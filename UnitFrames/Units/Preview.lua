@@ -6,9 +6,10 @@ local Units, Colors = ns.Units, ns.Colors
 local fillers = {}
 
 function fillers.health(row, cfg, v)
-	row:SetRange(0, v.healthMax)
+	local append = Units:GetHealthMaximumMode(row:GetBar()) == Enum.UnitMaximumHealthMode.WithAbsorbs
+	row:SetRange(0, v.healthMax + (append and v.absorb or 0))
 	row:SetValue(v.health)
-	row:SetSegmentValue("heal", v.heal)
+	row:SetSegmentValue("heal", math.min(v.heal, math.max(0, v.healthMax - v.health)))
 	row:SetSegmentValue("absorb", v.absorb)
 	row:SetSegmentValue("healAbsorb", v.healAbsorb)
 	if cfg.colorMode == "class" then

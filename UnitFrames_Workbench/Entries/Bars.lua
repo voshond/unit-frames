@@ -33,7 +33,8 @@ end
 local HEALTH_SPEC = {
 	segments = {
 		{ key = "heal", label = "Incoming heals", mode = "append", colorInherit = "colors.heal" },
-		{ key = "absorb", label = "Absorb shields", mode = "append", colorInherit = "colors.absorb" },
+		{ key = "absorb", label = "Absorb shields", mode = "overlay", configurablePlacement = true,
+			appendToFill = true, colorInherit = "colors.absorb" },
 		{ key = "healAbsorb", label = "Heal absorbs", mode = "inset", colorInherit = "colors.healAbsorb" },
 	},
 	formats = Formats.HEALTH,
@@ -61,10 +62,12 @@ end
 local function ShowStaticHealth(handle, d, healthPct, healPct, absorbPct, healAbsorbPct)
 	local row, max = handle.parts.row, d.max
 	local cur = Percent(healthPct, max)
-	row:SetRange(0, max)
+	local absorb = Percent(absorbPct, max)
+	local append = UF.Units:GetHealthMaximumMode(row:GetBar()) == Enum.UnitMaximumHealthMode.WithAbsorbs
+	row:SetRange(0, max + (append and absorb or 0))
 	row:SetValue(cur)
-	row:SetSegmentValue("heal", Percent(healPct, max))
-	row:SetSegmentValue("absorb", Percent(absorbPct, max))
+	row:SetSegmentValue("heal", math.min(Percent(healPct, max), math.max(0, max - cur)))
+	row:SetSegmentValue("absorb", absorb)
 	row:SetSegmentValue("healAbsorb", Percent(healAbsorbPct, max))
 	ApplyHealthColor(row, d, nil, healthPct / 100)
 	row:ShowSample({ name = d.name, level = 42, health = cur, healthMax = max })
@@ -76,7 +79,16 @@ local function ShowLiveHealth(handle, d)
 	if not UnitExists(unit) then
 		return NoUnit(row, unit)
 	end
-	row:SetRange(0, UnitHealthMax(unit))
+	local maximumMode = UF.Units:GetHealthMaximumMode(row:GetBar())
+	if maximumMode == Enum.UnitMaximumHealthMode.WithAbsorbs then
+		-- Never add secret health and absorbs in Lua; let the engine do it.
+		handle.healthValues = handle.healthValues or CreateUnitHealPredictionCalculator()
+		handle.healthValues:SetMaximumHealthMode(maximumMode)
+		UnitGetDetailedHealPrediction(unit, "player", handle.healthValues)
+		row:SetRange(0, handle.healthValues:GetMaximumHealth())
+	else
+		row:SetRange(0, UnitHealthMax(unit))
+	end
 	row:SetValue(UnitHealth(unit))
 	row:SetSegmentValue("heal", UnitGetIncomingHeals(unit) or 0)
 	row:SetSegmentValue("absorb", UnitGetTotalAbsorbs(unit))

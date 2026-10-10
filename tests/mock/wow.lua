@@ -77,6 +77,8 @@ ObjectMT.__index = function(obj, key)
 	if rawget(obj, "__strict") then
 		return nil
 	end
+	-- oUF's prediction calculator is a data field, never a widget method.
+	if key == "values" then return nil end
 	-- Unknown method: accept and record.
 	return function(self, ...)
 		self.__calls[#self.__calls + 1] = { key, ... }
@@ -216,6 +218,7 @@ end
 function Methods:GetValue() return self.__state.value end
 function Methods:SetStatusBarColor(r, g, b, a) self.__state.color = { r, g, b, a } end
 function Methods:SetOrientation(orientation) self.__state.orientation = orientation end
+function Methods:GetOrientation() return self.__state.orientation or "HORIZONTAL" end
 function Methods:SetReverseFill(reverse) self.__state.reverseFill = reverse end
 function Methods:SetTimerDuration(duration, interpolation, direction)
 	self.__state.timer = { duration = duration, interpolation = interpolation, direction = direction }
@@ -462,6 +465,7 @@ function Mock.Install()
 	_G.LibStub = nil
 	_G.UnitFrames = nil
 	_G.UnitFramesDB = nil
+	_G.UnitFramesWorkbenchDB = nil
 
 	_G.Secret = Mock.Secret
 	_G.issecretvalue = Mock.IsSecret
@@ -547,6 +551,8 @@ function Mock.Install()
 	_G.Enum = {
 		CustomAuraButtonDispelTypeTextureStyle = { Border = 1, PreserveAsset = 4 },
 		StatusBarInterpolation = { Immediate = 0, ExponentialEaseOut = 1 },
+		UnitDamageAbsorbClampMode = { MissingHealth = 0, MissingHealthWithoutIncomingHeals = 1, MaximumHealth = 2 },
+		UnitMaximumHealthMode = { Default = 0, WithAbsorbs = 1 },
 		StatusBarTimerDirection = { ElapsedTime = 0, RemainingTime = 1 },
 		SecondsFormatterAbbreviation = { None = 0, Truncate = 1, OneLetter = 2 },
 		SecondsFormatterInterval = { Seconds = 1, Minutes = 2, Hours = 3, Days = 4 },
@@ -657,6 +663,19 @@ function Mock.InstallUI()
 	_G.UnitGetIncomingHeals = function() return Secret(50) end
 	_G.UnitGetTotalAbsorbs = function() return Secret(100) end
 	_G.UnitGetTotalHealAbsorbs = function() return Secret(0) end
+	-- Minimal engine-side scale calculation for the standalone live preview.
+	_G.CreateUnitHealPredictionCalculator = function()
+		return {
+			SetMaximumHealthMode = function(self, mode) self.maximumMode = mode end,
+			GetMaximumHealth = function(self)
+				return Secret(self.max + (self.maximumMode == Enum.UnitMaximumHealthMode.WithAbsorbs and self.absorb or 0))
+			end,
+		}
+	end
+	_G.UnitGetDetailedHealPrediction = function(unit, _, calculator)
+		calculator.max = UnitHealthMax(unit).secretValue
+		calculator.absorb = UnitGetTotalAbsorbs(unit).secretValue
+	end
 	local function Percent(_, _, _, curve)
 		if curve and curve.isColor then
 			return NewColor(Secret(1), Secret(1), Secret(1), Secret(1))

@@ -55,15 +55,24 @@ local widgets = {}
 function widgets.health(row)
 	local bar = row:GetBar()
 	local health = bar:GetStatusBar()
-	health.HealingAll = bar:GetSegmentBar("heal")
-	health.DamageAbsorb = bar:GetSegmentBar("absorb")
-	health.HealAbsorb = bar:GetSegmentBar("healAbsorb")
+	local healing, absorb, healAbsorb = bar:GetSegmentBar("heal"), bar:GetSegmentBar("absorb"), bar:GetSegmentBar("healAbsorb")
+	local predictionChanged = health.HealingAll ~= healing or health.DamageAbsorb ~= absorb or health.HealAbsorb ~= healAbsorb
+	health.HealingAll, health.DamageAbsorb, health.HealAbsorb = healing, absorb, healAbsorb
+	-- Both placements must show shields at full health. Appending reserves
+	-- shield space inside the frame by including it in the native bar scale.
+	-- Set initial oUF options AND the existing calculator when re-styling.
+	health.maximumHealthClampMode = Units:GetHealthMaximumMode(bar)
+	health.damageAbsorbClampMode = Enum.UnitDamageAbsorbClampMode.MaximumHealth
+	if health.values then
+		health.values:SetMaximumHealthMode(health.maximumHealthClampMode)
+		health.values:SetDamageAbsorbClampMode(health.damageAbsorbClampMode)
+	end
 	health.smoothing = Smoothing(bar)
 	-- Keep reaction/tap colours current even when health hasn't changed.
 	health.colorReaction = true
 	health.colorTapping = true
 	health.UpdateColor = UpdateHealthColor
-	return health
+	return health, predictionChanged
 end
 
 function widgets.power(row)
@@ -83,9 +92,9 @@ end
 -- Points an oUF element at `widget` (nil switches it off). A different widget
 -- (e.g. 3D model vs. texture portrait) needs the element re-enabled. Before
 -- oUF has enabled the elements (inside the style function) only the key is set.
-local function SetElement(frame, element, widget)
+local function SetElement(frame, element, widget, rebind)
 	local ready = frame.ufReady
-	if ready and frame:IsElementEnabled(element) and widget ~= frame[element] then
+	if ready and frame:IsElementEnabled(element) and (widget ~= frame[element] or rebind) then
 		frame:DisableElement(element)
 	end
 	frame[element] = widget
@@ -112,7 +121,10 @@ end
 function Units:Bind(frame)
 	local uf = frame.uf
 	for key, row, cfg in uf:Rows() do
-		SetElement(frame, ELEMENTS[key], cfg.enabled and widgets[key](row) or nil)
+		local widget, rebind
+		if cfg.enabled then widget, rebind = widgets[key](row) end
+		-- Prediction subscriptions depend on which sub-widgets are enabled.
+		SetElement(frame, ELEMENTS[key], widget, rebind)
 		TagRow(frame, row, cfg.enabled)
 	end
 	local portrait = uf:GetPortrait()

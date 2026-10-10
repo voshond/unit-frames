@@ -37,6 +37,16 @@ In Edit Mode, Blizzard's **Snap** checkbox also controls our frames. With
 UnitFrames and highlighted Blizzard frame bounds, with red alignment guides
 while dragging. Positions stay independent after snapping (no linked anchors).
 
+Under each frame's **Health > Bar > Segments > Absorb shields**, **Enabled**
+controls shield visibility and **Placement** defaults to **Overlay health**.
+This draws shields inward from the bar's end, so they remain visible at full
+health. **After health** reserves shield space inside the existing bar by
+scaling it to maximum health plus shields; the shield starts at the health
+fill's end. Health numbers and percentages still refer to actual health.
+Shield colour defaults to blue to contrast with white priest health bars;
+colour and texture are independently configurable. The standalone
+Health bar preview has the same settings; set **Health %** to 100 to test.
+
 Aura settings live under **Buffs & debuffs**. Each of the **Buffs** and
 **Debuffs** sections has its own side, alignment, growth direction, gap,
 offsets and row/column length. Buffs default to the top, debuffs to the bottom.

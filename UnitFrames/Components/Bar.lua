@@ -20,6 +20,7 @@ way oUF does heal prediction. They are declared per instance through `spec`:
   } })
   append: starts where the previous append segment (or the fill) ends and grows outward
   inset:  pinned at the fill's end and grows back into the fill
+  overlay: pinned at the whole bar's end and grows inward, even at full health
 
 Segment positions are pure anchoring and every value goes straight into a
 StatusBar, so all of this works with secret values.
@@ -29,6 +30,11 @@ local Bar = ns.Component:Extend("Bar")
 Bar.ORIENTATIONS = {
 	{ "HORIZONTAL", "Horizontal" },
 	{ "VERTICAL", "Vertical" },
+}
+
+Bar.SHIELD_PLACEMENTS = {
+	{ "overlay", "Overlay health" },
+	{ "append", "After health" },
 }
 
 Bar.schema = {
@@ -111,6 +117,14 @@ function Bar:GetSchema()
 					{ key = "texture", type = "statusbar", label = "Texture", inherit = "barTexture" },
 				},
 			}
+			if seg.configurablePlacement then
+				local options = segmentSchema[#segmentSchema].schema
+				options[#options + 1] = {
+					key = "placement", type = "select", label = "Placement",
+					values = Bar.SHIELD_PLACEMENTS, default = seg.mode,
+					tooltip = "Overlay health draws inward from the end of the bar. After health reserves space within the bar for shields after the health fill, including at full health; health text stays unchanged.",
+				}
+			end
 		end
 		schema[#schema + 1] = { key = "segments", type = "group", label = "Segments", schema = segmentSchema }
 	end
@@ -138,6 +152,7 @@ function Bar:OnCreate(parent, spec)
 		local entry = {
 			key = seg.key,
 			mode = seg.mode or "append",
+			appendToFill = seg.appendToFill,
 			bar = CreateFrame("StatusBar", nil, self.clip),
 		}
 		entry.bar:SetMinMaxValues(0, 1)
@@ -187,17 +202,19 @@ function Bar:OnApply(cfg)
 	local previous = fill
 	for _, seg in ipairs(self.segments) do
 		local segCfg = cfg.segments[seg.key]
+		local mode = segCfg.placement or seg.mode
 		local sb = seg.bar
 		sb:ClearAllPoints()
 		sb:SetStatusBarTexture(Media:Fetch("statusbar", segCfg.texture))
 		sb:SetStatusBarColor(Util.UnpackColor(segCfg.color))
 		sb:SetOrientation(cfg.orientation)
 		if segCfg.enabled then
-			local target = seg.mode == "append" and previous or fill
-			for _, pair in ipairs(layout[seg.mode]) do
+			local target = mode == "append" and (seg.appendToFill and fill or previous)
+				or (mode == "overlay" and self.bar or fill)
+			for _, pair in ipairs(layout[mode == "overlay" and "inset" or mode]) do
 				sb:SetPoint(pair[1], target, pair[2])
 			end
-			if seg.mode == "append" then
+			if mode == "append" then
 				sb:SetReverseFill(cfg.reverseFill)
 				previous = sb:GetStatusBarTexture()
 			else
