@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
-# Install / reinstall the addon into the WoW Forever beta client.
+# Install / reinstall the addons into the WoW Forever beta client.
+#
+# Every top-level folder <Name>/ that contains <Name>.toc is an addon
+# (UnitFrames, UnitFrames_Workbench, ...).
 #
 # Usage:
-#   scripts/install.sh              # remove old copy, copy fresh build into AddOns/
-#   scripts/install.sh --link       # remove old copy, symlink AddOns/<name> -> repo (live editing, just /reload)
-#   scripts/install.sh --uninstall  # remove the addon from AddOns/ (SavedVariables in WTF/ are kept)
+#   scripts/install.sh [addon...]              # remove old copies, copy fresh ones into AddOns/
+#   scripts/install.sh --link [addon...]       # remove old copies, symlink AddOns/<name> -> repo folder
+#   scripts/install.sh --uninstall [addon...]  # remove from AddOns/ (SavedVariables in WTF/ are kept)
+#
+# Without addon names, all addons in the repo are handled.
 #
 # Environment overrides:
 #   WOW_DIR     WoW client dir (default: Forever beta under Faugus/battlenet)
-#   ADDON_NAME  addon folder name (default: derived from the .toc in the repo root)
 
 set -euo pipefail
 
@@ -16,28 +20,14 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WOW_DIR="${WOW_DIR:-/mnt/data02/Games/Faugus/battlenet/drive_c/Program Files (x86)/World of Warcraft/_classic_beta_}"
 ADDONS_DIR="$WOW_DIR/Interface/AddOns"
 
-# Repo files that are not part of the shipped addon
-EXCLUDES=(
-	.git .github .claude docs scripts
-	.gitattributes .gitignore .editorconfig .luacheckrc .pkgmeta
-	'*.md'
-)
-
 die() { echo "error: $*" >&2; exit 1; }
 
-detect_addon_name() {
-	shopt -s nullglob
-	local tocs=("$REPO_DIR"/*.toc)
-	shopt -u nullglob
-	[[ ${#tocs[@]} -gt 0 ]] || die "no .toc file in $REPO_DIR (set ADDON_NAME or add <Name>.toc)"
-	local name
-	name="$(basename "${tocs[0]}" .toc)"
-	# Strip flavor suffixes like _Mainline / _Camelot / _Forever
-	local suffix
-	for suffix in _Mainline _Camelot _Forever _Standard _Vanilla _Classic; do
-		name="${name%"$suffix"}"
+repo_addons() {
+	local dir name
+	for dir in "$REPO_DIR"/*/; do
+		name="$(basename "$dir")"
+		[[ -f "$dir/$name.toc" ]] && echo "$name"
 	done
-	echo "$name"
 }
 
 remove_existing() {
@@ -55,38 +45,45 @@ remove_existing() {
 
 mode="copy"
 case "${1:-}" in
-	"") ;;
-	--link) mode="link" ;;
-	--uninstall) mode="uninstall" ;;
-	-h|--help) sed -n '2,12p' "$0"; exit 0 ;;
-	*) die "unknown option: $1 (see --help)" ;;
+	--link) mode="link"; shift ;;
+	--uninstall) mode="uninstall"; shift ;;
+	-h|--help) sed -n '2,16p' "$0"; exit 0 ;;
+	-*) die "unknown option: $1 (see --help)" ;;
 esac
 
 [[ -d "$WOW_DIR" ]] || die "WoW dir not found: $WOW_DIR"
 mkdir -p "$ADDONS_DIR"
 
-ADDON_NAME="${ADDON_NAME:-$(detect_addon_name)}"
-[[ -n "$ADDON_NAME" && "$ADDON_NAME" != */* && "$ADDON_NAME" != .* ]] || die "invalid ADDON_NAME: '$ADDON_NAME'"
-TARGET="$ADDONS_DIR/$ADDON_NAME"
-
-if remove_existing "$TARGET"; then
-	echo "removed  $TARGET"
+mapfile -t available < <(repo_addons)
+[[ ${#available[@]} -gt 0 ]] || die "no addon folders (<Name>/<Name>.toc) in $REPO_DIR"
+if [[ $# -gt 0 ]]; then
+	addons=("$@")
+else
+	addons=("${available[@]}")
 fi
 
-case "$mode" in
-	uninstall)
-		echo "uninstalled $ADDON_NAME"
-		;;
-	link)
-		ln -s "$REPO_DIR" "$TARGET"
-		echo "linked   $TARGET -> $REPO_DIR"
-		;;
-	copy)
-		rsync_args=(-a)
-		for e in "${EXCLUDES[@]}"; do rsync_args+=(--exclude "$e"); done
-		rsync "${rsync_args[@]}" "$REPO_DIR/" "$TARGET/"
-		echo "copied   $REPO_DIR -> $TARGET"
-		;;
-esac
+for name in "${addons[@]}"; do
+	[[ -n "$name" && "$name" != */* && "$name" != .* ]] || die "invalid addon name: '$name'"
+	[[ " ${available[*]} " == *" $name "* ]] || die "unknown addon '$name' (available: ${available[*]})"
+	source_dir="$REPO_DIR/$name"
+	target="$ADDONS_DIR/$name"
 
-[[ "$mode" == "uninstall" ]] || echo "done. In game: /reload (or restart the client if you added new files to the .toc)"
+	if remove_existing "$target"; then
+		echo "removed  $target"
+	fi
+	case "$mode" in
+		uninstall)
+			echo "uninstalled $name"
+			;;
+		link)
+			ln -s "$source_dir" "$target"
+			echo "linked   $target -> $source_dir"
+			;;
+		copy)
+			rsync -a "$source_dir/" "$target/"
+			echo "copied   $name"
+			;;
+	esac
+done
+
+[[ "$mode" == "uninstall" ]] || echo "done. In game: /reload (restart the client if you added new files to a .toc)"

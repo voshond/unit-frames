@@ -1,0 +1,41 @@
+## Interface: 16001
+## Title: UnitFrames
+## Notes: Modular, customisable unit frames for WoW Forever.
+## Author: Martin Konstantin Herrmann
+## Version: 0.1.0-dev
+## SavedVariables: UnitFramesDB
+
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+Libs\AceDB-3.0\AceDB-3.0.lua
+Libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua
+
+Core\Init.lua
+Core\Util.lua
+Core\Class.lua
+Core\Events.lua
+Core\Schema.lua
+Core\Theme.lua
+Core\Media.lua
+Core\Config.lua
+
+Components\Component.lua
+Components\Backdrop.lua
+Components\Text.lua
+Components\Bar.lua
+Components\Castbar.lua
+
+Widgets\Skin.lua
+Widgets\Widget.lua
+Widgets\Window.lua
+Widgets\Button.lua
+Widgets\Checkbox.lua
+Widgets\Slider.lua
+Widgets\EditBox.lua
+Widgets\Dropdown.lua
+Widgets\ColorSwatch.lua
+Widgets\ScrollList.lua
+Widgets\ScrollPanel.lua
+Widgets\Inspector.lua
+
+Core\Commands.lua

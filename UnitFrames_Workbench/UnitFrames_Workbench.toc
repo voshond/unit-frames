@@ -1,0 +1,16 @@
+## Interface: 16001
+## Title: UnitFrames |cff4fa3ffWorkbench|r
+## Notes: Component gallery and test mode for UnitFrames. Open with /uf wb.
+## Author: Martin Konstantin Herrmann
+## Version: 0.1.0-dev
+## Dependencies: UnitFrames
+## LoadOnDemand: 1
+## SavedVariables: UnitFramesWorkbenchDB
+
+Workbench.lua
+Data.lua
+
+Entries\Bars.lua
+Entries\Castbar.lua
+Entries\Basics.lua
+Entries\Theme.lua
