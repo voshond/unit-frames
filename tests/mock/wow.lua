@@ -177,9 +177,10 @@ function Methods:CreateTexture(name, layer)
 	t.__state.layer = layer
 	return t
 end
-function Methods:CreateFontString(name, layer)
+function Methods:CreateFontString(name, layer, inherits)
 	local fs = NewObject("FontString", self, name)
 	fs.__state.layer = layer
+	fs.__state.fontObject = inherits
 	return fs
 end
 function Methods:CreateAnimationGroup() return NewObject("AnimationGroup", self) end
@@ -226,8 +227,20 @@ function Methods:SetFont(path, size, flags)
 	self.__state.font = { path, size, flags }
 	return true
 end
-function Methods:SetText(text) self.__state.text = text end
+-- Like the client: a FontString needs a font before it can show text.
+local function RequireFont(fs)
+	local s = fs.__state
+	if fs.__type == "FontString" and not (s.font or s.fontObject) then
+		error("FontString:SetText(): Font not set", 3)
+	end
+end
+function Methods:SetText(text)
+	RequireFont(self)
+	self.__state.text = text
+end
+function Methods:SetFontObject(font) self.__state.fontObject = font end
 function Methods:SetFormattedText(fmt, ...)
+	RequireFont(self)
 	if AnySecret(...) then
 		self.__state.text = Mock.Secret(fmt)
 	else
@@ -296,6 +309,41 @@ function Mock.FireEvent(event, ...)
 	end
 end
 
+-- AuraContainer (Blizzard_CustomAuraContainer): groups create two buttons up
+-- front through their initializeFrame, like the real frame batch does.
+function Mock.DecorateAuraContainer(container)
+	local s = container.__state
+	s.groups, s.groupOrder = {}, {}
+	function container:AddAuraGroup(key, filter, options)
+		local group = { filter = filter, options = options, frames = {}, enabled = true }
+		s.groups[key] = group
+		table.insert(s.groupOrder, key)
+		for i = 1, 2 do
+			local button = NewObject("Button", self)
+			-- The engine fills bound texts right away (here, during AddAuraGroup).
+			function button:SetApplicationCount(fs) fs:SetText("") end
+			function button:SetDurationText(fs) fs:SetText("") end
+			group.frames[i] = button
+			options.initializeFrame(button)
+		end
+	end
+	function container:SetAuraGroupEnabled(key, enabled) s.groups[key].enabled = enabled end
+	function container:SetAuraGroupFilterString(key, filter) s.groups[key].filter = filter end
+	function container:SetAuraGroupMaxFrameCount(key, max) s.groups[key].max = max end
+	function container:SetAuraGroupLayout(key, layout) s.groups[key].layout = layout end
+	function container:GetAuraGroupFrameCount(key) return #s.groups[key].frames end
+	function container:GetAuraGroupFrame(key, index) return s.groups[key].frames[index] end
+	function container:SetUnit(unit) s.unit = unit; s.updates = (s.updates or 0) + 1 end
+	function container:GetUnit() return s.unit end
+	function container:UpdateAllAuras() s.updates = (s.updates or 0) + 1 end
+	function container:SetEnabled(enabled) s.enabled = enabled end
+	function container:IsEnabled() return s.enabled == true end
+	function container:SetFlowLayoutAnchorPoint(point) s.flowAnchor = point end
+	function container:SetFlowLayoutAxis(axis) s.flowAxis = axis end
+	function container:SetFlowLayoutGrowthDirection(x, y) s.growth = { x, y } end
+	function container:SetFlowLayoutMaximumLineSize(size) s.lineSize = size end
+end
+
 -- Other API ---------------------------------------------------------------------
 
 local function NewColor(r, g, b, a)
@@ -356,7 +404,11 @@ function Mock.Install()
 	_G.issecretvalue = Mock.IsSecret
 
 	_G.CreateFrame = function(frameType, name, parent)
-		return NewObject(frameType or "Frame", parent, name)
+		local obj = NewObject(frameType or "Frame", parent, name)
+		if frameType == "AuraContainer" then
+			Mock.DecorateAuraContainer(obj)
+		end
+		return obj
 	end
 	_G.CreateFont = function(name)
 		return NewObject("Font", nil, name)
@@ -388,7 +440,14 @@ function Mock.Install()
 	Mock.inCombat = false
 	_G.FAILED = "Failed"
 
+	_G.AnchorUtil = {
+		FlowLayoutAxis = { Horizontal = 0, Vertical = 1 },
+		FlowDirection = { Left = -1, Right = 1, Up = 1, Down = -1 },
+	}
+	_G.AuraContainerSortMethod = { ExpirationOnly = 1 }
+	_G.AuraContainerSortDirection = { Normal = 0 }
 	_G.Enum = {
+		CustomAuraButtonDispelTypeTextureStyle = { Border = 1, PreserveAsset = 4 },
 		StatusBarInterpolation = { Immediate = 0, ExponentialEaseOut = 1 },
 		StatusBarTimerDirection = { ElapsedTime = 0, RemainingTime = 1 },
 		SecondsFormatterAbbreviation = { None = 0, Truncate = 1, OneLetter = 2 },
@@ -467,6 +526,11 @@ function Mock.InstallUI()
 	_G.SetPortraitTexture = function(texture) texture.__state.texture = "portrait" end
 	_G.UnitExists = function() return true end
 	_G.UnitIsPlayer = function() return true end
+	_G.UnitIsConnected = function() return true end
+	_G.UnitIsTapDenied = function() return false end
+	_G.UnitReaction = function() return 2 end
+	_G.UnitClassification = function() return "elite" end
+	_G.UnitCreatureType = function() return Secret("Beast") end
 	_G.UnitName = function() return Secret("name"), Secret("realm") end
 	_G.UnitClass = function() return Secret("Warrior"), "WARRIOR", 1 end
 	_G.UnitLevel = function() return 30 end

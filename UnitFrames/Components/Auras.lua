@@ -1,0 +1,295 @@
+local _, ns = ...
+local Media, Backdrop = ns.Media, ns.Components.Backdrop
+
+-- Independent buff/debuff containers. Blizzard owns selection, sorting,
+-- cooldowns, durations, counts and dispel colours, including secret auras.
+-- Our ordinary root frame never depends on a container's secret dimensions.
+local Auras = ns.Component:Extend("Auras")
+local KINDS = { "buffs", "debuffs" }
+
+Auras.POSITIONS = {
+	{ "top", "Top" }, { "bottom", "Bottom" },
+	{ "left", "Left" }, { "right", "Right" },
+}
+
+Auras.ALIGNMENTS = {
+	{ "start", "Left / top" }, { "center", "Centre" }, { "end", "Right / bottom" },
+}
+
+Auras.GROWTH = {
+	{ "forward", "Right / down" }, { "reverse", "Left / up" },
+}
+
+Auras.DURATION_POSITIONS = {
+	{ "below", "Below the icon" }, { "CENTER", "Inside: centre" },
+	{ "TOP", "Inside: top" }, { "BOTTOM", "Inside: bottom" },
+}
+
+Auras.BUFF_FILTERS = {
+	{ "HELPFUL", "All buffs" }, { "HELPFUL|PLAYER", "Cast by me" }, { "HELPFUL|RAID", "Raid buffs" },
+}
+
+Auras.DEBUFF_FILTERS = {
+	{ "HARMFUL", "All debuffs" }, { "HARMFUL|PLAYER", "Cast by me" }, { "HARMFUL|RAID", "Dispellable by me" },
+}
+
+local function GroupSchema(label, filters, size, position)
+	return {
+		{ key = "enabled", type = "toggle", label = "Show " .. label, default = true },
+		{ key = "filter", type = "select", label = "Which", values = filters, default = filters[1][1] },
+		{ key = "max", type = "range", label = "Maximum shown", min = 1, max = 40, step = 1, default = 16 },
+		{ key = "size", type = "range", label = "Icon size", min = 10, max = 64, step = 1, default = size },
+		{ key = "position", type = "select", label = "Side", values = Auras.POSITIONS, default = position },
+		{ key = "alignment", type = "select", label = "Alignment", values = Auras.ALIGNMENTS, default = "start",
+			tooltip = "Align the whole aura block along the selected side. Centre aligns the block, including wrapped rows." },
+		{ key = "growth", type = "select", label = "Grow direction", values = Auras.GROWTH, default = "forward",
+			tooltip = "Top/bottom: icons flow horizontally. Left/right: icons flow vertically. New rows or columns grow away from the frame." },
+		{ key = "gap", type = "range", label = "Gap to the frame", min = 0, max = 30, step = 1, default = 2 },
+		{ key = "offsetX", type = "range", label = "Offset X", min = -200, max = 200, step = 1, default = 0 },
+		{ key = "offsetY", type = "range", label = "Offset Y", min = -200, max = 200, step = 1, default = 0 },
+		{ key = "lineSize", type = "range", label = "Row / column length", min = 0, max = 600, step = 1, default = 0,
+			tooltip = "0 follows the frame width (top/bottom) or height (left/right). Use offsets to separate buffs and debuffs placed on the same side." },
+	}
+end
+
+Auras.schema = {
+	{ key = "enabled", type = "toggle", label = "Enabled", default = true },
+	{ key = "spacing", type = "range", label = "Icon spacing", min = 0, max = 10, step = 1, default = 2 },
+	{ key = "showDuration", type = "toggle", label = "Show time left", default = true },
+	{ key = "durationPosition", type = "select", label = "Time position", values = Auras.DURATION_POSITIONS, default = "below" },
+	{ key = "durationSize", type = "range", label = "Time text size", min = 6, max = 32, step = 1, default = 10 },
+	{ key = "showCount", type = "toggle", label = "Show stacks", default = true },
+	{ key = "countSize", type = "range", label = "Stack text size", min = 6, max = 32, step = 1, default = 10 },
+	{ key = "font", type = "font", label = "Font", inherit = "font" },
+	{ key = "fontOutline", type = "select", label = "Font outline", values = ns.Theme.OUTLINES, default = "OUTLINE" },
+	{ key = "dispelBorder", type = "toggle", label = "Colour debuff border by type", default = true,
+		tooltip = "Magic, curse, disease, poison: coloured by the engine, works in combat." },
+	{ key = "border", type = "group", label = "Icon frame", schema = Backdrop.schema,
+		defaults = { size = 8, inset = 1, padding = 2, background = "None" } },
+	{ key = "buffs", type = "group", label = "Buffs", schema = GroupSchema("buffs", Auras.BUFF_FILTERS, 20, "top") },
+	{ key = "debuffs", type = "group", label = "Debuffs", schema = GroupSchema("debuffs", Auras.DEBUFF_FILTERS, 26, "bottom") },
+}
+
+function Auras:OnCreate(parent)
+	self.frame = CreateFrame("Frame", nil, parent)
+	self.frame:SetAllPoints(parent)
+	self.containers = {}
+	for _, kind in ipairs(KINDS) do
+		local container = CreateFrame("AuraContainer", nil, self.frame, "CustomAuraContainerTemplate")
+		self.containers[kind] = container
+		container:AddAuraGroup(kind, kind == "buffs" and "HELPFUL" or "HARMFUL", {
+			maxFrameCount = 16,
+			sortMethod = AuraContainerSortMethod.ExpirationOnly,
+			sortDirection = AuraContainerSortDirection.Normal,
+			initializeFrame = function(button) self:InitButton(button, kind) end,
+		})
+	end
+end
+
+function Auras:InitButton(button, kind)
+	button.ufKind = kind
+	-- The button includes the below-icon timer in its layout bounds. The
+	-- artwork stays square, even when the container flows upwards.
+	local iconFrame = CreateFrame("Frame", nil, button, "BackdropTemplate")
+	iconFrame:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+	button.ufIconFrame = iconFrame
+
+	local icon = iconFrame:CreateTexture(nil, "ARTWORK")
+	icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+	button.ufIcon = icon
+	button:SetIcon(icon)
+
+	local cooldown = CreateFrame("Cooldown", nil, iconFrame, "CooldownFrameTemplate")
+	cooldown:SetHideCountdownNumbers(true)
+	button.ufCooldown = cooldown
+	button:SetDurationCooldown(cooldown)
+
+	local cover = CreateFrame("Frame", nil, iconFrame)
+	cover:SetAllPoints(iconFrame)
+	cover:SetFrameLevel(cooldown:GetFrameLevel() + 1)
+
+	-- The engine fills registered texts immediately, before OnApply.
+	button.ufCountHolder = CreateFrame("Frame", nil, cover)
+	button.ufCountHolder:SetAllPoints(iconFrame)
+	button.ufCount = button.ufCountHolder:CreateFontString(nil, "OVERLAY", "NumberFontNormalSmall")
+	button.ufCount:SetPoint("BOTTOMRIGHT", iconFrame, "BOTTOMRIGHT", -2, 2)
+	button:SetApplicationCount(button.ufCount, {})
+
+	button.ufTime = cover:CreateFontString(nil, "OVERLAY", "NumberFontNormalSmall")
+	button:SetDurationText(button.ufTime, {})
+
+	-- A permanent themed frame surrounds every icon. The engine colours
+	-- this additional thin edge for debuffs. Hide its parent to toggle it:
+	-- the engine owns each registered texture's shown state and colour.
+	button.ufBorder = CreateFrame("Frame", nil, cover)
+	button.ufBorder:SetAllPoints(iconFrame)
+	for _, edge in ipairs({ "TOP", "BOTTOM", "LEFT", "RIGHT" }) do
+		local texture = button.ufBorder:CreateTexture(nil, "OVERLAY")
+		texture:SetTexture([[Interface\Buttons\WHITE8X8]])
+		if edge == "TOP" or edge == "BOTTOM" then
+			texture:SetPoint(edge .. "LEFT", iconFrame, edge .. "LEFT", 0, 0)
+			texture:SetPoint(edge .. "RIGHT", iconFrame, edge .. "RIGHT", 0, 0)
+			texture:SetHeight(1)
+		else
+			texture:SetPoint("TOP" .. edge, iconFrame, "TOP" .. edge, 0, 0)
+			texture:SetPoint("BOTTOM" .. edge, iconFrame, "BOTTOM" .. edge, 0, 0)
+			texture:SetWidth(1)
+		end
+		button:AddDispelTypeTexture(texture, {
+			style = Enum.CustomAuraButtonDispelTypeTextureStyle.PreserveAsset,
+			showWhenHarmful = true, showWhenHelpful = false, showWithoutDispelType = true,
+		})
+	end
+	button:SetTooltipAnchorPoint("ANCHOR_BOTTOMRIGHT", 0, 0)
+	if self.resolved then self:StyleButton(button) end
+end
+
+local function TextRoom(cfg)
+	return cfg.showDuration and cfg.durationPosition == "below" and cfg.durationSize + 2 or 0
+end
+
+function Auras:StyleButton(button)
+	local cfg = self.resolved
+	local size = cfg[button.ufKind].size
+	button:SetSize(size, size + TextRoom(cfg))
+	button.ufIconFrame:SetSize(size, size)
+	Backdrop.ApplyTo(button.ufIconFrame, cfg.border)
+	-- Keep a drawable centre even at the smallest icon size.
+	local pad = cfg.border.enabled and math.min(cfg.border.padding, (size - 2) / 2) or 0
+	for _, region in ipairs({ button.ufIcon, button.ufCooldown }) do
+		region:ClearAllPoints()
+		region:SetPoint("TOPLEFT", button.ufIconFrame, "TOPLEFT", pad, -pad)
+		region:SetPoint("BOTTOMRIGHT", button.ufIconFrame, "BOTTOMRIGHT", -pad, pad)
+	end
+	local font, outline = Media:Fetch("font", cfg.font), Media:Outline(cfg.fontOutline)
+	for _, entry in ipairs({ { button.ufCount, cfg.countSize }, { button.ufTime, cfg.durationSize } }) do
+		if not entry[1]:SetFont(font, entry[2], outline) then
+			entry[1]:SetFont(Media:Fetch("font", Media.LSM:GetDefault("font")), entry[2], outline)
+		end
+	end
+	button.ufTime:ClearAllPoints()
+	if cfg.durationPosition == "below" then
+		button.ufTime:SetPoint("TOP", button.ufIconFrame, "BOTTOM", 0, -1)
+	else
+		local y = cfg.durationPosition == "TOP" and -2 or cfg.durationPosition == "BOTTOM" and 2 or 0
+		button.ufTime:SetPoint(cfg.durationPosition, button.ufIconFrame, cfg.durationPosition, 0, y)
+	end
+	button.ufCountHolder:SetShown(cfg.showCount)
+	button.ufTime:SetShown(cfg.showDuration)
+	button.ufBorder:SetShown(cfg.border.enabled and cfg.dispelBorder and button.ufKind == "debuffs")
+end
+
+function Auras:OnApply(cfg)
+	for _, kind in ipairs(KINDS) do
+		local container, group = self.containers[kind], cfg[kind]
+		container:SetAuraGroupEnabled(kind, group.enabled)
+		container:SetAuraGroupFilterString(kind, group.filter)
+		container:SetAuraGroupMaxFrameCount(kind, group.max)
+		container:SetAuraGroupLayout(kind, {
+			elementWidth = group.size, elementHeight = group.size + TextRoom(cfg),
+			elementSpacing = cfg.spacing, lineSpacing = cfg.spacing,
+		})
+	end
+	self:Layout()
+	self:RestyleButtons()
+end
+
+-- Only the container's anchor refers to our ordinary host. We never read
+-- secret sizes, install OnSizeChanged on it, or anchor another frame to it.
+function Auras:Layout(width, height)
+	self.hostWidth = width or self.hostWidth or self.frame:GetParent():GetWidth()
+	self.hostHeight = height or self.hostHeight or self.frame:GetParent():GetHeight()
+	for _, kind in ipairs(KINDS) do
+		local group, container = self.resolved[kind], self.containers[kind]
+		local side = group.position
+		local vertical = side == "left" or side == "right"
+		local reverse = group.growth == "reverse"
+		local align = group.alignment
+		local x, y = group.offsetX, group.offsetY
+		local point, framePoint, horizontal, upward
+		if vertical then
+			local edge = align == "center" and "" or align == "end" and "BOTTOM" or "TOP"
+			point = edge .. (side == "left" and "RIGHT" or "LEFT")
+			framePoint = edge .. side:upper()
+			x = x + (side == "left" and -group.gap or group.gap)
+			horizontal, upward = side == "right", reverse
+		else
+			local edge = align == "center" and "" or align == "end" and "RIGHT" or "LEFT"
+			point = (side == "top" and "BOTTOM" or "TOP") .. edge
+			framePoint = side:upper() .. edge
+			y = y + (side == "top" and group.gap or -group.gap)
+			horizontal, upward = not reverse, side == "top"
+		end
+		container:ClearAllPoints()
+		container:SetPoint(point, self.frame:GetParent(), framePoint, x, y)
+		container:SetFlowLayoutAxis(vertical and AnchorUtil.FlowLayoutAxis.Vertical or AnchorUtil.FlowLayoutAxis.Horizontal)
+		container:SetFlowLayoutAnchorPoint((upward and "BOTTOM" or "TOP") .. (horizontal and "LEFT" or "RIGHT"))
+		container:SetFlowLayoutGrowthDirection(
+			horizontal and AnchorUtil.FlowDirection.Right or AnchorUtil.FlowDirection.Left,
+			upward and AnchorUtil.FlowDirection.Up or AnchorUtil.FlowDirection.Down)
+		local length = group.lineSize > 0 and group.lineSize or vertical and self.hostHeight or self.hostWidth
+		local minimum = group.size + (vertical and TextRoom(self.resolved) or 0)
+		container:SetFlowLayoutMaximumLineSize(math.max(length, minimum))
+	end
+end
+
+-- Access to existing buttons (including enumeration) may be denied while
+-- aura data is secret. Reapply at the next combat end in that case.
+local pending = {}
+local regenFrame = CreateFrame("Frame")
+regenFrame:SetScript("OnEvent", function(self)
+	self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+	for auras in pairs(pending) do
+		pending[auras] = nil
+		auras:RestyleButtons()
+	end
+end)
+
+local function Restyle(auras)
+	for _, kind in ipairs(KINDS) do
+		local container = auras.containers[kind]
+		for index = 1, container:GetAuraGroupFrameCount(kind) do
+			auras:StyleButton(container:GetAuraGroupFrame(kind, index))
+		end
+	end
+end
+
+function Auras:RestyleButtons()
+	if InCombatLockdown() or not pcall(Restyle, self) then
+		pending[self] = true
+		regenFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+	else
+		pending[self] = nil
+	end
+end
+
+function Auras:SetEnabled(enabled)
+	self.enabled = enabled and true or false
+	self.frame:SetShown(self.enabled)
+	for _, kind in ipairs(KINDS) do
+		local enabledGroup = self.enabled and self.resolved[kind].enabled
+		self.containers[kind]:SetShown(enabledGroup)
+		self.containers[kind]:SetEnabled(enabledGroup)
+	end
+end
+
+function Auras:OnRelease()
+	pending[self] = nil
+	self:SetEnabled(false)
+	for _, kind in ipairs(KINDS) do self.containers[kind]:SetUnit(nil) end
+end
+
+function Auras:GetContainer(kind)
+	return self.containers[kind]
+end
+
+function Auras:SetUnit(unit)
+	for _, kind in ipairs(KINDS) do
+		local container = self.containers[kind]
+		if container:GetUnit() ~= unit then
+			container:SetUnit(unit)
+		else
+			container:UpdateAllAuras()
+		end
+	end
+end

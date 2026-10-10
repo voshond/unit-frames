@@ -121,6 +121,10 @@ function Units:Bind(frame)
 	if castbar then
 		SetElement(frame, "UF_Castbar", castbar:IsEnabled() and castbar or nil)
 	end
+	local auras = uf:GetAuras()
+	if auras then
+		SetElement(frame, "UF_Auras", auras:IsEnabled() and auras or nil)
+	end
 end
 
 -- Re-applies config to a live frame and refreshes everything shown on it.

@@ -163,3 +163,20 @@ local function DisableCastbar(self)
 end
 
 oUF:AddElement("UF_Castbar", UpdateCastbar, EnableCastbar, DisableCastbar)
+
+--[[
+UF_Auras: keeps our Auras component (frame.UF_Auras) on the frame's unit.
+The AuraContainer handles aura events itself; this only follows unit changes
+(new target, ...) and refreshes, like oUF's own Auras element.
+]]
+local function UpdateAuras(self)
+	self.UF_Auras:SetUnit(self.__unit)
+end
+
+local function EnableAuras(self)
+	return self.UF_Auras ~= nil
+end
+
+local function DisableAuras() end
+
+oUF:AddElement("UF_Auras", UpdateAuras, EnableAuras, DisableAuras)

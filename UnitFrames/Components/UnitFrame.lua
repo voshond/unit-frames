@@ -1,6 +1,6 @@
 local _, ns = ...
 local Backdrop, TextBar = ns.Components.Backdrop, ns.Components.TextBar
-local Castbar, Portrait = ns.Components.Castbar, ns.Components.Portrait
+local Castbar, Portrait, Auras = ns.Components.Castbar, ns.Components.Portrait, ns.Components.Auras
 
 --[[
 A unit frame made of rows stacked top to bottom inside one bordered frame.
@@ -11,6 +11,7 @@ Optional extras:
   portrait  a column left or right of the rows, as tall as all rows together
   castbar   placed as an extra row at the top or bottom, or over the health
             row (it covers the health bar only while casting)
+  auras     independently positioned buffs and debuffs on any side
 
 The component only builds and lays out the visuals. Feeding unit data is
 done by the owner: oUF for live frames (Units/), fake values in the Workbench.
@@ -26,6 +27,7 @@ spec:
             }
   portrait  { defaults } to offer a portrait
   castbar   { defaults } to offer a castbar
+  auras     { defaults } to offer buffs/debuffs
 ]]
 local UnitFrame = ns.Component:Extend("UnitFrame")
 
@@ -61,6 +63,9 @@ function UnitFrame:OnCreate(parent, spec)
 	if spec.castbar then
 		self.castbar = Castbar:New(self.frame, {})
 		self.castbar:GetFrame():Hide()
+	end
+	if spec.auras then
+		self.auras = Auras:New(self.frame, {})
 	end
 end
 
@@ -138,6 +143,10 @@ function UnitFrame:GetSchema()
 				HeightOption(18, OverHealth),
 			}, { enabled = true }) }
 	end
+	if self.auras then
+		schema[#schema + 1] = { key = "auras", type = "group", label = "Buffs & debuffs", schema = self.auras:GetSchema(),
+			defaults = self.spec.auras.defaults }
+	end
 	self.schemaCache = schema
 	return schema
 end
@@ -153,6 +162,9 @@ function UnitFrame:OnApply(cfg)
 	if self.castbar then
 		self:ApplyChild(self.castbar, "castbar")
 		self.castbar:SetEnabled(cfg.castbar.placement ~= "off")
+	end
+	if self.auras then
+		self:ApplyChild(self.auras, "auras")
 	end
 	self:Layout()
 end
@@ -242,7 +254,12 @@ function UnitFrame:Layout()
 		self.castbar:SetOpaque(placement == "health")
 	end
 
-	self:Resize(cfg.width + portraitWidth, math.max(stackHeight + 2 * pad, 1))
+	local width = cfg.width + portraitWidth
+	self:Resize(width, math.max(stackHeight + 2 * pad, 1))
+
+	if self.auras then
+		self.auras:Layout(width, math.max(stackHeight + 2 * pad, 1))
+	end
 end
 
 -- Unit buttons are protected: resizing them waits until combat ends.
@@ -275,6 +292,9 @@ function UnitFrame:OnRelease()
 	if self.castbar then
 		self.castbar:Release()
 	end
+	if self.auras then
+		self.auras:Release()
+	end
 end
 
 -- A row's TextBar, by key ("health", "power", ...).
@@ -305,4 +325,8 @@ end
 
 function UnitFrame:GetCastbar()
 	return self.castbar
+end
+
+function UnitFrame:GetAuras()
+	return self.auras
 end

@@ -46,6 +46,44 @@ function Colors.Class(token)
 	return 0.5, 0.5, 0.5
 end
 
+-- Theme colour key for an NPC's reaction to the player (UnitReaction 1..8).
+function Colors.ReactionKey(reaction)
+	if reaction == nil then
+		return "neutral"
+	elseif reaction <= 3 then
+		return "hostile"
+	elseif reaction == 4 then
+		return "neutral"
+	end
+	return "friendly"
+end
+
+--[[
+Unit colour for the "class / reaction" mode: offline -> disconnected,
+players -> class, NPCs tapped by others -> tapped, other NPCs -> reaction.
+UnitIsPlayer, UnitIsConnected, UnitIsTapDenied and UnitReaction are not
+secret; the class token may be, which C_ClassColor accepts.
+]]
+function Colors.Unit(unit)
+	if not UnitIsConnected(unit) then
+		return Colors.Theme("disconnected")
+	elseif UnitIsPlayer(unit) then
+		local _, class = UnitClass(unit)
+		return Colors.Class(class)
+	elseif UnitIsTapDenied(unit) then
+		return Colors.Theme("tapped")
+	end
+	return Colors.Theme(Colors.ReactionKey(UnitReaction(unit, "player")))
+end
+
+-- Same for plain sample values: { isPlayer, class, reaction ("hostile"/...) }
+function Colors.Sample(values)
+	if values.isPlayer == false then
+		return Colors.Theme(values.reaction or "hostile")
+	end
+	return Colors.Class(values.class)
+end
+
 -- Health gradient (low -> mid -> full) as a colour curve; use with
 -- UnitHealthPercent(unit, true, curve) for secret health.
 local healthCurve

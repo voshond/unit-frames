@@ -70,6 +70,11 @@ local function UnitSettings(unit)
 			kind = LEM.SettingType.Checkbox, name = "Show portrait", default = def.portrait.defaults.enabled,
 		})
 	end
+	if def.auras then
+		settings[#settings + 1] = UnitSetting(unit, "auras.enabled", {
+			kind = LEM.SettingType.Checkbox, name = "Show buffs & debuffs", default = true,
+		})
+	end
 	if def.castbar then
 		local values = {}
 		for _, entry in ipairs(ns.Components.UnitFrame.CASTBAR_PLACEMENTS) do

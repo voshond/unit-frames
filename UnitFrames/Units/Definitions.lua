@@ -60,6 +60,7 @@ Units.definitions.player = {
 	-- Inside the unit frame the castbar uses the frame's border, not its own.
 	castbar = { defaults = { placement = "bottom", height = 18, border = { enabled = false },
 		name = { size = 10 }, time = { size = 10 } } },
+	auras = { defaults = {} },
 }
 
 function Units:GetDefinition(unit)
@@ -71,6 +72,7 @@ function Units:CreateFrame(unit, parent, frame)
 	local def = self.definitions[unit]
 	return ns.Components.UnitFrame:New(parent, ns.Config:GetUnitConfig(unit), {
 		frame = frame, rows = def.rows, width = def.width, portrait = def.portrait, castbar = def.castbar,
+		auras = def.auras,
 	})
 end
 

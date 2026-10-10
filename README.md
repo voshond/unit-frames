@@ -21,6 +21,14 @@ scripts/fetch-libs.sh       # update the embedded libraries (UnitFrames/Libs/VER
 
 In game: `/uf wb` opens the Workbench.
 
+Player aura settings live under **Buffs & debuffs**. Each of the **Buffs** and
+**Debuffs** sections has its own side, alignment, growth direction, gap,
+offsets and row/column length. Buffs default to the top, debuffs to the bottom.
+The parent section controls the font, separate duration/stack sizes, and
+duration placement below or inside the icon. **Icon frame** styles each
+individual icon border. Centre alignment centres the whole aura block;
+use offsets to separate groups when placing both on the same side.
+
 ## Adding fonts
 
 1. Copy a static `.ttf`/`.otf` (one file per weight) into `UnitFrames_Media/Fonts/`.

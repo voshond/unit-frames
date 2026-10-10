@@ -319,12 +319,220 @@ describe("Player frame portrait and castbar", function()
 		end)
 		assert.is_true(preview:GetCastbar():GetFrame():IsShown())
 		assert.equals("Flash of Light", preview:GetCastbar().nameText.frame:GetText())
+describe("Player buffs and debuffs", function()
+	local ns, frame, auras
+	before_each(function()
+		ns = Helpers.LoadAddon(true, true)
+		Mock.InstallUI()
+		frame = ns.Units.frames.player
+		auras = frame.uf:GetAuras()
+	end)
+
+	local function Container(kind)
+		return auras:GetContainer(kind)
+	end
+
+	local function Group(kind)
+		return Container(kind).__state.groups[kind]
+	end
+
+	it("positions buffs above and debuffs below with separate containers", function()
+		local buffs, debuffs = Container("buffs"), Container("debuffs")
+		assert.same({ "BOTTOMLEFT", frame, "TOPLEFT", 0, 2 }, buffs:GetAnchor("BOTTOMLEFT"))
+		assert.same({ "TOPLEFT", frame, "BOTTOMLEFT", 0, -2 }, debuffs:GetAnchor("TOPLEFT"))
+		assert.equals("BOTTOMLEFT", buffs.__state.flowAnchor)
+		assert.same({ 1, 1 }, buffs.__state.growth)
+		assert.same({ 1, -1 }, debuffs.__state.growth)
+		assert.equals(frame:GetWidth(), buffs.__state.lineSize)
+		assert.equals(frame:GetWidth(), debuffs.__state.lineSize)
+		assert.is_true(buffs:IsEnabled())
+		assert.is_true(debuffs:IsEnabled())
+		assert.equals("HELPFUL", Group("buffs").filter)
+		assert.equals("HARMFUL", Group("debuffs").filter)
+	end)
+
+	it("gives every icon a themed frame and reserves room for its timer", function()
+		for _, kind in ipairs({ "buffs", "debuffs" }) do
+			local button = Group(kind).frames[1]
+			local size = kind == "buffs" and 20 or 26
+			assert.equals(size, button:GetWidth())
+			assert.equals(size + 12, button:GetHeight())
+			assert.equals(size, button.ufIconFrame:GetHeight(), "the artwork stays square")
+			assert.equals(ns.Media:Fetch("border", ns.Config:GetTheme().borderTexture),
+				button.ufIconFrame.__state.backdrop.edgeFile)
+			assert.same(ns.Config:GetTheme().borderColor, button.ufIconFrame.__state.backdropBorderColor)
+			assert.same({ "TOP", button.ufIconFrame, "BOTTOM", 0, -1 }, button.ufTime:GetAnchor("TOP"))
+			assert.same({ "TOPLEFT", button.ufIconFrame, "TOPLEFT", 2, -2 }, button.ufIcon:GetAnchor("TOPLEFT"))
+		end
+		assert.is_false(Group("buffs").frames[1].ufBorder:IsShown())
+		assert.is_true(Group("debuffs").frames[1].ufBorder:IsShown())
+	end)
+
+	it("keeps buffs on top while placing debuffs on the right, centred", function()
+		ns.Config:SetUnitValue("player", "auras.debuffs.position", "right")
+		ns.Config:SetUnitValue("player", "auras.debuffs.alignment", "center")
+		ns.Config:SetUnitValue("player", "auras.debuffs.offsetX", 5)
+		ns.Config:SetUnitValue("player", "auras.debuffs.offsetY", -3)
+		local debuffs = Container("debuffs")
+		assert.same({ "LEFT", frame, "RIGHT", 7, -3 }, debuffs:GetAnchor("LEFT"))
+		assert.equals(AnchorUtil.FlowLayoutAxis.Vertical, debuffs.__state.flowAxis)
+		assert.equals(frame:GetHeight(), debuffs.__state.lineSize)
+		assert.same({ 1, -1 }, debuffs.__state.growth)
+		assert.same({ "BOTTOMLEFT", frame, "TOPLEFT", 0, 2 }, Container("buffs"):GetAnchor("BOTTOMLEFT"))
+	end)
+
+	it("supports all four sides, alignments and growth directions", function()
+		local sides = {
+			top = { "BOTTOM", "TOP", false, 0, 2 },
+			bottom = { "TOP", "BOTTOM", false, 0, -2 },
+			left = { "RIGHT", "LEFT", true, -2, 0 },
+			right = { "LEFT", "RIGHT", true, 2, 0 },
+		}
+		for side, expected in pairs(sides) do
+			for _, alignment in ipairs({ "start", "center", "end" }) do
+				for _, growth in ipairs({ "forward", "reverse" }) do
+					ns.Config:SetUnitValue("player", "auras.buffs", {
+						position = side, alignment = alignment, growth = growth,
+					})
+					local container = Container("buffs")
+					local vertical = expected[3]
+					local suffix = alignment == "center" and "" or alignment == "start" and "LEFT" or "RIGHT"
+					local prefix = alignment == "center" and "" or alignment == "start" and "TOP" or "BOTTOM"
+					local point = vertical and prefix .. expected[1] or expected[1] .. suffix
+					local relative = vertical and prefix .. expected[2] or expected[2] .. suffix
+					assert.same({ point, frame, relative, expected[4], expected[5] }, container:GetAnchor(point))
+					assert.equals(1, container:GetNumPoints())
+					local x = vertical and (side == "right" and 1 or -1) or (growth == "forward" and 1 or -1)
+					local y = vertical and (growth == "forward" and -1 or 1) or (side == "top" and 1 or -1)
+					assert.same({ x, y }, container.__state.growth)
+					assert.equals((y == 1 and "BOTTOM" or "TOP") .. (x == 1 and "LEFT" or "RIGHT"),
+						container.__state.flowAnchor, "buttons use a corner even when the block is centred")
+				end
+			end
+		end
+	end)
+
+	it("applies filters, counts and sizes live and stops disabled containers", function()
+		ns.Config:SetUnitValue("player", "auras.buffs.filter", "HELPFUL|PLAYER")
+		ns.Config:SetUnitValue("player", "auras.debuffs.max", 8)
+		ns.Config:SetUnitValue("player", "auras.buffs.size", 30)
+		ns.Config:SetUnitValue("player", "auras.debuffs.enabled", false)
+		assert.equals("HELPFUL|PLAYER", Group("buffs").filter)
+		assert.equals(8, Group("debuffs").max)
+		assert.equals(30, Group("buffs").layout.elementWidth)
+		assert.equals(30, Group("buffs").frames[2]:GetWidth())
+		assert.is_false(Group("debuffs").enabled)
+		assert.is_false(Container("debuffs"):IsEnabled())
+		assert.is_false(Container("debuffs"):IsShown())
+		assert.is_true(Container("buffs"):IsEnabled())
+	end)
+
+	it("allows custom line lengths and keeps room for at least one icon", function()
+		ns.Config:SetUnitValue("player", "auras.debuffs.lineSize", 100)
+		assert.equals(100, Container("debuffs").__state.lineSize)
+		ns.Config:SetUnitValue("player", "auras.debuffs.position", "left")
+		assert.equals(100, Container("debuffs").__state.lineSize)
+		ns.Config:SetUnitValue("player", "auras.debuffs.lineSize", 1)
+		assert.equals(38, Container("debuffs").__state.lineSize, "includes the below-icon timer")
+		ns.Config:SetUnitValue("player", "auras.durationPosition", "CENTER")
+		assert.equals(26, Container("debuffs").__state.lineSize)
+	end)
+
+	it("moves duration text inside without keeping blank space below", function()
+		ns.Config:SetUnitValue("player", "auras.durationSize", 16)
+		ns.Config:SetUnitValue("player", "auras.countSize", 8)
+		ns.Config:SetUnitValue("player", "auras.font", "Arial Narrow")
+		ns.Config:SetUnitValue("player", "auras.fontOutline", "THICKOUTLINE")
+		for _, position in ipairs({ "CENTER", "TOP", "BOTTOM" }) do
+			ns.Config:SetUnitValue("player", "auras.durationPosition", position)
+			local button = Group("buffs").frames[1]
+			local y = position == "TOP" and -2 or position == "BOTTOM" and 2 or 0
+			assert.same({ position, button.ufIconFrame, position, 0, y }, button.ufTime:GetAnchor(position))
+			assert.equals(20, button:GetHeight())
+			assert.equals(20, Group("buffs").layout.elementHeight)
+			assert.same({ ns.Media:Fetch("font", "Arial Narrow"), 16, "THICKOUTLINE" }, button.ufTime.__state.font)
+			assert.equals(8, button.ufCount.__state.font[2])
+		end
+		ns.Config:SetUnitValue("player", "auras.durationPosition", "below")
+		assert.equals(38, Group("buffs").layout.elementHeight)
+		ns.Config:SetUnitValue("player", "auras.showDuration", false)
+		assert.equals(20, Group("buffs").layout.elementHeight)
+		assert.is_false(Group("buffs").frames[1].ufTime:IsShown())
+	end)
+
+	it("keeps stack text hidden when the engine updates its shown state", function()
+		ns.Config:SetUnitValue("player", "auras.showCount", false)
+		local button = Group("buffs").frames[1]
+		button.ufCount:Show() -- The engine can do this on any aura update.
+		assert.is_false(button.ufCountHolder:IsShown())
+		ns.Config:SetUnitValue("player", "auras.showCount", true)
+		assert.is_true(button.ufCountHolder:IsShown())
+	end)
+
+	it("toggles dispel colouring independently of the permanent icon frame", function()
+		ns.Config:SetUnitValue("player", "auras.dispelBorder", false)
+		local button = Group("debuffs").frames[1]
+		assert.is_false(button.ufBorder:IsShown())
+		assert.is_not_nil(button.ufIconFrame.__state.backdrop)
+		ns.Config:SetUnitValue("player", "auras.border.enabled", false)
+		assert.is_nil(button.ufIconFrame.__state.backdrop)
+		assert.same({ "TOPLEFT", button.ufIconFrame, "TOPLEFT", 0, 0 }, button.ufIcon:GetAnchor("TOPLEFT"))
+	end)
+
+	it("restyles existing buttons only out of combat", function()
+		Mock.inCombat = true
+		ns.Config:SetUnitValue("player", "auras.buffs.size", 32)
+		assert.equals(20, Group("buffs").frames[1]:GetWidth())
+		assert.equals(32, Group("buffs").layout.elementWidth)
+		Mock.inCombat = false
+		Mock.FireEvent("PLAYER_REGEN_ENABLED")
+		assert.equals(32, Group("buffs").frames[1]:GetWidth())
+	end)
+
+	it("defers denied button enumeration and retries at combat end", function()
+		local container = Container("buffs")
+		local original = container.GetAuraGroupFrameCount
+		container.GetAuraGroupFrameCount = function() error("Aura access denied") end
+		assert.has_no_error(function()
+			ns.Config:SetUnitValue("player", "auras.buffs.size", 31)
+		end)
+		assert.equals(20, Group("buffs").frames[1]:GetWidth())
+		container.GetAuraGroupFrameCount = original
+		Mock.FireEvent("PLAYER_REGEN_ENABLED")
+		assert.equals(31, Group("buffs").frames[1]:GetWidth())
+	end)
+
+	it("follows the frame's unit through the UF_Auras element", function()
+		assert.is_true(frame:IsElementEnabled("UF_Auras"))
+		frame.__unit = "target"
+		ns.oUF.elements.UF_Auras.update(frame, "UnitFramesRefresh")
+		assert.equals("target", Container("buffs"):GetUnit())
+		assert.equals("target", Container("debuffs"):GetUnit())
+		ns.Config:SetUnitValue("player", "auras.enabled", false)
+		assert.is_false(frame:IsElementEnabled("UF_Auras"))
+		assert.is_false(auras:GetFrame():IsShown())
+		assert.is_false(Container("buffs"):IsEnabled())
+		assert.is_false(Container("debuffs"):IsEnabled())
+	end)
+
+	it("previews real player auras and releases both containers", function()
+		local preview = ns.Units:CreateFrame("player", CreateFrame("Frame"))
+		ns.Units:ShowSample(preview, ns.Units.SAMPLE)
+		local previewAuras = preview:GetAuras()
+		assert.equals("player", previewAuras:GetContainer("buffs"):GetUnit())
+		assert.equals("player", previewAuras:GetContainer("debuffs"):GetUnit())
+		Mock.inCombat = true
+		previewAuras:Apply({ buffs = { size = 33 } })
+		preview:Release()
+		assert.is_false(previewAuras:GetContainer("buffs"):IsEnabled())
+		assert.is_false(previewAuras:GetContainer("debuffs"):IsEnabled())
+		assert.is_nil(previewAuras:GetContainer("buffs"):GetUnit())
+		Mock.inCombat = false
+		Mock.FireEvent("PLAYER_REGEN_ENABLED")
+		assert.equals(20, previewAuras:GetContainer("buffs").__state.groups.buffs.frames[1]:GetWidth(),
+			"a released preview is removed from deferred restyling")
 	end)
 end)
-
-describe("Edit Mode positions", function()
-	it("uses the default, then the position saved for the active layout", function()
-		local ns = Helpers.LoadAddon(true, true)
 		local frame = ns.Units.frames.player
 		assert.same({ "CENTER", UIParent, "CENTER", -280, -160 }, frame:GetAnchor("CENTER"))
 

@@ -99,6 +99,41 @@ Formats.Register("level:class", {
 	sample = function(v) return string.format("%s %s", v.level, v.className) end,
 })
 
+-- Level with markers: "??" for skull level, "+" elite, "R" rare, "R+" rare
+-- elite, "B" boss. Level and classification are not secret.
+local CLASSIFICATION = { elite = "+", rare = "R", rareelite = "R+", worldboss = "B" }
+
+local function SmartLevel(level, classification)
+	local text = level and level > 0 and tostring(level) or "??"
+	return text .. (CLASSIFICATION[classification] or "")
+end
+
+Formats.Register("smartlevel", {
+	label = "Level (with elite/rare marker)",
+	events = "UNIT_LEVEL PLAYER_LEVEL_UP UNIT_CLASSIFICATION_CHANGED",
+	text = function(unit) return SmartLevel(UnitLevel(unit), UnitClassification(unit)) end,
+	sample = function(v) return SmartLevel(v.level, v.classification) end,
+})
+
+-- Players show their class, NPCs their creature type (which may be secret).
+Formats.Register("level:info", {
+	label = "Level + class or creature type",
+	events = "UNIT_LEVEL PLAYER_LEVEL_UP UNIT_CLASSIFICATION_CHANGED",
+	text = function(unit)
+		local info
+		if UnitIsPlayer(unit) then
+			info = (UnitClass(unit))
+		else
+			info = UnitCreatureType(unit) or ""
+		end
+		return string.format("%s %s", SmartLevel(UnitLevel(unit), UnitClassification(unit)), info)
+	end,
+	sample = function(v)
+		local info = v.isPlayer == false and (v.creatureType or "") or v.className
+		return string.format("%s %s", SmartLevel(v.level, v.classification), info)
+	end,
+})
+
 -- Values: the same six formats for health, power and experience ---------------
 
 --[[
@@ -229,7 +264,7 @@ local function List(...)
 	return out
 end
 
-local IDENTITY = { "none", "name", "level", "level:name", "class", "level:class" }
+local IDENTITY = { "none", "name", "level", "smartlevel", "level:name", "class", "level:class", "level:info" }
 Formats.HEALTH = List(IDENTITY, HEALTH_VALUES)
 Formats.POWER = List(IDENTITY, POWER_VALUES)
 Formats.EXPERIENCE = List({ "none", "level" }, XP_VALUES, { "xp:rested" })
