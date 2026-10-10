@@ -33,11 +33,26 @@ function fillers.experience(row, _, v)
 	row:SetSegmentValue("rested", v.rested)
 end
 
+-- values.showCast = false hides the sample cast (it can cover the health bar).
 function Units:ShowSample(uf, values)
 	for key, row, cfg in uf:Rows() do
 		if cfg.enabled and fillers[key] then
 			fillers[key](row, cfg, values)
 			row:ShowSample(values)
+		end
+	end
+	local portrait = uf:GetPortrait()
+	if portrait and portrait:IsEnabled() then
+		portrait:SetUnit("player") -- the real character; there's no sample model
+	end
+	local castbar = uf:GetCastbar()
+	if castbar and castbar:IsEnabled() then
+		if values.showCast == false then
+			castbar:GetFrame():Hide()
+		else
+			local progress = values.castProgress
+			castbar:Preview({ name = values.spell, icon = values.spellIcon }, progress,
+				string.format("%.1f", values.castTime * (1 - progress)))
 		end
 	end
 end

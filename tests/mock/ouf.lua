@@ -15,7 +15,7 @@ return function(Mock)
 	}
 
 	-- Elements oUF ships with, which the style can enable by setting frame[name].
-	local BUILTIN = { Health = true, Power = true }
+	local BUILTIN = { Health = true, Power = true, Portrait = true }
 
 	function oUF:RegisterStyle(name, func)
 		self.styles[name] = func

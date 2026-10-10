@@ -21,7 +21,7 @@ local HEALTH_ROW = {
 			{ key = "healAbsorb", label = "Heal absorbs", mode = "inset", colorInherit = "colors.healAbsorb" },
 		},
 		formats = Formats.HEALTH,
-		textDefaults = { left = "name", right = "health:value" },
+		textDefaults = { left = "name", right = "health:value", belowLeft = { format = "level:class", enabled = false } },
 	},
 	defaults = { height = 26 },
 	options = {
@@ -56,6 +56,10 @@ Units.definitions.player = {
 	width = 230,
 	defaultPosition = { point = "CENTER", x = -280, y = -160 },
 	rows = { HEALTH_ROW, POWER_ROW, EXPERIENCE_ROW },
+	portrait = { defaults = { enabled = true } },
+	-- Inside the unit frame the castbar uses the frame's border, not its own.
+	castbar = { defaults = { placement = "bottom", height = 18, border = { enabled = false },
+		name = { size = 10 }, time = { size = 10 } } },
 }
 
 function Units:GetDefinition(unit)
@@ -66,15 +70,16 @@ end
 function Units:CreateFrame(unit, parent, frame)
 	local def = self.definitions[unit]
 	return ns.Components.UnitFrame:New(parent, ns.Config:GetUnitConfig(unit), {
-		frame = frame, rows = def.rows, width = def.width,
+		frame = frame, rows = def.rows, width = def.width, portrait = def.portrait, castbar = def.castbar,
 	})
 end
 
 -- Sample values for previews and test frames.
 Units.SAMPLE = {
-	name = "Uther", level = 42,
+	name = "Uther", level = 42, className = "Paladin",
 	health = 15600, healthMax = 24000, heal = 2400, absorb = 3600, healAbsorb = 1200,
 	power = 8400, powerMax = 12000, cost = 1500, powerType = "MANA",
 	xp = 41000, xpMax = 98000, rested = 30000,
 	class = "PALADIN",
+	spell = "Flash of Light", spellIcon = [[Interface\Icons\Spell_Holy_FlashHeal]], castProgress = 0.6, castTime = 1.5,
 }

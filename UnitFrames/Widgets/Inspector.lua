@@ -6,7 +6,11 @@ local W = ns.Widgets
 Builds a panel of controls from a schema (see Core/Schema.lua) and keeps it in
 sync with a config. Used by the Workbench and later by the settings window.
 
-  inspector:SetTarget(target, cacheKey)
+  inspector:SetTarget(target, cacheKey, groupPath)
+
+With groupPath (e.g. "health.bar", "" for the top level) only that group's own
+options are shown, not its sub-groups: one settings section at a time.
+Without it, the whole schema is shown with nested groups as headers.
 
   target = {
     schema   = schema,
@@ -32,20 +36,24 @@ function Inspector:OnCreate(parent)
 	self.scroll = W.ScrollPanel:New(parent)
 	self.frame = self.scroll:GetFrame()
 	self.pages = {}
+	self.empty = Skin.FontString(self.frame)
+	self.empty:SetPoint("TOPLEFT", 0, -4)
+	self.empty:SetTextColor(unpack(Skin.colors.textDim))
+	self.empty:SetText("Nothing to set here; pick a section below it.")
 	-- Row widths depend on the panel width.
 	self.scroll.box:HookScript("OnSizeChanged", function()
 		self:Refresh()
 	end)
 end
 
-function Inspector:SetTarget(target, cacheKey)
+function Inspector:SetTarget(target, cacheKey, groupPath)
 	if self.page then
 		self.page.frame:Hide()
 	end
 	cacheKey = cacheKey or target
 	local page = self.pages[cacheKey]
 	if not page then
-		page = self:BuildPage(target)
+		page = self:BuildPage(target, groupPath)
 		self.pages[cacheKey] = page
 	end
 	page.target = target
@@ -54,25 +62,36 @@ function Inspector:SetTarget(target, cacheKey)
 	self:Refresh()
 end
 
-function Inspector:BuildPage(target)
+function Inspector:BuildPage(target, groupPath)
 	local page = {
 		frame = CreateFrame("Frame", nil, self.scroll:GetContent()),
 		rows = {},
 	}
 	page.frame:SetAllPoints()
-	self:BuildRows(page, target.schema, "", 0)
+	if groupPath then
+		local schema, prefix = target.schema, ""
+		if groupPath ~= "" then
+			schema, prefix = Schema.Find(target.schema, groupPath).schema, groupPath .. "."
+		end
+		self:BuildRows(page, schema, prefix, 0, true)
+	else
+		self:BuildRows(page, target.schema, "", 0)
+	end
 	return page
 end
 
-function Inspector:BuildRows(page, schema, prefix, depth)
+-- flat: skip sub-groups (they are separate sections).
+function Inspector:BuildRows(page, schema, prefix, depth, flat)
 	for _, opt in ipairs(schema) do
 		local path = prefix .. opt.key
 		if opt.type == "group" then
-			local header = Skin.FontString(page.frame, "header")
-			header:SetJustifyH("LEFT")
-			header:SetText(opt.label or opt.key)
-			self:AddRow(page, { opt = opt, path = path, depth = depth, region = header, height = 18, isHeader = true })
-			self:BuildRows(page, opt.schema, path .. ".", depth + 1)
+			if not flat then
+				local header = Skin.FontString(page.frame, "header")
+				header:SetJustifyH("LEFT")
+				header:SetText(opt.label or opt.key)
+				self:AddRow(page, { opt = opt, path = path, depth = depth, region = header, height = 18, isHeader = true })
+				self:BuildRows(page, opt.schema, path .. ".", depth + 1)
+			end
 		else
 			local control = self:CreateControl(page, opt, path)
 			self:AddRow(page, { opt = opt, path = path, depth = depth, control = control, region = control:GetFrame(),
@@ -167,6 +186,7 @@ function Inspector:Refresh()
 			y = y + row.height + ROW_GAP
 		end
 	end
+	self.empty:SetShown(#page.rows == 0)
 	self.scroll:SetContentHeight(y)
 end
 

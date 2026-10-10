@@ -132,3 +132,34 @@ describe("Config", function()
 		assert.equals("colors.health", fired)
 	end)
 end)
+
+describe("UnitFrames_Media", function()
+	it("registers its fonts with LibSharedMedia for every font picker", function()
+		local ns = Helpers.LoadAddon(true)
+		Helpers.LoadToc("UnitFrames_Media/UnitFrames_Media.toc", "UnitFrames_Media")
+		local fonts = {}
+		for _, name in ipairs(ns.Media:List("font")) do
+			fonts[name] = true
+		end
+		for _, name in ipairs({ "Roboto Condensed", "Roboto Condensed Light", "Roboto Condensed Medium", "Roboto Condensed Bold" }) do
+			assert.is_true(fonts[name], name)
+		end
+		assert.equals([[Interface\AddOns\UnitFrames_Media\Fonts\RobotoCondensed-Medium.ttf]],
+			ns.Media:Fetch("font", "Roboto Condensed Medium"))
+	end)
+
+	it("ships every font file it registers, with the licence", function()
+		local ns = Helpers.LoadAddon(true)
+		Helpers.LoadToc("UnitFrames_Media/UnitFrames_Media.toc", "UnitFrames_Media")
+		local count = 0
+		for _, path in pairs(ns.Media.LSM:HashTable("font")) do
+			local file = path:match("^Interface\\AddOns\\UnitFrames_Media\\Fonts\\(.+)$")
+			if file then
+				count = count + 1
+				assert.is_not_nil(io.open("UnitFrames_Media/Fonts/" .. file), file)
+			end
+		end
+		assert.is_true(count >= 4, "Roboto Condensed: 4 weights")
+		assert.is_not_nil(io.open("UnitFrames_Media/Fonts/RobotoCondensed-OFL.txt"))
+	end)
+end)

@@ -30,7 +30,16 @@ Text.schema = {
 	{ key = "justifyH", type = "select", label = "Alignment", values = Text.JUSTIFY, default = "CENTER" },
 }
 
+Text.VERTICAL = {
+	{ "auto", "Automatic" },
+	{ "middle", "Middle" },
+	{ "top", "Top" },
+	{ "bottom", "Bottom" },
+}
+
 local HOST_OPTIONS = {
+	{ key = "vertical", type = "select", label = "Vertical position", values = Text.VERTICAL, default = "auto",
+		tooltip = "Automatic: middle, or decided by the owner (e.g. moves up to make room for a text below)." },
 	{ key = "inset", type = "range", label = "Edge inset", min = 0, max = 30, step = 1, default = 4,
 		tooltip = "Distance from the left and right edge." },
 	{ key = "offsetX", type = "range", label = "Offset X", min = -100, max = 100, step = 1, default = 0 },
@@ -79,10 +88,27 @@ function Text:OnApply(cfg)
 
 	local host = self.spec.host
 	if host then
+		local vertical = cfg.vertical
+		if vertical == "auto" then
+			vertical = self.autoVertical or "middle"
+		end
+		-- top/bottom sit 1px inside the edge; middle is centred.
+		local edge, y = "", cfg.offsetY
+		if vertical == "top" then
+			edge, y = "TOP", y - 1
+		elseif vertical == "bottom" then
+			edge, y = "BOTTOM", y + 1
+		end
 		fs:ClearAllPoints()
-		fs:SetPoint("LEFT", host, "LEFT", cfg.inset + cfg.offsetX, cfg.offsetY)
-		fs:SetPoint("RIGHT", host, "RIGHT", -cfg.inset + cfg.offsetX, cfg.offsetY)
+		fs:SetPoint(edge .. "LEFT", host, edge .. "LEFT", cfg.inset + cfg.offsetX, y)
+		fs:SetPoint(edge .. "RIGHT", host, edge .. "RIGHT", -cfg.inset + cfg.offsetX, y)
 	end
+end
+
+-- Where "auto" vertical position goes ("middle", "top", "bottom"); set by the
+-- owner before applying.
+function Text:SetAutoVertical(vertical)
+	self.autoVertical = vertical
 end
 
 function Text:GetFormat()

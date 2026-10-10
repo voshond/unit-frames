@@ -50,6 +50,8 @@ function Castbar:GetSchema()
 			Color("failed", "Failed / interrupted", "colors.castFailed"),
 			Color("success", "Succeeded", "colors.castSuccess"),
 		} },
+		{ key = "background", type = "color", label = "Background", default = { 0, 0, 0, 0 },
+			tooltip = "Fills the castbar behind icon and bar. Fully opaque while it covers another bar." },
 		{ key = "holdTime", type = "range", label = "Hold after finish (s)", min = 0, max = 2, step = 0.1, default = 0.4 },
 		{ key = "fadeTime", type = "range", label = "Fade out (s)", min = 0, max = 2, step = 0.1, default = 0.3 },
 	}
@@ -69,6 +71,10 @@ end
 
 function Castbar:OnCreate(parent)
 	self.frame = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+
+	-- Lowest layer: keeps whatever is behind the castbar from showing through.
+	self.backing = self.frame:CreateTexture(nil, "BACKGROUND", nil, -8)
+	self.backing:SetAllPoints(self.frame)
 
 	self.icon = self.frame:CreateTexture(nil, "ARTWORK")
 	self.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
@@ -95,6 +101,7 @@ end
 
 function Castbar:OnApply(cfg)
 	Backdrop.ApplyTo(self.frame, cfg.border)
+	self:UpdateBacking()
 	self:ApplyChild(self.barComp, "bar")
 	self:ApplyChild(self.nameText, "name")
 	self:ApplyChild(self.timeText, "time")
@@ -153,6 +160,18 @@ function Castbar:OnRelease()
 	self.barComp:Release()
 	self.nameText:Release()
 	self.timeText:Release()
+end
+
+-- Opaque mode: the castbar covers another bar (e.g. health) and nothing of it
+-- may show through, whatever alpha the background colour has.
+function Castbar:SetOpaque(opaque)
+	self.opaque = opaque and true or false
+	self:UpdateBacking()
+end
+
+function Castbar:UpdateBacking()
+	local r, g, b, a = Util.UnpackColor(self.resolved.background)
+	self.backing:SetColorTexture(r, g, b, self.opaque and 1 or a)
 end
 
 -- The castbar is only shown while casting, so enabling it doesn't show it.

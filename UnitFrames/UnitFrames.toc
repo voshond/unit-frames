@@ -4,7 +4,7 @@
 ## Author: Martin Konstantin Herrmann
 ## Version: 0.1.0-dev
 ## SavedVariables: UnitFramesDB
-## OptionalDeps: Clique
+## OptionalDeps: Clique, UnitFrames_Media
 
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
@@ -30,6 +30,7 @@ Components\Text.lua
 Components\Bar.lua
 Components\TextBar.lua
 Components\Castbar.lua
+Components\Portrait.lua
 Components\UnitFrame.lua
 
 Widgets\Skin.lua

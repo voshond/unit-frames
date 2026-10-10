@@ -4,7 +4,10 @@ local W, Skin, Util, Schema = UF.Widgets, UF.Skin, UF.Util, UF.Schema
 
 --[[
 Workbench: shows one component (or a small composition) at a time on a stage,
-with an inspector for its style and fake or live data to drive it.
+with its settings and fake or live data to drive it.
+
+Four columns:
+  entries | sections (the settings tree of the entry) | settings of the section | preview
 
 Entries register themselves:
   Workbench:Register({
@@ -150,7 +153,7 @@ function Workbench:Build()
 	self.window = W.Window:New(UIParent, {
 		name = "UnitFramesWorkbench",
 		title = "UnitFrames Workbench",
-		width = 1100, height = 640, minWidth = 860, minHeight = 460,
+		width = 1240, height = 700, minWidth = 1060, minHeight = 500,
 		db = db.window,
 		onHide = function()
 			self:SetForcedRestrictions(false)
@@ -158,7 +161,7 @@ function Workbench:Build()
 	})
 	local content = self.window:GetContent()
 
-	-- Left: entry list.
+	-- 1: entries.
 	self.list = W.ScrollList:New(content, {
 		rowHeight = 20,
 		onSelect = function(item)
@@ -167,28 +170,36 @@ function Workbench:Build()
 	})
 	self.list:SetPoint("TOPLEFT")
 	self.list:SetPoint("BOTTOMLEFT")
-	self.list:SetWidth(170)
+	self.list:SetWidth(150)
 
-	-- Right: Style / Data inspectors.
-	local right = CreateFrame("Frame", nil, content)
-	right:SetPoint("TOPRIGHT")
-	right:SetPoint("BOTTOMRIGHT")
-	right:SetWidth(300)
-	self.styleTab = W.Button:New(right, { text = "Style", width = 70, onClick = function() self:ShowTab("style") end })
-	self.styleTab:SetPoint("TOPLEFT")
-	self.dataTab = W.Button:New(right, { text = "Data", width = 70, onClick = function() self:ShowTab("data") end })
-	self.dataTab:SetPoint("LEFT", self.styleTab:GetFrame(), "RIGHT", 4, 0)
-	self.styleInspector = W.Inspector:New(right)
-	self.dataInspector = W.Inspector:New(right)
-	for _, inspector in ipairs({ self.styleInspector, self.dataInspector }) do
-		inspector:SetPoint("TOPLEFT", 0, -28)
-		inspector:SetPoint("BOTTOMRIGHT")
-	end
+	-- 2: sections of the selected entry.
+	self.sectionList = W.ScrollList:New(content, {
+		rowHeight = 20,
+		onSelect = function(item)
+			self:SelectSection(item.id)
+		end,
+	})
+	self.sectionList:SetPoint("TOPLEFT", self.list:GetFrame(), "TOPRIGHT", 8, 0)
+	self.sectionList:SetPoint("BOTTOMLEFT", self.list:GetFrame(), "BOTTOMRIGHT", 8, 0)
+	self.sectionList:SetWidth(170)
 
-	-- Centre: toolbar, stage, status line.
+	-- 3: settings of the selected section.
+	local settings = CreateFrame("Frame", nil, content)
+	settings:SetPoint("TOPLEFT", self.sectionList:GetFrame(), "TOPRIGHT", 8, 0)
+	settings:SetPoint("BOTTOMLEFT", self.sectionList:GetFrame(), "BOTTOMRIGHT", 8, 0)
+	settings:SetWidth(290)
+	self.sectionTitle = Skin.FontString(settings, "title")
+	self.sectionTitle:SetPoint("TOPLEFT", 0, -2)
+	self.sectionTitle:SetPoint("TOPRIGHT", 0, -2)
+	self.sectionTitle:SetJustifyH("LEFT")
+	self.inspector = W.Inspector:New(settings)
+	self.inspector:SetPoint("TOPLEFT", 0, -24)
+	self.inspector:SetPoint("BOTTOMRIGHT")
+
+	-- 4: preview: toolbar, stage, status line.
 	local center = CreateFrame("Frame", nil, content)
-	center:SetPoint("TOPLEFT", self.list:GetFrame(), "TOPRIGHT", 8, 0)
-	center:SetPoint("BOTTOMRIGHT", right, "BOTTOMLEFT", -8, 0)
+	center:SetPoint("TOPLEFT", settings, "TOPRIGHT", 12, 0)
+	center:SetPoint("BOTTOMRIGHT")
 	self:BuildToolbar(center)
 
 	local stage = CreateFrame("Frame", nil, center, "BackdropTemplate")
@@ -234,7 +245,6 @@ function Workbench:Build()
 
 	self:ApplyStageOptions()
 	self:FillList()
-	self:ShowTab("style")
 	local first = db.selected and self.entries[db.selected] and db.selected or (self.order[1] and self.order[1].id)
 	if first then
 		self.list:Select(first)
@@ -250,18 +260,21 @@ function Workbench:BuildToolbar(parent)
 	toolbar:SetHeight(72)
 	self.toolbar = toolbar
 
-	-- Row 1: presets of the current entry.
-	self.presetRow = CreateFrame("Frame", nil, toolbar)
-	self.presetRow:SetPoint("TOPLEFT")
-	self.presetRow:SetPoint("TOPRIGHT")
-	self.presetRow:SetHeight(22)
-	self.presetButtons = {}
-
-	-- Row 2: stage options.
+	-- Stage options on top.
 	local row = CreateFrame("Frame", nil, toolbar)
-	row:SetPoint("TOPLEFT", 0, -28)
-	row:SetPoint("TOPRIGHT", 0, -28)
+	row:SetPoint("TOPLEFT")
+	row:SetPoint("TOPRIGHT")
 	row:SetHeight(44)
+
+	-- Presets of the current entry below, wrapping onto more lines.
+	self.presetRow = CreateFrame("Frame", nil, toolbar)
+	self.presetRow:SetPoint("TOPLEFT", 0, -50)
+	self.presetRow:SetPoint("TOPRIGHT", 0, -50)
+	self.presetRow:SetHeight(22)
+	self.presetRow:SetScript("OnSizeChanged", function()
+		self:LayoutPresets()
+	end)
+	self.presetButtons = {}
 
 	local function Place(widget, width, previous)
 		widget:SetWidth(width)
@@ -274,19 +287,19 @@ function Workbench:BuildToolbar(parent)
 	end
 
 	self.widthSlider = Place(W.Slider:New(row, { label = "Width", min = 10, max = 600, step = 1,
-		onChange = function(value) self:SetEntrySize(value, nil) end }), 110)
+		onChange = function(value) self:SetEntrySize(value, nil) end }), 80)
 	self.heightSlider = Place(W.Slider:New(row, { label = "Height", min = 4, max = 300, step = 1,
-		onChange = function(value) self:SetEntrySize(nil, value) end }), 110, self.widthSlider)
+		onChange = function(value) self:SetEntrySize(nil, value) end }), 80, self.widthSlider)
 	self.scaleSlider = Place(W.Slider:New(row, { label = "Scale", min = 0.5, max = 3, step = 0.1,
 		onChange = function(value)
 			db.stage.scale = value
 			self:ApplyStageOptions()
-		end }), 100, self.heightSlider)
+		end }), 80, self.heightSlider)
 	self.backgroundDropdown = Place(W.Dropdown:New(row, { label = "Background", values = STAGE_BACKGROUNDS,
 		onChange = function(value)
 			db.stage.background = value
 			self:ApplyStageOptions()
-		end }), 110, self.scaleSlider)
+		end }), 100, self.scaleSlider)
 
 	self.boundsCheck = W.Checkbox:New(row, { label = "Bounds", onChange = function(value)
 		db.stage.bounds = value
@@ -337,14 +350,6 @@ function Workbench:FillList()
 	self.list:SetItems(items)
 end
 
-function Workbench:ShowTab(tab)
-	self.tab = tab
-	self.styleTab:SetSelected(tab == "style")
-	self.dataTab:SetSelected(tab == "data")
-	self.styleInspector:SetShown(tab == "style")
-	self.dataInspector:SetShown(tab == "data")
-end
-
 -- Entries ---------------------------------------------------------------------
 
 function Workbench:Select(id)
@@ -373,26 +378,111 @@ function Workbench:Select(id)
 	self.bounds:SetPoint("TOPLEFT", handle.frame, "TOPLEFT", -1, 1)
 	self.bounds:SetPoint("BOTTOMRIGHT", handle.frame, "BOTTOMRIGHT", 1, -1)
 
-	local styleTarget = entry.styleTarget and entry.styleTarget(handle) or self:StyleTarget(handle, state)
-	self.styleInspector:SetTarget(styleTarget, id)
-
+	self.styleTarget = entry.styleTarget and entry.styleTarget(handle) or self:StyleTarget(handle, state)
+	self.dataTarget = nil
 	if entry.data then
-		self.dataInspector:SetTarget(W.Inspector.TableTarget(entry.data.schema, state.data, function(path)
+		self.dataTarget = W.Inspector.TableTarget(entry.data.schema, state.data, function(path)
 			if path == "source" then
 				self:RegisterEntryEvents()
 			end
 			self:UpdateData()
-		end), id)
+		end)
 	end
-	self.dataTab:SetEnabled(entry.data ~= nil)
-	if not entry.data and self.tab == "data" then
-		self:ShowTab("style")
-	end
+	self:FillSections()
 
 	self:BuildPresets(entry)
 	self:ApplyStageOptions()
 	self:RegisterEntryEvents()
 	self:UpdateData()
+end
+
+-- Sections --------------------------------------------------------------------
+
+local DATA_SECTION = "@data"
+
+local function HasOptions(schema)
+	for _, opt in ipairs(schema) do
+		if opt.type ~= "group" then
+			return true
+		end
+	end
+	return false
+end
+
+-- The settings tree as list items: one item per group, indented by depth.
+-- Groups with only sub-groups are headers (not selectable).
+local function SectionItems(items, schema, prefix, depth)
+	for _, opt in ipairs(schema) do
+		if opt.type == "group" then
+			local path = prefix .. opt.key
+			if HasOptions(opt.schema) then
+				items[#items + 1] = { id = path, text = opt.label or opt.key, depth = depth }
+			else
+				items[#items + 1] = { text = opt.label or opt.key, depth = depth, header = true }
+			end
+			SectionItems(items, opt.schema, path .. ".", depth + 1)
+		end
+	end
+	return items
+end
+
+function Workbench:FillSections()
+	local items = {}
+	if self.dataTarget then
+		items[#items + 1] = { id = DATA_SECTION, text = "Preview data" }
+	end
+	if HasOptions(self.styleTarget.schema) then
+		items[#items + 1] = { id = "", text = "General" }
+	end
+	SectionItems(items, self.styleTarget.schema, "", 0)
+	self.sections = items
+
+	local wanted = self.state.section
+	local first
+	for _, item in ipairs(items) do
+		if not item.header then
+			first = first or item.id
+			if item.id == wanted then
+				first = wanted
+				break
+			end
+		end
+	end
+	self.sectionList:SetItems(items)
+	self.sectionList:Select(first)
+	self.inspector:SetShown(first ~= nil)
+	if first then
+		self:SelectSection(first)
+	else
+		self.sectionTitle:SetText("")
+	end
+end
+
+-- Shows the settings of one section ("" = top level, DATA_SECTION = data).
+function Workbench:SelectSection(id)
+	self.state.section = id
+	local title
+	for _, item in ipairs(self.sections) do
+		if item.id == id then
+			title = item.text
+		end
+	end
+	if id == DATA_SECTION then
+		self.inspector:SetTarget(self.dataTarget, self.entry.id .. "|" .. DATA_SECTION, "")
+	else
+		self.inspector:SetTarget(self.styleTarget, self.entry.id .. "|" .. id, id)
+		-- Breadcrumb for nested sections: "Health > Bar > Background".
+		local labels, schema = {}, self.styleTarget.schema
+		for key in string.gmatch(id, "[^%.]+") do
+			local opt = Schema.Find(schema, key)
+			labels[#labels + 1] = opt.label or key
+			schema = opt.schema
+		end
+		if #labels > 1 then
+			title = table.concat(labels, " > ")
+		end
+	end
+	self.sectionTitle:SetText(title or "")
 end
 
 function Workbench:StyleTarget(handle, state)
@@ -426,7 +516,6 @@ function Workbench:BuildPresets(entry)
 	end
 	presets[#presets + 1] = { name = "Reset", reset = true }
 
-	local previous
 	for i, preset in ipairs(presets) do
 		local button = self.presetButtons[i]
 		if not button then
@@ -438,15 +527,29 @@ function Workbench:BuildPresets(entry)
 		button.opts.onClick = function()
 			self:ApplyPreset(preset)
 		end
-		button:ClearAllPoints()
-		if previous then
-			button:SetPoint("LEFT", previous:GetFrame(), "RIGHT", 4, 0)
-		else
-			button:SetPoint("LEFT", self.presetRow, "LEFT")
-		end
 		button:Show()
-		previous = button
 	end
+	self.presetCount = #presets
+	self:LayoutPresets()
+end
+
+-- Flows the preset buttons into lines that fit the preview column.
+function Workbench:LayoutPresets()
+	local maxWidth = self.presetRow:GetWidth()
+	local x, line = 0, 0
+	for i = 1, self.presetCount or 0 do
+		local button = self.presetButtons[i]
+		local width = button:GetFrame():GetWidth()
+		if x > 0 and maxWidth > 0 and x + width > maxWidth then
+			x, line = 0, line + 1
+		end
+		button:ClearAllPoints()
+		button:SetPoint("TOPLEFT", self.presetRow, "TOPLEFT", x, -line * 26)
+		x = x + width + 4
+	end
+	local height = (line + 1) * 26
+	self.presetRow:SetHeight(height)
+	self.toolbar:SetHeight(50 + height)
 end
 
 function Workbench:ApplyPreset(preset)

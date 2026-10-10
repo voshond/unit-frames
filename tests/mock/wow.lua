@@ -277,6 +277,10 @@ function Methods:CreateRadio(text, isSelected, setSelected, data)
 	isSelected()
 	return element
 end
+function Methods:AddInitializer(initializer)
+	self.__state.initializers = self.__state.initializers or {}
+	table.insert(self.__state.initializers, initializer)
+end
 
 -- Events
 function Methods:RegisterEvent(event) self.__state.events[event] = true end
@@ -460,6 +464,7 @@ function Mock.InstallUI()
 	}
 	_G.LOCALIZED_CLASS_NAMES_MALE = { WARRIOR = "Warrior", PALADIN = "Paladin", MAGE = "Mage" }
 
+	_G.SetPortraitTexture = function(texture) texture.__state.texture = "portrait" end
 	_G.UnitExists = function() return true end
 	_G.UnitIsPlayer = function() return true end
 	_G.UnitName = function() return Secret("name"), Secret("realm") end

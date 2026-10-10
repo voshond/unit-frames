@@ -11,7 +11,7 @@ Each format has
   sample(values)  text for plain sample values (Workbench, test frames).
   events          oUF tag update events; shared = true when they have no unit.
 
-Sample values: { name, level, health, healthMax, power, powerMax, xp, xpMax, rested }
+Sample values: { name, level, className, health, healthMax, power, powerMax, xp, xpMax, rested }
 ]]
 local Formats = { list = {}, byId = {} }
 ns.Formats = Formats
@@ -86,126 +86,126 @@ Formats.Register("level:name", {
 	sample = function(v) return string.format("%s %s", v.level, v.name) end,
 })
 
--- Health ----------------------------------------------------------------------
-
-Formats.Register("health:value", {
-	label = "Health: current / max",
-	events = HEALTH_EVENTS,
-	text = function(unit)
-		return string.format("%s / %s", Short(UnitHealth(unit)), Short(UnitHealthMax(unit)))
-	end,
-	sample = function(v) return string.format("%s / %s", Short(v.health), Short(v.healthMax)) end,
+Formats.Register("class", {
+	label = "Class",
+	text = function(unit) return (UnitClass(unit)) end,
+	sample = function(v) return v.className end,
 })
 
-Formats.Register("health:current", {
-	label = "Health: current",
-	events = HEALTH_EVENTS,
-	text = function(unit) return Short(UnitHealth(unit)) end,
-	sample = function(v) return Short(v.health) end,
+Formats.Register("level:class", {
+	label = "Level + class",
+	events = "UNIT_LEVEL PLAYER_LEVEL_UP",
+	text = function(unit) return string.format("%s %s", UnitLevel(unit), (UnitClass(unit))) end,
+	sample = function(v) return string.format("%s %s", v.level, v.className) end,
 })
 
-Formats.Register("health:percent", {
-	label = "Health: percent",
-	events = HEALTH_EVENTS,
-	text = function(unit)
-		return string.format("%d%%", UnitHealthPercent(unit, true, ns.Colors.PercentCurve()))
-	end,
-	sample = function(v) return string.format("%d%%", Percent(v.health, v.healthMax)) end,
+-- Values: the same six formats for health, power and experience ---------------
+
+--[[
+Registers <kind>:current, :value, :percent, :current:percent, :value:percent
+and :missing. `api` provides
+  live(unit)         current, max (may be secret)
+  livePercent(unit)  0..100 (may be secret)
+  liveMissing(unit)  missing amount as text, "" when nothing is missing
+  sample             keys of current and max in the sample values
+]]
+local VALUE_FORMATS = {
+	{ "current", "Current" },
+	{ "value", "Current / max" },
+	{ "percent", "Percent" },
+	{ "current:percent", "Current | percent" },
+	{ "value:percent", "Current / max | percent" },
+	{ "missing", "Missing" },
+}
+
+local function SampleMissing(cur, max)
+	local missing = max - cur
+	return missing > 0 and Short(missing) or ""
+end
+
+local function RegisterValueFormats(kind, label, events, shared, api)
+	local curKey, maxKey = api.sample[1], api.sample[2]
+	local texts = {
+		current = {
+			function(unit) return Short((api.live(unit))) end,
+			function(v) return Short(v[curKey]) end,
+		},
+		value = {
+			function(unit)
+				local cur, max = api.live(unit)
+				return string.format("%s / %s", Short(cur), Short(max))
+			end,
+			function(v) return string.format("%s / %s", Short(v[curKey]), Short(v[maxKey])) end,
+		},
+		percent = {
+			function(unit) return string.format("%d%%", api.livePercent(unit)) end,
+			function(v) return string.format("%d%%", Percent(v[curKey], v[maxKey])) end,
+		},
+		["current:percent"] = {
+			function(unit) return string.format("%s | %d%%", Short((api.live(unit))), api.livePercent(unit)) end,
+			function(v) return string.format("%s | %d%%", Short(v[curKey]), Percent(v[curKey], v[maxKey])) end,
+		},
+		["value:percent"] = {
+			function(unit)
+				local cur, max = api.live(unit)
+				return string.format("%s / %s | %d%%", Short(cur), Short(max), api.livePercent(unit))
+			end,
+			function(v)
+				return string.format("%s / %s | %d%%", Short(v[curKey]), Short(v[maxKey]), Percent(v[curKey], v[maxKey]))
+			end,
+		},
+		missing = {
+			function(unit) return api.liveMissing(unit) end,
+			function(v) return SampleMissing(v[curKey], v[maxKey]) end,
+		},
+	}
+	local ids = {}
+	for _, entry in ipairs(VALUE_FORMATS) do
+		local id = kind .. ":" .. entry[1]
+		Formats.Register(id, {
+			label = label .. ": " .. entry[2]:lower(),
+			events = events, shared = shared,
+			text = texts[entry[1]][1],
+			sample = texts[entry[1]][2],
+		})
+		ids[#ids + 1] = id
+	end
+	return ids
+end
+
+local HEALTH_VALUES = RegisterValueFormats("health", "Health", HEALTH_EVENTS, false, {
+	live = function(unit) return UnitHealth(unit), UnitHealthMax(unit) end,
+	livePercent = function(unit) return UnitHealthPercent(unit, true, ns.Colors.PercentCurve()) end,
+	liveMissing = function(unit) return C_StringUtil.TruncateWhenZero(UnitHealthMissing(unit)) end,
+	sample = { "health", "healthMax" },
 })
 
-Formats.Register("health:current:percent", {
-	label = "Health: current | percent",
-	events = HEALTH_EVENTS,
-	text = function(unit)
-		return string.format("%s | %d%%", Short(UnitHealth(unit)), UnitHealthPercent(unit, true, ns.Colors.PercentCurve()))
-	end,
-	sample = function(v) return string.format("%s | %d%%", Short(v.health), Percent(v.health, v.healthMax)) end,
+local POWER_VALUES = RegisterValueFormats("power", "Power", POWER_EVENTS, false, {
+	live = function(unit) return UnitPower(unit), UnitPowerMax(unit) end,
+	livePercent = function(unit) return UnitPowerPercent(unit, nil, false, ns.Colors.PercentCurve()) end,
+	liveMissing = function(unit) return C_StringUtil.TruncateWhenZero(UnitPowerMissing(unit)) end,
+	sample = { "power", "powerMax" },
 })
 
-Formats.Register("health:missing", {
-	label = "Health: missing",
-	events = HEALTH_EVENTS,
-	text = function(unit) return C_StringUtil.TruncateWhenZero(UnitHealthMissing(unit)) end,
-	sample = function(v)
-		local missing = v.healthMax - v.health
-		return missing > 0 and Short(missing) or ""
-	end,
-})
-
--- Power -------------------------------------------------------------------------
-
-Formats.Register("power:value", {
-	label = "Power: current / max",
-	events = POWER_EVENTS,
-	text = function(unit)
-		return string.format("%s / %s", Short(UnitPower(unit)), Short(UnitPowerMax(unit)))
-	end,
-	sample = function(v) return string.format("%s / %s", Short(v.power), Short(v.powerMax)) end,
-})
-
-Formats.Register("power:current", {
-	label = "Power: current",
-	events = POWER_EVENTS,
-	text = function(unit) return Short(UnitPower(unit)) end,
-	sample = function(v) return Short(v.power) end,
-})
-
-Formats.Register("power:percent", {
-	label = "Power: percent",
-	events = POWER_EVENTS,
-	text = function(unit)
-		return string.format("%d%%", UnitPowerPercent(unit, nil, false, ns.Colors.PercentCurve()))
-	end,
-	sample = function(v) return string.format("%d%%", Percent(v.power, v.powerMax)) end,
-})
-
-Formats.Register("power:missing", {
-	label = "Power: missing",
-	events = POWER_EVENTS,
-	text = function(unit) return C_StringUtil.TruncateWhenZero(UnitPowerMissing(unit)) end,
-	sample = function(v)
-		local missing = v.powerMax - v.power
-		return missing > 0 and Short(missing) or ""
-	end,
-})
-
--- Experience (player only; XP values are not secret, but stay pass-through
--- where we can) -------------------------------------------------------------------
-
+-- Experience is player only and not secret, but stays pass-through where it can.
 local function XP()
 	return UnitXP("player"), UnitXPMax("player"), GetXPExhaustion() or 0
 end
 
-Formats.Register("xp:value", {
-	label = "XP: current / max",
-	events = XP_EVENTS, shared = true,
-	text = function()
+local XP_VALUES = RegisterValueFormats("xp", "XP", XP_EVENTS, true, {
+	live = function() return XP() end,
+	livePercent = function()
 		local cur, max = XP()
-		return string.format("%s / %s", Short(cur), Short(max))
+		return Percent(cur, max)
 	end,
-	sample = function(v) return string.format("%s / %s", Short(v.xp), Short(v.xpMax)) end,
-})
-
-Formats.Register("xp:percent", {
-	label = "XP: percent",
-	events = XP_EVENTS, shared = true,
-	text = function()
+	liveMissing = function()
 		local cur, max = XP()
-		return string.format("%d%%", Percent(cur, max))
+		if Util.IsSecret(cur) or Util.IsSecret(max) then
+			return ""
+		end
+		return SampleMissing(cur, max)
 	end,
-	sample = function(v) return string.format("%d%%", Percent(v.xp, v.xpMax)) end,
-})
-
-Formats.Register("xp:value:percent", {
-	label = "XP: current / max (percent)",
-	events = XP_EVENTS, shared = true,
-	text = function()
-		local cur, max = XP()
-		return string.format("%s / %s (%d%%)", Short(cur), Short(max), Percent(cur, max))
-	end,
-	sample = function(v)
-		return string.format("%s / %s (%d%%)", Short(v.xp), Short(v.xpMax), Percent(v.xp, v.xpMax))
-	end,
+	sample = { "xp", "xpMax" },
 })
 
 Formats.Register("xp:rested", {
@@ -219,7 +219,17 @@ Formats.Register("xp:rested", {
 })
 
 -- Format id lists per bar kind (what a text slot on that bar can show).
-Formats.HEALTH = { "none", "name", "level", "level:name", "health:value", "health:current", "health:percent",
-	"health:current:percent", "health:missing" }
-Formats.POWER = { "none", "name", "level", "power:value", "power:current", "power:percent", "power:missing" }
-Formats.EXPERIENCE = { "none", "level", "xp:value", "xp:percent", "xp:value:percent", "xp:rested" }
+local function List(...)
+	local out = {}
+	for i = 1, select("#", ...) do
+		for _, id in ipairs((select(i, ...))) do
+			out[#out + 1] = id
+		end
+	end
+	return out
+end
+
+local IDENTITY = { "none", "name", "level", "level:name", "class", "level:class" }
+Formats.HEALTH = List(IDENTITY, HEALTH_VALUES)
+Formats.POWER = List(IDENTITY, POWER_VALUES)
+Formats.EXPERIENCE = List({ "none", "level" }, XP_VALUES, { "xp:rested" })

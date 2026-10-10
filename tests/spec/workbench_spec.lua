@@ -65,7 +65,7 @@ describe("Workbench", function()
 				if entry.data then
 					local sourceOpt = ns.Schema.Find(entry.data.schema, "source")
 					for _, choice in ipairs(ns.Schema.GetValues(sourceOpt)) do
-						workbench.dataInspector.page.target.set("source", choice[1])
+						workbench.dataTarget.set("source", choice[1])
 						Tick(workbench, 6)
 					end
 				end
@@ -73,17 +73,60 @@ describe("Workbench", function()
 		end
 	end)
 
-	it("handles every inspector control of every entry", function()
+	it("handles every control in every section of every entry", function()
+		local sections = 0
 		for _, entry in ipairs(workbench.order) do
-			assert.has_no_error(function()
-				workbench:Select(entry.id)
-				Operate(workbench.styleInspector)
-				if entry.data then
-					Operate(workbench.dataInspector)
+			workbench:Select(entry.id)
+			for _, item in ipairs(workbench.sections) do
+				if not item.header then
+					assert.has_no_error(function()
+						workbench:SelectSection(item.id)
+						Operate(workbench.inspector)
+						Tick(workbench, 0.2)
+					end, entry.id .. " / " .. item.id)
+					sections = sections + 1
 				end
-				Tick(workbench, 0.5)
-			end, entry.id)
+			end
 		end
+		assert.is_true(sections > 40, "expected many sections, got " .. sections)
+	end)
+
+	it("lists the settings tree as sections, with data first", function()
+		workbench:Select("unit.player")
+		local ids = {}
+		for _, item in ipairs(workbench.sections) do
+			ids[#ids + 1] = item.id or ("[" .. item.text .. "]")
+		end
+		assert.equals("@data", ids[1])
+		assert.equals("", ids[2], "top-level options (width, spacing)")
+		local text = table.concat(ids, ",")
+		assert.is_not_nil(text:find("health.bar.background", 1, true))
+		assert.is_not_nil(text:find("[Segments]", 1, true), "groups with only sub-groups are headers")
+		workbench:SelectSection("health.belowLeft")
+		assert.equals("Health > Small text below left", workbench.sectionTitle:GetText())
+	end)
+
+	it("previews fonts in menus without SetFont (forbidden there)", function()
+		local dropdown = ns.Widgets.Dropdown:New(CreateFrame("Frame"), {
+			values = ns.Widgets.Dropdown.MediaValues("font"), preview = "font",
+		})
+		local radio = dropdown.dropdown.__state.menu.__state.elements[1]
+		-- Like the menu compositor: SetFont on its font strings raises an error.
+		local fontString = CreateFrame("Frame"):CreateFontString()
+		fontString.SetFont = function() error("Use of function 'SetFont' is disallowed") end
+		assert.has_no_error(function()
+			for _, init in ipairs(radio.__state.initializers) do
+				init({ fontString = fontString })
+			end
+		end)
+	end)
+
+	it("remembers the section per entry", function()
+		workbench:Select("bar.power")
+		workbench:SelectSection("row.right")
+		workbench:Select("castbar")
+		workbench:Select("bar.power")
+		assert.equals("row.right", workbench.state.section)
 	end)
 
 	it("applies presets", function()
@@ -99,7 +142,7 @@ describe("Workbench", function()
 
 	it("shows live casts with secret cast info", function()
 		workbench:Select("castbar")
-		workbench.dataInspector.page.target.set("source", "player")
+		workbench.dataTarget.set("source", "player")
 		local castbar = workbench.handle.parts.castbar
 		assert.has_no_error(function()
 			Mock.FireEvent("UNIT_SPELLCAST_START", "player")
@@ -115,10 +158,10 @@ describe("Workbench", function()
 		workbench:Select("bar.health")
 		local bar = workbench.handle.parts.row:GetBar()
 		workbench:Select("theme")
-		workbench.styleInspector.page.target.set("barTexture", "Solid")
+		workbench.styleTarget.set("barTexture", "Solid")
 		assert.equals("Solid", ns.Config:GetTheme().barTexture)
 		assert.equals([[Interface\Buttons\WHITE8X8]], workbench.handle.parts.bar.bar.__state.texture)
-		workbench.styleInspector.page.target.set("barTexture", nil)
+		workbench.styleTarget.set("barTexture", nil)
 		assert.equals("Blizzard", ns.Config:GetTheme().barTexture)
 		assert.is_not_nil(bar)
 	end)

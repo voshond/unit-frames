@@ -50,9 +50,10 @@ local function UpdatePowerColor(self, _, unit)
 	self.uf:GetRow("power"):SetColor(Colors.Power(token))
 end
 
-local binders = {}
+-- Row widgets for oUF, with their sub-widgets and options set.
+local widgets = {}
 
-function binders.health(frame, row)
+function widgets.health(row)
 	local bar = row:GetBar()
 	local health = bar:GetStatusBar()
 	health.HealingAll = bar:GetSegmentBar("heal")
@@ -60,21 +61,35 @@ function binders.health(frame, row)
 	health.HealAbsorb = bar:GetSegmentBar("healAbsorb")
 	health.smoothing = Smoothing(bar)
 	health.UpdateColor = UpdateHealthColor
-	frame.Health = health
+	return health
 end
 
-function binders.power(frame, row)
+function widgets.power(row)
 	local bar = row:GetBar()
 	local power = bar:GetStatusBar()
 	power.CostPrediction = bar:GetSegmentBar("cost")
 	power.smoothing = Smoothing(bar)
 	power.frequentUpdates = true
 	power.UpdateColor = UpdatePowerColor
-	frame.Power = power
+	return power
 end
 
-function binders.experience(frame, row)
-	frame.UF_Experience = row
+function widgets.experience(row)
+	return row
+end
+
+-- Points an oUF element at `widget` (nil switches it off). A different widget
+-- (e.g. 3D model vs. texture portrait) needs the element re-enabled. Before
+-- oUF has enabled the elements (inside the style function) only the key is set.
+local function SetElement(frame, element, widget)
+	local ready = frame.ufReady
+	if ready and frame:IsElementEnabled(element) and widget ~= frame[element] then
+		frame:DisableElement(element)
+	end
+	frame[element] = widget
+	if ready and widget and not frame:IsElementEnabled(element) then
+		frame:EnableElement(element)
+	end
 end
 
 local function TagRow(frame, row, rowEnabled)
@@ -91,23 +106,20 @@ local function TagRow(frame, row, rowEnabled)
 	end
 end
 
--- Points oUF elements and tags at the current rows. Before oUF has enabled
--- the elements (inside the style function) only the keys are set.
+-- Points oUF elements and tags at the current rows, portrait and castbar.
 function Units:Bind(frame)
-	for key, row, cfg in frame.uf:Rows() do
-		local element = ELEMENTS[key]
-		if cfg.enabled then
-			binders[key](frame, row)
-			if frame.ufReady and not frame:IsElementEnabled(element) then
-				frame:EnableElement(element)
-			end
-		elseif frame[element] then
-			if frame.ufReady and frame:IsElementEnabled(element) then
-				frame:DisableElement(element)
-			end
-			frame[element] = nil
-		end
+	local uf = frame.uf
+	for key, row, cfg in uf:Rows() do
+		SetElement(frame, ELEMENTS[key], cfg.enabled and widgets[key](row) or nil)
 		TagRow(frame, row, cfg.enabled)
+	end
+	local portrait = uf:GetPortrait()
+	if portrait then
+		SetElement(frame, "Portrait", portrait:IsEnabled() and portrait:GetWidget() or nil)
+	end
+	local castbar = uf:GetCastbar()
+	if castbar then
+		SetElement(frame, "UF_Castbar", castbar:IsEnabled() and castbar or nil)
 	end
 end
 

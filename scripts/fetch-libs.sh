@@ -79,6 +79,15 @@ fi
 replace_lib "$LSM_SRC" LibSharedMedia-3.0
 lsm_rev="$(lsm_minor "$LIBS_DIR/LibSharedMedia-3.0")"
 
+# --- UnitFrames_Media embeds what it needs to register fonts on its own --------
+MEDIA_LIBS_DIR="$REPO_DIR/UnitFrames_Media/Libs"
+mkdir -p "$MEDIA_LIBS_DIR"
+for lib in LibStub CallbackHandler-1.0 LibSharedMedia-3.0; do
+	rm -rf -- "${MEDIA_LIBS_DIR:?}/$lib"
+	cp -r "$LIBS_DIR/$lib" "$MEDIA_LIBS_DIR/$lib"
+done
+echo "updated  UnitFrames_Media/Libs"
+
 cat > "$LIBS_DIR/VERSIONS.md" <<EOF
 # Embedded libraries
 

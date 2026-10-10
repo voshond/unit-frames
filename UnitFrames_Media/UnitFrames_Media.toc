@@ -1,0 +1,11 @@
+## Interface: 16001
+## Title: UnitFrames |cff4fa3ffMedia|r
+## Notes: Extra fonts for UnitFrames and any addon using LibSharedMedia.
+## Author: Martin Konstantin Herrmann
+## Version: 0.1.0-dev
+
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+Libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua
+
+Media.lua

@@ -65,6 +65,20 @@ local function UnitSettings(unit)
 			kind = LEM.SettingType.Checkbox, name = "Show " .. row.label:lower(), default = true,
 		})
 	end
+	if def.portrait then
+		settings[#settings + 1] = UnitSetting(unit, "portrait.enabled", {
+			kind = LEM.SettingType.Checkbox, name = "Show portrait", default = def.portrait.defaults.enabled,
+		})
+	end
+	if def.castbar then
+		local values = {}
+		for _, entry in ipairs(ns.Components.UnitFrame.CASTBAR_PLACEMENTS) do
+			values[#values + 1] = { value = entry[1], text = entry[2] }
+		end
+		settings[#settings + 1] = UnitSetting(unit, "castbar.placement", {
+			kind = LEM.SettingType.Dropdown, name = "Castbar", default = def.castbar.defaults.placement, values = values,
+		})
+	end
 	return settings
 end
 

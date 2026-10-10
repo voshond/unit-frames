@@ -57,6 +57,8 @@ local function Values(d, healthPct)
 	v.absorb = v.healthMax * d.absorb / 100
 	v.power = v.powerMax * d.power / 100
 	v.xp = v.xpMax * d.xp / 100
+	v.showCast = d.showCast
+	v.castProgress = d.castProgress / 100
 	return v
 end
 
@@ -85,6 +87,9 @@ Workbench:Register({
 			Range("power", "Power %", 70),
 			Range("xp", "XP %", 42),
 			{ key = "class", type = "select", label = "Class", values = wb.Data.Classes, default = "PALADIN" },
+			{ key = "showCast", type = "toggle", label = "Show a cast", default = true,
+				tooltip = "Sample cast on the castbar. Turn off to see the health bar under a castbar placed over it." },
+			Range("castProgress", "Cast progress %", 60),
 		},
 		update = function(handle, d)
 			if d.source == "static" then

@@ -49,6 +49,23 @@ local function Preload(key)
 	preloaded[path] = font
 end
 
+-- A Font object for a font key at one size, e.g. for font previews in menus
+-- (Blizzard's menu font strings forbid SetFont but allow SetFontObject).
+local fontObjects = {}
+function Media:GetFontObject(key, size)
+	local id = key .. "@" .. size
+	local font = fontObjects[id]
+	if not font then
+		fontCount = fontCount + 1
+		font = CreateFont("UnitFramesFont" .. fontCount)
+		if not font:SetFont(self:Fetch("font", key), size, "") then
+			font:SetFont(self:Fetch("font", LSM:GetDefault("font")), size, "")
+		end
+		fontObjects[id] = font
+	end
+	return font
+end
+
 function Media:Initialize()
 	for _, key in ipairs(LSM:List("font")) do
 		Preload(key)

@@ -14,8 +14,9 @@ local Dropdown = ns.Widget:Extend("Dropdown")
 local MAX_MENU_HEIGHT = 320
 
 local previewers = {
+	-- Menu font strings forbid SetFont; a Font object is allowed.
 	font = function(button, value)
-		button.fontString:SetFont(Media:Fetch("font", value), 13, "")
+		button.fontString:SetFontObject(Media:GetFontObject(value, 13))
 	end,
 	statusbar = function(button, value)
 		local texture = button:AttachTexture()

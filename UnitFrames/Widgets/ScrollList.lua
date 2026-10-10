@@ -4,7 +4,7 @@ local Skin = ns.Skin
 --[[
 Virtualised list (Blizzard ScrollBox). Only visible rows exist.
 opts: rowHeight, onSelect(item)
-Items: { id, text, header = true|nil }
+Items: { id, text, header = true|nil, depth = 0.. (indent level) }
 ]]
 local ScrollList = ns.Widget:Extend("ScrollList")
 
@@ -54,7 +54,7 @@ function ScrollList:InitRow(row, item)
 	row.item = item
 	row.text:SetText(item.text)
 	row.text:SetFontObject(item.header and Skin.fonts.header or Skin.fonts.normal)
-	row.text:SetPoint("LEFT", item.header and 4 or 12, 0)
+	row.text:SetPoint("LEFT", (item.header and 4 or 12) + (item.depth or 0) * 12, 0)
 	self:StyleRow(row)
 end
 
