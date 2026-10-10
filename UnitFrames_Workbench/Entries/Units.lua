@@ -50,7 +50,7 @@ local function Range(key, label, default)
 end
 
 -- Sample values from the Data tab percentages.
-local function Values(d, healthPct)
+local function Values(d, healthPct, time)
 	local v = UF.Util.Copy(UF.Units.SAMPLE)
 	v.class = d.class
 	v.health = v.healthMax * healthPct / 100
@@ -59,6 +59,17 @@ local function Values(d, healthPct)
 	v.xp = v.xpMax * d.xp / 100
 	v.showCast = d.showCast
 	v.castProgress = d.castProgress / 100
+	for _, kind in ipairs({ "buffs", "debuffs" }) do
+		local samples = UF.Units.SAMPLE[kind]
+		v[kind] = {}
+		for i = 1, d[kind .. "Count"] do
+			local aura = UF.Util.Copy(samples[(i - 1) % #samples + 1])
+			if time and aura.duration > 0 then
+				aura.remaining = (aura.remaining - time - 1) % aura.duration + 1
+			end
+			v[kind][i] = aura
+		end
+	end
 	return v
 end
 
@@ -90,15 +101,19 @@ Workbench:Register({
 			{ key = "showCast", type = "toggle", label = "Show a cast", default = true,
 				tooltip = "Sample cast on the castbar. Turn off to see the health bar under a castbar placed over it." },
 			Range("castProgress", "Cast progress %", 60),
+			{ key = "buffsCount", type = "range", label = "Sample buffs", min = 0, max = 40, step = 1, default = 8,
+				tooltip = "The Buffs style's filter and Maximum shown still apply." },
+			{ key = "debuffsCount", type = "range", label = "Sample debuffs", min = 0, max = 40, step = 1, default = 5,
+				tooltip = "The Debuffs style's filter and Maximum shown still apply." },
 		},
-		update = function(handle, d)
-			if d.source == "static" then
-				UF.Units:ShowSample(handle.parts.uf, Values(d, d.health))
-			end
+		update = function(handle, d, es)
+			local animated = d.source == "animated"
+			UF.Units:ShowSample(handle.parts.uf, Values(d,
+				animated and 10 + 85 * wb.Data.Wave(es.time, 0.7) or d.health, animated and es.time or nil))
 		end,
 		tick = function(handle, d, es)
 			if d.source == "animated" then
-				UF.Units:ShowSample(handle.parts.uf, Values(d, 10 + 85 * wb.Data.Wave(es.time, 0.7)))
+				UF.Units:ShowSample(handle.parts.uf, Values(d, 10 + 85 * wb.Data.Wave(es.time, 0.7), es.time))
 			end
 		end,
 	},

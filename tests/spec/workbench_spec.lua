@@ -57,6 +57,47 @@ describe("Workbench", function()
 		assert.equals("unit.player", workbench.entry.id)
 	end)
 
+	it("reopens and switches away from a player preview without clearing its unit", function()
+		local oldAuras = workbench.handle.parts.uf:GetAuras()
+		workbench:Open("unit.player")
+		assert.is_false(oldAuras:GetContainer("buffs"):IsEnabled())
+		assert.is_false(oldAuras:GetContainer("debuffs"):IsEnabled())
+		local currentAuras = workbench.handle.parts.uf:GetAuras()
+		workbench:Select("bar.power")
+		assert.is_false(currentAuras:GetContainer("buffs"):IsShown())
+		assert.is_false(currentAuras:GetContainer("debuffs"):IsShown())
+		workbench:Select("unit.player")
+		assert.is_true(workbench.handle.parts.uf:GetAuras().previewContainers.buffs:IsShown())
+	end)
+
+	it("offers sample counts and keeps static aura timers frozen", function()
+		local auras = workbench.handle.parts.uf:GetAuras()
+		assert.equals(8, #auras.previewContainers.buffs.ufElements)
+		assert.equals(5, #auras.previewContainers.debuffs.ufElements)
+		workbench.dataTarget.set("buffsCount", 12)
+		assert.equals(12, #auras.previewContainers.buffs.ufElements)
+		workbench.dataTarget.set("debuffsCount", 0)
+		assert.equals(0, #auras.previewContainers.debuffs.ufElements)
+		local remaining = auras.previewData.buffs[3].remaining
+		Tick(workbench, 2)
+		assert.equals(remaining, auras.previewData.buffs[3].remaining)
+		assert.is_true(auras.previewContainers.buffs.ufElements[3].ufCooldown.__state.paused)
+	end)
+
+	it("animates aura durations without allocating new sample buttons", function()
+		local auras = workbench.handle.parts.uf:GetAuras()
+		workbench.dataTarget.set("buffsCount", 8)
+		workbench.dataTarget.set("source", "animated")
+		local allocated = #auras.previewContainers.buffs.ufButtons
+		local button = auras.previewContainers.buffs.ufElements[3]
+		local text, remaining = button.ufTime:GetText(), auras.previewData.buffs[3].remaining
+		Tick(workbench, 2)
+		assert.is_true(auras.previewData.buffs[3].remaining < remaining)
+		assert.is_false(text == button.ufTime:GetText())
+		assert.equals(button, auras.previewContainers.buffs.ufElements[3])
+		assert.equals(allocated, #auras.previewContainers.buffs.ufButtons)
+	end)
+
 	it("opens every entry and drives every data source", function()
 		for _, entry in ipairs(workbench.order) do
 			assert.has_no_error(function()

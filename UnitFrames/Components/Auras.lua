@@ -7,6 +7,21 @@ local Media, Backdrop = ns.Media, ns.Components.Backdrop
 local Auras = ns.Component:Extend("Auras")
 local KINDS = { "buffs", "debuffs" }
 
+local durationFormatter
+local function DurationFormatter()
+	if not durationFormatter then
+		durationFormatter = C_StringUtil.CreateSecondsFormatter()
+		durationFormatter:SetDefaultAbbreviation(Enum.SecondsFormatterAbbreviation.OneLetter)
+		durationFormatter:SetRounding(Enum.SecondsFormatterRounding.Truncate)
+		durationFormatter:SetCanRoundUpLastUnit(true)
+		durationFormatter:SetMinInterval(Enum.SecondsFormatterInterval.Seconds)
+		durationFormatter:SetMaxIntervalCurve(AuraContainerInbound.GetDefaultAuraDurationFormatter():GetMaxIntervalCurve())
+		durationFormatter:SetDesiredUnitCount(1)
+		durationFormatter:SetStripIntervalWhitespace(Enum.SecondsFormatterIntervalWhitespace.StripIgnoreLocale)
+	end
+	return durationFormatter
+end
+
 Auras.POSITIONS = {
 	{ "top", "Top" }, { "bottom", "Bottom" },
 	{ "left", "Left" }, { "right", "Right" },
@@ -86,7 +101,7 @@ function Auras:OnCreate(parent)
 	end
 end
 
-function Auras:InitButton(button, kind)
+function Auras:InitButton(button, kind, preview)
 	button.ufKind = kind
 	-- The button includes the below-icon timer in its layout bounds. The
 	-- artwork stays square, even when the container flows upwards.
@@ -97,12 +112,12 @@ function Auras:InitButton(button, kind)
 	local icon = iconFrame:CreateTexture(nil, "ARTWORK")
 	icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 	button.ufIcon = icon
-	button:SetIcon(icon)
+	if not preview then button:SetIcon(icon) end
 
 	local cooldown = CreateFrame("Cooldown", nil, iconFrame, "CooldownFrameTemplate")
 	cooldown:SetHideCountdownNumbers(true)
 	button.ufCooldown = cooldown
-	button:SetDurationCooldown(cooldown)
+	if not preview then button:SetDurationCooldown(cooldown) end
 
 	local cover = CreateFrame("Frame", nil, iconFrame)
 	cover:SetAllPoints(iconFrame)
@@ -113,18 +128,20 @@ function Auras:InitButton(button, kind)
 	button.ufCountHolder:SetAllPoints(iconFrame)
 	button.ufCount = button.ufCountHolder:CreateFontString(nil, "OVERLAY", "NumberFontNormalSmall")
 	button.ufCount:SetPoint("BOTTOMRIGHT", iconFrame, "BOTTOMRIGHT", -2, 2)
-	button:SetApplicationCount(button.ufCount, {})
+	if not preview then button:SetApplicationCount(button.ufCount, {}) end
 
 	button.ufTime = cover:CreateFontString(nil, "OVERLAY", "NumberFontNormalSmall")
-	button:SetDurationText(button.ufTime, {})
+	if not preview then button:SetDurationText(button.ufTime, { textFormatter = DurationFormatter() }) end
 
 	-- A permanent themed frame surrounds every icon. The engine colours
 	-- this additional thin edge for debuffs. Hide its parent to toggle it:
 	-- the engine owns each registered texture's shown state and colour.
 	button.ufBorder = CreateFrame("Frame", nil, cover)
 	button.ufBorder:SetAllPoints(iconFrame)
+	button.ufDispelTextures = {}
 	for _, edge in ipairs({ "TOP", "BOTTOM", "LEFT", "RIGHT" }) do
 		local texture = button.ufBorder:CreateTexture(nil, "OVERLAY")
+		button.ufDispelTextures[#button.ufDispelTextures + 1] = texture
 		texture:SetTexture([[Interface\Buttons\WHITE8X8]])
 		if edge == "TOP" or edge == "BOTTOM" then
 			texture:SetPoint(edge .. "LEFT", iconFrame, edge .. "LEFT", 0, 0)
@@ -135,12 +152,18 @@ function Auras:InitButton(button, kind)
 			texture:SetPoint("BOTTOM" .. edge, iconFrame, "BOTTOM" .. edge, 0, 0)
 			texture:SetWidth(1)
 		end
-		button:AddDispelTypeTexture(texture, {
-			style = Enum.CustomAuraButtonDispelTypeTextureStyle.PreserveAsset,
-			showWhenHarmful = true, showWhenHelpful = false, showWithoutDispelType = true,
-		})
+		if not preview then
+			button:AddDispelTypeTexture(texture, {
+				style = Enum.CustomAuraButtonDispelTypeTextureStyle.PreserveAsset,
+				showWhenHarmful = true, showWhenHelpful = false, showWithoutDispelType = true,
+			})
+		end
 	end
-	button:SetTooltipAnchorPoint("ANCHOR_BOTTOMRIGHT", 0, 0)
+	if preview then
+		button:EnableMouse(false)
+	else
+		button:SetTooltipAnchorPoint("ANCHOR_BOTTOMRIGHT", 0, 0)
+	end
 	if self.resolved then self:StyleButton(button) end
 end
 
@@ -153,7 +176,7 @@ function Auras:StyleButton(button)
 	local size = cfg[button.ufKind].size
 	button:SetSize(size, size + TextRoom(cfg))
 	button.ufIconFrame:SetSize(size, size)
-	Backdrop.ApplyTo(button.ufIconFrame, cfg.border)
+	Backdrop.ApplyToFixedSize(button.ufIconFrame, cfg.border, size, size)
 	-- Keep a drawable centre even at the smallest icon size.
 	local pad = cfg.border.enabled and math.min(cfg.border.padding, (size - 2) / 2) or 0
 	for _, region in ipairs({ button.ufIcon, button.ufCooldown }) do
@@ -200,7 +223,8 @@ function Auras:Layout(width, height)
 	self.hostWidth = width or self.hostWidth or self.frame:GetParent():GetWidth()
 	self.hostHeight = height or self.hostHeight or self.frame:GetParent():GetHeight()
 	for _, kind in ipairs(KINDS) do
-		local group, container = self.resolved[kind], self.containers[kind]
+		local group = self.resolved[kind]
+		local container = self.previewData and self.previewContainers[kind] or self.containers[kind]
 		local side = group.position
 		local vertical = side == "left" or side == "right"
 		local reverse = group.growth == "reverse"
@@ -222,14 +246,27 @@ function Auras:Layout(width, height)
 		end
 		container:ClearAllPoints()
 		container:SetPoint(point, self.frame:GetParent(), framePoint, x, y)
-		container:SetFlowLayoutAxis(vertical and AnchorUtil.FlowLayoutAxis.Vertical or AnchorUtil.FlowLayoutAxis.Horizontal)
-		container:SetFlowLayoutAnchorPoint((upward and "BOTTOM" or "TOP") .. (horizontal and "LEFT" or "RIGHT"))
-		container:SetFlowLayoutGrowthDirection(
-			horizontal and AnchorUtil.FlowDirection.Right or AnchorUtil.FlowDirection.Left,
-			upward and AnchorUtil.FlowDirection.Up or AnchorUtil.FlowDirection.Down)
+		local axis = vertical and AnchorUtil.FlowLayoutAxis.Vertical or AnchorUtil.FlowLayoutAxis.Horizontal
+		local anchor = (upward and "BOTTOM" or "TOP") .. (horizontal and "LEFT" or "RIGHT")
+		local directionX = horizontal and AnchorUtil.FlowDirection.Right or AnchorUtil.FlowDirection.Left
+		local directionY = upward and AnchorUtil.FlowDirection.Up or AnchorUtil.FlowDirection.Down
 		local length = group.lineSize > 0 and group.lineSize or vertical and self.hostHeight or self.hostWidth
 		local minimum = group.size + (vertical and TextRoom(self.resolved) or 0)
-		container:SetFlowLayoutMaximumLineSize(math.max(length, minimum))
+		length = math.max(length, minimum)
+		if self.previewData then
+			local flow = container.ufFlow
+			flow:SetLayoutAxis(axis)
+			flow:SetAnchorPoint(anchor)
+			flow:SetGrowthDirection(directionX, directionY)
+			flow:SetMaximumLineSize(length)
+			flow:Apply(container, { { elements = container.ufElements,
+				elementSpacing = self.resolved.spacing, lineSpacing = self.resolved.spacing } })
+		else
+			container:SetFlowLayoutAxis(axis)
+			container:SetFlowLayoutAnchorPoint(anchor)
+			container:SetFlowLayoutGrowthDirection(directionX, directionY)
+			container:SetFlowLayoutMaximumLineSize(length)
+		end
 	end
 end
 
@@ -255,6 +292,16 @@ local function Restyle(auras)
 end
 
 function Auras:RestyleButtons()
+	if self.previewData then
+		pending[self] = nil
+		for _, kind in ipairs(KINDS) do
+			for _, button in ipairs(self.previewContainers[kind].ufButtons) do
+				self:StyleButton(button)
+			end
+		end
+		self:RenderSamples()
+		return
+	end
 	if InCombatLockdown() or not pcall(Restyle, self) then
 		pending[self] = true
 		regenFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -268,15 +315,19 @@ function Auras:SetEnabled(enabled)
 	self.frame:SetShown(self.enabled)
 	for _, kind in ipairs(KINDS) do
 		local enabledGroup = self.enabled and self.resolved[kind].enabled
-		self.containers[kind]:SetShown(enabledGroup)
-		self.containers[kind]:SetEnabled(enabledGroup)
+		self.containers[kind]:SetShown(enabledGroup and not self.previewData)
+		self.containers[kind]:SetEnabled(enabledGroup and not self.previewData)
+		if self.previewContainers then
+			self.previewContainers[kind]:SetShown(enabledGroup and self.previewData ~= nil)
+		end
 	end
 end
 
 function Auras:OnRelease()
 	pending[self] = nil
+	-- Disabling clears auras and unregisters dynamic events/private callbacks.
+	-- SetUnit requires a string; nil is not a supported cleanup operation.
 	self:SetEnabled(false)
-	for _, kind in ipairs(KINDS) do self.containers[kind]:SetUnit(nil) end
 end
 
 function Auras:GetContainer(kind)
@@ -284,6 +335,12 @@ function Auras:GetContainer(kind)
 end
 
 function Auras:SetUnit(unit)
+	if self.previewData then
+		self.previewData = nil
+		self:SetEnabled(self.enabled)
+		self:Layout()
+		self:RestyleButtons()
+	end
 	for _, kind in ipairs(KINDS) do
 		local container = self.containers[kind]
 		if container:GetUnit() ~= unit then
@@ -292,4 +349,73 @@ function Auras:SetUnit(unit)
 			container:UpdateAllAuras()
 		end
 	end
+end
+
+-- Sample buttons are ordinary addon widgets: no restricted aura instances,
+-- global data-provider changes, or writes to engine-owned display elements.
+-- Their visuals and Blizzard flow layout use the same settings as live auras.
+function Auras:ShowSample(values)
+	if not self.previewContainers then
+		self.previewContainers = {}
+		for _, kind in ipairs(KINDS) do
+			local container = CreateFrame("Frame", nil, self.frame)
+			container.ufFlow = AnchorUtil.CreateFlowLayout()
+			container.ufButtons, container.ufElements = {}, {}
+			self.previewContainers[kind] = container
+		end
+	end
+	self.previewData = values
+	pending[self] = nil
+	self:SetEnabled(self.enabled)
+	self:RenderSamples()
+end
+
+local function MatchesSampleFilter(aura, filter)
+	if filter:find("PLAYER", 1, true) and aura.sourceUnit ~= "player" then return false end
+	if filter:find("RAID", 1, true) and not aura.isRaid then return false end
+	return true
+end
+
+function Auras:RenderSamples()
+	for _, kind in ipairs(KINDS) do
+		local container, cfg = self.previewContainers[kind], self.resolved[kind]
+		local elements = {}
+		if cfg.enabled then
+			for _, aura in ipairs(self.previewData[kind] or {}) do
+				if #elements >= cfg.max then break end
+				if MatchesSampleFilter(aura, cfg.filter) then
+					local index = #elements + 1
+					local button = container.ufButtons[index]
+					if not button then
+						button = CreateFrame("Button", nil, container)
+						self:InitButton(button, kind, true)
+						container.ufButtons[index] = button
+					end
+					button.ufIcon:SetTexture(aura.icon)
+					button.ufCount:SetText((aura.applications or 1) > 1 and aura.applications or "")
+					local duration = aura.duration or 0
+					local remaining = aura.remaining or duration
+					button.ufTime:SetText(duration > 0 and DurationFormatter():Format(remaining) or "")
+					if duration > 0 then
+						button.ufCooldown:SetCooldown(GetTime() - (duration - remaining), duration)
+						button.ufCooldown:Pause()
+						button.ufCooldown:Show()
+					else
+						button.ufCooldown:Hide()
+					end
+					if kind == "debuffs" then
+						local color = AuraUtil.GetAuraBorderColor(aura.dispelName or "None")
+						for _, texture in ipairs(button.ufDispelTextures) do
+							texture:SetVertexColor(color:GetRGBA())
+						end
+					end
+					button:Show()
+					elements[index] = button
+				end
+			end
+		end
+		for index = #elements + 1, #container.ufButtons do container.ufButtons[index]:Hide() end
+		container.ufElements = elements
+	end
+	self:Layout()
 end

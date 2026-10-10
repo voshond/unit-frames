@@ -48,6 +48,31 @@ function Backdrop.ApplyTo(frame, cfg)
 	frame:SetBackdropBorderColor(Util.UnpackColor(cfg.color))
 end
 
+-- Aura descendants can report secret dimensions even outside combat.
+-- BackdropTemplate's Lua UV calculation does arithmetic on GetWidth/Height;
+-- provide the known configured size to that calculation instead. Region
+-- methods still operate on the real textures, never on this geometry view.
+local fixedSizes = setmetatable({}, { __mode = "k" })
+function Backdrop.ApplyToFixedSize(frame, cfg, width, height)
+	local geometry = fixedSizes[frame]
+	if not geometry then
+		geometry = setmetatable({}, { __index = function(_, key) return frame[key] end })
+		geometry.GetWidth = function() return geometry.width end
+		geometry.GetHeight = function() return geometry.height end
+		geometry.GetEffectiveScale = function() return frame:GetEffectiveScale() end
+		geometry.GetEdgeSize = function() return frame:GetEdgeSize() end
+		fixedSizes[frame] = geometry
+		-- The owner updates the fixed size explicitly. Do not run an addon
+		-- size-change script when Blizzard changes the aura's secret layout.
+		frame:SetScript("OnSizeChanged", nil)
+		frame.SetupTextureCoordinates = function()
+			BackdropTemplateMixin.SetupTextureCoordinates(geometry)
+		end
+	end
+	geometry.width, geometry.height = width, height
+	Backdrop.ApplyTo(frame, cfg)
+end
+
 -- Anchors `content` inside `frame`, leaving room for the border.
 function Backdrop.Inset(content, frame, cfg)
 	local pad = cfg.enabled and cfg.padding or 0

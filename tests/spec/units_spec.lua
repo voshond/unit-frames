@@ -319,6 +319,9 @@ describe("Player frame portrait and castbar", function()
 		end)
 		assert.is_true(preview:GetCastbar():GetFrame():IsShown())
 		assert.equals("Flash of Light", preview:GetCastbar().nameText.frame:GetText())
+	end)
+end)
+
 describe("Player buffs and debuffs", function()
 	local ns, frame, auras
 	before_each(function()
@@ -469,6 +472,67 @@ describe("Player buffs and debuffs", function()
 		assert.is_true(button.ufCountHolder:IsShown())
 	end)
 
+	it("moves timers with the frame enabled when native dimensions are secret", function()
+		local originalMixin = BackdropTemplateMixin
+		local dimensions = {}
+		-- Model BackdropTemplate's Lua arithmetic, which the generic widget
+		-- mock otherwise skips. Native aura dimensions may be secret even
+		-- when addon access to the buttons is permitted.
+		BackdropTemplateMixin = {
+			SetupTextureCoordinates = function(geometry)
+				dimensions[#dimensions + 1] = {
+					geometry:GetWidth() / 8, geometry:GetHeight() / 8,
+				}
+			end,
+		}
+		for _, kind in ipairs({ "buffs", "debuffs" }) do
+			for _, button in ipairs(Group(kind).frames) do
+				local iconFrame = button.ufIconFrame
+				iconFrame.GetWidth = function() return Mock.Secret(20) end
+				iconFrame.GetHeight = function() return Mock.Secret(20) end
+				iconFrame.SetBackdrop = function(self, info)
+					self.__state.backdrop = info
+					self:SetupTextureCoordinates()
+				end
+			end
+		end
+		ns.Config:SetUnitValue("player", "auras.durationPosition", "CENTER")
+		assert.equals(4, #dimensions, "all existing buttons finish border styling")
+		for _, kind in ipairs({ "buffs", "debuffs" }) do
+			local size = kind == "buffs" and 20 or 26
+			for _, button in ipairs(Group(kind).frames) do
+				assert.same({ "CENTER", button.ufIconFrame, "CENTER", 0, 0 }, button.ufTime:GetAnchor("CENTER"))
+				assert.equals(size, button:GetHeight())
+				assert.is_not_nil(button.ufIconFrame.__state.backdrop)
+				assert.is_nil(button.ufIconFrame:GetScript("OnSizeChanged"))
+			end
+		end
+		ns.Config:SetUnitValue("player", "auras.buffs.size", 32)
+		assert.same({ 4, 4 }, dimensions[5], "UVs follow the newly configured size")
+		ns.Config:SetUnitValue("player", "auras.durationPosition", "below")
+		assert.equals(44, Group("buffs").frames[1]:GetHeight())
+		assert.is_not_nil(Group("buffs").frames[1].ufTime:GetAnchor("TOP"))
+		BackdropTemplateMixin = originalMixin
+	end)
+
+	it("uses a private compact duration formatter for every aura", function()
+		local formatter = Group("buffs").frames[1].__state.durationText.options.textFormatter
+		local function Setting(name)
+			for _, call in ipairs(formatter.__calls) do
+				if call[1] == name then return call[2] end
+			end
+		end
+		assert.equals(Enum.SecondsFormatterIntervalWhitespace.StripIgnoreLocale, Setting("SetStripIntervalWhitespace"))
+		assert.equals(Enum.SecondsFormatterAbbreviation.OneLetter, Setting("SetDefaultAbbreviation"))
+		assert.equals(1, Setting("SetDesiredUnitCount"))
+		assert.equals(AuraContainerInbound.GetDefaultAuraDurationFormatter():GetMaxIntervalCurve(), Setting("SetMaxIntervalCurve"))
+		for _, kind in ipairs({ "buffs", "debuffs" }) do
+			for _, button in ipairs(Group(kind).frames) do
+				assert.equals(formatter, button.__state.durationText.options.textFormatter)
+			end
+		end
+	end)
+
 	it("toggles dispel colouring independently of the permanent icon frame", function()
 		ns.Config:SetUnitValue("player", "auras.dispelBorder", false)
 		local button = Group("debuffs").frames[1]
@@ -515,24 +579,116 @@ describe("Player buffs and debuffs", function()
 		assert.is_false(Container("debuffs"):IsEnabled())
 	end)
 
-	it("previews real player auras and releases both containers", function()
+	it("releases sample previews and leaves native containers disabled", function()
 		local preview = ns.Units:CreateFrame("player", CreateFrame("Frame"))
 		ns.Units:ShowSample(preview, ns.Units.SAMPLE)
 		local previewAuras = preview:GetAuras()
-		assert.equals("player", previewAuras:GetContainer("buffs"):GetUnit())
-		assert.equals("player", previewAuras:GetContainer("debuffs"):GetUnit())
+		assert.equals(8, #previewAuras.previewContainers.buffs.ufElements)
+		assert.equals(5, #previewAuras.previewContainers.debuffs.ufElements)
 		Mock.inCombat = true
 		previewAuras:Apply({ buffs = { size = 33 } })
 		preview:Release()
 		assert.is_false(previewAuras:GetContainer("buffs"):IsEnabled())
 		assert.is_false(previewAuras:GetContainer("debuffs"):IsEnabled())
-		assert.is_nil(previewAuras:GetContainer("buffs"):GetUnit())
+		assert.is_false(previewAuras:GetContainer("buffs"):IsShown())
+		assert.is_false(previewAuras:GetContainer("debuffs"):IsShown())
+		assert.is_false(previewAuras.previewContainers.buffs:IsShown())
+		assert.is_false(previewAuras.previewContainers.debuffs:IsShown())
 		Mock.inCombat = false
 		Mock.FireEvent("PLAYER_REGEN_ENABLED")
 		assert.equals(20, previewAuras:GetContainer("buffs").__state.groups.buffs.frames[1]:GetWidth(),
 			"a released preview is removed from deferred restyling")
 	end)
 end)
+
+describe("Aura samples", function()
+	local ns, preview, auras
+	before_each(function()
+		ns = Helpers.LoadAddon(true, true)
+		preview = ns.Units:CreateFrame("player", CreateFrame("Frame"))
+		auras = preview:GetAuras()
+		ns.Units:ShowSample(preview, ns.Units.SAMPLE)
+	end)
+
+	local function Sample(kind)
+		return auras.previewContainers[kind]
+	end
+
+	it("shows timed, permanent, stacked and coloured auras without live data", function()
+		assert.is_false(auras:GetContainer("buffs"):IsEnabled())
+		assert.is_false(auras:GetContainer("debuffs"):IsEnabled())
+		assert.is_nil(auras:GetContainer("buffs"):GetUnit())
+		assert.is_true(ns.Units.frames.player.uf:GetAuras():GetContainer("buffs"):IsEnabled(), "live frame is unaffected")
+		assert.equals(ns.Units.SAMPLE.buffs[1].icon, Sample("buffs").ufElements[1].ufIcon:GetTexture())
+		assert.equals("3m", Sample("buffs").ufElements[2].ufTime:GetText())
+		assert.equals(3, Sample("buffs").ufElements[7].ufCount:GetText())
+		assert.equals("", Sample("buffs").ufElements[8].ufTime:GetText())
+		assert.is_false(Sample("buffs").ufElements[8].ufCooldown:IsShown())
+		assert.is_true(Sample("buffs").ufElements[1].ufCooldown.__state.paused)
+		for i, aura in ipairs(ns.Units.SAMPLE.debuffs) do
+			local button = Sample("debuffs").ufElements[i]
+			assert.same({ AuraUtil.GetAuraBorderColor(aura.dispelName or "None"):GetRGBA() }, button.ufDispelTextures[1].__state.vertexColor)
+		end
+	end)
+
+	it("uses the configured placement and restyles samples immediately", function()
+		auras:Apply({ durationPosition = "CENTER", durationSize = 16,
+			buffs = { size = 32 }, debuffs = { position = "right", alignment = "center" } })
+		local button = Sample("buffs").ufElements[1]
+		assert.equals(32, button:GetHeight())
+		assert.equals(16, button.ufTime.__state.font[2])
+		assert.same({ "CENTER", button.ufIconFrame, "CENTER", 0, 0 }, button.ufTime:GetAnchor("CENTER"))
+		assert.same({ "LEFT", preview:GetFrame(), "RIGHT", 2, 0 }, Sample("debuffs"):GetAnchor("LEFT"))
+		assert.equals(AnchorUtil.FlowLayoutAxis.Vertical, Sample("debuffs").ufFlow.axis)
+		auras:Apply({ showDuration = false, showCount = false, border = { enabled = false } })
+		assert.equals(20, button:GetHeight())
+		assert.is_false(button.ufTime:IsShown())
+		assert.is_false(button.ufCountHolder:IsShown())
+		assert.is_nil(button.ufIconFrame.__state.backdrop)
+	end)
+
+	it("honours filters, maximum counts and disabled groups", function()
+		auras:Apply({ buffs = { max = 2 }, debuffs = { filter = "HARMFUL|PLAYER" } })
+		assert.equals(2, #Sample("buffs").ufElements)
+		assert.equals(2, #Sample("debuffs").ufElements)
+		auras:Apply({ buffs = { filter = "HELPFUL|RAID" }, debuffs = { filter = "HARMFUL|RAID" } })
+		assert.equals(3, #Sample("buffs").ufElements)
+		assert.equals(4, #Sample("debuffs").ufElements)
+		auras:Apply({ debuffs = { enabled = false } })
+		assert.equals(0, #Sample("debuffs").ufElements)
+		assert.is_false(Sample("debuffs"):IsShown())
+	end)
+
+	it("hides empty groups and reuses sample buttons", function()
+		local button = Sample("buffs").ufElements[1]
+		auras:ShowSample({ buffs = {}, debuffs = {} })
+		assert.equals(0, #Sample("buffs").ufElements)
+		assert.is_false(button:IsShown())
+		auras:ShowSample(ns.Units.SAMPLE)
+		assert.equals(button, Sample("buffs").ufElements[1])
+		assert.is_true(button:IsShown())
+	end)
+
+	it("restyles ordinary sample buttons under combat restrictions", function()
+		Mock.inCombat = true
+		auras:GetContainer("buffs").GetAuraGroupFrameCount = function() error("Aura access denied") end
+		auras:Apply({ durationPosition = "CENTER", buffs = { size = 34 } })
+		assert.equals(34, Sample("buffs").ufElements[1]:GetHeight())
+	end)
+
+	it("can return to live unit data", function()
+		auras:SetUnit("target")
+		assert.is_nil(auras.previewData)
+		assert.is_false(Sample("buffs"):IsShown())
+		assert.is_false(Sample("debuffs"):IsShown())
+		assert.is_true(auras:GetContainer("buffs"):IsEnabled())
+		assert.equals("target", auras:GetContainer("buffs"):GetUnit())
+	end)
+end)
+
+describe("Edit Mode positions", function()
+	it("uses the default, then the position saved for the active layout", function()
+		local ns = Helpers.LoadAddon(true, true)
 		local frame = ns.Units.frames.player
 		assert.same({ "CENTER", UIParent, "CENTER", -280, -160 }, frame:GetAnchor("CENTER"))
 

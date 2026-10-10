@@ -29,6 +29,10 @@ duration placement below or inside the icon. **Icon frame** styles each
 individual icon border. Centre alignment centres the whole aura block;
 use offsets to separate groups when placing both on the same side.
 
+**Preview data** includes sample buff/debuff counts. Static previews freeze
+their timers; Animated previews cycle them. Samples include stacks, a
+permanent buff, and all four debuff dispel types, using the saved aura style.
+
 ## Adding fonts
 
 1. Copy a static `.ttf`/`.otf` (one file per weight) into `UnitFrames_Media/Fonts/`.

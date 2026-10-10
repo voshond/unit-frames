@@ -214,6 +214,7 @@ end
 
 -- Texture
 function Methods:SetTexture(texture) self.__state.texture = texture end
+function Methods:SetTexCoord(...) self.__state.texCoords = { ... } end
 function Methods:GetTexture() return self.__state.texture end
 function Methods:SetVertexColor(r, g, b, a) self.__state.vertexColor = { r, g, b, a } end
 function Methods:SetColorTexture(r, g, b, a) self.__state.colorTexture = { r, g, b, a } end
@@ -256,6 +257,9 @@ function Methods:SetBackdrop(info) self.__state.backdrop = info end
 function Methods:ClearBackdrop() self.__state.backdrop = nil end
 function Methods:SetBackdropColor(r, g, b, a) self.__state.backdropColor = { r, g, b, a } end
 function Methods:SetBackdropBorderColor(r, g, b, a) self.__state.backdropBorderColor = { r, g, b, a } end
+
+function Methods:SetCooldown(start, duration) self.__state.cooldown = { start = start, duration = duration } end
+function Methods:Pause() self.__state.paused = true end
 
 -- Slider
 function Methods:GetThumbTexture()
@@ -322,7 +326,10 @@ function Mock.DecorateAuraContainer(container)
 			local button = NewObject("Button", self)
 			-- The engine fills bound texts right away (here, during AddAuraGroup).
 			function button:SetApplicationCount(fs) fs:SetText("") end
-			function button:SetDurationText(fs) fs:SetText("") end
+			function button:SetDurationText(fs, options)
+				self.__state.durationText = { fontString = fs, options = options }
+				fs:SetText("")
+			end
 			group.frames[i] = button
 			options.initializeFrame(button)
 		end
@@ -333,7 +340,11 @@ function Mock.DecorateAuraContainer(container)
 	function container:SetAuraGroupLayout(key, layout) s.groups[key].layout = layout end
 	function container:GetAuraGroupFrameCount(key) return #s.groups[key].frames end
 	function container:GetAuraGroupFrame(key, index) return s.groups[key].frames[index] end
-	function container:SetUnit(unit) s.unit = unit; s.updates = (s.updates or 0) + 1 end
+	function container:SetUnit(unit)
+		assert(type(unit) == "string", "AuraContainer:SetUnit requires a string")
+		s.unit = unit
+		s.updates = (s.updates or 0) + 1
+	end
 	function container:GetUnit() return s.unit end
 	function container:UpdateAllAuras() s.updates = (s.updates or 0) + 1 end
 	function container:SetEnabled(enabled) s.enabled = enabled end
@@ -443,6 +454,41 @@ function Mock.Install()
 	_G.AnchorUtil = {
 		FlowLayoutAxis = { Horizontal = 0, Vertical = 1 },
 		FlowDirection = { Left = -1, Right = 1, Up = 1, Down = -1 },
+		CreateFlowLayout = function()
+			local flow = {}
+			function flow:SetLayoutAxis(axis) self.axis = axis end
+			function flow:SetAnchorPoint(anchor) self.anchor = anchor end
+			function flow:SetGrowthDirection(x, y) self.x, self.y = x, y end
+			function flow:SetMaximumLineSize(size) self.lineSize = size end
+			-- Sample grids have one group of equally sized cells. Model the
+			-- resulting bounds and anchors, including wrapping and empty grids.
+			function flow:Apply(container, groups)
+				local group = groups[1]
+				local elements = group.elements
+				if #elements == 0 then container:SetSize(1, 1); return end
+				local vertical = self.axis == 1
+				local width, height = elements[1]:GetSize()
+				local primary = vertical and height or width
+				local cross = vertical and width or height
+				local spacing, lineSpacing = group.elementSpacing, group.lineSpacing
+				local perLine = math.max(1, math.floor((self.lineSize + spacing) / (primary + spacing)))
+				for i, button in ipairs(elements) do
+					local p, c = (i - 1) % perLine * (primary + spacing), math.floor((i - 1) / perLine) * (cross + lineSpacing)
+					button:ClearAllPoints()
+					button:SetPoint(self.anchor, container, self.anchor, (vertical and c or p) * self.x, (vertical and p or c) * self.y)
+				end
+				local p = math.min(perLine, #elements) * (primary + spacing) - spacing
+				local c = math.ceil(#elements / perLine) * (cross + lineSpacing) - lineSpacing
+				container:SetSize(vertical and c or p, vertical and p or c)
+			end
+			return flow
+		end,
+	}
+	_G.AuraUtil = {
+		GetAuraBorderColor = function(kind)
+			local colors = { Magic = { 0.2, 0.6, 1 }, Curse = { 0.6, 0, 1 }, Disease = { 0.6, 0.4, 0 }, Poison = { 0, 0.6, 0 } }
+			return NewColor(unpack(colors[kind] or { 0.8, 0, 0 }))
+		end,
 	}
 	_G.AuraContainerSortMethod = { ExpirationOnly = 1 }
 	_G.AuraContainerSortDirection = { Normal = 0 }
@@ -452,12 +498,20 @@ function Mock.Install()
 		StatusBarTimerDirection = { ElapsedTime = 0, RemainingTime = 1 },
 		SecondsFormatterAbbreviation = { None = 0, Truncate = 1, OneLetter = 2 },
 		SecondsFormatterInterval = { Seconds = 1, Minutes = 2, Hours = 3, Days = 4 },
+		SecondsFormatterRounding = { RoundUp = 0, Truncate = 1 },
+		SecondsFormatterIntervalWhitespace = { Preserve = 0, Strip = 1, StripIgnoreLocale = 2 },
 	}
 	_G.C_AddOns = {
 		GetAddOnMetadata = function() return "test" end,
 		LoadAddOn = function() return true end,
 	}
 	_G.C_UIFileAsset = { IsKnownFile = function() return true end }
+	local defaultAuraCurve = NewCurve(false)
+	_G.AuraContainerInbound = {
+		GetDefaultAuraDurationFormatter = function()
+			return { GetMaxIntervalCurve = function() return defaultAuraCurve end }
+		end,
+	}
 	_G.C_DurationUtil = {
 		CreateDuration = function()
 			local duration = NewObject("Duration")
@@ -481,7 +535,18 @@ function Mock.Install()
 		end,
 	}
 	_G.C_StringUtil = {
-		CreateSecondsFormatter = function() return NewObject("SecondsFormatter") end,
+		CreateSecondsFormatter = function()
+			local formatter = NewObject("SecondsFormatter")
+			function formatter:Format(seconds)
+				if Mock.IsSecret(seconds) then return Mock.Secret("duration") end
+				local divisor, suffix = 1, "s"
+				if seconds > 129600 then divisor, suffix = 86400, "d"
+				elseif seconds > 5400 then divisor, suffix = 3600, "h"
+				elseif seconds > 90 then divisor, suffix = 60, "m" end
+				return tostring(math.ceil(seconds / divisor)) .. suffix
+			end
+			return formatter
+		end,
 		TruncateWhenZero = function(value)
 			if Mock.IsSecret(value) then
 				return Mock.Secret("truncated")

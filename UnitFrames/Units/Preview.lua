@@ -46,9 +46,7 @@ function Units:ShowSample(uf, values)
 		portrait:SetUnit("player") -- the real character; there's no sample model
 	end
 	local auras = uf:GetAuras()
-	if auras and auras:IsEnabled() then
-		auras:SetUnit("player") -- your real buffs and debuffs
-	end
+	if auras then auras:ShowSample(values) end
 	local castbar = uf:GetCastbar()
 	if castbar and castbar:IsEnabled() then
 		if values.showCast == false then
