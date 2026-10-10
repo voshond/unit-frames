@@ -6,6 +6,18 @@ local Media, Backdrop = ns.Media, ns.Components.Backdrop
 -- Our ordinary root frame never depends on a container's secret dimensions.
 local Auras = ns.Component:Extend("Auras")
 local KINDS = { "buffs", "debuffs" }
+local BORDER_PIECES = {
+	"TopLeftCorner", "TopRightCorner", "BottomLeftCorner", "BottomRightCorner",
+	"TopEdge", "BottomEdge", "LeftEdge", "RightEdge",
+}
+local DISPEL_TYPES = { "Magic", "Curse", "Disease", "Poison", "None" }
+local dispelColorSchema = {}
+for _, kind in ipairs(DISPEL_TYPES) do
+	dispelColorSchema[#dispelColorSchema + 1] = {
+		key = kind, type = "color", label = kind == "None" and "No dispel type" or kind,
+		default = { AuraUtil.GetAuraBorderColor(kind):GetRGBA() },
+	}
+end
 
 local durationFormatter
 local function DurationFormatter()
@@ -78,7 +90,8 @@ Auras.schema = {
 	{ key = "font", type = "font", label = "Font", inherit = "font" },
 	{ key = "fontOutline", type = "select", label = "Font outline", values = ns.Theme.OUTLINES, default = "OUTLINE" },
 	{ key = "dispelBorder", type = "toggle", label = "Colour debuff border by type", default = true,
-		tooltip = "Magic, curse, disease, poison: coloured by the engine, works in combat." },
+		tooltip = "Tint the entire icon frame using Debuff border colours. Disable to use Icon frame > Border colour for every icon. Works in combat." },
+	{ key = "dispelColors", type = "group", label = "Debuff border colours", schema = dispelColorSchema },
 	{ key = "border", type = "group", label = "Icon frame", schema = Backdrop.schema,
 		defaults = { size = 8, inset = 1, padding = 2, background = "None" } },
 	{ key = "buffs", type = "group", label = "Buffs", schema = GroupSchema("buffs", Auras.BUFF_FILTERS, 20, "top") },
@@ -103,6 +116,7 @@ end
 
 function Auras:InitButton(button, kind, preview)
 	button.ufKind = kind
+	button.ufPreview = preview and true or false
 	-- The button includes the below-icon timer in its layout bounds. The
 	-- artwork stays square, even when the container flows upwards.
 	local iconFrame = CreateFrame("Frame", nil, button, "BackdropTemplate")
@@ -133,32 +147,12 @@ function Auras:InitButton(button, kind, preview)
 	button.ufTime = cover:CreateFontString(nil, "OVERLAY", "NumberFontNormalSmall")
 	if not preview then button:SetDurationText(button.ufTime, { textFormatter = DurationFormatter() }) end
 
-	-- A permanent themed frame surrounds every icon. The engine colours
-	-- this additional thin edge for debuffs. Hide its parent to toggle it:
-	-- the engine owns each registered texture's shown state and colour.
-	button.ufBorder = CreateFrame("Frame", nil, cover)
+	-- A separate themed border lets the engine own the complete edge's
+	-- colour/shown state. Hide the holder to toggle type colouring, and
+	-- make the base edge transparent so no neutral border shows through.
+	button.ufBorder = CreateFrame("Frame", nil, cover, "BackdropTemplate")
 	button.ufBorder:SetAllPoints(iconFrame)
 	button.ufDispelTextures = {}
-	for _, edge in ipairs({ "TOP", "BOTTOM", "LEFT", "RIGHT" }) do
-		local texture = button.ufBorder:CreateTexture(nil, "OVERLAY")
-		button.ufDispelTextures[#button.ufDispelTextures + 1] = texture
-		texture:SetTexture([[Interface\Buttons\WHITE8X8]])
-		if edge == "TOP" or edge == "BOTTOM" then
-			texture:SetPoint(edge .. "LEFT", iconFrame, edge .. "LEFT", 0, 0)
-			texture:SetPoint(edge .. "RIGHT", iconFrame, edge .. "RIGHT", 0, 0)
-			texture:SetHeight(1)
-		else
-			texture:SetPoint("TOP" .. edge, iconFrame, "TOP" .. edge, 0, 0)
-			texture:SetPoint("BOTTOM" .. edge, iconFrame, "BOTTOM" .. edge, 0, 0)
-			texture:SetWidth(1)
-		end
-		if not preview then
-			button:AddDispelTypeTexture(texture, {
-				style = Enum.CustomAuraButtonDispelTypeTextureStyle.PreserveAsset,
-				showWhenHarmful = true, showWhenHelpful = false, showWithoutDispelType = true,
-			})
-		end
-	end
 	if preview then
 		button:EnableMouse(false)
 	else
@@ -199,10 +193,48 @@ function Auras:StyleButton(button)
 	end
 	button.ufCountHolder:SetShown(cfg.showCount)
 	button.ufTime:SetShown(cfg.showDuration)
-	button.ufBorder:SetShown(cfg.border.enabled and cfg.dispelBorder and button.ufKind == "debuffs")
+	self:StyleDispelBorder(button, size)
+end
+
+function Auras:StyleDispelBorder(button, size)
+	local cfg = self.resolved
+	-- Re-register after applying the backdrop: its setters reset vertex
+	-- colours, and inbound options are copied by the engine, not shared.
+	if not button.ufPreview then
+		for _, texture in ipairs(button.ufDispelTextures) do button:RemoveDispelTypeTexture(texture) end
+	end
+	button.ufDispelTextures = {}
+	local enabled = cfg.border.enabled and cfg.dispelBorder and button.ufKind == "debuffs"
+	button.ufBorder:SetShown(enabled)
+	if not enabled then
+		button.ufBorder:ClearBackdrop()
+		return
+	end
+	local border = ns.Util.Copy(cfg.border)
+	border.background = "None"
+	Backdrop.ApplyToFixedSize(button.ufBorder, border, size, size)
+	local backdrop = button.ufBorder:GetBackdrop()
+	if backdrop and backdrop.edgeFile and backdrop.edgeFile ~= "" then
+		button.ufIconFrame:SetBackdropBorderColor(0, 0, 0, 0)
+		for _, piece in ipairs(BORDER_PIECES) do
+			local texture = button.ufBorder[piece]
+			button.ufDispelTextures[#button.ufDispelTextures + 1] = texture
+			if not button.ufPreview then
+				button:AddDispelTypeTexture(texture, {
+					style = Enum.CustomAuraButtonDispelTypeTextureStyle.PreserveAsset,
+					showWhenHarmful = true, showWhenHelpful = false, showWithoutDispelType = true,
+					customDispelColorMap = self.dispelColors,
+				})
+			end
+		end
+	end
 end
 
 function Auras:OnApply(cfg)
+	self.dispelColors = {}
+	for _, kind in ipairs(DISPEL_TYPES) do
+		self.dispelColors[kind] = CreateColor(ns.Util.UnpackColor(cfg.dispelColors[kind]))
+	end
 	for _, kind in ipairs(KINDS) do
 		local container, group = self.containers[kind], cfg[kind]
 		container:SetAuraGroupEnabled(kind, group.enabled)
@@ -404,7 +436,7 @@ function Auras:RenderSamples()
 						button.ufCooldown:Hide()
 					end
 					if kind == "debuffs" then
-						local color = AuraUtil.GetAuraBorderColor(aura.dispelName or "None")
+						local color = self.dispelColors[aura.dispelName or "None"] or self.dispelColors.None
 						for _, texture in ipairs(button.ufDispelTextures) do
 							texture:SetVertexColor(color:GetRGBA())
 						end

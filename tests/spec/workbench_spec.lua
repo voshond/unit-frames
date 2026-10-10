@@ -84,6 +84,74 @@ describe("Workbench", function()
 		assert.is_true(auras.previewContainers.buffs.ufElements[3].ufCooldown.__state.paused)
 	end)
 
+	it("offers each unit with independent settings, reset and preview data", function()
+		local samples = { target = "Scarlet Myrmidon", targettarget = "Arthas", focus = "Jaina" }
+		for unit, name in pairs(samples) do
+			workbench:Select("unit." .. unit)
+			local uf = workbench.handle.parts.uf
+			assert.equals(name, uf:GetRow("health"):GetText("left"):GetFrame():GetText())
+			assert.is_nil(ns.Schema.Find(workbench.dataTarget.schema, "xp"))
+			workbench.styleTarget.set("width", 300)
+			assert.equals(300, uf.resolved.width)
+			assert.equals(300, ns.Units.frames[unit].uf.resolved.width)
+			assert.equals(230, ns.Units.frames.player.uf.resolved.width)
+			workbench.entry.reset()
+			workbench.handle:Apply()
+			assert.equals(ns.Units:GetDefinition(unit).width, uf.resolved.width)
+			workbench.dataTarget.set("powerType", "ENERGY")
+			assert.same(ns.Config:GetTheme().colors.energy, uf:GetRow("power"):GetBar().bar.__state.color)
+		end
+	end)
+
+	it("previews NPC reaction colours and creature info on the target", function()
+		workbench:Select("unit.target")
+		workbench.dataTarget.set("npc", true)
+		workbench.styleTarget.set("health.colorMode", "class")
+		workbench.styleTarget.set("health.belowLeft.enabled", true)
+		workbench.dataTarget.set("classification", "elite")
+		workbench.dataTarget.set("creatureType", "Humanoid")
+		local health = workbench.handle.parts.uf:GetRow("health")
+		assert.equals("42+ Humanoid", health:GetText("belowLeft"):GetFrame():GetText())
+		for _, reaction in ipairs({ "hostile", "neutral", "friendly", "tapped" }) do
+			workbench.dataTarget.set("reaction", reaction)
+			assert.same(ns.Config:GetTheme().colors[reaction], health:GetBar().bar.__state.color)
+		end
+		workbench.dataTarget.set("npc", false)
+		workbench.dataTarget.set("class", "MAGE")
+		assert.equals("42 " .. (LOCALIZED_CLASS_NAMES_MALE.MAGE or "MAGE"), health:GetText("belowLeft"):GetFrame():GetText())
+	end)
+
+	it("copies player settings from General on every secondary frame and refreshes the current preview", function()
+		local function CopyButton()
+			for _, row in ipairs(workbench.inspector.page.rows) do
+				if row.opt.key == "copyPlayerSettings" then return row.control end
+			end
+		end
+		ns.Config:SetUnitValue("player", "width", 290)
+		ns.Config:SetUnitValue("player", "auras.durationPosition", "CENTER")
+		for _, unit in ipairs({ "target", "targettarget", "focus" }) do
+			workbench:Select("unit." .. unit)
+			workbench:SelectSection("")
+			local button, oldHandle = CopyButton(), workbench.handle
+			assert.is_not_nil(button)
+			workbench:Select("unit.player")
+			workbench:SelectSection("")
+			assert.is_nil(CopyButton(), "no copy button on the player")
+			workbench:Select("unit." .. unit)
+			workbench:SelectSection("")
+			assert.equals(button, CopyButton(), "the cached control is reused")
+			assert.is_false(workbench.handle == oldHandle)
+			button.opts.onClick(button)
+			local uf = workbench.handle.parts.uf
+			assert.equals(290, uf.resolved.width)
+			assert.equals(290, ns.Units.frames[unit].uf.resolved.width)
+			assert.equals("CENTER", uf.resolved.auras.durationPosition)
+			assert.equals(ns.Units:GetSample(unit).name, uf:GetRow("health"):GetText("left"):GetFrame():GetText())
+			assert.is_nil(ns.Schema.Find(uf:GetSchema(), "copyPlayerSettings"), "UI actions don't alter the component schema")
+			assert.is_nil(ns.Config:GetUnitConfig(unit).copyPlayerSettings)
+		end
+	end)
+
 	it("animates aura durations without allocating new sample buttons", function()
 		local auras = workbench.handle.parts.uf:GetAuras()
 		workbench.dataTarget.set("buffsCount", 8)

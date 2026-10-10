@@ -363,7 +363,8 @@ describe("Player buffs and debuffs", function()
 			assert.equals(size, button.ufIconFrame:GetHeight(), "the artwork stays square")
 			assert.equals(ns.Media:Fetch("border", ns.Config:GetTheme().borderTexture),
 				button.ufIconFrame.__state.backdrop.edgeFile)
-			assert.same(ns.Config:GetTheme().borderColor, button.ufIconFrame.__state.backdropBorderColor)
+			assert.same(kind == "debuffs" and { 0, 0, 0, 0 } or ns.Config:GetTheme().borderColor,
+				button.ufIconFrame.__state.backdropBorderColor)
 			assert.same({ "TOP", button.ufIconFrame, "BOTTOM", 0, -1 }, button.ufTime:GetAnchor("TOP"))
 			assert.same({ "TOPLEFT", button.ufIconFrame, "TOPLEFT", 2, -2 }, button.ufIcon:GetAnchor("TOPLEFT"))
 		end
@@ -543,6 +544,43 @@ describe("Player buffs and debuffs", function()
 		assert.same({ "TOPLEFT", button.ufIconFrame, "TOPLEFT", 0, 0 }, button.ufIcon:GetAnchor("TOPLEFT"))
 	end)
 
+	it("tints all eight themed border pieces instead of drawing a square outline", function()
+		local button = Group("debuffs").frames[1]
+		assert.equals(8, #button.ufDispelTextures)
+		assert.is_nil(button.ufBorder.__state.backdrop.bgFile)
+		for _, texture in ipairs(button.ufDispelTextures) do
+			assert.equals(ns.Media:Fetch("border", ns.Config:GetTheme().borderTexture), texture:GetTexture())
+			assert.same({ AuraUtil.GetAuraBorderColor("Magic"):GetRGBA() }, texture.__state.vertexColor)
+			assert.equals(Enum.CustomAuraButtonDispelTypeTextureStyle.PreserveAsset,
+				button.__state.dispelTextures[texture].style)
+		end
+		assert.equals(0, #Group("buffs").frames[1].ufDispelTextures)
+	end)
+
+	it("updates the engine palette and restores the fixed colour when type colouring is off", function()
+		local button = Group("debuffs").frames[1]
+		local magic, fixed = { 1, 0.4, 0.1, 1 }, { 0.2, 0.8, 0.7, 0.5 }
+		ns.Config:SetUnitValue("player", "auras.dispelColors.Magic", magic)
+		for _, texture in ipairs(button.ufDispelTextures) do assert.same(magic, texture.__state.vertexColor) end
+		ns.Config:SetUnitValue("player", "auras.border.color", fixed)
+		assert.same(magic, button.ufDispelTextures[1].__state.vertexColor)
+		ns.Config:SetUnitValue("player", "auras.dispelBorder", false)
+		assert.same({}, button.__state.dispelTextures)
+		assert.same(fixed, button.ufIconFrame.__state.backdropBorderColor)
+		ns.Config:SetUnitValue("player", "auras.dispelBorder", true)
+		assert.equals(8, #button.ufDispelTextures)
+		for _, name in ipairs({ "Magic", "Curse", "Disease", "Poison", "None" }) do
+			button:MockUpdateDispelTextures(name)
+			assert.same(name == "Magic" and magic or { AuraUtil.GetAuraBorderColor(name):GetRGBA() },
+				button.ufDispelTextures[1].__state.vertexColor)
+		end
+		ns.Config:SetUnitValue("player", "auras.border.border", "None")
+		assert.equals(0, #button.ufDispelTextures)
+		assert.same({}, button.__state.dispelTextures)
+		ns.Config:SetUnitValue("player", "auras.border.border", ns.Config:GetTheme().borderTexture)
+		assert.equals(8, #button.ufDispelTextures)
+	end)
+
 	it("restyles existing buttons only out of combat", function()
 		Mock.inCombat = true
 		ns.Config:SetUnitValue("player", "auras.buffs.size", 32)
@@ -645,6 +683,32 @@ describe("Aura samples", function()
 		assert.is_false(button.ufTime:IsShown())
 		assert.is_false(button.ufCountHolder:IsShown())
 		assert.is_nil(button.ufIconFrame.__state.backdrop)
+	end)
+
+	it("previews custom type colours on the full themed frame and can use a fixed colour", function()
+		local palette = {
+			Magic = { 1, 0.5, 0, 1 }, Curse = { 0, 1, 0.5, 1 }, Disease = { 0.5, 0, 1, 1 },
+			Poison = { 0.5, 1, 0, 1 }, None = { 0, 0.5, 1, 1 },
+		}
+		local fixed = { 0.8, 0.7, 0.6, 1 }
+		auras:Apply({ dispelColors = palette, border = { color = fixed } })
+		for i, aura in ipairs(ns.Units.SAMPLE.debuffs) do
+			local button = Sample("debuffs").ufElements[i]
+			assert.equals(8, #button.ufDispelTextures)
+			for _, texture in ipairs(button.ufDispelTextures) do
+				assert.same(palette[aura.dispelName or "None"], texture.__state.vertexColor)
+				assert.equals(ns.Media:Fetch("border", auras.resolved.border.border), texture:GetTexture())
+			end
+		end
+		auras:Apply({ dispelBorder = false, border = { color = fixed } })
+		for _, kind in ipairs({ "buffs", "debuffs" }) do
+			for _, button in ipairs(Sample(kind).ufElements) do
+				assert.is_false(button.ufBorder:IsShown())
+				assert.same(fixed, button.ufIconFrame.__state.backdropBorderColor)
+			end
+		end
+		auras:Apply({ dispelColors = palette })
+		assert.same(palette.Magic, Sample("debuffs").ufElements[1].ufDispelTextures[1].__state.vertexColor)
 	end)
 
 	it("honours filters, maximum counts and disabled groups", function()

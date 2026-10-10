@@ -113,6 +113,10 @@ function Methods:Show() self.__state.shown = true end
 function Methods:Hide() self.__state.shown = false end
 function Methods:SetShown(shown) self.__state.shown = shown and true or false end
 function Methods:IsShown() return self.__state.shown end
+function Methods:IsVisible()
+	local parent = self:GetParent()
+	return self:IsShown() and (not parent or parent:IsVisible())
+end
 
 function Methods:SetParent(parent) self.__state.parent = parent end
 function Methods:GetParent() return self.__state.parent end
@@ -176,6 +180,11 @@ function Methods:CreateTexture(name, layer)
 	local t = NewObject("Texture", self, name)
 	t.__state.layer = layer
 	return t
+end
+function Methods:CreateLine(name, layer)
+	local line = NewObject("Line", self, name)
+	line.__state.layer = layer
+	return line
 end
 function Methods:CreateFontString(name, layer, inherits)
 	local fs = NewObject("FontString", self, name)
@@ -253,10 +262,33 @@ function Methods:SetTextColor(r, g, b, a) self.__state.textColor = { r, g, b, a 
 function Methods:GetStringWidth() return 50 end
 
 -- Backdrop (BackdropTemplate)
-function Methods:SetBackdrop(info) self.__state.backdrop = info end
-function Methods:ClearBackdrop() self.__state.backdrop = nil end
+local borderPieces = { "TopLeftCorner", "TopRightCorner", "BottomLeftCorner", "BottomRightCorner",
+	"TopEdge", "BottomEdge", "LeftEdge", "RightEdge" }
+function Methods:SetBackdrop(info)
+	if not info or not (info.edgeFile or info.bgFile) then self:ClearBackdrop(); return end
+	self.__state.backdrop = info
+	for _, key in ipairs(borderPieces) do
+		local texture = rawget(self, key) or self:CreateTexture(nil, "BORDER")
+		self[key] = texture
+		texture:SetTexture(info.edgeFile)
+	end
+end
+function Methods:GetBackdrop() return self.__state.backdrop end
+function Methods:ClearBackdrop()
+	self.__state.backdrop = nil
+	for _, key in ipairs(borderPieces) do
+		local texture = rawget(self, key)
+		if texture then texture:SetTexture(nil) end
+	end
+end
 function Methods:SetBackdropColor(r, g, b, a) self.__state.backdropColor = { r, g, b, a } end
-function Methods:SetBackdropBorderColor(r, g, b, a) self.__state.backdropBorderColor = { r, g, b, a } end
+function Methods:SetBackdropBorderColor(r, g, b, a)
+	self.__state.backdropBorderColor = { r, g, b, a }
+	for _, key in ipairs(borderPieces) do
+		local texture = rawget(self, key)
+		if texture then texture:SetVertexColor(r, g, b, a) end
+	end
+end
 
 function Methods:SetCooldown(start, duration) self.__state.cooldown = { start = start, duration = duration } end
 function Methods:Pause() self.__state.paused = true end
@@ -324,6 +356,26 @@ function Mock.DecorateAuraContainer(container)
 		table.insert(s.groupOrder, key)
 		for i = 1, 2 do
 			local button = NewObject("Button", self)
+			button.__state.dispelTextures = {}
+			function button:MockUpdateDispelTextures(dispelName)
+				if dispelName then self.__state.dispelName = dispelName end
+				for texture, opts in pairs(self.__state.dispelTextures) do
+					local name = self.__state.dispelName or "Magic"
+					local color = opts.customDispelColorMap and opts.customDispelColorMap[name]
+						or AuraUtil.GetAuraBorderColor(name)
+					texture:SetVertexColor(color:GetRGBA())
+					texture:Show()
+				end
+			end
+			function button:AddDispelTypeTexture(texture, opts)
+				assert(not self.__state.dispelTextures[texture], "duplicate dispel texture")
+				self.__state.dispelTextures[texture] = opts
+				self:MockUpdateDispelTextures()
+			end
+			function button:RemoveDispelTypeTexture(texture)
+				assert(self.__state.dispelTextures[texture], "unregistered dispel texture")
+				self.__state.dispelTextures[texture] = nil
+			end
 			-- The engine fills bound texts right away (here, during AddAuraGroup).
 			function button:SetApplicationCount(fs) fs:SetText("") end
 			function button:SetDurationText(fs, options)

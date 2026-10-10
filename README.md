@@ -21,13 +21,32 @@ scripts/fetch-libs.sh       # update the embedded libraries (UnitFrames/Libs/VER
 
 In game: `/uf wb` opens the Workbench.
 
-Player aura settings live under **Buffs & debuffs**. Each of the **Buffs** and
+**Unit frames** includes Player, Target, Target of target, and Focus, each
+with independent saved settings and Edit Mode positions. Target sits opposite
+the player, target-of-target beside the target, and focus below the player.
+The new frames use oUF's secure targeting/menu clicks and unit visibility;
+target-of-target refreshes through oUF's polling. XP remains player-only.
+Target and focus include castbars and auras; target-of-target starts compact,
+with portrait, castbar, and auras off but available in its settings.
+Their previews include distinct samples and NPC reaction/classification controls.
+Each new frame's **General** section has **Copy player settings** to replace
+its style with the player's current settings (including sizes and enabled
+extras). This is an independent, one-time copy; positions and XP are excluded.
+In Edit Mode, Blizzard's **Snap** checkbox also controls our frames. With
+**Show grid** enabled they snap to its lines; they can also snap to visible
+UnitFrames and highlighted Blizzard frame bounds, with red alignment guides
+while dragging. Positions stay independent after snapping (no linked anchors).
+
+Aura settings live under **Buffs & debuffs**. Each of the **Buffs** and
 **Debuffs** sections has its own side, alignment, growth direction, gap,
 offsets and row/column length. Buffs default to the top, debuffs to the bottom.
 The parent section controls the font, separate duration/stack sizes, and
 duration placement below or inside the icon. **Icon frame** styles each
 individual icon border. Centre alignment centres the whole aura block;
 use offsets to separate groups when placing both on the same side.
+**Debuff border colours** customises the full frame tint for magic, curse,
+disease, poison, and debuffs without a dispel type. Turn off **Colour debuff
+border by type** to use **Icon frame > Border colour** for every icon.
 
 **Preview data** includes sample buff/debuff counts. Static previews freeze
 their timers; Animated previews cycle them. Samples include stacks, a

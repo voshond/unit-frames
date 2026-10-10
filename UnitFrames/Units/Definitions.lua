@@ -3,11 +3,11 @@ local Formats = ns.Formats
 
 -- What each unit frame is made of (rows, segments, default texts). Used for
 -- the live oUF frames and for Workbench previews alike.
-local Units = { definitions = {}, frames = {} }
+local Units = { definitions = {}, frames = {}, order = { "player", "target", "targettarget", "focus" } }
 ns.Units = Units
 
 Units.HEALTH_COLOR_MODES = {
-	{ "class", "Class colour" },
+	{ "class", "Class / reaction colour" },
 	{ "gradient", "Health gradient" },
 	{ "theme", "Theme colour" },
 }
@@ -63,6 +63,62 @@ Units.definitions.player = {
 	auras = { defaults = {} },
 }
 
+-- Each definition owns its defaults; changing a compact row must not change
+-- the player or the other units that share the same components.
+local function HealthRow(height, compact)
+	local row = ns.Util.Copy(HEALTH_ROW)
+	row.defaults.height = height
+	row.spec.textDefaults.belowLeft.format = "level:info"
+	if compact then
+		row.defaults.left = { size = 10 }
+		row.defaults.right = { size = 9, format = "health:percent" }
+	end
+	return row
+end
+
+local function PowerRow(height, compact)
+	local row = ns.Util.Copy(POWER_ROW)
+	row.defaults.height = height
+	if compact then row.defaults.right = { size = 8, format = "power:percent" } end
+	return row
+end
+
+Units.definitions.target = {
+	label = "Target", width = 230,
+	defaultPosition = { point = "CENTER", x = 280, y = -160 },
+	rows = { HealthRow(26), PowerRow(12) },
+	portrait = { defaults = { enabled = true, position = "RIGHT" } },
+	castbar = ns.Util.Copy(Units.definitions.player.castbar),
+	auras = { defaults = {} },
+	sample = { name = "Scarlet Myrmidon", level = 42, isPlayer = false, creatureType = "Humanoid",
+		classification = "elite", reaction = "hostile", powerType = "RAGE", powerMax = 100, power = 70, cost = 15,
+		spell = "Mortal Strike", spellIcon = [[Interface\Icons\Ability_Warrior_SavageBlow]], castTime = 1.5 },
+}
+
+Units.definitions.targettarget = {
+	label = "Target of target", width = 140,
+	defaultPosition = { point = "CENTER", x = 510, y = -160 },
+	rows = { HealthRow(20, true), PowerRow(8, true) },
+	portrait = { defaults = { enabled = false } },
+	castbar = { defaults = { placement = "off", height = 14, border = { enabled = false },
+		name = { size = 9 }, time = { size = 9 } } },
+	auras = { defaults = { enabled = false, durationPosition = "CENTER", durationSize = 9, countSize = 8,
+		buffs = { max = 8, size = 16 }, debuffs = { max = 8, size = 18 } } },
+	sample = { name = "Arthas", level = 44, className = "Warrior", class = "WARRIOR", isPlayer = true,
+		powerType = "RAGE", powerMax = 100, power = 70, cost = 15 },
+}
+
+Units.definitions.focus = {
+	label = "Focus", width = 200,
+	defaultPosition = { point = "CENTER", x = -280, y = -290 },
+	rows = { HealthRow(24), PowerRow(10) },
+	portrait = { defaults = { enabled = false } },
+	castbar = ns.Util.Copy(Units.definitions.player.castbar),
+	auras = { defaults = {} },
+	sample = { name = "Jaina", level = 44, className = "Mage", class = "MAGE", isPlayer = true,
+		spell = "Frostbolt", spellIcon = [[Interface\Icons\Spell_Frost_FrostBolt02]], castTime = 2.5 },
+}
+
 function Units:GetDefinition(unit)
 	return self.definitions[unit]
 end
@@ -102,3 +158,7 @@ Units.SAMPLE = {
 		{ icon = [[Interface\Icons\Ability_Gouge]], duration = 15, remaining = 11, sourceUnit = "party1" },
 	},
 }
+
+function Units:GetSample(unit)
+	return ns.Util.Merge(ns.Util.Copy(self.SAMPLE), ns.Util.Copy(self.definitions[unit].sample or {}))
+end

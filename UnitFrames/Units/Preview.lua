@@ -12,7 +12,7 @@ function fillers.health(row, cfg, v)
 	row:SetSegmentValue("absorb", v.absorb)
 	row:SetSegmentValue("healAbsorb", v.healAbsorb)
 	if cfg.colorMode == "class" then
-		row:SetColor(Colors.Class(v.class))
+		row:SetColor(Colors.Sample(v))
 	elseif cfg.colorMode == "gradient" then
 		row:SetColor(Colors.HealthCurve():Evaluate(v.health / v.healthMax):GetRGB())
 	else

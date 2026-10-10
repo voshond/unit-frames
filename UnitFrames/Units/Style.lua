@@ -32,9 +32,8 @@ local function UpdateHealthColor(self, _, unit)
 	end
 	local row = self.uf:GetRow("health")
 	local mode = self.uf:GetRowConfig("health").colorMode
-	if mode == "class" and UnitIsPlayer(unit) then
-		local _, class = UnitClass(unit)
-		row:SetColor(Colors.Class(class))
+	if mode == "class" then
+		row:SetColor(Colors.Unit(unit))
 	elseif mode == "gradient" then
 		row:SetColor(UnitHealthPercent(unit, true, Colors.HealthCurve()):GetRGB())
 	else
@@ -60,6 +59,9 @@ function widgets.health(row)
 	health.DamageAbsorb = bar:GetSegmentBar("absorb")
 	health.HealAbsorb = bar:GetSegmentBar("healAbsorb")
 	health.smoothing = Smoothing(bar)
+	-- Keep reaction/tap colours current even when health hasn't changed.
+	health.colorReaction = true
+	health.colorTapping = true
 	health.UpdateColor = UpdateHealthColor
 	return health
 end
@@ -139,6 +141,40 @@ function Units:Refresh(unit)
 	frame:UpdateTags()
 end
 
+-- Copy effective settings, not just overrides: the units have different
+-- defaults (notably the compact target-of-target). Keep theme inheritance
+-- where the player hasn't overridden it and the target already matches.
+local function CopySettings(schema, source, overrides, defaults)
+	local result = {}
+	for _, opt in ipairs(schema) do
+		local value, raw = source[opt.key], overrides and overrides[opt.key]
+		if opt.type == "group" and type(value) == "table" then
+			local group = CopySettings(opt.schema, value, raw, defaults[opt.key])
+			if next(group) then result[opt.key] = group end
+		elseif opt.type ~= "group" and opt.type ~= "action" and value ~= nil
+			and (raw ~= nil or not ns.Util.Equals(value, defaults[opt.key])) then
+			result[opt.key] = ns.Util.Copy(value)
+		end
+	end
+	return result
+end
+
+function Units:CopyPlayerSettings(unit)
+	local player, target = self.frames.player, self.frames[unit]
+	if unit == "player" or not player or not target then return false end
+	local schema, theme = target.uf:GetSchema(), ns.Config:GetTheme()
+	local overrides = ns.Config:GetUnitConfig("player")
+	local source = ns.Schema.Resolve(player.uf:GetSchema(), overrides, theme)
+	local defaults = ns.Schema.Resolve(schema, nil, theme)
+	local copied = CopySettings(schema, source, overrides, defaults)
+	-- Positions live separately in Edit Mode. The target's schema excludes XP.
+	local config = ns.Config:GetUnitConfig(unit)
+	wipe(config)
+	ns.Util.Merge(config, copied)
+	ns.Events:Fire("UnitConfigChanged", unit)
+	return true
+end
+
 -- Unit tooltip. Blizzard's UnitFrame_OnEnter reads self.unit, which oUF frames
 -- don't have; oUF keeps the current unit in __unit.
 local function OnEnter(self)
@@ -174,7 +210,7 @@ end
 
 oUF:Factory(function(factory)
 	factory:SetActiveStyle(Units.STYLE)
-	Spawn(factory, "player")
+	for _, unit in ipairs(Units.order) do Spawn(factory, unit) end
 end)
 
 ns.Events.RegisterCallback(Units, "UnitConfigChanged", function(_, unit)
