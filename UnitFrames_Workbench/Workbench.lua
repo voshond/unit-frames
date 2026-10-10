@@ -21,6 +21,8 @@ Entries register themselves:
       onEvent = function(handle, data, entryState, event, ...) end,
     },
     styleTarget = function(handle) return target end,  optional, replaces the style inspector target
+    autoSize = true,                 the component sizes itself (no width/height sliders)
+    reset = function() end,          optional, what the "Reset" button does instead of clearing the config
   })
 ]]
 local Workbench = {}
@@ -90,9 +92,16 @@ end
 
 -- Saved state ---------------------------------------------------------------
 
+-- Bump when saved entry configs no longer fit the entries; old ones are dropped.
+local DB_VERSION = 2
+
 function Workbench:GetDB()
 	UnitFramesWorkbenchDB = UnitFramesWorkbenchDB or {}
 	local db = UnitFramesWorkbenchDB
+	if db.version ~= DB_VERSION then
+		db.entries = nil
+		db.version = DB_VERSION
+	end
 	db.window = db.window or {}
 	db.entries = db.entries or {}
 	db.stage = db.stage or { background = "dark", scale = 1, bounds = false }
@@ -122,6 +131,18 @@ function Workbench:Toggle()
 		return
 	end
 	self.window:Toggle()
+end
+
+-- Shows the Workbench at a given entry.
+function Workbench:Open(id)
+	if not self.window then
+		self:Build()
+	end
+	self.window:Show()
+	if self.entries[id] then
+		self.list:Select(id)
+		self:Select(id)
+	end
 end
 
 function Workbench:Build()
@@ -430,7 +451,9 @@ end
 
 function Workbench:ApplyPreset(preset)
 	local entry, state = self.entry, self.state
-	if preset.reset then
+	if preset.reset and entry.reset then
+		entry.reset()
+	elseif preset.reset then
 		state.config = Util.Copy(entry.defaultConfig or {})
 		state.width, state.height = entry.size[1], entry.size[2]
 	else
@@ -454,7 +477,12 @@ function Workbench:SetEntrySize(width, height)
 end
 
 function Workbench:ApplySize()
-	local state = self.state
+	local state, autoSize = self.state, self.entry.autoSize
+	self.widthSlider:SetShown(not autoSize)
+	self.heightSlider:SetShown(not autoSize)
+	if autoSize then
+		return
+	end
 	self.handle.frame:SetSize(state.width, state.height)
 	self.widthSlider:SetValue(state.width)
 	self.heightSlider:SetValue(state.height)

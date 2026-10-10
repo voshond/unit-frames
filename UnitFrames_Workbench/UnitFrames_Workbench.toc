@@ -10,6 +10,7 @@
 Workbench.lua
 Data.lua
 
+Entries\Units.lua
 Entries\Bars.lua
 Entries\Castbar.lua
 Entries\Basics.lua

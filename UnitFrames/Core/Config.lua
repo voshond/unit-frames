@@ -10,6 +10,10 @@ local function BuildDefaults()
 	return {
 		profile = {
 			theme = Schema.Defaults(ns.Theme.schema),
+			-- Per unit frame: only the user's changes; defaults come from the schema.
+			units = { ["*"] = {} },
+			-- Frame positions per Edit Mode layout name: positions[layout][frameKey] = { point, x, y }
+			positions = { ["*"] = {} },
 		},
 	}
 end
@@ -56,4 +60,39 @@ function Config:SetThemeValue(path, value)
 	end
 	Util.SetPath(self:GetTheme(), path, value)
 	ns.Events:Fire("ThemeChanged", path)
+end
+
+-- Unit frames -------------------------------------------------------------------
+
+function Config:GetUnitConfig(unit)
+	if self.db then
+		return self.db.profile.units[unit]
+	end
+	self.unitConfigs = self.unitConfigs or {}
+	self.unitConfigs[unit] = self.unitConfigs[unit] or {}
+	return self.unitConfigs[unit]
+end
+
+-- value nil removes the change (back to the default).
+function Config:SetUnitValue(unit, path, value)
+	local config = self:GetUnitConfig(unit)
+	if value == nil then
+		Util.ClearPath(config, path)
+	else
+		Util.SetPath(config, path, value)
+	end
+	ns.Events:Fire("UnitConfigChanged", unit, path)
+end
+
+-- Positions -------------------------------------------------------------------------
+
+function Config:GetPosition(layout, key)
+	if not self.db then
+		return nil
+	end
+	return self.db.profile.positions[layout or "default"][key]
+end
+
+function Config:SetPosition(layout, key, point, x, y)
+	self.db.profile.positions[layout or "default"][key] = { point = point, x = x, y = y }
 end

@@ -18,6 +18,11 @@ function Mock.Secret(value)
 	return setmetatable({ secretValue = value }, SecretMT)
 end
 
+-- Concatenating secrets is allowed in the client and gives a secret string.
+SecretMT.__concat = function()
+	return Mock.Secret("concat")
+end
+
 function Mock.IsSecret(value)
 	return type(value) == "table" and getmetatable(value) == SecretMT
 end
@@ -62,10 +67,15 @@ local function NewObject(objectType, parent, name)
 end
 Mock.NewObject = NewObject
 
-ObjectMT.__index = function(_, key)
+ObjectMT.__index = function(obj, key)
 	local impl = Methods[key]
 	if impl then
 		return impl
+	end
+	-- Strict objects behave like real frames for unknown keys (nil), e.g. oUF
+	-- unit frames where code checks fields like frame.Health.
+	if rawget(obj, "__strict") then
+		return nil
 	end
 	-- Unknown method: accept and record.
 	return function(self, ...)
@@ -156,6 +166,10 @@ function Methods:GetAnchor(point)
 end
 
 function Methods:SetFrameLevel(level) self.__state.level = level end
+function Methods:IsProtected() return self.__state.protected == true end
+function Methods:SetAttribute(name, value) self.__state.attributes = self.__state.attributes or {}; self.__state.attributes[name] = value end
+function Methods:RegisterForClicks(...) Record(self, "RegisterForClicks", ...) end
+function Methods:GetChildren() end
 function Methods:GetFrameLevel() return self.__state.level end
 
 function Methods:CreateTexture(name, layer)
@@ -314,6 +328,17 @@ local function NewCurve(isColor)
 	return curve
 end
 
+-- The client's string.format accepts secrets (result is a secret string).
+local format = string.format
+string.format = function(fmt, ...)
+	for i = 1, select("#", ...) do
+		if Mock.IsSecret((select(i, ...))) then
+			return Mock.Secret(fmt)
+		end
+	end
+	return format(fmt, ...)
+end
+
 function Mock.Install()
 	registry = {}
 	Mock.objects = registry
@@ -353,6 +378,10 @@ function Mock.Install()
 	_G.securecallfunction = function(fn, ...) return fn(...) end
 	_G.geterrorhandler = function() return error end
 	_G.INTERRUPTED = "Interrupted"
+	_G.UnitFrame_OnEnter = function() end
+	_G.UnitFrame_OnLeave = function() end
+	_G.InCombatLockdown = function() return Mock.inCombat == true end
+	Mock.inCombat = false
 	_G.FAILED = "Failed"
 
 	_G.Enum = {
@@ -390,7 +419,19 @@ function Mock.Install()
 	}
 	_G.C_StringUtil = {
 		CreateSecondsFormatter = function() return NewObject("SecondsFormatter") end,
+		TruncateWhenZero = function(value)
+			if Mock.IsSecret(value) then
+				return Mock.Secret("truncated")
+			end
+			return value == 0 and "" or tostring(value)
+		end,
 	}
+	_G.AbbreviateNumbers = function(value)
+		if Mock.IsSecret(value) then
+			return Mock.Secret("abbreviated")
+		end
+		return tostring(value)
+	end
 	_G.C_CVar = { SetCVar = function() return true end }
 end
 
@@ -418,15 +459,9 @@ function Mock.InstallUI()
 		MAGE = NewColor(0.25, 0.78, 0.92),
 	}
 	_G.LOCALIZED_CLASS_NAMES_MALE = { WARRIOR = "Warrior", PALADIN = "Paladin", MAGE = "Mage" }
-	_G.InCombatLockdown = function() return false end
-	_G.AbbreviateNumbers = function(value)
-		if Mock.IsSecret(value) then
-			return Secret("abbreviated")
-		end
-		return tostring(value)
-	end
 
 	_G.UnitExists = function() return true end
+	_G.UnitIsPlayer = function() return true end
 	_G.UnitName = function() return Secret("name"), Secret("realm") end
 	_G.UnitClass = function() return Secret("Warrior"), "WARRIOR", 1 end
 	_G.UnitLevel = function() return 30 end

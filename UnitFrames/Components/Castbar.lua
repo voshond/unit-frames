@@ -1,9 +1,10 @@
 local _, ns = ...
 local Util = ns.Util
-local Bar, Text = ns.Components.Bar, ns.Components.Text
+local Bar, Text, Backdrop = ns.Components.Bar, ns.Components.Text, ns.Components.Backdrop
 
 --[[
-Cast bar: a Bar plus spell icon, spell name and remaining time.
+Cast bar: one bordered frame holding the spell icon (left or right) and the
+bar right next to it, with spell name and remaining time on the bar.
 
 The fill and the time text are driven by the engine from a Duration object
 (StatusBar:SetTimerDuration + DurationTextBinding), the same approach oUF uses,
@@ -31,13 +32,15 @@ function Castbar:GetSchema()
 	end
 	self.schemaCache = {
 		{ key = "enabled", type = "toggle", label = "Enabled", default = true },
+		{ key = "border", type = "group", label = "Border", schema = Backdrop.schema,
+			defaults = { enabled = true, padding = 3 } },
 		{ key = "icon", type = "group", label = "Icon", schema = {
 			{ key = "enabled", type = "toggle", label = "Enabled", default = true },
 			{ key = "position", type = "select", label = "Position", values = Castbar.ICON_POSITIONS, default = "LEFT" },
 			{ key = "gap", type = "range", label = "Gap", min = 0, max = 10, step = 1, default = 1 },
 		} },
 		{ key = "bar", type = "group", label = "Bar", schema = self.barComp:GetSchema(),
-			defaults = { spark = true, smooth = false, border = { enabled = true } } },
+			defaults = { spark = true, smooth = false } },
 		{ key = "name", type = "group", label = "Spell name", schema = Text.schema, defaults = { justifyH = "LEFT" } },
 		{ key = "time", type = "group", label = "Time", schema = Text.schema, defaults = { justifyH = "RIGHT" } },
 		{ key = "colors", type = "group", label = "Colours", schema = {
@@ -65,7 +68,7 @@ local function TimeFormatter()
 end
 
 function Castbar:OnCreate(parent)
-	self.frame = CreateFrame("Frame", nil, parent)
+	self.frame = CreateFrame("Frame", nil, parent, "BackdropTemplate")
 
 	self.icon = self.frame:CreateTexture(nil, "ARTWORK")
 	self.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
@@ -91,6 +94,7 @@ function Castbar:OnCreate(parent)
 end
 
 function Castbar:OnApply(cfg)
+	Backdrop.ApplyTo(self.frame, cfg.border)
 	self:ApplyChild(self.barComp, "bar")
 	self:ApplyChild(self.nameText, "name")
 	self:ApplyChild(self.timeText, "time")
@@ -104,25 +108,28 @@ function Castbar:LayoutParts()
 	if not cfg then
 		return
 	end
-	local height = self.frame:GetHeight()
-	local icon, bar = self.icon, self.barComp
+	-- Icon and bar share the area inside the border.
+	local pad = cfg.border.enabled and cfg.border.padding or 0
+	local size = math.max(self.frame:GetHeight() - 2 * pad, 1)
+	local icon, bar, frame = self.icon, self.barComp, self.frame
 	icon:ClearAllPoints()
 	bar:ClearAllPoints()
 	if cfg.icon.enabled then
-		icon:SetSize(height, height)
+		icon:SetSize(size, size)
 		icon:Show()
 		if cfg.icon.position == "LEFT" then
-			icon:SetPoint("TOPLEFT", self.frame, "TOPLEFT")
+			icon:SetPoint("TOPLEFT", frame, "TOPLEFT", pad, -pad)
 			bar:SetPoint("TOPLEFT", icon, "TOPRIGHT", cfg.icon.gap, 0)
-			bar:SetPoint("BOTTOMRIGHT", self.frame, "BOTTOMRIGHT")
+			bar:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -pad, pad)
 		else
-			icon:SetPoint("TOPRIGHT", self.frame, "TOPRIGHT")
-			bar:SetPoint("TOPLEFT", self.frame, "TOPLEFT")
+			icon:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -pad, -pad)
+			bar:SetPoint("TOPLEFT", frame, "TOPLEFT", pad, -pad)
 			bar:SetPoint("BOTTOMRIGHT", icon, "BOTTOMLEFT", -cfg.icon.gap, 0)
 		end
 	else
 		icon:Hide()
-		bar:SetAllPoints(self.frame)
+		bar:SetPoint("TOPLEFT", frame, "TOPLEFT", pad, -pad)
+		bar:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -pad, pad)
 	end
 
 	local textParent = bar:GetTextParent()

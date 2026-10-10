@@ -4,11 +4,14 @@
 ## Author: Martin Konstantin Herrmann
 ## Version: 0.1.0-dev
 ## SavedVariables: UnitFramesDB
+## OptionalDeps: Clique
 
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
 Libs\AceDB-3.0\AceDB-3.0.lua
 Libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua
+Libs\LibEditMode\embed.xml
+Libs\oUF\oUF.xml
 
 Core\Init.lua
 Core\Util.lua
@@ -18,12 +21,16 @@ Core\Schema.lua
 Core\Theme.lua
 Core\Media.lua
 Core\Config.lua
+Core\Colors.lua
+Core\Formats.lua
 
 Components\Component.lua
 Components\Backdrop.lua
 Components\Text.lua
 Components\Bar.lua
+Components\TextBar.lua
 Components\Castbar.lua
+Components\UnitFrame.lua
 
 Widgets\Skin.lua
 Widgets\Widget.lua
@@ -37,5 +44,12 @@ Widgets\ColorSwatch.lua
 Widgets\ScrollList.lua
 Widgets\ScrollPanel.lua
 Widgets\Inspector.lua
+
+Units\Definitions.lua
+Units\Elements.lua
+Units\Style.lua
+Units\Preview.lua
+
+Integration\EditMode.lua
 
 Core\Commands.lua

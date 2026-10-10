@@ -234,28 +234,36 @@ describe("Castbar", function()
 		assert.equals("Interrupted", castbar.nameText.frame:GetText())
 	end)
 
-	it("places the icon left or right, or not at all", function()
-		local castbar = NewCastbar()
+	it("puts icon and bar inside its own border, icon left or right", function()
+		local castbar = NewCastbar() -- 200 x 20, border padding 3
 		local barFrame = castbar:GetBar().frame
+		assert.is_not_nil(castbar.frame.__state.backdrop, "the castbar frame carries the border")
+		assert.same({ "TOPLEFT", castbar.frame, "TOPLEFT", 3, -3 }, castbar.icon:GetAnchor("TOPLEFT"))
+		assert.equals(14, castbar.icon:GetWidth(), "square icon filling the inner height")
 		assert.same({ "TOPLEFT", castbar.icon, "TOPRIGHT", 1, 0 }, barFrame:GetAnchor("TOPLEFT"))
-		assert.equals(20, castbar.icon:GetWidth(), "square icon, as tall as the bar")
+		assert.same({ "BOTTOMRIGHT", castbar.frame, "BOTTOMRIGHT", -3, 3 }, barFrame:GetAnchor("BOTTOMRIGHT"))
 
 		castbar:Apply({ icon = { position = "RIGHT" } })
+		assert.same({ "TOPRIGHT", castbar.frame, "TOPRIGHT", -3, -3 }, castbar.icon:GetAnchor("TOPRIGHT"))
 		assert.same({ "BOTTOMRIGHT", castbar.icon, "BOTTOMLEFT", -1, 0 }, barFrame:GetAnchor("BOTTOMRIGHT"))
 
 		castbar:Apply({ icon = { enabled = false } })
 		assert.is_false(castbar.icon:IsShown())
-		assert.same({ "ALL", castbar.frame }, barFrame.__state.points[1])
+		assert.same({ "TOPLEFT", castbar.frame, "TOPLEFT", 3, -3 }, barFrame:GetAnchor("TOPLEFT"))
+
+		castbar:Apply({ icon = { enabled = false }, border = { enabled = false } })
+		assert.is_nil(castbar.frame.__state.backdrop)
+		assert.same({ "TOPLEFT", castbar.frame, "TOPLEFT", 0, 0 }, barFrame:GetAnchor("TOPLEFT"))
 	end)
 
-	it("passes group defaults to its bar (border on, spark on)", function()
+	it("passes group defaults to its bar (spark on, no own border)", function()
 		local castbar = NewCastbar()
 		local barResolved = castbar:GetBar().resolved
-		assert.is_true(barResolved.border.enabled)
+		assert.is_false(barResolved.border.enabled)
 		assert.is_true(barResolved.spark)
 		castbar:Apply({ bar = { spark = false } })
 		assert.is_false(castbar:GetBar().resolved.spark)
-		assert.is_true(castbar:GetBar().resolved.border.enabled, "other defaults stay")
+		assert.is_false(castbar:GetBar().resolved.smooth, "other defaults stay")
 	end)
 end)
 

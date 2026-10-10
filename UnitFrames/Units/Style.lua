@@ -1,0 +1,173 @@
+local _, ns = ...
+local oUF, Units, Colors, Formats = ns.oUF, ns.Units, ns.Colors, ns.Formats
+
+--[[
+oUF integration: the style builds our UnitFrame component inside the oUF unit
+button, then binds rows to oUF elements. oUF decides when values update (and
+keeps to the secret-safe paths); our components decide how it looks.
+
+Re-binding after a config change enables/disables elements and re-tags texts.
+]]
+
+Units.STYLE = "UnitFrames"
+
+-- oUF element name per row key.
+local ELEMENTS = {
+	health = "Health",
+	power = "Power",
+	experience = "UF_Experience",
+}
+
+local function Smoothing(bar)
+	if bar.resolved.smooth and ns.Caps.smoothBars then
+		return Enum.StatusBarInterpolation.ExponentialEaseOut
+	end
+	return Enum.StatusBarInterpolation.Immediate
+end
+
+-- Colour overrides (oUF calls these after every update). Values may be secret.
+local function UpdateHealthColor(self, _, unit)
+	if not unit or self.__unit ~= unit then -- same guard as oUF's own elements
+		return
+	end
+	local row = self.uf:GetRow("health")
+	local mode = self.uf:GetRowConfig("health").colorMode
+	if mode == "class" and UnitIsPlayer(unit) then
+		local _, class = UnitClass(unit)
+		row:SetColor(Colors.Class(class))
+	elseif mode == "gradient" then
+		row:SetColor(UnitHealthPercent(unit, true, Colors.HealthCurve()):GetRGB())
+	else
+		row:ClearColor()
+	end
+end
+
+local function UpdatePowerColor(self, _, unit)
+	if not unit or self.__unit ~= unit then -- same guard as oUF's own elements
+		return
+	end
+	local _, token = UnitPowerType(unit)
+	self.uf:GetRow("power"):SetColor(Colors.Power(token))
+end
+
+local binders = {}
+
+function binders.health(frame, row)
+	local bar = row:GetBar()
+	local health = bar:GetStatusBar()
+	health.HealingAll = bar:GetSegmentBar("heal")
+	health.DamageAbsorb = bar:GetSegmentBar("absorb")
+	health.HealAbsorb = bar:GetSegmentBar("healAbsorb")
+	health.smoothing = Smoothing(bar)
+	health.UpdateColor = UpdateHealthColor
+	frame.Health = health
+end
+
+function binders.power(frame, row)
+	local bar = row:GetBar()
+	local power = bar:GetStatusBar()
+	power.CostPrediction = bar:GetSegmentBar("cost")
+	power.smoothing = Smoothing(bar)
+	power.frequentUpdates = true
+	power.UpdateColor = UpdatePowerColor
+	frame.Power = power
+end
+
+function binders.experience(frame, row)
+	frame.UF_Experience = row
+end
+
+local function TagRow(frame, row, rowEnabled)
+	for _, slot in ipairs(ns.Components.TextBar.SLOTS) do
+		local text = row:GetText(slot.key)
+		local fs = text:GetFrame()
+		local format = text:GetFormat()
+		if rowEnabled and text:IsEnabled() and format ~= "none" then
+			frame:Tag(fs, Formats.Tag(format))
+		else
+			frame:Untag(fs)
+			fs:SetText("")
+		end
+	end
+end
+
+-- Points oUF elements and tags at the current rows. Before oUF has enabled
+-- the elements (inside the style function) only the keys are set.
+function Units:Bind(frame)
+	for key, row, cfg in frame.uf:Rows() do
+		local element = ELEMENTS[key]
+		if cfg.enabled then
+			binders[key](frame, row)
+			if frame.ufReady and not frame:IsElementEnabled(element) then
+				frame:EnableElement(element)
+			end
+		elseif frame[element] then
+			if frame.ufReady and frame:IsElementEnabled(element) then
+				frame:DisableElement(element)
+			end
+			frame[element] = nil
+		end
+		TagRow(frame, row, cfg.enabled)
+	end
+end
+
+-- Re-applies config to a live frame and refreshes everything shown on it.
+function Units:Refresh(unit)
+	local frame = self.frames[unit]
+	if not frame then
+		return
+	end
+	frame.uf:Apply(ns.Config:GetUnitConfig(unit))
+	self:Bind(frame)
+	frame:UpdateAllElements("UnitFramesRefresh")
+	frame:UpdateTags()
+end
+
+-- Unit tooltip. Blizzard's UnitFrame_OnEnter reads self.unit, which oUF frames
+-- don't have; oUF keeps the current unit in __unit.
+local function OnEnter(self)
+	GameTooltip_SetDefaultAnchor(GameTooltip, self)
+	if GameTooltip:SetUnit(self.__unit) then
+		GameTooltip:Show()
+	end
+end
+
+local function OnLeave()
+	GameTooltip:Hide()
+end
+
+oUF:RegisterStyle(Units.STYLE, function(frame, unit)
+	frame.uf = Units:CreateFrame(unit, UIParent, frame)
+	frame:RegisterForClicks("AnyUp")
+	frame:HookScript("OnEnter", OnEnter)
+	frame:HookScript("OnLeave", OnLeave)
+	Units:Bind(frame)
+end)
+
+-- Spawning --------------------------------------------------------------------
+
+local function Spawn(factory, unit)
+	local def = Units.definitions[unit]
+	local name = "UnitFrames" .. unit:gsub("^%l", string.upper)
+	local frame = factory:Spawn(unit, name)
+	frame.ufReady = true -- oUF has enabled the elements now
+	Units.frames[unit] = frame
+	ns.EditMode:Register(frame, unit, "UnitFrames: " .. def.label, def.defaultPosition)
+	return frame
+end
+
+oUF:Factory(function(factory)
+	factory:SetActiveStyle(Units.STYLE)
+	Spawn(factory, "player")
+end)
+
+ns.Events.RegisterCallback(Units, "UnitConfigChanged", function(_, unit)
+	Units:Refresh(unit)
+end)
+
+-- Colours come from the theme too (power colours, health gradient).
+ns.Events.RegisterCallback(Units, "ThemeChanged", function()
+	for unit in pairs(Units.frames) do
+		Units:Refresh(unit)
+	end
+end)

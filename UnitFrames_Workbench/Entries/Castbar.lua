@@ -54,8 +54,9 @@ Workbench:Register({
 	presets = {
 		{ name = "Icon right", config = { castbar = { icon = { position = "RIGHT" } } } },
 		{ name = "No icon", config = { castbar = { icon = { enabled = false } } } },
-		{ name = "Flat", config = { castbar = { bar = { texture = "Solid", border = { enabled = true,
-			border = "UnitFrames Pixel", size = 1, inset = 0, padding = 1, color = { 0, 0, 0, 1 } } } } } },
+		{ name = "Flat", config = { castbar = { bar = { texture = "Solid" }, border = { border = "UnitFrames Pixel",
+			size = 1, inset = 0, padding = 1, color = { 0, 0, 0, 1 } } } } },
+		{ name = "No border", config = { castbar = { border = { enabled = false } } } },
 		{ name = "Large", size = { 300, 30 }, config = { castbar = { name = { size = 13 }, time = { size = 13 } } } },
 	},
 	data = {

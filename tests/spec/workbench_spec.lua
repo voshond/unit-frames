@@ -54,7 +54,7 @@ describe("Workbench", function()
 
 	it("builds and selects the first entry", function()
 		assert.is_not_nil(workbench.window)
-		assert.equals("bar.health", workbench.entry.id)
+		assert.equals("unit.player", workbench.entry.id)
 	end)
 
 	it("opens every entry and drives every data source", function()
@@ -113,7 +113,7 @@ describe("Workbench", function()
 
 	it("edits the global theme and restyles components", function()
 		workbench:Select("bar.health")
-		local bar = workbench.handle.parts.bar
+		local bar = workbench.handle.parts.row:GetBar()
 		workbench:Select("theme")
 		workbench.styleInspector.page.target.set("barTexture", "Solid")
 		assert.equals("Solid", ns.Config:GetTheme().barTexture)

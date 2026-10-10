@@ -1,8 +1,17 @@
 local _, ns = ...
 local Media, Util = ns.Media, ns.Util
 
--- A single line of text. Accepts secret strings and numbers: they render
--- normally, they just can't be read back (GetText returns a secret).
+--[[
+A single line of text. Accepts secret strings and numbers: they render
+normally, they just can't be read back (GetText returns a secret).
+
+spec (optional):
+  host     frame the text spans (left edge to right edge, minus `inset`), so
+           the alignment option actually moves the text. Without a host the
+           owner anchors the text itself.
+  formats  list of format ids (Core/Formats.lua); adds a `format` option. The
+           owner decides how to fill the text from it.
+]]
 local Text = ns.Component:Extend("Text")
 
 Text.JUSTIFY = {
@@ -20,6 +29,34 @@ Text.schema = {
 	{ key = "color", type = "color", label = "Colour", default = { 1, 1, 1, 1 } },
 	{ key = "justifyH", type = "select", label = "Alignment", values = Text.JUSTIFY, default = "CENTER" },
 }
+
+local HOST_OPTIONS = {
+	{ key = "inset", type = "range", label = "Edge inset", min = 0, max = 30, step = 1, default = 4,
+		tooltip = "Distance from the left and right edge." },
+	{ key = "offsetX", type = "range", label = "Offset X", min = -100, max = 100, step = 1, default = 0 },
+	{ key = "offsetY", type = "range", label = "Offset Y", min = -50, max = 50, step = 1, default = 0 },
+}
+
+function Text:GetSchema()
+	if self.schemaCache then
+		return self.schemaCache
+	end
+	local schema = {}
+	if self.spec.formats then
+		schema[1] = { key = "format", type = "select", label = "Shows", values = ns.Formats.Values(self.spec.formats),
+			default = "none" }
+	end
+	for _, opt in ipairs(Text.schema) do
+		schema[#schema + 1] = opt
+	end
+	if self.spec.host then
+		for _, opt in ipairs(HOST_OPTIONS) do
+			schema[#schema + 1] = opt
+		end
+	end
+	self.schemaCache = schema
+	return schema
+end
 
 function Text:OnCreate(parent)
 	self.frame = parent:CreateFontString(nil, "OVERLAY")
@@ -39,6 +76,17 @@ function Text:OnApply(cfg)
 	fs:SetTextColor(Util.UnpackColor(cfg.color))
 	fs:SetJustifyH(cfg.justifyH)
 	fs:SetWordWrap(false)
+
+	local host = self.spec.host
+	if host then
+		fs:ClearAllPoints()
+		fs:SetPoint("LEFT", host, "LEFT", cfg.inset + cfg.offsetX, cfg.offsetY)
+		fs:SetPoint("RIGHT", host, "RIGHT", -cfg.inset + cfg.offsetX, cfg.offsetY)
+	end
+end
+
+function Text:GetFormat()
+	return self.resolved.format or "none"
 end
 
 -- Data API ------------------------------------------------------------------
@@ -53,4 +101,14 @@ end
 
 function Text:SetTextColor(r, g, b, a)
 	self.frame:SetTextColor(r, g, b, a or 1)
+end
+
+-- Fills the text from its format with plain sample values.
+function Text:ShowSample(values)
+	self.frame:SetText(ns.Formats.Get(self:GetFormat()).sample(values))
+end
+
+-- Fills the text from its format with the live (possibly secret) unit data.
+function Text:ShowLive(unit)
+	self.frame:SetText(ns.Formats.Get(self:GetFormat()).text(unit))
 end

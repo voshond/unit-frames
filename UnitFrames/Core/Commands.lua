@@ -1,18 +1,27 @@
 local _, ns = ...
 
 local HELP = {
-	"/uf wb - open the Workbench (component gallery and test mode)",
+	"/uf wb - open the Workbench (component gallery, test mode, frame settings)",
 }
+
+-- Loads the Workbench on demand and shows it, optionally at an entry.
+function ns:OpenWorkbench(entryId)
+	local loaded, reason = C_AddOns.LoadAddOn("UnitFrames_Workbench")
+	if not loaded then
+		self:Print("could not load UnitFrames_Workbench:", reason or "unknown reason")
+		return
+	end
+	if entryId then
+		self.Workbench:Open(entryId)
+	else
+		self.Workbench:Toggle()
+	end
+end
 
 local commands = {}
 
 function commands.wb()
-	local loaded, reason = C_AddOns.LoadAddOn("UnitFrames_Workbench")
-	if not loaded then
-		ns:Print("could not load UnitFrames_Workbench:", reason or "unknown reason")
-		return
-	end
-	ns.Workbench:Toggle()
+	ns:OpenWorkbench()
 end
 commands.workbench = commands.wb
 

@@ -281,6 +281,14 @@ function Bar:HasSegment(key)
 	return self.segmentsByKey[key] ~= nil
 end
 
+-- The StatusBar of an enabled segment (for oUF sub-widgets), else nil.
+function Bar:GetSegmentBar(key)
+	local seg = self.segmentsByKey[key]
+	if seg and self.resolved.segments[key].enabled then
+		return seg.bar
+	end
+end
+
 -- Colour set by the data source (class colour, power colour, curve result).
 -- It survives re-styling until ClearColor.
 function Bar:SetColor(r, g, b, a)

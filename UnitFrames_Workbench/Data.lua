@@ -1,8 +1,7 @@
 local _, wb = ...
-local UF = UnitFrames
-local Util = UF.Util
 
--- Fake and live data helpers shared by the Workbench entries.
+-- Fake and live data helpers shared by the Workbench entries. Colours and
+-- text formats live in the core (UF.Colors, UF.Formats).
 local Data = {}
 wb.Data = Data
 
@@ -42,27 +41,6 @@ function Data.Classes()
 	return values
 end
 
-function Data.ClassColor(token)
-	local color = RAID_CLASS_COLORS[token]
-	if color then
-		return color.r, color.g, color.b, 1
-	end
-	return 0.5, 0.5, 0.5, 1
-end
-
-function Data.ThemeColor(key)
-	return Util.UnpackColor(UF.Config:GetTheme().colors[key])
-end
-
--- Theme colour keys per power type token (UnitPowerType's second return).
-Data.POWER_COLORS = {
-	MANA = "mana",
-	RAGE = "rage",
-	ENERGY = "energy",
-	FOCUS = "focus",
-	RUNIC_POWER = "runicPower",
-}
-
 Data.POWER_TYPES = {
 	{ "MANA", "Mana" },
 	{ "RAGE", "Rage" },
@@ -70,47 +48,6 @@ Data.POWER_TYPES = {
 	{ "FOCUS", "Focus" },
 	{ "RUNIC_POWER", "Runic power" },
 }
-
-function Data.PowerColor(token)
-	local key = Data.POWER_COLORS[token]
-	if key then
-		return Data.ThemeColor(key)
-	end
-	local color = PowerBarColor and PowerBarColor[token]
-	if color then
-		return color.r, color.g, color.b, 1
-	end
-	return Data.ThemeColor("mana")
-end
-
--- Health gradient as a colour curve (red -> yellow -> green). It works on
--- secret health through UnitHealthPercent(unit, true, curve). Rebuilt when
--- the theme colours change.
-local healthCurve
-UF.Events.RegisterCallback(Data, "ThemeChanged", function()
-	healthCurve = nil
-end)
-
-function Data.HealthCurve()
-	if not healthCurve then
-		healthCurve = C_CurveUtil.CreateColorCurve()
-		healthCurve:AddPoint(0, CreateColor(Data.ThemeColor("healthLow")))
-		healthCurve:AddPoint(0.5, CreateColor(Data.ThemeColor("healthMid")))
-		healthCurve:AddPoint(1, CreateColor(Data.ThemeColor("health")))
-	end
-	return healthCurve
-end
-
--- Maps 0..1 to 0..100, for "%" texts from UnitHealthPercent/UnitPowerPercent.
-local percentCurve
-function Data.PercentCurve()
-	if not percentCurve then
-		percentCurve = C_CurveUtil.CreateCurve()
-		percentCurve:AddPoint(0, 0)
-		percentCurve:AddPoint(1, 100)
-	end
-	return percentCurve
-end
 
 -- AbbreviateNumbers accepts secret numbers (it returns a secret string).
 function Data.Short(value)
