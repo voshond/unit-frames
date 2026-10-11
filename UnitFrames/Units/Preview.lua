@@ -24,7 +24,34 @@ function fillers.experience(row, _, v)
 	ns.UnitRows.Experience(row, v.xp, v.xpMax, v.rested)
 end
 
+-- Sample feeders per optional part (UnitFrame.PARTS).
+local parts = {}
+
+function parts.portrait(portrait)
+	if portrait:IsEnabled() then
+		portrait:SetUnit("player") -- the real character; there's no sample model
+	end
+end
+
 -- values.showCast = false hides the sample cast (it can cover the health bar).
+function parts.castbar(castbar, v)
+	if not castbar:IsEnabled() then return end
+	if v.showCast == false then
+		castbar:GetFrame():Hide()
+	else
+		local progress = v.castProgress
+		castbar:Preview({ name = v.spell, icon = v.spellIcon }, progress, string.format("%.1f", v.castTime * (1 - progress)))
+	end
+end
+
+function parts.auras(auras, v)
+	auras:ShowSample(v)
+end
+
+function parts.raidTarget(marker, v)
+	marker:SetIndex(v.raidTarget)
+end
+
 function Units:ShowSample(uf, values)
 	uf:SetRangeState(values.outOfRange ~= true, true)
 	uf:SetResting(uf.spec.resting and values.resting == true, values.restingAnimated == true)
@@ -34,22 +61,5 @@ function Units:ShowSample(uf, values)
 			row:ShowSample(values)
 		end
 	end
-	local portrait = uf:GetPortrait()
-	if portrait and portrait:IsEnabled() then
-		portrait:SetUnit("player") -- the real character; there's no sample model
-	end
-	local auras = uf:GetAuras()
-	if auras then auras:ShowSample(values) end
-	local raidTarget = uf:GetRaidTarget()
-	if raidTarget then raidTarget:SetIndex(values.raidTarget) end
-	local castbar = uf:GetCastbar()
-	if castbar and castbar:IsEnabled() then
-		if values.showCast == false then
-			castbar:GetFrame():Hide()
-		else
-			local progress = values.castProgress
-			castbar:Preview({ name = values.spell, icon = values.spellIcon }, progress,
-				string.format("%.1f", values.castTime * (1 - progress)))
-		end
-	end
+	for key, part in uf:Parts() do parts[key](part, values) end
 end

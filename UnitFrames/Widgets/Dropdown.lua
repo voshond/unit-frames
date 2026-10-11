@@ -40,10 +40,7 @@ function Dropdown:OnCreate(parent, opts)
 	self.frame = frame
 	frame:SetHeight(44)
 
-	self.label = Skin.FontString(frame)
-	self.label:SetPoint("TOPLEFT")
-	self.label:SetJustifyH("LEFT")
-	self.label:SetText(opts.label or "")
+	self:CreateLabel(frame, opts.label):SetPoint("TOPLEFT")
 
 	local dropdown = CreateFrame("DropdownButton", nil, frame, "WowStyle1DropdownTemplate")
 	dropdown:SetPoint("BOTTOMLEFT")
@@ -94,10 +91,6 @@ end
 
 function Dropdown:GetValue()
 	return self.value
-end
-
-function Dropdown:SetLabelColor(r, g, b)
-	self.label:SetTextColor(r, g, b)
 end
 
 -- Value list for a LibSharedMedia type, as used by schema media options.

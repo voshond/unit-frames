@@ -90,6 +90,55 @@ function Schema.Resolve(schema, config, theme, overrides)
 	return out
 end
 
+-- Composition. Each returns a new list and never mutates its inputs; the
+-- descriptors themselves are shared, so copy the result before changing them.
+
+-- Joins schemas in order.
+function Schema.Concat(...)
+	local out = {}
+	for i = 1, select("#", ...) do
+		for _, opt in ipairs((select(i, ...))) do out[#out + 1] = opt end
+	end
+	return out
+end
+
+-- Inserts `options` after the descriptor `afterKey`, or first when the schema
+-- has no such key.
+function Schema.Insert(schema, afterKey, options)
+	local out, inserted = {}, false
+	for _, opt in ipairs(schema) do
+		out[#out + 1] = opt
+		if opt.key == afterKey and not inserted then
+			for _, extra in ipairs(options) do out[#out + 1] = extra end
+			inserted = true
+		end
+	end
+	if not inserted then return Schema.Concat(options, schema) end
+	return out
+end
+
+-- Leaves out the descriptors whose keys are set in `keys`.
+function Schema.Without(schema, keys)
+	local out = {}
+	for _, opt in ipairs(schema) do
+		if not (keys and keys[opt.key]) then out[#out + 1] = opt end
+	end
+	return out
+end
+
+-- Replaces descriptor `key` with a copy carrying the changed `fields`.
+function Schema.Override(schema, key, fields)
+	local out = {}
+	for i, opt in ipairs(schema) do
+		if opt.key == key then
+			opt = Util.Copy(opt)
+			for field, value in pairs(fields) do opt[field] = value end
+		end
+		out[i] = opt
+	end
+	return out
+end
+
 function Schema.GetValues(opt)
 	if type(opt.values) == "function" then
 		return opt.values()

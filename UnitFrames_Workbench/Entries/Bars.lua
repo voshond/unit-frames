@@ -16,7 +16,7 @@ end
 
 local function Range(key, label, default, max, step)
 	return { key = key, type = "range", label = label, min = 0, max = max or 100, step = step or 1, default = default,
-		hidden = Data.HiddenWhenLive }
+		hidden = Data.IsLive }
 end
 
 local function NoUnit(row, unit)
@@ -34,20 +34,19 @@ local HEALTH_SPEC = Rows.Spec("health", { left = "name", right = "health:value" 
 
 local BORDER = { bar = { border = { enabled = true } } }
 
-local function ApplyHealthColor(row, d, unit, fraction)
+-- The standalone bar shows class colours only, also for NPCs.
+local function ApplySampleHealthColor(row, d, fraction)
 	if d.colorMode == "class" then
-		row:SetColor(Colors.Class(unit and select(2, UnitClass(unit)) or d.class))
+		row:SetColor(Colors.Class(d.class))
 	elseif d.colorMode == "gradient" then
-		local color
-		if unit then
-			color = UnitHealthPercent(unit, true, Colors.HealthCurve())
-		else
-			color = Colors.HealthCurve():Evaluate(fraction)
-		end
-		row:SetColor(color:GetRGB())
+		row:SetColor(Colors.HealthCurve():Evaluate(fraction):GetRGB())
 	else
 		row:ClearColor()
 	end
+end
+
+local function UnitClassColor(unit)
+	return Colors.Class(select(2, UnitClass(unit)))
 end
 
 local function ShowStaticHealth(handle, d, healthPct, healPct, absorbPct, healAbsorbPct)
@@ -56,7 +55,7 @@ local function ShowStaticHealth(handle, d, healthPct, healPct, absorbPct, healAb
 	local absorb = Percent(absorbPct, max)
 	Rows.SampleHealth(row, { health = cur, healthMax = max, heal = Percent(healPct, max),
 		absorb = absorb, healAbsorb = Percent(healAbsorbPct, max) })
-	ApplyHealthColor(row, d, nil, healthPct / 100)
+	ApplySampleHealthColor(row, d, healthPct / 100)
 	row:ShowSample({ name = d.name, level = 42, health = cur, healthMax = max })
 end
 
@@ -66,22 +65,8 @@ local function ShowLiveHealth(handle, d)
 	if not UnitExists(unit) then
 		return NoUnit(row, unit)
 	end
-	local maximumMode = UF.Units:GetHealthMaximumMode(row:GetBar())
-	if maximumMode == Enum.UnitMaximumHealthMode.WithAbsorbs then
-		-- Never add secret health and absorbs in Lua; let the engine do it.
-		handle.healthValues = handle.healthValues or CreateUnitHealPredictionCalculator()
-		handle.healthValues:SetMaximumHealthMode(maximumMode)
-		UnitGetDetailedHealPrediction(unit, "player", handle.healthValues)
-		row:SetRange(0, handle.healthValues:GetMaximumHealth())
-	else
-		row:SetRange(0, UnitHealthMax(unit))
-	end
-	row:SetValue(UnitHealth(unit))
-	row:SetSegmentValue("heal", UnitGetIncomingHeals(unit) or 0)
-	row:SetSegmentValue("absorb", UnitGetTotalAbsorbs(unit))
-	row:SetSegmentValue("healAbsorb", UnitGetTotalHealAbsorbs(unit))
-	ApplyHealthColor(row, d, unit)
-	row:ShowLive(unit)
+	handle.healthValues = handle.healthValues or CreateUnitHealPredictionCalculator()
+	Rows.LiveHealth(row, unit, handle.healthValues, d.colorMode, UnitClassColor)
 end
 
 Workbench:Register({
@@ -118,7 +103,7 @@ Workbench:Register({
 			{ key = "colorMode", type = "select", label = "Colour", default = "class", values = UF.Units.HEALTH_COLOR_MODES },
 			{ key = "class", type = "select", label = "Class", values = Data.Classes, default = "PALADIN",
 				hidden = function(d) return d.colorMode ~= "class" or Data.IsLive(d) end },
-			{ key = "name", type = "text", label = "Name", default = "Uther", hidden = Data.HiddenWhenLive },
+			{ key = "name", type = "text", label = "Name", default = "Uther", hidden = Data.IsLive },
 		},
 		update = function(handle, d)
 			if d.source == "static" then
@@ -155,12 +140,7 @@ local function ShowLivePower(handle, d)
 	if not UnitExists(unit) then
 		return NoUnit(row, unit)
 	end
-	local _, token = UnitPowerType(unit)
-	row:SetRange(0, UnitPowerMax(unit))
-	row:SetValue(UnitPower(unit))
-	row:SetSegmentValue("cost", 0)
-	row:SetColor(Colors.Power(token))
-	row:ShowLive(unit)
+	Rows.LivePower(row, unit)
 end
 
 Workbench:Register({
@@ -184,7 +164,7 @@ Workbench:Register({
 		schema = {
 			{ key = "source", type = "select", label = "Source", values = Data.Sources(true), default = "static" },
 			{ key = "powerType", type = "select", label = "Power type", values = Data.POWER_TYPES, default = "MANA",
-				hidden = Data.HiddenWhenLive },
+				hidden = Data.IsLive },
 			Range("max", "Max power", 12000, 100000, 100),
 			Range("power", "Power %", 70),
 			Range("cost", "Spell cost %", 15),

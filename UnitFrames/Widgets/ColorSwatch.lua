@@ -28,11 +28,8 @@ function ColorSwatch:OnCreate(parent, opts)
 	self.color:SetPoint("TOPLEFT", 1, -1)
 	self.color:SetPoint("BOTTOMRIGHT", -1, 1)
 
-	self.label = Skin.FontString(frame)
-	self.label:SetPoint("LEFT", swatch, "RIGHT", 6, 0)
+	self:CreateLabel(frame, opts.label):SetPoint("LEFT", swatch, "RIGHT", 6, 0)
 	self.label:SetPoint("RIGHT")
-	self.label:SetJustifyH("LEFT")
-	self.label:SetText(opts.label or "")
 
 	frame:SetScript("OnClick", function()
 		self:OpenPicker()
@@ -87,8 +84,4 @@ function ColorSwatch:OpenPicker()
 		end,
 	})
 	ready = true
-end
-
-function ColorSwatch:SetLabelColor(r, g, b)
-	self.label:SetTextColor(r, g, b)
 end

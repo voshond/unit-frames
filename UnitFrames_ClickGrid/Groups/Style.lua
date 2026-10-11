@@ -2,29 +2,35 @@ local _, CG = ...
 local UF, oUF = CG.UF, CG.UF.oUF
 CG.STYLE = "UnitFramesClickGrid"
 
+-- Fixed slots share the member's aura artwork config (including its on/off
+-- state) and add their own slot groups; both resolve against the theme.
 function CG:SlotConfig(uf)
-	local config = UF.Util.Copy(uf:GetAuras().resolved)
-	local slots = self.Config:Resolved().slots
-	for key, value in pairs(slots) do config[key] = value end
-	return config
+	return UF.Util.Merge(uf:ChildConfig("auras"), UF.Util.Copy(self.Config:Get().slots or {}))
+end
+
+-- Status indicators and fixed slots belong to the member UnitFrame, sharing
+-- its combat deferral, theme management and release.
+function CG:AddMemberExtras(uf, button, live)
+	local status = uf:Own(self.Status:New(button, self.Config:Get().indicators, { unitFrame = uf, live = live }))
+	local slots = uf:Own(self.Slots:New(button, self:SlotConfig(uf)))
+	return status, slots
+end
+
+-- Frame-free style schema of a member/target bar (cached).
+function CG:StyleSchema(kind)
+	self.styleSchemas = self.styleSchemas or {}
+	if not self.styleSchemas[kind] then
+		self.styleSchemas[kind] = UF.Components.UnitFrame.BuildSchema(UF.Units:GetSpec(self.definitions[kind]))
+	end
+	return self.styleSchemas[kind]
 end
 
 function CG:Measure()
-	self.styleSchemas, self.metrics = self.styleSchemas or {}, {}
+	self.metrics = {}
 	for _, kind in ipairs({ "member", "target" }) do
-		local spec = UF.Units:GetSpec(self.definitions[kind])
-		local schema = self.styleSchemas[kind] or UF.Components.UnitFrame.BuildSchema(spec)
-		self.styleSchemas[kind] = schema
-		local cfg = UF.Schema.Resolve(schema, self.Config:GetStyle(kind), UF.Config:GetTheme())
-		local layout = UF.UnitFrameLayout.Compute(spec, cfg)
+		local layout = UF.UnitFrameLayout.Compute(UF.Units:GetSpec(self.definitions[kind]), self.Config.styles[kind]:Resolved())
 		self.metrics[kind] = { width = layout.width, height = layout.height }
 	end
-end
-
-local function Tooltip(frame)
-	if not frame.__unit then return end
-	GameTooltip_SetDefaultAnchor(GameTooltip, frame)
-	if GameTooltip:SetUnit(frame.__unit) then GameTooltip:Show() end
 end
 
 oUF:RegisterStyle(CG.STYLE, function(frame)
@@ -35,15 +41,11 @@ oUF:RegisterStyle(CG.STYLE, function(frame)
 	frame.uf:SetCombatDeferred(true)
 	frame.uf:SetThemeManaged(true)
 	frame:RegisterForClicks("AnyUp")
-	frame:HookScript("OnEnter", Tooltip)
-	frame:HookScript("OnLeave", function() GameTooltip:Hide() end)
+	frame:HookScript("OnEnter", UF.Units.ShowTooltip)
+	frame:HookScript("OnLeave", UF.Units.HideTooltip)
 	UF.Units:Bind(frame)
 	if not target then
-		frame.ufcgStatus = CG.Status:Create(frame, frame.uf)
-		CG.Status:Apply(frame, frame.ufcgStatus, CG.Config:Resolved().indicators, true)
-		frame.ufcgSlots = CG.Slots:New(frame, CG:SlotConfig(frame.uf))
-		frame.ufcgSlots:SetCombatDeferred(true)
-		frame.ufcgSlots:SetThemeManaged(true)
+		frame.ufcgStatus, frame.ufcgSlots = CG:AddMemberExtras(frame.uf, frame, true)
 		UF.Units.SetElement(frame, "UFCG_Slots", frame.ufcgSlots)
 	end
 	CG.frames[#CG.frames + 1] = frame

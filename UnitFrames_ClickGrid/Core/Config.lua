@@ -9,50 +9,68 @@ Config.schema = {
 	{ key = "slots", type = "group", label = "Fixed friendly buff slots", schema = CG.SlotSchema },
 }
 
+-- Fixed slots also need parseable spell IDs, beyond the schema's types.
+local function CheckSlots(candidate)
+	for _, slot in pairs(UF.Schema.Resolve(CG.SlotSchema, candidate.slots)) do
+		local ids, reason = CG.Slots.ParseIDs(slot.spell)
+		if not ids then return false, reason end
+	end
+	return true
+end
+
+local function Changed(path)
+	CG:RequestRefresh()
+	UF.Events:Fire("ClickGridConfigChanged", path)
+end
+
+-- Every write path is a validated store: settings, the member/target bar
+-- styles and the current specialization's click bindings.
 function Config:Initialize()
 	self.db = UF.Config.db:RegisterNamespace("ClickGrid", {
 		profile = { version = 1, settings = {}, member = {}, target = {} },
 		char = { loadouts = {} },
 	})
+	local db = self.db
+	self.settings = UF.Store.New({
+		schema = self.schema, theme = true, validate = true, check = CheckSlots, changed = Changed,
+		read = function() return db.profile.settings end,
+		write = function(settings) db.profile.settings = settings end,
+	})
+	self.styles = {}
+	for _, kind in ipairs({ "member", "target" }) do
+		self.styles[kind] = UF.Store.New({
+			schema = function() return CG:StyleSchema(kind) end, theme = true, validate = true,
+			read = function() return db.profile[kind] end,
+			write = function(style) db.profile[kind] = style end,
+			changed = function() Changed(kind) end,
+		})
+	end
+	self.bindings = UF.Store.New({
+		schema = function() return CG.Bindings.schema end, validate = true,
+		read = function() return self:GetBindings() end,
+		write = function(bindings) db.char.loadouts[self:SpecKey()] = bindings end,
+		changed = function() Changed("bindings") end,
+	})
 end
 
 function Config:Get()
-	return self.db.profile.settings
+	return self.settings:Read()
 end
 
 function Config:Resolved()
-	return UF.Schema.Resolve(self.schema, self:Get(), UF.Config:GetTheme())
+	return self.settings:Resolved()
 end
 
 function Config:Set(path, value)
-	local candidate = UF.Util.Copy(self:Get())
-	if value == nil then UF.Util.ClearPath(candidate, path) else UF.Util.SetPath(candidate, path, value) end
-	local errors = UF.Schema.Validate(self.schema, candidate)
-	if #errors > 0 then return false, table.concat(errors, "; ") end
-	local slots = UF.Schema.Resolve(CG.SlotSchema, candidate.slots)
-	for _, slot in pairs(slots) do
-		local ids, reason = CG.Slots.ParseIDs(slot.spell)
-		if not ids then return false, reason end
-	end
-	self.db.profile.settings = candidate
-	CG:RequestRefresh()
-	UF.Events:Fire("ClickGridConfigChanged", path)
-	return true
+	return self.settings:Set(path, value)
 end
 
 function Config:GetStyle(kind)
-	return self.db.profile[kind]
+	return self.styles[kind]:Read()
 end
 
 function Config:SetStyle(kind, path, value)
-	local candidate = UF.Util.Copy(self:GetStyle(kind))
-	if value == nil then UF.Util.ClearPath(candidate, path) else UF.Util.SetPath(candidate, path, value) end
-	local errors = UF.Schema.Validate(CG.styleSchemas[kind], candidate)
-	if #errors > 0 then return false, table.concat(errors, "; ") end
-	self.db.profile[kind] = candidate
-	CG:RequestRefresh()
-	UF.Events:Fire("ClickGridConfigChanged", kind)
-	return true
+	return self.styles[kind]:Set(path, value)
 end
 
 function Config:SpecKey()
@@ -71,13 +89,5 @@ function Config:GetBindings()
 end
 
 function Config:SetBinding(button, modifier, reaction, field, value)
-	local path = "button" .. button .. "." .. modifier .. "." .. reaction .. "." .. field
-	local candidate = UF.Util.Copy(self:GetBindings())
-	if value == nil then UF.Util.ClearPath(candidate, path) else UF.Util.SetPath(candidate, path, value) end
-	local errors = UF.Schema.Validate(CG.Bindings.schema, candidate)
-	if #errors > 0 then return false, table.concat(errors, "; ") end
-	self.db.char.loadouts[self:SpecKey()] = candidate
-	CG:RequestRefresh()
-	UF.Events:Fire("ClickGridConfigChanged", "bindings")
-	return true
+	return self.bindings:Set("button" .. button .. "." .. modifier .. "." .. reaction .. "." .. field, value)
 end

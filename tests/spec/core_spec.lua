@@ -163,3 +163,29 @@ describe("UnitFrames_Media", function()
 		assert.is_not_nil(io.open("UnitFrames_Media/Fonts/RobotoCondensed-OFL.txt"))
 	end)
 end)
+
+describe("Schema composition", function()
+	local Schema
+	before_each(function()
+		Schema = Helpers.LoadAddon().Schema
+	end)
+
+	local function Keys(schema)
+		local keys = {}
+		for i, opt in ipairs(schema) do keys[i] = opt.key end
+		return table.concat(keys, ",")
+	end
+
+	it("inserts, removes, joins and overrides without touching the inputs", function()
+		local base = { { key = "enabled" }, { key = "color", inherit = "colors.health" }, { key = "size" } }
+		assert.equals("enabled,a,b,color,size", Keys(Schema.Insert(base, "enabled", { { key = "a" }, { key = "b" } })))
+		assert.equals("a,enabled,color,size", Keys(Schema.Insert(base, "missing", { { key = "a" } })))
+		assert.equals("enabled,size", Keys(Schema.Without(base, { color = true })))
+		assert.equals("enabled,color,size,x", Keys(Schema.Concat(base, { { key = "x" } })))
+		local overridden = Schema.Override(base, "color", { inherit = "colors.cast" })
+		assert.equals("colors.cast", overridden[2].inherit)
+		assert.equals("colors.health", base[2].inherit)
+		assert.equals(base[1], overridden[1])
+		assert.equals("enabled,color,size", Keys(base))
+	end)
+end)

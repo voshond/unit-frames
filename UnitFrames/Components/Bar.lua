@@ -93,13 +93,7 @@ function Bar.BuildSchema(spec)
 	spec = spec or {}
 	local schema = Util.Copy(Bar.schema)
 	if spec.colorInherit then
-		for i, opt in ipairs(schema) do
-			if opt.key == "color" then
-				local copy = Util.Copy(opt)
-				copy.inherit = spec.colorInherit
-				schema[i] = copy
-			end
-		end
+		schema = ns.Schema.Override(schema, "color", { inherit = spec.colorInherit })
 	end
 	if spec.segments and #spec.segments > 0 then
 		local segmentSchema = {}

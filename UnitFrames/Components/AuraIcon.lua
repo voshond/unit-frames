@@ -60,9 +60,12 @@ function AuraIcon.DispelColors(cfg)
 	return colors
 end
 
+-- kind: the owner's key for this button's settings ("buffs", "slot1", ...).
+-- opts: harmful (debuff art and dispel tint), clickThrough, cancelBuffs.
 function AuraIcon.Create(button, kind, preview, opts)
 	opts = opts or {}
 	button.ufKind = kind
+	button.ufHarmful = opts.harmful == true
 	button.ufPreview = preview and true or false
 	-- The button includes the below-icon timer in its layout bounds. The
 	-- artwork stays square, even when the container flows upwards.
@@ -109,7 +112,7 @@ function AuraIcon.Create(button, kind, preview, opts)
 		-- The native secure click handler cancels the button's current aura;
 		-- addon code never reads its unit data or secret instance ID.
 		-- Cancel on press before propagated input can start world mouselook.
-		if opts.cancelBuffs and kind == "buffs" then
+		if opts.cancelBuffs and not button.ufHarmful then
 			button:SetCancelAuraButtons("RightButtonDown")
 		end
 	end
@@ -152,7 +155,7 @@ function AuraIcon.ApplyDispelBorder(button, cfg, size, dispelColors)
 		for _, texture in ipairs(button.ufDispelTextures) do button:RemoveDispelTypeTexture(texture) end
 	end
 	button.ufDispelTextures = {}
-	local enabled = cfg.border.enabled and cfg.dispelBorder and button.ufKind == "debuffs"
+	local enabled = cfg.border.enabled and cfg.dispelBorder and button.ufHarmful
 	button.ufBorder:SetShown(enabled)
 	if not enabled then
 		button.ufBorder:ClearBackdrop()
@@ -191,7 +194,7 @@ function AuraIcon.DrawSample(button, aura, dispelColors)
 	else
 		button.ufCooldown:Hide()
 	end
-	if button.ufKind == "debuffs" then
+	if button.ufHarmful then
 		local color = dispelColors[aura.dispelName or "None"] or dispelColors.None
 		for _, texture in ipairs(button.ufDispelTextures) do texture:SetVertexColor(color:GetRGBA()) end
 	end

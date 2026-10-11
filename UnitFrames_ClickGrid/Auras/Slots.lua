@@ -3,9 +3,8 @@ local UF = CG.UF
 local AuraIcon = UF.AuraIcon
 local Slots = UF.Component:Extend("FriendlyAuraSlots")
 CG.Slots = Slots
-Slots.schema = { { key = "enabled", type = "toggle", label = "Enabled", default = true } }
-for _, descriptor in ipairs(AuraIcon.schema) do Slots.schema[#Slots.schema + 1] = UF.Util.Copy(descriptor) end
-for _, descriptor in ipairs(CG.SlotSchema) do Slots.schema[#Slots.schema + 1] = descriptor end
+Slots.schema = UF.Schema.Concat({ { key = "enabled", type = "toggle", label = "Enabled", default = true } },
+	UF.Util.Copy(AuraIcon.schema), CG.SlotSchema)
 
 function Slots.ParseIDs(text)
 	local ids, count = {}, 0

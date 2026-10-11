@@ -354,20 +354,16 @@ describe("ClickGrid companion", function()
 		local spec = UF.Units:GetSpec(UF.Units.definitions.player)
 		spec.raidTarget = nil
 		local uf = UF.Components.UnitFrame:New(UIParent, { portrait = { enabled = true } }, spec)
-		local frame = uf:GetFrame()
-		local widgets = CG.Status:Create(frame, uf)
-		local cfg = UF.Util.Copy(CG.Config:Resolved().indicators)
-		cfg.role, cfg.rolePosition = true, "PORTRAIT_BOTTOMLEFT"
-		CG.Status:Apply(frame, widgets, cfg, false)
-		local host = widgets.GroupRoleIndicator.ufcgHost
+		local status = uf:Own(CG.Status:New(uf:GetFrame(), { role = true, rolePosition = "PORTRAIT_BOTTOMLEFT" }, { unitFrame = uf }))
+		local host = status.GroupRoleIndicator.ufcgHost
 		assert.is_true(host:IsShown())
 		assert.equals("BOTTOMLEFT", host:GetPoint())
 		assert.equals(uf:GetLayoutContext().portrait.frame, select(2, host:GetPoint()))
 		uf:Apply({ portrait = { enabled = false } })
-		CG.Status:LayoutIcons(frame, widgets, cfg)
+		status:LayoutIcons()
 		assert.is_false(host:IsShown())
-		CG.Status:Release(widgets)
 		uf:Release()
+		assert.is_true(status.released)
 	end)
 
 	it("supports portrait role anchors and defers role layout changes in combat", function()
@@ -457,6 +453,21 @@ describe("ClickGrid companion", function()
 		assert.equals(22, leader.ufcgHost:GetWidth())
 	end)
 
+	it("styles fixed slots from the member's aura config, inheriting the theme", function()
+		local frame = CG.headers.party:GetAttribute("child1").Member
+		local config = CG:SlotConfig(frame.uf)
+		assert.is_nil(config.font, "inherited values stay inherited")
+		assert.equals("CENTER", config.durationPosition, "member aura group defaults carry over")
+		UF.Config:SetThemeValue("font", "Arial Narrow")
+		assert.equals("Arial Narrow", frame.ufcgSlots.resolved.font)
+		CG.Config:SetStyle("member", "auras.font", "Morpheus")
+		assert.equals("Morpheus", frame.ufcgSlots.resolved.font)
+		CG.Config:SetStyle("member", "auras.enabled", false)
+		assert.is_false(frame.ufcgSlots:IsEnabled())
+		assert.equals(frame.uf, frame.ufcgSlots.componentOwner)
+		assert.equals(frame.uf, frame.ufcgStatus.componentOwner)
+	end)
+
 	it("keeps profile style separate from character/spec bindings", function()
 		CG.Config:SetStyle("member", "width", 190)
 		CG.Config:SetBinding(1, "none", "friendly", "spell", "2061")
@@ -543,8 +554,7 @@ describe("ClickGrid Workbench", function()
 		CG.Config:Set("panel.mode", "flat")
 		CG.Config:Set("panel.columns", 5)
 		CG.Config:Set("panel.rows", 5)
-		wb.state.data.count = 25
-		wb:UpdateData()
+		wb.dataTarget.set("count", 25)
 		local preview, header = wb.handle, CG.headers.raid
 		assert.is_false(preview.labels.raid:IsShown())
 		assert.is_false(header.ufcgLabel:IsShown())
@@ -574,13 +584,11 @@ describe("ClickGrid Workbench", function()
 		CG.Config:Set("panel.mode", "flat")
 		wb.styleTarget.set("panel.columns", 5)
 		wb.styleTarget.set("panel.rows", 5)
-		wb.state.data.count = 25
-		wb:UpdateData()
+		wb.dataTarget.set("count", 25)
 		local grid = wb.handle.layout.sections.raid.grid
 		assert.equals(5, grid.columns)
 		assert.equals(5, grid.rows)
-		wb.state.data.count = 40
-		wb:UpdateData()
+		wb.dataTarget.set("count", 40)
 		grid = wb.handle.layout.sections.raid.grid
 		assert.equals(8, grid.columns)
 		assert.equals(5, grid.rows)
@@ -591,8 +599,7 @@ describe("ClickGrid Workbench", function()
 		assert.equals(5, grid.columns)
 		assert.equals(8, grid.rows)
 		assert.equals(40, #wb.handle.cells)
-		wb.state.data.count = 25
-		wb:UpdateData()
+		wb.dataTarget.set("count", 25)
 		assert.equals(5, wb.handle.layout.sections.raid.grid.rows)
 		assert.is_false(wb.handle.cells[26].frame:IsShown())
 	end)
@@ -601,8 +608,7 @@ describe("ClickGrid Workbench", function()
 		wb.stage:SetSize(700, 400)
 		wb:GetDB().stage.scale = 2
 		CG.Config:SetStyle("member", "width", 600)
-		wb.state.data.count = 40
-		wb:UpdateData()
+		wb.dataTarget.set("count", 40)
 		local preview = wb.handle
 		local width, height = preview.frame:GetSize()
 		local expected = math.min(2, 668 / width, 368 / height)
@@ -622,11 +628,9 @@ describe("ClickGrid Workbench", function()
 
 	it("refits on count changes and restores normal scale after leaving the group preview", function()
 		wb.stage:SetSize(500, 400)
-		wb.state.data.count = 40
-		wb:UpdateData()
+		wb.dataTarget.set("count", 40)
 		assert.is_true(wb.holder:GetScale() < 1)
-		wb.state.data.count = 1
-		wb:UpdateData()
+		wb.dataTarget.set("count", 1)
 		assert.equals(1, wb.holder:GetScale())
 		local old = wb.handle
 		wb:Select("clickgrid.member")
@@ -639,8 +643,7 @@ describe("ClickGrid Workbench", function()
 
 	it("defers stage fitting during combat and resumes without touching native aura dimensions", function()
 		wb.stage:SetSize(700, 400)
-		wb.state.data.count = 40
-		wb:UpdateData()
+		wb.dataTarget.set("count", 40)
 		local before = wb.holder:GetScale()
 		Mock.inCombat = true
 		wb.stage:SetSize(400, 300)
@@ -654,8 +657,7 @@ describe("ClickGrid Workbench", function()
 	end)
 
 	it("shares custom title text and styling with live headers", function()
-		wb.state.data.count = 10
-		wb:UpdateData()
+		wb.dataTarget.set("count", 10)
 		wb.styleTarget.set("titles.group1", "Healing team")
 		CG.Config:Set("titles.size", 17)
 		CG.Config:Set("titles.outline", "OUTLINE")
@@ -681,8 +683,7 @@ describe("ClickGrid Workbench", function()
 	end)
 
 	it("keeps below-title preview placement inside the solo panel", function()
-		wb.state.data.count = 1
-		wb:UpdateData()
+		wb.dataTarget.set("count", 1)
 		CG.Config:Set("titles.position", "below")
 		CG.Config:Set("titles.offsetX", 4)
 		CG.Config:Set("titles.offsetY", -2)
@@ -698,11 +699,10 @@ describe("ClickGrid Workbench", function()
 			CG.Config:Set("panel.flow", flow)
 			CG.Config:Set("titles.position", "below")
 			for _, source in ipairs({ "static", "animated", "live" }) do
-				wb.state.data.source = source
+				wb.dataTarget.set("source", source)
 				for _, count in ipairs({ 2, 5, 3, 1 }) do
 					Mock.inParty, Mock.groupSize = count > 1, count
-					wb.state.data.count = count
-					wb:UpdateData()
+					wb.dataTarget.set("count", count)
 					local preview, cfg = wb.handle, CG.Config:Resolved()
 					local section = preview.layout.sections.party
 					assert.equals(count, section.grid.rows)
@@ -724,7 +724,7 @@ describe("ClickGrid Workbench", function()
 		assert.same(UF.Config:GetTheme().colors.hostile, target.bar.__state.color)
 		assert.has_no_error(function()
 			wb:Select("clickgrid.target")
-			wb.state.data.source = "animated"
+			wb.dataTarget.set("source", "animated")
 			wb:OnUpdate(0.2)
 		end)
 		assert.same(UF.Config:GetTheme().colors.hostile, wb.handle.cells[1].target:GetRow("health"):GetBar().bar.__state.color)
@@ -732,10 +732,13 @@ describe("ClickGrid Workbench", function()
 		assert.same({ UF.Colors.Class("MAGE") }, { UF.Colors.Class(Mock.Secret("MAGE")) })
 	end)
 
-	it("does not tick or apply config to an absent preview handle", function()
-		local preview = wb.handle
-		preview:Release()
-		wb.handle = nil
+	it("does not tick or apply config after a preview failed to build", function()
+		local entry = wb.entries["clickgrid.panel"]
+		local create = entry.create
+		entry.create = function() error("preview construction failed") end
+		assert.has_error(function() wb:Select("clickgrid.panel") end)
+		entry.create = create
+		assert.is_nil(wb.session)
 		assert.has_no_error(function()
 			wb:OnUpdate(0.005)
 			CG.Config:Set("panel.columns", 2)
@@ -770,9 +773,11 @@ describe("ClickGrid Workbench", function()
 		assert.equals(0, name.leadingSpace)
 		CG.Config:SetStyle("member", "health.left.enabled", true)
 		assert.equals(16, name.leadingSpace)
+		local status = cell.status
 		wb:Select("unit.player")
 		assert.equals(0, name.leadingSpace)
-		assert.is_false(role.ufcgOverlay:IsShown())
+		assert.is_true(status.released)
+		assert.is_false(status:GetFrame():IsShown())
 	end)
 
 	it("matches leader placement in samples and cleans up combined name reservations", function()
@@ -793,8 +798,7 @@ describe("ClickGrid Workbench", function()
 	end)
 
 	it("previews 40 members, animated timers, configured slots and full-health shields", function()
-		wb.state.data.count = 40
-		wb:UpdateData()
+		wb.dataTarget.set("count", 40)
 		assert.equals(40, #wb.handle.cells)
 		CG.Config:Set("slots.slot1.spell", "139")
 		CG.Config:Set("slots.slot1.enabled", true)
@@ -804,23 +808,24 @@ describe("ClickGrid Workbench", function()
 		local remaining = cell.member:GetAuras().previewData.buffs[3].remaining
 		wb:OnUpdate(0.2)
 		assert.equals(remaining, cell.member:GetAuras().previewData.buffs[3].remaining)
-		wb.state.data.source = "animated"
+		wb.dataTarget.set("source", "animated")
 		wb:OnUpdate(0.2)
 		assert.is_true(remaining ~= cell.member:GetAuras().previewData.buffs[3].remaining)
 		CG.Config:SetStyle("member", "health.bar.segments.absorb.placement", "append")
-		wb.state.data.source = "static"
-		wb:UpdateData()
+		wb.dataTarget.set("source", "static")
 		assert.equals(28800, cell.member:GetRow("health"):GetBar():GetStatusBar().__state.max)
 	end)
 
 	it("shows live opaque data without secret arithmetic and defers source changes in combat", function()
 		CG.headers.party:Assign(1, "player")
-		wb.state.data.source = "live"
-		assert.has_no_error(function() wb:UpdateData() end)
+		assert.has_no_error(function() wb.dataTarget.set("source", "live") end)
 		assert.is_true(Mock.IsSecret(wb.handle.cells[1].member:GetRow("health"):GetBar():GetStatusBar().__state.value))
 		Mock.inCombat = true
-		wb.state.data.count, wb.state.data.source = 40, "static"
-		assert.has_no_error(function() wb:UpdateData(); wb:Select("clickgrid.target") end)
+		assert.has_no_error(function()
+			wb.dataTarget.set("count", 40)
+			wb.dataTarget.set("source", "static")
+			wb:Select("clickgrid.target")
+		end)
 		assert.equals(0, #wb.handle.cells)
 		Mock.inCombat = false
 		Mock.FireEvent("PLAYER_REGEN_ENABLED")
@@ -831,8 +836,7 @@ describe("ClickGrid Workbench", function()
 	it("previews sparse live raids without assuming consecutive subgroup occupancy", function()
 		Mock.inRaid, Mock.groupSize = true, 4
 		CG.headers.group8:Assign(1, "raid1")
-		wb.state.data.source = "live"
-		wb:UpdateData()
+		wb.dataTarget.set("source", "live")
 		assert.equals(40, #wb.handle.cells)
 		assert.is_true(wb.handle.cells[36].member:GetFrame():IsShown())
 		assert.equals("raid1", wb.handle.cells[36].member:GetAuras().containers.buffs:GetUnit())
@@ -848,6 +852,29 @@ describe("ClickGrid Workbench", function()
 		wb.styleTarget.set("friendly.spell", "2061")
 		assert.equals(2061, CG.headers.party:GetAttribute("child1").Member:GetAttribute("spell-heal1"))
 		assert.has_no_error(function() wb:Select("unit.player"); wb:Select("clickgrid.bindings") end)
+	end)
+
+	it("edits another binding cell and refreshes on saves without rebuilding the preview", function()
+		wb:Select("clickgrid.bindings")
+		local session, handle = wb.session, wb.handle
+		handle.buttons["2:3"].opts.onClick()
+		assert.equals(3, wb.styleTarget.resolved().button)
+		assert.equals("shift", wb.styleTarget.resolved().modifier)
+		wb.styleTarget.set("friendly.action", "focus")
+		assert.equals(session, wb.session)
+		assert.is_false(handle.released == true)
+		assert.equals("focus", CG.Config:GetBindings().button3.shift.friendly.action)
+		CG.Config:SetBinding(1, "none", "hostile", "action", "assist")
+		assert.equals(session, wb.session)
+		assert.is_true(handle.buttons["1:1"].text:GetText():find("target", 1, true) ~= nil)
+	end)
+
+	it("restyles only the ClickGrid entries when ClickGrid settings change", function()
+		wb:Select("unit.player")
+		local session = wb.session
+		CG.Config:Set("panel.columns", 3)
+		assert.equals(session, wb.session)
+		assert.is_false(session.released == true)
 	end)
 
 	it("registers entries when Workbench was loaded before the companion", function()

@@ -12,10 +12,7 @@ function EditBox:OnCreate(parent, opts)
 	self.frame = frame
 	frame:SetHeight(38)
 
-	self.label = Skin.FontString(frame)
-	self.label:SetPoint("TOPLEFT")
-	self.label:SetJustifyH("LEFT")
-	self.label:SetText(opts.label or "")
+	self:CreateLabel(frame, opts.label):SetPoint("TOPLEFT")
 
 	local input = CreateFrame("EditBox", nil, frame, "BackdropTemplate")
 	input:SetHeight(20)
@@ -53,8 +50,4 @@ end
 
 function EditBox:GetValue()
 	return self.value
-end
-
-function EditBox:SetLabelColor(r, g, b)
-	self.label:SetTextColor(r, g, b)
 end

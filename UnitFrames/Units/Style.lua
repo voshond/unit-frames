@@ -30,15 +30,7 @@ local function UpdateHealthColor(self, _, unit)
 	if not unit or self.__unit ~= unit then -- same guard as oUF's own elements
 		return
 	end
-	local row = self.uf:GetRow("health")
-	local mode = self.uf:GetRowConfig("health").colorMode
-	if mode == "class" then
-		row:SetColor(Colors.Unit(unit))
-	elseif mode == "gradient" then
-		row:SetColor(UnitHealthPercent(unit, true, Colors.HealthCurve()):GetRGB())
-	else
-		row:ClearColor()
-	end
+	ns.UnitRows.LiveHealthColor(self.uf:GetRow("health"), self.uf:GetRowConfig("health").colorMode, unit)
 end
 
 local function UpdatePowerColor(self, _, unit)
@@ -61,7 +53,7 @@ function widgets.health(row)
 	-- Both placements must show shields at full health. Appending reserves
 	-- shield space inside the frame by including it in the native bar scale.
 	-- Set initial oUF options AND the existing calculator when re-styling.
-	health.maximumHealthClampMode = Units:GetHealthMaximumMode(bar)
+	health.maximumHealthClampMode = ns.UnitRows.HealthMaximumMode(bar)
 	health.damageAbsorbClampMode = Enum.UnitDamageAbsorbClampMode.MaximumHealth
 	if health.values then
 		health.values:SetMaximumHealthMode(health.maximumHealthClampMode)
@@ -119,7 +111,16 @@ local function TagRow(frame, row, rowEnabled)
 	end
 end
 
--- Points oUF elements and tags at the current rows, portrait and castbar.
+-- oUF element per optional part (UnitFrame.PARTS) and the widget it drives;
+-- without `widget` the element drives the part component itself.
+local PART_ELEMENTS = {
+	portrait = { element = "Portrait", widget = function(portrait) return portrait:GetWidget() end },
+	castbar = { element = "UF_Castbar" },
+	auras = { element = "UF_Auras" },
+	raidTarget = { element = "RaidTargetIndicator", widget = function(marker) return marker:GetWidget() end },
+}
+
+-- Points oUF elements and tags at the current rows and parts.
 function Units:Bind(frame)
 	local uf = frame.uf
 	SetElement(frame, "UF_Resting", uf.spec.resting and uf.resolved.resting.enabled and uf or nil)
@@ -130,21 +131,10 @@ function Units:Bind(frame)
 		SetElement(frame, ELEMENTS[key], widget, rebind)
 		TagRow(frame, row, cfg.enabled)
 	end
-	local portrait = uf:GetPortrait()
-	if portrait then
-		SetElement(frame, "Portrait", portrait:IsEnabled() and portrait:GetWidget() or nil)
-	end
-	local castbar = uf:GetCastbar()
-	if castbar then
-		SetElement(frame, "UF_Castbar", castbar:IsEnabled() and castbar or nil)
-	end
-	local auras = uf:GetAuras()
-	if auras then
-		SetElement(frame, "UF_Auras", auras:IsEnabled() and auras or nil)
-	end
-	local raidTarget = uf:GetRaidTarget()
-	if raidTarget then
-		SetElement(frame, "RaidTargetIndicator", raidTarget:IsEnabled() and raidTarget:GetWidget() or nil)
+	for key, part in uf:Parts() do
+		local binding = PART_ELEMENTS[key]
+		local widget = part:IsEnabled() and (binding.widget and binding.widget(part) or part) or nil
+		SetElement(frame, binding.element, widget)
 	end
 	local range = uf.resolved.range
 	SetElement(frame, "UF_Range", range.enabled and ns.Caps.booleanAlpha and uf or nil,
@@ -189,25 +179,21 @@ function Units:CopyPlayerSettings(unit)
 	local overrides = ns.Config:GetUnitConfig("player")
 	local source = ns.Schema.Resolve(player.uf:GetSchema(), overrides, theme)
 	local defaults = ns.Schema.Resolve(schema, nil, theme)
-	local copied = CopySettings(schema, source, overrides, defaults)
 	-- Positions live separately in Edit Mode. The target's schema excludes XP.
-	local config = ns.Config:GetUnitConfig(unit)
-	wipe(config)
-	ns.Util.Merge(config, copied)
-	ns.Events:Fire("UnitConfigChanged", unit)
-	return true
+	return ns.Config:UnitStore(unit):Replace(CopySettings(schema, source, overrides, defaults))
 end
 
--- Unit tooltip. Blizzard's UnitFrame_OnEnter reads self.unit, which oUF frames
--- don't have; oUF keeps the current unit in __unit.
-local function OnEnter(self)
-	GameTooltip_SetDefaultAnchor(GameTooltip, self)
-	if GameTooltip:SetUnit(self.__unit) then
+-- Unit tooltip hooks for oUF frames. Blizzard's UnitFrame_OnEnter reads
+-- self.unit, which oUF frames don't have; oUF keeps the current unit in __unit.
+function Units.ShowTooltip(frame)
+	if not frame.__unit then return end
+	GameTooltip_SetDefaultAnchor(GameTooltip, frame)
+	if GameTooltip:SetUnit(frame.__unit) then
 		GameTooltip:Show()
 	end
 end
 
-local function OnLeave()
+function Units.HideTooltip()
 	GameTooltip:Hide()
 end
 
@@ -215,8 +201,8 @@ oUF:RegisterStyle(Units.STYLE, function(frame, unit)
 	frame.uf = Units:CreateFrame(unit, UIParent, frame)
 	frame.uf:SetThemeManaged(true)
 	frame:RegisterForClicks("AnyUp")
-	frame:HookScript("OnEnter", OnEnter)
-	frame:HookScript("OnLeave", OnLeave)
+	frame:HookScript("OnEnter", Units.ShowTooltip)
+	frame:HookScript("OnLeave", Units.HideTooltip)
 	Units:Bind(frame)
 end)
 

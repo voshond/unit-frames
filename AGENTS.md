@@ -5,7 +5,7 @@
 - This is **UnitFrames for WoW Forever**, currently targeting TOC Interface `16001`. Use Lua 5.1-compatible code. Forever uses modern Retail/Midnight UI APIs and secret-value restrictions; do not assume Classic-era APIs work because the client directory is `_classic_beta_`.
 - Read the relevant implementation and tests before changing it. `README.md` describes current features. `docs/01-investigation-api-and-libraries.md`, `docs/02-architecture-plan.md`, and `docs/03-reference-nurfed-forever.md` explain the design and API findings, but contain dated research and unimplemented plans. Current code wins when they disagree.
 - `docs/WoW unit frames addon libraries.md` is the long conversation history, not a specification to implement wholesale. Search specific topics rather than loading the entire file.
-- Verify unfamiliar or changing APIs against the actual client or Blizzard UI/API documentation, preferably the `forever` branch of `Gethe/wow-ui-source`. see files cloned into `examples/wow-ui-src-live`. Never invent API signatures or texture paths.
+- Verify unfamiliar or changing APIs against the actual client or Blizzard UI/API documentation, preferably the `forever` branch of `Gethe/wow-ui-source` cloned into `examples/wow-ui-src-live` for local access. Never invent API signatures or texture paths.
 - Preserve existing worktree changes. Do not commit, push, update dependencies, or install into the game merely because you were asked to explain or review something.
 
 ## Code map and conventions
@@ -13,7 +13,7 @@
 - `UnitFrames/Core/`: namespace/bootstrap, schema, AceDB configuration, theme, media, colours and text formats. Core Lua files receive `local _, ns = ...`; the public `UnitFrames` handle exposes that namespace to companion addons.
 - `UnitFrames/Components/`: reusable visual building blocks. Keep them independent of oUF bindings; their configuration and data APIs also serve previews.
 - `UnitFrames/Widgets/`: the shared settings toolkit and schema-driven inspector. Reuse these controls instead of introducing a separate settings framework.
-- `UnitFrames/Units/Definitions.lua`: unit composition, structural specs, defaults and sample data. Current unit keys/order are `player`, `pet`, `target`, `targettarget`, `focus`; XP is player-only. Deep-copy shared definitions before changing per-unit defaults.
+- `UnitFrames/Units/Definitions.lua`: unit composition, structural specs, defaults and sample data. Current unit keys/order are `player`, `pet`, `target`, `targettarget`, `focus`, `focustarget`; XP is player-only. Derive definitions with `Units:Derive` (row overrides by key) rather than changing shared ones.
 - `UnitFrames/Units/Style.lua`: oUF style, spawning, element binding, tags and live refresh. `Units/Elements.lua` implements custom data elements; `Units/Preview.lua` feeds sample values into the same components.
 - `UnitFrames/Integration/EditMode.lua`: layout-specific positions and snapping through LibEditMode.
 - `UnitFrames_Workbench/`: load-on-demand settings and previews, opened with `/uf wb`. `Entries/Units.lua` edits the real saved unit style; `Data.lua` defines preview sources. Keep static, animated and live previews consistent with runtime behaviour.
@@ -26,7 +26,7 @@
 - Define settings once in schemas so defaults, resolution, validation and generated controls agree. Resolution order is explicit config, group default overrides, inherited theme, descriptor default.
 - `config` stores user overrides; `resolved` is effective configuration; `spec` is structural and fixed for an instance. Do not mutate caller config or shared schema/default tables during application.
 - Component lifecycle is `New`/`OnCreate`, repeatable `Apply`/`OnApply`, `SetEnabled`, then `Release`/`OnRelease`. Applying the same config twice must be safe. Release must remove pending work and callbacks as applicable; released instances must not be used again.
-- Use `Config:SetUnitValue`/`SetThemeValue` and existing events rather than bypassing refresh. Profile changes, theme changes, resets and toggles must update both live widgets and previews.
+- Use `Config:SetUnitValue`/`SetThemeValue`, settings stores (`Config:UnitStore`, ClickGrid's `Config.settings/styles/bindings`) and existing events rather than bypassing refresh or writing saved tables directly. Profile changes, theme changes, resets and toggles must update both live widgets and previews.
 - Style is stored in AceDB `UnitFramesDB`; positions are separate, per Edit Mode layout. **Copy player settings** is a one-time independent copy of effective style, accounting for different unit defaults, excluding positions and player-only XP. Preserve theme inheritance where possible.
 - When rebinding oUF, disable/re-enable elements if their widgets or prediction sub-widgets change. Updating only an element field can leave stale subscriptions.
 
@@ -35,7 +35,7 @@
 - Never do Lua arithmetic, comparisons, truth tests on secret booleans, table indexing/keying, or string parsing on live opaque unit values. Use native secret-aware StatusBars, duration objects, formatters, colour curves and prediction calculators. Arithmetic on deliberately plain sample values is fine.
 - Prefer existing capability checks in `ns.Caps` for optional APIs. Do not add blanket `pcall` fallbacks that conceal incorrect API usage; the aura restyling path has a specific exception for denied access to existing buttons.
 - oUF owns secure unit buttons, targeting/menu clicks, visibility watches and unit updates. Use its current unit token (`frame.__unit`) and lifecycle instead of recreating these systems. Target-of-target uses oUF polling; pet visibility/replacement updates come from oUF's pet handling.
-- Respect combat lockdown. Defer protected position changes and restricted aura restyling until `PLAYER_REGEN_ENABLED`; do not manipulate protected Blizzard scripts/anchors as a workaround.
+- Respect combat lockdown. Defer protected position changes and restricted aura restyling through `ns.AfterCombat` (runs on `PLAYER_REGEN_ENABLED`); do not manipulate protected Blizzard scripts/anchors as a workaround.
 
 ## Regression-sensitive behaviour
 

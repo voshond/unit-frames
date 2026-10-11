@@ -138,7 +138,7 @@ function CG:Refresh()
 		local kind = frame.ufcgKind
 		frame.uf:Apply(self.Config:GetStyle(kind))
 		UF.Units:Bind(frame)
-		if frame.ufcgStatus then self.Status:Apply(frame, frame.ufcgStatus, cfg.indicators, true) end
+		if frame.ufcgStatus then frame.ufcgStatus:Apply(self.Config:Get().indicators) end
 		if frame.ufcgSlots then frame.ufcgSlots:Apply(self:SlotConfig(frame.uf)) end
 		frame:ClearAllPoints()
 		local cell = frame:GetParent()

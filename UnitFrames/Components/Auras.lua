@@ -53,15 +53,13 @@ local function GroupSchema(label, filters, size, position)
 	}
 end
 
-Auras.schema = {
+-- The shared artwork options sit between the spacing and the two groups.
+Auras.schema = ns.Schema.Insert({
 	{ key = "enabled", type = "toggle", label = "Enabled", default = true },
 	{ key = "spacing", type = "range", label = "Icon spacing", min = 0, max = 10, step = 1, default = 2 },
 	{ key = "buffs", type = "group", label = "Buffs", schema = GroupSchema("buffs", Auras.BUFF_FILTERS, 20, "top") },
 	{ key = "debuffs", type = "group", label = "Debuffs", schema = GroupSchema("debuffs", Auras.DEBUFF_FILTERS, 26, "bottom") },
-}
-
--- Preserve the existing settings paths/order while sharing the artwork schema.
-for i, opt in ipairs(AuraIcon.schema) do table.insert(Auras.schema, i + 2, ns.Util.Copy(opt)) end
+}, "spacing", ns.Util.Copy(AuraIcon.schema))
 
 function Auras:OnCreate(parent)
 	self.frame = CreateFrame("Frame", nil, parent)
@@ -80,7 +78,8 @@ function Auras:OnCreate(parent)
 end
 
 function Auras:InitButton(button, kind, preview)
-	AuraIcon.Create(button, kind, preview, self.spec)
+	AuraIcon.Create(button, kind, preview, { harmful = kind == "debuffs",
+		cancelBuffs = self.spec.cancelBuffs, clickThrough = self.spec.clickThrough })
 	if self.resolved then self:StyleButton(button) end
 end
 
@@ -163,16 +162,6 @@ end
 
 -- Access to existing buttons (including enumeration) may be denied while
 -- aura data is secret. Reapply at the next combat end in that case.
-local pending = {}
-local regenFrame = CreateFrame("Frame")
-regenFrame:SetScript("OnEvent", function(self)
-	self:UnregisterEvent("PLAYER_REGEN_ENABLED")
-	for auras in pairs(pending) do
-		pending[auras] = nil
-		auras:RestyleButtons()
-	end
-end)
-
 local function Restyle(auras)
 	for _, kind in ipairs(KINDS) do
 		local container = auras.containers[kind]
@@ -184,7 +173,7 @@ end
 
 function Auras:RestyleButtons()
 	if self.previewData then
-		pending[self] = nil
+		ns.AfterCombat:Cancel(self, "restyle")
 		for _, kind in ipairs(KINDS) do
 			for _, button in ipairs(self.previewContainers[kind].ufButtons) do
 				self:StyleButton(button)
@@ -194,10 +183,9 @@ function Auras:RestyleButtons()
 		return
 	end
 	if InCombatLockdown() or not pcall(Restyle, self) then
-		pending[self] = true
-		regenFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+		ns.AfterCombat:Queue("restyle", self, Auras.RestyleButtons)
 	else
-		pending[self] = nil
+		ns.AfterCombat:Cancel(self, "restyle")
 	end
 end
 
@@ -215,7 +203,6 @@ function Auras:SetEnabled(enabled)
 end
 
 function Auras:OnRelease()
-	pending[self] = nil
 	-- Disabling clears auras and unregisters dynamic events/private callbacks.
 	-- SetUnit requires a string; nil is not a supported cleanup operation.
 	self:SetEnabled(false)
@@ -256,7 +243,7 @@ function Auras:ShowSample(values)
 		end
 	end
 	self.previewData = values
-	pending[self] = nil
+	ns.AfterCombat:Cancel(self, "restyle")
 	self:SetEnabled(self.enabled)
 	self:RenderSamples()
 end

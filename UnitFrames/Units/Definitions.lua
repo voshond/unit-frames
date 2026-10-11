@@ -10,14 +10,6 @@ Units.HEALTH_COLOR_MODES = {
 	{ "theme", "Theme colour" },
 }
 
--- The native calculator adds shields to the scale without Lua touching
--- secret health/absorb values. Hidden shields must not shrink the health fill.
-function Units:GetHealthMaximumMode(bar)
-	local shield = bar.resolved.segments.absorb
-	return shield.enabled and shield.placement == "append"
-		and Enum.UnitMaximumHealthMode.WithAbsorbs or Enum.UnitMaximumHealthMode.Default
-end
-
 local HEALTH_ROW = {
 	key = "health", label = "Health",
 	spec = ns.UnitRows.Spec("health"),
@@ -124,17 +116,44 @@ Units.definitions.focus = {
 		spell = "Frostbolt", spellIcon = [[Interface\Icons\Spell_Frost_FrostBolt02]], castTime = 2.5 },
 }
 
--- Both target chains use the same compact style, with independent defaults.
-Units.definitions.focustarget = ns.Util.Copy(Units.definitions.targettarget)
-Units.definitions.focustarget.label = "Focus target"
-Units.definitions.focustarget.defaultPosition = { point = "CENTER", x = -60, y = -290 }
-Units.definitions.focustarget.sample = {
-	name = "Thrall", level = 44, className = "Shaman", class = "SHAMAN", isPlayer = true,
-}
-
 function Units:GetDefinition(unit)
 	return self.definitions[unit]
 end
+
+--[[
+An independent copy of a definition (or unit key) with `overrides` merged in.
+Row overrides are keyed by row key, never by position:
+  Units:Derive("pet", { width = 150, rows = { power = { defaults = { enabled = false } } } })
+Tables merge recursively; give a field a new value afterwards to replace it.
+]]
+function Units:Derive(base, overrides)
+	local def = ns.Util.Copy(type(base) == "string" and assert(self.definitions[base], "Unknown unit: " .. base) or base)
+	for key, value in pairs(overrides or {}) do
+		if key == "rows" then
+			for rowKey, rowOverride in pairs(value) do
+				local found
+				for _, row in ipairs(def.rows) do
+					if row.key == rowKey then found = row end
+				end
+				ns.Util.Merge(assert(found, "Unknown row: " .. rowKey), rowOverride)
+			end
+		elseif type(value) == "table" and type(def[key]) == "table" then
+			ns.Util.Merge(def[key], value)
+		else
+			def[key] = ns.Util.Copy(value)
+		end
+	end
+	return def
+end
+
+-- Both target chains use the same compact style, with independent defaults.
+Units.definitions.focustarget = Units:Derive("targettarget", {
+	label = "Focus target",
+	defaultPosition = { point = "CENTER", x = -60, y = -290 },
+})
+Units.definitions.focustarget.sample = {
+	name = "Thrall", level = 44, className = "Shaman", class = "SHAMAN", isPlayer = true,
+}
 
 -- Builds the visual frame for `unit` (no data binding). `frame` is optional.
 function Units:CreateFrame(unit, parent, frame)
@@ -148,11 +167,21 @@ function Units:CreateFromDefinition(def, parent, config, frame)
 	return ns.Components.UnitFrame:New(parent, config or {}, self:GetSpec(def, frame))
 end
 
+-- Every unit offers a raid target icon, with default settings unless defined.
 function Units:GetSpec(def, frame)
-	return {
-		frame = frame, rows = def.rows, width = def.width, portrait = def.portrait, castbar = def.castbar,
-		auras = def.auras, raidTarget = def.raidTarget or { defaults = {} }, resting = def.resting,
-	}
+	local spec = { frame = frame, rows = def.rows, width = def.width, resting = def.resting }
+	for _, part in ipairs(ns.Components.UnitFrame.PARTS) do spec[part.key] = def[part.key] end
+	spec.raidTarget = spec.raidTarget or { defaults = {} }
+	return spec
+end
+
+-- Frame-free style schema of a unit (cached; schemas are not mutated).
+function Units:GetSchema(unit)
+	self.schemas = self.schemas or {}
+	if not self.schemas[unit] then
+		self.schemas[unit] = ns.Components.UnitFrame.BuildSchema(self:GetSpec(self.definitions[unit]))
+	end
+	return self.schemas[unit]
 end
 
 -- Sample values for previews and test frames.
