@@ -97,8 +97,7 @@ local function Subjects()
 		Add("row." .. row, C.TextBar.BuildSchema(UF.UnitRows.Spec(row)))
 	end
 	for _, kind in ipairs({ "member", "target" }) do
-		CG:Measure()
-		Add("clickgrid." .. kind, CG.styleSchemas[kind], CG.definitions[kind])
+		Add("clickgrid." .. kind, CG:StyleSchema(kind), CG.definitions[kind])
 	end
 	Add("clickgrid.settings", CG.Config.schema)
 	Add("clickgrid.slots", CG.Slots.schema)

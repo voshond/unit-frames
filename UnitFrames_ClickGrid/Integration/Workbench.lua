@@ -4,17 +4,8 @@ local UF = CG.UF
 -- Every ClickGrid setting change restyles the open ClickGrid preview.
 local REFRESH_ON = { "ClickGridConfigChanged" }
 
-local function Report(ok, reason)
-	if not ok then CG:Print(reason) end
-end
-
-local function StyleTarget(kind)
-	return {
-		schema = CG.styleSchemas[kind],
-		get = function(path) return UF.Util.GetPath(CG.Config:GetStyle(kind), path) end,
-		set = function(path, value) Report(CG.Config:SetStyle(kind, path, value)) end,
-		resolved = function() return UF.Schema.Resolve(CG.styleSchemas[kind], CG.Config:GetStyle(kind), UF.Config:GetTheme()) end,
-	}
+local function Report(reason)
+	CG:Print(reason)
 end
 
 function CG:RegisterWorkbench()
@@ -33,21 +24,16 @@ function CG:RegisterWorkbench()
 	local function Create(stage) return CG.Preview:New(stage) end
 	wb:Register({ id = "clickgrid.panel", name = "Panel & indicators", category = "ClickGrid", autoSize = true, fitToStage = true,
 		size = { 500, 500 }, create = Create, data = data, refreshOn = REFRESH_ON,
-		styleTarget = function()
-			return { schema = CG.Config.schema,
-				get = function(path) return UF.Util.GetPath(CG.Config:Get(), path) end,
-				set = function(path, value) Report(CG.Config:Set(path, value)) end,
-				resolved = function() return CG.Config:Resolved() end }
-		end,
-		reset = function() CG.Config.db.profile.settings = {}; CG:RequestRefresh(); UF.Events:Fire("ClickGridConfigChanged") end,
+		styleTarget = function() return CG.Config.settings:Target(Report) end,
+		reset = function() CG.Config.settings:Reset() end,
 	})
 	for _, kind in ipairs({ "member", "target" }) do
 		local styleKind = kind
 		wb:Register({ id = "clickgrid." .. styleKind, name = styleKind == "member" and "Member bars" or "Target bars",
 			category = "ClickGrid", autoSize = true, fitToStage = true, size = { 500, 500 }, create = Create, data = data,
 			refreshOn = REFRESH_ON,
-			styleTarget = function() return StyleTarget(styleKind) end,
-			reset = function() CG.Config.db.profile[styleKind] = {}; CG:RequestRefresh(); UF.Events:Fire("ClickGridConfigChanged") end,
+			styleTarget = function() return CG.Config.styles[styleKind]:Target(Report) end,
+			reset = function() CG.Config.styles[styleKind]:Reset() end,
 		})
 	end
 	self:RegisterBindingEntry(wb)
@@ -127,16 +113,13 @@ function CG:RegisterBindingEntry(wb)
 					if path == "button" or path == "modifier" then editor[path] = value or (path == "button" and 1 or "none")
 					else
 						local reaction, field = path:match("^(%w+)%.(%w+)$")
-						Report(CG.Config:SetBinding(editor.button, editor.modifier, reaction, field, value))
+						local ok, reason = CG.Config:SetBinding(editor.button, editor.modifier, reaction, field, value)
+						if not ok then Report(reason) end
 					end
 					handle:Apply()
 				end,
 				resolved = Selected }
 		end,
-		reset = function()
-			CG.Config.db.char.loadouts[CG.Config:SpecKey()] = {}
-			CG:RequestRefresh()
-			UF.Events:Fire("ClickGridConfigChanged", "bindings")
-		end,
+		reset = function() CG.Config.bindings:Reset() end,
 	})
 end

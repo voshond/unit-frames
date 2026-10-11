@@ -189,13 +189,8 @@ function Units:CopyPlayerSettings(unit)
 	local overrides = ns.Config:GetUnitConfig("player")
 	local source = ns.Schema.Resolve(player.uf:GetSchema(), overrides, theme)
 	local defaults = ns.Schema.Resolve(schema, nil, theme)
-	local copied = CopySettings(schema, source, overrides, defaults)
 	-- Positions live separately in Edit Mode. The target's schema excludes XP.
-	local config = ns.Config:GetUnitConfig(unit)
-	wipe(config)
-	ns.Util.Merge(config, copied)
-	ns.Events:Fire("UnitConfigChanged", unit)
-	return true
+	return ns.Config:UnitStore(unit):Replace(CopySettings(schema, source, overrides, defaults))
 end
 
 -- Unit tooltip. Blizzard's UnitFrame_OnEnter reads self.unit, which oUF frames

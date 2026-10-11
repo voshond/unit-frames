@@ -73,15 +73,26 @@ function Config:GetUnitConfig(unit)
 	return self.unitConfigs[unit]
 end
 
+-- The write path for one unit's style. The saved table keeps its identity;
+-- every change fires UnitConfigChanged(unit, path), path nil for all of it.
+function Config:UnitStore(unit)
+	self.unitStores = self.unitStores or {}
+	local store = self.unitStores[unit]
+	if not store then
+		store = ns.Store.New({
+			schema = function() return ns.Units:GetSchema(unit) end,
+			read = function() return self:GetUnitConfig(unit) end,
+			theme = true,
+			changed = function(path) ns.Events:Fire("UnitConfigChanged", unit, path) end,
+		})
+		self.unitStores[unit] = store
+	end
+	return store
+end
+
 -- value nil removes the change (back to the default).
 function Config:SetUnitValue(unit, path, value)
-	local config = self:GetUnitConfig(unit)
-	if value == nil then
-		Util.ClearPath(config, path)
-	else
-		Util.SetPath(config, path, value)
-	end
-	ns.Events:Fire("UnitConfigChanged", unit, path)
+	self:UnitStore(unit):Set(path, value)
 end
 
 -- Positions -------------------------------------------------------------------------

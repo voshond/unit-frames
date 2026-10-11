@@ -155,6 +155,15 @@ function Units:GetSpec(def, frame)
 	}
 end
 
+-- Frame-free style schema of a unit (cached; schemas are not mutated).
+function Units:GetSchema(unit)
+	self.schemas = self.schemas or {}
+	if not self.schemas[unit] then
+		self.schemas[unit] = ns.Components.UnitFrame.BuildSchema(self:GetSpec(self.definitions[unit]))
+	end
+	return self.schemas[unit]
+end
+
 -- Sample values for previews and test frames.
 Units.SAMPLE = {
 	name = "Uther", level = 42, className = "Paladin",

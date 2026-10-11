@@ -9,14 +9,19 @@ function CG:SlotConfig(uf)
 	return config
 end
 
+-- Frame-free style schema of a member/target bar (cached).
+function CG:StyleSchema(kind)
+	self.styleSchemas = self.styleSchemas or {}
+	if not self.styleSchemas[kind] then
+		self.styleSchemas[kind] = UF.Components.UnitFrame.BuildSchema(UF.Units:GetSpec(self.definitions[kind]))
+	end
+	return self.styleSchemas[kind]
+end
+
 function CG:Measure()
-	self.styleSchemas, self.metrics = self.styleSchemas or {}, {}
+	self.metrics = {}
 	for _, kind in ipairs({ "member", "target" }) do
-		local spec = UF.Units:GetSpec(self.definitions[kind])
-		local schema = self.styleSchemas[kind] or UF.Components.UnitFrame.BuildSchema(spec)
-		self.styleSchemas[kind] = schema
-		local cfg = UF.Schema.Resolve(schema, self.Config:GetStyle(kind), UF.Config:GetTheme())
-		local layout = UF.UnitFrameLayout.Compute(spec, cfg)
+		local layout = UF.UnitFrameLayout.Compute(UF.Units:GetSpec(self.definitions[kind]), self.Config.styles[kind]:Resolved())
 		self.metrics[kind] = { width = layout.width, height = layout.height }
 	end
 end

@@ -215,26 +215,9 @@ end
 
 -- Convenience target for a plain config table (no theme, e.g. Workbench data).
 function Inspector.TableTarget(schema, config, onChange, resolve)
-	local function Config()
-		return type(config) == "function" and config() or config
-	end
-	return {
+	return ns.Store.New({
 		schema = schema,
-		get = function(path)
-			return Util.GetPath(Config(), path)
-		end,
-		set = function(path, value)
-			if value == nil then
-				Util.ClearPath(Config(), path)
-			else
-				Util.SetPath(Config(), path, value)
-			end
-			if onChange then
-				onChange(path, value)
-			end
-		end,
-		resolved = function()
-			return resolve and resolve() or Schema.Resolve(schema, Config(), nil)
-		end,
-	}
+		read = function() return type(config) == "function" and config() or config end,
+		changed = onChange,
+	}):Target(nil, resolve)
 end

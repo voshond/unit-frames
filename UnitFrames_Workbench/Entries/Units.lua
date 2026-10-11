@@ -39,21 +39,13 @@ local function UnitStyleTarget(unit)
 			}
 		end
 		for _, opt in ipairs(handle.schema) do schema[#schema + 1] = opt end
-		return {
-			schema = schema,
-			invoke = function(path)
-				if path == "copyPlayerSettings" then UF.Units:CopyPlayerSettings(unit) end
-			end,
-			get = function(path)
-				return UF.Util.GetPath(UF.Config:GetUnitConfig(unit), path)
-			end,
-			set = function(path, value)
-				UF.Config:SetUnitValue(unit, path, value) -- also refreshes the live frame
-			end,
-			resolved = function()
-				return handle:Resolved()
-			end,
-		}
+		-- Writes also refresh the live frame (UnitConfigChanged).
+		local target = UF.Config:UnitStore(unit):Target(nil, function() return handle:Resolved() end)
+		target.schema = schema
+		target.invoke = function(path)
+			if path == "copyPlayerSettings" then UF.Units:CopyPlayerSettings(unit) end
+		end
+		return target
 	end
 end
 
@@ -148,10 +140,7 @@ local function RegisterUnit(unit)
 			return UnitHandle(stage, unit)
 		end,
 		styleTarget = UnitStyleTarget(unit),
-		reset = function()
-			wipe(UF.Config:GetUnitConfig(unit))
-			UF.Events:Fire("UnitConfigChanged", unit)
-		end,
+		reset = function() UF.Config:UnitStore(unit):Reset() end,
 		data = {
 			schema = schema,
 			update = function(handle, d, es)

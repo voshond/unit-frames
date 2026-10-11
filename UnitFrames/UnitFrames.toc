@@ -18,6 +18,7 @@ Core\Util.lua
 Core\Class.lua
 Core\Events.lua
 Core\Schema.lua
+Core\Store.lua
 Core\Theme.lua
 Core\Media.lua
 Core\Config.lua
