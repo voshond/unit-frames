@@ -27,7 +27,8 @@ Entries register themselves:
     styleTarget = function(handle) return target end,  optional, replaces the style inspector target
     autoSize = true,                 the component sizes itself (no width/height sliders)
     fitToStage = true,               opt-in for ordinary, plain-sized preview frames
-    configKey = unit,                optional saved unit style event key
+    refreshOn = { "Event", { "Event", match } },  restyle the preview on these core events
+                                     (a table entry only matches when the first payload equals `match`)
     reset = function() end,          optional, what the "Reset" button does instead of clearing the config
   })
 ]]
@@ -199,6 +200,7 @@ function Workbench:Select(id)
 	self.dataTarget = nil
 	if entry.data then
 		self.dataTarget = W.Inspector.TableTarget(entry.data.schema, function() return state.data end, function(path)
+			session:InvalidateData()
 			if path == "source" then
 				self:RegisterEntryEvents()
 			end
@@ -238,23 +240,29 @@ function Workbench:GetData()
 end
 
 function Workbench:UpdateData()
-	if self.handle and self.session then self.session:Update() end
+	if self.session then self.session:Update() end
+end
+
+-- Re-reads the current inspector page, e.g. after an entry changes what its
+-- target edits without changing the schema.
+function Workbench:RefreshInspector()
+	if self.inspector then self.inspector:Refresh() end
 end
 
 -- Runs a named action of the current entry (buttons in the Data tab).
 function Workbench:RunAction(name)
-	if self.handle and self.session then self.session:Invoke(name) end
+	if self.session then self.session:Invoke(name) end
 end
 
 function Workbench:RegisterEntryEvents()
 	self.eventFrame:UnregisterAllEvents()
-	if self.handle and self.session then
+	if self.session then
 		self.session:ActivateEvents(self.eventFrame, self.window:IsShown())
 	end
 end
 
 function Workbench:OnUnitEvent(event, ...)
-	if self.handle and self.session then self.session:OnEvent(event, ...) end
+	if self.session then self.session:OnEvent(event, ...) end
 end
 
 local STATUS_INTERVAL = 0.5
@@ -264,7 +272,7 @@ function Workbench:OnUpdate(elapsed)
 	-- Select clears the previous handle before constructing the next preview.
 	-- If creation raises, keep its original error visible without sending
 	-- every subsequent frame/event to an entry that has no active preview.
-	if self.handle and self.session then self.session:Tick(elapsed) end
+	if self.session then self.session:Tick(elapsed) end
 	self.statusElapsed = (self.statusElapsed or STATUS_INTERVAL) + elapsed
 	if self.statusElapsed >= STATUS_INTERVAL then
 		self.statusElapsed = 0

@@ -2,14 +2,17 @@ local Helpers = require("helpers")
 local Mock = Helpers.Mock
 
 describe("Workbench preview sessions", function()
-	it("caches plain data, skips static ticks and still observes direct saved-state edits", function()
+	it("caches plain data until the data target reports an edit and skips static ticks", function()
 		local _, wb = Helpers.LoadWorkbench()
 		wb:Open("unit.player")
 		local values = wb:GetData()
 		wb:OnUpdate(0.2)
 		assert.equals(values, wb:GetData())
 		assert.equals(0, wb.entryState.time)
-		wb.state.data.source = "animated"
+		wb.state.data.source = "animated" -- not an edit: the cache stays
+		wb:OnUpdate(0.2)
+		assert.equals(values, wb:GetData())
+		wb.dataTarget.set("source", "animated")
 		wb:OnUpdate(0.2)
 		assert.equals("animated", wb:GetData().source)
 		assert.equals(0.2, wb.entryState.time)

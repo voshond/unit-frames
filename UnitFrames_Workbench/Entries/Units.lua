@@ -139,7 +139,7 @@ local function RegisterUnit(unit)
 	end
 	Workbench:Register({
 		id = "unit." .. unit,
-		configKey = unit,
+		refreshOn = { { "UnitConfigChanged", unit } },
 		category = "Unit frames",
 		name = def.label,
 		autoSize = true,

@@ -13,9 +13,13 @@ function Session.New(entry, state, scratch, parent)
 		handle:SetThemeManaged(true)
 		UF.Events.RegisterCallback(session, "ThemeChanged", function() session:RefreshStyle() end)
 	end
-	if entry.configKey then
-		UF.Events.RegisterCallback(session, "UnitConfigChanged", function(_, key)
-			if key == entry.configKey then session:RefreshStyle() end
+	-- refreshOn: event names, or { event, match } where the first payload
+	-- argument must equal `match` (e.g. a unit's UnitConfigChanged).
+	for _, watch in ipairs(entry.refreshOn or {}) do
+		local event, match = watch, nil
+		if type(watch) == "table" then event, match = watch[1], watch[2] end
+		UF.Events.RegisterCallback(session, event, function(_, key)
+			if match == nil or key == match then session:RefreshStyle() end
 		end)
 	end
 	return session
@@ -28,16 +32,18 @@ function Session:RefreshStyle()
 	if self.onRefresh then self.onRefresh() end
 end
 
+-- Resolved data is cached until the data target reports an edit.
 function Session:GetData()
 	local data = self.entry.data
 	if not data then return nil end
-	-- UpdateData is the explicit edit boundary. Also honour direct edits to the
-	-- public saved state (used by companion integrations and the test harness).
-	if not self.values or not UF.Util.Equals(self.rawData, self.state.data) then
-		self.rawData = UF.Util.Copy(self.state.data)
+	if not self.values then
 		self.values = UF.Schema.Resolve(data.schema, self.state.data, nil)
 	end
 	return self.values
+end
+
+function Session:InvalidateData()
+	self.values = nil
 end
 
 function Session:Update()
