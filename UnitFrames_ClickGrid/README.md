@@ -55,7 +55,8 @@ repository's incremental deployment guidance when updating an existing copy.
 - Role, leader/assistant, ready check, dead/ghost, incoming resurrection,
   summon, phase, optional threat and native private-aura anchors, subject to
   client support.
-  Role, leader/assistant, ready check and dead/ghost positions offer **Before
+  Role, leader/assistant, ready check, dead/ghost, incoming resurrection and
+  summon positions offer **Before
   name** (an enabled left-aligned Name text on the health bar), the frame
   centre, or any raid-marker border/portrait anchor. Role defaults before
   name; the others default to the top border with the raid marker. Icons
@@ -63,15 +64,16 @@ repository's incremental deployment guidance when updating an existing copy.
   for absent icons: edges and the centre keep the group centred, border
   corners and portrait corners grow inward, left/right edges run top to
   bottom. **Order** arranges each group (raid 1, role 2, leader 3, ready 4,
-  dead/ghost 5 by default). Leader and assistant share one slot. Each icon
+  dead/ghost 5, resurrection 6, summon 7 by default). Leader and assistant share one slot. Each icon
   has independent size, gap (the space after it) and offsets that nudge only
   that icon. Before name gives the name room for the icons actually shown.
   An ordinary unassigned role takes no space; opaque roles keep their slot,
   as does any icon whose shown state is opaque. The dead/ghost icon is a
-  tombstone while dead and a spirit healer while a ghost. Missing portraits
+  spirit icon both while dead and after releasing as a ghost. Missing portraits
   or a missing left-aligned name hide the corresponding placement. Incoming
-  resurrection, summon and phase stay fixed overlays sized by **Other status
-  icon size**.
+  resurrection turns health-row text green by default; its text-colour toggle
+  restores the configured colours, as does the end of the resurrection.
+  Phase stays a fixed overlay sized by **Other status icon size**.
 - Static/animated group samples up to forty members and a live bars/auras
   preview. Live previews intentionally omit status/private-aura indicators.
   Group previews automatically shrink to fit the Workbench stage, retaining

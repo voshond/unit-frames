@@ -41,6 +41,7 @@ UnitFrame.CASTBAR_PLACEMENTS = {
 	{ "top", "Extra row at the top" },
 	{ "bottom", "Extra row at the bottom" },
 	{ "health", "Over the health bar" },
+	{ "portrait", "Replace portrait while casting" },
 }
 
 UnitFrame.SIDES = {
@@ -97,7 +98,7 @@ UnitFrame.PARTS = {
 	{ key = "castbar", label = "Castbar",
 		schema = function()
 			local function OverHealth(cfg)
-				return cfg.placement == "health" or cfg.placement == "off"
+				return cfg.placement == "health" or cfg.placement == "portrait" or cfg.placement == "off"
 			end
 			return GroupSchema(Castbar.BuildSchema(), {
 				{ key = "placement", type = "select", label = "Placement", values = UnitFrame.CASTBAR_PLACEMENTS,
@@ -295,16 +296,22 @@ function UnitFrame:Layout()
 
 	if self.castbar then
 		local castFrame = self.castbar:GetFrame()
+		self.castbar:SetPortraitPlacement(placement == "portrait")
+		self.castbar:SetEnabled(placement ~= "off" and (placement ~= "portrait" or layout.portrait ~= nil))
 		if placement == "health" then
 			-- Covers the health row while a cast is shown.
 			local health = self.rowsByKey.health:GetFrame()
 			self.castbar:ClearAllPoints()
 			self.castbar:SetAllPoints(health)
 			castFrame:SetFrameLevel(health:GetFrameLevel() + 10)
+		elseif placement == "portrait" and layout.portrait then
+			self.castbar:ClearAllPoints()
+			self.castbar:SetAllPoints(portrait:GetFrame())
+			castFrame:SetFrameLevel(portrait.model:GetFrameLevel() + 10)
 		else
 			castFrame:SetFrameLevel(self.frame:GetFrameLevel() + 1)
 		end
-		self.castbar:SetOpaque(placement == "health")
+		self.castbar:SetOpaque(placement == "health" or placement == "portrait")
 	end
 
 	self:Resize(layout.width, layout.height)

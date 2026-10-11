@@ -17,8 +17,6 @@ Status.schema = CG.IndicatorSchema
 
 -- Fixed-position icons: { element, option key, point, x, y }.
 local FIXED = {
-	{ "ResurrectIndicator", "resurrection", "RIGHT", -2, 0 },
-	{ "SummonIndicator", "summon", "LEFT", 2, 0 },
 	{ "PhaseIndicator", "phase", "BOTTOMRIGHT", -1, 1 },
 }
 
@@ -28,9 +26,12 @@ local PLACED = {
 	{ "leader", { "LeaderIndicator", "AssistantIndicator" } },
 	{ "ready", { "ReadyCheckIndicator" } },
 	{ "death", { "UFCG_DeathIndicator" } },
+	{ "resurrection", { "ResurrectIndicator" } },
+	{ "summon", { "SummonIndicator" } },
 }
 
-local DEAD_ATLAS, GHOST_ATLAS = "Icon-Death", "poi-graveyard-neutral"
+-- Spirit healer artwork used by the original resurrection indicator.
+local DEATH_ATLAS = "RaidFrame-Icon-Rez"
 
 --[[
 UFCG_DeathIndicator: a texture shown while the unit is dead or a ghost.
@@ -43,11 +44,8 @@ local function UpdateDeath(frame)
 	if unit then dead, ghost = UnitIsDead(unit), UnitIsGhost(unit) end
 	if issecretvalue(dead) then dead = false end
 	if issecretvalue(ghost) then ghost = false end
-	if ghost then
-		element:SetAtlas(GHOST_ATLAS)
-		element:Show()
-	elseif dead then
-		element:SetAtlas(DEAD_ATLAS)
+	if dead or ghost then
+		element:SetAtlas(DEATH_ATLAS)
 		element:Show()
 	else
 		element:Hide()
@@ -92,10 +90,23 @@ local function Threat(frame)
 	frame.ThreatIndicator:Show()
 end
 
-local function Resurrection(frame)
-	if not frame.__unit then return end
-	frame.ResurrectIndicator:SetAlphaFromBoolean(UnitHasIncomingResurrection(frame.__unit), 1, 0)
-	frame.ResurrectIndicator:Show()
+function Status:SetResurrection(incoming)
+	self.incomingResurrection = incoming
+	local icon = self.ResurrectIndicator
+	icon:SetAlphaFromBoolean(incoming, 1, 0)
+	if issecretvalue(incoming) then icon:Show() else icon:SetShown(incoming) end
+	self:UpdateResurrectionText()
+	if icon.PostUpdate then icon:PostUpdate() end
+end
+
+function Status:UpdateResurrectionText()
+	local row = self.unitFrame:GetRow("health")
+	if not row then return end
+	local cfg = self.resolved
+	local color = not self.released and cfg.resurrection and cfg.resurrectionText and CreateColor(0, 1, 0, 1) or nil
+	for _, text in pairs(row.texts) do
+		text:SetColorCondition(self.incomingResurrection, color)
+	end
 end
 
 local function Host(parent)
@@ -152,7 +163,13 @@ function Status:OnCreate(button, spec)
 	threat:SetAllPoints(button)
 	threat:Hide()
 	self.ThreatIndicator = threat
-	self.ResurrectIndicator.Override = Resurrection
+	self.incomingResurrection = false
+	self.ResurrectIndicator.Override = function(frame)
+		if self.released then return end
+		local incoming = false
+		if frame.__unit then incoming = UnitHasIncomingResurrection(frame.__unit) end
+		self:SetResurrection(incoming)
+	end
 
 	local private = CreateFrame("Frame", nil, overlay)
 	private:SetPoint("CENTER", button, "CENTER", 0, 0)
@@ -184,13 +201,18 @@ function Status:LayoutIcons()
 	local cfg, stack = self.resolved, self.unitFrame:GetDecorations()
 	self.frame:SetFrameLevel(self.button:GetFrameLevel() + 20)
 	local function RolePresent() return self:RolePresent() end
+	local function ResurrectionPresent()
+		if issecretvalue(self.incomingResurrection) then return nil end
+		return self.incomingResurrection
+	end
 	for _, item in ipairs(PLACED) do
 		local key, widgets = item[1], {}
 		for i, element in ipairs(item[2]) do widgets[i] = self[element] end
 		stack:Set(key, { host = self.hosts[key], widgets = widgets, enabled = cfg[key],
 			anchor = cfg[key .. "Position"], size = cfg[key .. "Size"], order = cfg[key .. "Order"], gap = cfg[key .. "Gap"],
 			x = cfg[key .. "OffsetX"], y = cfg[key .. "OffsetY"],
-			present = key == "role" and self.live and CG.Caps.roleEnum and RolePresent or nil })
+			present = key == "role" and self.live and CG.Caps.roleEnum and RolePresent
+				or key == "resurrection" and ResurrectionPresent or nil })
 	end
 	stack:Reflow()
 end
@@ -226,11 +248,14 @@ function Status:OnApply(cfg)
 	end
 	Bind("PrivateAuras", cfg.private and CG.Caps.privateAuras and private or nil)
 	private:SetShown(cfg.private and CG.Caps.privateAuras)
+	if not cfg.resurrection then self:SetResurrection(false) end
+	self:UpdateResurrectionText()
 	-- After binding: disabled elements have hidden their art.
 	self:LayoutIcons()
 end
 
 function Status:OnRelease()
+	self:SetResurrection(false)
 	local stack = self.unitFrame:GetDecorations()
 	for _, item in ipairs(PLACED) do stack:Remove(item[1]) end
 	stack:Reflow()
@@ -238,6 +263,7 @@ end
 
 -- Live previews show no sample status art.
 function Status:HideIndicators()
+	self:SetResurrection(false)
 	for _, item in ipairs(PLACED) do
 		for _, element in ipairs(item[2]) do self[element]:Hide() end
 	end
@@ -260,10 +286,10 @@ function Status:ShowSample(index)
 	self.ReadyCheckIndicator:SetAtlas("UI-LFG-ReadyMark-Raid")
 	self.ReadyCheckIndicator:SetShown(cfg.ready and index == 2)
 	-- Member 3 is dead with a resurrection on the way; member 5 is a ghost.
-	self.UFCG_DeathIndicator:SetAtlas(index == 5 and GHOST_ATLAS or DEAD_ATLAS)
+	self.UFCG_DeathIndicator:SetAtlas(DEATH_ATLAS)
 	self.UFCG_DeathIndicator:SetShown(cfg.death and (index == 3 or index == 5))
 	self.ResurrectIndicator:SetAtlas("RaidFrame-Icon-Rez")
-	self.ResurrectIndicator:SetShown(cfg.resurrection and index == 3)
+	self:SetResurrection(cfg.resurrection and index == 3)
 	self.SummonIndicator:SetAtlas("RaidFrame-Icon-SummonPending")
 	self.SummonIndicator:SetShown(cfg.summon and index == 4)
 	self.PhaseIndicator:Hide()

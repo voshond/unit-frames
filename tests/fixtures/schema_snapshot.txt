@@ -120,7 +120,7 @@ resolved inset = 3
 resolved padding = 4
 resolved size = 12
 ## text
-option format type="select" label="Shows" default="none" values=#b7b2e8a9
+option format type="select" label="Shows" default="none" values=#ccb0f81e
 option enabled type="toggle" label="Enabled" default=true
 option font type="font" label="Font" inherit="font"
 option size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -155,6 +155,7 @@ resolved size = 11
 resolved vertical = "auto"
 ## castbar
 option enabled type="toggle" label="Enabled" default=true
+option portraitLayout type="select" label="Portrait cast layout" default="bar" values=#c97f0a21 tooltip=#8fde9bad hidden
 option border type="group" label="Border" defaults={enabled=true,padding=3}
 option border.enabled type="toggle" label="Enabled" default=true
 option border.border type="border" label="Border" inherit="borderTexture"
@@ -242,6 +243,7 @@ default name.color = {1,1,1,1}
 default name.enabled = true
 default name.justifyH = "LEFT"
 default name.shadow = true
+default portraitLayout = "bar"
 default time.color = {1,1,1,1}
 default time.enabled = true
 default time.justifyH = "RIGHT"
@@ -292,6 +294,7 @@ resolved name.justifyH = "LEFT"
 resolved name.outline = ""
 resolved name.shadow = true
 resolved name.size = 11
+resolved portraitLayout = "bar"
 resolved time.color = {1,1,1,1}
 resolved time.enabled = true
 resolved time.font = "Friz Quadrata TT"
@@ -640,7 +643,7 @@ option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" defa
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
-option health.left.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.left.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.left.enabled type="toggle" label="Enabled" default=true
 option health.left.font type="font" label="Font" inherit="font"
 option health.left.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -653,7 +656,7 @@ option health.left.inset type="range" label="Edge inset" default=4 min=0 max=30 
 option health.left.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.left.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.center type="group" label="Centre text" defaults={enabled=false,format="none",justifyH="CENTER"}
-option health.center.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.center.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.center.enabled type="toggle" label="Enabled" default=true
 option health.center.font type="font" label="Font" inherit="font"
 option health.center.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -666,7 +669,7 @@ option health.center.inset type="range" label="Edge inset" default=4 min=0 max=3
 option health.center.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.center.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.right type="group" label="Right text" defaults={enabled=true,format="health:value",justifyH="RIGHT"}
-option health.right.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.right.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.right.enabled type="toggle" label="Enabled" default=true
 option health.right.font type="font" label="Font" inherit="font"
 option health.right.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -679,7 +682,7 @@ option health.right.inset type="range" label="Edge inset" default=4 min=0 max=30
 option health.right.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.right.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.belowLeft type="group" label="Small text below left" defaults={enabled=false,format="level:class",justifyH="LEFT",size=9}
-option health.belowLeft.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.belowLeft.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.belowLeft.enabled type="toggle" label="Enabled" default=true
 option health.belowLeft.font type="font" label="Font" inherit="font"
 option health.belowLeft.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -692,7 +695,7 @@ option health.belowLeft.inset type="range" label="Edge inset" default=4 min=0 ma
 option health.belowLeft.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.belowLeft.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.belowRight type="group" label="Small text below right" defaults={enabled=false,format="none",justifyH="RIGHT",size=9}
-option health.belowRight.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.belowRight.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.belowRight.enabled type="toggle" label="Enabled" default=true
 option health.belowRight.font type="font" label="Font" inherit="font"
 option health.belowRight.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -895,8 +898,9 @@ option experience.belowRight.inset type="range" label="Edge inset" default=4 min
 option experience.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option experience.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option castbar type="group" label="Castbar" defaults={border={enabled=false},height=18,name={size=10},placement="bottom",time={size=10}}
-option castbar.placement type="select" label="Placement" default="bottom" values=#08cc0f39
+option castbar.placement type="select" label="Placement" default="bottom" values=#7b180619
 option castbar.height type="range" label="Height" default=18 min=2 max=100 step=1 hidden
+option castbar.portraitLayout type="select" label="Portrait cast layout" default="bar" values=#c97f0a21 tooltip=#8fde9bad hidden
 option castbar.border type="group" label="Border" defaults={enabled=true,padding=3}
 option castbar.border.enabled type="toggle" label="Enabled" default=true
 option castbar.border.border type="border" label="Border" inherit="borderTexture"
@@ -1096,6 +1100,7 @@ default castbar.name.justifyH = "LEFT"
 default castbar.name.shadow = true
 default castbar.name.size = 10
 default castbar.placement = "bottom"
+default castbar.portraitLayout = "bar"
 default castbar.time.color = {1,1,1,1}
 default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
@@ -1428,6 +1433,7 @@ resolved castbar.name.outline = ""
 resolved castbar.name.shadow = true
 resolved castbar.name.size = 10
 resolved castbar.placement = "bottom"
+resolved castbar.portraitLayout = "bar"
 resolved castbar.time.color = {1,1,1,1}
 resolved castbar.time.enabled = true
 resolved castbar.time.font = "Friz Quadrata TT"
@@ -1739,7 +1745,7 @@ definition defaultPosition.y = -160
 definition label = "Player"
 definition portrait.defaults.enabled = true
 definition resting = true
-definition rows = {{defaults={height=26},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:class"},left="name",right="health:value"}}},{defaults={height=12,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}},{defaults={center={size=8},height=10},key="experience",label="Experience",spec={colorInherit="colors.experience",formats={"none","level","resting","xp:current","xp:value","xp:percent","xp:current:percent","xp:value:percent","xp:missing","xp:rested"},segments={{colorInherit="colors.rested",key="rested",label="Rested",mode="append"}},textDefaults={center="xp:value:percent"}}}}
+definition rows = {{defaults={height=26},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:class"},left="name",right="health:value"}}},{defaults={height=12,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}},{defaults={center={size=8},height=10},key="experience",label="Experience",spec={colorInherit="colors.experience",formats={"none","level","resting","xp:current","xp:value","xp:percent","xp:current:percent","xp:value:percent","xp:missing","xp:rested"},segments={{colorInherit="colors.rested",key="rested",label="Rested",mode="append"}},textDefaults={center="xp:value:percent"}}}}
 definition width = 230
 ## unit.pet
 option width type="range" label="Width" default=170 min=60 max=600 step=1
@@ -1816,7 +1822,7 @@ option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" defa
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
-option health.left.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.left.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.left.enabled type="toggle" label="Enabled" default=true
 option health.left.font type="font" label="Font" inherit="font"
 option health.left.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -1829,7 +1835,7 @@ option health.left.inset type="range" label="Edge inset" default=4 min=0 max=30 
 option health.left.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.left.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.center type="group" label="Centre text" defaults={enabled=false,format="none",justifyH="CENTER"}
-option health.center.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.center.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.center.enabled type="toggle" label="Enabled" default=true
 option health.center.font type="font" label="Font" inherit="font"
 option health.center.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -1842,7 +1848,7 @@ option health.center.inset type="range" label="Edge inset" default=4 min=0 max=3
 option health.center.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.center.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.right type="group" label="Right text" defaults={enabled=true,format="health:value",justifyH="RIGHT"}
-option health.right.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.right.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.right.enabled type="toggle" label="Enabled" default=true
 option health.right.font type="font" label="Font" inherit="font"
 option health.right.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -1855,7 +1861,7 @@ option health.right.inset type="range" label="Edge inset" default=4 min=0 max=30
 option health.right.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.right.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.belowLeft type="group" label="Small text below left" defaults={enabled=false,format="level:info",justifyH="LEFT",size=9}
-option health.belowLeft.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.belowLeft.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.belowLeft.enabled type="toggle" label="Enabled" default=true
 option health.belowLeft.font type="font" label="Font" inherit="font"
 option health.belowLeft.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -1868,7 +1874,7 @@ option health.belowLeft.inset type="range" label="Edge inset" default=4 min=0 ma
 option health.belowLeft.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.belowLeft.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.belowRight type="group" label="Small text below right" defaults={enabled=false,format="none",justifyH="RIGHT",size=9}
-option health.belowRight.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.belowRight.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.belowRight.enabled type="toggle" label="Enabled" default=true
 option health.belowRight.font type="font" label="Font" inherit="font"
 option health.belowRight.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -1976,8 +1982,9 @@ option power.belowRight.inset type="range" label="Edge inset" default=4 min=0 ma
 option power.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option power.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option castbar type="group" label="Castbar" defaults={border={enabled=false},height=14,name={size=9},placement="off",time={size=9}}
-option castbar.placement type="select" label="Placement" default="bottom" values=#08cc0f39
+option castbar.placement type="select" label="Placement" default="bottom" values=#7b180619
 option castbar.height type="range" label="Height" default=18 min=2 max=100 step=1 hidden
+option castbar.portraitLayout type="select" label="Portrait cast layout" default="bar" values=#c97f0a21 tooltip=#8fde9bad hidden
 option castbar.border type="group" label="Border" defaults={enabled=true,padding=3}
 option castbar.border.enabled type="toggle" label="Enabled" default=true
 option castbar.border.border type="border" label="Border" inherit="borderTexture"
@@ -2177,6 +2184,7 @@ default castbar.name.justifyH = "LEFT"
 default castbar.name.shadow = true
 default castbar.name.size = 9
 default castbar.placement = "off"
+default castbar.portraitLayout = "bar"
 default castbar.time.color = {1,1,1,1}
 default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
@@ -2444,6 +2452,7 @@ resolved castbar.name.outline = ""
 resolved castbar.name.shadow = true
 resolved castbar.name.size = 9
 resolved castbar.placement = "off"
+resolved castbar.portraitLayout = "bar"
 resolved castbar.time.color = {1,1,1,1}
 resolved castbar.time.enabled = true
 resolved castbar.time.font = "Friz Quadrata TT"
@@ -2672,7 +2681,7 @@ definition defaultPosition.x = -90
 definition defaultPosition.y = -235
 definition label = "Player pet"
 definition portrait.defaults.enabled = false
-definition rows = {{defaults={height=22,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=10,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
+definition rows = {{defaults={height=22,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=10,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
 definition sample.absorb = 900
 definition sample.castTime = 1.5
 definition sample.classification = "normal"
@@ -2767,7 +2776,7 @@ option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" defa
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
-option health.left.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.left.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.left.enabled type="toggle" label="Enabled" default=true
 option health.left.font type="font" label="Font" inherit="font"
 option health.left.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -2780,7 +2789,7 @@ option health.left.inset type="range" label="Edge inset" default=4 min=0 max=30 
 option health.left.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.left.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.center type="group" label="Centre text" defaults={enabled=false,format="none",justifyH="CENTER"}
-option health.center.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.center.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.center.enabled type="toggle" label="Enabled" default=true
 option health.center.font type="font" label="Font" inherit="font"
 option health.center.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -2793,7 +2802,7 @@ option health.center.inset type="range" label="Edge inset" default=4 min=0 max=3
 option health.center.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.center.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.right type="group" label="Right text" defaults={enabled=true,format="health:value",justifyH="RIGHT"}
-option health.right.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.right.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.right.enabled type="toggle" label="Enabled" default=true
 option health.right.font type="font" label="Font" inherit="font"
 option health.right.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -2806,7 +2815,7 @@ option health.right.inset type="range" label="Edge inset" default=4 min=0 max=30
 option health.right.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.right.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.belowLeft type="group" label="Small text below left" defaults={enabled=false,format="level:info",justifyH="LEFT",size=9}
-option health.belowLeft.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.belowLeft.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.belowLeft.enabled type="toggle" label="Enabled" default=true
 option health.belowLeft.font type="font" label="Font" inherit="font"
 option health.belowLeft.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -2819,7 +2828,7 @@ option health.belowLeft.inset type="range" label="Edge inset" default=4 min=0 ma
 option health.belowLeft.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.belowLeft.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.belowRight type="group" label="Small text below right" defaults={enabled=false,format="none",justifyH="RIGHT",size=9}
-option health.belowRight.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.belowRight.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.belowRight.enabled type="toggle" label="Enabled" default=true
 option health.belowRight.font type="font" label="Font" inherit="font"
 option health.belowRight.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -2927,8 +2936,9 @@ option power.belowRight.inset type="range" label="Edge inset" default=4 min=0 ma
 option power.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option power.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option castbar type="group" label="Castbar" defaults={border={enabled=false},height=18,name={size=10},placement="bottom",time={size=10}}
-option castbar.placement type="select" label="Placement" default="bottom" values=#08cc0f39
+option castbar.placement type="select" label="Placement" default="bottom" values=#7b180619
 option castbar.height type="range" label="Height" default=18 min=2 max=100 step=1 hidden
+option castbar.portraitLayout type="select" label="Portrait cast layout" default="bar" values=#c97f0a21 tooltip=#8fde9bad hidden
 option castbar.border type="group" label="Border" defaults={enabled=true,padding=3}
 option castbar.border.enabled type="toggle" label="Enabled" default=true
 option castbar.border.border type="border" label="Border" inherit="borderTexture"
@@ -3128,6 +3138,7 @@ default castbar.name.justifyH = "LEFT"
 default castbar.name.shadow = true
 default castbar.name.size = 10
 default castbar.placement = "bottom"
+default castbar.portraitLayout = "bar"
 default castbar.time.color = {1,1,1,1}
 default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
@@ -3393,6 +3404,7 @@ resolved castbar.name.outline = ""
 resolved castbar.name.shadow = true
 resolved castbar.name.size = 10
 resolved castbar.placement = "bottom"
+resolved castbar.portraitLayout = "bar"
 resolved castbar.time.color = {1,1,1,1}
 resolved castbar.time.enabled = true
 resolved castbar.time.font = "Friz Quadrata TT"
@@ -3616,7 +3628,7 @@ definition defaultPosition.y = -160
 definition label = "Target"
 definition portrait.defaults.enabled = true
 definition portrait.defaults.position = "RIGHT"
-definition rows = {{defaults={height=26},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=12,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
+definition rows = {{defaults={height=26},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=12,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
 definition sample.castTime = 1.5
 definition sample.classification = "elite"
 definition sample.cost = 15
@@ -3706,7 +3718,7 @@ option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" defa
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
-option health.left.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.left.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.left.enabled type="toggle" label="Enabled" default=true
 option health.left.font type="font" label="Font" inherit="font"
 option health.left.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -3719,7 +3731,7 @@ option health.left.inset type="range" label="Edge inset" default=4 min=0 max=30 
 option health.left.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.left.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.center type="group" label="Centre text" defaults={enabled=false,format="none",justifyH="CENTER"}
-option health.center.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.center.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.center.enabled type="toggle" label="Enabled" default=true
 option health.center.font type="font" label="Font" inherit="font"
 option health.center.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -3732,7 +3744,7 @@ option health.center.inset type="range" label="Edge inset" default=4 min=0 max=3
 option health.center.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.center.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.right type="group" label="Right text" defaults={enabled=true,format="health:value",justifyH="RIGHT"}
-option health.right.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.right.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.right.enabled type="toggle" label="Enabled" default=true
 option health.right.font type="font" label="Font" inherit="font"
 option health.right.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -3745,7 +3757,7 @@ option health.right.inset type="range" label="Edge inset" default=4 min=0 max=30
 option health.right.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.right.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.belowLeft type="group" label="Small text below left" defaults={enabled=false,format="level:info",justifyH="LEFT",size=9}
-option health.belowLeft.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.belowLeft.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.belowLeft.enabled type="toggle" label="Enabled" default=true
 option health.belowLeft.font type="font" label="Font" inherit="font"
 option health.belowLeft.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -3758,7 +3770,7 @@ option health.belowLeft.inset type="range" label="Edge inset" default=4 min=0 ma
 option health.belowLeft.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.belowLeft.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.belowRight type="group" label="Small text below right" defaults={enabled=false,format="none",justifyH="RIGHT",size=9}
-option health.belowRight.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.belowRight.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.belowRight.enabled type="toggle" label="Enabled" default=true
 option health.belowRight.font type="font" label="Font" inherit="font"
 option health.belowRight.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -3866,8 +3878,9 @@ option power.belowRight.inset type="range" label="Edge inset" default=4 min=0 ma
 option power.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option power.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option castbar type="group" label="Castbar" defaults={border={enabled=false},height=14,name={size=9},placement="off",time={size=9}}
-option castbar.placement type="select" label="Placement" default="bottom" values=#08cc0f39
+option castbar.placement type="select" label="Placement" default="bottom" values=#7b180619
 option castbar.height type="range" label="Height" default=18 min=2 max=100 step=1 hidden
+option castbar.portraitLayout type="select" label="Portrait cast layout" default="bar" values=#c97f0a21 tooltip=#8fde9bad hidden
 option castbar.border type="group" label="Border" defaults={enabled=true,padding=3}
 option castbar.border.enabled type="toggle" label="Enabled" default=true
 option castbar.border.border type="border" label="Border" inherit="borderTexture"
@@ -4067,6 +4080,7 @@ default castbar.name.justifyH = "LEFT"
 default castbar.name.shadow = true
 default castbar.name.size = 9
 default castbar.placement = "off"
+default castbar.portraitLayout = "bar"
 default castbar.time.color = {1,1,1,1}
 default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
@@ -4334,6 +4348,7 @@ resolved castbar.name.outline = ""
 resolved castbar.name.shadow = true
 resolved castbar.name.size = 9
 resolved castbar.placement = "off"
+resolved castbar.portraitLayout = "bar"
 resolved castbar.time.color = {1,1,1,1}
 resolved castbar.time.enabled = true
 resolved castbar.time.font = "Friz Quadrata TT"
@@ -4563,7 +4578,7 @@ definition defaultPosition.x = 510
 definition defaultPosition.y = -160
 definition label = "Target of target"
 definition portrait.defaults.enabled = false
-definition rows = {{defaults={height=20,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=8,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
+definition rows = {{defaults={height=20,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=8,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
 definition sample.class = "WARRIOR"
 definition sample.className = "Warrior"
 definition sample.cost = 15
@@ -4649,7 +4664,7 @@ option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" defa
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
-option health.left.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.left.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.left.enabled type="toggle" label="Enabled" default=true
 option health.left.font type="font" label="Font" inherit="font"
 option health.left.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -4662,7 +4677,7 @@ option health.left.inset type="range" label="Edge inset" default=4 min=0 max=30 
 option health.left.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.left.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.center type="group" label="Centre text" defaults={enabled=false,format="none",justifyH="CENTER"}
-option health.center.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.center.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.center.enabled type="toggle" label="Enabled" default=true
 option health.center.font type="font" label="Font" inherit="font"
 option health.center.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -4675,7 +4690,7 @@ option health.center.inset type="range" label="Edge inset" default=4 min=0 max=3
 option health.center.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.center.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.right type="group" label="Right text" defaults={enabled=true,format="health:value",justifyH="RIGHT"}
-option health.right.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.right.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.right.enabled type="toggle" label="Enabled" default=true
 option health.right.font type="font" label="Font" inherit="font"
 option health.right.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -4688,7 +4703,7 @@ option health.right.inset type="range" label="Edge inset" default=4 min=0 max=30
 option health.right.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.right.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.belowLeft type="group" label="Small text below left" defaults={enabled=false,format="level:info",justifyH="LEFT",size=9}
-option health.belowLeft.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.belowLeft.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.belowLeft.enabled type="toggle" label="Enabled" default=true
 option health.belowLeft.font type="font" label="Font" inherit="font"
 option health.belowLeft.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -4701,7 +4716,7 @@ option health.belowLeft.inset type="range" label="Edge inset" default=4 min=0 ma
 option health.belowLeft.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.belowLeft.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.belowRight type="group" label="Small text below right" defaults={enabled=false,format="none",justifyH="RIGHT",size=9}
-option health.belowRight.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.belowRight.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.belowRight.enabled type="toggle" label="Enabled" default=true
 option health.belowRight.font type="font" label="Font" inherit="font"
 option health.belowRight.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -4809,8 +4824,9 @@ option power.belowRight.inset type="range" label="Edge inset" default=4 min=0 ma
 option power.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option power.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option castbar type="group" label="Castbar" defaults={border={enabled=false},height=18,name={size=10},placement="bottom",time={size=10}}
-option castbar.placement type="select" label="Placement" default="bottom" values=#08cc0f39
+option castbar.placement type="select" label="Placement" default="bottom" values=#7b180619
 option castbar.height type="range" label="Height" default=18 min=2 max=100 step=1 hidden
+option castbar.portraitLayout type="select" label="Portrait cast layout" default="bar" values=#c97f0a21 tooltip=#8fde9bad hidden
 option castbar.border type="group" label="Border" defaults={enabled=true,padding=3}
 option castbar.border.enabled type="toggle" label="Enabled" default=true
 option castbar.border.border type="border" label="Border" inherit="borderTexture"
@@ -5010,6 +5026,7 @@ default castbar.name.justifyH = "LEFT"
 default castbar.name.shadow = true
 default castbar.name.size = 10
 default castbar.placement = "bottom"
+default castbar.portraitLayout = "bar"
 default castbar.time.color = {1,1,1,1}
 default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
@@ -5275,6 +5292,7 @@ resolved castbar.name.outline = ""
 resolved castbar.name.shadow = true
 resolved castbar.name.size = 10
 resolved castbar.placement = "bottom"
+resolved castbar.portraitLayout = "bar"
 resolved castbar.time.color = {1,1,1,1}
 resolved castbar.time.enabled = true
 resolved castbar.time.font = "Friz Quadrata TT"
@@ -5497,7 +5515,7 @@ definition defaultPosition.x = -280
 definition defaultPosition.y = -290
 definition label = "Focus"
 definition portrait.defaults.enabled = false
-definition rows = {{defaults={height=24},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=10,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
+definition rows = {{defaults={height=24},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=10,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
 definition sample.castTime = 2.5
 definition sample.class = "MAGE"
 definition sample.className = "Mage"
@@ -5582,7 +5600,7 @@ option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" defa
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
-option health.left.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.left.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.left.enabled type="toggle" label="Enabled" default=true
 option health.left.font type="font" label="Font" inherit="font"
 option health.left.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -5595,7 +5613,7 @@ option health.left.inset type="range" label="Edge inset" default=4 min=0 max=30 
 option health.left.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.left.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.center type="group" label="Centre text" defaults={enabled=false,format="none",justifyH="CENTER"}
-option health.center.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.center.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.center.enabled type="toggle" label="Enabled" default=true
 option health.center.font type="font" label="Font" inherit="font"
 option health.center.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -5608,7 +5626,7 @@ option health.center.inset type="range" label="Edge inset" default=4 min=0 max=3
 option health.center.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.center.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.right type="group" label="Right text" defaults={enabled=true,format="health:value",justifyH="RIGHT"}
-option health.right.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.right.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.right.enabled type="toggle" label="Enabled" default=true
 option health.right.font type="font" label="Font" inherit="font"
 option health.right.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -5621,7 +5639,7 @@ option health.right.inset type="range" label="Edge inset" default=4 min=0 max=30
 option health.right.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.right.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.belowLeft type="group" label="Small text below left" defaults={enabled=false,format="level:info",justifyH="LEFT",size=9}
-option health.belowLeft.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.belowLeft.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.belowLeft.enabled type="toggle" label="Enabled" default=true
 option health.belowLeft.font type="font" label="Font" inherit="font"
 option health.belowLeft.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -5634,7 +5652,7 @@ option health.belowLeft.inset type="range" label="Edge inset" default=4 min=0 ma
 option health.belowLeft.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.belowLeft.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.belowRight type="group" label="Small text below right" defaults={enabled=false,format="none",justifyH="RIGHT",size=9}
-option health.belowRight.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.belowRight.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.belowRight.enabled type="toggle" label="Enabled" default=true
 option health.belowRight.font type="font" label="Font" inherit="font"
 option health.belowRight.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -5742,8 +5760,9 @@ option power.belowRight.inset type="range" label="Edge inset" default=4 min=0 ma
 option power.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option power.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option castbar type="group" label="Castbar" defaults={border={enabled=false},height=14,name={size=9},placement="off",time={size=9}}
-option castbar.placement type="select" label="Placement" default="bottom" values=#08cc0f39
+option castbar.placement type="select" label="Placement" default="bottom" values=#7b180619
 option castbar.height type="range" label="Height" default=18 min=2 max=100 step=1 hidden
+option castbar.portraitLayout type="select" label="Portrait cast layout" default="bar" values=#c97f0a21 tooltip=#8fde9bad hidden
 option castbar.border type="group" label="Border" defaults={enabled=true,padding=3}
 option castbar.border.enabled type="toggle" label="Enabled" default=true
 option castbar.border.border type="border" label="Border" inherit="borderTexture"
@@ -5943,6 +5962,7 @@ default castbar.name.justifyH = "LEFT"
 default castbar.name.shadow = true
 default castbar.name.size = 9
 default castbar.placement = "off"
+default castbar.portraitLayout = "bar"
 default castbar.time.color = {1,1,1,1}
 default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
@@ -6210,6 +6230,7 @@ resolved castbar.name.outline = ""
 resolved castbar.name.shadow = true
 resolved castbar.name.size = 9
 resolved castbar.placement = "off"
+resolved castbar.portraitLayout = "bar"
 resolved castbar.time.color = {1,1,1,1}
 resolved castbar.time.enabled = true
 resolved castbar.time.font = "Friz Quadrata TT"
@@ -6439,7 +6460,7 @@ definition defaultPosition.x = -60
 definition defaultPosition.y = -290
 definition label = "Focus target"
 definition portrait.defaults.enabled = false
-definition rows = {{defaults={height=20,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=8,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
+definition rows = {{defaults={height=20,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=8,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
 definition sample.class = "SHAMAN"
 definition sample.className = "Shaman"
 definition sample.isPlayer = true
@@ -6485,7 +6506,7 @@ option bar.segments.healAbsorb.enabled type="toggle" label="Enabled" default=tru
 option bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
 option left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
-option left.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option left.format type="select" label="Shows" default="none" values=#ccb0f81e
 option left.enabled type="toggle" label="Enabled" default=true
 option left.font type="font" label="Font" inherit="font"
 option left.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -6498,7 +6519,7 @@ option left.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 
 option left.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option left.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option center type="group" label="Centre text" defaults={enabled=false,format="none",justifyH="CENTER"}
-option center.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option center.format type="select" label="Shows" default="none" values=#ccb0f81e
 option center.enabled type="toggle" label="Enabled" default=true
 option center.font type="font" label="Font" inherit="font"
 option center.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -6511,7 +6532,7 @@ option center.inset type="range" label="Edge inset" default=4 min=0 max=30 step=
 option center.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option center.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option right type="group" label="Right text" defaults={enabled=true,format="health:value",justifyH="RIGHT"}
-option right.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option right.format type="select" label="Shows" default="none" values=#ccb0f81e
 option right.enabled type="toggle" label="Enabled" default=true
 option right.font type="font" label="Font" inherit="font"
 option right.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -6524,7 +6545,7 @@ option right.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1
 option right.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option right.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option belowLeft type="group" label="Small text below left" defaults={enabled=false,format="level:class",justifyH="LEFT",size=9}
-option belowLeft.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option belowLeft.format type="select" label="Shows" default="none" values=#ccb0f81e
 option belowLeft.enabled type="toggle" label="Enabled" default=true
 option belowLeft.font type="font" label="Font" inherit="font"
 option belowLeft.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -6537,7 +6558,7 @@ option belowLeft.inset type="range" label="Edge inset" default=4 min=0 max=30 st
 option belowLeft.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option belowLeft.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option belowRight type="group" label="Small text below right" defaults={enabled=false,format="none",justifyH="RIGHT",size=9}
-option belowRight.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option belowRight.format type="select" label="Shows" default="none" values=#ccb0f81e
 option belowRight.enabled type="toggle" label="Enabled" default=true
 option belowRight.font type="font" label="Font" inherit="font"
 option belowRight.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -7259,7 +7280,7 @@ option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" defa
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
-option health.left.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.left.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.left.enabled type="toggle" label="Enabled" default=true
 option health.left.font type="font" label="Font" inherit="font"
 option health.left.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -7272,7 +7293,7 @@ option health.left.inset type="range" label="Edge inset" default=4 min=0 max=30 
 option health.left.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.left.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.center type="group" label="Centre text" defaults={enabled=false,format="none",justifyH="CENTER"}
-option health.center.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.center.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.center.enabled type="toggle" label="Enabled" default=true
 option health.center.font type="font" label="Font" inherit="font"
 option health.center.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -7285,7 +7306,7 @@ option health.center.inset type="range" label="Edge inset" default=4 min=0 max=3
 option health.center.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.center.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.right type="group" label="Right text" defaults={enabled=true,format="health:value",justifyH="RIGHT"}
-option health.right.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.right.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.right.enabled type="toggle" label="Enabled" default=true
 option health.right.font type="font" label="Font" inherit="font"
 option health.right.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -7298,7 +7319,7 @@ option health.right.inset type="range" label="Edge inset" default=4 min=0 max=30
 option health.right.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.right.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.belowLeft type="group" label="Small text below left" defaults={enabled=false,format="level:class",justifyH="LEFT",size=9}
-option health.belowLeft.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.belowLeft.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.belowLeft.enabled type="toggle" label="Enabled" default=true
 option health.belowLeft.font type="font" label="Font" inherit="font"
 option health.belowLeft.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -7311,7 +7332,7 @@ option health.belowLeft.inset type="range" label="Edge inset" default=4 min=0 ma
 option health.belowLeft.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.belowLeft.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.belowRight type="group" label="Small text below right" defaults={enabled=false,format="none",justifyH="RIGHT",size=9}
-option health.belowRight.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.belowRight.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.belowRight.enabled type="toggle" label="Enabled" default=true
 option health.belowRight.font type="font" label="Font" inherit="font"
 option health.belowRight.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -7419,8 +7440,9 @@ option power.belowRight.inset type="range" label="Edge inset" default=4 min=0 ma
 option power.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option power.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option castbar type="group" label="Castbar" defaults={border={enabled=false},height=14,name={size=9},placement="off",time={size=9}}
-option castbar.placement type="select" label="Placement" default="bottom" values=#08cc0f39
+option castbar.placement type="select" label="Placement" default="bottom" values=#7b180619
 option castbar.height type="range" label="Height" default=18 min=2 max=100 step=1 hidden
+option castbar.portraitLayout type="select" label="Portrait cast layout" default="bar" values=#c97f0a21 tooltip=#8fde9bad hidden
 option castbar.border type="group" label="Border" defaults={enabled=true,padding=3}
 option castbar.border.enabled type="toggle" label="Enabled" default=true
 option castbar.border.border type="border" label="Border" inherit="borderTexture"
@@ -7620,6 +7642,7 @@ default castbar.name.justifyH = "LEFT"
 default castbar.name.shadow = true
 default castbar.name.size = 9
 default castbar.placement = "off"
+default castbar.portraitLayout = "bar"
 default castbar.time.color = {1,1,1,1}
 default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
@@ -7887,6 +7910,7 @@ resolved castbar.name.outline = ""
 resolved castbar.name.shadow = true
 resolved castbar.name.size = 9
 resolved castbar.placement = "off"
+resolved castbar.portraitLayout = "bar"
 resolved castbar.time.color = {1,1,1,1}
 resolved castbar.time.enabled = true
 resolved castbar.time.font = "Friz Quadrata TT"
@@ -8125,7 +8149,7 @@ definition defaultPosition.y = -235
 definition label = "Group member"
 definition portrait.defaults.enabled = false
 definition raidTarget.defaults.size = 12
-definition rows = {{defaults={height=28,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:class"},left="name",right="health:value"}}},{defaults={enabled=false,height=6,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
+definition rows = {{defaults={height=28,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:class"},left="name",right="health:value"}}},{defaults={enabled=false,height=6,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
 definition sample.absorb = 900
 definition sample.castTime = 1.5
 definition sample.classification = "normal"
@@ -8220,7 +8244,7 @@ option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" defa
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
-option health.left.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.left.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.left.enabled type="toggle" label="Enabled" default=true
 option health.left.font type="font" label="Font" inherit="font"
 option health.left.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -8233,7 +8257,7 @@ option health.left.inset type="range" label="Edge inset" default=4 min=0 max=30 
 option health.left.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.left.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.center type="group" label="Centre text" defaults={enabled=false,format="none",justifyH="CENTER"}
-option health.center.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.center.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.center.enabled type="toggle" label="Enabled" default=true
 option health.center.font type="font" label="Font" inherit="font"
 option health.center.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -8246,7 +8270,7 @@ option health.center.inset type="range" label="Edge inset" default=4 min=0 max=3
 option health.center.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.center.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.right type="group" label="Right text" defaults={enabled=true,format="health:value",justifyH="RIGHT"}
-option health.right.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.right.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.right.enabled type="toggle" label="Enabled" default=true
 option health.right.font type="font" label="Font" inherit="font"
 option health.right.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -8259,7 +8283,7 @@ option health.right.inset type="range" label="Edge inset" default=4 min=0 max=30
 option health.right.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.right.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.belowLeft type="group" label="Small text below left" defaults={enabled=false,format="level:info",justifyH="LEFT",size=9}
-option health.belowLeft.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.belowLeft.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.belowLeft.enabled type="toggle" label="Enabled" default=true
 option health.belowLeft.font type="font" label="Font" inherit="font"
 option health.belowLeft.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -8272,7 +8296,7 @@ option health.belowLeft.inset type="range" label="Edge inset" default=4 min=0 ma
 option health.belowLeft.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.belowLeft.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option health.belowRight type="group" label="Small text below right" defaults={enabled=false,format="none",justifyH="RIGHT",size=9}
-option health.belowRight.format type="select" label="Shows" default="none" values=#b7b2e8a9
+option health.belowRight.format type="select" label="Shows" default="none" values=#ccb0f81e
 option health.belowRight.enabled type="toggle" label="Enabled" default=true
 option health.belowRight.font type="font" label="Font" inherit="font"
 option health.belowRight.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
@@ -8380,8 +8404,9 @@ option power.belowRight.inset type="range" label="Edge inset" default=4 min=0 ma
 option power.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option power.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option castbar type="group" label="Castbar" defaults={border={enabled=false},height=14,name={size=9},placement="off",time={size=9}}
-option castbar.placement type="select" label="Placement" default="bottom" values=#08cc0f39
+option castbar.placement type="select" label="Placement" default="bottom" values=#7b180619
 option castbar.height type="range" label="Height" default=18 min=2 max=100 step=1 hidden
+option castbar.portraitLayout type="select" label="Portrait cast layout" default="bar" values=#c97f0a21 tooltip=#8fde9bad hidden
 option castbar.border type="group" label="Border" defaults={enabled=true,padding=3}
 option castbar.border.enabled type="toggle" label="Enabled" default=true
 option castbar.border.border type="border" label="Border" inherit="borderTexture"
@@ -8581,6 +8606,7 @@ default castbar.name.justifyH = "LEFT"
 default castbar.name.shadow = true
 default castbar.name.size = 9
 default castbar.placement = "off"
+default castbar.portraitLayout = "bar"
 default castbar.time.color = {1,1,1,1}
 default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
@@ -8848,6 +8874,7 @@ resolved castbar.name.outline = ""
 resolved castbar.name.shadow = true
 resolved castbar.name.size = 9
 resolved castbar.placement = "off"
+resolved castbar.portraitLayout = "bar"
 resolved castbar.time.color = {1,1,1,1}
 resolved castbar.time.enabled = true
 resolved castbar.time.font = "Friz Quadrata TT"
@@ -9078,7 +9105,7 @@ definition defaultPosition.x = 510
 definition defaultPosition.y = -160
 definition label = "Target of target"
 definition portrait.defaults.enabled = false
-definition rows = {{defaults={height=28,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={enabled=false,height=8,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
+definition rows = {{defaults={height=28,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={enabled=false,height=8,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
 definition sample.class = "WARRIOR"
 definition sample.className = "Warrior"
 definition sample.cost = 15
@@ -9151,14 +9178,27 @@ option indicators.readyGap type="range" label="Ready check icon gap" default=2 m
 option indicators.readyOffsetX type="range" label="Ready check icon horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
 option indicators.readyOffsetY type="range" label="Ready check icon vertical offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
 option indicators.death type="toggle" label="Dead / ghost" default=true
-option indicators.deathPosition type="select" label="Dead / ghost icon position" default="TOP" values=#1fe6f2dd tooltip=#b756f0af hidden
+option indicators.deathPosition type="select" label="Dead / ghost icon position" default="TOP" values=#1fe6f2dd tooltip=#665adde7 hidden
 option indicators.deathSize type="range" label="Dead / ghost icon size" default=14 min=8 max=64 step=1 hidden
 option indicators.deathOrder type="range" label="Dead / ghost icon order" default=5 min=1 max=10 step=1 tooltip=#b6361d3f hidden
 option indicators.deathGap type="range" label="Dead / ghost icon gap" default=2 min=0 max=20 step=1 tooltip=#bd35420d hidden
 option indicators.deathOffsetX type="range" label="Dead / ghost icon horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
 option indicators.deathOffsetY type="range" label="Dead / ghost icon vertical offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
 option indicators.resurrection type="toggle" label="Incoming resurrection" default=true
+option indicators.resurrectionPosition type="select" label="Resurrection icon position" default="TOP" values=#1fe6f2dd tooltip=#7f8c4c92 hidden
+option indicators.resurrectionSize type="range" label="Resurrection icon size" default=14 min=8 max=64 step=1 hidden
+option indicators.resurrectionOrder type="range" label="Resurrection icon order" default=6 min=1 max=10 step=1 tooltip=#b6361d3f hidden
+option indicators.resurrectionGap type="range" label="Resurrection icon gap" default=2 min=0 max=20 step=1 tooltip=#bd35420d hidden
+option indicators.resurrectionOffsetX type="range" label="Resurrection icon horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
+option indicators.resurrectionOffsetY type="range" label="Resurrection icon vertical offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
+option indicators.resurrectionText type="toggle" label="Green health text for incoming resurrection" default=true hidden
 option indicators.summon type="toggle" label="Summon" default=true
+option indicators.summonPosition type="select" label="Summon icon position" default="TOP" values=#1fe6f2dd tooltip=#af7510dd hidden
+option indicators.summonSize type="range" label="Summon icon size" default=14 min=8 max=64 step=1 hidden
+option indicators.summonOrder type="range" label="Summon icon order" default=7 min=1 max=10 step=1 tooltip=#b6361d3f hidden
+option indicators.summonGap type="range" label="Summon icon gap" default=2 min=0 max=20 step=1 tooltip=#bd35420d hidden
+option indicators.summonOffsetX type="range" label="Summon icon horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
+option indicators.summonOffsetY type="range" label="Summon icon vertical offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
 option indicators.threat type="toggle" label="Threat" default=false
 option indicators.phase type="toggle" label="Different phase" default=true
 option indicators.size type="range" label="Other status icon size" default=14 min=8 max=32 step=1
@@ -9214,6 +9254,13 @@ default indicators.readyOrder = 4
 default indicators.readyPosition = "TOP"
 default indicators.readySize = 14
 default indicators.resurrection = true
+default indicators.resurrectionGap = 2
+default indicators.resurrectionOffsetX = 0
+default indicators.resurrectionOffsetY = 0
+default indicators.resurrectionOrder = 6
+default indicators.resurrectionPosition = "TOP"
+default indicators.resurrectionSize = 14
+default indicators.resurrectionText = true
 default indicators.role = true
 default indicators.roleGap = 2
 default indicators.roleOffsetX = 0
@@ -9223,6 +9270,12 @@ default indicators.rolePosition = "NAME"
 default indicators.roleSize = 14
 default indicators.size = 14
 default indicators.summon = true
+default indicators.summonGap = 2
+default indicators.summonOffsetX = 0
+default indicators.summonOffsetY = 0
+default indicators.summonOrder = 7
+default indicators.summonPosition = "TOP"
+default indicators.summonSize = 14
 default indicators.threat = false
 default panel.columns = 4
 default panel.enabled = true
@@ -9304,6 +9357,13 @@ resolved indicators.readyOrder = 4
 resolved indicators.readyPosition = "TOP"
 resolved indicators.readySize = 14
 resolved indicators.resurrection = true
+resolved indicators.resurrectionGap = 2
+resolved indicators.resurrectionOffsetX = 0
+resolved indicators.resurrectionOffsetY = 0
+resolved indicators.resurrectionOrder = 6
+resolved indicators.resurrectionPosition = "TOP"
+resolved indicators.resurrectionSize = 14
+resolved indicators.resurrectionText = true
 resolved indicators.role = true
 resolved indicators.roleGap = 2
 resolved indicators.roleOffsetX = 0
@@ -9313,6 +9373,12 @@ resolved indicators.rolePosition = "NAME"
 resolved indicators.roleSize = 14
 resolved indicators.size = 14
 resolved indicators.summon = true
+resolved indicators.summonGap = 2
+resolved indicators.summonOffsetX = 0
+resolved indicators.summonOffsetY = 0
+resolved indicators.summonOrder = 7
+resolved indicators.summonPosition = "TOP"
+resolved indicators.summonSize = 14
 resolved indicators.threat = false
 resolved panel.columns = 4
 resolved panel.enabled = true

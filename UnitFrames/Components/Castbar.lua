@@ -29,6 +29,10 @@ end
 function Castbar.BuildSchema()
 	return {
 		{ key = "enabled", type = "toggle", label = "Enabled", default = true },
+		{ key = "portraitLayout", type = "select", label = "Portrait cast layout", default = "bar", values = {
+			{ "bar", "Bar only" }, { "split", "Icon / bar side by side" }, { "stack", "Icon / bar top and bottom" },
+		}, hidden = function(cfg) return cfg.placement ~= "portrait" end,
+			tooltip = "Used when replacing the portrait. Split layouts give half the space to each part; Icon > Enabled can hide the icon." },
 		{ key = "border", type = "group", label = "Border", schema = ns.Util.Copy(Backdrop.schema),
 			defaults = { enabled = true, padding = 3 } },
 		{ key = "icon", type = "group", label = "Icon", schema = {
@@ -117,7 +121,34 @@ function Castbar:LayoutParts()
 	local icon, bar, frame = self.icon, self.bar, self.frame
 	icon:ClearAllPoints()
 	bar:ClearAllPoints()
-	if cfg.icon.enabled then
+	if self.portraitPlacement and cfg.icon.enabled and cfg.portraitLayout ~= "bar" then
+		local width = math.max(frame:GetWidth() - 2 * pad, 1)
+		local height = math.max(frame:GetHeight() - 2 * pad, 1)
+		icon:Show()
+		if cfg.portraitLayout == "split" then
+			local half = math.max((width - cfg.icon.gap) / 2, 1)
+			icon:SetSize(half, height)
+			if cfg.icon.position == "LEFT" then
+				icon:SetPoint("TOPLEFT", frame, "TOPLEFT", pad, -pad)
+				bar:SetPoint("TOPLEFT", icon, "TOPRIGHT", cfg.icon.gap, 0)
+				bar:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -pad, pad)
+			else
+				icon:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -pad, -pad)
+				bar:SetPoint("TOPLEFT", frame, "TOPLEFT", pad, -pad)
+				bar:SetPoint("BOTTOMRIGHT", icon, "BOTTOMLEFT", -cfg.icon.gap, 0)
+			end
+		else
+			icon:SetSize(width, math.max((height - cfg.icon.gap) / 2, 1))
+			icon:SetPoint("TOPLEFT", frame, "TOPLEFT", pad, -pad)
+			bar:SetPoint("TOPLEFT", icon, "BOTTOMLEFT", 0, -cfg.icon.gap)
+			bar:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -pad, pad)
+		end
+		-- Crop to the half's aspect ratio rather than stretching the artwork.
+		local iw, ih = icon:GetWidth(), icon:GetHeight()
+		local x, y = 0.42 * math.min(iw / ih, 1), 0.42 * math.min(ih / iw, 1)
+		icon:SetTexCoord(0.5 - x, 0.5 + x, 0.5 - y, 0.5 + y)
+	elseif cfg.icon.enabled and not self.portraitPlacement then
+		icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 		icon:SetSize(size, size)
 		icon:Show()
 		if cfg.icon.position == "LEFT" then
@@ -138,14 +169,30 @@ function Castbar:LayoutParts()
 	local textParent = bar:GetTextParent()
 	local name, time = self.nameText, self.timeText
 	time:ClearAllPoints()
-	time:SetPoint("RIGHT", textParent, "RIGHT", -4, 0)
 	name:ClearAllPoints()
-	name:SetPoint("LEFT", textParent, "LEFT", 4, 0)
-	if time:IsEnabled() then
+	if not name:IsEnabled() then
+		-- Alignment needs a box spanning the bar when time is the only text.
+		time:SetPoint("LEFT", textParent, "LEFT", 4, 0)
+		time:SetPoint("RIGHT", textParent, "RIGHT", -4, 0)
+	else
+		local anchor = time.resolved.justifyH
+		time:SetPoint(anchor, textParent, anchor, anchor == "LEFT" and 4 or anchor == "RIGHT" and -4 or 0, 0)
+	end
+	if time:IsEnabled() and name:IsEnabled() and time.resolved.justifyH == "LEFT" then
+		name:SetPoint("LEFT", time:GetFrame(), "RIGHT", 4, 0)
+		name:SetPoint("RIGHT", textParent, "RIGHT", -4, 0)
+	elseif time:IsEnabled() and name:IsEnabled() then
+		name:SetPoint("LEFT", textParent, "LEFT", 4, 0)
 		name:SetPoint("RIGHT", time:GetFrame(), "LEFT", -4, 0)
 	else
+		name:SetPoint("LEFT", textParent, "LEFT", 4, 0)
 		name:SetPoint("RIGHT", textParent, "RIGHT", -4, 0)
 	end
+end
+
+function Castbar:SetPortraitPlacement(enabled)
+	self.portraitPlacement = enabled
+	self:LayoutParts()
 end
 
 function Castbar:OnRelease()

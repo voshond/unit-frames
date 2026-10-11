@@ -181,6 +181,43 @@ Formats.Register("level:info", {
 	end,
 })
 
+-- Cast names can be opaque. Check only their type; pass the value to the
+-- native text renderer unchanged. Channels use the same text choices.
+local CAST_EVENTS = "UNIT_SPELLCAST_START UNIT_SPELLCAST_DELAYED UNIT_SPELLCAST_STOP UNIT_SPELLCAST_FAILED UNIT_SPELLCAST_INTERRUPTED UNIT_SPELLCAST_CHANNEL_START UNIT_SPELLCAST_CHANNEL_UPDATE UNIT_SPELLCAST_CHANNEL_STOP"
+local function SpellName(unit)
+	local name = UnitCastingInfo(unit)
+	if type(name) ~= "nil" then return name end
+	name = UnitChannelInfo(unit)
+	if type(name) ~= "nil" then return name end
+end
+
+Formats.Register("cast:name", {
+	label = "Spell name while casting", events = CAST_EVENTS,
+	text = function(unit)
+		local name = SpellName(unit)
+		if type(name) ~= "nil" then return name end
+		return ""
+	end,
+	sample = function(v) return v.showCast ~= false and v.spell or "" end,
+})
+
+for _, id in ipairs({ "level:class", "level:info" }) do
+	local fallback = Formats.Get(id)
+	Formats.Register(id .. ":cast", {
+		label = fallback.label .. " / spell name while casting",
+		events = fallback.events .. " " .. CAST_EVENTS, sharedEvents = fallback.sharedEvents,
+		text = function(unit)
+			local name = SpellName(unit)
+			if type(name) ~= "nil" then return name end
+			return fallback.text(unit)
+		end,
+		sample = function(v)
+			if v.showCast ~= false and v.spell then return v.spell end
+			return fallback.sample(v)
+		end,
+	})
+end
+
 -- Values: the same six formats for health, power and experience ---------------
 
 --[[
@@ -312,6 +349,6 @@ local function List(...)
 end
 
 local IDENTITY = { "none", "name", "level", "smartlevel", "level:name", "class", "level:class", "level:info", "resting" }
-Formats.HEALTH = List(IDENTITY, HEALTH_VALUES)
+Formats.HEALTH = List(IDENTITY, HEALTH_VALUES, { "cast:name", "level:class:cast", "level:info:cast" })
 Formats.POWER = List(IDENTITY, POWER_VALUES)
 Formats.EXPERIENCE = List({ "none", "level", "resting" }, XP_VALUES, { "xp:rested" })

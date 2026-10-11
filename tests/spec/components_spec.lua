@@ -258,6 +258,37 @@ describe("Castbar", function()
 		end)
 	end)
 
+	it("aligns cast time across the bar and relayouts when spell name is toggled", function()
+		local castbar = NewCastbar()
+		local duration = C_DurationUtil.CreateDuration()
+		castbar:Start({ name = Secret("Frostbolt"), duration = duration })
+		local time = castbar.timeText:GetFrame()
+		local host = castbar:GetBar():GetTextParent()
+		for _, alignment in ipairs({ "LEFT", "CENTER", "RIGHT" }) do
+			castbar:Apply({ name = { enabled = false }, time = { justifyH = alignment } })
+			castbar:Apply()
+			assert.same({ "LEFT", host, "LEFT", 4, 0 }, time:GetAnchor("LEFT"))
+			assert.same({ "RIGHT", host, "RIGHT", -4, 0 }, time:GetAnchor("RIGHT"))
+			local appliedAlignment
+			for _, call in ipairs(time.__calls) do
+				if call[1] == "SetJustifyH" then appliedAlignment = call[2] end
+			end
+			assert.equals(alignment, appliedAlignment)
+			assert.equals(2, time:GetNumPoints())
+			castbar:Apply({ name = { enabled = true }, time = { justifyH = alignment } })
+			local offset = alignment == "LEFT" and 4 or alignment == "RIGHT" and -4 or 0
+			assert.same({ alignment, host, alignment, offset, 0 }, time:GetAnchor(alignment))
+			assert.equals(1, time:GetNumPoints())
+			local name = castbar.nameText:GetFrame()
+			if alignment == "LEFT" then
+				assert.same({ "LEFT", time, "RIGHT", 4, 0 }, name:GetAnchor("LEFT"))
+			else
+				assert.same({ "RIGHT", time, "LEFT", -4, 0 }, name:GetAnchor("RIGHT"))
+			end
+		end
+		assert.equals(duration, castbar:GetBar().bar.__state.timer.duration)
+	end)
+
 	it("shows the result when stopped", function()
 		local castbar = NewCastbar()
 		castbar:Start({ name = "Fireball", duration = C_DurationUtil.CreateDuration() })

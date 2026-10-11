@@ -547,6 +547,7 @@ function Mock.Install()
 	Mock.time = 100
 	Mock.raidTargets = {}
 	Mock.dead, Mock.ghosts = {}, {}
+	Mock.incomingResurrections = {}
 	Mock.pvpInfo = {}
 	Mock.ranges = {}
 	Mock.spellRanges = {}
@@ -804,6 +805,7 @@ function Mock.InstallUI()
 	_G.UnitIsConnected = function() return true end
 	_G.UnitIsDead = function(unit) return Mock.dead[unit] or false end
 	_G.UnitIsGhost = function(unit) return Mock.ghosts[unit] or false end
+	_G.UnitHasIncomingResurrection = function(unit) return Mock.incomingResurrections[unit] or false end
 	_G.UnitIsTapDenied = function() return false end
 	_G.UnitReaction = function() return 2 end
 	_G.UnitClassification = function() return "elite" end

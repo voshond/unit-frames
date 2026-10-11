@@ -84,6 +84,17 @@ stops at the last available row. Rows below the portrait use the full frame
 width. **Width = 0** keeps the portrait square using the height of the rows
 it spans; a fixed width is also supported on either side.
 
+**Castbar > Placement > Replace portrait while casting** covers the portrait
+until the cast finishes and fades out. It requires an enabled portrait and
+adds no row. **Portrait cast layout** chooses a bar alone, or equal halves
+for the spell icon and bar (side by side or top/bottom). **Bar > Orientation**
+chooses horizontal or vertical fill; **Reverse fill** changes its direction.
+Remaining time stays on the bar. Disable **Spell name > Enabled** if the
+portrait is too small, and choose **Spell name while casting** or
+**Level + class / spell name while casting** in a Health text slot's **Shows**
+picker. The latter restores level/class when idle; a creature-type variant
+is available for NPCs. These choices also work with channels and sample previews.
+
 Each frame's **Raid target icon** section controls its marker, enabled by
 default at the top border. Choose any of the eight border anchors to centre
 the icon on that edge or corner, so it extends outside the frame, or the

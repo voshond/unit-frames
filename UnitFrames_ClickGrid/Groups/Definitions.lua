@@ -100,10 +100,14 @@ CG.IndicatorSchema = UF.Schema.Concat(
 		"An ordinary unassigned role (including solo) takes no space. Opaque roles keep their slot."),
 	Placed("leader", "Leader / assistant", "Leader icon", "TOP", 3, "Leader and assistant share one slot."),
 	Placed("ready", "Ready check", "Ready check icon", "TOP", 4, "Shown during a ready check and briefly after it."),
-	Placed("death", "Dead / ghost", "Dead / ghost icon", "TOP", 5, "A tombstone while dead, a spirit healer while a ghost."),
+	Placed("death", "Dead / ghost", "Dead / ghost icon", "TOP", 5, "A spirit icon while dead or after releasing as a ghost."),
+	Placed("resurrection", "Incoming resurrection", "Resurrection icon", "TOP", 6, "Shown while a resurrection is incoming."),
 	{
-		{ key = "resurrection", type = "toggle", label = "Incoming resurrection", default = true },
-		{ key = "summon", type = "toggle", label = "Summon", default = true },
+		{ key = "resurrectionText", type = "toggle", label = "Green health text for incoming resurrection", default = true,
+			hidden = function(c) return not c.resurrection end },
+	},
+	Placed("summon", "Summon", "Summon icon", "TOP", 7, "Shows pending, accepted or declined summons."),
+	{
 		{ key = "threat", type = "toggle", label = "Threat", default = false },
 		{ key = "phase", type = "toggle", label = "Different phase", default = true },
 		{ key = "size", type = "range", label = "Other status icon size", min = 8, max = 32, step = 1, default = 14 },
