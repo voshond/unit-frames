@@ -130,7 +130,18 @@ Components own their children explicitly with `Own`; releasing a composition
 releases its children and pending work. Theme refresh applies at composition
 roots, while runtime bindings manage their own refresh. Keep visual components
 independent of oUF and feed sample values through the shared row writers in
-`Units/Rows.lua`.
+`Units/Rows.lua`; non-oUF live previews use its calculator-based live writers.
+
+A unit frame's optional parts (portrait, castbar, auras, raid target) are
+declared once in `UnitFrame.PARTS`; the Units layer keeps one oUF binding and
+one sample feeder per part key, and Edit Mode quick settings read the unit
+schema. Derive new definitions with `Units:Derive`, overriding rows by key.
+
+Settings are written through stores (`Core/Store.lua`): set, replace and reset
+in one place with optional validation and one change event, plus a derived
+inspector target. Work blocked by combat goes through the ordered
+`Core/AfterCombat.lua` queue; casts for unit frames and live previews share
+`Units/Cast.lua`.
 
 `BuildSchema` and `UnitFrameLayout.Compute` build settings and measure unit
 geometry without creating frames. Decorations use `GetLayoutContext` for
@@ -141,8 +152,9 @@ retain their separate selection, container and lifecycle policies.
 Workbench separates its controller (`Workbench.lua`), presentation (`View.lua`),
 settings navigation (`Sections.lua`) and active preview lifetime
 (`PreviewSession.lua`). A session owns its data cache, callbacks and teardown;
-cached inspector pages dispatch through their current target. Entries still
-define their own handles, sources and actions using the shared settings toolkit.
+cached inspector pages dispatch through their current target. Entries declare
+the events that restyle them (`refreshOn`) and build handles with
+`Workbench.Composite` or `Workbench.ComponentHandle`.
 
 ## Adding fonts
 
