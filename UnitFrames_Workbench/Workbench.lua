@@ -415,6 +415,7 @@ function Workbench:Select(id)
 			end
 			self:UpdateData()
 		end)
+		self.dataTarget.invoke = function(path) self:RunAction(path) end
 	end
 	self:FillSections()
 
@@ -514,24 +515,10 @@ function Workbench:SelectSection(id)
 end
 
 function Workbench:StyleTarget(handle, state)
-	return {
-		schema = handle.schema,
-		get = function(path)
-			return Util.GetPath(state.config, path)
-		end,
-		set = function(path, value)
-			if value == nil then
-				Util.ClearPath(state.config, path)
-			else
-				Util.SetPath(state.config, path, value)
-			end
-			handle:Apply(state.config)
-			self:UpdateData()
-		end,
-		resolved = function()
-			return handle:Resolved()
-		end,
-	}
+	return W.Inspector.TableTarget(handle.schema, function() return state.config end, function()
+		handle:Apply(state.config)
+		self:UpdateData()
+	end, function() return handle:Resolved() end)
 end
 
 function Workbench:BuildPresets(entry)

@@ -72,12 +72,9 @@ Workbench:Register({
 			{ key = "notInterruptible", type = "toggle", label = "Not interruptible", default = false, hidden = NotFake },
 			{ key = "progress", type = "range", label = "Progress %", min = 0, max = 100, step = 1, default = 60,
 				hidden = NotStatic },
-			{ key = "start", type = "action", label = "Start cast", hidden = NotFake,
-				run = function() Workbench:RunAction("start") end },
-			{ key = "interrupt", type = "action", label = "Interrupt", hidden = NotFake,
-				run = function() Workbench:RunAction("interrupt") end },
-			{ key = "fail", type = "action", label = "Fail", hidden = NotFake,
-				run = function() Workbench:RunAction("fail") end },
+			{ key = "start", type = "action", label = "Start cast", hidden = NotFake },
+			{ key = "interrupt", type = "action", label = "Interrupt", hidden = NotFake },
+			{ key = "fail", type = "action", label = "Fail", hidden = NotFake },
 		},
 		actions = {
 			start = function(handle, d, es)

@@ -17,6 +17,8 @@ Without it, the whole schema is shown with nested groups as headers.
     get      = function(path) end        -- raw value at path, nil = inherited/default
     set      = function(path, value) end  -- value nil = reset to inherited/default
     resolved = function() end              -- effective values (same shape as schema)
+    invoke   = function(path) end          -- optional UI action on the current target
+    revision = value                       -- optional; change when schema structure changes
   }
 
 Controls are built once per cacheKey and reused when switching back.
@@ -24,7 +26,7 @@ Options whose value is set (not inherited) show their label in the accent
 colour and get a reset button.
 
 Extra option type understood only here:
-  action   { key, type = "action", label, run = function() end }  -> a button
+  action   { key, type = "action", label } -> target.invoke(path)
 ]]
 local Inspector = ns.Widget:Extend("Inspector")
 
@@ -52,7 +54,7 @@ function Inspector:SetTarget(target, cacheKey, groupPath)
 	end
 	cacheKey = cacheKey or target
 	local page = self.pages[cacheKey]
-	if not page then
+	if not page or page.revision ~= target.revision or page.groupPath ~= groupPath then
 		page = self:BuildPage(target, groupPath)
 		self.pages[cacheKey] = page
 	end
@@ -66,6 +68,8 @@ function Inspector:BuildPage(target, groupPath)
 	local page = {
 		frame = CreateFrame("Frame", nil, self.scroll:GetContent()),
 		rows = {},
+		revision = target.revision,
+		groupPath = groupPath,
 	}
 	page.frame:SetAllPoints()
 	if groupPath then
@@ -139,7 +143,7 @@ function Inspector:CreateControl(page, opt, path)
 		return W.EditBox:New(page.frame, { label = label, tooltip = opt.tooltip, onChange = Set })
 	elseif t == "action" then
 		return W.Button:New(page.frame, { text = label, tooltip = opt.tooltip, onClick = function()
-			opt.run()
+			page.target.invoke(path)
 			self:Refresh()
 		end })
 	end
@@ -210,24 +214,27 @@ function Inspector:UpdateControl(row, target, resolved)
 end
 
 -- Convenience target for a plain config table (no theme, e.g. Workbench data).
-function Inspector.TableTarget(schema, config, onChange)
+function Inspector.TableTarget(schema, config, onChange, resolve)
+	local function Config()
+		return type(config) == "function" and config() or config
+	end
 	return {
 		schema = schema,
 		get = function(path)
-			return Util.GetPath(config, path)
+			return Util.GetPath(Config(), path)
 		end,
 		set = function(path, value)
 			if value == nil then
-				Util.ClearPath(config, path)
+				Util.ClearPath(Config(), path)
 			else
-				Util.SetPath(config, path, value)
+				Util.SetPath(Config(), path, value)
 			end
 			if onChange then
 				onChange(path, value)
 			end
 		end,
 		resolved = function()
-			return Schema.Resolve(schema, config, nil)
+			return resolve and resolve() or Schema.Resolve(schema, Config(), nil)
 		end,
 	}
 end

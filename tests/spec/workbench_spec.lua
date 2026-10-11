@@ -57,6 +57,27 @@ describe("Workbench", function()
 		assert.equals("unit.player", workbench.entry.id)
 	end)
 
+	it("dispatches cached inspector actions to the current target and invalidates revised schemas", function()
+		local inspector, calls = workbench.inspector, {}
+		local schema = { { key = "run", type = "action", label = "Run" } }
+		local function Target(id, revision)
+			return { schema = schema, revision = revision, get = function() end,
+				resolved = function() return {} end, invoke = function(path) calls[#calls + 1] = id .. ":" .. path end }
+		end
+		inspector:SetTarget(Target("old"), "test.actions", "")
+		local page, button = inspector.page, inspector.page.rows[1].control
+		inspector:SetTarget(Target("new"), "test.actions", "")
+		assert.equals(page, inspector.page)
+		button.opts.onClick()
+		assert.same({ "new:run" }, calls)
+		schema = { { key = "other", type = "action", label = "Other" } }
+		inspector:SetTarget(Target("revised", 2), "test.actions", "")
+		assert.is_false(page == inspector.page)
+		assert.is_false(page.frame:IsShown())
+		inspector.page.rows[1].control.opts.onClick()
+		assert.same({ "new:run", "revised:other" }, calls)
+	end)
+
 	it("suspends data callbacks after preview creation fails and recovers on selection", function()
 		local function RequiresHandle(handle) assert.is_not_nil(handle) end
 		workbench:Register({ id = "test.failed-preview", name = "Failed preview", category = "Tests",

@@ -33,19 +33,17 @@ local function UnitStyleTarget(unit)
 			schema[#schema + 1] = {
 				key = "copyPlayerSettings", type = "action", label = "Copy player settings",
 				tooltip = "Replace this frame's style with the player's current settings, including sizes, text, portrait, castbar, auras, raid target icon and range opacity. Position and player-only XP are not copied. This is a one-time copy, not a link.",
-				run = function()
-					if UF.Units:CopyPlayerSettings(unit) then
-						-- Inspector pages are cached across preview recreation; use
-						-- the current handle rather than capturing a released one.
-						Workbench.handle:Apply()
-						Workbench:UpdateData()
-					end
-				end,
 			}
 		end
 		for _, opt in ipairs(handle.schema) do schema[#schema + 1] = opt end
 		return {
 			schema = schema,
+			invoke = function(path)
+				if path == "copyPlayerSettings" and UF.Units:CopyPlayerSettings(unit) then
+					handle:Apply()
+					Workbench:UpdateData()
+				end
+			end,
 			get = function(path)
 				return UF.Util.GetPath(UF.Config:GetUnitConfig(unit), path)
 			end,
