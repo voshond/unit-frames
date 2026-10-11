@@ -29,7 +29,7 @@ spec:
             }
   portrait  { defaults } to offer a portrait
   castbar   { defaults } to offer a castbar
-  auras     { defaults } to offer buffs/debuffs
+  auras     { defaults, cancelBuffs } to offer buffs/debuffs
   raidTarget  { defaults } to offer a raid target icon
 ]]
 local UnitFrame = ns.Component:Extend("UnitFrame")
@@ -77,7 +77,7 @@ function UnitFrame:OnCreate(parent, spec)
 		self.castbar:GetFrame():Hide()
 	end
 	if spec.auras then
-		self.auras = Auras:New(self.frame, {})
+		self.auras = Auras:New(self.frame, {}, { cancelBuffs = spec.auras.cancelBuffs })
 	end
 	if spec.raidTarget then
 		self.raidTarget = RaidTarget:New(self.frame, {})

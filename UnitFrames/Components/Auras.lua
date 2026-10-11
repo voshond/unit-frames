@@ -156,7 +156,14 @@ function Auras:InitButton(button, kind, preview)
 	if preview then
 		button:EnableMouse(false)
 	else
+		button:EnableMouse(true)
 		button:SetTooltipAnchorPoint("ANCHOR_BOTTOMRIGHT", 0, 0)
+		-- The native secure click handler cancels the button's current aura;
+		-- addon code never reads its unit data or secret instance ID.
+		-- Cancel on press before propagated input can start world mouselook.
+		if self.spec.cancelBuffs and kind == "buffs" then
+			button:SetCancelAuraButtons("RightButtonDown")
+		end
 	end
 	if self.resolved then self:StyleButton(button) end
 end

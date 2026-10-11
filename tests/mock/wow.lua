@@ -361,6 +361,14 @@ function Mock.DecorateAuraContainer(container)
 		for i = 1, 2 do
 			local button = NewObject("Button", self)
 			button.__state.dispelTextures = {}
+			function button:SetCancelAuraButtons(tokens)
+				assert(tokens == nil or type(tokens) == "string", "cancelAuraButtons must be a string or nil")
+				local clicks = {}
+				for token in (tokens or ""):gmatch("[^,%s]+") do clicks[#clicks + 1] = token end
+				assert(tokens == nil or #clicks > 0, "cancelAuraButtons must contain at least one click token")
+				self.__state.cancelAuraButtons = tokens
+				self:RegisterForClicks(unpack(clicks))
+			end
 			function button:MockUpdateDispelTextures(dispelName)
 				if dispelName then self.__state.dispelName = dispelName end
 				for texture, opts in pairs(self.__state.dispelTextures) do
@@ -463,6 +471,7 @@ function Mock.Install()
 	Mock.objects = registry
 	Mock.time = 100
 	Mock.raidTargets = {}
+	Mock.pvpInfo = {}
 
 	_G.LibStub = nil
 	_G.UnitFrames = nil
@@ -595,6 +604,10 @@ function Mock.Install()
 		end,
 	}
 	_G.C_StringUtil = {
+		WrapString = function(infix, prefix, suffix)
+			if AnySecret(infix, prefix, suffix) then return Mock.Secret("wrapped") end
+			return infix ~= "" and ((prefix or "") .. infix .. (suffix or "")) or ""
+		end,
 		CreateSecondsFormatter = function()
 			local formatter = NewObject("SecondsFormatter")
 			function formatter:Format(seconds)
@@ -651,6 +664,12 @@ function Mock.InstallUI()
 	_G.SetPortraitTexture = function(texture) texture.__state.texture = "portrait" end
 	_G.GetRaidTargetIndex = function(unit) return Mock.raidTargets and Mock.raidTargets[unit] end
 	_G.SetRaidTargetIconTexture = function(texture, index) texture.__state.raidTargetIndex = index end
+	_G.UnitFrameUtil = {
+		GetUnitPvPIndicatorDisplayInfo = function(unit, checkMercenary)
+			assert(checkMercenary == true, "live PvP flags should account for mercenary mode")
+			return Mock.pvpInfo[unit] or { pvpIconAtlas = "" }
+		end,
+	}
 	_G.UnitExists = function() return true end
 	_G.UnitIsPlayer = function() return true end
 	_G.UnitIsConnected = function() return true end

@@ -339,6 +339,57 @@ describe("Player buffs and debuffs", function()
 		return Container(kind).__state.groups[kind]
 	end
 
+	it("delegates right-click cancellation only for live player buffs", function()
+		for _, unit in ipairs(ns.Units.order) do
+			local component = ns.Units.frames[unit].uf:GetAuras()
+			for _, kind in ipairs({ "buffs", "debuffs" }) do
+				for _, button in ipairs(component:GetContainer(kind).__state.groups[kind].frames) do
+					local expected = unit == "player" and kind == "buffs" and "RightButtonDown" or nil
+					assert.equals(expected, button.__state.cancelAuraButtons)
+					assert.is_nil(button:GetScript("OnClick"), "Blizzard owns the secure click handler")
+					local mouse, clicks
+					for _, call in ipairs(button.__calls) do
+						if call[1] == "EnableMouse" then mouse = call[2] end
+						if call[1] == "RegisterForClicks" then clicks = call[2] end
+					end
+					assert.is_true(mouse, "live icons retain mouse input and tooltips")
+					assert.equals(expected, clicks)
+				end
+			end
+		end
+	end)
+
+	it("preserves native cancellation across refreshes, toggles and unit rebinding", function()
+		ns.Config:SetUnitValue("player", "auras.buffs.enabled", false)
+		ns.Config:SetUnitValue("player", "auras.buffs.enabled", true)
+		ns.Config:SetUnitValue("player", "auras.enabled", false)
+		ns.Config:SetUnitValue("player", "auras.enabled", true)
+		frame.__unit = "vehicle"
+		ns.oUF.elements.UF_Auras.update(frame, "UnitFramesRefresh")
+		assert.equals("vehicle", Container("buffs"):GetUnit(), "native buttons follow the current unit")
+		frame.__unit = "player"
+		ns.oUF.elements.UF_Auras.update(frame, "UnitFramesRefresh")
+		ns.Config:SetUnitValue("player", "auras.durationPosition", "CENTER")
+		assert.is_true(Container("buffs"):IsEnabled())
+		assert.equals("player", Container("buffs"):GetUnit())
+		for _, button in ipairs(Group("buffs").frames) do
+			assert.equals("RightButtonDown", button.__state.cancelAuraButtons)
+		end
+		assert.is_nil(Group("debuffs").frames[1].__state.cancelAuraButtons)
+	end)
+
+	it("configures cancellation when the native pool creates another buff button", function()
+		local button = CreateFrame("AuraButton", nil, Container("buffs"), "CustomAuraButtonTemplate")
+		Group("buffs").options.initializeFrame(button)
+		local cancelToken
+		for _, call in ipairs(button.__calls) do
+			if call[1] == "SetCancelAuraButtons" then cancelToken = call[2] end
+		end
+		assert.equals("RightButtonDown", cancelToken)
+		assert.is_nil(button:GetScript("OnClick"))
+		assert.equals(20, button.ufIconFrame:GetHeight())
+	end)
+
 	it("positions buffs above and debuffs below with separate containers", function()
 		local buffs, debuffs = Container("buffs"), Container("debuffs")
 		assert.same({ "BOTTOMLEFT", frame, "TOPLEFT", 0, 2 }, buffs:GetAnchor("BOTTOMLEFT"))
@@ -651,6 +702,26 @@ describe("Aura samples", function()
 	local function Sample(kind)
 		return auras.previewContainers[kind]
 	end
+
+	it("keeps sample icons non-interactive through live and sample switches", function()
+		for _, unit in ipairs({ "player", "target", "player" }) do
+			auras:SetUnit(unit)
+			assert.equals(unit, auras:GetContainer("buffs"):GetUnit())
+			auras:ShowSample(ns.Units.SAMPLE)
+			assert.is_false(auras:GetContainer("buffs"):IsEnabled())
+			for _, kind in ipairs({ "buffs", "debuffs" }) do
+				for _, button in ipairs(Sample(kind).ufElements) do
+					local mouse
+					for _, call in ipairs(button.__calls) do
+						assert.is_false(call[1] == "SetCancelAuraButtons" or call[1] == "RegisterForClicks")
+						if call[1] == "EnableMouse" then mouse = call[2] end
+					end
+					assert.is_false(mouse)
+					assert.is_nil(button:GetScript("OnClick"))
+				end
+			end
+		end
+	end)
 
 	it("shows timed, permanent, stacked and coloured auras without live data", function()
 		assert.is_false(auras:GetContainer("buffs"):IsEnabled())

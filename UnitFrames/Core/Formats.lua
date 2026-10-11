@@ -10,8 +10,9 @@ Each format has
                   Registered as the oUF tag [uf:<id>].
   sample(values)  text for plain sample values (Workbench, test frames).
   events          oUF tag update events; shared = true when they have no unit.
+  sharedEvents    set of unitless events when mixed with unit events.
 
-Sample values: { name, level, className, health, healthMax, power, powerMax, xp, xpMax, rested }
+Sample values: { name, level, className, pvp, health, healthMax, power, powerMax, xp, xpMax, rested }
 ]]
 local Formats = { list = {}, byId = {} }
 ns.Formats = Formats
@@ -67,6 +68,34 @@ end
 local HEALTH_EVENTS = "UNIT_HEALTH UNIT_MAXHEALTH UNIT_CONNECTION"
 local POWER_EVENTS = "UNIT_POWER_UPDATE UNIT_MAXPOWER UNIT_DISPLAYPOWER"
 local XP_EVENTS = "PLAYER_XP_UPDATE UPDATE_EXHAUSTION PLAYER_LEVEL_UP"
+local PVP_EVENTS = "UNIT_FACTION PLAYER_PVP_FLAG_CHANGED PLAYER_REGEN_ENABLED"
+local PVP_SHARED_EVENTS = { PLAYER_PVP_FLAG_CHANGED = true, PLAYER_REGEN_ENABLED = true }
+
+Formats.PVP_FLAGS = {
+	{ "off", "Not flagged" },
+	{ "Alliance", "Alliance" },
+	{ "Horde", "Horde" },
+	{ "FFA", "Free-for-all" },
+}
+
+-- Forever's PvP atlases. Only samples select them in Lua; live flags use
+-- Blizzard's secret-safe helper, including mercenary and FFA handling.
+local PVP_ATLASES = {
+	Alliance = "UI-HUD-UnitFrame-SmallCircle-Alliance",
+	Horde = "UI-HUD-UnitFrame-SmallCircle-Horde",
+	FFA = "UI-HUD-UnitFrame-Player-PVP-FFAIcon",
+}
+
+local function PvPFlag(unit)
+	local info = UnitFrameUtil.GetUnitPvPIndicatorDisplayInfo(unit, true)
+	-- WrapString returns empty text for an empty atlas, even when secret.
+	-- Zero dimensions let the inline flag follow the text's font size.
+	return C_StringUtil.WrapString(info.pvpIconAtlas, " |A:", ":0:0:0:0|a")
+end
+
+local function SamplePvPFlag(values)
+	return C_StringUtil.WrapString(PVP_ATLASES[values.pvp] or "", " |A:", ":0:0:0:0|a")
+end
 
 Formats.Register("none", {
 	label = "None",
@@ -103,9 +132,10 @@ Formats.Register("class", {
 
 Formats.Register("level:class", {
 	label = "Level + class",
-	events = "UNIT_LEVEL PLAYER_LEVEL_UP",
-	text = function(unit) return string.format("%s %s", UnitLevel(unit) or "", (UnitClass(unit)) or "") end,
-	sample = function(v) return string.format("%s %s", v.level, v.className) end,
+	events = "UNIT_LEVEL PLAYER_LEVEL_UP " .. PVP_EVENTS,
+	sharedEvents = PVP_SHARED_EVENTS,
+	text = function(unit) return string.format("%s %s%s", UnitLevel(unit) or "", (UnitClass(unit)) or "", PvPFlag(unit)) end,
+	sample = function(v) return string.format("%s %s%s", v.level, v.className, SamplePvPFlag(v)) end,
 })
 
 -- Level with markers: "??" for skull level, "+" elite, "R" rare, "R+" rare
@@ -127,7 +157,8 @@ Formats.Register("smartlevel", {
 -- Players show their class, NPCs their creature type (which may be secret).
 Formats.Register("level:info", {
 	label = "Level + class or creature type",
-	events = "UNIT_LEVEL PLAYER_LEVEL_UP UNIT_CLASSIFICATION_CHANGED",
+	events = "UNIT_LEVEL PLAYER_LEVEL_UP UNIT_CLASSIFICATION_CHANGED " .. PVP_EVENTS,
+	sharedEvents = PVP_SHARED_EVENTS,
 	text = function(unit)
 		local info
 		if UnitIsPlayer(unit) then
@@ -135,11 +166,11 @@ Formats.Register("level:info", {
 		else
 			info = UnitCreatureType(unit) or ""
 		end
-		return string.format("%s %s", SmartLevel(UnitLevel(unit), UnitClassification(unit)), info)
+		return string.format("%s %s%s", SmartLevel(UnitLevel(unit), UnitClassification(unit)), info, PvPFlag(unit))
 	end,
 	sample = function(v)
 		local info = v.isPlayer == false and (v.creatureType or "") or v.className
-		return string.format("%s %s", SmartLevel(v.level, v.classification), info)
+		return string.format("%s %s%s", SmartLevel(v.level, v.classification), info, SamplePvPFlag(v))
 	end,
 })
 

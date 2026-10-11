@@ -81,6 +81,7 @@ local function Values(unit, d, healthPct, time)
 	if d.xp then v.xp = v.xpMax * d.xp / 100 end
 	v.showCast = d.showCast
 	v.raidTarget = d.raidTarget
+	v.pvp = d.pvp
 	v.castProgress = d.castProgress / 100
 	for _, kind in ipairs({ "buffs", "debuffs" }) do
 		local samples = v[kind]
@@ -113,6 +114,8 @@ local function RegisterUnit(unit)
 		Range("castProgress", "Cast progress %", 60),
 		{ key = "raidTarget", type = "select", label = "Raid target marker", default = 8,
 			values = UF.Components.RaidTarget.MARKERS },
+		{ key = "pvp", type = "select", label = "PvP flag", default = "off", values = UF.Formats.PVP_FLAGS,
+			tooltip = "Sample flag shown beside Level + class or Level + class or creature type text." },
 		{ key = "buffsCount", type = "range", label = "Sample buffs", min = 0, max = 40, step = 1, default = 8,
 			tooltip = "The Buffs style's filter and Maximum shown still apply." },
 		{ key = "debuffsCount", type = "range", label = "Sample debuffs", min = 0, max = 40, step = 1, default = 5,

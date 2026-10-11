@@ -52,6 +52,13 @@ Shield colour defaults to blue to contrast with white priest health bars;
 colour and texture are independently configurable. The standalone
 Health bar preview has the same settings; set **Health %** to 100 to test.
 
+The **Level + class** and **Level + class or creature type** text formats
+include a small PvP flag after the text when the unit is flagged. The flag
+shows Alliance, Horde (accounting for mercenary mode), or free-for-all PvP
+and updates when the unit's faction/PvP state changes. Enable **Health >
+Small text below left** to show the default level/class line. **Preview data >
+PvP flag** lets you preview each flag or **Not flagged**.
+
 Under **Portrait > Rows to span**, choose **All rows** (the default) or
 the first 1–4 visible rows from the top. Disabled rows are skipped; a castbar
 in its own top/bottom row counts, while one over health does not. The span
@@ -72,6 +79,8 @@ None. Live markers follow the unit's raid target assignment automatically.
 Aura settings live under **Buffs & debuffs**. Each of the **Buffs** and
 **Debuffs** sections has its own side, alignment, growth direction, gap,
 offsets and row/column length. Buffs default to the top, debuffs to the bottom.
+Right-click a buff on the live player frame to cancel it, if the game permits
+removing that buff. Sample preview icons remain non-interactive.
 The parent section controls the font, separate duration/stack sizes, and
 duration placement below or inside the icon. **Icon frame** styles each
 individual icon border. Centre alignment centres the whole aura block;

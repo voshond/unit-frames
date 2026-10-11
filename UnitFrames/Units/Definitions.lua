@@ -69,7 +69,7 @@ Units.definitions.player = {
 	-- Inside the unit frame the castbar uses the frame's border, not its own.
 	castbar = { defaults = { placement = "bottom", height = 18, border = { enabled = false },
 		name = { size = 10 }, time = { size = 10 } } },
-	auras = { defaults = {} },
+	auras = { cancelBuffs = true, defaults = {} },
 }
 
 -- Each definition owns its defaults; changing a compact row must not change
