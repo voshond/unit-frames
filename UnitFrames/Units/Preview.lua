@@ -48,6 +48,8 @@ function Units:ShowSample(uf, values)
 	end
 	local auras = uf:GetAuras()
 	if auras then auras:ShowSample(values) end
+	local raidTarget = uf:GetRaidTarget()
+	if raidTarget then raidTarget:SetIndex(values.raidTarget) end
 	local castbar = uf:GetCastbar()
 	if castbar and castbar:IsEnabled() then
 		if values.showCast == false then

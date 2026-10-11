@@ -32,7 +32,7 @@ local function UnitStyleTarget(unit)
 		if unit ~= "player" then
 			schema[#schema + 1] = {
 				key = "copyPlayerSettings", type = "action", label = "Copy player settings",
-				tooltip = "Replace this frame's style with the player's current settings, including sizes, text, portrait, castbar and auras. Position and player-only XP are not copied. This is a one-time copy, not a link.",
+				tooltip = "Replace this frame's style with the player's current settings, including sizes, text, portrait, castbar, auras and raid target icon. Position and player-only XP are not copied. This is a one-time copy, not a link.",
 				run = function()
 					if UF.Units:CopyPlayerSettings(unit) then
 						-- Inspector pages are cached across preview recreation; use
@@ -80,6 +80,7 @@ local function Values(unit, d, healthPct, time)
 	v.power = v.powerMax * d.power / 100
 	if d.xp then v.xp = v.xpMax * d.xp / 100 end
 	v.showCast = d.showCast
+	v.raidTarget = d.raidTarget
 	v.castProgress = d.castProgress / 100
 	for _, kind in ipairs({ "buffs", "debuffs" }) do
 		local samples = v[kind]
@@ -110,6 +111,8 @@ local function RegisterUnit(unit)
 		{ key = "showCast", type = "toggle", label = "Show a cast", default = true,
 			tooltip = "Sample cast on the castbar. Turn off to see the health bar under a castbar placed over it." },
 		Range("castProgress", "Cast progress %", 60),
+		{ key = "raidTarget", type = "select", label = "Raid target marker", default = 8,
+			values = UF.Components.RaidTarget.MARKERS },
 		{ key = "buffsCount", type = "range", label = "Sample buffs", min = 0, max = 40, step = 1, default = 8,
 			tooltip = "The Buffs style's filter and Maximum shown still apply." },
 		{ key = "debuffsCount", type = "range", label = "Sample debuffs", min = 0, max = 40, step = 1, default = 5,

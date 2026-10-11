@@ -174,6 +174,7 @@ end
 function Methods:SetFrameLevel(level) self.__state.level = level end
 function Methods:IsProtected() return self.__state.protected == true end
 function Methods:SetAttribute(name, value) self.__state.attributes = self.__state.attributes or {}; self.__state.attributes[name] = value end
+function Methods:GetAttribute(name) return self.__state.attributes and self.__state.attributes[name] end
 function Methods:RegisterForClicks(...) Record(self, "RegisterForClicks", ...) end
 function Methods:GetChildren() end
 function Methods:GetFrameLevel() return self.__state.level end
@@ -461,6 +462,7 @@ function Mock.Install()
 	registry = {}
 	Mock.objects = registry
 	Mock.time = 100
+	Mock.raidTargets = {}
 
 	_G.LibStub = nil
 	_G.UnitFrames = nil
@@ -647,6 +649,8 @@ function Mock.InstallUI()
 	_G.LOCALIZED_CLASS_NAMES_MALE = { WARRIOR = "Warrior", PALADIN = "Paladin", MAGE = "Mage" }
 
 	_G.SetPortraitTexture = function(texture) texture.__state.texture = "portrait" end
+	_G.GetRaidTargetIndex = function(unit) return Mock.raidTargets and Mock.raidTargets[unit] end
+	_G.SetRaidTargetIconTexture = function(texture, index) texture.__state.raidTargetIndex = index end
 	_G.UnitExists = function() return true end
 	_G.UnitIsPlayer = function() return true end
 	_G.UnitIsConnected = function() return true end

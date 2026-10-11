@@ -5,7 +5,7 @@ local _, wb = ...
 local Data = {}
 wb.Data = Data
 
-Data.LIVE_UNITS = { player = true, target = true, focus = true }
+Data.LIVE_UNITS = { player = true, pet = true, target = true, focus = true }
 
 -- Source choices; entries pick the ones they support.
 function Data.Sources(withTarget)
@@ -15,6 +15,7 @@ function Data.Sources(withTarget)
 		{ "player", "Live: player" },
 	}
 	if withTarget then
+		values[#values + 1] = { "pet", "Live: player pet" }
 		values[#values + 1] = { "target", "Live: target" }
 		values[#values + 1] = { "focus", "Live: focus" }
 	end

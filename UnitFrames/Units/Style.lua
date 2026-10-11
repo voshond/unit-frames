@@ -139,6 +139,10 @@ function Units:Bind(frame)
 	if auras then
 		SetElement(frame, "UF_Auras", auras:IsEnabled() and auras or nil)
 	end
+	local raidTarget = uf:GetRaidTarget()
+	if raidTarget then
+		SetElement(frame, "RaidTargetIndicator", raidTarget:IsEnabled() and raidTarget:GetWidget() or nil)
+	end
 end
 
 -- Re-applies config to a live frame and refreshes everything shown on it.

@@ -85,7 +85,7 @@ describe("Workbench", function()
 	end)
 
 	it("offers each unit with independent settings, reset and preview data", function()
-		local samples = { target = "Scarlet Myrmidon", targettarget = "Arthas", focus = "Jaina" }
+		local samples = { pet = "Wolf", target = "Scarlet Myrmidon", targettarget = "Arthas", focus = "Jaina" }
 		for unit, name in pairs(samples) do
 			workbench:Select("unit." .. unit)
 			local uf = workbench.handle.parts.uf
@@ -129,7 +129,7 @@ describe("Workbench", function()
 		end
 		ns.Config:SetUnitValue("player", "width", 290)
 		ns.Config:SetUnitValue("player", "auras.durationPosition", "CENTER")
-		for _, unit in ipairs({ "target", "targettarget", "focus" }) do
+		for _, unit in ipairs({ "pet", "target", "targettarget", "focus" }) do
 			workbench:Select("unit." .. unit)
 			workbench:SelectSection("")
 			local button, oldHandle = CopyButton(), workbench.handle

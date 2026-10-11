@@ -82,7 +82,7 @@ describe("Target, target of target and focus", function()
 
 	it("copies effective player defaults to every secondary frame, not their differing defaults", function()
 		local player = ns.Units.frames.player.uf.resolved
-		for _, unit in ipairs({ "target", "targettarget", "focus" }) do
+		for _, unit in ipairs({ "pet", "target", "targettarget", "focus" }) do
 			assert.is_true(ns.Units:CopyPlayerSettings(unit))
 			AssertCopied(ns.Units.frames[unit], player)
 			assert.is_nil(ns.Config:GetUnitConfig(unit).experience)

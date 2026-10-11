@@ -21,13 +21,18 @@ scripts/fetch-libs.sh       # update the embedded libraries (UnitFrames/Libs/VER
 
 In game: `/uf wb` opens the Workbench.
 
-**Unit frames** includes Player, Target, Target of target, and Focus, each
+**Unit frames** includes Player, Player pet, Target, Target of target, and Focus, each
 with independent saved settings and Edit Mode positions. Target sits opposite
 the player, target-of-target beside the target, and focus below the player.
 The new frames use oUF's secure targeting/menu clicks and unit visibility;
 target-of-target refreshes through oUF's polling. XP remains player-only.
 Target and focus include castbars and auras; target-of-target starts compact,
 with portrait, castbar, and auras off but available in its settings.
+Player pet starts compact below/right of the player, with health, power,
+shields and small aura icons. Portrait and castbar are available but off by
+default. Its secure pet unit watch hides it when no pet exists; summons,
+dismissals and replacements use oUF's normal pet updates. Its preview shows
+a friendly wolf with focus power; the same frame supports mana-based pets.
 Their previews include distinct samples and NPC reaction/classification controls.
 Each new frame's **General** section has **Copy player settings** to replace
 its style with the player's current settings (including sizes and enabled
@@ -46,6 +51,23 @@ fill's end. Health numbers and percentages still refer to actual health.
 Shield colour defaults to blue to contrast with white priest health bars;
 colour and texture are independently configurable. The standalone
 Health bar preview has the same settings; set **Health %** to 100 to test.
+
+Under **Portrait > Rows to span**, choose **All rows** (the default) or
+the first 1–4 visible rows from the top. Disabled rows are skipped; a castbar
+in its own top/bottom row counts, while one over health does not. The span
+stops at the last available row. Rows below the portrait use the full frame
+width. **Width = 0** keeps the portrait square using the height of the rows
+it spans; a fixed width is also supported on either side.
+
+Each frame's **Raid target icon** section controls its marker, enabled by
+default at the top border. Choose any of the eight border anchors to centre
+the icon on that edge or corner, so it extends outside the frame. The two
+**Inside portrait** anchors keep it within the bottom-left or bottom-right
+corner and hide it when the portrait is off. Size and horizontal/vertical
+offsets are independent per frame; positive offsets move right/up. Portrait
+icons shrink to fit small portraits; offsets can deliberately move them
+outside. **Preview data > Raid target marker** offers all eight markers and
+None. Live markers follow the unit's raid target assignment automatically.
 
 Aura settings live under **Buffs & debuffs**. Each of the **Buffs** and
 **Debuffs** sections has its own side, alignment, growth direction, gap,

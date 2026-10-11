@@ -29,6 +29,15 @@ end
 
 function Formats.Register(id, format)
 	format.id = id
+	-- Explicit oUF tag refreshes also run on hidden frames with no unit.
+	-- Avoid reading missing unit data or passing nil into native formatters.
+	local text = format.text
+	format.text = function(unit)
+		if not unit or not UnitExists(unit) then
+			return ""
+		end
+		return text(unit)
+	end
 	Formats.byId[id] = format
 	Formats.list[#Formats.list + 1] = format
 end
@@ -82,7 +91,7 @@ Formats.Register("level", {
 Formats.Register("level:name", {
 	label = "Level + name",
 	events = "UNIT_NAME_UPDATE UNIT_LEVEL PLAYER_LEVEL_UP",
-	text = function(unit) return string.format("%s %s", UnitLevel(unit), UnitName(unit)) end,
+	text = function(unit) return string.format("%s %s", UnitLevel(unit) or "", (UnitName(unit)) or "") end,
 	sample = function(v) return string.format("%s %s", v.level, v.name) end,
 })
 
@@ -95,7 +104,7 @@ Formats.Register("class", {
 Formats.Register("level:class", {
 	label = "Level + class",
 	events = "UNIT_LEVEL PLAYER_LEVEL_UP",
-	text = function(unit) return string.format("%s %s", UnitLevel(unit), (UnitClass(unit))) end,
+	text = function(unit) return string.format("%s %s", UnitLevel(unit) or "", (UnitClass(unit)) or "") end,
 	sample = function(v) return string.format("%s %s", v.level, v.className) end,
 })
 
@@ -122,7 +131,7 @@ Formats.Register("level:info", {
 	text = function(unit)
 		local info
 		if UnitIsPlayer(unit) then
-			info = (UnitClass(unit))
+			info = (UnitClass(unit)) or ""
 		else
 			info = UnitCreatureType(unit) or ""
 		end

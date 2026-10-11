@@ -3,7 +3,7 @@ local Formats = ns.Formats
 
 -- What each unit frame is made of (rows, segments, default texts). Used for
 -- the live oUF frames and for Workbench previews alike.
-local Units = { definitions = {}, frames = {}, order = { "player", "target", "targettarget", "focus" } }
+local Units = { definitions = {}, frames = {}, order = { "player", "pet", "target", "targettarget", "focus" } }
 ns.Units = Units
 
 Units.HEALTH_COLOR_MODES = {
@@ -92,6 +92,22 @@ local function PowerRow(height, compact)
 	return row
 end
 
+Units.definitions.pet = {
+	label = "Player pet", width = 170,
+	-- Below/right of the player, clear of the existing focus position.
+	defaultPosition = { point = "CENTER", x = -90, y = -235 },
+	rows = { HealthRow(22, true), PowerRow(10, true) },
+	portrait = { defaults = { enabled = false } },
+	castbar = { defaults = { placement = "off", height = 14, border = { enabled = false },
+		name = { size = 9 }, time = { size = 9 } } },
+	auras = { defaults = { durationPosition = "CENTER", durationSize = 9, countSize = 8,
+		buffs = { max = 6, size = 18 }, debuffs = { max = 6, size = 18 } } },
+	sample = { name = "Wolf", level = 42, isPlayer = false, creatureType = "Beast", classification = "normal",
+		reaction = "friendly", healthMax = 6000, health = 3900, heal = 600, absorb = 900, healAbsorb = 0,
+		powerType = "FOCUS", powerMax = 100, power = 70, cost = 20,
+		spell = "Bite", spellIcon = [[Interface\Icons\Ability_Druid_FerociousBite]], castTime = 1.5 },
+}
+
 Units.definitions.target = {
 	label = "Target", width = 230,
 	defaultPosition = { point = "CENTER", x = 280, y = -160 },
@@ -137,7 +153,7 @@ function Units:CreateFrame(unit, parent, frame)
 	local def = self.definitions[unit]
 	return ns.Components.UnitFrame:New(parent, ns.Config:GetUnitConfig(unit), {
 		frame = frame, rows = def.rows, width = def.width, portrait = def.portrait, castbar = def.castbar,
-		auras = def.auras,
+		auras = def.auras, raidTarget = { defaults = {} },
 	})
 end
 

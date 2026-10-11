@@ -1,6 +1,7 @@
 local _, ns = ...
 local Backdrop, TextBar = ns.Components.Backdrop, ns.Components.TextBar
 local Castbar, Portrait, Auras = ns.Components.Castbar, ns.Components.Portrait, ns.Components.Auras
+local RaidTarget = ns.Components.RaidTarget
 
 --[[
 A unit frame made of rows stacked top to bottom inside one bordered frame.
@@ -8,10 +9,11 @@ Each row is a TextBar (bar + left/centre/right text) with its own height and
 on/off toggle; switched-off rows collapse and the frame shrinks.
 
 Optional extras:
-  portrait  a column left or right of the rows, as tall as all rows together
+  portrait  a column left or right, spanning all or the first few visible rows
   castbar   placed as an extra row at the top or bottom, or over the health
             row (it covers the health bar only while casting)
   auras     independently positioned buffs and debuffs on any side
+  raidTarget  raid marker centred on a border or inside a portrait corner
 
 The component only builds and lays out the visuals. Feeding unit data is
 done by the owner: oUF for live frames (Units/), fake values in the Workbench.
@@ -28,6 +30,7 @@ spec:
   portrait  { defaults } to offer a portrait
   castbar   { defaults } to offer a castbar
   auras     { defaults } to offer buffs/debuffs
+  raidTarget  { defaults } to offer a raid target icon
 ]]
 local UnitFrame = ns.Component:Extend("UnitFrame")
 
@@ -41,6 +44,15 @@ UnitFrame.CASTBAR_PLACEMENTS = {
 UnitFrame.SIDES = {
 	{ "LEFT", "Left" },
 	{ "RIGHT", "Right" },
+}
+
+-- Shared choices keep copied settings valid on units with fewer rows.
+UnitFrame.PORTRAIT_ROW_SPANS = {
+	{ 0, "All rows" },
+	{ 1, "1 row" },
+	{ 2, "2 rows" },
+	{ 3, "3 rows" },
+	{ 4, "4 rows" },
 }
 
 function UnitFrame:OnCreate(parent, spec)
@@ -66,6 +78,9 @@ function UnitFrame:OnCreate(parent, spec)
 	end
 	if spec.auras then
 		self.auras = Auras:New(self.frame, {})
+	end
+	if spec.raidTarget then
+		self.raidTarget = RaidTarget:New(self.frame, {})
 	end
 end
 
@@ -119,8 +134,10 @@ function UnitFrame:GetSchema()
 		schema[#schema + 1] = { key = "portrait", type = "group", label = "Portrait", defaults = self.spec.portrait.defaults,
 			schema = GroupSchema(self.portrait, {
 				{ key = "position", type = "select", label = "Side", values = UnitFrame.SIDES, default = "LEFT" },
+				{ key = "rowSpan", type = "select", label = "Rows to span", values = UnitFrame.PORTRAIT_ROW_SPANS, default = 0,
+					tooltip = "Count visible rows from the top, including a castbar in its own row. Disabled rows are skipped. Rows below the portrait use the full width. All rows follows the whole frame." },
 				{ key = "size", type = "range", label = "Width", min = 0, max = 200, step = 1, default = 0,
-					tooltip = "0 = square, as wide as the rows are tall." },
+					tooltip = "0 = square, as wide as the rows the portrait spans are tall." },
 				{ key = "gap", type = "range", label = "Gap to the bars", min = 0, max = 20, step = 1, default = 2 },
 			}) }
 	end
@@ -147,6 +164,10 @@ function UnitFrame:GetSchema()
 		schema[#schema + 1] = { key = "auras", type = "group", label = "Buffs & debuffs", schema = self.auras:GetSchema(),
 			defaults = self.spec.auras.defaults }
 	end
+	if self.raidTarget then
+		schema[#schema + 1] = { key = "raidTarget", type = "group", label = "Raid target icon", schema = self.raidTarget:GetSchema(),
+			defaults = self.spec.raidTarget.defaults }
+	end
 	self.schemaCache = schema
 	return schema
 end
@@ -165,6 +186,9 @@ function UnitFrame:OnApply(cfg)
 	end
 	if self.auras then
 		self:ApplyChild(self.auras, "auras")
+	end
+	if self.raidTarget then
+		self:ApplyChild(self.raidTarget, "raidTarget")
 	end
 	self:Layout()
 end
@@ -210,13 +234,18 @@ function UnitFrame:Layout()
 
 	-- Portrait column beside the rows.
 	local left, right, portraitWidth = pad, pad, 0
+	local portraitRows, portraitHeight = 0, 0
 	local portrait = self.portrait
 	if portrait then
 		portrait:ClearAllPoints()
 		if cfg.portrait.enabled and stackHeight > 0 then
-			portraitWidth = cfg.portrait.size > 0 and cfg.portrait.size or stackHeight
+			portraitRows = cfg.portrait.rowSpan == 0 and #items or math.min(cfg.portrait.rowSpan, #items)
+			for i = 1, portraitRows do
+				portraitHeight = portraitHeight + items[i].height + (i > 1 and cfg.spacing or 0)
+			end
+			portraitWidth = cfg.portrait.size > 0 and cfg.portrait.size or portraitHeight
 			local side = cfg.portrait.position
-			portrait:SetSize(portraitWidth, stackHeight)
+			portrait:SetSize(portraitWidth, portraitHeight)
 			portrait:SetPoint("TOP" .. side, self.frame, "TOP" .. side, side == "LEFT" and pad or -pad, -pad)
 			if side == "LEFT" then
 				left = left + portraitWidth + cfg.portrait.gap
@@ -234,8 +263,8 @@ function UnitFrame:Layout()
 		end
 		local component = item.component
 		component:ClearAllPoints()
-		component:SetPoint("TOPLEFT", self.frame, "TOPLEFT", left, -y)
-		component:SetPoint("TOPRIGHT", self.frame, "TOPRIGHT", -right, -y)
+		component:SetPoint("TOPLEFT", self.frame, "TOPLEFT", i <= portraitRows and left or pad, -y)
+		component:SetPoint("TOPRIGHT", self.frame, "TOPRIGHT", -(i <= portraitRows and right or pad), -y)
 		component:GetFrame():SetHeight(item.height)
 		y = y + item.height
 	end
@@ -259,6 +288,11 @@ function UnitFrame:Layout()
 
 	if self.auras then
 		self.auras:Layout(width, math.max(stackHeight + 2 * pad, 1))
+	end
+	if self.raidTarget then
+		local anchorPortrait = portraitWidth > 0 and portrait or nil
+		self.raidTarget:Layout(self.frame, anchorPortrait,
+			anchorPortrait and portraitWidth - cfg.portrait.gap or 0, portraitHeight)
 	end
 end
 
@@ -295,6 +329,9 @@ function UnitFrame:OnRelease()
 	if self.auras then
 		self.auras:Release()
 	end
+	if self.raidTarget then
+		self.raidTarget:Release()
+	end
 end
 
 -- A row's TextBar, by key ("health", "power", ...).
@@ -329,4 +366,8 @@ end
 
 function UnitFrame:GetAuras()
 	return self.auras
+end
+
+function UnitFrame:GetRaidTarget()
+	return self.raidTarget
 end

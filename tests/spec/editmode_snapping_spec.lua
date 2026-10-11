@@ -45,7 +45,9 @@ describe("Edit Mode snapping", function()
 		frame = ns.Units.frames.player
 		selection = lem.frameSelections[frame]
 		Geometry(frame, 263, 185, 100, 40)
-		for _, unit in ipairs({ "target", "targettarget", "focus" }) do ns.Units.frames[unit]:Hide() end
+		for _, unit in ipairs(ns.Units.order) do
+			if unit ~= "player" then ns.Units.frames[unit]:Hide() end
+		end
 	end)
 
 	after_each(function()
