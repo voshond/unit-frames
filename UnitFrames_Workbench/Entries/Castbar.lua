@@ -92,11 +92,12 @@ Workbench:Register({
 				es.nextStart = GetTime() + 1.2
 			end,
 		},
-		update = function(handle, d)
+		update = function(handle, d, es)
 			if d.source == "static" then
 				Preview(handle.parts.castbar, d)
 			elseif Data.IsLive(d) then
-				handle.parts.castbar:GetFrame():Hide() -- until the unit casts
+				es.live = es.live or {}
+				UF.Cast.Refresh(handle.parts.castbar, es.live, d.source) -- a cast in progress, else hidden
 			end
 		end,
 		tick = function(handle, d, es)
@@ -128,45 +129,12 @@ Workbench:Register({
 				es.nextStart = now + 1.2
 			end
 		end,
-		events = {
-			"UNIT_SPELLCAST_START", "UNIT_SPELLCAST_DELAYED", "UNIT_SPELLCAST_STOP",
-			"UNIT_SPELLCAST_SUCCEEDED", "UNIT_SPELLCAST_FAILED", "UNIT_SPELLCAST_INTERRUPTED",
-			"UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_UPDATE", "UNIT_SPELLCAST_CHANNEL_STOP",
-			"UNIT_SPELLCAST_INTERRUPTIBLE", "UNIT_SPELLCAST_NOT_INTERRUPTIBLE",
-		},
-		-- Live casts: names, icons, timings and the interruptible flag may all be
-		-- secret. Only type() is used to check for "no cast".
-		onEvent = function(handle, _, es, event, unit)
-			local castbar = handle.parts.castbar
-			if event == "UNIT_SPELLCAST_START" or event == "UNIT_SPELLCAST_DELAYED" then
-				local name, _, texture, _, _, _, _, notInterruptible = UnitCastingInfo(unit)
-				if type(name) == "nil" then
-					return
-				end
-				castbar:Start({ name = name, icon = texture, notInterruptible = notInterruptible,
-					duration = UnitCastingDuration(unit) })
-				es.casting, es.channel = true, false
-			elseif event == "UNIT_SPELLCAST_CHANNEL_START" or event == "UNIT_SPELLCAST_CHANNEL_UPDATE" then
-				local name, _, texture, _, _, _, notInterruptible = UnitChannelInfo(unit)
-				if type(name) == "nil" then
-					return
-				end
-				castbar:Start({ name = name, icon = texture, channel = true, notInterruptible = notInterruptible,
-					duration = UnitChannelDuration(unit) })
-				es.casting, es.channel = true, true
-			elseif event == "UNIT_SPELLCAST_INTERRUPTED" and es.casting then
-				castbar:Stop("interrupted")
-				es.casting = false
-			elseif event == "UNIT_SPELLCAST_FAILED" and es.casting and not es.channel then
-				castbar:Stop("failed")
-				es.casting = false
-			elseif (event == "UNIT_SPELLCAST_SUCCEEDED" and not es.channel or event == "UNIT_SPELLCAST_STOP"
-				or event == "UNIT_SPELLCAST_CHANNEL_STOP") and es.casting then
-				castbar:Stop("success")
-				es.casting = false
-			elseif event == "UNIT_SPELLCAST_INTERRUPTIBLE" or event == "UNIT_SPELLCAST_NOT_INTERRUPTIBLE" then
-				castbar:ApplyCastColor({ channel = es.channel, notInterruptible = event == "UNIT_SPELLCAST_NOT_INTERRUPTIBLE" })
-			end
+		-- Live casts use the same state machine as the unit frames, so names,
+		-- icons, timings and the interruptible flag may all be secret.
+		events = UF.Cast.EVENTS,
+		onEvent = function(handle, _, es, event, unit, ...)
+			es.live = es.live or {}
+			UF.Cast.Handle(handle.parts.castbar, es.live, event, unit, ...)
 		end,
 	},
 })
