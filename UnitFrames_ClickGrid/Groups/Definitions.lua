@@ -72,42 +72,44 @@ for group = 1, 8 do
 	CG.TitleSchema[#CG.TitleSchema + 1] = { key = "group" .. group, type = "text", label = "Group / column " .. group .. " title", default = "Group " .. group }
 end
 
-local rolePositions = { { "NAME", "Before name" } }
-for _, anchor in ipairs(UF.Components.RaidTarget.ANCHORS) do rolePositions[#rolePositions + 1] = Copy(anchor) end
-CG.IndicatorSchema = {
-	{ key = "role", type = "toggle", label = "Group role", default = true },
-	{ key = "rolePosition", type = "select", label = "Role icon position", values = rolePositions, default = "NAME",
-		hidden = function(c) return not c.role end,
-		tooltip = "Before name uses an enabled left-aligned Name text on the health bar, with no role padding for an ordinary unassigned role. Opaque roles retain a safe slot. Matching anchors stack raid, role, then leader (left/top first)." },
-	{ key = "roleSize", type = "range", label = "Role icon size", min = 8, max = 64, step = 1, default = 14,
-		hidden = function(c) return not c.role end },
-	{ key = "roleGap", type = "range", label = "Role icon gap", min = 0, max = 20, step = 1, default = 2,
-		hidden = function(c) return not c.role end },
-	{ key = "roleOffsetX", type = "range", label = "Role horizontal offset", min = -100, max = 100, step = 1, default = 0,
-		hidden = function(c) return not c.role or c.rolePosition == "NAME" end },
-	{ key = "roleOffsetY", type = "range", label = "Role vertical offset", min = -100, max = 100, step = 1, default = 0,
-		hidden = function(c) return not c.role or c.rolePosition == "NAME" end },
-	{ key = "leader", type = "toggle", label = "Leader / assistant", default = true },
-	{ key = "leaderPosition", type = "select", label = "Leader icon position", values = rolePositions, default = "TOP",
-		hidden = function(c) return not c.leader end,
-		tooltip = "Leader and assistant share one slot. Before name uses an enabled left-aligned Name text on the health bar. Matching anchors stack raid, role, then leader (left/top first). Space stays reserved while enabled." },
-	{ key = "leaderSize", type = "range", label = "Leader icon size", min = 8, max = 64, step = 1, default = 14,
-		hidden = function(c) return not c.leader end },
-	{ key = "leaderGap", type = "range", label = "Leader icon gap", min = 0, max = 20, step = 1, default = 2,
-		hidden = function(c) return not c.leader end },
-	{ key = "leaderOffsetX", type = "range", label = "Leader horizontal offset", min = -100, max = 100, step = 1, default = 0,
-		hidden = function(c) return not c.leader or c.leaderPosition == "NAME" end },
-	{ key = "leaderOffsetY", type = "range", label = "Leader vertical offset", min = -100, max = 100, step = 1, default = 0,
-		hidden = function(c) return not c.leader or c.leaderPosition == "NAME" end },
-	{ key = "ready", type = "toggle", label = "Ready check", default = true },
-	{ key = "resurrection", type = "toggle", label = "Incoming resurrection", default = true },
-	{ key = "summon", type = "toggle", label = "Summon", default = true },
-	{ key = "threat", type = "toggle", label = "Threat", default = false },
-	{ key = "phase", type = "toggle", label = "Different phase", default = true },
-	{ key = "size", type = "range", label = "Status icon size", min = 8, max = 32, step = 1, default = 14 },
-	{ key = "private", type = "toggle", label = "Private encounter auras", default = true },
-	{ key = "privateSize", type = "range", label = "Private aura size", min = 10, max = 40, step = 1, default = 18 },
-}
+local positions = { { "NAME", "Before name" } }
+for _, anchor in ipairs(UF.DecorationStack.ANCHORS) do positions[#positions + 1] = Copy(anchor) end
+
+-- Options of an icon in the member's decoration stack, sharing a prefix.
+local function Placed(key, label, name, position, order, tooltip)
+	local function Off(c) return not c[key] end
+	local function NoOffset(c) return not c[key] or c[key .. "Position"] == "NAME" end
+	return {
+		{ key = key, type = "toggle", label = label, default = true },
+		{ key = key .. "Position", type = "select", label = name .. " position", values = positions, default = position,
+			hidden = Off, tooltip = tooltip .. " Icons sharing a position line up as one group and leave no gap for absent icons: edges and the centre keep the group centred, border corners grow inward. Before name uses an enabled left-aligned Name text on the health bar." },
+		{ key = key .. "Size", type = "range", label = name .. " size", min = 8, max = 64, step = 1, default = 14, hidden = Off },
+		{ key = key .. "Order", type = "range", label = name .. " order", min = 1, max = 10, step = 1, default = order, hidden = Off,
+			tooltip = "Icons sharing a position run left to right (top to bottom on the sides) by order. The raid marker's order is in the member style." },
+		{ key = key .. "Gap", type = "range", label = name .. " gap", min = 0, max = 20, step = 1, default = 2, hidden = Off,
+			tooltip = "Space after this icon, to the next icon or the name." },
+		{ key = key .. "OffsetX", type = "range", label = name .. " horizontal offset", min = -100, max = 100, step = 1, default = 0,
+			hidden = NoOffset, tooltip = "Moves only this icon, not the rest of its group." },
+		{ key = key .. "OffsetY", type = "range", label = name .. " vertical offset", min = -100, max = 100, step = 1, default = 0,
+			hidden = NoOffset, tooltip = "Moves only this icon, not the rest of its group." },
+	}
+end
+
+CG.IndicatorSchema = UF.Schema.Concat(
+	Placed("role", "Group role", "Role icon", "NAME", 2,
+		"An ordinary unassigned role (including solo) takes no space. Opaque roles keep their slot."),
+	Placed("leader", "Leader / assistant", "Leader icon", "TOP", 3, "Leader and assistant share one slot."),
+	Placed("ready", "Ready check", "Ready check icon", "TOP", 4, "Shown during a ready check and briefly after it."),
+	Placed("death", "Dead / ghost", "Dead / ghost icon", "TOP", 5, "A tombstone while dead, a spirit healer while a ghost."),
+	{
+		{ key = "resurrection", type = "toggle", label = "Incoming resurrection", default = true },
+		{ key = "summon", type = "toggle", label = "Summon", default = true },
+		{ key = "threat", type = "toggle", label = "Threat", default = false },
+		{ key = "phase", type = "toggle", label = "Different phase", default = true },
+		{ key = "size", type = "range", label = "Other status icon size", min = 8, max = 32, step = 1, default = 14 },
+		{ key = "private", type = "toggle", label = "Private encounter auras", default = true },
+		{ key = "privateSize", type = "range", label = "Private aura size", min = 10, max = 40, step = 1, default = 18 },
+	})
 
 local slotSchema = {
 	{ key = "enabled", type = "toggle", label = "Enabled", default = false },

@@ -86,12 +86,16 @@ it spans; a fixed width is also supported on either side.
 
 Each frame's **Raid target icon** section controls its marker, enabled by
 default at the top border. Choose any of the eight border anchors to centre
-the icon on that edge or corner, so it extends outside the frame. The two
-**Inside portrait** anchors keep it within the bottom-left or bottom-right
-corner and hide it when the portrait is off. Size and horizontal/vertical
-offsets are independent per frame; positive offsets move right/up. Portrait
-icons shrink to fit small portraits; offsets can deliberately move them
-outside. **Preview data > Raid target marker** offers all eight markers and
+the icon on that edge or corner, so it extends outside the frame, or the
+frame centre. The two **Inside portrait** anchors keep it within the
+bottom-left or bottom-right corner and hide it when the portrait is off.
+Icons sharing an anchor (such as ClickGrid's status icons) form one group
+that leaves no gap for absent icons: edges and the centre keep the group
+centred, border corners grow inward. **Order** sets its place in the group
+and **Gap to next icon** the spacing after it. Size and horizontal/vertical
+offsets are independent per frame; offsets nudge only this icon, and
+positive offsets move right/up. Portrait icons shrink to fit small portraits;
+offsets can deliberately move them outside. **Preview data > Raid target marker** offers all eight markers and
 None. Live markers follow the unit's raid target assignment automatically.
 
 Each frame's **Out-of-range opacity** section offers an opt-in fade with
@@ -133,7 +137,8 @@ independent of oUF and feed sample values through the shared row writers in
 `Units/Rows.lua`; non-oUF live previews use its calculator-based live writers.
 
 A unit frame's optional parts (portrait, castbar, auras, raid target) are
-declared once in `UnitFrame.PARTS`; the Units layer keeps one oUF binding and
+declared once in `UnitFrame.PARTS`; edge icons, including companions', join
+the frame's `DecorationStack` (`UnitFrame:GetDecorations()`); the Units layer keeps one oUF binding and
 one sample feeder per part key, and Edit Mode quick settings read the unit
 schema. Derive new definitions with `Units:Derive`, overriding rows by key.
 

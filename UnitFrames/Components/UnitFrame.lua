@@ -13,7 +13,10 @@ Optional extras:
   castbar   placed as an extra row at the top or bottom, or over the health
             row (it covers the health bar only while casting)
   auras     independently positioned buffs and debuffs on any side
-  raidTarget  raid marker centred on a border or inside a portrait corner
+  raidTarget  raid marker on a border, the centre or inside a portrait corner
+
+Edge icons (the raid marker and companions' status icons) share one
+DecorationStack per frame, so icons on the same anchor stay grouped.
 
 The component only builds and lays out the visuals. Feeding unit data is
 done by the owner: oUF for live frames (Units/), fake values in the Workbench.
@@ -134,6 +137,7 @@ function UnitFrame:OnCreate(parent, spec)
 		self.rows[#self.rows + 1] = { def = def, component = row }
 		self.rowsByKey[def.key] = row
 	end
+	self.decorations = ns.DecorationStack.New()
 	self.parts = {}
 	for _, part in ipairs(UnitFrame.PARTS) do
 		if spec[part.key] then
@@ -307,7 +311,8 @@ function UnitFrame:Layout()
 	local bounds = layout.portrait
 	self.layoutContext = { root = self.frame, portrait = bounds and {
 		frame = portrait:GetFrame(), width = bounds.width, height = bounds.height,
-	} or nil }
+	} or nil, name = self:GetLeadingName(), decorations = self.decorations }
+	self.decorations:SetContext(self.layoutContext)
 
 	if self.auras then
 		self.auras:Layout(layout.width, layout.height)
@@ -315,6 +320,25 @@ function UnitFrame:Layout()
 	if self.raidTarget then
 		self.raidTarget:Layout(self.layoutContext)
 	end
+	self.decorations:Reflow()
+end
+
+-- An enabled, left-aligned name text on the health row. Icons placed
+-- "before the name" make room in it.
+function UnitFrame:GetLeadingName()
+	local row = self.rowsByKey.health
+	if row and row:IsEnabled() then
+		for _, text in row:EnabledTexts() do
+			if text.resolved.justifyH == "LEFT" and (text:GetFormat() == "name" or text:GetFormat() == "level:name") then
+				return text
+			end
+		end
+	end
+end
+
+-- The edge icon stack; members join through DecorationStack:Set.
+function UnitFrame:GetDecorations()
+	return self.decorations
 end
 
 function UnitFrame:GetLayoutContext()
@@ -332,6 +356,7 @@ end
 
 function UnitFrame:OnRelease()
 	self.border:SetScript("OnUpdate", nil)
+	self.decorations:Release()
 end
 
 -- A row's TextBar, by key ("health", "power", ...).

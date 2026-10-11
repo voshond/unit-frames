@@ -167,7 +167,7 @@ describe("Raid target Workbench previews", function()
 			workbench.styleTarget.set("raidTarget.anchor", "BOTTOM")
 			assert.equals("BOTTOM", ns.Units.frames[unit].uf:GetRaidTarget().resolved.anchor)
 			workbench:SelectSection("raidTarget")
-			assert.equals(5, #workbench.inspector.page.rows)
+			assert.equals(7, #workbench.inspector.page.rows)
 		end
 	end)
 end)

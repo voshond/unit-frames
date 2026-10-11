@@ -52,19 +52,26 @@ repository's incremental deployment guidance when updating an existing copy.
   numeric aura spell IDs, own/any caster, position and size. Multiple IDs share
   a slot; Blizzard chooses the earliest-expiring matching effect. These are
   buff slots, not arbitrary friendly-debuff encounter rules.
-- Role, leader/assistant, ready check, incoming resurrection, summon, phase,
-  optional threat and native private-aura anchors, subject to client support.
-  Role and leader/assistant positions offer **Before name** (an enabled
-  left-aligned Name text on the health bar), or any raid-marker border/portrait
-  anchor. Role defaults before name; leader defaults top. Matching anchors
-  stack raid, role, then leader: left-to-right on top/bottom/corners,
-  top-to-bottom on left/right edges. Leader and assistant share one slot.
-  Each icon has independent size, gap and border-position offsets. Name mode
-  reserves their combined space. An ordinary unassigned role removes its
-  name padding immediately on role updates; opaque roles retain a safe slot.
-  Border slots and leadership space remain reserved while enabled; native
-  visibility is not inspected for layout. Missing portraits or a missing left-aligned
-  name hide the corresponding placement.
+- Role, leader/assistant, ready check, dead/ghost, incoming resurrection,
+  summon, phase, optional threat and native private-aura anchors, subject to
+  client support.
+  Role, leader/assistant, ready check and dead/ghost positions offer **Before
+  name** (an enabled left-aligned Name text on the health bar), the frame
+  centre, or any raid-marker border/portrait anchor. Role defaults before
+  name; the others default to the top border with the raid marker. Icons
+  sharing an anchor form one group with the raid marker that leaves no gap
+  for absent icons: edges and the centre keep the group centred, border
+  corners and portrait corners grow inward, left/right edges run top to
+  bottom. **Order** arranges each group (raid 1, role 2, leader 3, ready 4,
+  dead/ghost 5 by default). Leader and assistant share one slot. Each icon
+  has independent size, gap (the space after it) and offsets that nudge only
+  that icon. Before name gives the name room for the icons actually shown.
+  An ordinary unassigned role takes no space; opaque roles keep their slot,
+  as does any icon whose shown state is opaque. The dead/ghost icon is a
+  tombstone while dead and a spirit healer while a ghost. Missing portraits
+  or a missing left-aligned name hide the corresponding placement. Incoming
+  resurrection, summon and phase stay fixed overlays sized by **Other status
+  icon size**.
 - Static/animated group samples up to forty members and a live bars/auras
   preview. Live previews intentionally omit status/private-aura indicators.
   Group previews automatically shrink to fit the Workbench stage, retaining

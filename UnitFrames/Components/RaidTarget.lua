@@ -3,18 +3,7 @@ local _, ns = ...
 -- Layout only: oUF drives the texture on live frames; previews use SetIndex.
 local RaidTarget = ns.Component:Extend("RaidTarget")
 
-RaidTarget.ANCHORS = {
-	{ "TOPLEFT", "Border: top left" },
-	{ "TOP", "Border: top" },
-	{ "TOPRIGHT", "Border: top right" },
-	{ "RIGHT", "Border: right" },
-	{ "BOTTOMRIGHT", "Border: bottom right" },
-	{ "BOTTOM", "Border: bottom" },
-	{ "BOTTOMLEFT", "Border: bottom left" },
-	{ "LEFT", "Border: left" },
-	{ "PORTRAIT_BOTTOMLEFT", "Inside portrait: bottom left" },
-	{ "PORTRAIT_BOTTOMRIGHT", "Inside portrait: bottom right" },
-}
+RaidTarget.ANCHORS = ns.DecorationStack.ANCHORS
 
 RaidTarget.MARKERS = {
 	{ 0, "None" }, { 1, "Star" }, { 2, "Circle" }, { 3, "Diamond" },
@@ -24,13 +13,16 @@ RaidTarget.MARKERS = {
 RaidTarget.schema = {
 	{ key = "enabled", type = "toggle", label = "Enabled", default = true },
 	{ key = "anchor", type = "select", label = "Anchor", values = RaidTarget.ANCHORS, default = "TOP",
-		tooltip = "Border anchors centre the icon on the edge. Portrait anchors keep it inside a bottom corner and require an enabled portrait." },
+		tooltip = "Icons sharing a position line up as one group: edges and the centre keep the group centred, border corners grow inward from the corner. Portrait anchors keep it inside a bottom corner and require an enabled portrait." },
+	{ key = "order", type = "range", label = "Order", min = 1, max = 10, step = 1, default = 1,
+		tooltip = "Icons sharing a position run left to right (top to bottom on the sides) by order. Absent icons leave no gap." },
+	{ key = "gap", type = "range", label = "Gap to next icon", min = 0, max = 20, step = 1, default = 2 },
 	{ key = "size", type = "range", label = "Size", min = 8, max = 64, step = 1, default = 20,
 		tooltip = "Portrait icons shrink to fit if the portrait is smaller than this size." },
 	{ key = "offsetX", type = "range", label = "Horizontal offset", min = -100, max = 100, step = 1, default = 0,
-		tooltip = "Positive moves right; negative moves left." },
+		tooltip = "Positive moves right; negative moves left. Moves only this icon, not the rest of its group." },
 	{ key = "offsetY", type = "range", label = "Vertical offset", min = -100, max = 100, step = 1, default = 0,
-		tooltip = "Positive moves up; negative moves down." },
+		tooltip = "Positive moves up; negative moves down. Moves only this icon, not the rest of its group." },
 }
 
 function RaidTarget:OnCreate(parent)
@@ -39,6 +31,8 @@ function RaidTarget:OnCreate(parent)
 	self.texture:SetAllPoints(self.frame)
 	self.texture:SetTexture([[Interface\TargetingFrame\UI-RaidTargetingIcons]])
 	self.texture:Hide()
+	-- oUF calls this after showing or hiding the marker, also in combat.
+	self.texture.PostUpdate = function() self:Reflow() end
 end
 
 function RaidTarget:OnApply(cfg)
@@ -51,23 +45,33 @@ end
 
 function RaidTarget:SetEnabled(enabled)
 	self.enabled = enabled and true or false
-	self.frame:SetShown(self.enabled and self.available ~= false)
+	local stack = self.layoutContext and self.layoutContext.decorations
+	if not stack then
+		self.frame:SetShown(self.enabled)
+		return
+	end
+	local cfg = self.resolved
+	stack:Set("raidTarget", { host = self.frame, widgets = { self.texture }, enabled = self.enabled,
+		anchor = cfg.anchor, size = cfg.size, order = cfg.order, gap = cfg.gap, x = cfg.offsetX, y = cfg.offsetY })
+	stack:Reflow()
 end
 
--- Border positions attach the centre; portrait positions attach the matching
--- corner, so the whole icon is inside at zero offset. Explicit offsets may
--- move it outside. Keep this above portraits, bars and the overlay castbar.
+-- Joins the frame's decoration stack. Keep this above portraits, bars and
+-- the overlay castbar.
 function RaidTarget:Layout(context)
 	self.layoutContext = context
-	local cfg = self.resolved
 	self.frame:SetFrameLevel(context.root:GetFrameLevel() + 20)
-	self.available = ns.DecorationLayout.Place(self.frame, context, cfg.anchor, cfg.size, cfg.offsetX, cfg.offsetY)
-	self:SetEnabled(cfg.enabled)
+	self:SetEnabled(self.resolved.enabled)
 end
 
--- A stable configured slot, not a read of the live texture's visibility.
-function RaidTarget:GetLayoutSlot()
-	if self.enabled and self.available then return self.resolved.anchor, self.frame end
+function RaidTarget:Reflow()
+	local stack = self.layoutContext and self.layoutContext.decorations
+	if stack and not self.released then stack:Reflow() end
+end
+
+function RaidTarget:OnRelease()
+	local stack = self.layoutContext and self.layoutContext.decorations
+	if stack then stack:Remove("raidTarget") end
 end
 
 function RaidTarget:GetWidget()
@@ -81,4 +85,5 @@ function RaidTarget:SetIndex(index)
 	else
 		self.texture:Hide()
 	end
+	self:Reflow()
 end

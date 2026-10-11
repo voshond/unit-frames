@@ -113,11 +113,17 @@ end
 
 function Methods:Show() self.__state.shown = true end
 function Methods:Hide() self.__state.shown = false end
-function Methods:SetShown(shown) self.__state.shown = shown and true or false end
+-- A secret argument gives the region a secret shown state (the Shown
+-- secret aspect): IsShown and IsVisible then return secrets too.
+function Methods:SetShown(shown)
+	if Mock.IsSecret(shown) then self.__state.shown = shown else self.__state.shown = shown and true or false end
+end
 function Methods:IsShown() return self.__state.shown end
 function Methods:IsVisible()
+	local shown = self:IsShown()
+	if Mock.IsSecret(shown) then return Mock.Secret(shown.secretValue) end
 	local parent = self:GetParent()
-	return self:IsShown() and (not parent or parent:IsVisible())
+	return shown and (not parent or parent:IsVisible())
 end
 
 function Methods:SetParent(parent) self.__state.parent = parent end
@@ -540,6 +546,7 @@ function Mock.Install()
 	Mock.objects = registry
 	Mock.time = 100
 	Mock.raidTargets = {}
+	Mock.dead, Mock.ghosts = {}, {}
 	Mock.pvpInfo = {}
 	Mock.ranges = {}
 	Mock.spellRanges = {}
@@ -795,6 +802,8 @@ function Mock.InstallUI()
 	_G.UnitGroupRolesAssignedEnum = function() return Mock.assignedRole end
 	_G.UnitIsPlayer = function() return true end
 	_G.UnitIsConnected = function() return true end
+	_G.UnitIsDead = function(unit) return Mock.dead[unit] or false end
+	_G.UnitIsGhost = function(unit) return Mock.ghosts[unit] or false end
 	_G.UnitIsTapDenied = function() return false end
 	_G.UnitReaction = function() return 2 end
 	_G.UnitClassification = function() return "elite" end

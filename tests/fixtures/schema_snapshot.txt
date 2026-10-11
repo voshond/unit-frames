@@ -331,19 +331,25 @@ resolved enabled = true
 resolved mode = "3D"
 ## raidTarget
 option enabled type="toggle" label="Enabled" default=true
-option anchor type="select" label="Anchor" default="TOP" values=#306dcfeb tooltip=#cb80ebea
+option anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
+option order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
+option gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
 option size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
-option offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#19f98b31
-option offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#85aaa345
+option offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default anchor = "TOP"
 default enabled = true
+default gap = 2
 default offsetX = 0
 default offsetY = 0
+default order = 1
 default size = 20
 resolved anchor = "TOP"
 resolved enabled = true
+resolved gap = 2
 resolved offsetX = 0
 resolved offsetY = 0
+resolved order = 1
 resolved size = 20
 ## auras
 option enabled type="toggle" label="Enabled" default=true
@@ -1007,10 +1013,12 @@ option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 ma
 option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
 option raidTarget type="group" label="Raid target icon" defaults={}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
-option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#306dcfeb tooltip=#cb80ebea
+option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
+option raidTarget.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
+option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
 option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
-option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#19f98b31
-option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#85aaa345
+option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -1302,8 +1310,10 @@ default power.right.size = 9
 default power.right.vertical = "auto"
 default raidTarget.anchor = "TOP"
 default raidTarget.enabled = true
+default raidTarget.gap = 2
 default raidTarget.offsetX = 0
 default raidTarget.offsetY = 0
+default raidTarget.order = 1
 default raidTarget.size = 20
 default range.enabled = false
 default range.mode = "group"
@@ -1702,8 +1712,10 @@ resolved power.right.size = 9
 resolved power.right.vertical = "auto"
 resolved raidTarget.anchor = "TOP"
 resolved raidTarget.enabled = true
+resolved raidTarget.gap = 2
 resolved raidTarget.offsetX = 0
 resolved raidTarget.offsetY = 0
+resolved raidTarget.order = 1
 resolved raidTarget.size = 20
 resolved range.enabled = false
 resolved range.mode = "group"
@@ -2082,10 +2094,12 @@ option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 ma
 option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
 option raidTarget type="group" label="Raid target icon" defaults={}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
-option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#306dcfeb tooltip=#cb80ebea
+option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
+option raidTarget.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
+option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
 option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
-option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#19f98b31
-option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#85aaa345
+option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -2315,8 +2329,10 @@ default power.right.size = 8
 default power.right.vertical = "auto"
 default raidTarget.anchor = "TOP"
 default raidTarget.enabled = true
+default raidTarget.gap = 2
 default raidTarget.offsetX = 0
 default raidTarget.offsetY = 0
+default raidTarget.order = 1
 default raidTarget.size = 20
 default range.enabled = false
 default range.mode = "group"
@@ -2628,8 +2644,10 @@ resolved power.right.size = 8
 resolved power.right.vertical = "auto"
 resolved raidTarget.anchor = "TOP"
 resolved raidTarget.enabled = true
+resolved raidTarget.gap = 2
 resolved raidTarget.offsetX = 0
 resolved raidTarget.offsetY = 0
+resolved raidTarget.order = 1
 resolved raidTarget.size = 20
 resolved range.enabled = false
 resolved range.mode = "group"
@@ -3027,10 +3045,12 @@ option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 ma
 option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
 option raidTarget type="group" label="Raid target icon" defaults={}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
-option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#306dcfeb tooltip=#cb80ebea
+option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
+option raidTarget.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
+option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
 option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
-option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#19f98b31
-option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#85aaa345
+option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -3258,8 +3278,10 @@ default power.right.size = 9
 default power.right.vertical = "auto"
 default raidTarget.anchor = "TOP"
 default raidTarget.enabled = true
+default raidTarget.gap = 2
 default raidTarget.offsetX = 0
 default raidTarget.offsetY = 0
+default raidTarget.order = 1
 default raidTarget.size = 20
 default range.enabled = false
 default range.mode = "group"
@@ -3571,8 +3593,10 @@ resolved power.right.size = 9
 resolved power.right.vertical = "auto"
 resolved raidTarget.anchor = "TOP"
 resolved raidTarget.enabled = true
+resolved raidTarget.gap = 2
 resolved raidTarget.offsetX = 0
 resolved raidTarget.offsetY = 0
+resolved raidTarget.order = 1
 resolved raidTarget.size = 20
 resolved range.enabled = false
 resolved range.mode = "group"
@@ -3960,10 +3984,12 @@ option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 ma
 option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
 option raidTarget type="group" label="Raid target icon" defaults={}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
-option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#306dcfeb tooltip=#cb80ebea
+option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
+option raidTarget.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
+option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
 option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
-option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#19f98b31
-option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#85aaa345
+option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -4193,8 +4219,10 @@ default power.right.size = 8
 default power.right.vertical = "auto"
 default raidTarget.anchor = "TOP"
 default raidTarget.enabled = true
+default raidTarget.gap = 2
 default raidTarget.offsetX = 0
 default raidTarget.offsetY = 0
+default raidTarget.order = 1
 default raidTarget.size = 20
 default range.enabled = false
 default range.mode = "group"
@@ -4506,8 +4534,10 @@ resolved power.right.size = 8
 resolved power.right.vertical = "auto"
 resolved raidTarget.anchor = "TOP"
 resolved raidTarget.enabled = true
+resolved raidTarget.gap = 2
 resolved raidTarget.offsetX = 0
 resolved raidTarget.offsetY = 0
+resolved raidTarget.order = 1
 resolved raidTarget.size = 20
 resolved range.enabled = false
 resolved range.mode = "group"
@@ -4897,10 +4927,12 @@ option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 ma
 option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
 option raidTarget type="group" label="Raid target icon" defaults={}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
-option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#306dcfeb tooltip=#cb80ebea
+option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
+option raidTarget.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
+option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
 option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
-option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#19f98b31
-option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#85aaa345
+option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -5128,8 +5160,10 @@ default power.right.size = 9
 default power.right.vertical = "auto"
 default raidTarget.anchor = "TOP"
 default raidTarget.enabled = true
+default raidTarget.gap = 2
 default raidTarget.offsetX = 0
 default raidTarget.offsetY = 0
+default raidTarget.order = 1
 default raidTarget.size = 20
 default range.enabled = false
 default range.mode = "group"
@@ -5441,8 +5475,10 @@ resolved power.right.size = 9
 resolved power.right.vertical = "auto"
 resolved raidTarget.anchor = "TOP"
 resolved raidTarget.enabled = true
+resolved raidTarget.gap = 2
 resolved raidTarget.offsetX = 0
 resolved raidTarget.offsetY = 0
+resolved raidTarget.order = 1
 resolved raidTarget.size = 20
 resolved range.enabled = false
 resolved range.mode = "group"
@@ -5824,10 +5860,12 @@ option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 ma
 option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
 option raidTarget type="group" label="Raid target icon" defaults={}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
-option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#306dcfeb tooltip=#cb80ebea
+option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
+option raidTarget.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
+option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
 option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
-option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#19f98b31
-option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#85aaa345
+option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -6057,8 +6095,10 @@ default power.right.size = 8
 default power.right.vertical = "auto"
 default raidTarget.anchor = "TOP"
 default raidTarget.enabled = true
+default raidTarget.gap = 2
 default raidTarget.offsetX = 0
 default raidTarget.offsetY = 0
+default raidTarget.order = 1
 default raidTarget.size = 20
 default range.enabled = false
 default range.mode = "group"
@@ -6370,8 +6410,10 @@ resolved power.right.size = 8
 resolved power.right.vertical = "auto"
 resolved raidTarget.anchor = "TOP"
 resolved raidTarget.enabled = true
+resolved raidTarget.gap = 2
 resolved raidTarget.offsetX = 0
 resolved raidTarget.offsetY = 0
+resolved raidTarget.order = 1
 resolved raidTarget.size = 20
 resolved range.enabled = false
 resolved range.mode = "group"
@@ -7495,10 +7537,12 @@ option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 ma
 option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
 option raidTarget type="group" label="Raid target icon" defaults={size=12}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
-option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#306dcfeb tooltip=#cb80ebea
+option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
+option raidTarget.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
+option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
 option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
-option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#19f98b31
-option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#85aaa345
+option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -7728,8 +7772,10 @@ default power.right.size = 8
 default power.right.vertical = "auto"
 default raidTarget.anchor = "TOP"
 default raidTarget.enabled = true
+default raidTarget.gap = 2
 default raidTarget.offsetX = 0
 default raidTarget.offsetY = 0
+default raidTarget.order = 1
 default raidTarget.size = 12
 default range.enabled = false
 default range.mode = "group"
@@ -8041,8 +8087,10 @@ resolved power.right.size = 8
 resolved power.right.vertical = "auto"
 resolved raidTarget.anchor = "TOP"
 resolved raidTarget.enabled = true
+resolved raidTarget.gap = 2
 resolved raidTarget.offsetX = 0
 resolved raidTarget.offsetY = 0
+resolved raidTarget.order = 1
 resolved raidTarget.size = 12
 resolved range.enabled = false
 resolved range.mode = "group"
@@ -8450,10 +8498,12 @@ option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 ma
 option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
 option raidTarget type="group" label="Raid target icon" defaults={}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
-option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#306dcfeb tooltip=#cb80ebea
+option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
+option raidTarget.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
+option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
 option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
-option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#19f98b31
-option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#85aaa345
+option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -8683,8 +8733,10 @@ default power.right.size = 8
 default power.right.vertical = "auto"
 default raidTarget.anchor = "TOP"
 default raidTarget.enabled = true
+default raidTarget.gap = 2
 default raidTarget.offsetX = 0
 default raidTarget.offsetY = 0
+default raidTarget.order = 1
 default raidTarget.size = 20
 default range.enabled = false
 default range.mode = "group"
@@ -8996,8 +9048,10 @@ resolved power.right.size = 8
 resolved power.right.vertical = "auto"
 resolved raidTarget.anchor = "TOP"
 resolved raidTarget.enabled = true
+resolved raidTarget.gap = 2
 resolved raidTarget.offsetX = 0
 resolved raidTarget.offsetY = 0
+resolved raidTarget.order = 1
 resolved raidTarget.size = 20
 resolved range.enabled = false
 resolved range.mode = "group"
@@ -9076,23 +9130,38 @@ option titles.group7 type="text" label="Group / column 7 title" default="Group 7
 option titles.group8 type="text" label="Group / column 8 title" default="Group 8"
 option indicators type="group" label="Status indicators"
 option indicators.role type="toggle" label="Group role" default=true
-option indicators.rolePosition type="select" label="Role icon position" default="NAME" values=#c0f86c58 tooltip=#d4e69ed7 hidden
+option indicators.rolePosition type="select" label="Role icon position" default="NAME" values=#1fe6f2dd tooltip=#9f6df31b hidden
 option indicators.roleSize type="range" label="Role icon size" default=14 min=8 max=64 step=1 hidden
-option indicators.roleGap type="range" label="Role icon gap" default=2 min=0 max=20 step=1 hidden
-option indicators.roleOffsetX type="range" label="Role horizontal offset" default=0 min=-100 max=100 step=1 hidden
-option indicators.roleOffsetY type="range" label="Role vertical offset" default=0 min=-100 max=100 step=1 hidden
+option indicators.roleOrder type="range" label="Role icon order" default=2 min=1 max=10 step=1 tooltip=#b6361d3f hidden
+option indicators.roleGap type="range" label="Role icon gap" default=2 min=0 max=20 step=1 tooltip=#bd35420d hidden
+option indicators.roleOffsetX type="range" label="Role icon horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
+option indicators.roleOffsetY type="range" label="Role icon vertical offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
 option indicators.leader type="toggle" label="Leader / assistant" default=true
-option indicators.leaderPosition type="select" label="Leader icon position" default="TOP" values=#c0f86c58 tooltip=#2b3a9036 hidden
+option indicators.leaderPosition type="select" label="Leader icon position" default="TOP" values=#1fe6f2dd tooltip=#0fb1d625 hidden
 option indicators.leaderSize type="range" label="Leader icon size" default=14 min=8 max=64 step=1 hidden
-option indicators.leaderGap type="range" label="Leader icon gap" default=2 min=0 max=20 step=1 hidden
-option indicators.leaderOffsetX type="range" label="Leader horizontal offset" default=0 min=-100 max=100 step=1 hidden
-option indicators.leaderOffsetY type="range" label="Leader vertical offset" default=0 min=-100 max=100 step=1 hidden
+option indicators.leaderOrder type="range" label="Leader icon order" default=3 min=1 max=10 step=1 tooltip=#b6361d3f hidden
+option indicators.leaderGap type="range" label="Leader icon gap" default=2 min=0 max=20 step=1 tooltip=#bd35420d hidden
+option indicators.leaderOffsetX type="range" label="Leader icon horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
+option indicators.leaderOffsetY type="range" label="Leader icon vertical offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
 option indicators.ready type="toggle" label="Ready check" default=true
+option indicators.readyPosition type="select" label="Ready check icon position" default="TOP" values=#1fe6f2dd tooltip=#e99bb5ef hidden
+option indicators.readySize type="range" label="Ready check icon size" default=14 min=8 max=64 step=1 hidden
+option indicators.readyOrder type="range" label="Ready check icon order" default=4 min=1 max=10 step=1 tooltip=#b6361d3f hidden
+option indicators.readyGap type="range" label="Ready check icon gap" default=2 min=0 max=20 step=1 tooltip=#bd35420d hidden
+option indicators.readyOffsetX type="range" label="Ready check icon horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
+option indicators.readyOffsetY type="range" label="Ready check icon vertical offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
+option indicators.death type="toggle" label="Dead / ghost" default=true
+option indicators.deathPosition type="select" label="Dead / ghost icon position" default="TOP" values=#1fe6f2dd tooltip=#b756f0af hidden
+option indicators.deathSize type="range" label="Dead / ghost icon size" default=14 min=8 max=64 step=1 hidden
+option indicators.deathOrder type="range" label="Dead / ghost icon order" default=5 min=1 max=10 step=1 tooltip=#b6361d3f hidden
+option indicators.deathGap type="range" label="Dead / ghost icon gap" default=2 min=0 max=20 step=1 tooltip=#bd35420d hidden
+option indicators.deathOffsetX type="range" label="Dead / ghost icon horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
+option indicators.deathOffsetY type="range" label="Dead / ghost icon vertical offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
 option indicators.resurrection type="toggle" label="Incoming resurrection" default=true
 option indicators.summon type="toggle" label="Summon" default=true
 option indicators.threat type="toggle" label="Threat" default=false
 option indicators.phase type="toggle" label="Different phase" default=true
-option indicators.size type="range" label="Status icon size" default=14 min=8 max=32 step=1
+option indicators.size type="range" label="Other status icon size" default=14 min=8 max=32 step=1
 option indicators.private type="toggle" label="Private encounter auras" default=true
 option indicators.privateSize type="range" label="Private aura size" default=18 min=10 max=40 step=1
 option slots type="group" label="Fixed friendly buff slots"
@@ -9120,21 +9189,36 @@ option slots.slot3.size type="range" label="Size" default=14 min=10 max=32 step=
 option slots.slot3.anchor type="select" label="Position" default="TOPLEFT" values=#a082508f
 option slots.slot3.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option slots.slot3.offsetY type="range" label="Offset Y" default=0 min=-100 max=100 step=1
+default indicators.death = true
+default indicators.deathGap = 2
+default indicators.deathOffsetX = 0
+default indicators.deathOffsetY = 0
+default indicators.deathOrder = 5
+default indicators.deathPosition = "TOP"
+default indicators.deathSize = 14
 default indicators.leader = true
 default indicators.leaderGap = 2
 default indicators.leaderOffsetX = 0
 default indicators.leaderOffsetY = 0
+default indicators.leaderOrder = 3
 default indicators.leaderPosition = "TOP"
 default indicators.leaderSize = 14
 default indicators.phase = true
 default indicators.private = true
 default indicators.privateSize = 18
 default indicators.ready = true
+default indicators.readyGap = 2
+default indicators.readyOffsetX = 0
+default indicators.readyOffsetY = 0
+default indicators.readyOrder = 4
+default indicators.readyPosition = "TOP"
+default indicators.readySize = 14
 default indicators.resurrection = true
 default indicators.role = true
 default indicators.roleGap = 2
 default indicators.roleOffsetX = 0
 default indicators.roleOffsetY = 0
+default indicators.roleOrder = 2
 default indicators.rolePosition = "NAME"
 default indicators.roleSize = 14
 default indicators.size = 14
@@ -9195,21 +9279,36 @@ default titles.position = "above"
 default titles.shadow = true
 default titles.size = 11
 default titles.tanks = "Tanks"
+resolved indicators.death = true
+resolved indicators.deathGap = 2
+resolved indicators.deathOffsetX = 0
+resolved indicators.deathOffsetY = 0
+resolved indicators.deathOrder = 5
+resolved indicators.deathPosition = "TOP"
+resolved indicators.deathSize = 14
 resolved indicators.leader = true
 resolved indicators.leaderGap = 2
 resolved indicators.leaderOffsetX = 0
 resolved indicators.leaderOffsetY = 0
+resolved indicators.leaderOrder = 3
 resolved indicators.leaderPosition = "TOP"
 resolved indicators.leaderSize = 14
 resolved indicators.phase = true
 resolved indicators.private = true
 resolved indicators.privateSize = 18
 resolved indicators.ready = true
+resolved indicators.readyGap = 2
+resolved indicators.readyOffsetX = 0
+resolved indicators.readyOffsetY = 0
+resolved indicators.readyOrder = 4
+resolved indicators.readyPosition = "TOP"
+resolved indicators.readySize = 14
 resolved indicators.resurrection = true
 resolved indicators.role = true
 resolved indicators.roleGap = 2
 resolved indicators.roleOffsetX = 0
 resolved indicators.roleOffsetY = 0
+resolved indicators.roleOrder = 2
 resolved indicators.rolePosition = "NAME"
 resolved indicators.roleSize = 14
 resolved indicators.size = 14

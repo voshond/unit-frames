@@ -35,7 +35,7 @@ Components\Castbar.lua
 Components\Portrait.lua
 Components\AuraIcon.lua
 Components\Auras.lua
-Components\DecorationLayout.lua
+Components\DecorationStack.lua
 Components\RaidTarget.lua
 Components\UnitFrameLayout.lua
 Components\UnitFrame.lua
