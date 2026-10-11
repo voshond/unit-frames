@@ -102,13 +102,18 @@ function Component:SetThemeManaged(managed)
 	self.themeManaged = managed and true or false
 end
 
--- Applies the `key` group of this component's config to a child component,
--- carrying over the group's default overrides (composite components).
-function Component:ApplyChild(child, key)
+-- The config of this component's `key` group for a child: the group's
+-- default overrides plus the user's values (never resolved values, which
+-- would turn inherited theme values into overrides).
+function Component:ChildConfig(key)
 	local opt = Schema.Find(self:GetSchema(), key)
 	local config = ns.Util.Copy(opt and opt.defaults or {})
-	ns.Util.Merge(config, (self.config and self.config[key]) or {})
-	child:Apply(config)
+	return ns.Util.Merge(config, (self.config and self.config[key]) or {})
+end
+
+-- Applies the `key` group of this component's config to a child component.
+function Component:ApplyChild(child, key)
+	child:Apply(self:ChildConfig(key))
 end
 
 function Component:SetEnabled(enabled)

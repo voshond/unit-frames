@@ -2,11 +2,18 @@ local _, CG = ...
 local UF, oUF = CG.UF, CG.UF.oUF
 CG.STYLE = "UnitFramesClickGrid"
 
+-- Fixed slots share the member's aura artwork config (including its on/off
+-- state) and add their own slot groups; both resolve against the theme.
 function CG:SlotConfig(uf)
-	local config = UF.Util.Copy(uf:GetAuras().resolved)
-	local slots = self.Config:Resolved().slots
-	for key, value in pairs(slots) do config[key] = value end
-	return config
+	return UF.Util.Merge(uf:ChildConfig("auras"), UF.Util.Copy(self.Config:Get().slots or {}))
+end
+
+-- Status indicators and fixed slots belong to the member UnitFrame, sharing
+-- its combat deferral, theme management and release.
+function CG:AddMemberExtras(uf, button, live)
+	local status = uf:Own(self.Status:New(button, self.Config:Get().indicators, { unitFrame = uf, live = live }))
+	local slots = uf:Own(self.Slots:New(button, self:SlotConfig(uf)))
+	return status, slots
 end
 
 -- Frame-free style schema of a member/target bar (cached).
@@ -44,11 +51,7 @@ oUF:RegisterStyle(CG.STYLE, function(frame)
 	frame:HookScript("OnLeave", function() GameTooltip:Hide() end)
 	UF.Units:Bind(frame)
 	if not target then
-		frame.ufcgStatus = CG.Status:Create(frame, frame.uf)
-		CG.Status:Apply(frame, frame.ufcgStatus, CG.Config:Resolved().indicators, true)
-		frame.ufcgSlots = CG.Slots:New(frame, CG:SlotConfig(frame.uf))
-		frame.ufcgSlots:SetCombatDeferred(true)
-		frame.ufcgSlots:SetThemeManaged(true)
+		frame.ufcgStatus, frame.ufcgSlots = CG:AddMemberExtras(frame.uf, frame, true)
 		UF.Units.SetElement(frame, "UFCG_Slots", frame.ufcgSlots)
 	end
 	CG.frames[#CG.frames + 1] = frame

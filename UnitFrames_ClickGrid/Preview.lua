@@ -24,14 +24,11 @@ function Preview:CreateCell()
 	local host = CreateFrame("Frame", nil, self.frame)
 	local member = UF.Units:CreateFromDefinition(CG.definitions.member, host, CG.Config:GetStyle("member"))
 	local target = UF.Units:CreateFromDefinition(CG.definitions.target, host, CG.Config:GetStyle("target"))
-	local slots = CG.Slots:New(member:GetFrame(), CG:SlotConfig(member))
-	local status = CG.Status:Create(member:GetFrame(), member)
-	member:SetCombatDeferred(true)
-	target:SetCombatDeferred(true)
-	slots:SetCombatDeferred(true)
-	member:SetThemeManaged(true)
-	target:SetThemeManaged(true)
-	slots:SetThemeManaged(true)
+	local status, slots = CG:AddMemberExtras(member, member:GetFrame(), false)
+	for _, uf in ipairs({ member, target }) do
+		uf:SetCombatDeferred(true)
+		uf:SetThemeManaged(true)
+	end
 	-- Plain samples drive ordinary buttons and never touch restricted live art.
 	local cell = { frame = host, member = member, target = target, slots = slots, status = status }
 	self.cells[#self.cells + 1] = cell
@@ -146,7 +143,7 @@ function Preview:ShowData(data, dataOnly)
 				cell.target:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", CG.metrics.member.width + cfg.targetGap, 0)
 				cell.target:GetFrame():SetShown(cfg.targets)
 				cell.slots:Apply(CG:SlotConfig(cell.member))
-				CG.Status:Apply(cell.member:GetFrame(), cell.status, self.cfg.indicators, false)
+				cell.status:Apply(CG.Config:Get().indicators)
 				cell.styled = true
 			end
 			local values = self:Values(index)
@@ -156,13 +153,13 @@ function Preview:ShowData(data, dataOnly)
 				if not raid and localIndex == 1 and not IsInGroup() then unit = "player" end
 				self:ShowLive(cell.member, unit, cell)
 				if unit then cell.slots:SetUnit(unit) end
-				for _, widget in pairs(cell.status) do widget:Hide() end
+				cell.status:HideIndicators()
 				if cfg.targets then self:ShowLive(cell.target, unit and unit .. "target", cell) end
 			else
 				cell.member:GetFrame():Show()
 				UF.Units:ShowSample(cell.member, values)
 				cell.slots:ShowSample(values)
-				CG.Status:Sample(cell.status, self.cfg.indicators, index)
+				cell.status:ShowSample(index)
 				local targetValues = UF.Util.Copy(values)
 				targetValues.name, targetValues.class, targetValues.reaction = "Enemy " .. index, nil, "hostile"
 				targetValues.isPlayer = false
@@ -213,9 +210,7 @@ end
 
 function Preview:ReleaseComponents()
 	for _, cell in ipairs(self.cells) do
-		CG.Status:Release(cell.status)
-		cell.slots:Release()
-		cell.member:Release()
+		cell.member:Release() -- with its status indicators and slots
 		cell.target:Release()
 		cell.frame:Hide()
 	end

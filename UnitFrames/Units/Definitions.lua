@@ -116,17 +116,44 @@ Units.definitions.focus = {
 		spell = "Frostbolt", spellIcon = [[Interface\Icons\Spell_Frost_FrostBolt02]], castTime = 2.5 },
 }
 
--- Both target chains use the same compact style, with independent defaults.
-Units.definitions.focustarget = ns.Util.Copy(Units.definitions.targettarget)
-Units.definitions.focustarget.label = "Focus target"
-Units.definitions.focustarget.defaultPosition = { point = "CENTER", x = -60, y = -290 }
-Units.definitions.focustarget.sample = {
-	name = "Thrall", level = 44, className = "Shaman", class = "SHAMAN", isPlayer = true,
-}
-
 function Units:GetDefinition(unit)
 	return self.definitions[unit]
 end
+
+--[[
+An independent copy of a definition (or unit key) with `overrides` merged in.
+Row overrides are keyed by row key, never by position:
+  Units:Derive("pet", { width = 150, rows = { power = { defaults = { enabled = false } } } })
+Tables merge recursively; give a field a new value afterwards to replace it.
+]]
+function Units:Derive(base, overrides)
+	local def = ns.Util.Copy(type(base) == "string" and assert(self.definitions[base], "Unknown unit: " .. base) or base)
+	for key, value in pairs(overrides or {}) do
+		if key == "rows" then
+			for rowKey, rowOverride in pairs(value) do
+				local found
+				for _, row in ipairs(def.rows) do
+					if row.key == rowKey then found = row end
+				end
+				ns.Util.Merge(assert(found, "Unknown row: " .. rowKey), rowOverride)
+			end
+		elseif type(value) == "table" and type(def[key]) == "table" then
+			ns.Util.Merge(def[key], value)
+		else
+			def[key] = ns.Util.Copy(value)
+		end
+	end
+	return def
+end
+
+-- Both target chains use the same compact style, with independent defaults.
+Units.definitions.focustarget = Units:Derive("targettarget", {
+	label = "Focus target",
+	defaultPosition = { point = "CENTER", x = -60, y = -290 },
+})
+Units.definitions.focustarget.sample = {
+	name = "Thrall", level = 44, className = "Shaman", class = "SHAMAN", isPlayer = true,
+}
 
 -- Builds the visual frame for `unit` (no data binding). `frame` is optional.
 function Units:CreateFrame(unit, parent, frame)

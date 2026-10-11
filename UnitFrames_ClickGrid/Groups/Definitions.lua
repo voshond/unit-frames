@@ -1,27 +1,32 @@
 local _, CG = ...
 local UF, Copy = CG.UF, CG.UF.Util.Copy
 
--- Independent defaults; never change the shared player/pet definitions.
-local member = Copy(UF.Units.definitions.pet)
-member.label, member.width = "Group member", 150
-member.rows[1].defaults.height = 28
-member.rows[1].spec.textDefaults.belowLeft.format = "level:class"
-member.rows[2].defaults.height = 6
-member.rows[2].defaults.enabled = false
-member.portrait.defaults.enabled = false
-member.castbar.defaults.placement = "off"
-member.auras.clickThrough = true
+-- Independent copies; never change the shared pet/target-of-target definitions.
+local member = UF.Units:Derive("pet", {
+	label = "Group member", width = 150,
+	rows = {
+		health = { defaults = { height = 28 }, spec = { textDefaults = { belowLeft = { format = "level:class" } } } },
+		power = { defaults = { height = 6, enabled = false } },
+	},
+	portrait = { defaults = { enabled = false } },
+	castbar = { defaults = { placement = "off" } },
+	auras = { clickThrough = true },
+	raidTarget = { defaults = { size = 12 } },
+})
+-- Replaces the pet's aura defaults as a whole.
 member.auras.defaults = {
 	durationPosition = "CENTER", durationSize = 8, countSize = 8,
 	buffs = { filter = "HELPFUL|PLAYER", maxDuration = 120, max = 4, size = 14, position = "top", gap = 1, alignment = "end" },
 	debuffs = { sort = "unitDebuff", max = 3, size = 16, position = "bottom", gap = 1 },
 }
-member.raidTarget = { defaults = { size = 12 } }
-CG.definitions = { member = member, target = Copy(UF.Units.definitions.targettarget) }
-CG.definitions.target.width = 85
-CG.definitions.target.rows[1].defaults.height = 28
-CG.definitions.target.rows[2].defaults.enabled = false
-CG.definitions.target.auras.clickThrough = true
+CG.definitions = {
+	member = member,
+	target = UF.Units:Derive("targettarget", {
+		width = 85,
+		rows = { health = { defaults = { height = 28 } }, power = { defaults = { enabled = false } } },
+		auras = { clickThrough = true },
+	}),
+}
 
 CG.LayoutSchema = {
 	{ key = "enabled", type = "toggle", label = "Show healing panel", default = true },
