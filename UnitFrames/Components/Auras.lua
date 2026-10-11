@@ -161,16 +161,6 @@ end
 
 -- Access to existing buttons (including enumeration) may be denied while
 -- aura data is secret. Reapply at the next combat end in that case.
-local pending = {}
-local regenFrame = CreateFrame("Frame")
-regenFrame:SetScript("OnEvent", function(self)
-	self:UnregisterEvent("PLAYER_REGEN_ENABLED")
-	for auras in pairs(pending) do
-		pending[auras] = nil
-		auras:RestyleButtons()
-	end
-end)
-
 local function Restyle(auras)
 	for _, kind in ipairs(KINDS) do
 		local container = auras.containers[kind]
@@ -182,7 +172,7 @@ end
 
 function Auras:RestyleButtons()
 	if self.previewData then
-		pending[self] = nil
+		ns.AfterCombat:Cancel(self, "restyle")
 		for _, kind in ipairs(KINDS) do
 			for _, button in ipairs(self.previewContainers[kind].ufButtons) do
 				self:StyleButton(button)
@@ -192,10 +182,9 @@ function Auras:RestyleButtons()
 		return
 	end
 	if InCombatLockdown() or not pcall(Restyle, self) then
-		pending[self] = true
-		regenFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+		ns.AfterCombat:Queue("restyle", self, Auras.RestyleButtons)
 	else
-		pending[self] = nil
+		ns.AfterCombat:Cancel(self, "restyle")
 	end
 end
 
@@ -213,7 +202,6 @@ function Auras:SetEnabled(enabled)
 end
 
 function Auras:OnRelease()
-	pending[self] = nil
 	-- Disabling clears auras and unregisters dynamic events/private callbacks.
 	-- SetUnit requires a string; nil is not a supported cleanup operation.
 	self:SetEnabled(false)
@@ -254,7 +242,7 @@ function Auras:ShowSample(values)
 		end
 	end
 	self.previewData = values
-	pending[self] = nil
+	ns.AfterCombat:Cancel(self, "restyle")
 	self:SetEnabled(self.enabled)
 	self:RenderSamples()
 end

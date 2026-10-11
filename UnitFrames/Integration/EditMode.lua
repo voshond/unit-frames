@@ -13,23 +13,12 @@ local LEM = LibStub("LibEditMode", true)
 local EditMode = { frames = {} }
 ns.EditMode = EditMode
 
-local pending = {}
-local regenFrame = CreateFrame("Frame")
-regenFrame:SetScript("OnEvent", function(self)
-	self:UnregisterEvent("PLAYER_REGEN_ENABLED")
-	for key in pairs(pending) do
-		pending[key] = nil
-		EditMode:ApplyPosition(key)
-	end
-end)
-
 -- Moves a registered frame to its stored position for the current layout.
 -- Unit buttons are protected, so this waits for combat to end.
 function EditMode:ApplyPosition(key)
 	local entry = self.frames[key]
 	if InCombatLockdown() then
-		pending[key] = true
-		regenFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+		ns.AfterCombat:Queue("position", key, function() EditMode:ApplyPosition(key) end)
 		return
 	end
 	local pos = ns.Config:GetPosition(self.layout, key) or entry.default

@@ -322,27 +322,15 @@ function UnitFrame:GetLayoutContext()
 end
 
 -- Unit buttons are protected: resizing them waits until combat ends.
-local pending = {}
-local regenFrame = CreateFrame("Frame")
-regenFrame:SetScript("OnEvent", function(self)
-	self:UnregisterEvent("PLAYER_REGEN_ENABLED")
-	for component in pairs(pending) do
-		pending[component] = nil
-		component:Layout()
-	end
-end)
-
 function UnitFrame:Resize(width, height)
 	if self.frame:IsProtected() and InCombatLockdown() then
-		pending[self] = true
-		regenFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+		ns.AfterCombat:Queue("layout", self, UnitFrame.Layout)
 		return
 	end
 	self.frame:SetSize(width, height)
 end
 
 function UnitFrame:OnRelease()
-	pending[self] = nil
 	self.border:SetScript("OnUpdate", nil)
 end
 
