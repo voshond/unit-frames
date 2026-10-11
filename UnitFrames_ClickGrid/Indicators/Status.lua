@@ -111,8 +111,12 @@ function Status:LayoutIcons(frame, widgets, cfg)
 		end
 	end
 	local marker = uf and uf:GetRaidTarget()
+	local context = uf and uf:GetLayoutContext()
 	local previous, names, total = {}, {}, 0
-	if marker and marker:IsEnabled() and marker.available ~= false then previous[marker.resolved.anchor] = marker:GetFrame() end
+	if marker then
+		local anchor, host = marker:GetLayoutSlot()
+		if anchor then previous[anchor] = host end
+	end
 	local nameText = uf and NameText(uf)
 	local rolePresent = true
 	if role.ufcgLive and CG.Caps.roleEnum and frame.__unit then
@@ -130,7 +134,7 @@ function Status:LayoutIcons(frame, widgets, cfg)
 		local x, y = cfg[key .. "OffsetX"], cfg[key .. "OffsetY"]
 		host:ClearAllPoints()
 		host:SetSize(size, size)
-		local available = cfg[key] and uf ~= nil
+		local available = cfg[key] and context ~= nil
 		if available and position == "NAME" then
 			available = nameText ~= nil
 			if key == "role" and not rolePresent then available = false end
@@ -140,14 +144,7 @@ function Status:LayoutIcons(frame, widgets, cfg)
 				total = total + size + gap
 			end
 		elseif available then
-			local corner = position:match("^PORTRAIT_(.+)$")
-			local portrait = marker.portrait
-			available = not corner or portrait ~= nil
-			if corner and portrait then
-				local portraitSize = math.min(size, marker.portraitWidth, marker.portraitHeight)
-				host:SetSize(portraitSize, portraitSize)
-				host:SetPoint(corner, portrait:GetFrame(), corner, x, y)
-			elseif not corner then host:SetPoint("CENTER", frame, position, x, y) end
+			available = UF.DecorationLayout.Place(host, context, position, size, x, y)
 			if available then
 				-- Stable configured slots: no reads of native icon visibility,
 				-- dimensions or live role/leader/marker values. Raid stays first.

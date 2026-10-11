@@ -313,6 +313,26 @@ describe("ClickGrid companion", function()
 		assert.equals(marker:GetFrame(), select(2, role.ufcgHost:GetPoint()))
 	end)
 
+	it("positions portrait decorations without a raid-marker component", function()
+		local spec = UF.Units:GetSpec(UF.Units.definitions.player)
+		spec.raidTarget = nil
+		local uf = UF.Components.UnitFrame:New(UIParent, { portrait = { enabled = true } }, spec)
+		local frame = uf:GetFrame()
+		local widgets = CG.Status:Create(frame, uf)
+		local cfg = UF.Util.Copy(CG.Config:Resolved().indicators)
+		cfg.role, cfg.rolePosition = true, "PORTRAIT_BOTTOMLEFT"
+		CG.Status:Apply(frame, widgets, cfg, false)
+		local host = widgets.GroupRoleIndicator.ufcgHost
+		assert.is_true(host:IsShown())
+		assert.equals("BOTTOMLEFT", host:GetPoint())
+		assert.equals(uf:GetLayoutContext().portrait.frame, select(2, host:GetPoint()))
+		uf:Apply({ portrait = { enabled = false } })
+		CG.Status:LayoutIcons(frame, widgets, cfg)
+		assert.is_false(host:IsShown())
+		CG.Status:Release(widgets)
+		uf:Release()
+	end)
+
 	it("supports portrait role anchors and defers role layout changes in combat", function()
 		local frame = CG.headers.party:GetAttribute("child1").Member
 		local role = frame.GroupRoleIndicator

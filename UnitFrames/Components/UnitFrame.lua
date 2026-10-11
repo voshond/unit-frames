@@ -314,14 +314,21 @@ function UnitFrame:Layout()
 	end
 
 	self:Resize(layout.width, layout.height)
+	local bounds = layout.portrait
+	self.layoutContext = { root = self.frame, portrait = bounds and {
+		frame = portrait:GetFrame(), width = bounds.width, height = bounds.height,
+	} or nil }
 
 	if self.auras then
 		self.auras:Layout(layout.width, layout.height)
 	end
 	if self.raidTarget then
-		local bounds = layout.portrait
-		self.raidTarget:Layout(self.frame, bounds and portrait or nil, bounds and bounds.width or 0, bounds and bounds.height or 0)
+		self.raidTarget:Layout(self.layoutContext)
 	end
+end
+
+function UnitFrame:GetLayoutContext()
+	return self.layoutContext
 end
 
 -- Unit buttons are protected: resizing them waits until combat ends.

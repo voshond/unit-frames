@@ -42,8 +42,8 @@ function RaidTarget:OnCreate(parent)
 end
 
 function RaidTarget:OnApply(cfg)
-	if self.owner then
-		self:Layout(self.owner, self.portrait, self.portraitWidth, self.portraitHeight)
+	if self.layoutContext then
+		self:Layout(self.layoutContext)
 	else
 		self:SetSize(cfg.size, cfg.size)
 	end
@@ -57,23 +57,17 @@ end
 -- Border positions attach the centre; portrait positions attach the matching
 -- corner, so the whole icon is inside at zero offset. Explicit offsets may
 -- move it outside. Keep this above portraits, bars and the overlay castbar.
-function RaidTarget:Layout(owner, portrait, portraitWidth, portraitHeight)
-	self.owner, self.portrait = owner, portrait
-	self.portraitWidth, self.portraitHeight = portraitWidth, portraitHeight
+function RaidTarget:Layout(context)
+	self.layoutContext = context
 	local cfg = self.resolved
-	local corner = cfg.anchor:match("^PORTRAIT_(.+)$")
-	self.available = not corner or portrait ~= nil
-	self:ClearAllPoints()
-	self.frame:SetFrameLevel(owner:GetFrameLevel() + 20)
-	if corner and portrait then
-		local size = math.min(cfg.size, portraitWidth, portraitHeight)
-		self:SetSize(size, size)
-		self:SetPoint(corner, portrait:GetFrame(), corner, cfg.offsetX, cfg.offsetY)
-	elseif not corner then
-		self:SetSize(cfg.size, cfg.size)
-		self:SetPoint("CENTER", owner, cfg.anchor, cfg.offsetX, cfg.offsetY)
-	end
+	self.frame:SetFrameLevel(context.root:GetFrameLevel() + 20)
+	self.available = ns.DecorationLayout.Place(self.frame, context, cfg.anchor, cfg.size, cfg.offsetX, cfg.offsetY)
 	self:SetEnabled(cfg.enabled)
+end
+
+-- A stable configured slot, not a read of the live texture's visibility.
+function RaidTarget:GetLayoutSlot()
+	if self.enabled and self.available then return self.resolved.anchor, self.frame end
 end
 
 function RaidTarget:GetWidget()
