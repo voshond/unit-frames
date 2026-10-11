@@ -5,7 +5,7 @@
 - This is **UnitFrames for WoW Forever**, currently targeting TOC Interface `16001`. Use Lua 5.1-compatible code. Forever uses modern Retail/Midnight UI APIs and secret-value restrictions; do not assume Classic-era APIs work because the client directory is `_classic_beta_`.
 - Read the relevant implementation and tests before changing it. `README.md` describes current features. `docs/01-investigation-api-and-libraries.md`, `docs/02-architecture-plan.md`, and `docs/03-reference-nurfed-forever.md` explain the design and API findings, but contain dated research and unimplemented plans. Current code wins when they disagree.
 - `docs/WoW unit frames addon libraries.md` is the long conversation history, not a specification to implement wholesale. Search specific topics rather than loading the entire file.
-- Verify unfamiliar or changing APIs against the actual client or Blizzard UI/API documentation, preferably the `forever` branch of `Gethe/wow-ui-source`. see files cloned into `examples/wow-ui-src-live`. Never invent API signatures or texture paths.
+- Verify unfamiliar or changing APIs against the actual client or Blizzard UI/API documentation, preferably the `forever` branch of `Gethe/wow-ui-source` cloned into `examples/wow-ui-src-live` for local access. Never invent API signatures or texture paths.
 - Preserve existing worktree changes. Do not commit, push, update dependencies, or install into the game merely because you were asked to explain or review something.
 
 ## Code map and conventions
