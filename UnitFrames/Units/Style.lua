@@ -143,6 +143,10 @@ function Units:Bind(frame)
 	if raidTarget then
 		SetElement(frame, "RaidTargetIndicator", raidTarget:IsEnabled() and raidTarget:GetWidget() or nil)
 	end
+	local range = uf.resolved.range
+	SetElement(frame, "UF_Range", range.enabled and ns.Caps.booleanAlpha and uf or nil,
+		frame.ufRangeMode ~= range.mode)
+	frame.ufRangeMode = range.mode
 end
 
 -- Re-applies config to a live frame and refreshes everything shown on it.

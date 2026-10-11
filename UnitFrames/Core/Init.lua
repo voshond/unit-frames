@@ -19,6 +19,9 @@ do
 		durations = C_DurationUtil ~= nil and C_DurationUtil.CreateDuration ~= nil,
 		curves = C_CurveUtil ~= nil and C_CurveUtil.CreateColorCurve ~= nil,
 		secrets = issecretvalue ~= nil,
+		booleanAlpha = probe.SetAlphaFromBoolean ~= nil,
+		groupRange = UnitInRange ~= nil,
+		spellRange = C_Spell ~= nil and C_Spell.IsSpellInRange ~= nil,
 	}
 	probe:Hide()
 end

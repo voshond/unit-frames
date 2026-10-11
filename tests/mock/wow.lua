@@ -179,6 +179,31 @@ function Methods:RegisterForClicks(...) Record(self, "RegisterForClicks", ...) e
 function Methods:GetChildren() end
 function Methods:GetFrameLevel() return self.__state.level end
 
+function Methods:SetAlpha(alpha)
+	assert(Mock.IsSecret(alpha) or type(alpha) == "number", "alpha must be numeric")
+	self.__state.alpha = alpha
+	Record(self, "SetAlpha", alpha)
+end
+function Methods:GetAlpha()
+	if self.__state.alpha == nil then return 1 end
+	return self.__state.alpha
+end
+function Methods:SetAlphaFromBoolean(value, ifTrue, ifFalse)
+	assert(Mock.IsSecret(value) or type(value) == "boolean", "value must be a boolean")
+	Record(self, "SetAlphaFromBoolean", value, ifTrue, ifFalse)
+	-- Model native selection, retaining the alpha's secrecy for the next
+	-- native call. Tests alone may inspect secretValue as an engine oracle.
+	local boolean = value
+	if Mock.IsSecret(value) then boolean = value.secretValue end
+	local alpha
+	if boolean then alpha = ifTrue else alpha = ifFalse end
+	if AnySecret(value, ifTrue, ifFalse) then
+		if Mock.IsSecret(alpha) then alpha = alpha.secretValue end
+		alpha = Mock.Secret(alpha)
+	end
+	self:SetAlpha(alpha)
+end
+
 function Methods:CreateTexture(name, layer)
 	local t = NewObject("Texture", self, name)
 	t.__state.layer = layer
@@ -472,6 +497,8 @@ function Mock.Install()
 	Mock.time = 100
 	Mock.raidTargets = {}
 	Mock.pvpInfo = {}
+	Mock.ranges = {}
+	Mock.spellRanges = {}
 
 	_G.LibStub = nil
 	_G.UnitFrames = nil
@@ -505,6 +532,16 @@ function Mock.Install()
 	_G.UnitClass = function() return "Warrior", "WARRIOR", 1 end
 	_G.UnitRace = function() return "Human", "Human" end
 	_G.UnitFactionGroup = function() return "Alliance", "Alliance" end
+	_G.UnitInRange = function(unit)
+		local range = Mock.ranges[unit] or { inRange = false, checked = false }
+		return range.inRange, range.checked
+	end
+	_G.C_Spell = {
+		IsSpellInRange = function(spell, unit)
+			local ranges = Mock.spellRanges[spell]
+			if ranges then return ranges[unit] end
+		end,
+	}
 	_G.strtrim = function(s) return (s:gsub("^%s+", ""):gsub("%s+$", "")) end
 	_G.strlenutf8 = function(s) return #s end
 	_G.tinsert = table.insert

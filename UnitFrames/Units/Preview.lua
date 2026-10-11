@@ -36,6 +36,7 @@ end
 
 -- values.showCast = false hides the sample cast (it can cover the health bar).
 function Units:ShowSample(uf, values)
+	uf:SetRangeState(values.outOfRange ~= true, true)
 	for key, row, cfg in uf:Rows() do
 		if cfg.enabled and fillers[key] then
 			fillers[key](row, cfg, values)

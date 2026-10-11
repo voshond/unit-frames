@@ -32,7 +32,7 @@ local function UnitStyleTarget(unit)
 		if unit ~= "player" then
 			schema[#schema + 1] = {
 				key = "copyPlayerSettings", type = "action", label = "Copy player settings",
-				tooltip = "Replace this frame's style with the player's current settings, including sizes, text, portrait, castbar, auras and raid target icon. Position and player-only XP are not copied. This is a one-time copy, not a link.",
+				tooltip = "Replace this frame's style with the player's current settings, including sizes, text, portrait, castbar, auras, raid target icon and range opacity. Position and player-only XP are not copied. This is a one-time copy, not a link.",
 				run = function()
 					if UF.Units:CopyPlayerSettings(unit) then
 						-- Inspector pages are cached across preview recreation; use
@@ -82,6 +82,7 @@ local function Values(unit, d, healthPct, time)
 	v.showCast = d.showCast
 	v.raidTarget = d.raidTarget
 	v.pvp = d.pvp
+	v.outOfRange = d.outOfRange
 	v.castProgress = d.castProgress / 100
 	for _, kind in ipairs({ "buffs", "debuffs" }) do
 		local samples = v[kind]
@@ -106,6 +107,8 @@ local function RegisterUnit(unit)
 		Range("health", "Health %", 65),
 		Range("absorb", "Absorb shields %", 15),
 		Range("power", "Power %", 70),
+		{ key = "outOfRange", type = "toggle", label = "Out of range", default = false,
+			tooltip = "Preview the saved out-of-range opacity. Enable it in the frame's Out-of-range opacity style section first." },
 		{ key = "powerType", type = "select", label = "Power type", values = wb.Data.POWER_TYPES, default = sample.powerType },
 		{ key = "class", type = "select", label = "Class", values = wb.Data.Classes, default = sample.class,
 			hidden = function(d) return d.npc end },

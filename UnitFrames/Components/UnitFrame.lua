@@ -46,6 +46,11 @@ UnitFrame.SIDES = {
 	{ "RIGHT", "Right" },
 }
 
+UnitFrame.RANGE_MODES = {
+	{ "group", "Group range" },
+	{ "spell", "Spell range" },
+}
+
 -- Shared choices keep copied settings valid on units with fewer rows.
 UnitFrame.PORTRAIT_ROW_SPANS = {
 	{ 0, "All rows" },
@@ -57,6 +62,7 @@ UnitFrame.PORTRAIT_ROW_SPANS = {
 
 function UnitFrame:OnCreate(parent, spec)
 	self.frame = spec.frame or CreateFrame("Frame", nil, parent)
+	self.rangeInRange, self.rangeChecked = true, false
 	-- The unit button may not be a BackdropTemplate frame; draw the border on a child.
 	self.border = CreateFrame("Frame", nil, self.frame, "BackdropTemplate")
 	self.border:SetAllPoints(self.frame)
@@ -129,6 +135,16 @@ function UnitFrame:GetSchema()
 		{ key = "spacing", type = "range", label = "Row spacing", min = 0, max = 20, step = 1, default = 1 },
 		{ key = "border", type = "group", label = "Frame border", schema = Backdrop.schema,
 			defaults = { enabled = true, padding = 4 } },
+		{ key = "range", type = "group", label = "Out-of-range opacity", schema = {
+			{ key = "enabled", type = "toggle", label = "Enabled", default = false },
+			{ key = "outsideAlpha", type = "range", label = "Out-of-range opacity", min = 0, max = 1, step = 0.05, default = 0.55,
+				tooltip = "0 = transparent, 1 = fully opaque. In-range and unavailable checks stay fully opaque. Fades the whole frame, including its extras." },
+			{ key = "mode", type = "select", label = "Range check", values = UnitFrame.RANGE_MODES, default = "group",
+				tooltip = "Group range uses the game's group-member check (normally 40 yards), not enemy distance. Spell range checks the chosen spell against this frame's unit, including enemy targets." },
+			{ key = "spell", type = "text", label = "Spell ID or name", default = "",
+				hidden = function(cfg) return cfg.mode ~= "spell" end,
+				tooltip = "Choose a spell you know that applies to this unit (a heal for allies, an attack for enemies). Unknown spells, invalid targets and spells without a range check do not fade the frame. Names must match your client language." },
+		} },
 	}
 	if self.portrait then
 		schema[#schema + 1] = { key = "portrait", type = "group", label = "Portrait", defaults = self.spec.portrait.defaults,
@@ -191,6 +207,24 @@ function UnitFrame:OnApply(cfg)
 		self:ApplyChild(self.raidTarget, "raidTarget")
 	end
 	self:Layout()
+	self:ApplyRangeOpacity()
+end
+
+-- Neither range result may be tested in Lua: both can be secret in combat.
+-- Native selection also restores full opacity when no range check was made.
+function UnitFrame:ApplyRangeOpacity()
+	local cfg = self.resolved.range
+	if cfg.enabled and ns.Caps.booleanAlpha then
+		self.frame:SetAlphaFromBoolean(self.rangeInRange, 1, cfg.outsideAlpha)
+		self.frame:SetAlphaFromBoolean(self.rangeChecked, self.frame:GetAlpha(), 1)
+	else
+		self.frame:SetAlpha(1)
+	end
+end
+
+function UnitFrame:SetRangeState(inRange, checkedRange)
+	self.rangeInRange, self.rangeChecked = inRange, checkedRange
+	self:ApplyRangeOpacity()
 end
 
 -- Where the castbar actually goes: "health" falls back to the top row when

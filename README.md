@@ -76,6 +76,19 @@ icons shrink to fit small portraits; offsets can deliberately move them
 outside. **Preview data > Raid target marker** offers all eight markers and
 None. Live markers follow the unit's raid target assignment automatically.
 
+Each frame's **Out-of-range opacity** section offers an opt-in fade with
+an opacity slider (0 = transparent, 1 = fully opaque; default 0.55).
+**Group range** uses the game's group-member range check, normally 40 yards;
+it cannot measure enemy targets. **Spell range** accepts a known spell's ID
+or localised name and checks it against that frame's unit, including target,
+focus and target-of-target. Choose a heal for friendly units or an attack for
+enemies. Spell mode refreshes every 0.2 seconds while the frame is shown.
+Missing/offline units, unknown spells and unavailable range checks stay fully
+opaque. Range results go straight through native secret-aware opacity setters
+so updates can run in combat without Lua inspecting the range booleans.
+The whole frame and its extras fade together; its secure clicks remain intact.
+**Preview data > Out of range** lets you tune the fade in either sample mode.
+
 Aura settings live under **Buffs & debuffs**. Each of the **Buffs** and
 **Debuffs** sections has its own side, alignment, growth direction, gap,
 offsets and row/column length. Buffs default to the top, debuffs to the bottom.

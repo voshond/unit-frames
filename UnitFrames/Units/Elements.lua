@@ -180,3 +180,75 @@ end
 local function DisableAuras() end
 
 oUF:AddElement("UF_Auras", UpdateAuras, EnableAuras, DisableAuras)
+
+-- UF_Range: group checks are event-driven; spell checks also poll because
+-- SPELL_RANGE_CHECK_UPDATE only describes the player's current target, not
+-- focus/target-of-target. Never inspect a live range boolean in Lua.
+local function UpdateRange(self)
+	local uf, unit = self.UF_Range, self.__unit
+	if not unit or not UnitExists(unit) or not UnitIsConnected(unit) then
+		uf:SetRangeState(true, false)
+		return
+	end
+	local cfg = uf.resolved.range
+	if cfg.mode == "spell" then
+		local spell = cfg.spell:match("^%s*(.-)%s*$")
+		if not ns.Caps.spellRange or spell == "" then
+			uf:SetRangeState(true, false)
+			return
+		end
+		local inRange = C_Spell.IsSpellInRange(tonumber(spell) or spell, unit)
+		if type(inRange) == "nil" then
+			uf:SetRangeState(true, false)
+		else
+			uf:SetRangeState(inRange, true)
+		end
+	elseif ns.Caps.groupRange then
+		uf:SetRangeState(UnitInRange(unit))
+	else
+		uf:SetRangeState(true, false)
+	end
+end
+
+-- A separate, unprotected driver avoids changing scripts on secure buttons.
+-- Only enabled spell-mode frames are tracked; hidden frames aren't polled.
+local spellFrames = {}
+local rangeDriver = CreateFrame("Frame")
+local rangeElapsed = 0
+rangeDriver:Hide()
+rangeDriver:SetScript("OnUpdate", function(_, elapsed)
+	rangeElapsed = rangeElapsed + elapsed
+	if rangeElapsed < 0.2 then return end
+	rangeElapsed = 0
+	for frame in pairs(spellFrames) do
+		if frame:IsShown() then UpdateRange(frame) end
+	end
+end)
+
+local function EnableRange(self)
+	if not self.UF_Range then return end
+	self:RegisterEvent("UNIT_CONNECTION", UpdateRange)
+	self:RegisterEvent("GROUP_ROSTER_UPDATE", UpdateRange, true)
+	if self.UF_Range.resolved.range.mode == "spell" then
+		spellFrames[self] = true
+		rangeDriver:Show()
+	else
+		self:RegisterEvent("UNIT_IN_RANGE_UPDATE", UpdateRange)
+	end
+	UpdateRange(self)
+	return true
+end
+
+local function DisableRange(self)
+	self:UnregisterEvent("UNIT_CONNECTION", UpdateRange)
+	self:UnregisterEvent("GROUP_ROSTER_UPDATE", UpdateRange)
+	self:UnregisterEvent("UNIT_IN_RANGE_UPDATE", UpdateRange)
+	spellFrames[self] = nil
+	if not next(spellFrames) then
+		rangeDriver:Hide()
+		rangeElapsed = 0
+	end
+	self.UF_Range:SetRangeState(true, false)
+end
+
+oUF:AddElement("UF_Range", UpdateRange, EnableRange, DisableRange)
