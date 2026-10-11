@@ -30,15 +30,7 @@ local function UpdateHealthColor(self, _, unit)
 	if not unit or self.__unit ~= unit then -- same guard as oUF's own elements
 		return
 	end
-	local row = self.uf:GetRow("health")
-	local mode = self.uf:GetRowConfig("health").colorMode
-	if mode == "class" then
-		row:SetColor(Colors.Unit(unit))
-	elseif mode == "gradient" then
-		row:SetColor(UnitHealthPercent(unit, true, Colors.HealthCurve()):GetRGB())
-	else
-		row:ClearColor()
-	end
+	ns.UnitRows.LiveHealthColor(self.uf:GetRow("health"), self.uf:GetRowConfig("health").colorMode, unit)
 end
 
 local function UpdatePowerColor(self, _, unit)
@@ -61,7 +53,7 @@ function widgets.health(row)
 	-- Both placements must show shields at full health. Appending reserves
 	-- shield space inside the frame by including it in the native bar scale.
 	-- Set initial oUF options AND the existing calculator when re-styling.
-	health.maximumHealthClampMode = Units:GetHealthMaximumMode(bar)
+	health.maximumHealthClampMode = ns.UnitRows.HealthMaximumMode(bar)
 	health.damageAbsorbClampMode = Enum.UnitDamageAbsorbClampMode.MaximumHealth
 	if health.values then
 		health.values:SetMaximumHealthMode(health.maximumHealthClampMode)

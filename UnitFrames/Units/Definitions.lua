@@ -10,14 +10,6 @@ Units.HEALTH_COLOR_MODES = {
 	{ "theme", "Theme colour" },
 }
 
--- The native calculator adds shields to the scale without Lua touching
--- secret health/absorb values. Hidden shields must not shrink the health fill.
-function Units:GetHealthMaximumMode(bar)
-	local shield = bar.resolved.segments.absorb
-	return shield.enabled and shield.placement == "append"
-		and Enum.UnitMaximumHealthMode.WithAbsorbs or Enum.UnitMaximumHealthMode.Default
-end
-
 local HEALTH_ROW = {
 	key = "health", label = "Health",
 	spec = ns.UnitRows.Spec("health"),

@@ -808,7 +808,8 @@ function Mock.InstallUI()
 	_G.UnitGetIncomingHeals = function() return Secret(50) end
 	_G.UnitGetTotalAbsorbs = function() return Secret(100) end
 	_G.UnitGetTotalHealAbsorbs = function() return Secret(0) end
-	-- Minimal engine-side scale calculation for the standalone live preview.
+	-- Minimal engine-side calculation for live previews: secret, non-nil
+	-- results filled by UnitGetDetailedHealPrediction.
 	_G.CreateUnitHealPredictionCalculator = function()
 		return {
 			SetMaximumHealthMode = function(self, mode) self.maximumMode = mode end,
@@ -816,11 +817,18 @@ function Mock.InstallUI()
 			GetMaximumHealth = function(self)
 				return Secret(self.max + (self.maximumMode == Enum.UnitMaximumHealthMode.WithAbsorbs and self.absorb or 0))
 			end,
+			GetCurrentHealth = function(self) return Secret(self.current) end,
+			GetIncomingHeals = function(self) return Secret(self.heal), Secret(0), Secret(self.heal), false end,
+			GetDamageAbsorbs = function(self) return Secret(self.absorb), false end,
+			GetHealAbsorbs = function(self) return Secret(self.healAbsorb), false end,
 		}
 	end
 	_G.UnitGetDetailedHealPrediction = function(unit, _, calculator)
 		calculator.max = UnitHealthMax(unit).secretValue
+		calculator.current = UnitHealth(unit).secretValue
+		calculator.heal = (UnitGetIncomingHeals(unit) or Secret(0)).secretValue
 		calculator.absorb = UnitGetTotalAbsorbs(unit).secretValue
+		calculator.healAbsorb = UnitGetTotalHealAbsorbs(unit).secretValue
 	end
 	local function Percent(_, _, _, curve)
 		if curve and curve.isColor then

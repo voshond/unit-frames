@@ -22,11 +22,7 @@ UF_Experience: player experience on a TextBar (frame.UF_Experience = row).
 Fills the bar and its "rested" segment. XP events carry no unit.
 ]]
 local function UpdateExperience(self)
-	local row = self.UF_Experience
-	local max = UnitXPMax("player")
-	row:SetRange(0, max)
-	row:SetValue(UnitXP("player"))
-	row:SetSegmentValue("rested", GetXPExhaustion() or 0)
+	ns.UnitRows.Experience(self.UF_Experience, UnitXP("player"), UnitXPMax("player"), GetXPExhaustion() or 0)
 end
 
 local function EnableExperience(self, unit)
