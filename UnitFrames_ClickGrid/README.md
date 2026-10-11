@@ -20,6 +20,8 @@ repository's incremental deployment guidance when updating an existing copy.
 ## Implemented
 
 - Secure party header (including the player) and forty-member raid capacity.
+  Party panel bounds follow the current member count, including roster changes
+  during combat; unused party rows do not reserve background space.
   Raid subgroups can be stacked in configurable columns, or use a flat grid
   with rows, columns and fill direction. Optional duplicate tank section.
   Flat-grid rows and columns are independent preferences: a 5 × 5 grid is

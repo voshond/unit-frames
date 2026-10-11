@@ -58,6 +58,43 @@ describe("ClickGrid companion", function()
 		assert.equals(CG.metrics.member.height, cell:GetHeight())
 	end)
 
+	it("shrinks party bounds and selects precomputed roster sizes during combat", function()
+		Mock.inParty, Mock.groupSize = true, 2
+		CG:Refresh()
+		local cfg, layout = CG.Config:Resolved(), CG.layout
+		local function Height(count)
+			return count * layout.cellHeight + (count - 1) * cfg.panel.spacingY
+				+ CG.Layout.TitleHeight(cfg.titles) + 2 * cfg.panel.padding
+		end
+		assert.equals(Height(2), CG.panel:GetHeight())
+		assert.equals("[group:raid] raid; [@party4,exists] party5; [@party3,exists] party4; [@party2,exists] party3; [group:party] party2; solo",
+			CG.panel.__state.drivers.roster)
+		assert.equals(5, CG.headers.party:GetAttribute("unitsPerColumn"))
+		assert.is_not_nil(CG.headers.party:GetAttribute("child5"))
+		local resize = assert(loadstring(CG.panel:GetAttribute("_onstate-roster")))
+		local env = setmetatable({ self = CG.panel }, { __index = _G })
+		setfenv(resize, env)
+		local frames = #CG.frames
+		Mock.inCombat = true
+		for _, count in ipairs({ 3, 5, 4, 2 }) do
+			env.newstate = "party" .. count
+			assert.has_no_error(resize)
+			assert.equals(Height(count), CG.panel:GetHeight())
+			assert.equals(layout.party.width, CG.panel:GetWidth())
+		end
+		env.newstate = "raid"
+		resize()
+		assert.equals(layout.raid.height, CG.panel:GetHeight())
+		env.newstate = "solo"
+		resize()
+		assert.equals(Height(1), CG.panel:GetHeight())
+		assert.equals(frames, #CG.frames)
+		Mock.inCombat = false
+		Mock.groupSize = 4
+		CG:Refresh()
+		assert.equals(Height(4), CG.panel:GetHeight())
+	end)
+
 	it("creates alternate layouts outside combat and preserves all 40 primary slots", function()
 		assert.is_true(CG.Config:Set("panel.mode", "flat"))
 		local header = CG.headers.raid
@@ -654,6 +691,30 @@ describe("ClickGrid Workbench", function()
 		assert.same({ "TOPLEFT", preview.frame, "TOPLEFT", section.x + 4,
 			-section.y - preview.layout.cellHeight - cfg.titles.gap - cfg.panel.padding - 2 }, { preview.labels.party:GetPoint() })
 		assert.equals(preview.layout.solo.height, preview.frame:GetHeight())
+	end)
+
+	it("fits party previews to occupied rows for sample and live sources", function()
+		for _, flow in ipairs({ "down", "across" }) do
+			CG.Config:Set("panel.flow", flow)
+			CG.Config:Set("titles.position", "below")
+			for _, source in ipairs({ "static", "animated", "live" }) do
+				wb.state.data.source = source
+				for _, count in ipairs({ 2, 5, 3, 1 }) do
+					Mock.inParty, Mock.groupSize = count > 1, count
+					wb.state.data.count = count
+					wb:UpdateData()
+					local preview, cfg = wb.handle, CG.Config:Resolved()
+					local section = preview.layout.sections.party
+					assert.equals(count, section.grid.rows)
+					assert.equals(section.grid.height + CG.Layout.TitleHeight(cfg.titles)
+						+ 2 * cfg.panel.padding, preview.frame:GetHeight())
+					assert.same({ "TOPLEFT", preview.frame, "TOPLEFT", section.x + cfg.titles.offsetX,
+						-section.y - section.grid.height - cfg.titles.gap - cfg.panel.padding + cfg.titles.offsetY },
+						{ preview.labels.party:GetPoint() })
+					if preview.cells[count + 1] then assert.is_false(preview.cells[count + 1].frame:IsShown()) end
+				end
+			end
+		end
 	end)
 
 	it("renders enemy targets with NPC reaction colors instead of an absent class token", function()

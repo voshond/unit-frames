@@ -88,9 +88,16 @@ function CG:Refresh()
 		self.panel:SetAttribute(state .. "-width", layout[state].width)
 		self.panel:SetAttribute(state .. "-height", layout[state].height)
 	end
-	local state = IsInRaid() and "raid" or IsInGroup() and "party" or "solo"
-	self.panel:SetSize(layout[state].width, layout[state].height)
-	RegisterStateDriver(self.panel, "roster", "[group:raid] raid; [group:party] party; solo")
+	-- Precompute each party size outside combat. The secure driver selects
+	-- bounds as members join/leave, while the header retains all five cells.
+	for count = 2, 5 do
+		self.panel:SetAttribute("party" .. count .. "-width", layout.partySizes[count].width)
+		self.panel:SetAttribute("party" .. count .. "-height", layout.partySizes[count].height)
+	end
+	local size = IsInRaid() and layout.raid or IsInGroup()
+		and layout.partySizes[math.max(2, math.min(5, GetNumGroupMembers()))] or layout.solo
+	self.panel:SetSize(size.width, size.height)
+	RegisterStateDriver(self.panel, "roster", "[group:raid] raid; [@party4,exists] party5; [@party3,exists] party4; [@party2,exists] party3; [group:party] party2; solo")
 	RegisterAttributeDriver(self.panel, "state-visibility", not cfg.panel.enabled and "hide"
 		or cfg.panel.showSolo and "show" or "[group] show; hide")
 	self.Layout.Backdrop(self.background, self.panel, cfg.titles)

@@ -21,17 +21,23 @@ function Layout.TitleHeight(titles)
 	return titles.enabled and (titles.size + titles.gap + 2) or 0
 end
 
-function Layout.Compute(cfg, member, target, titles, raidCount)
+function Layout.Compute(cfg, member, target, titles, raidCount, partyCount)
 	local titleHeight = Layout.TitleHeight(titles)
 	local below = titles and titles.position == "below"
 	local leading, trailing = below and 0 or titleHeight, below and titleHeight or 0
 	local cellWidth = member.width + (cfg.targets and target.width + cfg.targetGap or 0)
 	local cellHeight = math.max(member.height, cfg.targets and target.height or 0)
 	local cols = cfg.mode == "subgroups" and math.min(8, cfg.columns) or cfg.columns
-	local result = { cellWidth = cellWidth, cellHeight = cellHeight, sections = {} }
-	local party = Layout.Grid(1, 5, cellWidth, cellHeight, cfg.spacingX, cfg.spacingY)
-	result.party = { width = party.width + 2 * cfg.padding, height = party.height + titleHeight + 2 * cfg.padding }
-	result.solo = { width = cellWidth + 2 * cfg.padding, height = cellHeight + titleHeight + 2 * cfg.padding }
+	local result = { cellWidth = cellWidth, cellHeight = cellHeight, sections = {}, partySizes = {} }
+	for count = 1, 5 do
+		local grid = Layout.Grid(1, count, cellWidth, cellHeight, cfg.spacingX, cfg.spacingY)
+		result.partySizes[count] = { width = grid.width + 2 * cfg.padding,
+			height = grid.height + titleHeight + 2 * cfg.padding }
+	end
+	partyCount = math.max(1, math.min(5, partyCount or 5))
+	local party = Layout.Grid(1, partyCount, cellWidth, cellHeight, cfg.spacingX, cfg.spacingY)
+	result.party = result.partySizes[partyCount]
+	result.solo = result.partySizes[1]
 	local y, width = cfg.padding + leading, 0
 	if cfg.tanks then
 		local tankCols = math.min(cols, cfg.tankSlots)

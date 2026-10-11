@@ -119,7 +119,7 @@ function Preview:ShowData(data, dataOnly)
 	if live then count = math.max(1, GetNumGroupMembers()) end
 	local raid = live and IsInRaid() or count > 5
 	local cfg = self.cfg.panel
-	local layout = CG.Layout.Compute(cfg, CG.metrics.member, CG.metrics.target, self.cfg.titles, count)
+	local layout = CG.Layout.Compute(cfg, CG.metrics.member, CG.metrics.target, self.cfg.titles, count, count)
 	self.layout = layout
 	local size = raid and layout.raid or count == 1 and layout.solo or layout.party
 	self.frame:SetSize(size.width, size.height)
