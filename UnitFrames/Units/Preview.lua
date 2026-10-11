@@ -6,12 +6,7 @@ local Units, Colors = ns.Units, ns.Colors
 local fillers = {}
 
 function fillers.health(row, cfg, v)
-	local append = Units:GetHealthMaximumMode(row:GetBar()) == Enum.UnitMaximumHealthMode.WithAbsorbs
-	row:SetRange(0, v.healthMax + (append and v.absorb or 0))
-	row:SetValue(v.health)
-	row:SetSegmentValue("heal", math.min(v.heal, math.max(0, v.healthMax - v.health)))
-	row:SetSegmentValue("absorb", v.absorb)
-	row:SetSegmentValue("healAbsorb", v.healAbsorb)
+	ns.UnitRows.SampleHealth(row, v)
 	if cfg.colorMode == "class" then
 		row:SetColor(Colors.Sample(v))
 	elseif cfg.colorMode == "gradient" then
@@ -22,16 +17,11 @@ function fillers.health(row, cfg, v)
 end
 
 function fillers.power(row, _, v)
-	row:SetRange(0, v.powerMax)
-	row:SetValue(v.power)
-	row:SetSegmentValue("cost", v.cost)
-	row:SetColor(Colors.Power(v.powerType))
+	ns.UnitRows.SamplePower(row, v)
 end
 
 function fillers.experience(row, _, v)
-	row:SetRange(0, v.xpMax)
-	row:SetValue(v.xp)
-	row:SetSegmentValue("rested", v.rested)
+	ns.UnitRows.Experience(row, v.xp, v.xpMax, v.rested)
 end
 
 -- values.showCast = false hides the sample cast (it can cover the health bar).

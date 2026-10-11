@@ -1,7 +1,7 @@
 local _, wb = ...
 local UF = UnitFrames
 local Workbench, Data = wb.Workbench, wb.Data
-local C, Colors, Formats = UF.Components, UF.Colors, UF.Formats
+local C, Colors, Rows = UF.Components, UF.Colors, UF.UnitRows
 
 -- One TextBar (bar + left/centre/right text) as an inspectable handle.
 local function TextBarHandle(stage, spec)
@@ -30,16 +30,7 @@ end
 
 -- Health ------------------------------------------------------------------------
 
-local HEALTH_SPEC = {
-	segments = {
-		{ key = "heal", label = "Incoming heals", mode = "append", colorInherit = "colors.heal" },
-		{ key = "absorb", label = "Absorb shields", mode = "overlay", configurablePlacement = true,
-			appendToFill = true, colorInherit = "colors.absorb" },
-		{ key = "healAbsorb", label = "Heal absorbs", mode = "inset", colorInherit = "colors.healAbsorb" },
-	},
-	formats = Formats.HEALTH,
-	textDefaults = { left = "name", right = "health:value" },
-}
+local HEALTH_SPEC = Rows.Spec("health", { left = "name", right = "health:value" })
 
 local BORDER = { bar = { border = { enabled = true } } }
 
@@ -63,12 +54,8 @@ local function ShowStaticHealth(handle, d, healthPct, healPct, absorbPct, healAb
 	local row, max = handle.parts.row, d.max
 	local cur = Percent(healthPct, max)
 	local absorb = Percent(absorbPct, max)
-	local append = UF.Units:GetHealthMaximumMode(row:GetBar()) == Enum.UnitMaximumHealthMode.WithAbsorbs
-	row:SetRange(0, max + (append and absorb or 0))
-	row:SetValue(cur)
-	row:SetSegmentValue("heal", math.min(Percent(healPct, max), math.max(0, max - cur)))
-	row:SetSegmentValue("absorb", absorb)
-	row:SetSegmentValue("healAbsorb", Percent(healAbsorbPct, max))
+	Rows.SampleHealth(row, { health = cur, healthMax = max, heal = Percent(healPct, max),
+		absorb = absorb, healAbsorb = Percent(healAbsorbPct, max) })
 	ApplyHealthColor(row, d, nil, healthPct / 100)
 	row:ShowSample({ name = d.name, level = 42, health = cur, healthMax = max })
 end
@@ -152,22 +139,14 @@ Workbench:Register({
 
 -- Power ---------------------------------------------------------------------------
 
-local POWER_SPEC = {
-	colorInherit = "colors.mana",
-	segments = { { key = "cost", label = "Spell cost", mode = "inset", colorInherit = "colors.powerCost" } },
-	formats = Formats.POWER,
-	textDefaults = { right = "power:value" },
-}
+local POWER_SPEC = Rows.Spec("power")
 
 local THIN_BORDER = { enabled = true, size = 8, inset = 2, padding = 2 }
 
 local function ShowStaticPower(handle, d, powerPct, costPct)
 	local row, max = handle.parts.row, d.max
 	local cur = Percent(powerPct, max)
-	row:SetRange(0, max)
-	row:SetValue(cur)
-	row:SetSegmentValue("cost", Percent(costPct, max))
-	row:SetColor(Colors.Power(d.powerType))
+	Rows.SamplePower(row, { power = cur, powerMax = max, cost = Percent(costPct, max), powerType = d.powerType })
 	row:ShowSample({ name = "Uther", level = 42, power = cur, powerMax = max })
 end
 
@@ -228,18 +207,11 @@ Workbench:Register({
 
 -- Experience ------------------------------------------------------------------------
 
-local XP_SPEC = {
-	colorInherit = "colors.experience",
-	segments = { { key = "rested", label = "Rested", mode = "append", colorInherit = "colors.rested" } },
-	formats = Formats.EXPERIENCE,
-	textDefaults = { left = "level", right = "xp:value:percent" },
-}
+local XP_SPEC = Rows.Spec("experience", { left = "level", right = "xp:value:percent" })
 
 local function ShowExperience(handle, cur, max, rested, level, live)
 	local row = handle.parts.row
-	row:SetRange(0, max)
-	row:SetValue(cur)
-	row:SetSegmentValue("rested", rested)
+	Rows.Experience(row, cur, max, rested)
 	if live then
 		row:ShowLive("player")
 	else

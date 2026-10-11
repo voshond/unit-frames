@@ -1,6 +1,4 @@
 local _, ns = ...
-local Formats = ns.Formats
-
 -- What each unit frame is made of (rows, segments, default texts). Used for
 -- the live oUF frames and for Workbench previews alike.
 local Units = { definitions = {}, frames = {}, order = { "player", "pet", "target", "targettarget", "focus", "focustarget" } }
@@ -22,16 +20,7 @@ end
 
 local HEALTH_ROW = {
 	key = "health", label = "Health",
-	spec = {
-		segments = {
-			{ key = "heal", label = "Incoming heals", mode = "append", colorInherit = "colors.heal" },
-			{ key = "absorb", label = "Absorb shields", mode = "overlay", configurablePlacement = true,
-				appendToFill = true, colorInherit = "colors.absorb" },
-			{ key = "healAbsorb", label = "Heal absorbs", mode = "inset", colorInherit = "colors.healAbsorb" },
-		},
-		formats = Formats.HEALTH,
-		textDefaults = { left = "name", right = "health:value", belowLeft = { format = "level:class", enabled = false } },
-	},
+	spec = ns.UnitRows.Spec("health"),
 	defaults = { height = 26 },
 	options = {
 		{ key = "colorMode", type = "select", label = "Bar colour", values = Units.HEALTH_COLOR_MODES, default = "class" },
@@ -40,23 +29,13 @@ local HEALTH_ROW = {
 
 local POWER_ROW = {
 	key = "power", label = "Power",
-	spec = {
-		colorInherit = "colors.mana",
-		segments = { { key = "cost", label = "Spell cost", mode = "inset", colorInherit = "colors.powerCost" } },
-		formats = Formats.POWER,
-		textDefaults = { right = "power:value" },
-	},
+	spec = ns.UnitRows.Spec("power"),
 	defaults = { height = 12, right = { size = 9 } },
 }
 
 local EXPERIENCE_ROW = {
 	key = "experience", label = "Experience",
-	spec = {
-		colorInherit = "colors.experience",
-		segments = { { key = "rested", label = "Rested", mode = "append", colorInherit = "colors.rested" } },
-		formats = Formats.EXPERIENCE,
-		textDefaults = { center = "xp:value:percent" },
-	},
+	spec = ns.UnitRows.Spec("experience"),
 	defaults = { height = 10, center = { size = 8 } },
 }
 

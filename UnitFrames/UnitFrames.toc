@@ -48,6 +48,7 @@ Widgets\ScrollList.lua
 Widgets\ScrollPanel.lua
 Widgets\Inspector.lua
 
+Units\Rows.lua
 Units\Definitions.lua
 Units\Elements.lua
 Units\Style.lua
