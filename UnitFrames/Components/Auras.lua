@@ -53,15 +53,13 @@ local function GroupSchema(label, filters, size, position)
 	}
 end
 
-Auras.schema = {
+-- The shared artwork options sit between the spacing and the two groups.
+Auras.schema = ns.Schema.Insert({
 	{ key = "enabled", type = "toggle", label = "Enabled", default = true },
 	{ key = "spacing", type = "range", label = "Icon spacing", min = 0, max = 10, step = 1, default = 2 },
 	{ key = "buffs", type = "group", label = "Buffs", schema = GroupSchema("buffs", Auras.BUFF_FILTERS, 20, "top") },
 	{ key = "debuffs", type = "group", label = "Debuffs", schema = GroupSchema("debuffs", Auras.DEBUFF_FILTERS, 26, "bottom") },
-}
-
--- Preserve the existing settings paths/order while sharing the artwork schema.
-for i, opt in ipairs(AuraIcon.schema) do table.insert(Auras.schema, i + 2, ns.Util.Copy(opt)) end
+}, "spacing", ns.Util.Copy(AuraIcon.schema))
 
 function Auras:OnCreate(parent)
 	self.frame = CreateFrame("Frame", nil, parent)

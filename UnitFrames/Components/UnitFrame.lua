@@ -90,35 +90,10 @@ function UnitFrame:OnCreate(parent, spec)
 	end
 end
 
--- Copies a component's schema, inserting `extra` options after "enabled"
--- (or at the top) and leaving out keys listed in `skip`.
+-- A component's schema with `extra` options after "enabled" (or at the
+-- top), leaving out keys listed in `skip`.
 local function GroupSchema(options, extra, skip)
-	local schema, inserted = {}, false
-	local function Insert()
-		for _, opt in ipairs(extra) do
-			schema[#schema + 1] = opt
-		end
-		inserted = true
-	end
-	for _, opt in ipairs(options) do
-		if not (skip and skip[opt.key]) then
-			schema[#schema + 1] = opt
-		end
-		if opt.key == "enabled" then
-			Insert()
-		end
-	end
-	if not inserted then
-		local merged = {}
-		for _, opt in ipairs(extra) do
-			merged[#merged + 1] = opt
-		end
-		for _, opt in ipairs(schema) do
-			merged[#merged + 1] = opt
-		end
-		schema = merged
-	end
-	return schema
+	return ns.Schema.Without(ns.Schema.Insert(options, "enabled", extra), skip)
 end
 
 local function HeightOption(default, hidden)

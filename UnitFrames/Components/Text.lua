@@ -48,20 +48,9 @@ local HOST_OPTIONS = {
 
 function Text.BuildSchema(spec)
 	spec = spec or {}
-	local schema = {}
-	if spec.formats then
-		schema[1] = { key = "format", type = "select", label = "Shows", values = ns.Formats.Values(spec.formats),
-			default = "none" }
-	end
-	for _, opt in ipairs(Text.schema) do
-		schema[#schema + 1] = opt
-	end
-	if spec.host then
-		for _, opt in ipairs(HOST_OPTIONS) do
-			schema[#schema + 1] = opt
-		end
-	end
-	return ns.Util.Copy(schema)
+	local format = spec.formats and { { key = "format", type = "select", label = "Shows",
+		values = ns.Formats.Values(spec.formats), default = "none" } } or {}
+	return ns.Util.Copy(ns.Schema.Concat(format, Text.schema, spec.host and HOST_OPTIONS or {}))
 end
 
 function Text:OnCreate(parent)
