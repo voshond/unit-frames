@@ -124,6 +124,26 @@ border by type** to use **Icon frame > Border colour** for every icon.
 their timers; Animated previews cycle them. Samples include stacks, a
 permanent buff, and all four debuff dispel types, using the saved aura style.
 
+## Component and preview structure
+
+Components own their children explicitly with `Own`; releasing a composition
+releases its children and pending work. Theme refresh applies at composition
+roots, while runtime bindings manage their own refresh. Keep visual components
+independent of oUF and feed sample values through the shared row writers in
+`Units/Rows.lua`.
+
+`BuildSchema` and `UnitFrameLayout.Compute` build settings and measure unit
+geometry without creating frames. Decorations use `GetLayoutContext` for
+configured portrait bounds rather than reading native artwork dimensions.
+Flowing auras and ClickGrid's fixed slots share `Components/AuraIcon.lua`, but
+retain their separate selection, container and lifecycle policies.
+
+Workbench separates its controller (`Workbench.lua`), presentation (`View.lua`),
+settings navigation (`Sections.lua`) and active preview lifetime
+(`PreviewSession.lua`). A session owns its data cache, callbacks and teardown;
+cached inspector pages dispatch through their current target. Entries still
+define their own handles, sources and actions using the shared settings toolkit.
+
 ## Adding fonts
 
 1. Copy a static `.ttf`/`.otf` (one file per weight) into `UnitFrames_Media/Fonts/`.
