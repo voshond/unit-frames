@@ -106,7 +106,7 @@ describe("Portrait row spans", function()
 	it("copies spans to compact units and clamps geometry without invalidating settings", function()
 		Set("portrait.rowSpan", 4)
 		Set("castbar.placement", "off")
-		for _, unit in ipairs({ "pet", "target", "targettarget", "focus" }) do
+		for _, unit in ipairs({ "pet", "target", "targettarget", "focus", "focustarget" }) do
 			ns.Units:CopyPlayerSettings(unit)
 			local copied = ns.Units.frames[unit].uf
 			assert.equals(4, copied.resolved.portrait.rowSpan)

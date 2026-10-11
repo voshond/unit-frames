@@ -21,12 +21,13 @@ scripts/fetch-libs.sh       # update the embedded libraries (UnitFrames/Libs/VER
 
 In game: `/uf wb` opens the Workbench.
 
-**Unit frames** includes Player, Player pet, Target, Target of target, and Focus, each
-with independent saved settings and Edit Mode positions. Target sits opposite
-the player, target-of-target beside the target, and focus below the player.
+**Unit frames** includes Player, Player pet, Target, Target of target, Focus,
+and Focus target, each with independent saved settings and Edit Mode positions. Target sits opposite
+the player, target-of-target beside the target, focus below the player, and
+focus target beside the focus.
 The new frames use oUF's secure targeting/menu clicks and unit visibility;
-target-of-target refreshes through oUF's polling. XP remains player-only.
-Target and focus include castbars and auras; target-of-target starts compact,
+target-of-target and focus target refresh through oUF's polling. XP remains player-only.
+Target and focus include castbars and auras; both target chains start compact,
 with portrait, castbar, and auras off but available in its settings.
 Player pet starts compact below/right of the player, with health, power,
 shields and small aura icons. Portrait and castbar are available but off by

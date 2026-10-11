@@ -3,7 +3,7 @@ local Formats = ns.Formats
 
 -- What each unit frame is made of (rows, segments, default texts). Used for
 -- the live oUF frames and for Workbench previews alike.
-local Units = { definitions = {}, frames = {}, order = { "player", "pet", "target", "targettarget", "focus" } }
+local Units = { definitions = {}, frames = {}, order = { "player", "pet", "target", "targettarget", "focus", "focustarget" } }
 ns.Units = Units
 
 Units.HEALTH_COLOR_MODES = {
@@ -142,6 +142,14 @@ Units.definitions.focus = {
 	auras = { defaults = {} },
 	sample = { name = "Jaina", level = 44, className = "Mage", class = "MAGE", isPlayer = true,
 		spell = "Frostbolt", spellIcon = [[Interface\Icons\Spell_Frost_FrostBolt02]], castTime = 2.5 },
+}
+
+-- Both target chains use the same compact style, with independent defaults.
+Units.definitions.focustarget = ns.Util.Copy(Units.definitions.targettarget)
+Units.definitions.focustarget.label = "Focus target"
+Units.definitions.focustarget.defaultPosition = { point = "CENTER", x = -60, y = -290 }
+Units.definitions.focustarget.sample = {
+	name = "Thrall", level = 44, className = "Shaman", class = "SHAMAN", isPlayer = true,
 }
 
 function Units:GetDefinition(unit)

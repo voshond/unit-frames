@@ -1,7 +1,7 @@
 local Helpers = require("helpers")
 local Mock = Helpers.Mock
 
-describe("Target, target of target and focus", function()
+describe("Target, focus and their targets", function()
 	local ns
 	before_each(function()
 		ns = Helpers.LoadAddon(true, true)
@@ -26,26 +26,48 @@ describe("Target, target of target and focus", function()
 		end
 	end)
 
-	it("starts target and focus full-sized and target of target compact with optional extras", function()
+	it("starts target and focus full-sized and their targets compact with optional extras", function()
 		for _, unit in ipairs({ "target", "focus" }) do
 			local frame = ns.Units.frames[unit]
 			assert.is_true(frame:IsElementEnabled("UF_Castbar"))
 			assert.is_true(frame:IsElementEnabled("UF_Auras"))
 		end
 		assert.equals("RIGHT", ns.Units.frames.target.uf.resolved.portrait.position)
-		local frame = ns.Units.frames.targettarget
-		assert.equals(140, frame:GetWidth())
-		assert.equals(37, frame:GetHeight())
-		assert.is_false(frame:IsElementEnabled("Portrait"))
-		assert.is_false(frame:IsElementEnabled("UF_Castbar"))
-		assert.is_false(frame:IsElementEnabled("UF_Auras"))
-		assert.equals("[uf:health:percent]", frame.tags[frame.uf:GetRow("health"):GetText("right"):GetFrame()])
-		ns.Config:SetUnitValue("targettarget", "auras.enabled", true)
-		ns.Config:SetUnitValue("targettarget", "castbar.placement", "bottom")
-		ns.Config:SetUnitValue("targettarget", "portrait.enabled", true)
-		assert.is_true(frame:IsElementEnabled("UF_Auras"))
-		assert.is_true(frame:IsElementEnabled("UF_Castbar"))
-		assert.is_true(frame:IsElementEnabled("Portrait"))
+		for _, unit in ipairs({ "targettarget", "focustarget" }) do
+			local frame = ns.Units.frames[unit]
+			assert.equals(140, frame:GetWidth())
+			assert.equals(37, frame:GetHeight())
+			assert.is_false(frame:IsElementEnabled("Portrait"))
+			assert.is_false(frame:IsElementEnabled("UF_Castbar"))
+			assert.is_false(frame:IsElementEnabled("UF_Auras"))
+			assert.equals("[uf:health:percent]", frame.tags[frame.uf:GetRow("health"):GetText("right"):GetFrame()])
+			ns.Config:SetUnitValue(unit, "auras.enabled", true)
+			ns.Config:SetUnitValue(unit, "castbar.placement", "bottom")
+			ns.Config:SetUnitValue(unit, "portrait.enabled", true)
+			assert.is_true(frame:IsElementEnabled("UF_Auras"))
+			assert.is_true(frame:IsElementEnabled("UF_Castbar"))
+			assert.is_true(frame:IsElementEnabled("Portrait"))
+		end
+	end)
+
+	it("keeps focus target defaults, settings and positions independent of target of target", function()
+		local focusTarget, targetTarget = ns.Units.definitions.focustarget, ns.Units.definitions.targettarget
+		focusTarget.rows[1].defaults.height = 30
+		focusTarget.castbar.defaults.name.size = 12
+		focusTarget.auras.defaults.buffs.size = 24
+		assert.equals(20, targetTarget.rows[1].defaults.height)
+		assert.equals(9, targetTarget.castbar.defaults.name.size)
+		assert.equals(16, targetTarget.auras.defaults.buffs.size)
+		ns.Config:SetUnitValue("focustarget", "width", 180)
+		assert.equals(180, ns.Units.frames.focustarget.uf.resolved.width)
+		assert.equals(140, ns.Units.frames.targettarget.uf.resolved.width)
+		assert.equals(200, ns.Units.frames.focus.uf.resolved.width)
+		ns.Config:SetPosition("Healer", "focustarget", "TOP", 20, -100)
+		ns.EditMode.layout = "Healer"
+		ns.EditMode:ApplyPosition("focustarget")
+		ns.EditMode:ApplyPosition("targettarget")
+		assert.same({ "TOP", UIParent, "TOP", 20, -100 }, ns.Units.frames.focustarget:GetAnchor("TOP"))
+		assert.same({ "CENTER", UIParent, "CENTER", 510, -160 }, ns.Units.frames.targettarget:GetAnchor("CENTER"))
 	end)
 
 	it("keeps settings, defaults and layout positions independent", function()
@@ -82,7 +104,7 @@ describe("Target, target of target and focus", function()
 
 	it("copies effective player defaults to every secondary frame, not their differing defaults", function()
 		local player = ns.Units.frames.player.uf.resolved
-		for _, unit in ipairs({ "pet", "target", "targettarget", "focus" }) do
+		for _, unit in ipairs({ "pet", "target", "targettarget", "focus", "focustarget" }) do
 			assert.is_true(ns.Units:CopyPlayerSettings(unit))
 			AssertCopied(ns.Units.frames[unit], player)
 			assert.is_nil(ns.Config:GetUnitConfig(unit).experience)
@@ -157,7 +179,7 @@ describe("Target, target of target and focus", function()
 	end)
 
 	it("binds each aura container to its own unit without changing the other frames", function()
-		for _, unit in ipairs({ "target", "focus", "targettarget" }) do
+		for _, unit in ipairs({ "target", "focus", "targettarget", "focustarget" }) do
 			ns.Config:SetUnitValue(unit, "auras.enabled", true)
 			local frame = ns.Units.frames[unit]
 			ns.oUF.elements.UF_Auras.update(frame, "UnitFramesRefresh")
@@ -187,7 +209,7 @@ describe("Target, target of target and focus", function()
 	end)
 
 	it("renders distinct per-unit samples without changing the shared sample data", function()
-		for _, unit in ipairs({ "target", "targettarget", "focus" }) do
+		for _, unit in ipairs({ "target", "targettarget", "focus", "focustarget" }) do
 			local preview = ns.Units:CreateFrame(unit, CreateFrame("Frame"))
 			local sample = ns.Units:GetSample(unit)
 			ns.Units:ShowSample(preview, sample)
@@ -199,7 +221,7 @@ describe("Target, target of target and focus", function()
 		assert.equals("Uther", ns.Units.SAMPLE.name)
 	end)
 
-	it("uses embedded oUF target/focus change events and target-of-target polling", function()
+	it("uses embedded oUF target/focus change events and polling for their targets", function()
 		-- Load the actual embedded unit dispatch code, not a copy of its rules.
 		ns.oUF.Private = { unitExists = function() return true end }
 		function ns.oUF:RegisterMetaFunction(name, fn)
@@ -212,13 +234,18 @@ describe("Target, target of target and focus", function()
 			ns.oUF:HandleUnit(frame)
 			assert.equals(frame.UpdateAllElements, handlers[event])
 		end
-		local frame = ns.Units.frames.targettarget
-		frame.IsVisible = function() return true end
-		ns.oUF:HandleEventlessUnit(frame)
-		assert.is_true(frame:IsEventless())
+		for _, unit in ipairs({ "targettarget", "focustarget" }) do
+			local frame = ns.Units.frames[unit]
+			frame.IsVisible = function() return true end
+			ns.oUF:HandleEventlessUnit(frame)
+			assert.is_true(frame:IsEventless())
+		end
 		local timer = Mock.objects[#Mock.objects]
 		timer.elapsed = 0
 		timer:RunScript("OnUpdate", 0.6)
-		assert.equals("UpdateAllElements OnUpdate", frame.calls[#frame.calls])
+		for _, unit in ipairs({ "targettarget", "focustarget" }) do
+			local frame = ns.Units.frames[unit]
+			assert.equals("UpdateAllElements OnUpdate", frame.calls[#frame.calls])
+		end
 	end)
 end)

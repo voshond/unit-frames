@@ -14,7 +14,7 @@ describe("Live text formats", function()
 		UnitClass = function() return nil end
 		UnitLevel = function() return nil end
 		UnitCreatureType = function() return nil end
-		for _, unit in ipairs({ "target", "focus", "pet", "targettarget" }) do
+		for _, unit in ipairs({ "target", "focus", "pet", "targettarget", "focustarget" }) do
 			for _, format in ipairs(ns.Formats.list) do
 				assert.equals("", format.text(unit), unit .. ": " .. format.id)
 				assert.equals("", ns.oUF.Tags.Methods["uf:" .. format.id](unit), unit .. " tag: " .. format.id)

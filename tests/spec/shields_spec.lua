@@ -101,7 +101,7 @@ describe("Health shields", function()
 	it("copies shield placement and visibility independently to the other frames", function()
 		ns.Config:SetUnitValue("player", "health.bar.segments.absorb.placement", "append")
 		ns.Config:SetUnitValue("player", "health.bar.segments.absorb.enabled", false)
-		for _, unit in ipairs({ "pet", "target", "targettarget", "focus" }) do
+		for _, unit in ipairs({ "pet", "target", "targettarget", "focus", "focustarget" }) do
 			ns.Units:CopyPlayerSettings(unit)
 			assert.equals("append", Bar(unit).resolved.segments.absorb.placement)
 			assert.is_false(Bar(unit).resolved.segments.absorb.enabled)
@@ -114,7 +114,7 @@ describe("Health shields", function()
 		local wb
 		ns, wb = Helpers.LoadWorkbench()
 		wb:Open()
-		for _, id in ipairs({ "bar.health", "unit.player", "unit.pet", "unit.target", "unit.targettarget", "unit.focus" }) do
+		for _, id in ipairs({ "bar.health", "unit.player", "unit.pet", "unit.target", "unit.targettarget", "unit.focus", "unit.focustarget" }) do
 			wb:Select(id)
 			wb.dataTarget.set("health", 100)
 			wb.dataTarget.set("absorb", 20)
@@ -132,7 +132,7 @@ describe("Health shields", function()
 		local wb
 		ns, wb = Helpers.LoadWorkbench()
 		wb:Open()
-		for _, id in ipairs({ "bar.health", "unit.player", "unit.pet", "unit.target", "unit.targettarget", "unit.focus" }) do
+		for _, id in ipairs({ "bar.health", "unit.player", "unit.pet", "unit.target", "unit.targettarget", "unit.focus", "unit.focustarget" }) do
 			wb:Select(id)
 			wb.dataTarget.set("health", 100)
 			wb.dataTarget.set("absorb", 20)
