@@ -21,6 +21,9 @@ function Preview:CreateCell()
 	member:SetCombatDeferred(true)
 	target:SetCombatDeferred(true)
 	slots:SetCombatDeferred(true)
+	member:SetThemeManaged(true)
+	target:SetThemeManaged(true)
+	slots:SetThemeManaged(true)
 	-- Plain samples drive ordinary buttons and never touch restricted live art.
 	local cell = { frame = host, member = member, target = target, slots = slots, status = status }
 	self.cells[#self.cells + 1] = cell

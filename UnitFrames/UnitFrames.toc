@@ -33,6 +33,7 @@ Components\Castbar.lua
 Components\Portrait.lua
 Components\Auras.lua
 Components\RaidTarget.lua
+Components\UnitFrameLayout.lua
 Components\UnitFrame.lua
 
 Widgets\Skin.lua

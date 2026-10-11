@@ -46,25 +46,22 @@ local HOST_OPTIONS = {
 	{ key = "offsetY", type = "range", label = "Offset Y", min = -50, max = 50, step = 1, default = 0 },
 }
 
-function Text:GetSchema()
-	if self.schemaCache then
-		return self.schemaCache
-	end
+function Text.BuildSchema(spec)
+	spec = spec or {}
 	local schema = {}
-	if self.spec.formats then
-		schema[1] = { key = "format", type = "select", label = "Shows", values = ns.Formats.Values(self.spec.formats),
+	if spec.formats then
+		schema[1] = { key = "format", type = "select", label = "Shows", values = ns.Formats.Values(spec.formats),
 			default = "none" }
 	end
 	for _, opt in ipairs(Text.schema) do
 		schema[#schema + 1] = opt
 	end
-	if self.spec.host then
+	if spec.host then
 		for _, opt in ipairs(HOST_OPTIONS) do
 			schema[#schema + 1] = opt
 		end
 	end
-	self.schemaCache = schema
-	return schema
+	return ns.Util.Copy(schema)
 end
 
 function Text:OnCreate(parent)

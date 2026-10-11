@@ -11,18 +11,13 @@ end
 
 function CG:Measure()
 	self.styleSchemas, self.metrics = self.styleSchemas or {}, {}
-	self.prototypes = self.prototypes or {}
 	for _, kind in ipairs({ "member", "target" }) do
-		local uf = self.prototypes[kind]
-		if not uf then
-			uf = UF.Units:CreateFromDefinition(self.definitions[kind], UIParent, self.Config:GetStyle(kind))
-			self.prototypes[kind] = uf
-			uf:SetCombatDeferred(true)
-		end
-		uf:Apply(self.Config:GetStyle(kind))
-		uf:GetFrame():Hide()
-		self.styleSchemas[kind] = uf:GetSchema()
-		self.metrics[kind] = { width = uf:GetFrame():GetWidth(), height = uf:GetFrame():GetHeight() }
+		local spec = UF.Units:GetSpec(self.definitions[kind])
+		local schema = self.styleSchemas[kind] or UF.Components.UnitFrame.BuildSchema(spec)
+		self.styleSchemas[kind] = schema
+		local cfg = UF.Schema.Resolve(schema, self.Config:GetStyle(kind), UF.Config:GetTheme())
+		local layout = UF.UnitFrameLayout.Compute(spec, cfg)
+		self.metrics[kind] = { width = layout.width, height = layout.height }
 	end
 end
 
@@ -38,6 +33,7 @@ oUF:RegisterStyle(CG.STYLE, function(frame)
 	frame.ufcgKind = kind
 	frame.uf = UF.Units:CreateFromDefinition(CG.definitions[kind], frame, CG.Config:GetStyle(kind), frame)
 	frame.uf:SetCombatDeferred(true)
+	frame.uf:SetThemeManaged(true)
 	frame:RegisterForClicks("AnyUp")
 	frame:HookScript("OnEnter", Tooltip)
 	frame:HookScript("OnLeave", function() GameTooltip:Hide() end)
@@ -47,6 +43,7 @@ oUF:RegisterStyle(CG.STYLE, function(frame)
 		CG.Status:Apply(frame, frame.ufcgStatus, CG.Config:Resolved().indicators, true)
 		frame.ufcgSlots = CG.Slots:New(frame, CG:SlotConfig(frame.uf))
 		frame.ufcgSlots:SetCombatDeferred(true)
+		frame.ufcgSlots:SetThemeManaged(true)
 		UF.Units.SetElement(frame, "UFCG_Slots", frame.ufcgSlots)
 	end
 	CG.frames[#CG.frames + 1] = frame

@@ -71,28 +71,28 @@ function UnitFrame:OnCreate(parent, spec)
 	self.rows = {}
 	self.rowsByKey = {}
 	for _, def in ipairs(spec.rows) do
-		local row = TextBar:New(self.frame, {}, def.spec)
+		local row = self:Own(TextBar:New(self.frame, {}, def.spec))
 		self.rows[#self.rows + 1] = { def = def, component = row }
 		self.rowsByKey[def.key] = row
 	end
 	if spec.portrait then
-		self.portrait = Portrait:New(self.frame, {})
+		self.portrait = self:Own(Portrait:New(self.frame, {}))
 	end
 	if spec.castbar then
-		self.castbar = Castbar:New(self.frame, {})
+		self.castbar = self:Own(Castbar:New(self.frame, {}))
 		self.castbar:GetFrame():Hide()
 	end
 	if spec.auras then
-		self.auras = Auras:New(self.frame, {}, { cancelBuffs = spec.auras.cancelBuffs, clickThrough = spec.auras.clickThrough })
+		self.auras = self:Own(Auras:New(self.frame, {}, { cancelBuffs = spec.auras.cancelBuffs, clickThrough = spec.auras.clickThrough }))
 	end
 	if spec.raidTarget then
-		self.raidTarget = RaidTarget:New(self.frame, {})
+		self.raidTarget = self:Own(RaidTarget:New(self.frame, {}))
 	end
 end
 
 -- Copies a component's schema, inserting `extra` options after "enabled"
 -- (or at the top) and leaving out keys listed in `skip`.
-local function GroupSchema(component, extra, skip)
+local function GroupSchema(options, extra, skip)
 	local schema, inserted = {}, false
 	local function Insert()
 		for _, opt in ipairs(extra) do
@@ -100,7 +100,7 @@ local function GroupSchema(component, extra, skip)
 		end
 		inserted = true
 	end
-	for _, opt in ipairs(component:GetSchema()) do
+	for _, opt in ipairs(options) do
 		if not (skip and skip[opt.key]) then
 			schema[#schema + 1] = opt
 		end
@@ -126,12 +126,9 @@ local function HeightOption(default, hidden)
 		hidden = hidden }
 end
 
-function UnitFrame:GetSchema()
-	if self.schemaCache then
-		return self.schemaCache
-	end
+function UnitFrame.BuildSchema(spec)
 	local schema = {
-		{ key = "width", type = "range", label = "Width", min = 60, max = 600, step = 1, default = self.spec.width or 230 },
+		{ key = "width", type = "range", label = "Width", min = 60, max = 600, step = 1, default = spec.width or 230 },
 		{ key = "spacing", type = "range", label = "Row spacing", min = 0, max = 20, step = 1, default = 1 },
 		{ key = "border", type = "group", label = "Frame border", schema = Backdrop.schema,
 			defaults = { enabled = true, padding = 4 } },
@@ -146,7 +143,7 @@ function UnitFrame:GetSchema()
 				tooltip = "Choose a spell you know that applies to this unit (a heal for allies, an attack for enemies). Unknown spells, invalid targets and spells without a range check do not fade the frame. Names must match your client language." },
 		} },
 	}
-	if self.spec.resting then
+	if spec.resting then
 		schema[#schema + 1] = { key = "resting", type = "group", label = "Resting border", schema = {
 			{ key = "enabled", type = "toggle", label = "Enabled", default = true },
 			{ key = "color", type = "color", label = "Resting colour", default = { 1, 0.88, 0.25, 1 } },
@@ -154,9 +151,9 @@ function UnitFrame:GetSchema()
 				tooltip = "Time for one slow fade to the resting colour and back. Requires a visible frame border." },
 		} }
 	end
-	if self.portrait then
-		schema[#schema + 1] = { key = "portrait", type = "group", label = "Portrait", defaults = self.spec.portrait.defaults,
-			schema = GroupSchema(self.portrait, {
+	if spec.portrait then
+		schema[#schema + 1] = { key = "portrait", type = "group", label = "Portrait", defaults = spec.portrait.defaults,
+			schema = GroupSchema(Portrait.schema, {
 				{ key = "position", type = "select", label = "Side", values = UnitFrame.SIDES, default = "LEFT" },
 				{ key = "rowSpan", type = "select", label = "Rows to span", values = UnitFrame.PORTRAIT_ROW_SPANS, default = 0,
 					tooltip = "Count visible rows from the top, including a castbar in its own row. Disabled rows are skipped. Rows below the portrait use the full width. All rows follows the whole frame." },
@@ -165,35 +162,34 @@ function UnitFrame:GetSchema()
 				{ key = "gap", type = "range", label = "Gap to the bars", min = 0, max = 20, step = 1, default = 2 },
 			}) }
 	end
-	for _, row in ipairs(self.rows) do
+	for _, row in ipairs(spec.rows) do
 		local extra = { HeightOption() }
-		for _, opt in ipairs(row.def.options or {}) do
+		for _, opt in ipairs(row.options or {}) do
 			extra[#extra + 1] = opt
 		end
-		schema[#schema + 1] = { key = row.def.key, type = "group", label = row.def.label,
-			schema = GroupSchema(row.component, extra), defaults = row.def.defaults }
+		schema[#schema + 1] = { key = row.key, type = "group", label = row.label,
+			schema = GroupSchema(TextBar.BuildSchema(row.spec), extra), defaults = row.defaults }
 	end
-	if self.castbar then
+	if spec.castbar then
 		local function OverHealth(cfg)
 			return cfg.placement == "health" or cfg.placement == "off"
 		end
-		schema[#schema + 1] = { key = "castbar", type = "group", label = "Castbar", defaults = self.spec.castbar.defaults,
-			schema = GroupSchema(self.castbar, {
+		schema[#schema + 1] = { key = "castbar", type = "group", label = "Castbar", defaults = spec.castbar.defaults,
+			schema = GroupSchema(Castbar.BuildSchema(), {
 				{ key = "placement", type = "select", label = "Placement", values = UnitFrame.CASTBAR_PLACEMENTS,
 					default = "bottom" },
 				HeightOption(18, OverHealth),
 			}, { enabled = true }) }
 	end
-	if self.auras then
-		schema[#schema + 1] = { key = "auras", type = "group", label = "Buffs & debuffs", schema = self.auras:GetSchema(),
-			defaults = self.spec.auras.defaults }
+	if spec.auras then
+		schema[#schema + 1] = { key = "auras", type = "group", label = "Buffs & debuffs", schema = Auras.schema,
+			defaults = spec.auras.defaults }
 	end
-	if self.raidTarget then
-		schema[#schema + 1] = { key = "raidTarget", type = "group", label = "Raid target icon", schema = self.raidTarget:GetSchema(),
-			defaults = self.spec.raidTarget.defaults }
+	if spec.raidTarget then
+		schema[#schema + 1] = { key = "raidTarget", type = "group", label = "Raid target icon", schema = RaidTarget.schema,
+			defaults = spec.raidTarget.defaults }
 	end
-	self.schemaCache = schema
-	return schema
+	return ns.Util.Copy(schema)
 end
 
 function UnitFrame:OnApply(cfg)
@@ -277,77 +273,30 @@ end
 -- Where the castbar actually goes: "health" falls back to the top row when
 -- the health row is switched off.
 function UnitFrame:GetCastbarPlacement()
-	if not self.castbar then
-		return "off"
-	end
-	local placement = self.resolved.castbar.placement
-	if placement == "health" and not (self.rowsByKey.health and self.resolved.health.enabled) then
-		return "top"
-	end
-	return placement
+	return ns.UnitFrameLayout.CastbarPlacement(self.spec, self.resolved)
 end
 
 function UnitFrame:Layout()
-	local cfg = self.resolved
-	local pad = cfg.border.enabled and cfg.border.padding or 0
-
-	-- Stack items top to bottom.
-	local items = {}
-	local placement = self:GetCastbarPlacement()
-	if placement == "top" then
-		items[#items + 1] = { component = self.castbar, height = cfg.castbar.height }
-	end
-	for _, row in ipairs(self.rows) do
-		local rowCfg = cfg[row.def.key]
-		row.component:ClearAllPoints()
-		if rowCfg.enabled then
-			items[#items + 1] = { component = row.component, height = rowCfg.height }
-		end
-	end
-	if placement == "bottom" then
-		items[#items + 1] = { component = self.castbar, height = cfg.castbar.height }
-	end
-
-	local stackHeight = 0
-	for i, item in ipairs(items) do
-		stackHeight = stackHeight + item.height + (i > 1 and cfg.spacing or 0)
-	end
-
-	-- Portrait column beside the rows.
-	local left, right, portraitWidth = pad, pad, 0
-	local portraitRows, portraitHeight = 0, 0
+	local layout = ns.UnitFrameLayout.Compute(self.spec, self.resolved)
+	local placement = layout.castbarPlacement
+	self.layout = layout
+	for _, row in ipairs(self.rows) do row.component:ClearAllPoints() end
 	local portrait = self.portrait
 	if portrait then
 		portrait:ClearAllPoints()
-		if cfg.portrait.enabled and stackHeight > 0 then
-			portraitRows = cfg.portrait.rowSpan == 0 and #items or math.min(cfg.portrait.rowSpan, #items)
-			for i = 1, portraitRows do
-				portraitHeight = portraitHeight + items[i].height + (i > 1 and cfg.spacing or 0)
-			end
-			portraitWidth = cfg.portrait.size > 0 and cfg.portrait.size or portraitHeight
-			local side = cfg.portrait.position
-			portrait:SetSize(portraitWidth, portraitHeight)
-			portrait:SetPoint("TOP" .. side, self.frame, "TOP" .. side, side == "LEFT" and pad or -pad, -pad)
-			if side == "LEFT" then
-				left = left + portraitWidth + cfg.portrait.gap
-			else
-				right = right + portraitWidth + cfg.portrait.gap
-			end
-			portraitWidth = portraitWidth + cfg.portrait.gap
+		local bounds = layout.portrait
+		if bounds then
+			portrait:SetSize(bounds.width, bounds.height)
+			portrait:SetPoint("TOP" .. bounds.side, self.frame, "TOP" .. bounds.side, bounds.x, bounds.y)
 		end
 	end
 
-	local y = pad
-	for i, item in ipairs(items) do
-		if i > 1 then
-			y = y + cfg.spacing
-		end
-		local component = item.component
+	for _, item in ipairs(layout.rows) do
+		local component = item.key == "castbar" and self.castbar or self.rowsByKey[item.key]
 		component:ClearAllPoints()
-		component:SetPoint("TOPLEFT", self.frame, "TOPLEFT", i <= portraitRows and left or pad, -y)
-		component:SetPoint("TOPRIGHT", self.frame, "TOPRIGHT", -(i <= portraitRows and right or pad), -y)
+		component:SetPoint("TOPLEFT", self.frame, "TOPLEFT", item.left, item.y)
+		component:SetPoint("TOPRIGHT", self.frame, "TOPRIGHT", -item.right, item.y)
 		component:GetFrame():SetHeight(item.height)
-		y = y + item.height
 	end
 
 	if self.castbar then
@@ -364,16 +313,14 @@ function UnitFrame:Layout()
 		self.castbar:SetOpaque(placement == "health")
 	end
 
-	local width = cfg.width + portraitWidth
-	self:Resize(width, math.max(stackHeight + 2 * pad, 1))
+	self:Resize(layout.width, layout.height)
 
 	if self.auras then
-		self.auras:Layout(width, math.max(stackHeight + 2 * pad, 1))
+		self.auras:Layout(layout.width, layout.height)
 	end
 	if self.raidTarget then
-		local anchorPortrait = portraitWidth > 0 and portrait or nil
-		self.raidTarget:Layout(self.frame, anchorPortrait,
-			anchorPortrait and portraitWidth - cfg.portrait.gap or 0, portraitHeight)
+		local bounds = layout.portrait
+		self.raidTarget:Layout(self.frame, bounds and portrait or nil, bounds and bounds.width or 0, bounds and bounds.height or 0)
 	end
 end
 
@@ -400,29 +347,6 @@ end
 function UnitFrame:OnRelease()
 	pending[self] = nil
 	self.border:SetScript("OnUpdate", nil)
-	for _, row in ipairs(self.rows) do
-		row.component:Release()
-	end
-	if self.portrait then
-		self.portrait:Release()
-	end
-	if self.castbar then
-		self.castbar:Release()
-	end
-	if self.auras then
-		self.auras:Release()
-	end
-	if self.raidTarget then
-		self.raidTarget:Release()
-	end
-end
-
-function UnitFrame:SetCombatDeferred(deferred)
-	ns.Component.SetCombatDeferred(self, deferred)
-	for _, row in ipairs(self.rows) do row.component:SetCombatDeferred(deferred) end
-	for _, child in ipairs({ self.portrait or false, self.castbar or false, self.auras or false, self.raidTarget or false }) do
-		if child then child:SetCombatDeferred(deferred) end
-	end
 end
 
 -- A row's TextBar, by key ("health", "power", ...).

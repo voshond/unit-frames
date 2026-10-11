@@ -213,6 +213,7 @@ end
 
 oUF:RegisterStyle(Units.STYLE, function(frame, unit)
 	frame.uf = Units:CreateFrame(unit, UIParent, frame)
+	frame.uf:SetThemeManaged(true)
 	frame:RegisterForClicks("AnyUp")
 	frame:HookScript("OnEnter", OnEnter)
 	frame:HookScript("OnLeave", OnLeave)

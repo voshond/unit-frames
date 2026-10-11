@@ -145,10 +145,14 @@ end
 -- Companion styles have many instances and their own configuration keys.
 -- A definition describes the visuals; the live unit token belongs to oUF.
 function Units:CreateFromDefinition(def, parent, config, frame)
-	return ns.Components.UnitFrame:New(parent, config or {}, {
+	return ns.Components.UnitFrame:New(parent, config or {}, self:GetSpec(def, frame))
+end
+
+function Units:GetSpec(def, frame)
+	return {
 		frame = frame, rows = def.rows, width = def.width, portrait = def.portrait, castbar = def.castbar,
 		auras = def.auras, raidTarget = def.raidTarget or { defaults = {} }, resting = def.resting,
-	})
+	}
 end
 
 -- Sample values for previews and test frames.

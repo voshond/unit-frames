@@ -23,23 +23,21 @@ TextBar.SLOTS = {
 }
 
 function TextBar:OnCreate(parent, spec)
-	self.bar = Bar:New(parent, {}, spec)
+	self.bar = self:Own(Bar:New(parent, {}, spec))
 	self.frame = self.bar:GetFrame()
 	local host = self.bar:GetTextParent()
 	self.texts = {}
 	for _, slot in ipairs(TextBar.SLOTS) do
-		self.texts[slot.key] = Text:New(host, {}, { host = host, formats = spec.formats })
+		self.texts[slot.key] = self:Own(Text:New(host, {}, { host = host, formats = spec.formats }))
 	end
 end
 
-function TextBar:GetSchema()
-	if self.schemaCache then
-		return self.schemaCache
-	end
-	local textDefaults = self.spec.textDefaults or {}
+function TextBar.BuildSchema(spec)
+	spec = spec or {}
+	local textDefaults = spec.textDefaults or {}
 	local schema = {
 		{ key = "enabled", type = "toggle", label = "Enabled", default = true },
-		{ key = "bar", type = "group", label = "Bar", schema = self.bar:GetSchema(), defaults = self.spec.barDefaults },
+		{ key = "bar", type = "group", label = "Bar", schema = Bar.BuildSchema(spec), defaults = ns.Util.Copy(spec.barDefaults) },
 	}
 	for _, slot in ipairs(TextBar.SLOTS) do
 		local default = textDefaults[slot.key]
@@ -48,11 +46,10 @@ function TextBar:GetSchema()
 			format, enabled = default.format, default.enabled ~= false
 		end
 		schema[#schema + 1] = {
-			key = slot.key, type = "group", label = slot.label, schema = self.texts[slot.key]:GetSchema(),
+			key = slot.key, type = "group", label = slot.label, schema = Text.BuildSchema({ host = true, formats = spec.formats }),
 			defaults = { justifyH = slot.justifyH, format = format or "none", enabled = enabled, size = slot.size },
 		}
 	end
-	self.schemaCache = schema
 	return schema
 end
 
@@ -77,18 +74,6 @@ function TextBar:BelowSlot(key)
 			return slot.key
 		end
 	end
-end
-
-function TextBar:OnRelease()
-	self.bar:Release()
-	for _, text in pairs(self.texts) do
-		text:Release()
-	end
-end
-
-function TextBar:SetCombatDeferred(deferred)
-	ns.Component.SetCombatDeferred(self, deferred)
-	for _, text in pairs(self.texts) do text:SetCombatDeferred(deferred) end
 end
 
 function TextBar:GetBar()

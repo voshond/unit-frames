@@ -89,26 +89,21 @@ Bar.LAYOUT = LAYOUT
 
 local SPARK_TEXTURE = [[Interface\CastingBar\UI-CastingBar-Spark]]
 
-function Bar:GetSchema()
-	if self.schemaCache then
-		return self.schemaCache
-	end
-	local schema = {}
-	for i, opt in ipairs(Bar.schema) do
-		schema[i] = opt
-	end
-	if self.spec.colorInherit then
+function Bar.BuildSchema(spec)
+	spec = spec or {}
+	local schema = Util.Copy(Bar.schema)
+	if spec.colorInherit then
 		for i, opt in ipairs(schema) do
 			if opt.key == "color" then
 				local copy = Util.Copy(opt)
-				copy.inherit = self.spec.colorInherit
+				copy.inherit = spec.colorInherit
 				schema[i] = copy
 			end
 		end
 	end
-	if self.spec.segments and #self.spec.segments > 0 then
+	if spec.segments and #spec.segments > 0 then
 		local segmentSchema = {}
-		for _, seg in ipairs(self.spec.segments) do
+		for _, seg in ipairs(spec.segments) do
 			segmentSchema[#segmentSchema + 1] = {
 				key = seg.key, type = "group", label = seg.label or seg.key,
 				schema = {
@@ -128,7 +123,6 @@ function Bar:GetSchema()
 		end
 		schema[#schema + 1] = { key = "segments", type = "group", label = "Segments", schema = segmentSchema }
 	end
-	self.schemaCache = schema
 	return schema
 end
 

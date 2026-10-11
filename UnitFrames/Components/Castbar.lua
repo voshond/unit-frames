@@ -26,23 +26,20 @@ local function Color(key, label, inherit)
 	return { key = key, type = "color", label = label, inherit = inherit }
 end
 
-function Castbar:GetSchema()
-	if self.schemaCache then
-		return self.schemaCache
-	end
-	self.schemaCache = {
+function Castbar.BuildSchema()
+	return {
 		{ key = "enabled", type = "toggle", label = "Enabled", default = true },
-		{ key = "border", type = "group", label = "Border", schema = Backdrop.schema,
+		{ key = "border", type = "group", label = "Border", schema = ns.Util.Copy(Backdrop.schema),
 			defaults = { enabled = true, padding = 3 } },
 		{ key = "icon", type = "group", label = "Icon", schema = {
 			{ key = "enabled", type = "toggle", label = "Enabled", default = true },
 			{ key = "position", type = "select", label = "Position", values = Castbar.ICON_POSITIONS, default = "LEFT" },
 			{ key = "gap", type = "range", label = "Gap", min = 0, max = 10, step = 1, default = 1 },
 		} },
-		{ key = "bar", type = "group", label = "Bar", schema = self.barComp:GetSchema(),
+		{ key = "bar", type = "group", label = "Bar", schema = Bar.BuildSchema({ colorInherit = "colors.cast" }),
 			defaults = { spark = true, smooth = false } },
-		{ key = "name", type = "group", label = "Spell name", schema = Text.schema, defaults = { justifyH = "LEFT" } },
-		{ key = "time", type = "group", label = "Time", schema = Text.schema, defaults = { justifyH = "RIGHT" } },
+		{ key = "name", type = "group", label = "Spell name", schema = Text.BuildSchema(), defaults = { justifyH = "LEFT" } },
+		{ key = "time", type = "group", label = "Time", schema = Text.BuildSchema(), defaults = { justifyH = "RIGHT" } },
 		{ key = "colors", type = "group", label = "Colours", schema = {
 			Color("cast", "Cast", "colors.cast"),
 			Color("channel", "Channel", "colors.channel"),
@@ -55,7 +52,6 @@ function Castbar:GetSchema()
 		{ key = "holdTime", type = "range", label = "Hold after finish (s)", min = 0, max = 2, step = 0.1, default = 0.4 },
 		{ key = "fadeTime", type = "range", label = "Fade out (s)", min = 0, max = 2, step = 0.1, default = 0.3 },
 	}
-	return self.schemaCache
 end
 
 local timeFormatter
@@ -79,10 +75,10 @@ function Castbar:OnCreate(parent)
 	self.icon = self.frame:CreateTexture(nil, "ARTWORK")
 	self.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
-	self.barComp = Bar:New(self.frame, {}, { colorInherit = "colors.cast" })
+	self.barComp = self:Own(Bar:New(self.frame, {}, { colorInherit = "colors.cast" }))
 	local textParent = self.barComp:GetTextParent()
-	self.nameText = Text:New(textParent, {})
-	self.timeText = Text:New(textParent, {})
+	self.nameText = self:Own(Text:New(textParent, {}))
+	self.timeText = self:Own(Text:New(textParent, {}))
 
 	self.fade = self.frame:CreateAnimationGroup()
 	local alpha = self.fade:CreateAnimation("Alpha")
@@ -157,9 +153,6 @@ function Castbar:OnRelease()
 	if self.timeBinding then
 		self.timeBinding:SetEnabled(false)
 	end
-	self.barComp:Release()
-	self.nameText:Release()
-	self.timeText:Release()
 end
 
 -- Opaque mode: the castbar covers another bar (e.g. health) and nothing of it

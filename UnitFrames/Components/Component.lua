@@ -45,6 +45,7 @@ end
 function Component:New(parent, config, spec)
 	local instance = setmetatable({}, self)
 	instance.spec = spec or {}
+	instance.children = {}
 	instance.enabled = true
 	instance:OnCreate(parent, instance.spec)
 	live[instance] = true
@@ -53,20 +54,24 @@ function Component:New(parent, config, spec)
 end
 
 function Component:GetSchema()
-	return self.schema
+	if not self.schemaCache then
+		self.schemaCache = self.BuildSchema and self.BuildSchema(self.spec) or ns.Util.Copy(self.schema)
+	end
+	return self.schemaCache
 end
 
 function Component:Apply(config)
+	assert(not self.released, "Cannot apply a released component")
 	if config then
 		self.config = config
 	end
 	-- Group styles opt their entire composition into deferred presentation.
-	-- Theme notifications also reach child components independently.
 	if self.deferInCombat and InCombatLockdown() then
 		pending[self] = true
 		regen:RegisterEvent("PLAYER_REGEN_ENABLED")
 		return
 	end
+	pending[self] = nil
 	self.resolved = Schema.Resolve(self:GetSchema(), self.config, ns.Config:GetTheme())
 	self:OnApply(self.resolved)
 	if self.resolved.enabled ~= nil then
@@ -76,11 +81,25 @@ end
 
 function Component:SetCombatDeferred(deferred)
 	self.deferInCombat = deferred and true or false
-	for _, child in pairs(self) do
-		if type(child) == "table" and rawget(child, "spec") and rawget(child, "frame") then
-			child:SetCombatDeferred(deferred)
-		end
+	for _, child in ipairs(self.children) do
+		child:SetCombatDeferred(deferred)
 	end
+end
+
+-- Component ownership is independent of native frame parenting. Collections
+-- and shared-root compositions participate in the same lifecycle.
+function Component:Own(child)
+	assert(not child.componentOwner and not child.released, "Component already owned or released")
+	child.componentOwner = self
+	self.children[#self.children + 1] = child
+	child:SetCombatDeferred(self.deferInCombat)
+	return child
+end
+
+-- Runtime owners also rebind oUF/data on theme changes, so they perform the
+-- entire refresh through their own theme callback.
+function Component:SetThemeManaged(managed)
+	self.themeManaged = managed and true or false
 end
 
 -- Applies the `key` group of this component's config to a child component,
@@ -122,9 +141,12 @@ function Component:SetSize(width, height)
 end
 
 function Component:Release()
+	if self.released then return end
+	self.released = true
 	live[self] = nil
 	pending[self] = nil
 	self:OnRelease()
+	for i = #self.children, 1, -1 do self.children[i]:Release() end
 	self.frame:Hide()
 	self.frame:ClearAllPoints()
 end
@@ -137,6 +159,6 @@ function Component:OnRelease() end
 local themeWatcher = {}
 ns.Events.RegisterCallback(themeWatcher, "ThemeChanged", function()
 	for instance in pairs(live) do
-		instance:Apply()
+		if not instance.componentOwner and not instance.themeManaged then instance:Apply() end
 	end
 end)
