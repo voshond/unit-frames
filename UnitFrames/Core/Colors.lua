@@ -33,6 +33,9 @@ end
 
 -- Class colour as r, g, b. C_ClassColor accepts a secret class token.
 function Colors.Class(token)
+	-- Missing unit/sample class data is not a valid native API argument.
+	-- type() is safe for opaque tokens; valid secret tokens still go native.
+	if type(token) == "nil" then return 0.5, 0.5, 0.5 end
 	if C_ClassColor and C_ClassColor.GetClassColor then
 		local color = C_ClassColor.GetClassColor(token)
 		if color then

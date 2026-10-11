@@ -200,7 +200,7 @@ end
 
 -- Syntax check of all addon code (catches typos in files the specs don't load).
 local syntaxErrors = 0
-for _, file in ipairs(ListFiles("find UnitFrames UnitFrames_Workbench -name '*.lua' -not -path '*/Libs/*'")) do
+for _, file in ipairs(ListFiles("find UnitFrames UnitFrames_Workbench UnitFrames_ClickGrid -name '*.lua' -not -path '*/Libs/*'")) do
 	local _, err = loadfile(file)
 	if err then
 		syntaxErrors = syntaxErrors + 1

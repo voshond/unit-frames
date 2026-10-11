@@ -65,6 +65,11 @@ local function GroupSchema(label, filters, size, position)
 		{ key = "enabled", type = "toggle", label = "Show " .. label, default = true },
 		{ key = "filter", type = "select", label = "Which", values = filters, default = filters[1][1] },
 		{ key = "max", type = "range", label = "Maximum shown", min = 1, max = 40, step = 1, default = 16 },
+		{ key = "maxDuration", type = "range", label = "Maximum total duration", min = 0, max = 7200, step = 1, default = 0,
+			tooltip = "0 = unrestricted. A limit excludes permanent effects and compares total duration, not time left." },
+		{ key = "sort", type = "select", label = "Order", default = "expiration", values = {
+			{ "expiration", "Time left" }, { "default", "Native priority" }, { "unitDebuff", "Raid debuff priority" },
+		} },
 		{ key = "size", type = "range", label = "Icon size", min = 10, max = 64, step = 1, default = size },
 		{ key = "position", type = "select", label = "Side", values = Auras.POSITIONS, default = position },
 		{ key = "alignment", type = "select", label = "Alignment", values = Auras.ALIGNMENTS, default = "start",
@@ -157,6 +162,7 @@ function Auras:InitButton(button, kind, preview)
 		button:EnableMouse(false)
 	else
 		button:EnableMouse(true)
+		if self.spec.clickThrough then button:SetMouseClickEnabled(false) end
 		button:SetTooltipAnchorPoint("ANCHOR_BOTTOMRIGHT", 0, 0)
 		-- The native secure click handler cancels the button's current aura;
 		-- addon code never reads its unit data or secret instance ID.
@@ -247,6 +253,10 @@ function Auras:OnApply(cfg)
 		container:SetAuraGroupEnabled(kind, group.enabled)
 		container:SetAuraGroupFilterString(kind, group.filter)
 		container:SetAuraGroupMaxFrameCount(kind, group.max)
+		container:SetAuraGroupCandidateFilters(kind, group.maxDuration > 0 and { maxDuration = group.maxDuration } or nil)
+		local sort = group.sort == "default" and AuraContainerSortMethod.Default
+			or group.sort == "unitDebuff" and AuraContainerSortMethod.UnitFrameDebuff or AuraContainerSortMethod.ExpirationOnly
+		container:SetAuraGroupSortMethod(kind, sort, AuraContainerSortDirection.Normal)
 		container:SetAuraGroupLayout(kind, {
 			elementWidth = group.size, elementHeight = group.size + TextRoom(cfg),
 			elementSpacing = cfg.spacing, lineSpacing = cfg.spacing,
@@ -409,10 +419,31 @@ function Auras:ShowSample(values)
 	self:RenderSamples()
 end
 
-local function MatchesSampleFilter(aura, filter)
+local function MatchesSampleFilter(aura, filter, maxDuration)
 	if filter:find("PLAYER", 1, true) and aura.sourceUnit ~= "player" then return false end
 	if filter:find("RAID", 1, true) and not aura.isRaid then return false end
+	if maxDuration > 0 and ((aura.duration or 0) == 0 or aura.duration > maxDuration) then return false end
 	return true
+end
+
+-- Shared artwork for flowing groups and companion fixed-slot samples.
+function Auras:DrawSample(button, aura)
+	button.ufIcon:SetTexture(aura.icon)
+	button.ufCount:SetText((aura.applications or 1) > 1 and aura.applications or "")
+	local duration = aura.duration or 0
+	local remaining = aura.remaining or duration
+	button.ufTime:SetText(duration > 0 and DurationFormatter():Format(remaining) or "")
+	if duration > 0 then
+		button.ufCooldown:SetCooldown(GetTime() - (duration - remaining), duration)
+		button.ufCooldown:Pause()
+		button.ufCooldown:Show()
+	else
+		button.ufCooldown:Hide()
+	end
+	if button.ufKind == "debuffs" then
+		local color = self.dispelColors[aura.dispelName or "None"] or self.dispelColors.None
+		for _, texture in ipairs(button.ufDispelTextures) do texture:SetVertexColor(color:GetRGBA()) end
+	end
 end
 
 function Auras:RenderSamples()
@@ -422,7 +453,7 @@ function Auras:RenderSamples()
 		if cfg.enabled then
 			for _, aura in ipairs(self.previewData[kind] or {}) do
 				if #elements >= cfg.max then break end
-				if MatchesSampleFilter(aura, cfg.filter) then
+				if MatchesSampleFilter(aura, cfg.filter, cfg.maxDuration) then
 					local index = #elements + 1
 					local button = container.ufButtons[index]
 					if not button then
@@ -430,24 +461,7 @@ function Auras:RenderSamples()
 						self:InitButton(button, kind, true)
 						container.ufButtons[index] = button
 					end
-					button.ufIcon:SetTexture(aura.icon)
-					button.ufCount:SetText((aura.applications or 1) > 1 and aura.applications or "")
-					local duration = aura.duration or 0
-					local remaining = aura.remaining or duration
-					button.ufTime:SetText(duration > 0 and DurationFormatter():Format(remaining) or "")
-					if duration > 0 then
-						button.ufCooldown:SetCooldown(GetTime() - (duration - remaining), duration)
-						button.ufCooldown:Pause()
-						button.ufCooldown:Show()
-					else
-						button.ufCooldown:Hide()
-					end
-					if kind == "debuffs" then
-						local color = self.dispelColors[aura.dispelName or "None"] or self.dispelColors.None
-						for _, texture in ipairs(button.ufDispelTextures) do
-							texture:SetVertexColor(color:GetRGBA())
-						end
-					end
+					self:DrawSample(button, aura)
 					button:Show()
 					elements[index] = button
 				end

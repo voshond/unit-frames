@@ -7,6 +7,7 @@ Modular unit frames for WoW Forever (Interface 16001). Design and research live 
 | `UnitFrames/` | Core addon: components (Bar, Text, Backdrop, Castbar), widget toolkit, schema/config/theme |
 | `UnitFrames_Workbench/` | Load-on-demand test mode and settings (`/uf wb`) |
 | `UnitFrames_Media/` | Extra fonts (Roboto Condensed) for every LibSharedMedia font picker |
+| `UnitFrames_ClickGrid/` | Experimental healing panel: party/raid groups, member targets, native auras and modifier click spells (`/ufcg`) |
 | `tests/` | Offline tests (mocked WoW API, fake secret values) |
 | `scripts/` | `install.sh`, `fetch-libs.sh` |
 
@@ -20,6 +21,14 @@ scripts/fetch-libs.sh       # update the embedded libraries (UnitFrames/Libs/VER
 ```
 
 In game: `/uf wb` opens the Workbench.
+
+**UnitFrames ClickGrid** is an optional companion for party/raid healing.
+`/ufcg` opens its Workbench settings;
+`/ufcg bindings` opens the click-spell matrix. It requires UnitFrames and uses
+the same bar components, theme, inspector and Edit Mode integration.
+See [the companion guide](UnitFrames_ClickGrid/README.md) for features, setup
+and the in-game validation checklist. Blizzard party/raid frames are not
+hidden by this experimental release.
 
 **Unit frames** includes Player, Player pet, Target, Target of target, Focus,
 and Focus target, each with independent saved settings and Edit Mode positions. Target sits opposite

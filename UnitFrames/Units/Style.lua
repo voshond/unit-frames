@@ -103,6 +103,8 @@ local function SetElement(frame, element, widget, rebind)
 	end
 end
 
+Units.SetElement = SetElement
+
 local function TagRow(frame, row, rowEnabled)
 	for _, slot in ipairs(ns.Components.TextBar.SLOTS) do
 		local text = row:GetText(slot.key)

@@ -83,7 +83,7 @@ function UnitFrame:OnCreate(parent, spec)
 		self.castbar:GetFrame():Hide()
 	end
 	if spec.auras then
-		self.auras = Auras:New(self.frame, {}, { cancelBuffs = spec.auras.cancelBuffs })
+		self.auras = Auras:New(self.frame, {}, { cancelBuffs = spec.auras.cancelBuffs, clickThrough = spec.auras.clickThrough })
 	end
 	if spec.raidTarget then
 		self.raidTarget = RaidTarget:New(self.frame, {})
@@ -351,6 +351,7 @@ function UnitFrame:Resize(width, height)
 end
 
 function UnitFrame:OnRelease()
+	pending[self] = nil
 	for _, row in ipairs(self.rows) do
 		row.component:Release()
 	end
@@ -365,6 +366,14 @@ function UnitFrame:OnRelease()
 	end
 	if self.raidTarget then
 		self.raidTarget:Release()
+	end
+end
+
+function UnitFrame:SetCombatDeferred(deferred)
+	ns.Component.SetCombatDeferred(self, deferred)
+	for _, row in ipairs(self.rows) do row.component:SetCombatDeferred(deferred) end
+	for _, child in ipairs({ self.portrait or false, self.castbar or false, self.auras or false, self.raidTarget or false }) do
+		if child then child:SetCombatDeferred(deferred) end
 	end
 end
 

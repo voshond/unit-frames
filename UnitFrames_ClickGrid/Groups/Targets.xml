@@ -1,0 +1,21 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Button name="UnitFramesClickGridCellTemplate" inherits="SecureUnitButtonTemplate,SecureHandlerStateTemplate,SecureHandlerEnterLeaveTemplate" virtual="true">
+		<Attributes>
+			<Attribute name="oUF-onlyProcessChildren" type="boolean" value="true"/>
+		</Attributes>
+		<Frames>
+			<Button parentKey="Member" inherits="SecureUnitButtonTemplate,SecureHandlerStateTemplate,SecureHandlerEnterLeaveTemplate,PingableUnitFrameTemplate">
+				<Attributes>
+					<Attribute name="useparent-unit" type="boolean" value="true"/>
+				</Attributes>
+			</Button>
+			<Button parentKey="Target" inherits="SecureUnitButtonTemplate,SecureHandlerStateTemplate,SecureHandlerEnterLeaveTemplate,PingableUnitFrameTemplate">
+				<Attributes>
+					<Attribute name="useparent-unit" type="boolean" value="true"/>
+					<Attribute name="unitsuffix" type="string" value="target"/>
+					<Attribute name="ufcg-target" type="boolean" value="true"/>
+				</Attributes>
+			</Button>
+		</Frames>
+	</Button>
+</Ui>

@@ -26,6 +26,15 @@ Component.schema = {}
 
 -- Live instances, re-applied when the theme changes.
 local live = setmetatable({}, { __mode = "k" })
+local pending = {}
+local regen = CreateFrame("Frame")
+regen:SetScript("OnEvent", function(self)
+	self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+	for instance in pairs(pending) do
+		pending[instance] = nil
+		instance:Apply()
+	end
+end)
 
 function Component:Extend(className)
 	local class = ns.Object.Extend(self, className)
@@ -51,10 +60,26 @@ function Component:Apply(config)
 	if config then
 		self.config = config
 	end
+	-- Group styles opt their entire composition into deferred presentation.
+	-- Theme notifications also reach child components independently.
+	if self.deferInCombat and InCombatLockdown() then
+		pending[self] = true
+		regen:RegisterEvent("PLAYER_REGEN_ENABLED")
+		return
+	end
 	self.resolved = Schema.Resolve(self:GetSchema(), self.config, ns.Config:GetTheme())
 	self:OnApply(self.resolved)
 	if self.resolved.enabled ~= nil then
 		self:SetEnabled(self.resolved.enabled)
+	end
+end
+
+function Component:SetCombatDeferred(deferred)
+	self.deferInCombat = deferred and true or false
+	for _, child in pairs(self) do
+		if type(child) == "table" and rawget(child, "spec") and rawget(child, "frame") then
+			child:SetCombatDeferred(deferred)
+		end
 	end
 end
 
@@ -98,6 +123,7 @@ end
 
 function Component:Release()
 	live[self] = nil
+	pending[self] = nil
 	self:OnRelease()
 	self.frame:Hide()
 	self.frame:ClearAllPoints()

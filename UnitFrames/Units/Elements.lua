@@ -170,7 +170,7 @@ The AuraContainer handles aura events itself; this only follows unit changes
 (new target, ...) and refreshes, like oUF's own Auras element.
 ]]
 local function UpdateAuras(self)
-	self.UF_Auras:SetUnit(self.__unit)
+	if self.__unit then self.UF_Auras:SetUnit(self.__unit) end
 end
 
 local function EnableAuras(self)

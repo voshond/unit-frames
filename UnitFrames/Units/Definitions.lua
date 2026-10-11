@@ -159,9 +159,15 @@ end
 -- Builds the visual frame for `unit` (no data binding). `frame` is optional.
 function Units:CreateFrame(unit, parent, frame)
 	local def = self.definitions[unit]
-	return ns.Components.UnitFrame:New(parent, ns.Config:GetUnitConfig(unit), {
+	return self:CreateFromDefinition(def, parent, ns.Config:GetUnitConfig(unit), frame)
+end
+
+-- Companion styles have many instances and their own configuration keys.
+-- A definition describes the visuals; the live unit token belongs to oUF.
+function Units:CreateFromDefinition(def, parent, config, frame)
+	return ns.Components.UnitFrame:New(parent, config or {}, {
 		frame = frame, rows = def.rows, width = def.width, portrait = def.portrait, castbar = def.castbar,
-		auras = def.auras, raidTarget = { defaults = {} },
+		auras = def.auras, raidTarget = def.raidTarget or { defaults = {} },
 	})
 end
 

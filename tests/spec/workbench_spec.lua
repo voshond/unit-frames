@@ -57,6 +57,27 @@ describe("Workbench", function()
 		assert.equals("unit.player", workbench.entry.id)
 	end)
 
+	it("suspends data callbacks after preview creation fails and recovers on selection", function()
+		local function RequiresHandle(handle) assert.is_not_nil(handle) end
+		workbench:Register({ id = "test.failed-preview", name = "Failed preview", category = "Tests",
+			create = function() error("original preview creation error") end,
+			data = { schema = {}, tick = RequiresHandle, update = RequiresHandle,
+				onEvent = RequiresHandle, actions = { test = RequiresHandle } },
+		})
+		assert.has_error(function() workbench:Select("test.failed-preview") end)
+		assert.is_nil(workbench.handle)
+		assert.has_no_error(function()
+			Tick(workbench, 1)
+			workbench:UpdateData()
+			workbench:OnUnitEvent("UNIT_HEALTH", "player")
+			workbench:RunAction("test")
+		end)
+		assert.equals(0, workbench.entryState.time)
+		assert.has_no_error(function() workbench:Select("unit.player"); Tick(workbench, 0.2) end)
+		assert.is_not_nil(workbench.handle)
+		assert.is_true(workbench.entryState.time > 0)
+	end)
+
 	it("reopens and switches away from a player preview without clearing its unit", function()
 		local oldAuras = workbench.handle.parts.uf:GetAuras()
 		workbench:Open("unit.player")

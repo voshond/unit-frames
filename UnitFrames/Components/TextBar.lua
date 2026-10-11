@@ -86,6 +86,11 @@ function TextBar:OnRelease()
 	end
 end
 
+function TextBar:SetCombatDeferred(deferred)
+	ns.Component.SetCombatDeferred(self, deferred)
+	for _, text in pairs(self.texts) do text:SetCombatDeferred(deferred) end
+end
+
 function TextBar:GetBar()
 	return self.bar
 end
@@ -131,4 +136,3 @@ function TextBar:SetValue(value) self.bar:SetValue(value) end
 function TextBar:SetSegmentValue(key, value) self.bar:SetSegmentValue(key, value) end
 function TextBar:SetColor(r, g, b, a) self.bar:SetColor(r, g, b, a) end
 function TextBar:ClearColor() self.bar:ClearColor() end
-

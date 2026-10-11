@@ -178,7 +178,11 @@ function Methods:IsProtected() return self.__state.protected == true end
 function Methods:SetAttribute(name, value) self.__state.attributes = self.__state.attributes or {}; self.__state.attributes[name] = value end
 function Methods:GetAttribute(name) return self.__state.attributes and self.__state.attributes[name] end
 function Methods:RegisterForClicks(...) Record(self, "RegisterForClicks", ...) end
-function Methods:GetChildren() end
+function Methods:GetChildren()
+	local children = {}
+	for _, obj in ipairs(registry) do if obj:GetParent() == self then children[#children + 1] = obj end end
+	return unpack(children)
+end
 function Methods:GetFrameLevel() return self.__state.level end
 
 function Methods:SetAlpha(alpha)
@@ -381,11 +385,11 @@ end
 function Mock.DecorateAuraContainer(container)
 	local s = container.__state
 	s.groups, s.groupOrder = {}, {}
-	function container:AddAuraGroup(key, filter, options)
+	local function AddFrames(self, key, filter, options, count)
 		local group = { filter = filter, options = options, frames = {}, enabled = true }
 		s.groups[key] = group
 		table.insert(s.groupOrder, key)
-		for i = 1, 2 do
+		for i = 1, count do
 			local button = NewObject("Button", self)
 			button.__state.dispelTextures = {}
 			function button:SetCancelAuraButtons(tokens)
@@ -424,11 +428,28 @@ function Mock.DecorateAuraContainer(container)
 			group.frames[i] = button
 			options.initializeFrame(button)
 		end
+		return group
+	end
+	function container:AddAuraGroup(key, filter, options)
+		AddFrames(self, key, filter, options, 2)
 	end
 	function container:SetAuraGroupEnabled(key, enabled) s.groups[key].enabled = enabled end
 	function container:SetAuraGroupFilterString(key, filter) s.groups[key].filter = filter end
 	function container:SetAuraGroupMaxFrameCount(key, max) s.groups[key].max = max end
 	function container:SetAuraGroupLayout(key, layout) s.groups[key].layout = layout end
+	function container:SetAuraGroupCandidateFilters(key, filters) s.groups[key].candidateFilters = filters end
+	function container:SetAuraGroupSortMethod(key, method, direction) s.groups[key].sort = { method, direction } end
+	function container:AddAuraSlot(key, filter, options)
+		assert(not InCombatLockdown(), "Native aura slots must be prepared outside combat")
+		assert(filter == "HELPFUL" or filter == "HELPFUL|PLAYER", "Mock fixed slots support friendly buffs only")
+		-- A native slot initializes exactly one button, unlike a flowing group.
+		local group = AddFrames(self, key, filter, options, 1)
+		s.slots = s.slots or {}
+		s.slots[key] = group
+		return group.frames[1]
+	end
+	function container:SetAuraSlotFilterString(key, filter) s.slots[key].filter = filter end
+	function container:SetAuraSlotCandidateFilters(key, filters) s.slots[key].candidateFilters = filters end
 	function container:GetAuraGroupFrameCount(key) return #s.groups[key].frames end
 	function container:GetAuraGroupFrame(key, index) return s.groups[key].frames[index] end
 	function container:SetUnit(unit)
@@ -462,6 +483,12 @@ local function NewCurve(isColor)
 		table.sort(self.points, function(a, b) return a[1] < b[1] end)
 	end
 	function curve:Evaluate(x)
+		if Mock.IsSecret(x) then
+			if self.isColor then
+				return NewColor(Mock.Secret("r"), Mock.Secret("g"), Mock.Secret("b"), Mock.Secret("a"))
+			end
+			return Mock.Secret("curve")
+		end
 		local points = self.points
 		if x <= points[1][1] then
 			return points[1][2]
@@ -494,6 +521,7 @@ string.format = function(fmt, ...)
 end
 
 function Mock.Install()
+	_G.C_ClassColor = nil
 	registry = {}
 	Mock.objects = registry
 	Mock.time = 100
@@ -510,9 +538,11 @@ function Mock.Install()
 	_G.Secret = Mock.Secret
 	_G.issecretvalue = Mock.IsSecret
 
-	_G.CreateFrame = function(frameType, name, parent)
+	_G.CreateFrame = function(frameType, name, parent, template)
 		local obj = NewObject(frameType or "Frame", parent, name)
+		if template and template:find("Secure", 1, true) then obj.__state.protected = true end
 		if frameType == "AuraContainer" then
+			assert(not InCombatLockdown(), "Native aura containers cannot be created in combat")
 			Mock.DecorateAuraContainer(obj)
 		end
 		return obj
@@ -543,7 +573,35 @@ function Mock.Install()
 			local ranges = Mock.spellRanges[spell]
 			if ranges then return ranges[unit] end
 		end,
+		GetSpellInfo = function(spell)
+			local id = tonumber(spell) or (spell == "Flash Heal" and 2061 or nil)
+			if id then return { spellID = id, name = id == 2061 and "Flash Heal" or "Spell " .. id } end
+		end,
+		GetOverrideSpell = function(id) return Mock.spellOverrides[id] or id end,
 	}
+	Mock.spellOverrides, Mock.unknownSpells = {}, {}
+	_G.C_SpellBook = { IsSpellKnown = function(id) return not Mock.unknownSpells[id] end }
+	Mock.specIndex = 1
+	_G.C_SpecializationInfo = { GetSpecialization = function() return Mock.specIndex end }
+	_G.IsInRaid = function() return Mock.inRaid == true end
+	_G.IsInGroup = function() return Mock.inParty == true or Mock.inRaid == true end
+	_G.GetNumGroupMembers = function() return Mock.groupSize or 0 end
+	Mock.inRaid, Mock.inParty, Mock.groupSize = false, false, 0
+	_G.Clique, _G.ClickCastFrames = nil, nil
+	_G.RegisterAttributeDriver = function(frame, name, condition)
+		assert(not InCombatLockdown(), "Attribute drivers must be configured outside combat")
+		frame.__state.drivers = frame.__state.drivers or {}
+		frame.__state.drivers[name] = condition
+		if name == "state-visibility" then frame:SetShown(condition ~= "hide") end
+	end
+	_G.UnregisterAttributeDriver = function(frame, name)
+		assert(not InCombatLockdown(), "Attribute drivers must be removed outside combat")
+		if frame.__state.drivers then frame.__state.drivers[name] = nil end
+	end
+	_G.RegisterStateDriver = _G.RegisterAttributeDriver
+	_G.RegisterUnitWatch = function(frame)
+		frame.__state.unitWatched = true
+	end
 	_G.strtrim = function(s) return (s:gsub("^%s+", ""):gsub("%s+$", "")) end
 	_G.strlenutf8 = function(s) return #s end
 	_G.tinsert = table.insert
@@ -698,6 +756,14 @@ function Mock.InstallUI()
 		PALADIN = NewColor(0.96, 0.55, 0.73),
 		MAGE = NewColor(0.25, 0.78, 0.92),
 	}
+	_G.C_ClassColor = {
+		GetClassColor = function(token)
+			assert(type(token) == "string" or Mock.IsSecret(token), "C_ClassColor.GetClassColor requires a class token")
+			-- Native engine oracle: addon Lua must never unwrap a secret token.
+			local key = Mock.IsSecret(token) and token.secretValue or token
+			return RAID_CLASS_COLORS[key]
+		end,
+	}
 	_G.LOCALIZED_CLASS_NAMES_MALE = { WARRIOR = "Warrior", PALADIN = "Paladin", MAGE = "Mage" }
 
 	_G.SetPortraitTexture = function(texture) texture.__state.texture = "portrait" end
@@ -729,6 +795,7 @@ function Mock.InstallUI()
 	_G.CreateUnitHealPredictionCalculator = function()
 		return {
 			SetMaximumHealthMode = function(self, mode) self.maximumMode = mode end,
+			SetDamageAbsorbClampMode = function(self, mode) self.damageAbsorbMode = mode end,
 			GetMaximumHealth = function(self)
 				return Secret(self.max + (self.maximumMode == Enum.UnitMaximumHealthMode.WithAbsorbs and self.absorb or 0))
 			end,

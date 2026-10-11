@@ -599,7 +599,7 @@ end
 
 function Workbench:UpdateData()
 	local data = self.entry and self.entry.data
-	if data and data.update then
+	if self.handle and data and data.update then
 		data.update(self.handle, self:GetData(), self.entryState)
 	end
 end
@@ -608,7 +608,7 @@ end
 function Workbench:RunAction(name)
 	local data = self.entry and self.entry.data
 	local action = data and data.actions and data.actions[name]
-	if action then
+	if self.handle and action then
 		action(self.handle, self:GetData(), self.entryState)
 	end
 end
@@ -630,7 +630,7 @@ end
 
 function Workbench:OnUnitEvent(event, ...)
 	local data = self.entry and self.entry.data
-	if data and data.onEvent then
+	if self.handle and data and data.onEvent then
 		data.onEvent(self.handle, self:GetData(), self.entryState, event, ...)
 	end
 end
@@ -639,7 +639,10 @@ local STATUS_INTERVAL = 0.5
 
 function Workbench:OnUpdate(elapsed)
 	local data = self.entry and self.entry.data
-	if data and data.tick then
+	-- Select clears the previous handle before constructing the next preview.
+	-- If creation raises, keep its original error visible without sending
+	-- every subsequent frame/event to an entry that has no active preview.
+	if self.handle and data and data.tick then
 		self.entryState.time = self.entryState.time + elapsed
 		data.tick(self.handle, self:GetData(), self.entryState, elapsed)
 	end

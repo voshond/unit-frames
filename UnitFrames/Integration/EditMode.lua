@@ -262,7 +262,7 @@ local function UnitSettings(unit)
 end
 
 -- key: config key for the position ("player"), name: label in Edit Mode.
-function EditMode:Register(frame, key, name, default)
+function EditMode:Register(frame, key, name, default, entryId)
 	self.frames[key] = { frame = frame, default = default }
 	self:ApplyPosition(key)
 	if not LEM then
@@ -277,7 +277,7 @@ function EditMode:Register(frame, key, name, default)
 	end
 	LEM:AddFrameSettingsButtons(frame, {
 		{ text = "More settings", click = function()
-			ns:OpenWorkbench("unit." .. key)
+			ns:OpenWorkbench(entryId or "unit." .. key)
 		end },
 	})
 end

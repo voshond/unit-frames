@@ -81,4 +81,17 @@ function Helpers.LoadWorkbench()
 	return ns, ns.Workbench
 end
 
+function Helpers.LoadClickGrid(workbench)
+	local ns = Helpers.LoadAddon(true, true)
+	Mock.InstallUI()
+	local cg = Helpers.LoadToc("UnitFrames_ClickGrid/UnitFrames_ClickGrid.toc", "UnitFrames_ClickGrid")
+	Mock.FireEvent("ADDON_LOADED", "UnitFrames_ClickGrid")
+	Mock.FireEvent("PLAYER_LOGIN")
+	if workbench then
+		Helpers.LoadToc("UnitFrames_Workbench/UnitFrames_Workbench.toc", "UnitFrames_Workbench")
+		Mock.FireEvent("ADDON_LOADED", "UnitFrames_Workbench")
+	end
+	return ns, cg, ns.Workbench
+end
+
 return Helpers
