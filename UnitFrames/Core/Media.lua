@@ -33,6 +33,14 @@ function Media:Outline(flags)
 	return flags
 end
 
+-- Ordinary FontStrings may use SetFont; menu FontStrings use GetFontObject.
+function Media:ApplyFont(fontString, key, size, flags)
+	local outline = self:Outline(flags)
+	if not fontString:SetFont(self:Fetch("font", key), size, outline) then
+		fontString:SetFont(self:Fetch("font", LSM:GetDefault("font")), size, outline)
+	end
+end
+
 -- Raw SetFont on a font file the client hasn't loaded yet is unreliable in
 -- Forever (see docs/03 §2.6), so every font gets a Font object up front.
 local preloaded = {}

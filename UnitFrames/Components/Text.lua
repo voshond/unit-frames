@@ -70,9 +70,7 @@ end
 
 function Text:OnApply(cfg)
 	local fs = self.frame
-	if not fs:SetFont(Media:Fetch("font", cfg.font), cfg.size, Media:Outline(cfg.outline)) then
-		fs:SetFont(Media:Fetch("font", Media.LSM:GetDefault("font")), cfg.size, Media:Outline(cfg.outline))
-	end
+	Media:ApplyFont(fs, cfg.font, cfg.size, cfg.outline)
 	if cfg.shadow then
 		fs:SetShadowColor(0, 0, 0, 1)
 		fs:SetShadowOffset(1, -1)

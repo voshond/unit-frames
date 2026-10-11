@@ -69,9 +69,7 @@ end
 -- Native header anchors follow roster bounds without reading their geometry.
 function Layout.StyleTitle(label, key, cfg)
 	local UF = CG.UF
-	if not label:SetFont(UF.Media:Fetch("font", cfg.font), cfg.size, UF.Media:Outline(cfg.outline)) then
-		label:SetFont(UF.Media:Fetch("font", UF.Media.LSM:GetDefault("font")), cfg.size, UF.Media:Outline(cfg.outline))
-	end
+	UF.Media:ApplyFont(label, cfg.font, cfg.size, cfg.outline)
 	label:SetTextColor(UF.Util.UnpackColor(cfg.color))
 	label:SetJustifyH(cfg.alignment)
 	label:SetWordWrap(false)
