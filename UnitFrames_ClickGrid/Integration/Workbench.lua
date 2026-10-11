@@ -33,7 +33,7 @@ function CG:RegisterWorkbench()
 		tick = function(handle, values, _, elapsed) handle.data = values; handle:Tick(elapsed) end,
 	}
 	local function Create(stage) return CG.Preview:New(stage) end
-	wb:Register({ id = "clickgrid.panel", name = "Panel & indicators", category = "ClickGrid", autoSize = true,
+	wb:Register({ id = "clickgrid.panel", name = "Panel & indicators", category = "ClickGrid", autoSize = true, fitToStage = true,
 		size = { 500, 500 }, create = Create, data = data,
 		styleTarget = function(handle)
 			return { schema = CG.Config.schema,
@@ -46,7 +46,7 @@ function CG:RegisterWorkbench()
 	for _, kind in ipairs({ "member", "target" }) do
 		local styleKind = kind
 		wb:Register({ id = "clickgrid." .. styleKind, name = styleKind == "member" and "Member bars" or "Target bars",
-			category = "ClickGrid", autoSize = true, size = { 500, 500 }, create = Create, data = data,
+			category = "ClickGrid", autoSize = true, fitToStage = true, size = { 500, 500 }, create = Create, data = data,
 			styleTarget = function(handle) return StyleTarget(handle, styleKind) end,
 			reset = function() CG.Config.db.profile[styleKind] = {}; CG:RequestRefresh(); UF.Events:Fire("ClickGridConfigChanged") end,
 		})

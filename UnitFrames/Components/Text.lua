@@ -85,7 +85,18 @@ function Text:OnApply(cfg)
 	fs:SetTextColor(Util.UnpackColor(cfg.color))
 	fs:SetJustifyH(cfg.justifyH)
 	fs:SetWordWrap(false)
+	self:Layout()
+end
 
+-- Transient room for an adjacent indicator, not a saved text-style override.
+function Text:SetLeadingSpace(space)
+	self.leadingSpace = space
+	self:Layout()
+end
+
+function Text:Layout()
+	local cfg, fs = self.resolved, self.frame
+	if not cfg then return end
 	local host = self.spec.host
 	if host then
 		local vertical = cfg.vertical
@@ -100,7 +111,7 @@ function Text:OnApply(cfg)
 			edge, y = "BOTTOM", y + 1
 		end
 		fs:ClearAllPoints()
-		fs:SetPoint(edge .. "LEFT", host, edge .. "LEFT", cfg.inset + cfg.offsetX, y)
+		fs:SetPoint(edge .. "LEFT", host, edge .. "LEFT", cfg.inset + cfg.offsetX + (self.leadingSpace or 0), y)
 		fs:SetPoint(edge .. "RIGHT", host, edge .. "RIGHT", -cfg.inset + cfg.offsetX, y)
 	end
 end

@@ -146,6 +146,14 @@ function UnitFrame:GetSchema()
 				tooltip = "Choose a spell you know that applies to this unit (a heal for allies, an attack for enemies). Unknown spells, invalid targets and spells without a range check do not fade the frame. Names must match your client language." },
 		} },
 	}
+	if self.spec.resting then
+		schema[#schema + 1] = { key = "resting", type = "group", label = "Resting border", schema = {
+			{ key = "enabled", type = "toggle", label = "Enabled", default = true },
+			{ key = "color", type = "color", label = "Resting colour", default = { 1, 0.88, 0.25, 1 } },
+			{ key = "period", type = "range", label = "Pulse duration (seconds)", min = 2, max = 10, step = 0.5, default = 4,
+				tooltip = "Time for one slow fade to the resting colour and back. Requires a visible frame border." },
+		} }
+	end
 	if self.portrait then
 		schema[#schema + 1] = { key = "portrait", type = "group", label = "Portrait", defaults = self.spec.portrait.defaults,
 			schema = GroupSchema(self.portrait, {
@@ -208,6 +216,45 @@ function UnitFrame:OnApply(cfg)
 	end
 	self:Layout()
 	self:ApplyRangeOpacity()
+	self:ApplyRestingBorder()
+end
+
+-- Resting is a plain player state (IsResting), never opaque unit data.
+-- Only the unprotected border child gets an update script.
+local function PulseRestingBorder(_, elapsed, component)
+	component.restingElapsed = (component.restingElapsed + elapsed) % component.resolved.resting.period
+	component:ColorRestingBorder(0.5 - 0.5 * math.cos(component.restingElapsed * 2 * math.pi / component.resolved.resting.period))
+end
+
+function UnitFrame:ColorRestingBorder(amount)
+	local base, tint = self.resolved.border.color, self.resolved.resting.color
+	self.border:SetBackdropBorderColor(
+		base[1] + (tint[1] - base[1]) * amount,
+		base[2] + (tint[2] - base[2]) * amount,
+		base[3] + (tint[3] - base[3]) * amount,
+		(base[4] or 1) + ((tint[4] or 1) - (base[4] or 1)) * amount)
+end
+
+function UnitFrame:ApplyRestingBorder()
+	local cfg = self.resolved
+	self.border:SetScript("OnUpdate", nil)
+	if cfg.resting and cfg.resting.enabled and self.resting and cfg.border.enabled and cfg.border.border ~= "None" then
+		if self.restingAnimated ~= false then
+			self.restingElapsed = self.restingElapsed or 0
+			PulseRestingBorder(self.border, 0, self)
+			self.border:SetScript("OnUpdate", function(border, elapsed) PulseRestingBorder(border, elapsed, self) end)
+		else
+			self:ColorRestingBorder(1)
+		end
+	else
+		self.restingElapsed = 0
+		self.border:SetBackdropBorderColor(ns.Util.UnpackColor(cfg.border.color))
+	end
+end
+
+function UnitFrame:SetResting(resting, animated)
+	self.resting, self.restingAnimated = resting, animated
+	self:ApplyRestingBorder()
 end
 
 -- Neither range result may be tested in Lua: both can be secret in combat.
@@ -352,6 +399,7 @@ end
 
 function UnitFrame:OnRelease()
 	pending[self] = nil
+	self.border:SetScript("OnUpdate", nil)
 	for _, row in ipairs(self.rows) do
 		row.component:Release()
 	end

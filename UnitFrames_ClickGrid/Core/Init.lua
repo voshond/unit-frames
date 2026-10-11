@@ -4,6 +4,7 @@ UF.ClickGrid = CG
 CG.name, CG.UF = addonName, UF
 CG.frames, CG.headers, CG.previews = {}, {}, {}
 CG.Caps = {
+	roleEnum = UnitGroupRolesAssignedEnum ~= nil and Enum.LFGRole ~= nil,
 	spellInfo = C_Spell and C_Spell.GetSpellInfo ~= nil,
 	spellKnown = C_SpellBook and C_SpellBook.IsSpellKnown ~= nil,
 	spellOverride = C_Spell and C_Spell.GetOverrideSpell ~= nil,

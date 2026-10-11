@@ -131,9 +131,23 @@ local function Resize(self, width, height)
 		s.scripts.OnSizeChanged(self, width, height)
 	end
 end
-function Methods:SetSize(width, height) Resize(self, width, height) end
-function Methods:SetWidth(width) Resize(self, width, self.__state.height) end
-function Methods:SetHeight(height) Resize(self, self.__state.width, height) end
+local function CheckTextureDimensions(self, ...)
+	if self.__type == "Texture" then
+		assert(not AnySecret(...), "Texture dimensions require untainted execution for secret values")
+	end
+end
+function Methods:SetSize(width, height)
+	CheckTextureDimensions(self, width, height)
+	Resize(self, width, height)
+end
+function Methods:SetWidth(width)
+	CheckTextureDimensions(self, width)
+	Resize(self, width, self.__state.height)
+end
+function Methods:SetHeight(height)
+	CheckTextureDimensions(self, height)
+	Resize(self, self.__state.width, height)
+end
 function Methods:GetSize() return self.__state.width, self.__state.height end
 function Methods:GetWidth() return self.__state.width end
 function Methods:GetHeight() return self.__state.height end
@@ -657,6 +671,7 @@ function Mock.Install()
 	_G.AuraContainerSortMethod = { ExpirationOnly = 1 }
 	_G.AuraContainerSortDirection = { Normal = 0 }
 	_G.Enum = {
+		LFGRole = { Tank = 0, Healer = 1, Damage = 2 },
 		CustomAuraButtonDispelTypeTextureStyle = { Border = 1, PreserveAsset = 4 },
 		StatusBarInterpolation = { Immediate = 0, ExponentialEaseOut = 1 },
 		UnitDamageAbsorbClampMode = { MissingHealth = 0, MissingHealthWithoutIncomingHeals = 1, MaximumHealth = 2 },
@@ -776,6 +791,8 @@ function Mock.InstallUI()
 		end,
 	}
 	_G.UnitExists = function() return true end
+	Mock.assignedRole = Enum.LFGRole.Tank
+	_G.UnitGroupRolesAssignedEnum = function() return Mock.assignedRole end
 	_G.UnitIsPlayer = function() return true end
 	_G.UnitIsConnected = function() return true end
 	_G.UnitIsTapDenied = function() return false end
@@ -818,6 +835,8 @@ function Mock.InstallUI()
 	_G.UnitPowerMax = function() return Secret(600) end
 	_G.UnitPowerMissing = function() return Secret(300) end
 	_G.UnitXP = function() return 1200 end
+	Mock.resting = false
+	_G.IsResting = function() return Mock.resting end
 	_G.UnitXPMax = function() return 5000 end
 	_G.GetXPExhaustion = function() return nil end
 	_G.UnitCastingInfo = function()

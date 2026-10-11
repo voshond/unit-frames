@@ -22,6 +22,18 @@ repository's incremental deployment guidance when updating an existing copy.
 - Secure party header (including the player) and forty-member raid capacity.
   Raid subgroups can be stacked in configurable columns, or use a flat grid
   with rows, columns and fill direction. Optional duplicate tank section.
+  Flat-grid rows and columns are independent preferences: a 5 × 5 grid is
+  valid. Larger rosters overflow into extra columns when filling down, or
+  extra rows when filling across, without changing saved settings or hiding
+  raiders. Live panel bounds reserve forty-member capacity before combat;
+  previews reserve the configured grid plus any needed sample overflow.
+- **Group / column titles** under **Panel & indicators**: editable party,
+  tank and individual raid-subgroup/flat-column labels (Group 1, Group 2,
+  etc., not one Raid title). Shared font, size,
+  outline, shadow and colour; above/below placement, left/centre/right
+  alignment, gap and offsets. Hiding titles removes their reserved space.
+  The single enclosing backdrop excludes the outer title band, so headings
+  hover outside it. No independent group backdrops are created.
 - Member targets beside the bars, with independent target styling. Existing
   UnitFrames health, shields, power, portrait, castbar, text, range, marker,
   font and border controls are reused rather than duplicated.
@@ -40,8 +52,22 @@ repository's incremental deployment guidance when updating an existing copy.
   buff slots, not arbitrary friendly-debuff encounter rules.
 - Role, leader/assistant, ready check, incoming resurrection, summon, phase,
   optional threat and native private-aura anchors, subject to client support.
+  Role and leader/assistant positions offer **Before name** (an enabled
+  left-aligned Name text on the health bar), or any raid-marker border/portrait
+  anchor. Role defaults before name; leader defaults top. Matching anchors
+  stack raid, role, then leader: left-to-right on top/bottom/corners,
+  top-to-bottom on left/right edges. Leader and assistant share one slot.
+  Each icon has independent size, gap and border-position offsets. Name mode
+  reserves their combined space. An ordinary unassigned role removes its
+  name padding immediately on role updates; opaque roles retain a safe slot.
+  Border slots and leadership space remain reserved while enabled; native
+  visibility is not inspected for layout. Missing portraits or a missing left-aligned
+  name hide the corresponding placement.
 - Static/animated group samples up to forty members and a live bars/auras
   preview. Live previews intentionally omit status/private-aura indicators.
+  Group previews automatically shrink to fit the Workbench stage, retaining
+  the configured group positions and empty roster slots. The stage scale is
+  an upper limit; fitting does not change the live panel's size or scale.
   Samples illustrate styling/filtering; native priority ordering remains
   authoritative in game, not the sample list order.
 

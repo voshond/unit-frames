@@ -103,6 +103,13 @@ Formats.Register("none", {
 	sample = function() return "" end,
 })
 
+Formats.Register("resting", {
+	label = "Resting (zZz)",
+	events = "PLAYER_UPDATE_RESTING PLAYER_ENTERING_WORLD", shared = true,
+	text = function(unit) return unit == "player" and IsResting() and "zZz" or "" end,
+	sample = function(v) return v.resting and "zZz" or "" end,
+})
+
 Formats.Register("name", {
 	label = "Name",
 	events = "UNIT_NAME_UPDATE",
@@ -304,7 +311,7 @@ local function List(...)
 	return out
 end
 
-local IDENTITY = { "none", "name", "level", "smartlevel", "level:name", "class", "level:class", "level:info" }
+local IDENTITY = { "none", "name", "level", "smartlevel", "level:name", "class", "level:class", "level:info", "resting" }
 Formats.HEALTH = List(IDENTITY, HEALTH_VALUES)
 Formats.POWER = List(IDENTITY, POWER_VALUES)
-Formats.EXPERIENCE = List({ "none", "level" }, XP_VALUES, { "xp:rested" })
+Formats.EXPERIENCE = List({ "none", "level", "resting" }, XP_VALUES, { "xp:rested" })

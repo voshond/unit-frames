@@ -25,6 +25,7 @@ Entries register themselves:
     },
     styleTarget = function(handle) return target end,  optional, replaces the style inspector target
     autoSize = true,                 the component sizes itself (no width/height sliders)
+    fitToStage = true,               opt-in for ordinary, plain-sized preview frames
     reset = function() end,          optional, what the "Reset" button does instead of clearing the config
   })
 ]]
@@ -208,6 +209,7 @@ function Workbench:Build()
 	stage:SetClipsChildren(true)
 	Skin.ApplyPanel(stage, "panel")
 	self.stage = stage
+	stage:SetScript("OnSizeChanged", function() self:FitStage() end)
 
 	self.holder = CreateFrame("Frame", nil, stage)
 	self.holder:SetSize(1, 1)
@@ -322,13 +324,33 @@ end
 function Workbench:ApplyStageOptions()
 	local stageDB = self:GetDB().stage
 	self.stage:SetBackdropColor(unpack(STAGE_COLORS[stageDB.background] or STAGE_COLORS.dark))
-	self.holder:SetScale(stageDB.scale)
+	self:FitStage()
 	self.scaleSlider:SetValue(stageDB.scale)
 	self.backgroundDropdown:SetValue(stageDB.background)
 	self.boundsCheck:SetValue(stageDB.bounds)
 	self.bounds:SetShown(stageDB.bounds and self.handle ~= nil)
 	self.secretCheck:SetValue(self.forcedRestrictions)
 	self.banner:SetShown(self.forcedRestrictions == true)
+end
+
+-- Only opt-in previews have ordinary, addon-owned dimensions. Never inspect
+-- native aura/container bounds here: those can be secret even outside combat.
+function Workbench:FitStage()
+	if not self.holder then return end
+	if self.entry and self.entry.fitToStage and InCombatLockdown() then
+		self.pendingStageFit = true
+		return
+	end
+	self.pendingStageFit = nil
+	local scale = self:GetDB().stage.scale
+	if self.entry and self.entry.fitToStage and self.handle then
+		local width, height = self.handle.frame:GetSize()
+		local availableWidth, availableHeight = self.stage:GetWidth() - 32, self.stage:GetHeight() - 32
+		if width > 0 and height > 0 and availableWidth > 0 and availableHeight > 0 then
+			scale = math.min(scale, availableWidth / width, availableHeight / height)
+		end
+	end
+	if self.holder:GetScale() ~= scale then self.holder:SetScale(scale) end
 end
 
 function Workbench:FillList()
@@ -358,6 +380,7 @@ function Workbench:Select(id)
 		return
 	end
 	if self.handle then
+		if self.entry and self.entry.fitToStage then self.handle.frame:SetScript("OnSizeChanged", nil) end
 		self.handle:Release()
 		self.handle = nil
 	end
@@ -370,6 +393,11 @@ function Workbench:Select(id)
 
 	local handle = entry.create(self.holder)
 	self.handle = handle
+	if entry.fitToStage then
+		handle.frame:SetScript("OnSizeChanged", function()
+			if self.handle == handle then self:FitStage() end
+		end)
+	end
 	handle.frame:ClearAllPoints()
 	handle.frame:SetPoint("CENTER", self.holder, "CENTER")
 	handle:Apply(state.config)
@@ -638,6 +666,7 @@ end
 local STATUS_INTERVAL = 0.5
 
 function Workbench:OnUpdate(elapsed)
+	if self.pendingStageFit and not InCombatLockdown() then self:FitStage() end
 	local data = self.entry and self.entry.data
 	-- Select clears the previous handle before constructing the next preview.
 	-- If creation raises, keep its original error visible without sending

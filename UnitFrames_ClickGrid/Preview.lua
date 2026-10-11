@@ -6,6 +6,7 @@ CG.Preview = Preview
 
 function Preview:New(parent)
 	local result = setmetatable({ frame = CreateFrame("Frame", nil, parent), cells = {}, labels = {}, time = 0 }, self)
+	result.background = CreateFrame("Frame", nil, result.frame, "BackdropTemplate")
 	CG.previews[result] = true
 	result:Apply()
 	return result
@@ -16,7 +17,7 @@ function Preview:CreateCell()
 	local member = UF.Units:CreateFromDefinition(CG.definitions.member, host, CG.Config:GetStyle("member"))
 	local target = UF.Units:CreateFromDefinition(CG.definitions.target, host, CG.Config:GetStyle("target"))
 	local slots = CG.Slots:New(member:GetFrame(), CG:SlotConfig(member))
-	local status = CG.Status:Create(member:GetFrame())
+	local status = CG.Status:Create(member:GetFrame(), member)
 	member:SetCombatDeferred(true)
 	target:SetCombatDeferred(true)
 	slots:SetCombatDeferred(true)
@@ -73,8 +74,7 @@ function Preview:Apply()
 	if self.notice then self.notice:Hide() end
 	local cfg = CG.Config:Resolved()
 	self.cfg = cfg
-	local layout = CG.Layout.Compute(cfg.panel, CG.metrics.member, CG.metrics.target)
-	self.layout = layout
+	CG.Layout.Backdrop(self.background, self.frame, cfg.titles)
 	self:ShowData(self.data or { source = "static", count = 5 })
 end
 
@@ -107,7 +107,9 @@ function Preview:ShowData(data, dataOnly)
 	local live = data.source == "live"
 	if live then count = math.max(1, GetNumGroupMembers()) end
 	local raid = live and IsInRaid() or count > 5
-	local cfg, layout = self.cfg.panel, self.layout
+	local cfg = self.cfg.panel
+	local layout = CG.Layout.Compute(cfg, CG.metrics.member, CG.metrics.target, self.cfg.titles, count)
+	self.layout = layout
 	local size = raid and layout.raid or count == 1 and layout.solo or layout.party
 	self.frame:SetSize(size.width, size.height)
 	local visible = 0
@@ -117,14 +119,24 @@ function Preview:ShowData(data, dataOnly)
 		local label = self.labels[key]
 		if not label then
 			label = self.frame:CreateFontString(nil, "OVERLAY")
-			label:SetFontObject(UF.Media:GetFontObject(UF.Config:GetTheme().font, 11, "OUTLINE"))
 			self.labels[key] = label
 		end
-		label:ClearAllPoints()
-		label:SetFontObject(UF.Media:GetFontObject(UF.Config:GetTheme().font, 11, "OUTLINE"))
-		label:SetPoint("TOPLEFT", self.frame, "TOPLEFT", section.x, -(section.y - CG.Layout.LABEL))
-		label:SetText(key == "party" and "Party" or key == "raid" and "Raid" or key == "tanks" and "Tanks" or "Group " .. key:match("%d+"))
-		label:Show()
+		local contentHeight = section.grid.height
+		if key == "party" and count == 1 then contentHeight = layout.cellHeight end
+		if key == "raid" then
+			label:Hide()
+			for column = 1, section.grid.columns do
+				local columnKey = "column" .. column
+				local columnLabel = self.labels[columnKey]
+				if not columnLabel then
+					columnLabel = self.frame:CreateFontString(nil, "OVERLAY")
+					self.labels[columnKey] = columnLabel
+				end
+				CG.Layout.TitleInPreview(columnLabel, self.frame, "group" .. column,
+					{ x = section.x + (column - 1) * (layout.cellWidth + cfg.spacingX), y = section.y,
+						grid = { width = layout.cellWidth } }, self.cfg.titles, contentHeight, cfg.padding)
+			end
+		else CG.Layout.TitleInPreview(label, self.frame, key, section, self.cfg.titles, contentHeight, cfg.padding) end
 		for localIndex = 1, amount do
 			visible = visible + 1
 			local index = first + localIndex - 1
@@ -199,6 +211,7 @@ end
 function Preview:Release()
 	if self.released then return end
 	self.released = true
+	self.frame:SetScript("OnSizeChanged", nil)
 	CG.previews[self] = nil
 	self.frame:Hide()
 	if InCombatLockdown() then
@@ -212,6 +225,7 @@ end
 
 function Preview:ReleaseComponents()
 	for _, cell in ipairs(self.cells) do
+		CG.Status:Release(cell.status)
 		cell.slots:Release()
 		cell.member:Release()
 		cell.target:Release()

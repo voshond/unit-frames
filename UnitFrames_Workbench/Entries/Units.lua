@@ -83,6 +83,8 @@ local function Values(unit, d, healthPct, time)
 	v.raidTarget = d.raidTarget
 	v.pvp = d.pvp
 	v.outOfRange = d.outOfRange
+	v.resting = unit == "player" and d.resting
+	v.restingAnimated = time ~= nil
 	v.castProgress = d.castProgress / 100
 	for _, kind in ipairs({ "buffs", "debuffs" }) do
 		local samples = v[kind]
@@ -125,6 +127,8 @@ local function RegisterUnit(unit)
 			tooltip = "The Debuffs style's filter and Maximum shown still apply." },
 	}
 	if unit == "player" then
+		schema[#schema + 1] = { key = "resting", type = "toggle", label = "Resting", default = false,
+			tooltip = "Preview the resting border and Resting (zZz) text. Static holds the resting colour; Animated pulses it." }
 		schema[#schema + 1] = Range("xp", "XP %", 42)
 	else
 		schema[#schema + 1] = { key = "npc", type = "toggle", label = "NPC", default = sample.isPlayer == false }

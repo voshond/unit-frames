@@ -91,7 +91,7 @@ describe("Bar", function()
 		assert.equals(max, segMax)
 	end)
 
-	it("sizes the spark and segments without arithmetic on secret dimensions", function()
+	it("anchors the spark without passing secret dimensions to texture setters", function()
 		local bar = C.Bar:New(parent, {}, { segments = HEALTH_SEGMENTS })
 		local width, height = Secret(200), Secret(20)
 		for _, orientation in ipairs({ "HORIZONTAL", "VERTICAL" }) do
@@ -104,12 +104,18 @@ describe("Bar", function()
 						bar:Apply()
 					end)
 					local horizontal = orientation == "HORIZONTAL"
-					assert.equals(horizontal and 6 or width, bar.spark:GetWidth())
-					assert.equals(horizontal and height or 6, bar.spark:GetHeight())
-					assert.equals(2, bar.spark:GetScale())
+					assert.equals(12, horizontal and bar.spark:GetWidth() or bar.spark:GetHeight())
+					assert.equals(1, bar.spark:GetScale())
 					assert.equals(spark, bar.spark:IsShown())
-					assert.same({ "CENTER", bar.bar:GetStatusBarTexture(), C.Bar.LAYOUT[orientation][reverse].spark, 0, 0 },
-						bar.spark:GetAnchor("CENTER"))
+					local fill = bar.bar:GetStatusBarTexture()
+					local edge = C.Bar.LAYOUT[orientation][reverse].spark
+					if horizontal then
+						assert.same({ "TOP", fill, "TOP" .. edge, 0, 6 }, bar.spark:GetAnchor("TOP"))
+						assert.same({ "BOTTOM", fill, "BOTTOM" .. edge, 0, -6 }, bar.spark:GetAnchor("BOTTOM"))
+					else
+						assert.same({ "LEFT", fill, edge .. "LEFT", -6, 0 }, bar.spark:GetAnchor("LEFT"))
+						assert.same({ "RIGHT", fill, edge .. "RIGHT", 6, 0 }, bar.spark:GetAnchor("RIGHT"))
+					end
 					for _, seg in ipairs(bar.segments) do
 						assert.equals(horizontal and width or height,
 							horizontal and seg.bar:GetWidth() or seg.bar:GetHeight())

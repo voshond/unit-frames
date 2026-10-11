@@ -62,6 +62,7 @@ local EXPERIENCE_ROW = {
 
 Units.definitions.player = {
 	label = "Player",
+	resting = true,
 	width = 230,
 	defaultPosition = { point = "CENTER", x = -280, y = -160 },
 	rows = { HEALTH_ROW, POWER_ROW, EXPERIENCE_ROW },
@@ -167,7 +168,7 @@ end
 function Units:CreateFromDefinition(def, parent, config, frame)
 	return ns.Components.UnitFrame:New(parent, config or {}, {
 		frame = frame, rows = def.rows, width = def.width, portrait = def.portrait, castbar = def.castbar,
-		auras = def.auras, raidTarget = def.raidTarget or { defaults = {} },
+		auras = def.auras, raidTarget = def.raidTarget or { defaults = {} }, resting = def.resting,
 	})
 end
 

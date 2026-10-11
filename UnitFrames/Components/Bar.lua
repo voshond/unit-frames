@@ -168,9 +168,6 @@ function Bar:OnCreate(parent, spec)
 	self.spark = self.overlay:CreateTexture(nil, "OVERLAY")
 	self.spark:SetTexture(SPARK_TEXTURE)
 	self.spark:SetBlendMode("ADD")
-	-- Native scaling doubles the cross-axis size without Lua arithmetic on
-	-- bar dimensions, which can be secret. Six units become twelve on screen.
-	self.spark:SetScale(2)
 
 	self.bar:SetScript("OnSizeChanged", function(_, width, height)
 		self:SizeParts(width, height)
@@ -230,7 +227,18 @@ function Bar:OnApply(cfg)
 	end
 
 	self.spark:ClearAllPoints()
-	self.spark:SetPoint("CENTER", fill, layout.spark)
+	-- Fill geometry can be secret. Native anchors follow its cross-axis
+	-- bounds without passing GetSize/OnSizeChanged values to texture setters.
+	-- Extend the glow six units beyond either edge, with a twelve-unit width.
+	if cfg.orientation == "HORIZONTAL" then
+		self.spark:SetWidth(12)
+		self.spark:SetPoint("TOP", fill, "TOP" .. layout.spark, 0, 6)
+		self.spark:SetPoint("BOTTOM", fill, "BOTTOM" .. layout.spark, 0, -6)
+	else
+		self.spark:SetHeight(12)
+		self.spark:SetPoint("LEFT", fill, layout.spark .. "LEFT", -6, 0)
+		self.spark:SetPoint("RIGHT", fill, layout.spark .. "RIGHT", 6, 0)
+	end
 	self.spark:SetRotation(cfg.orientation == "VERTICAL" and math.pi / 2 or 0)
 	self.spark:SetShown(cfg.spark)
 
@@ -249,11 +257,6 @@ function Bar:SizeParts(width, height)
 		else
 			seg.bar:SetHeight(height)
 		end
-	end
-	if horizontal then
-		self.spark:SetSize(6, height)
-	else
-		self.spark:SetSize(width, 6)
 	end
 end
 

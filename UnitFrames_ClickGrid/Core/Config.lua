@@ -4,6 +4,7 @@ local Config = {}
 CG.Config = Config
 Config.schema = {
 	{ key = "panel", type = "group", label = "Panel layout", schema = CG.LayoutSchema },
+	{ key = "titles", type = "group", label = "Group / column titles", schema = CG.TitleSchema },
 	{ key = "indicators", type = "group", label = "Status indicators", schema = CG.IndicatorSchema },
 	{ key = "slots", type = "group", label = "Fixed friendly buff slots", schema = CG.SlotSchema },
 }
@@ -32,16 +33,6 @@ function Config:Set(path, value)
 	for _, slot in pairs(slots) do
 		local ids, reason = CG.Slots.ParseIDs(slot.spell)
 		if not ids then return false, reason end
-	end
-	local panel = UF.Schema.Resolve(CG.LayoutSchema, candidate.panel)
-	if panel.columns * panel.rows < 40 then
-		candidate.panel = candidate.panel or {}
-		if path == "panel.rows" then candidate.panel.columns = math.ceil(40 / panel.rows)
-		else candidate.panel.rows = math.ceil(40 / panel.columns) end
-	end
-	-- The columns control is capped at ten. A one-row flat grid needs 40.
-	if candidate.panel and candidate.panel.columns and candidate.panel.columns > 10 then
-		return false, "At least four rows are required with at most ten columns."
 	end
 	self.db.profile.settings = candidate
 	CG:RequestRefresh()

@@ -1,14 +1,6 @@
 local _, CG = ...
 local UF, oUF = CG.UF, CG.UF.oUF
 
-local function Label(parent, text)
-	local label = parent:CreateFontString(nil, "OVERLAY")
-	label:SetFontObject(UF.Media:GetFontObject(UF.Config:GetTheme().font, 11, "OUTLINE"))
-	label:SetPoint("BOTTOMLEFT", parent, "TOPLEFT", 0, 3)
-	label:SetText(text)
-	return label
-end
-
 function CG:CreateHeader(key, capacity, filter, role)
 	-- SpawnHeader hides Blizzard party frames only if showParty is supplied
 	-- here. Configure it later through normal header attributes instead.
@@ -42,8 +34,8 @@ function CG:CreateHeader(key, capacity, filter, role)
 	header:SetAttribute("startingIndex", 1)
 	header:SetAttribute("showSolo", false)
 	self.headers[key] = header
-	header.ufcgLabel = Label(header, key == "party" and "Party" or key == "raid" and "Raid"
-		or key == "tanks" and "Tanks" or "Group " .. key:match("%d+"))
+	header.ufcgLabel = header:CreateFontString(nil, "OVERLAY")
+	header.ufcgLabel:Hide()
 	return header
 end
 
@@ -89,7 +81,7 @@ function CG:Refresh()
 	self:Measure()
 	local cfg = self.Config:Resolved()
 	self:EnsureHeaders(cfg.panel)
-	local layout = self.Layout.Compute(cfg.panel, self.metrics.member, self.metrics.target)
+	local layout = self.Layout.Compute(cfg.panel, self.metrics.member, self.metrics.target, cfg.titles)
 	self.layout = layout
 	self.panel:SetScale(cfg.panel.scale)
 	for _, state in ipairs({ "party", "raid", "solo" }) do
@@ -101,19 +93,32 @@ function CG:Refresh()
 	RegisterStateDriver(self.panel, "roster", "[group:raid] raid; [group:party] party; solo")
 	RegisterAttributeDriver(self.panel, "state-visibility", not cfg.panel.enabled and "hide"
 		or cfg.panel.showSolo and "show" or "[group] show; hide")
-	UF.Components.Backdrop.ApplyTo(self.background, UF.Schema.Resolve(UF.Components.Backdrop.schema,
-		{ enabled = true, padding = 0 }, UF.Config:GetTheme()))
+	self.Layout.Backdrop(self.background, self.panel, cfg.titles)
 	for key, header in pairs(self.headers) do
-		header.ufcgLabel:SetFontObject(UF.Media:GetFontObject(UF.Config:GetTheme().font, 11, "OUTLINE"))
 		local section = layout.sections[key]
 		local visible = section ~= nil
+		for _, label in ipairs(header.ufcgColumnLabels or {}) do label:Hide() end
 		if section then
+			if key == "raid" then
+				header.ufcgLabel:Hide()
+				header.ufcgColumnLabels = header.ufcgColumnLabels or {}
+				for column = 1, section.grid.columns do
+					local label = header.ufcgColumnLabels[column]
+					if not label then
+						label = header:CreateFontString(nil, "OVERLAY")
+						header.ufcgColumnLabels[column] = label
+					end
+					self.Layout.TitleOnHeader(label, header, "group" .. column,
+						{ grid = { width = layout.cellWidth } }, cfg.titles, cfg.panel.padding,
+						(column - 1) * (layout.cellWidth + cfg.panel.spacingX))
+				end
+			else self.Layout.TitleOnHeader(header.ufcgLabel, header, key, section, cfg.titles, cfg.panel.padding) end
 			header:ClearAllPoints()
 			header:SetPoint("TOPLEFT", self.panel, "TOPLEFT", section.x, -section.y)
 			header:SetAttribute("_ignore", true)
 			for attribute, value in pairs(self.Layout.Attributes(section.grid, cfg.panel)) do header:SetAttribute(attribute, value) end
 			header:SetAttribute("_ignore", nil)
-		end
+		else header.ufcgLabel:Hide() end
 		if key == "party" then
 			header:SetAttribute("showSolo", cfg.panel.showSolo)
 			header:SetVisibility("custom [group:raid] hide; " .. (cfg.panel.showSolo and "show" or "[group:party] show; hide"))

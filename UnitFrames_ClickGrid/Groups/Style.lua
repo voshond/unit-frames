@@ -43,7 +43,7 @@ oUF:RegisterStyle(CG.STYLE, function(frame)
 	frame:HookScript("OnLeave", function() GameTooltip:Hide() end)
 	UF.Units:Bind(frame)
 	if not target then
-		frame.ufcgStatus = CG.Status:Create(frame)
+		frame.ufcgStatus = CG.Status:Create(frame, frame.uf)
 		CG.Status:Apply(frame, frame.ufcgStatus, CG.Config:Resolved().indicators, true)
 		frame.ufcgSlots = CG.Slots:New(frame, CG:SlotConfig(frame.uf))
 		frame.ufcgSlots:SetCombatDeferred(true)

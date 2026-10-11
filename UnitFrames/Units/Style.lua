@@ -122,6 +122,7 @@ end
 -- Points oUF elements and tags at the current rows, portrait and castbar.
 function Units:Bind(frame)
 	local uf = frame.uf
+	SetElement(frame, "UF_Resting", uf.spec.resting and uf.resolved.resting.enabled and uf or nil)
 	for key, row, cfg in uf:Rows() do
 		local widget, rebind
 		if cfg.enabled then widget, rebind = widgets[key](row) end

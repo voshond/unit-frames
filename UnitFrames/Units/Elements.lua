@@ -46,6 +46,26 @@ end
 
 oUF:AddElement("UF_Experience", UpdateExperience, EnableExperience, DisableExperience)
 
+local function UpdateResting(self)
+	self.UF_Resting:SetResting(self.__unit == "player" and IsResting())
+end
+
+local function EnableResting(self)
+	if not self.UF_Resting then return end
+	self:RegisterEvent("PLAYER_UPDATE_RESTING", UpdateResting, true)
+	self:RegisterEvent("PLAYER_ENTERING_WORLD", UpdateResting, true)
+	UpdateResting(self)
+	return true
+end
+
+local function DisableResting(self)
+	self:UnregisterEvent("PLAYER_UPDATE_RESTING", UpdateResting)
+	self:UnregisterEvent("PLAYER_ENTERING_WORLD", UpdateResting)
+	self.UF_Resting:SetResting(false)
+end
+
+oUF:AddElement("UF_Resting", UpdateResting, EnableResting, DisableResting)
+
 --[[
 UF_Castbar: drives our Castbar component (frame.UF_Castbar = component) from
 the cast events. Cast info may be secret: it goes straight into the component,
