@@ -9,6 +9,9 @@
 
 Workbench.lua
 Data.lua
+PreviewSession.lua
+View.lua
+Sections.lua
 
 Entries\Units.lua
 Entries\Bars.lua

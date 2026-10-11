@@ -7,9 +7,17 @@ CG.Preview = Preview
 function Preview:New(parent)
 	local result = setmetatable({ frame = CreateFrame("Frame", nil, parent), cells = {}, labels = {}, time = 0 }, self)
 	result.background = CreateFrame("Frame", nil, result.frame, "BackdropTemplate")
+	result.frame:SetScript("OnSizeChanged", function()
+		if result.onSizeChanged then result.onSizeChanged() end
+	end)
 	CG.previews[result] = true
 	result:Apply()
 	return result
+end
+
+-- The preview owns its script. Stage fitting subscribes without replacing it.
+function Preview:SetSizeChangedCallback(callback)
+	self.onSizeChanged = callback
 end
 
 function Preview:CreateCell()
@@ -209,6 +217,7 @@ end
 function Preview:Release()
 	if self.released then return end
 	self.released = true
+	self.onSizeChanged = nil
 	self.frame:SetScript("OnSizeChanged", nil)
 	CG.previews[self] = nil
 	self.frame:Hide()

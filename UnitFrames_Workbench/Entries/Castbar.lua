@@ -60,6 +60,7 @@ Workbench:Register({
 		{ name = "Large", size = { 300, 30 }, config = { castbar = { name = { size = 13 }, time = { size = 13 } } } },
 	},
 	data = {
+		tickStatic = true, -- test casts finish and restore the frozen preview
 		schema = {
 			{ key = "source", type = "select", label = "Source", default = "static", values = {
 				{ "static", "Static preview" },

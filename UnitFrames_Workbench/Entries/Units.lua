@@ -23,6 +23,9 @@ local function UnitHandle(stage, unit)
 		Release = function()
 			uf:Release()
 		end,
+		SetThemeManaged = function(_, managed)
+			uf:SetThemeManaged(managed)
+		end,
 	}
 end
 
@@ -39,18 +42,13 @@ local function UnitStyleTarget(unit)
 		return {
 			schema = schema,
 			invoke = function(path)
-				if path == "copyPlayerSettings" and UF.Units:CopyPlayerSettings(unit) then
-					handle:Apply()
-					Workbench:UpdateData()
-				end
+				if path == "copyPlayerSettings" then UF.Units:CopyPlayerSettings(unit) end
 			end,
 			get = function(path)
 				return UF.Util.GetPath(UF.Config:GetUnitConfig(unit), path)
 			end,
 			set = function(path, value)
 				UF.Config:SetUnitValue(unit, path, value) -- also refreshes the live frame
-				handle:Apply()
-				Workbench:UpdateData()
 			end,
 			resolved = function()
 				return handle:Resolved()
@@ -141,6 +139,7 @@ local function RegisterUnit(unit)
 	end
 	Workbench:Register({
 		id = "unit." .. unit,
+		configKey = unit,
 		category = "Unit frames",
 		name = def.label,
 		autoSize = true,
