@@ -31,6 +31,15 @@ Entries register themselves:
                                      (a table entry only matches when the first payload equals `match`)
     reset = function() end,          optional, what the "Reset" button does instead of clearing the config
   })
+
+create returns a handle:
+  frame                          the stage frame to centre and size
+  schema                         style schema (unless styleTarget replaces it)
+  Apply(config), Resolved(), Release()
+  parts                          optional, components by key for data hooks
+  SetThemeManaged(managed)       optional; the session then restyles on ThemeChanged
+  SetSizeChangedCallback(fn)     optional, with fitToStage: ordinary sizes only
+Workbench.Composite and Workbench.ComponentHandle build the common ones.
 ]]
 local Workbench = {}
 UF.Workbench = Workbench
@@ -88,6 +97,20 @@ function Workbench.Composite(parts, frame)
 	end
 
 	return handle
+end
+
+-- One component configured from elsewhere (e.g. a saved unit style), so the
+-- entry's own config is ignored.
+function Workbench.ComponentHandle(key, component, getConfig)
+	return {
+		frame = component:GetFrame(),
+		parts = { [key] = component },
+		schema = component:GetSchema(),
+		Apply = function() component:Apply(getConfig()) end,
+		Resolved = function() return component.resolved end,
+		Release = function() component:Release() end,
+		SetThemeManaged = function(_, managed) component:SetThemeManaged(managed) end,
+	}
 end
 
 -- Saved state ---------------------------------------------------------------

@@ -23,11 +23,8 @@ function Checkbox:OnCreate(parent, opts)
 	self.check:SetPoint("CENTER")
 	self.check:SetSize(18, 18)
 
-	self.label = Skin.FontString(frame)
-	self.label:SetPoint("LEFT", box, "RIGHT", 6, 0)
+	self:CreateLabel(frame, opts.label):SetPoint("LEFT", box, "RIGHT", 6, 0)
 	self.label:SetPoint("RIGHT")
-	self.label:SetJustifyH("LEFT")
-	self.label:SetText(opts.label or "")
 
 	frame:SetScript("OnClick", function()
 		self:SetValue(not self.value)
@@ -52,8 +49,4 @@ end
 
 function Checkbox:GetValue()
 	return self.value
-end
-
-function Checkbox:SetLabelColor(r, g, b)
-	self.label:SetTextColor(r, g, b)
 end

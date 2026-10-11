@@ -17,10 +17,7 @@ function Slider:OnCreate(parent, opts)
 	frame:SetHeight(36)
 	self.step = opts.step or 1
 
-	self.label = Skin.FontString(frame)
-	self.label:SetPoint("TOPLEFT")
-	self.label:SetJustifyH("LEFT")
-	self.label:SetText(opts.label or "")
+	self:CreateLabel(frame, opts.label):SetPoint("TOPLEFT")
 	ns.Widget.AttachTooltip(frame, opts.label, opts.tooltip)
 	frame:EnableMouse(true)
 
@@ -101,8 +98,4 @@ end
 
 function Slider:SetRange(min, max)
 	self.slider:SetMinMaxValues(min, max)
-end
-
-function Slider:SetLabelColor(r, g, b)
-	self.label:SetTextColor(r, g, b)
 end

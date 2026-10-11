@@ -60,6 +60,19 @@ function Widget:IsShown()
 	return self.frame:IsShown()
 end
 
+-- The control's left-aligned label; the caller anchors it. The Inspector
+-- tints labels of overridden options through SetLabelColor.
+function Widget:CreateLabel(parent, text)
+	self.label = ns.Skin.FontString(parent)
+	self.label:SetJustifyH("LEFT")
+	self.label:SetText(text or "")
+	return self.label
+end
+
+function Widget:SetLabelColor(r, g, b)
+	self.label:SetTextColor(r, g, b)
+end
+
 -- Shared tooltip helper for controls with opts.tooltip.
 function Widget.AttachTooltip(frame, title, text)
 	if not text then

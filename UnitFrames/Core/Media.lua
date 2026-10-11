@@ -33,11 +33,12 @@ function Media:Outline(flags)
 	return flags
 end
 
--- Ordinary FontStrings may use SetFont; menu FontStrings use GetFontObject.
-function Media:ApplyFont(fontString, key, size, flags)
+-- Sets a font on a FontString or Font object, falling back to the default
+-- font. Menu FontStrings forbid SetFont; give them GetFontObject instead.
+function Media:ApplyFont(target, key, size, flags)
 	local outline = self:Outline(flags)
-	if not fontString:SetFont(self:Fetch("font", key), size, outline) then
-		fontString:SetFont(self:Fetch("font", LSM:GetDefault("font")), size, outline)
+	if not target:SetFont(self:Fetch("font", key), size, outline) then
+		target:SetFont(self:Fetch("font", LSM:GetDefault("font")), size, outline)
 	end
 end
 
@@ -66,9 +67,7 @@ function Media:GetFontObject(key, size)
 	if not font then
 		fontCount = fontCount + 1
 		font = CreateFont("UnitFramesFont" .. fontCount)
-		if not font:SetFont(self:Fetch("font", key), size, "") then
-			font:SetFont(self:Fetch("font", LSM:GetDefault("font")), size, "")
-		end
+		self:ApplyFont(font, key, size, "")
 		fontObjects[id] = font
 	end
 	return font

@@ -37,10 +37,6 @@ local function NotStatic(d)
 	return d.source ~= "static"
 end
 
-local function NotFake(d)
-	return Data.IsLive(d)
-end
-
 Workbench:Register({
 	id = "castbar",
 	category = "Bars",
@@ -69,13 +65,13 @@ Workbench:Register({
 				{ "target", "Live: target" },
 				{ "focus", "Live: focus" },
 			} },
-			{ key = "spell", type = "select", label = "Spell", values = Data.SpellValues, default = 1, hidden = NotFake },
-			{ key = "notInterruptible", type = "toggle", label = "Not interruptible", default = false, hidden = NotFake },
+			{ key = "spell", type = "select", label = "Spell", values = Data.SpellValues, default = 1, hidden = Data.IsLive },
+			{ key = "notInterruptible", type = "toggle", label = "Not interruptible", default = false, hidden = Data.IsLive },
 			{ key = "progress", type = "range", label = "Progress %", min = 0, max = 100, step = 1, default = 60,
 				hidden = NotStatic },
-			{ key = "start", type = "action", label = "Start cast", hidden = NotFake },
-			{ key = "interrupt", type = "action", label = "Interrupt", hidden = NotFake },
-			{ key = "fail", type = "action", label = "Fail", hidden = NotFake },
+			{ key = "start", type = "action", label = "Start cast", hidden = Data.IsLive },
+			{ key = "interrupt", type = "action", label = "Interrupt", hidden = Data.IsLive },
+			{ key = "fail", type = "action", label = "Fail", hidden = Data.IsLive },
 		},
 		actions = {
 			start = function(handle, d, es)

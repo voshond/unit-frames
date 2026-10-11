@@ -1,6 +1,6 @@
 local _, wb = ...
 local UF = UnitFrames
-local Workbench, Data = wb.Workbench, wb.Data
+local Workbench = wb.Workbench
 local C = UF.Components
 
 -- Backdrop ------------------------------------------------------------------
@@ -59,13 +59,14 @@ Workbench:Register({
 				text:SetText(d.text)
 			end
 		end,
-		-- Live values may be secret: they go straight into SetText.
+		-- Live values may be secret: they go straight into SetText
+		-- (AbbreviateNumbers returns a secret string for a secret number).
 		tick = function(handle, d)
 			local text = handle.parts.text
 			if d.source == "playerName" then
 				text:SetText(UnitName("player"))
 			elseif d.source == "playerHealth" then
-				text:SetText(Data.Short(UnitHealth("player")))
+				text:SetText(AbbreviateNumbers(UnitHealth("player")))
 			end
 		end,
 	},

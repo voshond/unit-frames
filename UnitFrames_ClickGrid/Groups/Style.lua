@@ -33,12 +33,6 @@ function CG:Measure()
 	end
 end
 
-local function Tooltip(frame)
-	if not frame.__unit then return end
-	GameTooltip_SetDefaultAnchor(GameTooltip, frame)
-	if GameTooltip:SetUnit(frame.__unit) then GameTooltip:Show() end
-end
-
 oUF:RegisterStyle(CG.STYLE, function(frame)
 	local target = frame:GetAttribute("ufcg-target")
 	local kind = target and "target" or "member"
@@ -47,8 +41,8 @@ oUF:RegisterStyle(CG.STYLE, function(frame)
 	frame.uf:SetCombatDeferred(true)
 	frame.uf:SetThemeManaged(true)
 	frame:RegisterForClicks("AnyUp")
-	frame:HookScript("OnEnter", Tooltip)
-	frame:HookScript("OnLeave", function() GameTooltip:Hide() end)
+	frame:HookScript("OnEnter", UF.Units.ShowTooltip)
+	frame:HookScript("OnLeave", UF.Units.HideTooltip)
 	UF.Units:Bind(frame)
 	if not target then
 		frame.ufcgStatus, frame.ufcgSlots = CG:AddMemberExtras(frame.uf, frame, true)

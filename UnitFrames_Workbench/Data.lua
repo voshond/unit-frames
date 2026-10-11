@@ -26,10 +26,6 @@ function Data.IsLive(data)
 	return Data.LIVE_UNITS[data.source] == true
 end
 
-function Data.HiddenWhenLive(data)
-	return Data.IsLive(data)
-end
-
 function Data.Classes()
 	local values = {}
 	for token in pairs(RAID_CLASS_COLORS) do
@@ -49,11 +45,6 @@ Data.POWER_TYPES = {
 	{ "FOCUS", "Focus" },
 	{ "RUNIC_POWER", "Runic power" },
 }
-
--- AbbreviateNumbers accepts secret numbers (it returns a secret string).
-function Data.Short(value)
-	return AbbreviateNumbers(value)
-end
 
 -- Smooth 0..1 wave for animated sources.
 function Data.Wave(time, speed, offset)

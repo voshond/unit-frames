@@ -75,8 +75,8 @@ function Castbar:OnCreate(parent)
 	self.icon = self.frame:CreateTexture(nil, "ARTWORK")
 	self.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
-	self.barComp = self:Own(Bar:New(self.frame, {}, { colorInherit = "colors.cast" }))
-	local textParent = self.barComp:GetTextParent()
+	self.bar = self:Own(Bar:New(self.frame, {}, { colorInherit = "colors.cast" }))
+	local textParent = self.bar:GetTextParent()
 	self.nameText = self:Own(Text:New(textParent, {}))
 	self.timeText = self:Own(Text:New(textParent, {}))
 
@@ -98,7 +98,7 @@ end
 function Castbar:OnApply(cfg)
 	Backdrop.ApplyTo(self.frame, cfg.border)
 	self:UpdateBacking()
-	self:ApplyChild(self.barComp, "bar")
+	self:ApplyChild(self.bar, "bar")
 	self:ApplyChild(self.nameText, "name")
 	self:ApplyChild(self.timeText, "time")
 	self.fadeAlpha:SetStartDelay(cfg.holdTime)
@@ -114,7 +114,7 @@ function Castbar:LayoutParts()
 	-- Icon and bar share the area inside the border.
 	local pad = cfg.border.enabled and cfg.border.padding or 0
 	local size = math.max(self.frame:GetHeight() - 2 * pad, 1)
-	local icon, bar, frame = self.icon, self.barComp, self.frame
+	local icon, bar, frame = self.icon, self.bar, self.frame
 	icon:ClearAllPoints()
 	bar:ClearAllPoints()
 	if cfg.icon.enabled then
@@ -180,12 +180,12 @@ function Castbar:ApplyCastColor(info)
 	local colors = self.resolved.colors
 	local base = info.channel and colors.channel or colors.cast
 	if type(info.notInterruptible) == "nil" or not ns.Caps.curves then
-		self.barComp:SetColor(Util.UnpackColor(base))
+		self.bar:SetColor(Util.UnpackColor(base))
 		return
 	end
 	local color = C_CurveUtil.EvaluateColorFromBoolean(info.notInterruptible,
 		CreateColor(Util.UnpackColor(colors.nonInterruptible)), CreateColor(Util.UnpackColor(base)))
-	self.barComp:SetColor(color:GetRGBA())
+	self.bar:SetColor(color:GetRGBA())
 end
 
 function Castbar:ShowCast(info)
@@ -204,7 +204,7 @@ end
 function Castbar:Start(info)
 	self:ShowCast(info)
 	local direction = info.channel and Enum.StatusBarTimerDirection.RemainingTime or Enum.StatusBarTimerDirection.ElapsedTime
-	self.barComp:SetTimerDuration(info.duration, direction)
+	self.bar:SetTimerDuration(info.duration, direction)
 	if not self.timeBinding then
 		self.timeBinding = C_DurationUtil.CreateDurationTextBinding()
 		self.timeBinding:SetFormatter(TimeFormatter())
@@ -220,14 +220,14 @@ function Castbar:Stop(result, text)
 	end
 	self.timeText:SetText("")
 	-- Setting a plain value ends the timer-driven fill (same as oUF).
-	self.barComp:SetRange(0, 1)
-	self.barComp:SetValue(1)
+	self.bar:SetRange(0, 1)
+	self.bar:SetValue(1)
 	local colors = self.resolved.colors
 	if result == "failed" or result == "interrupted" then
-		self.barComp:SetColor(Util.UnpackColor(colors.failed))
+		self.bar:SetColor(Util.UnpackColor(colors.failed))
 		self.nameText:SetText(text or (result == "interrupted" and (INTERRUPTED or "Interrupted") or (FAILED or "Failed")))
 	else
-		self.barComp:SetColor(Util.UnpackColor(colors.success))
+		self.bar:SetColor(Util.UnpackColor(colors.success))
 	end
 	self.fade:Play()
 end
@@ -237,11 +237,11 @@ function Castbar:Preview(info, progress, timeText)
 		self.timeBinding:SetEnabled(false)
 	end
 	self:ShowCast(info)
-	self.barComp:SetRange(0, 1)
-	self.barComp:SetValue(progress)
+	self.bar:SetRange(0, 1)
+	self.bar:SetValue(progress)
 	self.timeText:SetText(timeText or "")
 end
 
 function Castbar:GetBar()
-	return self.barComp
+	return self.bar
 end

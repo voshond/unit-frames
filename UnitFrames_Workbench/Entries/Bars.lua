@@ -16,7 +16,7 @@ end
 
 local function Range(key, label, default, max, step)
 	return { key = key, type = "range", label = label, min = 0, max = max or 100, step = step or 1, default = default,
-		hidden = Data.HiddenWhenLive }
+		hidden = Data.IsLive }
 end
 
 local function NoUnit(row, unit)
@@ -103,7 +103,7 @@ Workbench:Register({
 			{ key = "colorMode", type = "select", label = "Colour", default = "class", values = UF.Units.HEALTH_COLOR_MODES },
 			{ key = "class", type = "select", label = "Class", values = Data.Classes, default = "PALADIN",
 				hidden = function(d) return d.colorMode ~= "class" or Data.IsLive(d) end },
-			{ key = "name", type = "text", label = "Name", default = "Uther", hidden = Data.HiddenWhenLive },
+			{ key = "name", type = "text", label = "Name", default = "Uther", hidden = Data.IsLive },
 		},
 		update = function(handle, d)
 			if d.source == "static" then
@@ -164,7 +164,7 @@ Workbench:Register({
 		schema = {
 			{ key = "source", type = "select", label = "Source", values = Data.Sources(true), default = "static" },
 			{ key = "powerType", type = "select", label = "Power type", values = Data.POWER_TYPES, default = "MANA",
-				hidden = Data.HiddenWhenLive },
+				hidden = Data.IsLive },
 			Range("max", "Max power", 12000, 100000, 100),
 			Range("power", "Power %", 70),
 			Range("cost", "Spell cost %", 15),

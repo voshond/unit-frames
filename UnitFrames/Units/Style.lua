@@ -183,16 +183,17 @@ function Units:CopyPlayerSettings(unit)
 	return ns.Config:UnitStore(unit):Replace(CopySettings(schema, source, overrides, defaults))
 end
 
--- Unit tooltip. Blizzard's UnitFrame_OnEnter reads self.unit, which oUF frames
--- don't have; oUF keeps the current unit in __unit.
-local function OnEnter(self)
-	GameTooltip_SetDefaultAnchor(GameTooltip, self)
-	if GameTooltip:SetUnit(self.__unit) then
+-- Unit tooltip hooks for oUF frames. Blizzard's UnitFrame_OnEnter reads
+-- self.unit, which oUF frames don't have; oUF keeps the current unit in __unit.
+function Units.ShowTooltip(frame)
+	if not frame.__unit then return end
+	GameTooltip_SetDefaultAnchor(GameTooltip, frame)
+	if GameTooltip:SetUnit(frame.__unit) then
 		GameTooltip:Show()
 	end
 end
 
-local function OnLeave()
+function Units.HideTooltip()
 	GameTooltip:Hide()
 end
 
@@ -200,8 +201,8 @@ oUF:RegisterStyle(Units.STYLE, function(frame, unit)
 	frame.uf = Units:CreateFrame(unit, UIParent, frame)
 	frame.uf:SetThemeManaged(true)
 	frame:RegisterForClicks("AnyUp")
-	frame:HookScript("OnEnter", OnEnter)
-	frame:HookScript("OnLeave", OnLeave)
+	frame:HookScript("OnEnter", Units.ShowTooltip)
+	frame:HookScript("OnLeave", Units.HideTooltip)
 	Units:Bind(frame)
 end)
 

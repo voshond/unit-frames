@@ -9,24 +9,9 @@ the preview and on the live frame at the same time.
 ]]
 
 local function UnitHandle(stage, unit)
-	local uf = UF.Units:CreateFrame(unit, stage)
-	return {
-		frame = uf:GetFrame(),
-		parts = { uf = uf },
-		schema = uf:GetSchema(),
-		Apply = function()
-			uf:Apply(UF.Config:GetUnitConfig(unit))
-		end,
-		Resolved = function()
-			return uf.resolved
-		end,
-		Release = function()
-			uf:Release()
-		end,
-		SetThemeManaged = function(_, managed)
-			uf:SetThemeManaged(managed)
-		end,
-	}
+	return Workbench.ComponentHandle("uf", UF.Units:CreateFrame(unit, stage), function()
+		return UF.Config:GetUnitConfig(unit)
+	end)
 end
 
 local function UnitStyleTarget(unit)
@@ -90,6 +75,12 @@ end
 
 local function RegisterUnit(unit)
 	local def, sample = UF.Units:GetDefinition(unit), UF.Units:GetSample(unit)
+	-- Animated health waves; static uses the Data tab's health.
+	local function ShowSample(handle, d, es)
+		local animated = d.source == "animated"
+		UF.Units:ShowSample(handle.parts.uf, Values(unit, d,
+			animated and 10 + 85 * wb.Data.Wave(es.time, 0.7) or d.health, animated and es.time or nil))
+	end
 	local schema = {
 		{ key = "source", type = "select", label = "Source", default = "static", values = {
 			{ "static", "Static (sliders)" }, { "animated", "Animated" },
@@ -143,15 +134,9 @@ local function RegisterUnit(unit)
 		reset = function() UF.Config:UnitStore(unit):Reset() end,
 		data = {
 			schema = schema,
-			update = function(handle, d, es)
-				local animated = d.source == "animated"
-				UF.Units:ShowSample(handle.parts.uf, Values(unit, d,
-					animated and 10 + 85 * wb.Data.Wave(es.time, 0.7) or d.health, animated and es.time or nil))
-			end,
+			update = ShowSample,
 			tick = function(handle, d, es)
-				if d.source == "animated" then
-					UF.Units:ShowSample(handle.parts.uf, Values(unit, d, 10 + 85 * wb.Data.Wave(es.time, 0.7), es.time))
-				end
+				if d.source == "animated" then ShowSample(handle, d, es) end
 			end,
 		},
 	})

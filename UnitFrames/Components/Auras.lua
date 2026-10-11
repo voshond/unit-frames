@@ -78,7 +78,8 @@ function Auras:OnCreate(parent)
 end
 
 function Auras:InitButton(button, kind, preview)
-	AuraIcon.Create(button, kind, preview, self.spec)
+	AuraIcon.Create(button, kind, preview, { harmful = kind == "debuffs",
+		cancelBuffs = self.spec.cancelBuffs, clickThrough = self.spec.clickThrough })
 	if self.resolved then self:StyleButton(button) end
 end
 
