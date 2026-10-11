@@ -91,6 +91,34 @@ describe("Bar", function()
 		assert.equals(max, segMax)
 	end)
 
+	it("sizes the spark and segments without arithmetic on secret dimensions", function()
+		local bar = C.Bar:New(parent, {}, { segments = HEALTH_SEGMENTS })
+		local width, height = Secret(200), Secret(20)
+		for _, orientation in ipairs({ "HORIZONTAL", "VERTICAL" }) do
+			for _, reverse in ipairs({ false, true }) do
+				for _, spark in ipairs({ false, true }) do
+					assert.has_no_error(function()
+						bar:Apply({ orientation = orientation, reverseFill = reverse, spark = spark })
+						bar.bar:SetSize(width, height)
+						bar.bar:RunScript("OnSizeChanged", width, height)
+						bar:Apply()
+					end)
+					local horizontal = orientation == "HORIZONTAL"
+					assert.equals(horizontal and 6 or width, bar.spark:GetWidth())
+					assert.equals(horizontal and height or 6, bar.spark:GetHeight())
+					assert.equals(2, bar.spark:GetScale())
+					assert.equals(spark, bar.spark:IsShown())
+					assert.same({ "CENTER", bar.bar:GetStatusBarTexture(), C.Bar.LAYOUT[orientation][reverse].spark, 0, 0 },
+						bar.spark:GetAnchor("CENTER"))
+					for _, seg in ipairs(bar.segments) do
+						assert.equals(horizontal and width or height,
+							horizontal and seg.bar:GetWidth() or seg.bar:GetHeight())
+					end
+				end
+			end
+		end
+	end)
+
 	it("uses the client's smoothing when enabled", function()
 		local bar = C.Bar:New(parent, { smooth = true })
 		bar:SetValue(5)
@@ -264,6 +292,16 @@ describe("Castbar", function()
 		castbar:Apply({ bar = { spark = false } })
 		assert.is_false(castbar:GetBar().resolved.spark)
 		assert.is_false(castbar:GetBar().resolved.smooth, "other defaults stay")
+	end)
+
+	it("refreshes a castbar with secret status bar dimensions", function()
+		local castbar = NewCastbar()
+		assert.has_no_error(function()
+			castbar:GetBar().bar:SetSize(Secret(180), Secret(14))
+			castbar:Apply()
+			castbar:Apply({ bar = { spark = false } })
+			castbar:Apply({ bar = { spark = true } })
+		end)
 	end)
 end)
 

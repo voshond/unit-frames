@@ -168,6 +168,9 @@ function Bar:OnCreate(parent, spec)
 	self.spark = self.overlay:CreateTexture(nil, "OVERLAY")
 	self.spark:SetTexture(SPARK_TEXTURE)
 	self.spark:SetBlendMode("ADD")
+	-- Native scaling doubles the cross-axis size without Lua arithmetic on
+	-- bar dimensions, which can be secret. Six units become twelve on screen.
+	self.spark:SetScale(2)
 
 	self.bar:SetScript("OnSizeChanged", function(_, width, height)
 		self:SizeParts(width, height)
@@ -248,9 +251,9 @@ function Bar:SizeParts(width, height)
 		end
 	end
 	if horizontal then
-		self.spark:SetSize(12, height * 2)
+		self.spark:SetSize(6, height)
 	else
-		self.spark:SetSize(width * 2, 12)
+		self.spark:SetSize(width, 6)
 	end
 end
 

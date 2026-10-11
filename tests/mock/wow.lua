@@ -137,6 +137,8 @@ function Methods:SetHeight(height) Resize(self, self.__state.width, height) end
 function Methods:GetSize() return self.__state.width, self.__state.height end
 function Methods:GetWidth() return self.__state.width end
 function Methods:GetHeight() return self.__state.height end
+function Methods:SetScale(scale) self.__state.scale = scale end
+function Methods:GetScale() return self.__state.scale or 1 end
 
 function Methods:SetPoint(point, relativeTo, relativePoint, x, y)
 	if type(relativeTo) == "number" then
