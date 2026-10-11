@@ -148,11 +148,12 @@ function Units:CreateFromDefinition(def, parent, config, frame)
 	return ns.Components.UnitFrame:New(parent, config or {}, self:GetSpec(def, frame))
 end
 
+-- Every unit offers a raid target icon, with default settings unless defined.
 function Units:GetSpec(def, frame)
-	return {
-		frame = frame, rows = def.rows, width = def.width, portrait = def.portrait, castbar = def.castbar,
-		auras = def.auras, raidTarget = def.raidTarget or { defaults = {} }, resting = def.resting,
-	}
+	local spec = { frame = frame, rows = def.rows, width = def.width, resting = def.resting }
+	for _, part in ipairs(ns.Components.UnitFrame.PARTS) do spec[part.key] = def[part.key] end
+	spec.raidTarget = spec.raidTarget or { defaults = {} }
+	return spec
 end
 
 -- Frame-free style schema of a unit (cached; schemas are not mutated).

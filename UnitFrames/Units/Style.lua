@@ -119,7 +119,16 @@ local function TagRow(frame, row, rowEnabled)
 	end
 end
 
--- Points oUF elements and tags at the current rows, portrait and castbar.
+-- oUF element per optional part (UnitFrame.PARTS) and the widget it drives;
+-- without `widget` the element drives the part component itself.
+local PART_ELEMENTS = {
+	portrait = { element = "Portrait", widget = function(portrait) return portrait:GetWidget() end },
+	castbar = { element = "UF_Castbar" },
+	auras = { element = "UF_Auras" },
+	raidTarget = { element = "RaidTargetIndicator", widget = function(marker) return marker:GetWidget() end },
+}
+
+-- Points oUF elements and tags at the current rows and parts.
 function Units:Bind(frame)
 	local uf = frame.uf
 	SetElement(frame, "UF_Resting", uf.spec.resting and uf.resolved.resting.enabled and uf or nil)
@@ -130,21 +139,10 @@ function Units:Bind(frame)
 		SetElement(frame, ELEMENTS[key], widget, rebind)
 		TagRow(frame, row, cfg.enabled)
 	end
-	local portrait = uf:GetPortrait()
-	if portrait then
-		SetElement(frame, "Portrait", portrait:IsEnabled() and portrait:GetWidget() or nil)
-	end
-	local castbar = uf:GetCastbar()
-	if castbar then
-		SetElement(frame, "UF_Castbar", castbar:IsEnabled() and castbar or nil)
-	end
-	local auras = uf:GetAuras()
-	if auras then
-		SetElement(frame, "UF_Auras", auras:IsEnabled() and auras or nil)
-	end
-	local raidTarget = uf:GetRaidTarget()
-	if raidTarget then
-		SetElement(frame, "RaidTargetIndicator", raidTarget:IsEnabled() and raidTarget:GetWidget() or nil)
+	for key, part in uf:Parts() do
+		local binding = PART_ELEMENTS[key]
+		local widget = part:IsEnabled() and (binding.widget and binding.widget(part) or part) or nil
+		SetElement(frame, binding.element, widget)
 	end
 	local range = uf.resolved.range
 	SetElement(frame, "UF_Range", range.enabled and ns.Caps.booleanAlpha and uf or nil,

@@ -211,9 +211,29 @@ function EditMode:HookSnapping(frame, key)
 	end)
 end
 
--- A setting whose value lives at `path` in the unit config. Setting it back
--- to the default removes the change.
-local function UnitSetting(unit, path, setting)
+-- Optional parts offered in the quick settings: { part key, option path, name }.
+local PART_SETTINGS = {
+	{ "portrait", "portrait.enabled", "Show portrait" },
+	{ "auras", "auras.enabled", "Show buffs & debuffs" },
+	{ "castbar", "castbar.placement", "Castbar" },
+}
+
+-- A quick setting built from the unit's schema descriptor at `path`. Its value
+-- lives in the unit config; setting it back to the default removes the change.
+local function UnitSetting(unit, path, name)
+	local schema = ns.Units:GetSchema(unit)
+	local opt = ns.Schema.Find(schema, path)
+	local setting = { name = name, default = ns.Util.GetPath(ns.Schema.Defaults(schema), path) }
+	if opt.type == "range" then
+		setting.kind, setting.minValue, setting.maxValue, setting.valueStep = LEM.SettingType.Slider, opt.min, opt.max, opt.step
+	elseif opt.type == "toggle" then
+		setting.kind = LEM.SettingType.Checkbox
+	else
+		setting.kind, setting.values = LEM.SettingType.Dropdown, {}
+		for _, entry in ipairs(ns.Schema.GetValues(opt)) do
+			setting.values[#setting.values + 1] = { value = entry[1], text = entry[2] }
+		end
+	end
 	setting.get = function()
 		return ns.Util.GetPath(ns.Units.frames[unit].uf.resolved, path)
 	end
@@ -228,35 +248,12 @@ end
 
 local function UnitSettings(unit)
 	local def = ns.Units.definitions[unit]
-	local settings = {
-		UnitSetting(unit, "width", {
-			kind = LEM.SettingType.Slider, name = "Width", default = def.width,
-			minValue = 60, maxValue = 600, valueStep = 1,
-		}),
-	}
+	local settings = { UnitSetting(unit, "width", "Width") }
 	for _, row in ipairs(def.rows) do
-		settings[#settings + 1] = UnitSetting(unit, row.key .. ".enabled", {
-			kind = LEM.SettingType.Checkbox, name = "Show " .. row.label:lower(), default = true,
-		})
+		settings[#settings + 1] = UnitSetting(unit, row.key .. ".enabled", "Show " .. row.label:lower())
 	end
-	if def.portrait then
-		settings[#settings + 1] = UnitSetting(unit, "portrait.enabled", {
-			kind = LEM.SettingType.Checkbox, name = "Show portrait", default = def.portrait.defaults.enabled,
-		})
-	end
-	if def.auras then
-		settings[#settings + 1] = UnitSetting(unit, "auras.enabled", {
-			kind = LEM.SettingType.Checkbox, name = "Show buffs & debuffs", default = def.auras.defaults.enabled ~= false,
-		})
-	end
-	if def.castbar then
-		local values = {}
-		for _, entry in ipairs(ns.Components.UnitFrame.CASTBAR_PLACEMENTS) do
-			values[#values + 1] = { value = entry[1], text = entry[2] }
-		end
-		settings[#settings + 1] = UnitSetting(unit, "castbar.placement", {
-			kind = LEM.SettingType.Dropdown, name = "Castbar", default = def.castbar.defaults.placement, values = values,
-		})
+	for _, entry in ipairs(PART_SETTINGS) do
+		if def[entry[1]] then settings[#settings + 1] = UnitSetting(unit, entry[2], entry[3]) end
 	end
 	return settings
 end

@@ -27,10 +27,9 @@ spec:
               defaults  row option defaults, e.g. { height = 24, right = { size = 9 } }
               options   extra row options (schema entries), e.g. health colour mode
             }
-  portrait  { defaults } to offer a portrait
-  castbar   { defaults } to offer a castbar
-  auras     { defaults, cancelBuffs } to offer buffs/debuffs
-  raidTarget  { defaults } to offer a raid target icon
+  portrait, castbar, auras, raidTarget
+            { defaults, ... } to offer that part (see UnitFrame.PARTS;
+            auras also take cancelBuffs and clickThrough)
 ]]
 local UnitFrame = ns.Component:Extend("UnitFrame")
 
@@ -60,6 +59,66 @@ UnitFrame.PORTRAIT_ROW_SPANS = {
 	{ 4, "4 rows" },
 }
 
+-- A component's schema with `extra` options after "enabled" (or at the
+-- top), leaving out keys listed in `skip`.
+local function GroupSchema(options, extra, skip)
+	return ns.Schema.Without(ns.Schema.Insert(options, "enabled", extra), skip)
+end
+
+local function HeightOption(default, hidden)
+	return { key = "height", type = "range", label = "Height", min = 2, max = 100, step = 1, default = default or 20,
+		hidden = hidden }
+end
+
+--[[
+Optional parts, declared once. A unit offers a part when its spec has the
+key ({ defaults, ... }); the order is creation, apply, binding and frame-level
+order. Every part is a child component stored as self[key].
+  schema(partSpec)     the part's option group (beforeRows: listed above the rows)
+  create(frame, ps)    builds the component
+  apply(part, cfg)     optional, after the part's config is applied
+]]
+UnitFrame.PARTS = {
+	{ key = "portrait", label = "Portrait", beforeRows = true,
+		schema = function()
+			return GroupSchema(Portrait.schema, {
+				{ key = "position", type = "select", label = "Side", values = UnitFrame.SIDES, default = "LEFT" },
+				{ key = "rowSpan", type = "select", label = "Rows to span", values = UnitFrame.PORTRAIT_ROW_SPANS, default = 0,
+					tooltip = "Count visible rows from the top, including a castbar in its own row. Disabled rows are skipped. Rows below the portrait use the full width. All rows follows the whole frame." },
+				{ key = "size", type = "range", label = "Width", min = 0, max = 200, step = 1, default = 0,
+					tooltip = "0 = square, as wide as the rows the portrait spans are tall." },
+				{ key = "gap", type = "range", label = "Gap to the bars", min = 0, max = 20, step = 1, default = 2 },
+			})
+		end,
+		create = function(frame) return Portrait:New(frame, {}) end },
+	{ key = "castbar", label = "Castbar",
+		schema = function()
+			local function OverHealth(cfg)
+				return cfg.placement == "health" or cfg.placement == "off"
+			end
+			return GroupSchema(Castbar.BuildSchema(), {
+				{ key = "placement", type = "select", label = "Placement", values = UnitFrame.CASTBAR_PLACEMENTS,
+					default = "bottom" },
+				HeightOption(18, OverHealth),
+			}, { enabled = true })
+		end,
+		create = function(frame)
+			local castbar = Castbar:New(frame, {})
+			castbar:GetFrame():Hide()
+			return castbar
+		end,
+		-- Placement replaces the on/off toggle.
+		apply = function(castbar, cfg) castbar:SetEnabled(cfg.placement ~= "off") end },
+	{ key = "auras", label = "Buffs & debuffs",
+		schema = function() return Auras.schema end,
+		create = function(frame, partSpec)
+			return Auras:New(frame, {}, { cancelBuffs = partSpec.cancelBuffs, clickThrough = partSpec.clickThrough })
+		end },
+	{ key = "raidTarget", label = "Raid target icon",
+		schema = function() return RaidTarget.schema end,
+		create = function(frame) return RaidTarget:New(frame, {}) end },
+}
+
 function UnitFrame:OnCreate(parent, spec)
 	self.frame = spec.frame or CreateFrame("Frame", nil, parent)
 	self.rangeInRange, self.rangeChecked = true, false
@@ -75,30 +134,14 @@ function UnitFrame:OnCreate(parent, spec)
 		self.rows[#self.rows + 1] = { def = def, component = row }
 		self.rowsByKey[def.key] = row
 	end
-	if spec.portrait then
-		self.portrait = self:Own(Portrait:New(self.frame, {}))
+	self.parts = {}
+	for _, part in ipairs(UnitFrame.PARTS) do
+		if spec[part.key] then
+			local component = self:Own(part.create(self.frame, spec[part.key]))
+			self[part.key] = component
+			self.parts[#self.parts + 1] = { def = part, component = component }
+		end
 	end
-	if spec.castbar then
-		self.castbar = self:Own(Castbar:New(self.frame, {}))
-		self.castbar:GetFrame():Hide()
-	end
-	if spec.auras then
-		self.auras = self:Own(Auras:New(self.frame, {}, { cancelBuffs = spec.auras.cancelBuffs, clickThrough = spec.auras.clickThrough }))
-	end
-	if spec.raidTarget then
-		self.raidTarget = self:Own(RaidTarget:New(self.frame, {}))
-	end
-end
-
--- A component's schema with `extra` options after "enabled" (or at the
--- top), leaving out keys listed in `skip`.
-local function GroupSchema(options, extra, skip)
-	return ns.Schema.Without(ns.Schema.Insert(options, "enabled", extra), skip)
-end
-
-local function HeightOption(default, hidden)
-	return { key = "height", type = "range", label = "Height", min = 2, max = 100, step = 1, default = default or 20,
-		hidden = hidden }
 end
 
 function UnitFrame.BuildSchema(spec)
@@ -126,17 +169,16 @@ function UnitFrame.BuildSchema(spec)
 				tooltip = "Time for one slow fade to the resting colour and back. Requires a visible frame border." },
 		} }
 	end
-	if spec.portrait then
-		schema[#schema + 1] = { key = "portrait", type = "group", label = "Portrait", defaults = spec.portrait.defaults,
-			schema = GroupSchema(Portrait.schema, {
-				{ key = "position", type = "select", label = "Side", values = UnitFrame.SIDES, default = "LEFT" },
-				{ key = "rowSpan", type = "select", label = "Rows to span", values = UnitFrame.PORTRAIT_ROW_SPANS, default = 0,
-					tooltip = "Count visible rows from the top, including a castbar in its own row. Disabled rows are skipped. Rows below the portrait use the full width. All rows follows the whole frame." },
-				{ key = "size", type = "range", label = "Width", min = 0, max = 200, step = 1, default = 0,
-					tooltip = "0 = square, as wide as the rows the portrait spans are tall." },
-				{ key = "gap", type = "range", label = "Gap to the bars", min = 0, max = 20, step = 1, default = 2 },
-			}) }
+	local function AddParts(beforeRows)
+		for _, part in ipairs(UnitFrame.PARTS) do
+			local partSpec = spec[part.key]
+			if partSpec and (part.beforeRows or false) == beforeRows then
+				schema[#schema + 1] = { key = part.key, type = "group", label = part.label,
+					schema = part.schema(partSpec), defaults = partSpec.defaults }
+			end
+		end
 	end
+	AddParts(true)
 	for _, row in ipairs(spec.rows) do
 		local extra = { HeightOption() }
 		for _, opt in ipairs(row.options or {}) do
@@ -145,25 +187,7 @@ function UnitFrame.BuildSchema(spec)
 		schema[#schema + 1] = { key = row.key, type = "group", label = row.label,
 			schema = GroupSchema(TextBar.BuildSchema(row.spec), extra), defaults = row.defaults }
 	end
-	if spec.castbar then
-		local function OverHealth(cfg)
-			return cfg.placement == "health" or cfg.placement == "off"
-		end
-		schema[#schema + 1] = { key = "castbar", type = "group", label = "Castbar", defaults = spec.castbar.defaults,
-			schema = GroupSchema(Castbar.BuildSchema(), {
-				{ key = "placement", type = "select", label = "Placement", values = UnitFrame.CASTBAR_PLACEMENTS,
-					default = "bottom" },
-				HeightOption(18, OverHealth),
-			}, { enabled = true }) }
-	end
-	if spec.auras then
-		schema[#schema + 1] = { key = "auras", type = "group", label = "Buffs & debuffs", schema = Auras.schema,
-			defaults = spec.auras.defaults }
-	end
-	if spec.raidTarget then
-		schema[#schema + 1] = { key = "raidTarget", type = "group", label = "Raid target icon", schema = RaidTarget.schema,
-			defaults = spec.raidTarget.defaults }
-	end
+	AddParts(false)
 	return ns.Util.Copy(schema)
 end
 
@@ -172,18 +196,9 @@ function UnitFrame:OnApply(cfg)
 	for _, row in ipairs(self.rows) do
 		self:ApplyChild(row.component, row.def.key)
 	end
-	if self.portrait then
-		self:ApplyChild(self.portrait, "portrait")
-	end
-	if self.castbar then
-		self:ApplyChild(self.castbar, "castbar")
-		self.castbar:SetEnabled(cfg.castbar.placement ~= "off")
-	end
-	if self.auras then
-		self:ApplyChild(self.auras, "auras")
-	end
-	if self.raidTarget then
-		self:ApplyChild(self.raidTarget, "raidTarget")
+	for _, part in ipairs(self.parts) do
+		self:ApplyChild(part.component, part.def.key)
+		if part.def.apply then part.def.apply(part.component, cfg[part.def.key]) end
 	end
 	self:Layout()
 	self:ApplyRangeOpacity()
@@ -351,6 +366,23 @@ function UnitFrame:Rows()
 			return row.def.key, row.component, self.resolved[row.def.key]
 		end
 	end
+end
+
+-- Iterates present optional parts in declaration order:
+-- for key, part, partConfig in frame:Parts() do ... end
+function UnitFrame:Parts()
+	local i = 0
+	return function()
+		i = i + 1
+		local part = self.parts[i]
+		if part then
+			return part.def.key, part.component, self.resolved[part.def.key]
+		end
+	end
+end
+
+function UnitFrame:GetPart(key)
+	return self[key]
 end
 
 function UnitFrame:GetPortrait()
