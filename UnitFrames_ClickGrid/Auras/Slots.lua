@@ -1,8 +1,10 @@
 local _, CG = ...
 local UF = CG.UF
-local Slots = UF.Components.Auras:Extend("FriendlyAuraSlots")
+local AuraIcon = UF.AuraIcon
+local Slots = UF.Component:Extend("FriendlyAuraSlots")
 CG.Slots = Slots
-Slots.schema = UF.Util.Copy(UF.Components.Auras.schema)
+Slots.schema = { { key = "enabled", type = "toggle", label = "Enabled", default = true } }
+for _, descriptor in ipairs(AuraIcon.schema) do Slots.schema[#Slots.schema + 1] = UF.Util.Copy(descriptor) end
 for _, descriptor in ipairs(CG.SlotSchema) do Slots.schema[#Slots.schema + 1] = descriptor end
 
 function Slots.ParseIDs(text)
@@ -32,9 +34,14 @@ function Slots:OnCreate(parent)
 end
 
 function Slots:InitButton(button, key, preview)
-	UF.Components.Auras.InitButton(self, button, key, preview)
+	AuraIcon.Create(button, key, preview, { clickThrough = true })
 	button:SetMouseClickEnabled(false)
 	button:SetMouseMotionEnabled(false)
+	if self.resolved then self:StyleButton(button) end
+end
+
+function Slots:StyleButton(button)
+	AuraIcon.Apply(button, self.resolved, self.resolved[button.ufKind].size)
 end
 
 function Slots:OnApply(cfg)
@@ -61,6 +68,11 @@ function Slots:SetEnabled(enabled)
 end
 
 function Slots:SetUnit(unit)
+	if self.previewData then
+		self.previewData = nil
+		for _, button in ipairs(self.samples or {}) do button:Hide() end
+		self:SetEnabled(self.enabled)
+	end
 	if self.container:GetUnit() ~= unit then self.container:SetUnit(unit) end
 end
 
@@ -92,7 +104,7 @@ function Slots:RenderSamples()
 				if not found or remaining < previous then found = aura end
 			end
 		end
-		if found then UF.Components.Auras.DrawSample(self, button, found) end
+		if found then AuraIcon.DrawSample(button, found) end
 		button:SetShown(found ~= nil)
 	end
 end

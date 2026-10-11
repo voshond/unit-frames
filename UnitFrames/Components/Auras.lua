@@ -1,39 +1,11 @@
 local _, ns = ...
-local Media, Backdrop = ns.Media, ns.Components.Backdrop
+local AuraIcon = ns.AuraIcon
 
 -- Independent buff/debuff containers. Blizzard owns selection, sorting,
 -- cooldowns, durations, counts and dispel colours, including secret auras.
 -- Our ordinary root frame never depends on a container's secret dimensions.
 local Auras = ns.Component:Extend("Auras")
 local KINDS = { "buffs", "debuffs" }
-local BORDER_PIECES = {
-	"TopLeftCorner", "TopRightCorner", "BottomLeftCorner", "BottomRightCorner",
-	"TopEdge", "BottomEdge", "LeftEdge", "RightEdge",
-}
-local DISPEL_TYPES = { "Magic", "Curse", "Disease", "Poison", "None" }
-local dispelColorSchema = {}
-for _, kind in ipairs(DISPEL_TYPES) do
-	dispelColorSchema[#dispelColorSchema + 1] = {
-		key = kind, type = "color", label = kind == "None" and "No dispel type" or kind,
-		default = { AuraUtil.GetAuraBorderColor(kind):GetRGBA() },
-	}
-end
-
-local durationFormatter
-local function DurationFormatter()
-	if not durationFormatter then
-		durationFormatter = C_StringUtil.CreateSecondsFormatter()
-		durationFormatter:SetDefaultAbbreviation(Enum.SecondsFormatterAbbreviation.OneLetter)
-		durationFormatter:SetRounding(Enum.SecondsFormatterRounding.Truncate)
-		durationFormatter:SetCanRoundUpLastUnit(true)
-		durationFormatter:SetMinInterval(Enum.SecondsFormatterInterval.Seconds)
-		durationFormatter:SetMaxIntervalCurve(AuraContainerInbound.GetDefaultAuraDurationFormatter():GetMaxIntervalCurve())
-		durationFormatter:SetDesiredUnitCount(1)
-		durationFormatter:SetStripIntervalWhitespace(Enum.SecondsFormatterIntervalWhitespace.StripIgnoreLocale)
-	end
-	return durationFormatter
-end
-
 Auras.POSITIONS = {
 	{ "top", "Top" }, { "bottom", "Bottom" },
 	{ "left", "Left" }, { "right", "Right" },
@@ -47,10 +19,7 @@ Auras.GROWTH = {
 	{ "forward", "Right / down" }, { "reverse", "Left / up" },
 }
 
-Auras.DURATION_POSITIONS = {
-	{ "below", "Below the icon" }, { "CENTER", "Inside: centre" },
-	{ "TOP", "Inside: top" }, { "BOTTOM", "Inside: bottom" },
-}
+Auras.DURATION_POSITIONS = AuraIcon.DURATION_POSITIONS
 
 Auras.BUFF_FILTERS = {
 	{ "HELPFUL", "All buffs" }, { "HELPFUL|PLAYER", "Cast by me" }, { "HELPFUL|RAID", "Raid buffs" },
@@ -87,21 +56,12 @@ end
 Auras.schema = {
 	{ key = "enabled", type = "toggle", label = "Enabled", default = true },
 	{ key = "spacing", type = "range", label = "Icon spacing", min = 0, max = 10, step = 1, default = 2 },
-	{ key = "showDuration", type = "toggle", label = "Show time left", default = true },
-	{ key = "durationPosition", type = "select", label = "Time position", values = Auras.DURATION_POSITIONS, default = "below" },
-	{ key = "durationSize", type = "range", label = "Time text size", min = 6, max = 32, step = 1, default = 10 },
-	{ key = "showCount", type = "toggle", label = "Show stacks", default = true },
-	{ key = "countSize", type = "range", label = "Stack text size", min = 6, max = 32, step = 1, default = 10 },
-	{ key = "font", type = "font", label = "Font", inherit = "font" },
-	{ key = "fontOutline", type = "select", label = "Font outline", values = ns.Theme.OUTLINES, default = "OUTLINE" },
-	{ key = "dispelBorder", type = "toggle", label = "Colour debuff border by type", default = true,
-		tooltip = "Tint the entire icon frame using Debuff border colours. Disable to use Icon frame > Border colour for every icon. Works in combat." },
-	{ key = "dispelColors", type = "group", label = "Debuff border colours", schema = dispelColorSchema },
-	{ key = "border", type = "group", label = "Icon frame", schema = Backdrop.schema,
-		defaults = { size = 8, inset = 1, padding = 2, background = "None" } },
 	{ key = "buffs", type = "group", label = "Buffs", schema = GroupSchema("buffs", Auras.BUFF_FILTERS, 20, "top") },
 	{ key = "debuffs", type = "group", label = "Debuffs", schema = GroupSchema("debuffs", Auras.DEBUFF_FILTERS, 26, "bottom") },
 }
+
+-- Preserve the existing settings paths/order while sharing the artwork schema.
+for i, opt in ipairs(AuraIcon.schema) do table.insert(Auras.schema, i + 2, ns.Util.Copy(opt)) end
 
 function Auras:OnCreate(parent)
 	self.frame = CreateFrame("Frame", nil, parent)
@@ -120,134 +80,16 @@ function Auras:OnCreate(parent)
 end
 
 function Auras:InitButton(button, kind, preview)
-	button.ufKind = kind
-	button.ufPreview = preview and true or false
-	-- The button includes the below-icon timer in its layout bounds. The
-	-- artwork stays square, even when the container flows upwards.
-	local iconFrame = CreateFrame("Frame", nil, button, "BackdropTemplate")
-	iconFrame:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
-	button.ufIconFrame = iconFrame
-
-	local icon = iconFrame:CreateTexture(nil, "ARTWORK")
-	icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-	button.ufIcon = icon
-	if not preview then button:SetIcon(icon) end
-
-	local cooldown = CreateFrame("Cooldown", nil, iconFrame, "CooldownFrameTemplate")
-	cooldown:SetHideCountdownNumbers(true)
-	button.ufCooldown = cooldown
-	if not preview then button:SetDurationCooldown(cooldown) end
-
-	local cover = CreateFrame("Frame", nil, iconFrame)
-	cover:SetAllPoints(iconFrame)
-	cover:SetFrameLevel(cooldown:GetFrameLevel() + 1)
-
-	-- The engine fills registered texts immediately, before OnApply.
-	button.ufCountHolder = CreateFrame("Frame", nil, cover)
-	button.ufCountHolder:SetAllPoints(iconFrame)
-	button.ufCount = button.ufCountHolder:CreateFontString(nil, "OVERLAY", "NumberFontNormalSmall")
-	button.ufCount:SetPoint("BOTTOMRIGHT", iconFrame, "BOTTOMRIGHT", -2, 2)
-	if not preview then button:SetApplicationCount(button.ufCount, {}) end
-
-	button.ufTime = cover:CreateFontString(nil, "OVERLAY", "NumberFontNormalSmall")
-	if not preview then button:SetDurationText(button.ufTime, { textFormatter = DurationFormatter() }) end
-
-	-- A separate themed border lets the engine own the complete edge's
-	-- colour/shown state. Hide the holder to toggle type colouring, and
-	-- make the base edge transparent so no neutral border shows through.
-	button.ufBorder = CreateFrame("Frame", nil, cover, "BackdropTemplate")
-	button.ufBorder:SetAllPoints(iconFrame)
-	button.ufDispelTextures = {}
-	if preview then
-		button:EnableMouse(false)
-	else
-		button:EnableMouse(true)
-		if self.spec.clickThrough then button:SetMouseClickEnabled(false) end
-		button:SetTooltipAnchorPoint("ANCHOR_BOTTOMRIGHT", 0, 0)
-		-- The native secure click handler cancels the button's current aura;
-		-- addon code never reads its unit data or secret instance ID.
-		-- Cancel on press before propagated input can start world mouselook.
-		if self.spec.cancelBuffs and kind == "buffs" then
-			button:SetCancelAuraButtons("RightButtonDown")
-		end
-	end
+	AuraIcon.Create(button, kind, preview, self.spec)
 	if self.resolved then self:StyleButton(button) end
 end
 
-local function TextRoom(cfg)
-	return cfg.showDuration and cfg.durationPosition == "below" and cfg.durationSize + 2 or 0
-end
-
 function Auras:StyleButton(button)
-	local cfg = self.resolved
-	local size = cfg[button.ufKind].size
-	button:SetSize(size, size + TextRoom(cfg))
-	button.ufIconFrame:SetSize(size, size)
-	Backdrop.ApplyToFixedSize(button.ufIconFrame, cfg.border, size, size)
-	-- Keep a drawable centre even at the smallest icon size.
-	local pad = cfg.border.enabled and math.min(cfg.border.padding, (size - 2) / 2) or 0
-	for _, region in ipairs({ button.ufIcon, button.ufCooldown }) do
-		region:ClearAllPoints()
-		region:SetPoint("TOPLEFT", button.ufIconFrame, "TOPLEFT", pad, -pad)
-		region:SetPoint("BOTTOMRIGHT", button.ufIconFrame, "BOTTOMRIGHT", -pad, pad)
-	end
-	local font, outline = Media:Fetch("font", cfg.font), Media:Outline(cfg.fontOutline)
-	for _, entry in ipairs({ { button.ufCount, cfg.countSize }, { button.ufTime, cfg.durationSize } }) do
-		if not entry[1]:SetFont(font, entry[2], outline) then
-			entry[1]:SetFont(Media:Fetch("font", Media.LSM:GetDefault("font")), entry[2], outline)
-		end
-	end
-	button.ufTime:ClearAllPoints()
-	if cfg.durationPosition == "below" then
-		button.ufTime:SetPoint("TOP", button.ufIconFrame, "BOTTOM", 0, -1)
-	else
-		local y = cfg.durationPosition == "TOP" and -2 or cfg.durationPosition == "BOTTOM" and 2 or 0
-		button.ufTime:SetPoint(cfg.durationPosition, button.ufIconFrame, cfg.durationPosition, 0, y)
-	end
-	button.ufCountHolder:SetShown(cfg.showCount)
-	button.ufTime:SetShown(cfg.showDuration)
-	self:StyleDispelBorder(button, size)
-end
-
-function Auras:StyleDispelBorder(button, size)
-	local cfg = self.resolved
-	-- Re-register after applying the backdrop: its setters reset vertex
-	-- colours, and inbound options are copied by the engine, not shared.
-	if not button.ufPreview then
-		for _, texture in ipairs(button.ufDispelTextures) do button:RemoveDispelTypeTexture(texture) end
-	end
-	button.ufDispelTextures = {}
-	local enabled = cfg.border.enabled and cfg.dispelBorder and button.ufKind == "debuffs"
-	button.ufBorder:SetShown(enabled)
-	if not enabled then
-		button.ufBorder:ClearBackdrop()
-		return
-	end
-	local border = ns.Util.Copy(cfg.border)
-	border.background = "None"
-	Backdrop.ApplyToFixedSize(button.ufBorder, border, size, size)
-	local backdrop = button.ufBorder:GetBackdrop()
-	if backdrop and backdrop.edgeFile and backdrop.edgeFile ~= "" then
-		button.ufIconFrame:SetBackdropBorderColor(0, 0, 0, 0)
-		for _, piece in ipairs(BORDER_PIECES) do
-			local texture = button.ufBorder[piece]
-			button.ufDispelTextures[#button.ufDispelTextures + 1] = texture
-			if not button.ufPreview then
-				button:AddDispelTypeTexture(texture, {
-					style = Enum.CustomAuraButtonDispelTypeTextureStyle.PreserveAsset,
-					showWhenHarmful = true, showWhenHelpful = false, showWithoutDispelType = true,
-					customDispelColorMap = self.dispelColors,
-				})
-			end
-		end
-	end
+	AuraIcon.Apply(button, self.resolved, self.resolved[button.ufKind].size, self.dispelColors)
 end
 
 function Auras:OnApply(cfg)
-	self.dispelColors = {}
-	for _, kind in ipairs(DISPEL_TYPES) do
-		self.dispelColors[kind] = CreateColor(ns.Util.UnpackColor(cfg.dispelColors[kind]))
-	end
+	self.dispelColors = AuraIcon.DispelColors(cfg)
 	for _, kind in ipairs(KINDS) do
 		local container, group = self.containers[kind], cfg[kind]
 		container:SetAuraGroupEnabled(kind, group.enabled)
@@ -258,7 +100,7 @@ function Auras:OnApply(cfg)
 			or group.sort == "unitDebuff" and AuraContainerSortMethod.UnitFrameDebuff or AuraContainerSortMethod.ExpirationOnly
 		container:SetAuraGroupSortMethod(kind, sort, AuraContainerSortDirection.Normal)
 		container:SetAuraGroupLayout(kind, {
-			elementWidth = group.size, elementHeight = group.size + TextRoom(cfg),
+			elementWidth = group.size, elementHeight = group.size + AuraIcon.TextRoom(cfg),
 			elementSpacing = cfg.spacing, lineSpacing = cfg.spacing,
 		})
 	end
@@ -300,7 +142,7 @@ function Auras:Layout(width, height)
 		local directionX = horizontal and AnchorUtil.FlowDirection.Right or AnchorUtil.FlowDirection.Left
 		local directionY = upward and AnchorUtil.FlowDirection.Up or AnchorUtil.FlowDirection.Down
 		local length = group.lineSize > 0 and group.lineSize or vertical and self.hostHeight or self.hostWidth
-		local minimum = group.size + (vertical and TextRoom(self.resolved) or 0)
+		local minimum = group.size + (vertical and AuraIcon.TextRoom(self.resolved) or 0)
 		length = math.max(length, minimum)
 		if self.previewData then
 			local flow = container.ufFlow
@@ -427,25 +269,6 @@ local function MatchesSampleFilter(aura, filter, maxDuration)
 end
 
 -- Shared artwork for flowing groups and companion fixed-slot samples.
-function Auras:DrawSample(button, aura)
-	button.ufIcon:SetTexture(aura.icon)
-	button.ufCount:SetText((aura.applications or 1) > 1 and aura.applications or "")
-	local duration = aura.duration or 0
-	local remaining = aura.remaining or duration
-	button.ufTime:SetText(duration > 0 and DurationFormatter():Format(remaining) or "")
-	if duration > 0 then
-		button.ufCooldown:SetCooldown(GetTime() - (duration - remaining), duration)
-		button.ufCooldown:Pause()
-		button.ufCooldown:Show()
-	else
-		button.ufCooldown:Hide()
-	end
-	if button.ufKind == "debuffs" then
-		local color = self.dispelColors[aura.dispelName or "None"] or self.dispelColors.None
-		for _, texture in ipairs(button.ufDispelTextures) do texture:SetVertexColor(color:GetRGBA()) end
-	end
-end
-
 function Auras:RenderSamples()
 	for _, kind in ipairs(KINDS) do
 		local container, cfg = self.previewContainers[kind], self.resolved[kind]
@@ -461,7 +284,7 @@ function Auras:RenderSamples()
 						self:InitButton(button, kind, true)
 						container.ufButtons[index] = button
 					end
-					self:DrawSample(button, aura)
+					AuraIcon.DrawSample(button, aura, self.dispelColors)
 					button:Show()
 					elements[index] = button
 				end

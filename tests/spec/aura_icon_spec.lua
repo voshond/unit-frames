@@ -1,0 +1,31 @@
+local Helpers = require("helpers")
+
+describe("Shared aura artwork", function()
+	it("styles independent fixed slots and restores native ownership after samples", function()
+		local UF, CG = Helpers.LoadClickGrid()
+		local slots = CG.Slots:New(UIParent, { durationPosition = "below", durationSize = 12,
+			showCount = false, slot1 = { enabled = true, spell = "139", size = 24 } })
+		assert.is_nil(UF.Schema.Find(slots:GetSchema(), "buffs"))
+		assert.is_nil(UF.Schema.Find(slots:GetSchema(), "debuffs"))
+		local values = { buffs = { { spellId = 139, icon = "sample", sourceUnit = "player", duration = 15,
+			remaining = 8, applications = 3 } } }
+		slots:ShowSample(values)
+		local sample, native = slots.samples[1], slots.buttons[1]
+		assert.is_false(slots.container:IsEnabled())
+		assert.equals(24, sample.ufIconFrame:GetHeight())
+		assert.equals(38, sample:GetHeight())
+		assert.same(native.ufTime.__state.font, sample.ufTime.__state.font)
+		assert.is_false(sample.ufCountHolder:IsShown())
+		slots:Apply({ durationPosition = "CENTER", slot1 = { enabled = true, spell = "139", size = 18 } })
+		assert.equals(18, sample:GetHeight())
+		assert.equals(18, native:GetHeight())
+		slots:SetUnit("player")
+		assert.is_nil(slots.previewData)
+		assert.is_false(sample:IsShown())
+		assert.is_true(slots.container:IsEnabled())
+		slots:ShowSample(values)
+		assert.equals(sample, slots.samples[1])
+		slots:Release()
+		assert.is_false(slots.container:IsEnabled())
+	end)
+end)

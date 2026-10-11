@@ -166,11 +166,6 @@ function Preview:ShowData(data, dataOnly)
 				local unit = source and source.Member.__unit
 				if not raid and localIndex == 1 and not IsInGroup() then unit = "player" end
 				self:ShowLive(cell.member, unit, cell)
-				if cell.slots.previewData then
-					cell.slots.previewData = nil
-					for _, button in ipairs(cell.slots.samples or {}) do button:Hide() end
-					cell.slots:SetEnabled(true)
-				end
 				if unit then cell.slots:SetUnit(unit) end
 				for _, widget in pairs(cell.status) do widget:Hide() end
 				if cfg.targets then self:ShowLive(cell.target, unit and unit .. "target", cell) end
