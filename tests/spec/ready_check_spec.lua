@@ -49,7 +49,7 @@ describe("Ready check tints", function()
 	end
 
 	local function Step(seconds)
-		local driver = uf.readyCheckDriver
+		local driver = uf:GetReadyCheck().driver
 		for _ = 1, math.floor(seconds / 0.25 + 0.5) do
 			local script = driver:GetScript("OnUpdate")
 			if script then script(driver, 0.25) end
@@ -60,7 +60,7 @@ describe("Ready check tints", function()
 		for _, unit in ipairs(ns.Units.order) do
 			local live = ns.Units.frames[unit]
 			assert.is_not_nil(ns.Schema.Find(live.uf:GetSchema(), "readyCheck.fade"), unit)
-			assert.equals(live.uf, live.UF_ReadyCheck)
+			assert.equals(live.uf:GetReadyCheck(), live.UF_ReadyCheck)
 			assert.is_true(live:IsElementEnabled("UF_ReadyCheck"))
 		end
 		ns.Config:SetUnitValue("target", "readyCheck.enabled", false)
@@ -121,12 +121,12 @@ describe("Ready check tints", function()
 		AssertTint(uf, RED, 1, "held for two seconds")
 		Step(0.75)
 		AssertTint(uf, RED, 0.5, "half faded")
-		frame.UF_ReadyCheck = uf
+		frame.UF_ReadyCheck = uf:GetReadyCheck()
 		ns.oUF.elements.UF_ReadyCheck.update(frame, "UnitFramesRefresh")
 		AssertTint(uf, RED, 0.5, "other updates do not cut the fade short")
 		Step(0.75)
 		AssertTint(uf, nil, nil, "faded out")
-		assert.is_nil(uf.readyCheckDriver:GetScript("OnUpdate"), "no work after the fade")
+		assert.is_nil(uf:GetReadyCheck().driver:GetScript("OnUpdate"), "no work after the fade")
 	end)
 
 	it("lets a new check interrupt the fade and honours changed settings", function()
@@ -138,7 +138,7 @@ describe("Ready check tints", function()
 		statuses.player = "waiting"
 		Fire("READY_CHECK")
 		AssertTint(uf, GREY, 1, "new check")
-		assert.is_nil(uf.readyCheckDriver:GetScript("OnUpdate"))
+		assert.is_nil(uf:GetReadyCheck().driver:GetScript("OnUpdate"))
 		ns.Config:SetUnitValue("player", "readyCheck.waitingColor", { 0.3, 0.3, 0.3, 1 })
 		AssertTint(uf, { 0.3, 0.3, 0.3 }, 1, "colour changes apply during a check")
 		ns.Config:SetUnitValue("player", "readyCheck.hold", 0)
@@ -163,17 +163,17 @@ describe("Ready check tints", function()
 		ns.oUF.elements.UF_ReadyCheck.disable(frame)
 		AssertTint(uf, nil, nil, "element disabled")
 		assert.is_nil(handlers.READY_CHECK)
-		assert.is_nil(uf.readyCheckDriver:GetScript("OnUpdate"))
+		assert.is_nil(uf:GetReadyCheck().driver:GetScript("OnUpdate"))
 		local preview = ns.Units:CreateFrame("target", UIParent)
-		preview:SetReadyCheck("ready")
-		preview:FinishReadyCheck()
-		assert.is_not_nil(preview.readyCheckDriver:GetScript("OnUpdate"))
+		preview:GetReadyCheck():Set("ready")
+		preview:GetReadyCheck():Finish()
+		assert.is_not_nil(preview:GetReadyCheck().driver:GetScript("OnUpdate"))
 		preview:Release()
-		assert.is_nil(preview.readyCheckDriver:GetScript("OnUpdate"))
+		assert.is_nil(preview:GetReadyCheck().driver:GetScript("OnUpdate"))
 	end)
 
 	it("shows the matching check mark in the decoration stack and fades it with the tints", function()
-		local icon = uf:GetReadyCheckIcon()
+		local icon = uf:GetReadyCheck():GetIcon()
 		local texture = icon:GetWidget()
 		assert.is_false(texture:IsShown(), "no check")
 		statuses.player = "waiting"
@@ -197,14 +197,14 @@ describe("Ready check tints", function()
 	end)
 
 	it("lets the icon and the tints work without each other", function()
-		local texture = uf:GetReadyCheckIcon():GetWidget()
+		local texture = uf:GetReadyCheck():GetIcon():GetWidget()
 		ns.Config:SetUnitValue("player", "readyCheck.enabled", false)
 		statuses.player = "notready"
 		Fire("READY_CHECK")
 		AssertTint(uf, nil, nil, "tints off")
 		assert.is_true(texture:IsShown(), "icon only")
 		Fire("READY_CHECK_FINISHED")
-		assert.is_not_nil(uf.readyCheckDriver:GetScript("OnUpdate"), "the icon still fades")
+		assert.is_not_nil(uf:GetReadyCheck().driver:GetScript("OnUpdate"), "the icon still fades")
 		Step(4)
 		assert.is_false(texture:IsShown())
 		ns.Config:SetUnitValue("player", "readyCheck.enabled", true)
@@ -212,9 +212,9 @@ describe("Ready check tints", function()
 		statuses.player = "ready"
 		Fire("READY_CHECK")
 		AssertTint(uf, GREEN, 1, "tints only")
-		assert.is_false(uf:GetReadyCheckIcon():GetFrame():IsShown(), "a disabled icon leaves the stack")
+		assert.is_false(uf:GetReadyCheck():GetIcon():GetFrame():IsShown(), "a disabled icon leaves the stack")
 		ns.Config:SetUnitValue("player", "readyCheckIcon.enabled", true)
-		assert.is_true(uf:GetReadyCheckIcon():GetFrame():IsShown())
+		assert.is_true(uf:GetReadyCheck():GetIcon():GetFrame():IsShown())
 		assert.is_true(texture:IsShown(), "enabled during a check: shows the current answer")
 	end)
 
@@ -250,12 +250,12 @@ describe("Ready check previews", function()
 			for status, atlas in pairs({ waiting = "UI-LFG-PendingMark-Raid", ready = "UI-LFG-ReadyMark-Raid",
 				notready = "UI-LFG-DeclineMark-Raid" }) do
 				wb.dataTarget.set("readyCheck", status)
-				assert.equals(atlas, uf:GetReadyCheckIcon():GetWidget().__state.atlas, unit .. " icon " .. status)
-				assert.is_true(uf:GetReadyCheckIcon():GetWidget():IsShown())
+				assert.equals(atlas, uf:GetReadyCheck():GetIcon():GetWidget().__state.atlas, unit .. " icon " .. status)
+				assert.is_true(uf:GetReadyCheck():GetIcon():GetWidget():IsShown())
 			end
 			wb.dataTarget.set("readyCheck", "off")
 			AssertTint(uf, nil, nil, unit .. " off")
-			assert.is_false(uf:GetReadyCheckIcon():GetWidget():IsShown())
+			assert.is_false(uf:GetReadyCheck():GetIcon():GetWidget():IsShown())
 			Tick(wb, 1)
 			AssertTint(uf, nil, nil, unit .. " static samples do not animate")
 		end

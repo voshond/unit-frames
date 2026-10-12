@@ -13,11 +13,11 @@ describe("ClickGrid ready checks", function()
 
 	it("tints member bars live but not their targets", function()
 		assert.is_true(member:IsElementEnabled("UF_ReadyCheck"))
-		assert.equals(member.uf, member.UF_ReadyCheck)
+		assert.equals(member.uf:GetReadyCheck(), member.UF_ReadyCheck)
 		assert.is_false(target:IsElementEnabled("UF_ReadyCheck"))
-		assert.equals(member.ufcgStatus.ReadyCheckIndicator, member.uf:GetReadyCheckIcon():GetWidget())
-		assert.equals("CENTER", member.uf:GetReadyCheckIcon().resolved.anchor)
-		assert.equals(22, member.uf:GetReadyCheckIcon().resolved.size)
+		assert.equals(member.ufcgStatus.ReadyCheckIndicator, member.uf:GetReadyCheck():GetIcon():GetWidget())
+		assert.equals("CENTER", member.uf:GetReadyCheck():GetIcon().resolved.anchor)
+		assert.equals(22, member.uf:GetReadyCheck():GetIcon().resolved.size)
 		assert.is_false(member:IsElementEnabled("ReadyCheckIndicator"), "one shared state drives bars and icon")
 		member.__unit = "party1"
 		GetReadyCheckStatus = function(unit) return unit == "party1" and "notready" or nil end
@@ -41,11 +41,11 @@ describe("ClickGrid ready checks", function()
 		local element = UF.oUF.elements.UF_ReadyCheck
 		element.update(member, "READY_CHECK")
 		assert.equals(ATLASES.waiting, icon.__state.atlas)
-		member.uf:GetRaidTarget():SetIndex(8)
-		assert.same({ "CENTER", member, "TOP", -8, 0 }, { member.uf:GetRaidTarget():GetFrame():GetPoint() })
+		member.uf:GetPart("raidTarget"):SetIndex(8)
+		assert.same({ "CENTER", member, "TOP", -8, 0 }, { member.uf:GetPart("raidTarget"):GetFrame():GetPoint() })
 		element.update(member, "READY_CHECK_FINISHED")
 		assert.equals(ATLASES.notready, icon.__state.atlas, "an unanswered check ends as not ready")
-		local driver = member.uf.readyCheckDriver
+		local driver = member.uf:GetReadyCheck().driver
 		driver:RunScript("OnUpdate", 2.75)
 		assert.equals(0.5, icon:GetAlpha())
 		local _, _, _, amount = member.uf:GetRow("health"):GetBar():GetTint()
@@ -53,7 +53,7 @@ describe("ClickGrid ready checks", function()
 		driver:RunScript("OnUpdate", 0.75)
 		assert.is_false(icon:IsShown())
 		assert.is_nil(driver:GetScript("OnUpdate"))
-		assert.same({ "CENTER", member, "TOP", 0, 0 }, { member.uf:GetRaidTarget():GetFrame():GetPoint() })
+		assert.same({ "CENTER", member, "TOP", 0, 0 }, { member.uf:GetPart("raidTarget"):GetFrame():GetPoint() })
 		element.update(member, "READY_CHECK")
 		element.update(member, "READY_CHECK_FINISHED")
 		CG.Config:SetStyle("member", "readyCheck.hold", 0)
@@ -75,7 +75,7 @@ describe("ClickGrid ready check previews", function()
 	end
 
 	local function State(cell)
-		local status = cell.member:GetReadyCheckState()
+		local status = cell.member:GetReadyCheck():GetState()
 		local icon = cell.status.ReadyCheckIndicator
 		return status, icon:IsShown() and icon.__state.atlas or nil
 	end

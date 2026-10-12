@@ -1,18 +1,16 @@
 local _, CG = ...
 local UF = CG.UF
-local Preview = {}
-Preview.__index = Preview
+local Preview = UF.Object:Extend("ClickGridPreview")
 CG.Preview = Preview
 
-function Preview:New(parent)
-	local result = setmetatable({ frame = CreateFrame("Frame", nil, parent), cells = {}, labels = {}, time = 0 }, self)
-	result.background = CreateFrame("Frame", nil, result.frame, "BackdropTemplate")
-	result.frame:SetScript("OnSizeChanged", function()
-		if result.onSizeChanged then result.onSizeChanged() end
+function Preview:Init(parent)
+	self.frame, self.cells, self.labels, self.time = CreateFrame("Frame", nil, parent), {}, {}, 0
+	self.background = CreateFrame("Frame", nil, self.frame, "BackdropTemplate")
+	self.frame:SetScript("OnSizeChanged", function()
+		if self.onSizeChanged then self.onSizeChanged() end
 	end)
-	CG.previews[result] = true
-	result:Apply()
-	return result
+	CG.previews[self] = true
+	self:Apply()
 end
 
 -- The preview owns its script. Stage fitting subscribes without replacing it.
@@ -38,7 +36,8 @@ end
 function Preview:ShowLive(uf, unit, cell)
 	if not unit or not UnitExists(unit) then
 		uf:GetFrame():Hide()
-		if uf:GetAuras() then uf:GetAuras():SetEnabled(false) end
+		local auras = uf:GetPart("auras")
+		if auras then auras:SetEnabled(false) end
 		return false
 	end
 	uf:GetFrame():Show()
@@ -46,10 +45,10 @@ function Preview:ShowLive(uf, unit, cell)
 	UF.UnitRows.LiveHealth(uf:GetRow("health"), unit, cell.calculator, uf:GetRowConfig("health").colorMode)
 	UF.UnitRows.LivePower(uf:GetRow("power"), unit)
 	uf:SetRangeState(UnitInRange(unit))
-	local auras = uf:GetAuras()
+	local auras = uf:GetPart("auras")
 	auras:SetEnabled(auras.resolved.enabled)
 	auras:SetUnit(unit)
-	uf:GetRaidTarget():SetIndex(GetRaidTargetIndex(unit))
+	uf:GetPart("raidTarget"):SetIndex(GetRaidTargetIndex(unit))
 	return true
 end
 
@@ -80,10 +79,11 @@ function Preview:ChangeSource(source)
 	self.source = source
 	for _, cell in ipairs(self.cells) do
 		for _, uf in ipairs({ cell.member, cell.target }) do
-			uf:SetReadyCheck(nil)
+			local readyCheck, castbar = uf:GetReadyCheck(), uf:GetPart("castbar")
+			if readyCheck then readyCheck:Set(nil) end
 			uf:SetResting(false)
 			uf:SetRangeState(true, false)
-			if uf:GetCastbar() then uf:GetCastbar():Hide() end
+			if castbar then castbar:Hide() end
 		end
 		cell.status:HideIndicators()
 	end
@@ -96,7 +96,8 @@ function Preview:StyleCell(cell)
 	cell.target:Apply(CG.Config:GetStyle("target"))
 	cell.target:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", CG.metrics.member.width + cfg.targetGap, 0)
 	cell.target:GetFrame():SetShown(cfg.targets)
-	if not cfg.targets and cell.target:GetAuras() then cell.target:GetAuras():SetEnabled(false) end
+	local targetAuras = cell.target:GetPart("auras")
+	if not cfg.targets and targetAuras then targetAuras:SetEnabled(false) end
 	cell.slots:Apply(CG:SlotConfig(cell.member))
 	cell.status:Apply(CG.Config:Get().indicators)
 	cell.styled = true
@@ -112,7 +113,7 @@ function Preview:FeedCell(cell, index, live, unit)
 	else
 		local values = self:Values(index)
 		cell.member:GetFrame():Show()
-		local auras = cell.member:GetAuras()
+		local auras = cell.member:GetPart("auras")
 		auras:SetEnabled(auras.resolved.enabled)
 		UF.Units:ShowSample(cell.member, values)
 		cell.slots:SetEnabled(cell.slots.resolved.enabled)
@@ -120,7 +121,7 @@ function Preview:FeedCell(cell, index, live, unit)
 		cell.status:ShowSample(index, self.data.readyCheck == "check")
 		if self.cfg.panel.targets then
 			cell.target:GetFrame():Show()
-			local targetAuras = cell.target:GetAuras()
+			local targetAuras = cell.target:GetPart("auras")
 			targetAuras:SetEnabled(targetAuras.resolved.enabled)
 			local targetValues = UF.Util.Copy(values)
 			targetValues.name, targetValues.class, targetValues.reaction = "Enemy " .. index, nil, "hostile"
@@ -132,8 +133,8 @@ end
 
 function Preview:HideCell(cell)
 	cell.frame:Hide()
-	cell.member:GetAuras():SetEnabled(false)
-	cell.target:GetAuras():SetEnabled(false)
+	cell.member:GetPart("auras"):SetEnabled(false)
+	cell.target:GetPart("auras"):SetEnabled(false)
 	cell.slots:SetEnabled(false)
 end
 

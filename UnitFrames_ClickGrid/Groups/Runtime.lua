@@ -154,7 +154,8 @@ function CG:Refresh()
 				RegisterAttributeDriver(frame, "state-visibility", "hide")
 				frame:PauseAllElements()
 				-- Native aura containers own subscriptions independent of oUF.
-				if frame.uf:GetAuras() then frame.uf:GetAuras():SetEnabled(false) end
+				local auras = frame.uf:GetPart("auras")
+				if auras then auras:SetEnabled(false) end
 			end
 		else frame:SetPoint("TOPLEFT", cell, "TOPLEFT", 0, 0) end
 		cell:SetSize(layout.cellWidth, layout.cellHeight)

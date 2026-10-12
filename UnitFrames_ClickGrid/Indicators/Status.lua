@@ -258,12 +258,13 @@ function Status:OnApply(cfg)
 	self:UpdateResurrectionText()
 	-- After binding: disabled elements have hidden their art.
 	self:LayoutIcons()
-	self.unitFrame:AttachReadyCheckIcon(self.readyCheckIcon)
+	self.unitFrame:GetReadyCheck():Attach(self.readyCheckIcon)
 end
 
 function Status:OnRelease()
 	self:SetResurrection(false)
-	self.unitFrame:DetachReadyCheckIcon(self.readyCheckIcon)
+	local readyCheck = self.unitFrame:GetReadyCheck()
+	if readyCheck then readyCheck:Detach(self.readyCheckIcon) end
 	local stack = self.unitFrame:GetDecorations()
 	for _, item in ipairs(PLACED) do stack:Remove(item[1]) end
 	stack:Reflow()

@@ -271,7 +271,7 @@ end
 
 -- Convenience target for a plain config table (no theme, e.g. Workbench data).
 function Inspector.TableTarget(schema, config, onChange, resolve)
-	return ns.Store.New({
+	return ns.Store:New({
 		schema = schema,
 		read = function() return type(config) == "function" and config() or config end,
 		changed = onChange,

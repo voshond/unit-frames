@@ -78,15 +78,16 @@ describe("ClickGrid companion", function()
 		Mock.inCombat = true
 		for _, count in ipairs({ 3, 5, 4, 2 }) do
 			env.newstate = "party" .. count
-			assert.has_no_error(resize)
+			-- Secure state snippets run untainted: they may resize protected frames in combat.
+			assert.has_no_error(function() Mock.RunUntainted(resize) end)
 			assert.equals(Height(count), CG.panel:GetHeight())
 			assert.equals(layout.party.width, CG.panel:GetWidth())
 		end
 		env.newstate = "raid"
-		resize()
+		Mock.RunUntainted(resize)
 		assert.equals(layout.raid.height, CG.panel:GetHeight())
 		env.newstate = "solo"
-		resize()
+		Mock.RunUntainted(resize)
 		assert.equals(Height(1), CG.panel:GetHeight())
 		assert.equals(frames, #CG.frames)
 		Mock.inCombat = false
@@ -194,10 +195,10 @@ describe("ClickGrid companion", function()
 		assert.is_nil(member.UF_Experience)
 		assert.equals(member.uf:GetRow("health"):GetBar():GetStatusBar(), member.Health)
 		assert.equals(Enum.UnitDamageAbsorbClampMode.MaximumHealth, member.Health.damageAbsorbClampMode)
-		assert.equals(120, member.uf:GetAuras().resolved.buffs.maxDuration)
-		assert.equals("unitDebuff", member.uf:GetAuras().resolved.debuffs.sort)
+		assert.equals(120, member.uf:GetPart("auras").resolved.buffs.maxDuration)
+		assert.equals("unitDebuff", member.uf:GetPart("auras").resolved.debuffs.sort)
 		assert.is_true(member.uf:GetRow("health"):GetText("left").deferInCombat)
-		local auraButton = member.uf:GetAuras().containers.buffs.__state.groups.buffs.frames[1]
+		local auraButton = member.uf:GetPart("auras").containers.buffs.__state.groups.buffs.frames[1]
 		local clickThrough = false
 		for _, call in ipairs(auraButton.__calls) do
 			if call[1] == "SetMouseClickEnabled" and call[2] == false then clickThrough = true end
@@ -240,7 +241,7 @@ describe("ClickGrid companion", function()
 		assert.is_false(target:IsShown())
 		assert.is_true(target:IsElementPaused("Health"))
 		assert.is_true(target:IsElementPaused("RaidTargetIndicator"))
-		assert.is_false(target.uf:GetAuras():IsEnabled())
+		assert.is_false(target.uf:GetPart("auras"):IsEnabled())
 		target.calls = {}
 		CG:Refresh()
 		for _, call in ipairs(target.calls) do
@@ -249,7 +250,7 @@ describe("ClickGrid companion", function()
 		CG.Config:Set("panel.targets", true)
 		assert.is_true(target:IsEnabled())
 		assert.is_false(target:IsElementPaused("Health"))
-		assert.is_true(target.uf:GetAuras():IsEnabled())
+		assert.is_true(target.uf:GetPart("auras"):IsEnabled())
 		assert.is_nil(target.__state.drivers["state-visibility"])
 	end)
 
@@ -376,7 +377,7 @@ describe("ClickGrid companion", function()
 		CG.Config:Set("indicators.readyPosition", "TOP")
 		CG.Config:Set("indicators.readySize", 14)
 		local frame = CG.headers.party:GetAttribute("child1").Member
-		local marker, leader, ready = frame.uf:GetRaidTarget(), frame.LeaderIndicator, frame.ufcgStatus.ReadyCheckIndicator
+		local marker, leader, ready = frame.uf:GetPart("raidTarget"), frame.LeaderIndicator, frame.ufcgStatus.ReadyCheckIndicator
 		assert.same({ "CENTER", frame, "TOP", 0, 0 }, Anchor(leader:GetParent()), "absent icons keep their own position")
 		Native(leader, true)
 		assert.same({ "CENTER", frame, "TOP", 0, 0 }, Anchor(leader:GetParent()))
@@ -384,7 +385,7 @@ describe("ClickGrid companion", function()
 		Native(marker:GetWidget(), true)
 		assert.same({ "CENTER", frame, "TOP", -8, 0 }, Anchor(marker:GetFrame()))
 		assert.same({ "CENTER", frame, "TOP", 7, 0 }, Anchor(leader:GetParent()))
-		frame.uf:SetReadyCheck("ready")
+		frame.uf:GetReadyCheck():Set("ready")
 		assert.same({ "CENTER", frame, "TOP", -16, 0 }, Anchor(marker:GetFrame()))
 		assert.same({ "CENTER", frame, "TOP", -1, 0 }, Anchor(leader:GetParent()))
 		assert.same({ "CENTER", frame, "TOP", 15, 0 }, Anchor(ready:GetParent()))
@@ -408,7 +409,7 @@ describe("ClickGrid companion", function()
 		local frame = CG.headers.party:GetAttribute("child1").Member
 		local leader, ready = frame.LeaderIndicator, frame.ufcgStatus.ReadyCheckIndicator
 		Native(leader, true)
-		frame.uf:SetReadyCheck("ready")
+		frame.uf:GetReadyCheck():Set("ready")
 		CG.Config:Set("indicators.readyOrder", 1)
 		assert.same({ "CENTER", frame, "TOP", -8, 0 }, Anchor(ready:GetParent()))
 		assert.same({ "CENTER", frame, "TOP", 8, 0 }, Anchor(leader:GetParent()))
@@ -442,8 +443,8 @@ describe("ClickGrid companion", function()
 		CG.Config:Set("indicators.readySize", 14)
 		local frame = CG.headers.party:GetAttribute("child1").Member
 		local role, leader, ready = frame.GroupRoleIndicator, frame.LeaderIndicator, frame.ufcgStatus.ReadyCheckIndicator
-		frame.uf:SetReadyCheck("ready")
-		leader:SetShown(Mock.Secret(true))
+		frame.uf:GetReadyCheck():Set("ready")
+		Mock.RunUntainted(leader.SetShown, leader, Mock.Secret(true)) -- an engine-owned shown state
 		assert.has_no_error(function() leader:PostUpdate() end)
 		assert.same({ "CENTER", frame, "TOP", -8, 0 }, Anchor(leader:GetParent()))
 		assert.same({ "CENTER", frame, "TOP", 8, 0 }, Anchor(ready:GetParent()))
@@ -476,7 +477,7 @@ describe("ClickGrid companion", function()
 
 	it("supports portrait role anchors and defers role layout changes in combat", function()
 		local frame = CG.headers.party:GetAttribute("child1").Member
-		local role, marker = frame.GroupRoleIndicator, frame.uf:GetRaidTarget()
+		local role, marker = frame.GroupRoleIndicator, frame.uf:GetPart("raidTarget")
 		CG.Config:Set("indicators.rolePosition", "PORTRAIT_BOTTOMLEFT")
 		assert.is_false(role:GetParent():IsShown())
 		CG.Config:SetStyle("member", "portrait.enabled", true)
@@ -517,7 +518,7 @@ describe("ClickGrid companion", function()
 		assert.is_true(element.enable(frame))
 		assert.same({ UNIT_HEALTH = false, UNIT_CONNECTION = false, PLAYER_DEAD = true, PLAYER_ALIVE = true, PLAYER_UNGHOST = true }, events)
 		frame.__unit = "party1"
-		frame.uf:SetReadyCheck("ready")
+		frame.uf:GetReadyCheck():Set("ready")
 		element.update(frame, "UNIT_HEALTH")
 		assert.is_false(death:IsShown())
 		assert.same({ "CENTER", frame, "TOP", 0, 0 }, Anchor(ready:GetParent()))
@@ -988,7 +989,7 @@ describe("ClickGrid Workbench", function()
 		-- Sample member 1: marker 12, role 14 and leader 14 at the top, 44 wide.
 		CG.Config:Set("indicators.rolePosition", "TOP")
 		local frame = cell.member:GetFrame()
-		assert.same({ "CENTER", frame, "TOP", -16, 0 }, { cell.member:GetRaidTarget():GetFrame():GetPoint() })
+		assert.same({ "CENTER", frame, "TOP", -16, 0 }, { cell.member:GetPart("raidTarget"):GetFrame():GetPoint() })
 		assert.same({ "CENTER", frame, "TOP", -1, 0 }, { role:GetParent():GetPoint() })
 		assert.same({ "CENTER", frame, "TOP", 15, 0 }, { cell.status.LeaderIndicator:GetParent():GetPoint() })
 		assert.equals(0, name.leadingSpace)
@@ -1088,12 +1089,12 @@ describe("ClickGrid Workbench", function()
 		wb:UpdateData()
 		local cell = wb.handle.cells[1]
 		assert.is_true(cell.slots.samples[1]:IsShown())
-		local remaining = cell.member:GetAuras().previewData.buffs[3].remaining
+		local remaining = cell.member:GetPart("auras").previewData.buffs[3].remaining
 		wb:OnUpdate(0.2)
-		assert.equals(remaining, cell.member:GetAuras().previewData.buffs[3].remaining)
+		assert.equals(remaining, cell.member:GetPart("auras").previewData.buffs[3].remaining)
 		wb.dataTarget.set("source", "animated")
 		wb:OnUpdate(0.2)
-		assert.is_true(remaining ~= cell.member:GetAuras().previewData.buffs[3].remaining)
+		assert.is_true(remaining ~= cell.member:GetPart("auras").previewData.buffs[3].remaining)
 		CG.Config:SetStyle("member", "health.bar.segments.absorb.placement", "append")
 		wb.dataTarget.set("source", "static")
 		assert.equals(28800, cell.member:GetRow("health"):GetBar():GetStatusBar().__state.max)
@@ -1122,7 +1123,7 @@ describe("ClickGrid Workbench", function()
 		wb.dataTarget.set("source", "live")
 		assert.equals(40, #wb.handle.cells)
 		assert.is_true(wb.handle.cells[36].member:GetFrame():IsShown())
-		assert.equals("raid1", wb.handle.cells[36].member:GetAuras().containers.buffs:GetUnit())
+		assert.equals("raid1", wb.handle.cells[36].member:GetPart("auras").containers.buffs:GetUnit())
 	end)
 
 	it("releases old previews and their native aura subscriptions when switching entries", function()

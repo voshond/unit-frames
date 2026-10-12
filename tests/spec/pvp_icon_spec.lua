@@ -14,13 +14,13 @@ describe("PvP flag icons", function()
 		Mock.InstallUI()
 		frame = ns.Units.frames.player
 		uf = frame.uf
-		flag = uf:GetPvPFlag()
+		flag = uf:GetPart("pvp")
 	end)
 
 	it("offers and binds an icon with its background circle on every unit frame", function()
 		for _, unit in ipairs(ns.Units.order) do
 			local live = ns.Units.frames[unit]
-			local icon = live.uf:GetPvPFlag()
+			local icon = live.uf:GetPart("pvp")
 			assert.is_not_nil(ns.Schema.Find(live.uf:GetSchema(), "pvp.anchor"), unit)
 			assert.equals(icon:GetWidget(), live.PvPIndicator)
 			assert.equals(icon.background, live.PvPIndicator.Background)
@@ -56,15 +56,15 @@ describe("PvP flag icons", function()
 	it("joins the decoration stack and collapses when the unit is not flagged", function()
 		ns.Config:SetUnitValue("player", "pvp.anchor", "TOP")
 		ns.Config:SetUnitValue("player", "pvp.order", 2)
-		uf:GetRaidTarget():SetIndex(8)
-		assert.same({ "CENTER", frame, "TOP", 0, 0 }, { uf:GetRaidTarget():GetFrame():GetPoint() })
+		uf:GetPart("raidTarget"):SetIndex(8)
+		assert.same({ "CENTER", frame, "TOP", 0, 0 }, { uf:GetPart("raidTarget"):GetFrame():GetPoint() })
 		flag:SetSample("Alliance")
 		-- Marker 20 + gap 2 + flag 18 = 40 wide.
-		assert.same({ "CENTER", frame, "TOP", -10, 0 }, { uf:GetRaidTarget():GetFrame():GetPoint() })
+		assert.same({ "CENTER", frame, "TOP", -10, 0 }, { uf:GetPart("raidTarget"):GetFrame():GetPoint() })
 		assert.same({ "CENTER", frame, "TOP", 11, 0 }, { flag:GetFrame():GetPoint() })
 		assert.equals(18, flag:GetFrame():GetWidth())
 		flag:SetSample("off")
-		assert.same({ "CENTER", frame, "TOP", 0, 0 }, { uf:GetRaidTarget():GetFrame():GetPoint() })
+		assert.same({ "CENTER", frame, "TOP", 0, 0 }, { uf:GetPart("raidTarget"):GetFrame():GetPoint() })
 		assert.is_false(flag.background:IsShown())
 	end)
 
@@ -84,12 +84,12 @@ describe("PvP flag icons", function()
 			enable(self, name)
 		end
 		ns.Config:SetUnitValue("player", "pvp.anchor", "TOP")
-		uf:GetRaidTarget():SetIndex(8)
+		uf:GetPart("raidTarget"):SetIndex(8)
 		flag:SetSample("Alliance")
-		assert.same({ "CENTER", frame, "TOP", -10, 0 }, { uf:GetRaidTarget():GetFrame():GetPoint() })
+		assert.same({ "CENTER", frame, "TOP", -10, 0 }, { uf:GetPart("raidTarget"):GetFrame():GetPoint() })
 		ns.Config:SetUnitValue("player", "pvp.background", false)
 		assert.is_false(flag:GetWidget():IsShown(), "native Disable hides art without PostUpdate")
-		assert.same({ "CENTER", frame, "TOP", 0, 0 }, { uf:GetRaidTarget():GetFrame():GetPoint() },
+		assert.same({ "CENTER", frame, "TOP", 0, 0 }, { uf:GetPart("raidTarget"):GetFrame():GetPoint() },
 			"binding must recalculate the stack after the native disable")
 	end)
 
@@ -101,7 +101,7 @@ describe("PvP flag icons", function()
 		frame.RegisterEvent = function(_, event, handler) handlers[event] = handler end
 		frame.UnregisterEvent = function(_, event) handlers[event] = nil end
 		UnitFactionGroup = function() error("the addon must not derive a live PvP flag") end
-		UnitFrameUtil.UpdateUnitPvPIndicator = function(elements, unit, checkMercenary)
+		UnitFrameUtil.UpdateUnitPvPIndicator = Mock.SecureDelegate(function(elements, unit, checkMercenary)
 			received = elements
 			assert.equals("player", unit)
 			assert.is_true(checkMercenary)
@@ -111,32 +111,32 @@ describe("PvP flag icons", function()
 			end
 			elements.pvpIcon:SetShown(info.showPvPIcon)
 			elements.pvpBackground:SetShown(info.showPvPIcon)
-		end
+		end)
 		assert.is_true(element.enable(frame, "player"))
 		assert.is_not_nil(handlers.PLAYER_PVP_FLAG_CHANGED)
 		assert.is_not_nil(handlers.UNIT_FACTION)
 
 		ns.Config:SetUnitValue("player", "pvp.anchor", "TOP")
-		uf:GetRaidTarget():SetIndex(8)
+		uf:GetPart("raidTarget"):SetIndex(8)
 		Mock.pvpInfo.player = { pvpIconAtlas = ATLASES.Horde, showPvPIcon = true }
 		handlers.PLAYER_PVP_FLAG_CHANGED(frame, "PLAYER_PVP_FLAG_CHANGED")
 		assert.equals(flag:GetWidget(), received.pvpIcon)
 		assert.equals(flag.background, received.pvpBackground)
 		assert.equals(ATLASES.Horde, flag:GetWidget().__state.atlas)
 		assert.is_true(flag:GetWidget():IsShown())
-		assert.same({ "CENTER", frame, "TOP", -10, 0 }, { uf:GetRaidTarget():GetFrame():GetPoint() },
+		assert.same({ "CENTER", frame, "TOP", -10, 0 }, { uf:GetPart("raidTarget"):GetFrame():GetPoint() },
 			"oUF's PostUpdate reflows the stack")
 
 		Mock.pvpInfo.player = { pvpIconAtlas = Secret(ATLASES.FFA), showPvPIcon = Secret(true) }
 		handlers.UNIT_FACTION(frame, "UNIT_FACTION", "player")
 		assert.is_true(Mock.IsSecret(flag:GetWidget():IsShown()))
-		assert.same({ "CENTER", frame, "TOP", -10, 0 }, { uf:GetRaidTarget():GetFrame():GetPoint() },
+		assert.same({ "CENTER", frame, "TOP", -10, 0 }, { uf:GetPart("raidTarget"):GetFrame():GetPoint() },
 			"an opaque shown state keeps its slot")
 
 		Mock.pvpInfo.player = nil
 		handlers.PLAYER_PVP_FLAG_CHANGED(frame, "PLAYER_PVP_FLAG_CHANGED")
 		assert.is_false(flag:GetWidget():IsShown())
-		assert.same({ "CENTER", frame, "TOP", 0, 0 }, { uf:GetRaidTarget():GetFrame():GetPoint() })
+		assert.same({ "CENTER", frame, "TOP", 0, 0 }, { uf:GetPart("raidTarget"):GetFrame():GetPoint() })
 		element.disable(frame)
 		assert.is_nil(handlers.PLAYER_PVP_FLAG_CHANGED)
 		assert.is_false(flag.background:IsShown())
@@ -147,10 +147,10 @@ describe("PvP flag icons", function()
 		ns.Config:SetUnitValue("player", "pvp.background", false)
 		ns.Units:CopyPlayerSettings("focus")
 		local focus = ns.Units.frames.focus.uf
-		assert.equals("BOTTOMLEFT", focus:GetPvPFlag().resolved.anchor)
-		assert.is_false(focus:GetPvPFlag().resolved.background)
+		assert.equals("BOTTOMLEFT", focus:GetPart("pvp").resolved.anchor)
+		assert.is_false(focus:GetPart("pvp").resolved.background)
 		local preview = ns.Units:CreateFrame("target", UIParent)
-		local previewFlag = preview:GetPvPFlag()
+		local previewFlag = preview:GetPart("pvp")
 		previewFlag:SetSample("FFA")
 		preview:Release()
 		assert.is_false(previewFlag:GetFrame():IsShown())
@@ -172,7 +172,7 @@ describe("PvP flag icon companions and previews", function()
 		wb:Toggle()
 		for _, unit in ipairs(ns.Units.order) do
 			wb:Select("unit." .. unit)
-			local flag = wb.handle.parts.uf:GetPvPFlag()
+			local flag = wb.handle.parts.uf:GetPart("pvp")
 			for _, source in ipairs({ "static", "animated" }) do
 				wb.dataTarget.set("source", source)
 				for state, atlas in pairs(ATLASES) do

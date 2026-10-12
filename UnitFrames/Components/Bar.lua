@@ -257,11 +257,16 @@ function Bar:OnApply(cfg)
 end
 
 -- Segments must be as long as the whole bar so their values use the same scale.
+-- A bar anchored to secret geometry reports secret dimensions, which size
+-- setters refuse from addon code: its segments keep their last plain length.
 function Bar:SizeParts(width, height)
 	if not self.resolved then
 		return
 	end
 	local horizontal = self.resolved.orientation == "HORIZONTAL"
+	if Util.IsSecret(horizontal and width or height) then
+		return
+	end
 	for _, seg in ipairs(self.segments) do
 		if horizontal then
 			seg.bar:SetWidth(width)
@@ -311,10 +316,6 @@ function Bar:SetSegmentValue(key, value)
 	else
 		seg.bar:SetValue(value)
 	end
-end
-
-function Bar:HasSegment(key)
-	return self.segmentsByKey[key] ~= nil
 end
 
 -- The StatusBar of an enabled segment (for oUF sub-widgets), else nil.

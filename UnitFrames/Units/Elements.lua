@@ -90,27 +90,28 @@ end
 oUF:AddElement("UF_Classification", UpdateClassification, EnableClassification, DisableClassification)
 
 --[[
-UF_ReadyCheck: bar tints during a ready check (frame.UF_ReadyCheck =
-UnitFrame). The events carry no unit of this frame (confirmations name
-party/raid tokens), so every frame re-reads its own unit's status. The
+UF_ReadyCheck: bar tints during a ready check (frame.UF_ReadyCheck = the
+UnitFrame's ReadyCheck presenter). The events carry no unit of this frame
+(confirmations name party/raid tokens), so every frame re-reads its own
+unit's status. The
 status is plain group state; an opaque one counts as none. After the check
 the result fades on its own: only a new check interrupts it.
 ]]
 local READY_CHECK_EVENTS = { "READY_CHECK", "READY_CHECK_CONFIRM", "READY_CHECK_FINISHED" }
 
 local function UpdateReadyCheck(self, event)
-	local uf, unit = self.UF_ReadyCheck, self.__unit
+	local readyCheck, unit = self.UF_ReadyCheck, self.__unit
 	if event == "READY_CHECK_FINISHED" then
-		uf:FinishReadyCheck()
+		readyCheck:Finish()
 		return
 	end
-	if uf:IsReadyCheckFinishing() and event ~= "READY_CHECK" then return end
+	if readyCheck:IsFinishing() and event ~= "READY_CHECK" then return end
 	local status
 	if unit and UnitExists(unit) then
 		status = GetReadyCheckStatus(unit)
 		if issecretvalue(status) then status = nil end
 	end
-	uf:SetReadyCheck(status)
+	readyCheck:Set(status)
 end
 
 local function EnableReadyCheck(self)
@@ -125,7 +126,7 @@ local function DisableReadyCheck(self)
 	for _, event in ipairs(READY_CHECK_EVENTS) do
 		self:UnregisterEvent(event, UpdateReadyCheck)
 	end
-	self.UF_ReadyCheck:SetReadyCheck(nil)
+	self.UF_ReadyCheck:Set(nil)
 end
 
 oUF:AddElement("UF_ReadyCheck", UpdateReadyCheck, EnableReadyCheck, DisableReadyCheck)
@@ -146,6 +147,8 @@ local BLIZZARD_CAST_EVENTS = {
 }
 
 local castState = setmetatable({}, { __mode = "k" })
+-- The player frame whose castbar muted Blizzard's; only it restores it.
+local blizzardCastbarMutedBy
 
 local function UpdateCastbar(self, event, unit, ...)
 	unit = unit or self.__unit
@@ -163,9 +166,10 @@ local function EnableCastbar(self, unit)
 	for _, event in ipairs(Cast.EVENTS) do
 		self:RegisterEvent(event, UpdateCastbar)
 	end
-	if unit == "player" and PlayerCastingBarFrame then
+	if unit == "player" and PlayerCastingBarFrame and not blizzardCastbarMutedBy then
 		PlayerCastingBarFrame:UnregisterAllEvents()
 		PlayerCastingBarFrame:Hide()
+		blizzardCastbarMutedBy = self
 	end
 	return true
 end
@@ -177,7 +181,8 @@ local function DisableCastbar(self)
 	if self.UF_Castbar then
 		self.UF_Castbar:Hide()
 	end
-	if self.__unit == "player" and PlayerCastingBarFrame then
+	if blizzardCastbarMutedBy == self then
+		blizzardCastbarMutedBy = nil
 		for _, event in ipairs(BLIZZARD_CAST_EVENTS) do
 			PlayerCastingBarFrame:RegisterUnitEvent(event, "player")
 		end
