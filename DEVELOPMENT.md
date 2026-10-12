@@ -18,7 +18,20 @@ The embedded library folders are currently **ignored by Git**, so a fresh
 clone or GitHub source ZIP is not a complete, installable addon. The TOCs
 expect libraries under `UnitFrames/Libs/` and `UnitFrames_Media/Libs/`.
 
-To populate those folders, review and run:
+For a fresh checkout, populate the pinned test dependencies without needing
+a game installation:
+
+```sh
+bash scripts/setup-test-libs.sh
+```
+
+This downloads the existing Ace3, oUF and LibEditMode revisions and
+LibSharedMedia revision 176 (minor 12000002). It refuses to replace existing
+library folders. LibSharedMedia files are verified with SHA-256 checksums.
+The pins live in the script; change them only for an intentional dependency
+update. Setup requires curl, tar and sha256sum in addition to Bash.
+
+For an intentional library update, review and run:
 
 ```sh
 scripts/fetch-libs.sh
@@ -63,6 +76,13 @@ dated investigations and unimplemented plans; current code takes precedence.
 Run from the repository root:
 
 ```sh
+bash scripts/run-tests.sh
+```
+
+This runs the complete suite and addon Lua syntax checks, using the same
+command as CI and the pre-push hook. Individual test commands remain available:
+
+```sh
 luajit tests/run.lua
 luajit tests/run.lua shields
 luajit tests/run.lua workbench
@@ -72,6 +92,44 @@ luajit tests/run.lua clickgrid
 The runner also checks addon Lua syntax. Its optional filter matches spec
 filenames, not individual test names. No external busted installation is needed.
 
+### Pull request checks
+
+The [Tests workflow](.github/workflows/tests.yml) runs for pull requests,
+pushes to `main`, and manual dispatches. It installs LuaJIT, fetches pinned
+test libraries and checks out the matching Forever Blizzard source, so API
+snapshot freshness is checked as well. The workflow has read-only repository
+permissions and does not install anything into a game client.
+
+To require a passing check before merging, select **LuaJIT test suite** in
+the repository's branch protection or ruleset settings after its first run.
+
+### Pre-push checks
+
+Enable the versioned hook once in each local clone:
+
+```sh
+bash scripts/install-hooks.sh
+```
+
+It sets this repository's `core.hooksPath` to `.githooks`, preserving existing
+custom hook setups by refusing to replace them. Hooks are not enabled
+automatically by cloning a repository.
+
+The hook tests each distinct pushed commit in a temporary snapshot, rather
+than testing uncommitted working files. It reuses your local libraries and,
+when present, Blizzard source checkout. A failing test stops the push.
+Deleting a remote branch does not run tests. Multiple refs pointing to the
+same commit run the suite once.
+
+Install LuaJIT and set up the libraries before pushing. Tests do not download
+dependencies themselves. To disable this checkout's hook configuration:
+
+```sh
+git config --local --unset core.hooksPath
+```
+
+### API snapshot and client verification
+
 The mock API is checked against `tests/fixtures/api_snapshot.lua`. With the
 Blizzard source checkout present, the suite also checks that regeneration
 produces the committed snapshot. After adding API usage or updating that
@@ -80,6 +138,9 @@ checkout, regenerate and review the diff:
 ```sh
 luajit scripts/api-snapshot.lua
 ```
+
+When updating the client source version, update the workflow's pinned Blizzard
+checkout commit alongside the reviewed snapshot.
 
 Add regression tests for fixes. Keep mocks faithful to native restrictions;
 do not weaken them to make an implementation pass. Offline tests cannot

@@ -1,0 +1,38 @@
+name: Tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: LuaJIT test suite
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - name: Install LuaJIT
+        run: sudo apt-get update && sudo apt-get install -y luajit
+      - name: Set up pinned test libraries
+        run: bash scripts/setup-test-libs.sh
+      - name: Check out the matching Blizzard source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          repository: Gethe/wow-ui-source
+          ref: fc4ba4f086290dc4b875c2f75cdc048b7f9b33a9 # Forever 1.60.1.70338
+          path: examples/wow-ui-source-forever
+          persist-credentials: false
+      - name: Run all tests and addon syntax checks
+        run: bash scripts/run-tests.sh
+

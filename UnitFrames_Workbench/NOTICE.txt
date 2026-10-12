@@ -1,0 +1,11 @@
+Original UnitFrames_Workbench code: Copyright (c) 2026 Martin Konstantin Herrmann.
+See LICENSE for the UnitFrames Noncommercial License.
+
+This addon uses components and libraries supplied by the required UnitFrames
+addon; see that addon's NOTICE.txt and third-party license files.
+Blizzard icons, atlases, textures and fonts are referenced from the WoW client
+and are not bundled as asset files. No ownership or redistribution permission
+for them is claimed. Media registered by other addons retains its owners' terms.
+
+The original code's noncommercial restriction does not restrict rights under
+third-party licenses. Preserve this notice when redistributing the addon.

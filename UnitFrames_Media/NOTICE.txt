@@ -1,0 +1,16 @@
+Original UnitFrames_Media code: Copyright (c) 2026 Martin Konstantin Herrmann.
+See LICENSE for the UnitFrames Noncommercial License.
+
+Bundled third-party components retain their own terms:
+- Roboto Condensed Light, Regular, Medium and Bold: Copyright 2011 The Roboto
+  Project Authors. SIL Open Font License 1.1; see Fonts/RobotoCondensed-OFL.txt.
+- LibStub: public domain. Preserve its credits in Libs/LibStub/LibStub.lua.
+- CallbackHandler-1.0: Copyright (c) 2007, Ace3 Development Team.
+  See Licenses/Ace3.txt. Standalone redistribution requires authorization.
+- LibSharedMedia-3.0: LGPL 2.1; author Elkano, inspired by SurfaceLib by
+  Haste/Otravi. See Licenses/LGPL-2.1.txt and Licenses/GPL-2.0.txt, and preserve
+  its source header. Its readable Lua source is included in
+  Libs/LibSharedMedia-3.0; users may modify or replace it under the LGPL.
+
+The original code's noncommercial restriction does not restrict rights under
+third-party licenses. Preserve this notice and all referenced license files.

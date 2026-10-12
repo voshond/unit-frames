@@ -1,0 +1,59 @@
+UnitFrames Noncommercial License 1.0
+
+Copyright (c) 2026 Martin Konstantin Herrmann
+
+1. Scope
+
+This license applies to the original UnitFrames code, documentation and
+assets in this repository, including UnitFrames, UnitFrames_Workbench,
+UnitFrames_Media and UnitFrames_ClickGrid. It does not apply to third-party
+libraries, fonts, reference projects or Blizzard materials. Those retain
+their own licenses and notices; see THIRD_PARTY_NOTICES.md in the repository
+and NOTICE.txt in each distributed addon.
+
+2. Permission
+
+Permission is granted, free of charge, to use, copy, study, modify and
+redistribute the covered work, including modified versions and use in other
+projects, for noncommercial purposes, subject to the conditions below.
+
+Noncommercial means not primarily intended for or directed toward commercial
+advantage or monetary compensation. Selling the covered work, charging for
+access to it, or incorporating it into a commercial product or service is
+not permitted without separate written permission from the copyright holder.
+
+3. Conditions
+
+Copies and substantial portions of the covered work must retain this license
+and the copyright notice. Modified versions must clearly identify that they
+have been modified and must not imply endorsement by the original author.
+
+Recipients must retain the permissions granted by this license for the
+covered work. No additional restrictions may be imposed on those permissions.
+These noncommercial conditions continue to apply to the covered work when
+it is redistributed, modified or incorporated into another project.
+
+No permission is granted to use the author's name or project name to imply
+endorsement. All rights not expressly granted are reserved.
+
+4. Third-party rights and library compatibility
+
+The restrictions above do not restrict any rights granted by the licenses
+of third-party components. In particular, they do not prohibit commercial
+use of third-party components where their own licenses permit it.
+
+Modification of the covered work for the user's own use and reverse
+engineering for debugging modifications to an LGPL-covered library are
+expressly permitted, including where required by the LGPL. Users may replace
+or modify the bundled LGPL library under its own license.
+
+5. Disclaimer
+
+THE COVERED WORK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. TO THE MAXIMUM EXTENT
+PERMITTED BY LAW, THE COPYRIGHT HOLDER SHALL NOT BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY ARISING FROM THE WORK OR ITS USE.
+
+This is a source-available, noncommercial license, not an OSI-approved
+open-source license.

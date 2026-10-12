@@ -72,3 +72,14 @@ have not been verified.
 
 See [DEVELOPMENT.md](DEVELOPMENT.md) for setup, tests, the code map and
 implementation notes.
+
+## License
+
+Original UnitFrames code and documentation are source-available under the
+[UnitFrames Noncommercial License](LICENSE). You may use, share, modify and
+reuse them for noncommercial purposes, retaining the license and attribution.
+Commercial use requires separate written permission from the author.
+
+Bundled libraries and Roboto fonts retain their own licenses. Blizzard artwork
+is supplied by the game client. See [third-party notices](THIRD_PARTY_NOTICES.md)
+for credits, license locations and release packaging requirements.

@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Test each distinct pushed commit, excluding dirty or untracked working files.
+set -euo pipefail
+
+repo_dir="$(git rev-parse --show-toplevel)"
+cd "$repo_dir"
+# Git exports repository-specific variables to hooks. Nested test repos must
+# discover their own Git directory and index rather than inherit this one.
+while IFS= read -r git_variable; do unset "$git_variable"; done < <(git rev-parse --local-env-vars)
+push_tests_tmp=""
+trap 'if [[ -n "$push_tests_tmp" ]]; then rm -rf -- "$push_tests_tmp"; fi' EXIT
+declare -A tested=()
+
+while read -r local_ref local_oid remote_ref remote_oid; do
+	# Deletions have no code to test. Tags pointing to non-commits also have none.
+	[[ "$local_oid" =~ ^0+$ ]] && continue
+	commit="$(git rev-parse --verify "$local_oid^{commit}" 2>/dev/null)" || continue
+	[[ -n "${tested[$commit]:-}" ]] && continue
+	tested[$commit]=1
+	if [[ -z "$push_tests_tmp" ]]; then push_tests_tmp="$(mktemp -d)"; fi
+	snapshot="$push_tests_tmp/$commit"
+	mkdir -p "$snapshot"
+	git archive "$commit" | tar -x -C "$snapshot"
+	for addon in UnitFrames UnitFrames_Media; do
+		if [[ -d "$snapshot/$addon" && ! -e "$snapshot/$addon/Libs" ]]; then
+			if [[ -d "$repo_dir/$addon/Libs" ]]; then
+				cp -a "$repo_dir/$addon/Libs" "$snapshot/$addon/Libs"
+			fi
+		fi
+	done
+	if [[ -d "$repo_dir/examples/wow-ui-source-forever" && ! -e "$snapshot/examples" ]]; then
+		mkdir -p "$snapshot/examples"
+		ln -s "$repo_dir/examples/wow-ui-source-forever" "$snapshot/examples/wow-ui-source-forever"
+	fi
+	echo "Testing $local_ref ($commit) before pushing to $remote_ref..."
+	if ! bash "$repo_dir/scripts/run-tests.sh" "$snapshot"; then
+		echo "Push stopped: tests failed for $local_ref." >&2
+		exit 1
+	fi
+done

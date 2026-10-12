@@ -56,7 +56,7 @@ function Proxy(path)
 end
 
 local systems = {}
-for _, path in ipairs(Lines("find '" .. docsDir .. "' -name '*.lua' | sort")) do
+for _, path in ipairs(Lines("find '" .. docsDir .. "' -name '*.lua' | LC_ALL=C sort")) do
 	local env = setmetatable({
 		APIDocumentation = { AddDocumentationTable = function(_, t) systems[#systems + 1] = t end },
 	}, { __index = function(_, key) return Proxy(key) end })
@@ -155,7 +155,7 @@ local KEYWORDS = {}
 for word in ("and break do else elseif end false for function if in local nil not or repeat return then true"
 	.. " until while"):gmatch("%a+") do KEYWORDS[word] = true end
 local calls = {}
-for _, path in ipairs(Lines("find '" .. sourceDir .. "/Interface' -name '*.lua' | sort")) do
+for _, path in ipairs(Lines("find '" .. sourceDir .. "/Interface' -name '*.lua' | LC_ALL=C sort")) do
 	if path:sub(1, #docsPrefix) ~= docsPrefix then
 		local relative = path:sub(#sourceDir + 2)
 		for line in Read(path):gmatch("[^\n]+") do
