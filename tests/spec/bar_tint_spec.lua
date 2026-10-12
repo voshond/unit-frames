@@ -30,18 +30,16 @@ describe("Bar tint", function()
 		assert.same({ r, g, b, 1 }, bar.bar.__state.color, "the data colour stays as it is")
 		assert.is_true(bar.tintFill:IsShown())
 		assert.same({ "ALL", fill }, { bar.tintFill:GetPoint(1) })
-		assert.same({ 0.1, 0.9, 0.1, 1 }, bar.tintFill.__state.vertexColor)
-		assert.equals(0.25, bar.tintFill:GetAlpha())
+		assert.same({ 0.1, 0.9, 0.1, 0.25 }, bar.tintFill.__state.vertexColor)
 		assert.equals(bar.clip, bar.tintFill:GetParent(), "drawn above the fill, below the segments")
 		-- The bar-coloured background fades over to the tint at its own opacity.
 		assert.is_true(bar.tintBg:IsShown())
-		assert.same({ 0.1, 0.9, 0.1, 0.25 }, bar.tintBg.__state.vertexColor)
-		assert.equals(0.25, bar.tintBg:GetAlpha())
-		assert.equals(0.75, bar.bg:GetAlpha())
+		assert.same({ 0.1, 0.9, 0.1, 0.25 * 0.25 }, bar.tintBg.__state.vertexColor)
+		assert.same({ r, g, b, 0.25 * 0.75 }, bar.bg.__state.vertexColor, "the secret colour passes through")
 		bar:SetTint(nil)
 		assert.is_false(bar.tintFill:IsShown())
 		assert.is_false(bar.tintBg:IsShown())
-		assert.equals(1, bar.bg:GetAlpha())
+		assert.same({ r, g, b, 0.25 }, bar.bg.__state.vertexColor)
 		assert.is_nil(bar:GetTint())
 	end)
 
@@ -65,14 +63,14 @@ describe("Bar tint", function()
 		assert.same({ 0.5, 0.5, 0.5, 1 }, { bar:GetTint() })
 		assert.equals(bar.bg.__state.texture, bar.tintFill.__state.texture, "tint uses the bar texture")
 		assert.is_false(bar.tintBg:IsShown())
-		assert.equals(1, bar.bg:GetAlpha())
+		assert.same({ 0, 0, 0, 0.5 }, bar.bg.__state.vertexColor, "a fixed background colour stays")
 		bar:Apply({ background = { enabled = false } })
 		assert.is_false(bar.tintBg:IsShown())
 		bar:Apply({})
 		assert.is_true(bar.tintBg:IsShown())
-		assert.equals(0, bar.bg:GetAlpha())
+		assert.equals(0, bar.bg.__state.vertexColor[4])
 		bar:Apply({})
-		assert.equals(1, bar.tintFill:GetAlpha(), "applying twice is safe")
+		assert.equals(1, bar.tintFill.__state.vertexColor[4], "applying twice is safe")
 	end)
 
 	it("passes through text bars", function()
@@ -82,5 +80,25 @@ describe("Bar tint", function()
 		row:SetTint(nil)
 		assert.is_nil(row:GetBar():GetTint())
 		assert.is_false(Mock.IsSecret(row:GetBar().bg:GetAlpha()))
+	end)
+
+	-- A texture's SetAlpha replaces its vertex alpha in the client, which
+	-- turned the 25% bar-coloured background fully opaque (XP looked full).
+	it("keeps the background's opacity in its vertex colour through frame refreshes", function()
+		ns = Helpers.LoadAddon(true, true)
+		Mock.InstallUI()
+		local uf = ns.Units.frames.player.uf
+		ns.Units:Refresh("player")
+		uf:SetReadyCheck("ready")
+		uf:SetReadyCheck(nil)
+		for key, row in uf:Rows() do
+			local bar = row:GetBar()
+			assert.equals(0.25, bar.bg.__state.vertexColor[4], key)
+			for _, texture in ipairs({ bar.bg, bar.tintBg, bar.tintFill }) do
+				for _, call in ipairs(texture.__calls) do
+					assert.is_false(call[1] == "SetAlpha", key .. ": bar textures fade by vertex alpha only")
+				end
+			end
+		end
 	end)
 end)

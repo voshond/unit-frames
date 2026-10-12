@@ -27,8 +27,9 @@ StatusBar, so all of this works with secret values.
 
 SetTint(r, g, b, amount) temporarily recolours the bar (ready checks). The
 data colour may be secret, so instead of blending it the tint is drawn over
-the fill and background and faded with region alpha. Segment colours are
-plain settings and blend directly.
+the fill and background and crossfaded by opacity. Segment colours are
+plain settings and blend directly. Fades use vertex colour alpha only: a
+texture's SetAlpha replaces its vertex alpha (the background's opacity).
 ]]
 local Bar = ns.Component:Extend("Bar")
 
@@ -270,7 +271,9 @@ function Bar:ApplyColor(r, g, b, a)
 	self.bar:SetStatusBarColor(r, g, b, a or 1)
 	local bg = self.resolved.background
 	if bg.useBarColor then
-		self.bg:SetVertexColor(r, g, b, bg.alpha)
+		-- A tint fades this background out as its own fades in.
+		local tint = self.tint and self.tint[4] or 0
+		self.bg:SetVertexColor(r, g, b, bg.alpha * (1 - tint))
 	else
 		self.bg:SetVertexColor(Util.UnpackColor(bg.color))
 	end
@@ -351,15 +354,17 @@ function Bar:ApplyTint()
 	self.tintFill:SetShown(tint ~= nil)
 	self.tintBg:SetShown(tintBackground)
 	if tint then
-		self.tintFill:SetVertexColor(tint[1], tint[2], tint[3], 1)
-		self.tintFill:SetAlpha(tint[4])
+		self.tintFill:SetVertexColor(tint[1], tint[2], tint[3], tint[4])
 	end
 	if tintBackground then
-		self.tintBg:SetVertexColor(tint[1], tint[2], tint[3], background.alpha)
-		self.tintBg:SetAlpha(tint[4])
-		self.bg:SetAlpha(1 - tint[4])
+		self.tintBg:SetVertexColor(tint[1], tint[2], tint[3], background.alpha * tint[4])
+	end
+	-- The bar-coloured background's share (ApplyColor). The data colour
+	-- may be secret; it is only passed back to the texture.
+	if self.dataColor then
+		self:ApplyColor(unpack(self.dataColor, 1, 4))
 	else
-		self.bg:SetAlpha(1)
+		self:ApplyColor(Util.UnpackColor(cfg.color))
 	end
 	for _, seg in ipairs(self.segments) do
 		seg.bar:SetStatusBarColor(self:SegmentColor(cfg.segments[seg.key].color))
