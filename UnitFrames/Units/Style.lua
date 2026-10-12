@@ -126,10 +126,16 @@ local PART_ELEMENTS = {
 }
 
 -- Points oUF elements and tags at the current rows and parts.
+function Units:BindReadyCheck(frame)
+	local uf = frame.uf
+	SetElement(frame, "UF_ReadyCheck", uf:IsReadyCheckShown() and uf or nil)
+end
+
 function Units:Bind(frame)
 	local uf = frame.uf
+	uf:SetReadyCheckChangedCallback(function() self:BindReadyCheck(frame) end)
 	SetElement(frame, "UF_Resting", uf.spec.resting and uf.resolved.resting.enabled and uf or nil)
-	SetElement(frame, "UF_ReadyCheck", uf.spec.readyCheck and uf:IsReadyCheckShown() and uf or nil)
+	self:BindReadyCheck(frame)
 	for key, row, cfg in uf:Rows() do
 		local widget, rebind
 		if cfg.enabled then widget, rebind = widgets[key](row) end

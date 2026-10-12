@@ -43,6 +43,7 @@ Components\PvPFlag.lua
 Components\Classification.lua
 Components\ReadyCheckIcon.lua
 Components\UnitFrameLayout.lua
+Components\ReadyCheck.lua
 Components\UnitFrame.lua
 
 Widgets\Skin.lua

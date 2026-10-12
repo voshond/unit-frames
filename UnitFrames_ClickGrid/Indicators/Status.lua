@@ -135,7 +135,6 @@ function Status:OnCreate(button, spec)
 		local ready = item[1] == "ready" and self:Own(UF.Components.ReadyCheckIcon:New(overlay, {})) or nil
 		if ready then
 			ready.stackKey = "ready"
-			self.unitFrame.readyCheckIcon = ready
 			self.readyCheckIcon = ready
 		end
 		local host = ready and ready:GetFrame() or Host(overlay)
@@ -259,13 +258,12 @@ function Status:OnApply(cfg)
 	self:UpdateResurrectionText()
 	-- After binding: disabled elements have hidden their art.
 	self:LayoutIcons()
-	Bind("UF_ReadyCheck", self.unitFrame:IsReadyCheckShown() and self.unitFrame or nil)
-	self.unitFrame:ApplyReadyCheck()
+	self.unitFrame:AttachReadyCheckIcon(self.readyCheckIcon)
 end
 
 function Status:OnRelease()
 	self:SetResurrection(false)
-	self.unitFrame.readyCheckIcon = nil
+	self.unitFrame:DetachReadyCheckIcon(self.readyCheckIcon)
 	local stack = self.unitFrame:GetDecorations()
 	for _, item in ipairs(PLACED) do stack:Remove(item[1]) end
 	stack:Reflow()
@@ -284,8 +282,7 @@ function Status:HideIndicators()
 end
 
 -- Plain sample art for preview member `index`. `ready` is the member's
--- sample ready check { status, amount } (UnitFrame:GetReadyCheckState), or
--- nil for the static placement sample.
+-- simulated check flag; false/nil uses the static placement sample.
 function Status:ShowSample(index, ready)
 	local cfg = self.resolved
 	self.GroupRoleIndicator:SetAtlas(index == 1 and "UI-LFG-RoleIcon-Tank-Micro-Raid"
@@ -295,10 +292,8 @@ function Status:ShowSample(index, ready)
 	self.LeaderIndicator:SetShown(cfg.leader and index == 1)
 	self.AssistantIndicator:SetTexture([[Interface\GroupFrame\UI-Group-AssistantIcon]])
 	self.AssistantIndicator:SetShown(cfg.leader and index == 2)
-	if ready then
-		local status, amount = ready[1], ready[2]
-		self.readyCheckIcon:SetStatus(cfg.ready and status or nil, amount)
-	else
+	if not ready then
+		-- Placement sample only. A simulated check has already written its icon.
 		self.readyCheckIcon:SetStatus(cfg.ready and index == 2 and "ready" or nil, 1)
 	end
 	-- Member 3 is dead with a resurrection on the way; member 5 is a ghost.

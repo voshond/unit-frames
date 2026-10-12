@@ -147,10 +147,6 @@ function UnitFrame:OnCreate(parent, spec)
 	self.border = CreateFrame("Frame", nil, self.frame, "BackdropTemplate")
 	self.border:SetAllPoints(self.frame)
 	self.border:SetFrameLevel(self.frame:GetFrameLevel())
-	if spec.readyCheck then
-		-- Drives the fade after a check; never a script on the unit button.
-		self.readyCheckDriver = CreateFrame("Frame", nil, self.frame)
-	end
 
 	self.rows = {}
 	self.rowsByKey = {}
@@ -167,6 +163,16 @@ function UnitFrame:OnCreate(parent, spec)
 			self[part.key] = component
 			self.parts[#self.parts + 1] = { def = part, component = component }
 		end
+	end
+	if spec.readyCheck then
+		self.readyCheck = ns.ReadyCheck.New(self.frame, function(color, amount)
+			for _, row in ipairs(self.rows) do
+				if color then row.component:SetTint(color[1], color[2], color[3], amount)
+				else row.component:SetTint(nil) end
+			end
+		end)
+		self.readyCheckDriver = self.readyCheck.driver
+		self.readyCheck:Attach(self.readyCheckIcon)
 	end
 end
 
@@ -295,105 +301,53 @@ GetReadyCheckStatus's plain results: "waiting", "ready", "notready" or nil
                           (default 1.5 s), the answer until 3 s, then the end
                           of the check with hold and fade, then 1 s plain
 ]]
-local READY_CHECK_COLORS = { waiting = "waitingColor", ready = "readyColor", notready = "notReadyColor" }
-
 function UnitFrame:SetReadyCheck(status)
-	self.readyCheckStatus, self.readyCheckFinished = status, false
-	self:ApplyReadyCheck()
+	if self.readyCheck then self.readyCheck:Set(status) end
 end
 
 function UnitFrame:FinishReadyCheck()
-	if not self.readyCheckStatus then return end
-	if self.readyCheckStatus == "waiting" then self.readyCheckStatus = "notready" end
-	self.readyCheckFinished, self.readyCheckElapsed = true, 0
-	self:ApplyReadyCheck()
+	if self.readyCheck then self.readyCheck:Finish() end
 end
 
 function UnitFrame:IsReadyCheckFinishing()
-	return self.readyCheckFinished == true
+	return self.readyCheck ~= nil and self.readyCheck.finished == true
 end
 
--- The ready check state last shown: status (or nil), amount.
 function UnitFrame:GetReadyCheckState()
-	local shown = self.readyCheckShown
-	if shown then return shown[1], shown[2] end
+	if self.readyCheck then return self.readyCheck.shownStatus, self.readyCheck.shownAmount or 0 end
 	return nil, 0
 end
 
--- Whether ready checks show at all: bar tints or the icon.
 function UnitFrame:IsReadyCheckShown()
-	local cfg, icon = self.resolved.readyCheck, self.readyCheckIcon
-	return cfg ~= nil and (cfg.enabled or (icon ~= nil and icon:IsEnabled()))
+	return self.readyCheck ~= nil and self.readyCheck:IsShown()
 end
 
--- Amount after the check: held, then fading to 0.
-local function ReadyCheckFade(cfg, elapsed)
-	local fading = elapsed - cfg.hold
-	if fading <= 0 then return 1 end
-	if cfg.fade <= 0 then return 0 end
-	return math.max(0, 1 - fading / cfg.fade)
-end
-
-local function StepReadyCheck(component, elapsed)
-	component.readyCheckElapsed = component.readyCheckElapsed + elapsed
-	if ReadyCheckFade(component.resolved.readyCheck, component.readyCheckElapsed) <= 0 then
-		component:SetReadyCheck(nil)
-	else
-		component:ApplyReadyCheck()
-	end
-end
-
--- Tints every row with the status colour and shows the status icon, both
--- at `amount` (0 removes them).
 function UnitFrame:ShowReadyCheckState(status, amount)
-	self.readyCheckShown = { amount > 0 and status or nil, amount }
-	local cfg = self.resolved.readyCheck
-	local color = status and cfg and cfg.enabled and amount > 0 and cfg[READY_CHECK_COLORS[status]]
-	for _, row in ipairs(self.rows) do
-		if color then
-			row.component:SetTint(color[1], color[2], color[3], amount)
-		else
-			row.component:SetTint(nil)
-		end
-	end
-	if self.readyCheckIcon then
-		self.readyCheckIcon:SetStatus(amount > 0 and status or nil, amount)
-	end
+	if self.readyCheck then self.readyCheck:Show(status, amount) end
 end
 
 function UnitFrame:ApplyReadyCheck()
-	local driver = self.readyCheckDriver
-	if not driver then return end
-	local status, amount = self.readyCheckStatus, 0
-	if status and self:IsReadyCheckShown() then
-		amount = self.readyCheckFinished and ReadyCheckFade(self.resolved.readyCheck, self.readyCheckElapsed) or 1
-	end
-	self:ShowReadyCheckState(status, amount)
-	if amount > 0 and self.readyCheckFinished then
-		if not driver:GetScript("OnUpdate") then
-			driver:SetScript("OnUpdate", function(_, elapsed) StepReadyCheck(self, elapsed) end)
-		end
-	else
-		driver:SetScript("OnUpdate", nil)
-	end
+	if self.readyCheck then self.readyCheck:Apply(self.resolved.readyCheck) end
 end
 
 function UnitFrame:ShowReadyCheckSample(status, time, answerAt)
-	if not self.readyCheckDriver then return end
-	self.readyCheckDriver:SetScript("OnUpdate", nil)
-	self.readyCheckStatus, self.readyCheckFinished = nil, false
-	if not time or not status then
-		self:ShowReadyCheckState(status, status and 1 or 0)
-		return
-	end
-	local cfg = self.resolved.readyCheck
-	local t = time % (4 + cfg.hold + cfg.fade)
-	if t < (answerAt or 1.5) then
-		self:ShowReadyCheckState("waiting", 1)
-	elseif t < 3 then
-		self:ShowReadyCheckState(status, 1)
-	else
-		self:ShowReadyCheckState(status == "waiting" and "notready" or status, ReadyCheckFade(cfg, t - 3))
+	if self.readyCheck then self.readyCheck:Sample(status, time, answerAt) end
+end
+
+-- The live adapter owns binding; companions only attach their owned icon.
+function UnitFrame:SetReadyCheckChangedCallback(callback)
+	self.onReadyCheckChanged = callback
+end
+
+function UnitFrame:AttachReadyCheckIcon(icon)
+	assert(self.readyCheck and not self.released, "Ready check presentation unavailable")
+	self.readyCheck:Attach(icon)
+	if self.onReadyCheckChanged then self.onReadyCheckChanged() end
+end
+
+function UnitFrame:DetachReadyCheckIcon(icon)
+	if self.readyCheck and self.readyCheck:Detach(icon) then
+		if not self.released and self.onReadyCheckChanged then self.onReadyCheckChanged() end
 	end
 end
 
@@ -514,7 +468,8 @@ end
 
 function UnitFrame:OnRelease()
 	self.border:SetScript("OnUpdate", nil)
-	if self.readyCheckDriver then self.readyCheckDriver:SetScript("OnUpdate", nil) end
+	self.onReadyCheckChanged = nil
+	if self.readyCheck then self.readyCheck:Release() end
 	self.decorations:Release()
 end
 
@@ -582,5 +537,5 @@ function UnitFrame:GetClassification()
 end
 
 function UnitFrame:GetReadyCheckIcon()
-	return self.readyCheckIcon
+	return self.readyCheck and self.readyCheck.icon or nil
 end
