@@ -121,3 +121,4 @@ function TextBar:SetValue(value) self.bar:SetValue(value) end
 function TextBar:SetSegmentValue(key, value) self.bar:SetSegmentValue(key, value) end
 function TextBar:SetColor(r, g, b, a) self.bar:SetColor(r, g, b, a) end
 function TextBar:ClearColor() self.bar:ClearColor() end
+function TextBar:SetTint(r, g, b, amount) self.bar:SetTint(r, g, b, amount) end

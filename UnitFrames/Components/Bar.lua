@@ -24,6 +24,11 @@ way oUF does heal prediction. They are declared per instance through `spec`:
 
 Segment positions are pure anchoring and every value goes straight into a
 StatusBar, so all of this works with secret values.
+
+SetTint(r, g, b, amount) temporarily recolours the bar (ready checks). The
+data colour may be secret, so instead of blending it the tint is drawn over
+the fill and background and faded with region alpha. Segment colours are
+plain settings and blend directly.
 ]]
 local Bar = ns.Component:Extend("Bar")
 
@@ -129,10 +134,18 @@ function Bar:OnCreate(parent, spec)
 
 	self.bg = self.bar:CreateTexture(nil, "BACKGROUND")
 	self.bg:SetAllPoints(self.bar)
+	self.tintBg = self.bar:CreateTexture(nil, "BACKGROUND", nil, 1)
+	self.tintBg:SetAllPoints(self.bar)
+	self.tintBg:SetDesaturated(true)
+	self.tintBg:Hide()
 
 	self.clip = CreateFrame("Frame", nil, self.bar)
 	self.clip:SetAllPoints(self.bar)
 	self.clip:SetClipsChildren(true)
+	-- Above the fill (the clip frame draws over the bar), below the segments.
+	self.tintFill = self.clip:CreateTexture(nil, "BACKGROUND")
+	self.tintFill:SetDesaturated(true)
+	self.tintFill:Hide()
 
 	self.segments = {}
 	self.segmentsByKey = {}
@@ -172,6 +185,11 @@ function Bar:OnApply(cfg)
 	self.bar:SetReverseFill(cfg.reverseFill)
 	self.bg:SetTexture(texture)
 	self.bg:SetShown(cfg.background.enabled)
+	self.tintBg:SetTexture(texture)
+	self.tintFill:SetTexture(texture)
+	self.tintFill:ClearAllPoints()
+	self.tintFill:SetAllPoints(self.bar:GetStatusBarTexture())
+	self:ApplyTint()
 
 	if cfg.smooth and ns.Caps.smoothBars then
 		self.interpolation = Enum.StatusBarInterpolation.ExponentialEaseOut
@@ -194,7 +212,7 @@ function Bar:OnApply(cfg)
 		local sb = seg.bar
 		sb:ClearAllPoints()
 		sb:SetStatusBarTexture(Media:Fetch("statusbar", segCfg.texture))
-		sb:SetStatusBarColor(Util.UnpackColor(segCfg.color))
+		sb:SetStatusBarColor(self:SegmentColor(segCfg.color))
 		sb:SetOrientation(cfg.orientation)
 		if segCfg.enabled then
 			local target = mode == "append" and (seg.appendToFill and fill or previous)
@@ -310,6 +328,59 @@ end
 function Bar:ClearColor()
 	self.dataColor = nil
 	self:ApplyColor(Util.UnpackColor(self.resolved.color))
+end
+
+-- Plain tint colour over the bar at `amount` (0..1, default 1); no colour
+-- or a zero amount removes it. It survives re-styling until removed.
+function Bar:SetTint(r, g, b, amount)
+	amount = amount or 1
+	if r == nil or amount <= 0 then
+		self.tint = nil
+	else
+		self.tint = { r, g, b, math.min(amount, 1) }
+	end
+	self:ApplyTint()
+end
+
+function Bar:ApplyTint()
+	local tint, cfg = self.tint, self.resolved
+	local background = cfg.background
+	-- A fixed background colour stays; one tinted with the bar colour fades
+	-- over to the tint like the fill.
+	local tintBackground = tint ~= nil and background.enabled and background.useBarColor
+	self.tintFill:SetShown(tint ~= nil)
+	self.tintBg:SetShown(tintBackground)
+	if tint then
+		self.tintFill:SetVertexColor(tint[1], tint[2], tint[3], 1)
+		self.tintFill:SetAlpha(tint[4])
+	end
+	if tintBackground then
+		self.tintBg:SetVertexColor(tint[1], tint[2], tint[3], background.alpha)
+		self.tintBg:SetAlpha(tint[4])
+		self.bg:SetAlpha(1 - tint[4])
+	else
+		self.bg:SetAlpha(1)
+	end
+	for _, seg in ipairs(self.segments) do
+		seg.bar:SetStatusBarColor(self:SegmentColor(cfg.segments[seg.key].color))
+	end
+end
+
+-- A segment's configured colour blended towards the tint.
+function Bar:SegmentColor(color)
+	local r, g, b, a = Util.UnpackColor(color)
+	local tint = self.tint
+	if not tint then
+		return r, g, b, a
+	end
+	local t = tint[4]
+	return r + (tint[1] - r) * t, g + (tint[2] - g) * t, b + (tint[3] - b) * t, a
+end
+
+function Bar:GetTint()
+	if self.tint then
+		return unpack(self.tint, 1, 4)
+	end
 end
 
 -- Engine-driven fill from a Duration object (casts). direction is an
