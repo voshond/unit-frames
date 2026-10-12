@@ -125,17 +125,21 @@ local PART_ELEMENTS = {
 	classification = { element = "UF_Classification" },
 }
 
--- Points oUF elements and tags at the current rows and parts.
-function Units:BindReadyCheck(frame)
-	local uf = frame.uf
-	SetElement(frame, "UF_ReadyCheck", uf:IsReadyCheckShown() and uf or nil)
+-- Companions attach their own ready check icon later: rebind on changes.
+local function BindReadyCheck(frame)
+	local readyCheck = frame.uf:GetReadyCheck()
+	SetElement(frame, "UF_ReadyCheck", readyCheck and readyCheck:IsShown() and readyCheck or nil)
 end
 
+-- Points oUF elements and tags at the current rows and parts.
 function Units:Bind(frame)
 	local uf = frame.uf
-	uf:SetReadyCheckChangedCallback(function() self:BindReadyCheck(frame) end)
+	local readyCheck = uf:GetReadyCheck()
+	if readyCheck then
+		readyCheck:SetChangedCallback(function() BindReadyCheck(frame) end)
+	end
 	SetElement(frame, "UF_Resting", uf.spec.resting and uf.resolved.resting.enabled and uf or nil)
-	self:BindReadyCheck(frame)
+	BindReadyCheck(frame)
 	for key, row, cfg in uf:Rows() do
 		local widget, rebind
 		if cfg.enabled then widget, rebind = widgets[key](row) end

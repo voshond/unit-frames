@@ -89,8 +89,8 @@ describe("Bar tint", function()
 		Mock.InstallUI()
 		local uf = ns.Units.frames.player.uf
 		ns.Units:Refresh("player")
-		uf:SetReadyCheck("ready")
-		uf:SetReadyCheck(nil)
+		uf:GetReadyCheck():Set("ready")
+		uf:GetReadyCheck():Set(nil)
 		for key, row in uf:Rows() do
 			local bar = row:GetBar()
 			assert.equals(0.25, bar.bg.__state.vertexColor[4], key)

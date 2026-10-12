@@ -79,7 +79,7 @@ function Config:UnitStore(unit)
 	self.unitStores = self.unitStores or {}
 	local store = self.unitStores[unit]
 	if not store then
-		store = ns.Store.New({
+		store = ns.Store:New({
 			schema = function() return ns.Units:GetSchema(unit) end,
 			read = function() return self:GetUnitConfig(unit) end,
 			theme = true,

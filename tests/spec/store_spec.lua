@@ -34,7 +34,7 @@ describe("Settings stores", function()
 
 	it("rejects invalid candidates without writing or notifying", function()
 		local saved, changes = {}, 0
-		local store = ns.Store.New({
+		local store = ns.Store:New({
 			schema = { { key = "size", type = "range", min = 1, max = 10, default = 5 } },
 			read = function() return saved end,
 			write = function(candidate) saved = candidate end,

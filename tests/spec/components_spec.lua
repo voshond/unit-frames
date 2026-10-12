@@ -91,7 +91,7 @@ describe("Bar", function()
 		assert.equals(max, segMax)
 	end)
 
-	it("anchors the spark without passing secret dimensions to texture setters", function()
+	it("anchors the spark and sizes segments without passing secret dimensions to size setters", function()
 		local bar = C.Bar:New(parent, {}, { segments = HEALTH_SEGMENTS })
 		local width, height = Secret(200), Secret(20)
 		for _, orientation in ipairs({ "HORIZONTAL", "VERTICAL", "HORIZONTAL" }) do
@@ -99,8 +99,8 @@ describe("Bar", function()
 				for _, spark in ipairs({ false, true }) do
 					assert.has_no_error(function()
 						bar:Apply({ orientation = orientation, reverseFill = reverse, spark = spark })
-						bar.bar:SetSize(width, height)
-						bar.bar:RunScript("OnSizeChanged", width, height)
+						bar.bar:SetSize(200, 20)
+						Mock.SetEngineSize(bar.bar, width, height)
 						bar:Apply()
 					end)
 					local horizontal = orientation == "HORIZONTAL"
@@ -122,8 +122,8 @@ describe("Bar", function()
 						assert.is_false(call[1] == "SetRotation", "spark artwork rotates within its bounds")
 					end
 					for _, seg in ipairs(bar.segments) do
-						assert.equals(horizontal and width or height,
-							horizontal and seg.bar:GetWidth() or seg.bar:GetHeight())
+						assert.equals(horizontal and 200 or 20, horizontal and seg.bar:GetWidth() or seg.bar:GetHeight(),
+							"segments keep their last plain length")
 					end
 				end
 			end
@@ -339,7 +339,7 @@ describe("Castbar", function()
 	it("refreshes a castbar with secret status bar dimensions", function()
 		local castbar = NewCastbar()
 		assert.has_no_error(function()
-			castbar:GetBar().bar:SetSize(Secret(180), Secret(14))
+			Mock.SetEngineSize(castbar:GetBar().bar, Secret(180), Secret(14))
 			castbar:Apply()
 			castbar:Apply({ bar = { spark = false } })
 			castbar:Apply({ bar = { spark = true } })

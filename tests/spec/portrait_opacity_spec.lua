@@ -12,7 +12,7 @@ describe("3D portrait opacity", function()
 	it("follows secret range opacity, resets, mode changes and model replacement", function()
 		local UF = Helpers.LoadAddon(true, true)
 		local uf = UF.Units.frames.target.uf
-		local portrait = uf:GetPortrait()
+		local portrait = uf:GetPart("portrait")
 		UF.Config:SetUnitValue("target", "range.enabled", true)
 		Mock.inCombat = true
 		for _, checked in ipairs({ true, false }) do
@@ -39,7 +39,7 @@ describe("3D portrait opacity", function()
 		UF.Config:SetUnitValue("player", "range.outsideAlpha", 0.3)
 		UF.Config:SetUnitValue("player", "castbar.placement", "portrait")
 		local uf = UF.Units.frames.player.uf
-		local portrait, castbar = uf:GetPortrait(), uf:GetCastbar()
+		local portrait, castbar = uf:GetPart("portrait"), uf:GetPart("castbar")
 		uf:SetRangeState(Mock.Secret(false), Mock.Secret(true))
 		castbar:Start({ name = Mock.Secret("Fireball"), icon = Mock.Secret(1), duration = C_DurationUtil.CreateDuration() })
 		assert.equals(0, ModelAlpha(portrait))
@@ -61,7 +61,7 @@ describe("3D portrait opacity", function()
 		local sample = UF.Units:GetSample("target")
 		sample.outOfRange = true
 		UF.Units:ShowSample(uf, sample)
-		local portrait = uf:GetPortrait()
+		local portrait = uf:GetPart("portrait")
 		assert.equals(0.2, ModelAlpha(portrait))
 		assert.is_nil(portrait.model:GetScript("OnUpdate"))
 		sample.outOfRange = false

@@ -208,7 +208,7 @@ function Workbench:Select(id)
 	local state = self:GetState(entry)
 	self.state = state
 
-	local session = wb.PreviewSession.New(entry, state, self.entryState, self.holder)
+	local session = wb.PreviewSession:New(entry, state, self.entryState, self.holder)
 	local handle = session.handle
 	self.session = session
 	self.handle = handle

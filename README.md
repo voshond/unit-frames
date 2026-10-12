@@ -17,6 +17,7 @@ Modular unit frames for WoW Forever (Interface 16001). Design and research live 
 scripts/install.sh          # copy all addons into the Forever client (or: --link, --uninstall)
 luajit tests/run.lua        # offline tests + syntax check of all addon code
 luajit tests/run.lua bar    # only spec files matching "bar"
+luajit scripts/api-snapshot.lua  # refresh the client API snapshot the mock is held to
 scripts/fetch-libs.sh       # update the embedded libraries (UnitFrames/Libs/VERSIONS.md)
 ```
 
@@ -193,15 +194,16 @@ independent of oUF and feed sample values through the shared row writers in
 `Units/Rows.lua`; non-oUF live previews use its calculator-based live writers.
 
 A unit frame's optional parts (portrait, castbar, auras, raid target) are
-declared once in `UnitFrame.PARTS`; edge icons, including companions', join
+declared once in `UnitFrame.PARTS` and reached with `UnitFrame:GetPart(key)`;
+edge icons, including companions', join
 the frame's `DecorationStack` (`UnitFrame:GetDecorations()`); the Units layer keeps one oUF binding and
 one sample feeder per part key, and Edit Mode quick settings read the unit
 schema. Derive new definitions with `Units:Derive`, overriding rows by key.
 
 `IconPlacement` shares placement descriptors and adapts the companion's flat
 settings without changing saved keys. `ReadyCheck` owns the shared ready-check
-timeline; companions use `AttachReadyCheckIcon` / `DetachReadyCheckIcon` to lend
-an icon while retaining its component ownership. The Units adapter owns live
+timeline (`UnitFrame:GetReadyCheck()`); companions use its `Attach` / `Detach`
+to lend an icon while retaining its component ownership. The Units adapter owns live
 element rebinding when the attached icon's availability changes.
 
 Settings are written through stores (`Core/Store.lua`): set, replace and reset

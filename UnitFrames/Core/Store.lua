@@ -4,7 +4,7 @@ local Schema, Util = ns.Schema, ns.Util
 --[[
 A settings store: the one write path for a table of user overrides.
 
-  Store.New({
+  Store:New({
     schema   = schema or function() return schema end,
     read     = function() return overrides end,   -- current override table
     write    = function(overrides) end,           -- optional; installs a validated replacement.
@@ -18,12 +18,11 @@ A settings store: the one write path for a table of user overrides.
 Set/Reset/Replace return true, or false plus a reason when validation fails
 (nothing is written then). Target() is an Inspector target for the store.
 ]]
-local Store = {}
-Store.__index = Store
+local Store = ns.Object:Extend("Store")
 ns.Store = Store
 
-function Store.New(opts)
-	return setmetatable({ opts = opts }, Store)
+function Store:Init(opts)
+	self.opts = opts
 end
 
 function Store:GetSchema()

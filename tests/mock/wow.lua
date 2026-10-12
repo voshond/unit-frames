@@ -4,13 +4,18 @@ logic offline (LuaJIT, Lua 5.1 semantics like the client).
 
 Widgets are plain tables that keep simple state and record calls. Methods
 without an explicit implementation are accepted and recorded, so code can call
-them, and tests can inspect obj.__calls.
+them, and tests can inspect obj.__calls. Every method call and documented
+global function is held to the client API snapshot (tests/mock/api.lua):
+undocumented methods, rejected arguments, secrets where the client refuses
+them and protected calls in combat all raise errors.
 
 Secret(v) creates a fake secret value: a table without arithmetic or
 comparison metamethods, so doing maths or comparisons on it raises an error,
 just like a real secret does. issecretvalue() recognises it.
 ]]
 local Mock = {}
+local API = dofile("tests/mock/api.lua")
+Mock.API = API
 
 local SecretMT = { __tostring = function() return "<secret>" end }
 
@@ -40,6 +45,7 @@ end
 
 local Methods = {}
 local ObjectMT = {}
+Mock.Methods = Methods
 
 local registry -- all created objects, reset per Mock.Install()
 
@@ -67,10 +73,64 @@ local function NewObject(objectType, parent, name)
 end
 Mock.NewObject = NewObject
 
+-- Blizzard's secure code (secure delegates, engine updates simulated by specs)
+-- runs untainted: the client accepts secrets and protected calls from it.
+local untainted = 0
+function Mock.RunUntainted(fn, ...)
+	untainted = untainted + 1
+	local results = { pcall(fn, ...) }
+	untainted = untainted - 1
+	if not results[1] then error(results[2], 0) end
+	return unpack(results, 2, table.maxn(results))
+end
+
+-- Like CreateSecureDelegate: `fn` runs untainted for every caller.
+function Mock.SecureDelegate(fn)
+	return function(...) return Mock.RunUntainted(fn, ...) end
+end
+
+-- Test-only conveniences on mock objects. Addon code must never call them.
+Mock.HELPERS = { GetAnchor = true, RunScript = true }
+-- Intrinsic types whose Lua mixins come without a named template.
+local INTRINSIC_MIXINS = { AuraContainer = true, EventFrame = true, DropdownButton = true }
+
+local function CheckMethod(self, key, ...)
+	local objectType = rawget(self, "__type")
+	local def, modelled = API.Method(objectType, key)
+	if def then
+		if def.protected and untainted == 0 and self.__state.protected and InCombatLockdown() then
+			error(string.format("%s:%s is protected and blocked in combat", objectType, key), 3)
+		end
+		API.CheckArgs(objectType .. ":" .. key, def, Mock.IsSecret, untainted > 0, ...)
+	elseif modelled and not Mock.HELPERS[key] then
+		local templated = self.__state.template or INTRINSIC_MIXINS[objectType]
+		if not (templated and API.LuaMethod(key)) then
+			error(string.format("%s:%s is not a documented method%s", objectType, key,
+				API.LuaMethod(key) and " (it needs a template providing " .. API.LuaMethod(key) .. ")" or ""), 3)
+		end
+	end
+end
+
+-- One checked entry point per method name: the explicit implementation, or
+-- for any other method, record the call.
+local wrappers = {}
+local function Wrapped(key)
+	local wrapper = wrappers[key]
+	if not wrapper then
+		wrapper = function(self, ...)
+			CheckMethod(self, key, ...)
+			local impl = Methods[key]
+			if impl then return impl(self, ...) end
+			self.__calls[#self.__calls + 1] = { key, ... }
+		end
+		wrappers[key] = wrapper
+	end
+	return wrapper
+end
+
 ObjectMT.__index = function(obj, key)
-	local impl = Methods[key]
-	if impl then
-		return impl
+	if Methods[key] then
+		return Wrapped(key)
 	end
 	-- Strict objects behave like real frames for unknown keys (nil), e.g. oUF
 	-- unit frames where code checks fields like frame.Health.
@@ -79,10 +139,7 @@ ObjectMT.__index = function(obj, key)
 	end
 	-- oUF's prediction calculator is a data field, never a widget method.
 	if key == "values" then return nil end
-	-- Unknown method: accept and record.
-	return function(self, ...)
-		self.__calls[#self.__calls + 1] = { key, ... }
-	end
+	return Wrapped(key)
 end
 
 local function Record(self, name, ...)
@@ -136,6 +193,11 @@ local function Resize(self, width, height)
 	if changed and s.scripts.OnSizeChanged then
 		s.scripts.OnSizeChanged(self, width, height)
 	end
+end
+-- Test helper: dimensions the engine gives a frame (e.g. secret ones from
+-- anchoring), bypassing the addon-facing SetSize checks.
+function Mock.SetEngineSize(obj, width, height)
+	Resize(obj, width, height)
 end
 local function CheckTextureDimensions(self, ...)
 	if self.__type == "Texture" then
@@ -200,7 +262,7 @@ function Methods:GetAttribute(name) return self.__state.attributes and self.__st
 function Methods:RegisterForClicks(...) Record(self, "RegisterForClicks", ...) end
 function Methods:GetChildren()
 	local children = {}
-	for _, obj in ipairs(registry) do if obj:GetParent() == self then children[#children + 1] = obj end end
+	for _, obj in ipairs(registry) do if obj.__state.parent == self then children[#children + 1] = obj end end
 	return unpack(children)
 end
 function Methods:GetFrameLevel() return self.__state.level end
@@ -417,8 +479,8 @@ function Methods:AddInitializer(initializer)
 end
 
 -- Events
-function Methods:RegisterEvent(event) self.__state.events[event] = true end
-function Methods:RegisterUnitEvent(event) self.__state.events[event] = true end
+function Methods:RegisterEvent(event) self.__state.events[event] = true; Mock.registeredEvents[event] = true end
+function Methods:RegisterUnitEvent(event) self.__state.events[event] = true; Mock.registeredEvents[event] = true end
 function Methods:UnregisterEvent(event) self.__state.events[event] = nil end
 function Methods:UnregisterAllEvents() self.__state.events = {} end
 
@@ -441,6 +503,7 @@ function Mock.DecorateAuraContainer(container)
 		table.insert(s.groupOrder, key)
 		for i = 1, count do
 			local button = NewObject("Button", self)
+			button.__state.template = "CustomAuraButtonTemplate"
 			button.__state.dispelTextures = {}
 			function button:SetCancelAuraButtons(tokens)
 				assert(tokens == nil or type(tokens) == "string", "cancelAuraButtons must be a string or nil")
@@ -581,6 +644,7 @@ function Mock.Install()
 	Mock.pvpInfo = {}
 	Mock.ranges = {}
 	Mock.spellRanges = {}
+	Mock.registeredEvents = {}
 
 	_G.LibStub = nil
 	_G.UnitFrames = nil
@@ -592,6 +656,7 @@ function Mock.Install()
 
 	_G.CreateFrame = function(frameType, name, parent, template)
 		local obj = NewObject(frameType or "Frame", parent, name)
+		obj.__state.template = template
 		if template and template:find("Secure", 1, true) then obj.__state.protected = true end
 		if frameType == "AuraContainer" then
 			assert(not InCombatLockdown(), "Native aura containers cannot be created in combat")
@@ -723,18 +788,16 @@ function Mock.Install()
 	}
 	_G.AuraContainerSortMethod = { ExpirationOnly = 1 }
 	_G.AuraContainerSortDirection = { Normal = 0 }
-	_G.Enum = {
-		LFGRole = { Tank = 0, Healer = 1, Damage = 2 },
-		CustomAuraButtonDispelTypeTextureStyle = { Border = 1, PreserveAsset = 4 },
-		StatusBarInterpolation = { Immediate = 0, ExponentialEaseOut = 1 },
-		UnitDamageAbsorbClampMode = { MissingHealth = 0, MissingHealthWithoutIncomingHeals = 1, MaximumHealth = 2 },
-		UnitMaximumHealthMode = { Default = 0, WithAbsorbs = 1 },
-		StatusBarTimerDirection = { ElapsedTime = 0, RemainingTime = 1 },
-		SecondsFormatterAbbreviation = { None = 0, Truncate = 1, OneLetter = 2 },
-		SecondsFormatterInterval = { Seconds = 1, Minutes = 2, Hours = 3, Days = 4 },
-		SecondsFormatterRounding = { RoundUp = 0, Truncate = 1 },
-		SecondsFormatterIntervalWhitespace = { Preserve = 0, Strip = 1, StripIgnoreLocale = 2 },
-	}
+	-- The client's values, from the API snapshot.
+	_G.Enum = {}
+	for _, name in ipairs({ "LFGRole", "CustomAuraButtonDispelTypeTextureStyle", "StatusBarInterpolation",
+		"UnitDamageAbsorbClampMode", "UnitMaximumHealthMode", "StatusBarTimerDirection",
+		"SecondsFormatterAbbreviation", "SecondsFormatterInterval", "SecondsFormatterRounding",
+		"SecondsFormatterIntervalWhitespace" }) do
+		local values = assert(API.Snapshot().enums[name], "Enum." .. name .. " is not a client enum")
+		_G.Enum[name] = {}
+		for field, value in pairs(values) do _G.Enum[name][field] = value end
+	end
 	_G.C_AddOns = {
 		GetAddOnMetadata = function() return "test" end,
 		LoadAddOn = function() return true end,
@@ -799,6 +862,28 @@ function Mock.Install()
 		return tostring(value)
 	end
 	_G.C_CVar = { SetCVar = function() return true end }
+	Mock.EnforceAPI()
+end
+
+-- Wraps the mock's documented global functions with the client's argument
+-- checks. Runs after each install; specs that replace a global afterwards
+-- can call it again.
+local enforced = setmetatable({}, { __mode = "k" })
+function Mock.EnforceAPI()
+	for name, def in pairs(API.Snapshot().functions) do
+		local namespace, key = name:match("^([%w_]+)%.([%w_]+)$")
+		local owner = namespace and rawget(_G, namespace) or _G
+		key = key or name
+		local impl = type(owner) == "table" and rawget(owner, key)
+		if type(impl) == "function" and not enforced[impl] then
+			local wrapper = function(...)
+				API.CheckArgs(name, def, Mock.IsSecret, untainted > 0, ...)
+				return impl(...)
+			end
+			enforced[wrapper] = true
+			owner[key] = wrapper
+		end
+	end
 end
 
 --[[
@@ -838,13 +923,13 @@ function Mock.InstallUI()
 	_G.GetRaidTargetIndex = function(unit) return Mock.raidTargets and Mock.raidTargets[unit] end
 	_G.SetRaidTargetIconTexture = function(texture, index) texture.__state.raidTargetIndex = index end
 	_G.UnitFrameUtil = {
-		GetUnitPvPIndicatorDisplayInfo = function(unit, checkMercenary)
+		GetUnitPvPIndicatorDisplayInfo = Mock.SecureDelegate(function(unit, checkMercenary)
 			assert(checkMercenary == true, "live PvP flags should account for mercenary mode")
 			return Mock.pvpInfo[unit] or { pvpIconAtlas = "" }
-		end,
+		end),
 	}
 	_G.UnitExists = function() return true end
-	Mock.assignedRole = Enum.LFGRole.Tank
+	Mock.assignedRole = Secret(Enum.LFGRole.Tank)
 	_G.UnitGroupRolesAssignedEnum = function() return Mock.assignedRole end
 	_G.UnitIsPlayer = function() return true end
 	_G.UnitIsConnected = function() return true end
@@ -856,7 +941,9 @@ function Mock.InstallUI()
 	_G.UnitClassification = function() return "elite" end
 	_G.UnitCreatureType = function() return Secret("Beast") end
 	_G.UnitName = function() return Secret("name"), Secret("realm") end
-	_G.UnitClass = function() return Secret("Warrior"), "WARRIOR", 1 end
+	_G.UnitNameUnmodified = _G.UnitName
+	_G.UnitClass = function() return Secret("Warrior"), Secret("WARRIOR"), Secret(1) end
+	_G.UnitRace = function() return Secret("Human"), Secret("Human") end
 	_G.UnitLevel = function() return 30 end
 	_G.UnitHealth = function() return Secret(500) end
 	_G.UnitHealthMax = function() return Secret(1000) end
@@ -904,13 +991,16 @@ function Mock.InstallUI()
 	_G.UnitXPMax = function() return 5000 end
 	_G.GetXPExhaustion = function() return nil end
 	_G.UnitCastingInfo = function()
-		return Secret("Fireball"), Secret("Fireball"), Secret(135812), Secret(0), Secret(3000), false, Secret(1), Secret(true)
+		return Secret("Fireball"), Secret("Fireball"), Secret(135812), Secret(0), Secret(3000), Secret(false), Secret(1),
+			Secret(true)
 	end
 	_G.UnitChannelInfo = function()
-		return Secret("Drain Life"), Secret("Drain Life"), Secret(136169), Secret(0), Secret(5000), false, Secret(true)
+		return Secret("Drain Life"), Secret("Drain Life"), Secret(136169), Secret(0), Secret(5000), Secret(false),
+			Secret(true)
 	end
 	_G.UnitCastingDuration = function() return C_DurationUtil.CreateDuration() end
 	_G.UnitChannelDuration = function() return C_DurationUtil.CreateDuration() end
+	Mock.EnforceAPI()
 end
 
 return Mock

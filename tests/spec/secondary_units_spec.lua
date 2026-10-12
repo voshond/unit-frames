@@ -184,7 +184,7 @@ describe("Target, focus and their targets", function()
 			local frame = ns.Units.frames[unit]
 			ns.oUF.elements.UF_Auras.update(frame, "UnitFramesRefresh")
 			for _, kind in ipairs({ "buffs", "debuffs" }) do
-				assert.equals(unit, frame.uf:GetAuras():GetContainer(kind):GetUnit())
+				assert.equals(unit, frame.uf:GetPart("auras"):GetContainer(kind):GetUnit())
 			end
 		end
 	end)
@@ -197,14 +197,14 @@ describe("Target, focus and their targets", function()
 			UnitCastingInfo = function(token) called = token; return Mock.Secret("Frostbolt"), nil, Mock.Secret(1) end
 			update(frame, "UnitFramesRefresh")
 			assert.equals(unit, called)
-			assert.is_true(frame.uf:GetCastbar():GetFrame():IsShown())
+			assert.is_true(frame.uf:GetPart("castbar"):GetFrame():IsShown())
 			called = nil
 			update(frame, "UNIT_SPELLCAST_START", "player")
 			assert.is_nil(called)
 			UnitCastingInfo = function() return nil end
 			UnitChannelInfo = function() return nil end
 			update(frame, "UnitFramesRefresh")
-			assert.is_false(frame.uf:GetCastbar():GetFrame():IsShown())
+			assert.is_false(frame.uf:GetPart("castbar"):GetFrame():IsShown())
 		end
 	end)
 

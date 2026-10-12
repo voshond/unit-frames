@@ -8,14 +8,14 @@ describe("Raid target icons", function()
 		Mock.InstallUI()
 		frame = ns.Units.frames.player
 		uf = frame.uf
-		marker = uf:GetRaidTarget()
+		marker = uf:GetPart("raidTarget")
 	end)
 
 	it("offers and binds an independently configurable icon on every unit", function()
 		for _, unit in ipairs(ns.Units.order) do
 			local live = ns.Units.frames[unit]
 			assert.is_not_nil(ns.Schema.Find(live.uf:GetSchema(), "raidTarget.anchor"))
-			assert.equals(live.uf:GetRaidTarget():GetWidget(), live.RaidTargetIndicator)
+			assert.equals(live.uf:GetPart("raidTarget"):GetWidget(), live.RaidTargetIndicator)
 			assert.is_true(live:IsElementEnabled("RaidTargetIndicator"))
 			assert.is_false(live.RaidTargetIndicator:IsShown(), "hidden until a marker is assigned")
 		end
@@ -43,7 +43,7 @@ describe("Raid target icons", function()
 	end)
 
 	it("keeps portrait corners inside on either side and through portrait style changes", function()
-		local portrait = uf:GetPortrait():GetFrame()
+		local portrait = uf:GetPart("portrait"):GetFrame()
 		for _, side in ipairs({ "LEFT", "RIGHT" }) do
 			ns.Config:SetUnitValue("player", "portrait.position", side)
 			for _, mode in ipairs({ "3D", "2D", "class" }) do
@@ -96,8 +96,8 @@ describe("Raid target icons", function()
 	it("stays above the portrait and the castbar covering health", function()
 		ns.Config:SetUnitValue("player", "castbar.placement", "health")
 		local level = marker:GetFrame():GetFrameLevel()
-		assert.is_true(level > uf:GetPortrait().model:GetFrameLevel())
-		assert.is_true(level > uf:GetCastbar():GetFrame():GetFrameLevel())
+		assert.is_true(level > uf:GetPart("portrait").model:GetFrameLevel())
+		assert.is_true(level > uf:GetPart("castbar"):GetFrame():GetFrameLevel())
 		assert.equals("OVERLAY", marker:GetWidget().__state.layer)
 	end)
 
@@ -137,9 +137,9 @@ describe("Raid target icons", function()
 		ns.Config:SetUnitValue("player", "raidTarget.offsetX", 7)
 		ns.Units:CopyPlayerSettings("target")
 		local target = ns.Units.frames.target
-		assert.same({ "CENTER", target, "BOTTOMRIGHT", 7, 0 }, target.uf:GetRaidTarget():GetFrame():GetAnchor("CENTER"))
+		assert.same({ "CENTER", target, "BOTTOMRIGHT", 7, 0 }, target.uf:GetPart("raidTarget"):GetFrame():GetAnchor("CENTER"))
 		local preview = ns.Units:CreateFrame("target", UIParent)
-		local previewMarker = preview:GetRaidTarget()
+		local previewMarker = preview:GetPart("raidTarget")
 		previewMarker:SetIndex(8)
 		preview:Release()
 		assert.is_false(previewMarker:GetFrame():IsShown())
@@ -153,7 +153,7 @@ describe("Raid target Workbench previews", function()
 		workbench:Toggle()
 		for _, unit in ipairs(ns.Units.order) do
 			workbench:Select("unit." .. unit)
-			local marker = workbench.handle.parts.uf:GetRaidTarget()
+			local marker = workbench.handle.parts.uf:GetPart("raidTarget")
 			local opt = ns.Schema.Find(workbench.dataTarget.schema, "raidTarget")
 			assert.equals(9, #ns.Schema.GetValues(opt))
 			assert.equals(8, marker:GetWidget().__state.raidTargetIndex)
@@ -165,7 +165,7 @@ describe("Raid target Workbench previews", function()
 			workbench.dataTarget.set("raidTarget", 0)
 			assert.is_false(marker:GetWidget():IsShown())
 			workbench.styleTarget.set("raidTarget.anchor", "BOTTOM")
-			assert.equals("BOTTOM", ns.Units.frames[unit].uf:GetRaidTarget().resolved.anchor)
+			assert.equals("BOTTOM", ns.Units.frames[unit].uf:GetPart("raidTarget").resolved.anchor)
 			workbench:SelectSection("raidTarget")
 			assert.equals(7, #workbench.inspector.page.rows)
 		end

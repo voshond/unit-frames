@@ -40,6 +40,10 @@ spec:
   portrait, castbar, auras, raidTarget, pvp, classification, readyCheckIcon
             { defaults, ... } to offer that part (see UnitFrame.PARTS;
             auras also take cancelBuffs and clickThrough)
+
+Access: GetRow(key) and GetPart(key) return a row's TextBar or a present
+part's component; Rows() and Parts() iterate them with their resolved config.
+GetReadyCheck() returns the ReadyCheck presenter when the spec offers one.
 ]]
 local UnitFrame = ns.Component:Extend("UnitFrame")
 
@@ -84,7 +88,9 @@ end
 --[[
 Optional parts, declared once. A unit offers a part when its spec has the
 key ({ defaults, ... }); the order is creation, apply, binding and frame-level
-order. Every part is a child component stored as self[key].
+order. Every part is an owned child component, found with GetPart(key).
+Adding a part here is enough for schema, lifecycle and iteration; live data
+binds through Units/Style.lua PART_ELEMENTS, samples through Units/Preview.lua.
   schema(partSpec)     the part's option group (beforeRows: listed above the rows)
   create(frame, ps)    builds the component
   apply(part, cfg)     optional, after the part's config is applied
@@ -158,24 +164,24 @@ function UnitFrame:OnCreate(parent, spec)
 		self.rows[#self.rows + 1] = { def = def, component = row }
 		self.rowsByKey[def.key] = row
 	end
-	self.decorations = ns.DecorationStack.New()
+	self.decorations = ns.DecorationStack:New()
 	self.parts = {}
+	self.partsByKey = {}
 	for _, part in ipairs(UnitFrame.PARTS) do
 		if spec[part.key] then
 			local component = self:Own(part.create(self.frame, spec[part.key]))
-			self[part.key] = component
 			self.parts[#self.parts + 1] = { def = part, component = component }
+			self.partsByKey[part.key] = component
 		end
 	end
 	if spec.readyCheck then
-		self.readyCheck = ns.ReadyCheck.New(self.frame, function(color, amount)
+		self.readyCheck = ns.ReadyCheck:New(self.frame, function(color, amount)
 			for _, row in ipairs(self.rows) do
 				if color then row.component:SetTint(color[1], color[2], color[3], amount)
 				else row.component:SetTint(nil) end
 			end
 		end)
-		self.readyCheckDriver = self.readyCheck.driver
-		self.readyCheck:Attach(self.readyCheckIcon)
+		self.readyCheck:Attach(self.partsByKey.readyCheckIcon)
 	end
 end
 
@@ -205,17 +211,7 @@ function UnitFrame.BuildSchema(spec)
 		} }
 	end
 	if spec.readyCheck then
-		schema[#schema + 1] = { key = "readyCheck", type = "group", label = "Ready check", schema = {
-			{ key = "enabled", type = "toggle", label = "Tint bars", default = true,
-				tooltip = "During a ready check, grey this frame's bars until the unit answers, then turn them green (ready) or red (not ready). When the check ends, units without an answer turn red, then all bars fade back to their normal colours. The Ready check icon section places the matching check mark." },
-			{ key = "waitingColor", type = "color", label = "Waiting colour", default = { 0.5, 0.5, 0.5, 1 } },
-			{ key = "readyColor", type = "color", label = "Ready colour", default = { 0.15, 0.8, 0.15, 1 } },
-			{ key = "notReadyColor", type = "color", label = "Not ready colour", default = { 0.85, 0.12, 0.12, 1 } },
-			{ key = "hold", type = "range", label = "Hold after the check (seconds)", min = 0, max = 10, step = 0.5, default = 2,
-				tooltip = "How long the result (tints and icon) stays after the check ends, before fading." },
-			{ key = "fade", type = "range", label = "Fade duration (seconds)", min = 0, max = 5, step = 0.25, default = 1.5,
-				tooltip = "Time to fade back to the normal bar colours and fade out the icon. 0 = switch back at once." },
-		} }
+		schema[#schema + 1] = { key = "readyCheck", type = "group", label = "Ready check", schema = ns.ReadyCheck.schema }
 	end
 	local function AddParts(beforeRows)
 		for _, part in ipairs(UnitFrame.PARTS) do
@@ -251,7 +247,7 @@ function UnitFrame:OnApply(cfg)
 	self:Layout()
 	self:ApplyRangeOpacity()
 	self:ApplyRestingBorder()
-	self:ApplyReadyCheck()
+	if self.readyCheck then self.readyCheck:Apply(cfg.readyCheck) end
 end
 
 -- Resting is a plain player state (IsResting), never opaque unit data.
@@ -292,66 +288,9 @@ function UnitFrame:SetResting(resting, animated)
 	self:ApplyRestingBorder()
 end
 
---[[
-Ready check state, shown as bar tints and the ready check icon. Statuses are
-GetReadyCheckStatus's plain results: "waiting", "ready", "notready" or nil
-(no check, or not part of it).
-  SetReadyCheck(status)   during a check; nil removes tints and icon at once
-  FinishReadyCheck()      the check ended: an unanswered check counts as not
-                          ready; hold the result, then fade out
-  ShowReadyCheckSample(status, time, answerAt)  previews: the answer held, or
-                          with `time` a looping check: waiting until `answerAt`
-                          (default 1.5 s), the answer until 3 s, then the end
-                          of the check with hold and fade, then 1 s plain
-]]
-function UnitFrame:SetReadyCheck(status)
-	if self.readyCheck then self.readyCheck:Set(status) end
-end
-
-function UnitFrame:FinishReadyCheck()
-	if self.readyCheck then self.readyCheck:Finish() end
-end
-
-function UnitFrame:IsReadyCheckFinishing()
-	return self.readyCheck ~= nil and self.readyCheck.finished == true
-end
-
-function UnitFrame:GetReadyCheckState()
-	if self.readyCheck then return self.readyCheck.shownStatus, self.readyCheck.shownAmount or 0 end
-	return nil, 0
-end
-
-function UnitFrame:IsReadyCheckShown()
-	return self.readyCheck ~= nil and self.readyCheck:IsShown()
-end
-
-function UnitFrame:ShowReadyCheckState(status, amount)
-	if self.readyCheck then self.readyCheck:Show(status, amount) end
-end
-
-function UnitFrame:ApplyReadyCheck()
-	if self.readyCheck then self.readyCheck:Apply(self.resolved.readyCheck) end
-end
-
-function UnitFrame:ShowReadyCheckSample(status, time, answerAt)
-	if self.readyCheck then self.readyCheck:Sample(status, time, answerAt) end
-end
-
--- The live adapter owns binding; companions only attach their owned icon.
-function UnitFrame:SetReadyCheckChangedCallback(callback)
-	self.onReadyCheckChanged = callback
-end
-
-function UnitFrame:AttachReadyCheckIcon(icon)
-	assert(self.readyCheck and not self.released, "Ready check presentation unavailable")
-	self.readyCheck:Attach(icon)
-	if self.onReadyCheckChanged then self.onReadyCheckChanged() end
-end
-
-function UnitFrame:DetachReadyCheckIcon(icon)
-	if self.readyCheck and self.readyCheck:Detach(icon) then
-		if not self.released and self.onReadyCheckChanged then self.onReadyCheckChanged() end
-	end
+-- The ReadyCheck presenter (tints and icon), or nil when not offered.
+function UnitFrame:GetReadyCheck()
+	return self.readyCheck
 end
 
 -- Neither range result may be tested in Lua: both can be secret in combat.
@@ -364,7 +303,7 @@ function UnitFrame:ApplyRangeOpacity()
 	else
 		self.frame:SetAlpha(1)
 	end
-	if self.portrait then self.portrait:SyncAlpha() end
+	if self.partsByKey.portrait then self.partsByKey.portrait:SyncAlpha() end
 end
 
 function UnitFrame:SetRangeState(inRange, checkedRange)
@@ -372,18 +311,11 @@ function UnitFrame:SetRangeState(inRange, checkedRange)
 	self:ApplyRangeOpacity()
 end
 
--- Where the castbar actually goes: "health" falls back to the top row when
--- the health row is switched off.
-function UnitFrame:GetCastbarPlacement()
-	return ns.UnitFrameLayout.CastbarPlacement(self.spec, self.resolved)
-end
-
 function UnitFrame:Layout()
 	local layout = ns.UnitFrameLayout.Compute(self.spec, self.resolved)
-	local placement = layout.castbarPlacement
 	self.layout = layout
 	for _, row in ipairs(self.rows) do row.component:ClearAllPoints() end
-	local portrait = self.portrait
+	local portrait = self.partsByKey.portrait
 	if portrait then
 		portrait:ClearAllPoints()
 		local bounds = layout.portrait
@@ -394,35 +326,13 @@ function UnitFrame:Layout()
 	end
 
 	for _, item in ipairs(layout.rows) do
-		local component = item.key == "castbar" and self.castbar or self.rowsByKey[item.key]
+		local component = item.key == "castbar" and self.partsByKey.castbar or self.rowsByKey[item.key]
 		component:ClearAllPoints()
 		component:SetPoint("TOPLEFT", self.frame, "TOPLEFT", item.left, item.y)
 		component:SetPoint("TOPRIGHT", self.frame, "TOPRIGHT", -item.right, item.y)
 		component:GetFrame():SetHeight(item.height)
 	end
-
-	if self.castbar then
-		local castFrame = self.castbar:GetFrame()
-		self.castbar:SetPortraitPlacement(placement == "portrait")
-		self.castbar:SetEnabled(placement ~= "off" and (placement ~= "portrait" or layout.portrait ~= nil))
-		if placement == "health" then
-			-- Covers the health row while a cast is shown.
-			local health = self.rowsByKey.health:GetFrame()
-			self.castbar:ClearAllPoints()
-			self.castbar:SetAllPoints(health)
-			castFrame:SetFrameLevel(health:GetFrameLevel() + 10)
-		elseif placement == "portrait" and layout.portrait then
-			self.castbar:ClearAllPoints()
-			self.castbar:SetAllPoints(portrait:GetFrame())
-			castFrame:SetFrameLevel(portrait.model:GetFrameLevel() + 10)
-		else
-			castFrame:SetFrameLevel(self.frame:GetFrameLevel() + 1)
-		end
-		self.castbar:SetOpaque(placement == "health" or placement == "portrait")
-		self.castbar:SetCovered(placement == "health" and self.rowsByKey.health:GetFrame()
-			or placement == "portrait" and layout.portrait and portrait:GetFrame() or nil,
-			placement == "portrait" and layout.portrait and function() portrait:SyncAlpha() end or nil)
-	end
+	self:LayoutCastbar(layout)
 
 	self:Resize(layout.width, layout.height)
 	local bounds = layout.portrait
@@ -431,13 +341,44 @@ function UnitFrame:Layout()
 	} or nil, name = self:GetLeadingName(), decorations = self.decorations }
 	self.decorations:SetContext(self.layoutContext)
 
-	if self.auras then
-		self.auras:Layout(layout.width, layout.height)
+	if self.partsByKey.auras then
+		self.partsByKey.auras:Layout(layout.width, layout.height)
 	end
 	for _, part in ipairs(self.parts) do
 		if part.def.stack then part.component:Layout(self.layoutContext) end
 	end
 	self.decorations:Reflow()
+end
+
+-- Row placements are positioned with the rows. A covering castbar ("health",
+-- "portrait") instead sits over its host, opaque, and replaces it while a
+-- cast is shown. Portrait placement needs a visible portrait.
+function UnitFrame:LayoutCastbar(layout)
+	local castbar = self.partsByKey.castbar
+	if not castbar then return end
+	local placement = layout.castbarPlacement
+	local portrait = layout.portrait and self.partsByKey.portrait
+	local host, hostLevel, onCoverChanged
+	if placement == "health" then
+		host = self.rowsByKey.health:GetFrame()
+		hostLevel = host:GetFrameLevel()
+	elseif placement == "portrait" and portrait then
+		host = portrait:GetFrame()
+		hostLevel = portrait.model:GetFrameLevel()
+		onCoverChanged = function() portrait:SyncAlpha() end
+	end
+
+	castbar:SetPortraitPlacement(placement == "portrait")
+	castbar:SetEnabled(placement ~= "off" and (placement ~= "portrait" or portrait ~= nil))
+	if host then
+		castbar:ClearAllPoints()
+		castbar:SetAllPoints(host)
+		castbar:GetFrame():SetFrameLevel(hostLevel + 10)
+	else
+		castbar:GetFrame():SetFrameLevel(self.frame:GetFrameLevel() + 1)
+	end
+	castbar:SetOpaque(host ~= nil)
+	castbar:SetCovered(host, onCoverChanged)
 end
 
 -- An enabled, left-aligned name text on the health row. Icons placed
@@ -513,34 +454,7 @@ function UnitFrame:Parts()
 	end
 end
 
+-- A present optional part's component ("portrait", "castbar", ...), else nil.
 function UnitFrame:GetPart(key)
-	return self[key]
-end
-
-function UnitFrame:GetPortrait()
-	return self.portrait
-end
-
-function UnitFrame:GetCastbar()
-	return self.castbar
-end
-
-function UnitFrame:GetAuras()
-	return self.auras
-end
-
-function UnitFrame:GetRaidTarget()
-	return self.raidTarget
-end
-
-function UnitFrame:GetPvPFlag()
-	return self.pvp
-end
-
-function UnitFrame:GetClassification()
-	return self.classification
-end
-
-function UnitFrame:GetReadyCheckIcon()
-	return self.readyCheck and self.readyCheck.icon or nil
+	return self.partsByKey[key]
 end

@@ -5,19 +5,21 @@
 - This is **UnitFrames for WoW Forever**, currently targeting TOC Interface `16001`. Use Lua 5.1-compatible code. Forever uses modern Retail/Midnight UI APIs and secret-value restrictions; do not assume Classic-era APIs work because the client directory is `_classic_beta_`.
 - Read the relevant implementation and tests before changing it. `README.md` describes current features. `docs/01-investigation-api-and-libraries.md`, `docs/02-architecture-plan.md`, and `docs/03-reference-nurfed-forever.md` explain the design and API findings, but contain dated research and unimplemented plans. Current code wins when they disagree.
 - `docs/WoW unit frames addon libraries.md` is the long conversation history, not a specification to implement wholesale. Search specific topics rather than loading the entire file.
-- Verify unfamiliar or changing APIs against the actual client or Blizzard UI/API documentation, preferably the `forever` branch of `Gethe/wow-ui-source` cloned into `examples/wow-ui-src-forever` for local access. Never invent API signatures or texture paths.
+- Verify unfamiliar or changing APIs against the actual client or Blizzard UI/API documentation, preferably the `forever` branch of `Gethe/wow-ui-source` cloned into `examples/wow-ui-source-forever` for local access. Never invent API signatures or texture paths.
 - Preserve existing worktree changes. Do not commit, push, update dependencies, or install into the game merely because you were asked to explain or review something.
 
 ## Code map and conventions
 
 - `UnitFrames/Core/`: namespace/bootstrap, schema, AceDB configuration, theme, media, colours and text formats. Core Lua files receive `local _, ns = ...`; the public `UnitFrames` handle exposes that namespace to companion addons.
-- `UnitFrames/Components/`: reusable visual building blocks. Keep them independent of oUF bindings; their configuration and data APIs also serve previews.
+- `UnitFrames/Components/`: reusable visual building blocks. Keep them independent of oUF bindings; their configuration and data APIs also serve previews. `UnitFrame` exposes rows and optional parts through `GetRow(key)`/`GetPart(key)` and the `Rows()`/`Parts()` iterators; add a part to `UnitFrame.PARTS` rather than adding per-part getters. Ready-check state lives in the `ReadyCheck` presenter (`GetReadyCheck()`), which also owns its settings schema.
+- Classes (`Core/Class.lua`): configurable visuals extend `Component`, settings controls extend `Widget`, other stateful helpers extend `Object` (`Class:New(...)` calls `Init(...)`). Stateless calculations stay plain module tables of functions.
 - `UnitFrames/Widgets/`: the shared settings toolkit and schema-driven inspector. Reuse these controls instead of introducing a separate settings framework.
 - `UnitFrames/Units/Definitions.lua`: unit composition, structural specs, defaults and sample data. Current unit keys/order are `player`, `pet`, `target`, `targettarget`, `focus`, `focustarget`; XP is player-only. Derive definitions with `Units:Derive` (row overrides by key) rather than changing shared ones.
 - `UnitFrames/Units/Style.lua`: oUF style, spawning, element binding, tags and live refresh. `Units/Elements.lua` implements custom data elements; `Units/Preview.lua` feeds sample values into the same components.
 - `UnitFrames/Integration/EditMode.lua`: layout-specific positions and snapping through LibEditMode.
 - `UnitFrames_Workbench/`: load-on-demand settings and previews, opened with `/uf wb`. `Entries/Units.lua` edits the real saved unit style; `Data.lua` defines preview sources. Keep static, animated and live previews consistent with runtime behaviour.
 - `UnitFrames_Media/`: independently registered LibSharedMedia fonts and their licences.
+- `UnitFrames_ClickGrid/`: optional healing panel companion (`/ufcg`): party/raid groups, member targets, native aura slots, status indicators and click-spell bindings, built from the same `UnitFrame` component through the public `UnitFrames` handle.
 - Match nearby code: tabs, local helpers, existing component methods. New runtime files must be added to the appropriate `.toc` in dependency order; the tests load those TOCs too.
 - Embedded libraries under either addon's `Libs/` are committed dependencies, not normal edit targets. Versions are recorded in `UnitFrames/Libs/VERSIONS.md`; `scripts/fetch-libs.sh` replaces library copies and should run only for an intentional dependency update.
 
@@ -75,7 +77,9 @@ luajit tests/run.lua workbench
 
 - The optional filter matches **spec filenames**, not individual test names. The runner includes addon Lua syntax checks. No external busted installation is needed.
 - `tests/helpers.lua` loads TOCs into a fresh mocked client; `tests/mock/wow.lua` includes fake secrets and `tests/mock/ouf.lua` supplies the usual oUF stand-in. Some specs exercise embedded oUF paths explicitly.
-- Add regression tests for fixes. Keep mocks faithful to native assertions/restrictions; do not weaken a mock simply to make a broken implementation pass.
+- The mock is held to the client API through `tests/fixtures/api_snapshot.lua`, generated from Blizzard's API documentation and Lua source by `luajit scripts/api-snapshot.lua` (regenerate after adding API usage or updating the source checkout, and review the diff). `tests/mock/api.lua` enforces it on every mock call: undocumented widget methods, rejected arguments, secrets passed where addon (tainted) code may not pass them, and protected calls in combat raise errors. `tests/spec/api_contract_spec.lua` checks the mock's functions, methods, enums, restricted secret returns and our event names, and that the snapshot is current when the source checkout exists.
+- Specs simulating Blizzard secure code or engine state use `Mock.SecureDelegate`/`Mock.RunUntainted` (secure delegates such as `UnitFrameUtil.UpdateUnitPvPIndicator`) and `Mock.SetEngineSize` (engine-given, possibly secret dimensions) instead of calling addon-facing APIs with values addon code could not pass.
+- Add regression tests for fixes. Keep mocks faithful to native assertions/restrictions; do not weaken a mock simply to make a broken implementation pass. Add new mock API from the snapshot, not from memory.
 - Offline mocks cannot prove rendering, taint safety or combat behaviour. For visual/lifecycle changes, report what still needs in-game verification: Workbench entry switching/release, repeated toggles, sample/live sources, real combat, unit disappearance/replacement, full-health shields, and Edit Mode as relevant.
 - Do not hard-code a historical passing-test count as a requirement; report the current run's result.
 

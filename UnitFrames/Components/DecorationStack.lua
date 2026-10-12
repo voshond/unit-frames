@@ -27,8 +27,7 @@ next Reflow is still placed on its anchor.
   stack:SetContext(ctx)    the owning UnitFrame's layout context
   stack:Reflow()           after visibility changes; moves only plain addon hosts
 ]]
-local Stack = {}
-Stack.__index = Stack
+local Stack = ns.Object:Extend("DecorationStack")
 ns.DecorationStack = Stack
 
 Stack.ANCHORS = {
@@ -52,8 +51,8 @@ local PIN = {
 	TOPLEFT = "first", BOTTOMLEFT = "first", TOPRIGHT = "last", BOTTOMRIGHT = "last",
 }
 
-function Stack.New()
-	return setmetatable({ members = {} }, Stack)
+function Stack:Init()
+	self.members = {}
 end
 
 function Stack:SetContext(context)

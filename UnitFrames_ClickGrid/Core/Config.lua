@@ -31,21 +31,21 @@ function Config:Initialize()
 		char = { loadouts = {} },
 	})
 	local db = self.db
-	self.settings = UF.Store.New({
+	self.settings = UF.Store:New({
 		schema = self.schema, theme = true, validate = true, check = CheckSlots, changed = Changed,
 		read = function() return db.profile.settings end,
 		write = function(settings) db.profile.settings = settings end,
 	})
 	self.styles = {}
 	for _, kind in ipairs({ "member", "target" }) do
-		self.styles[kind] = UF.Store.New({
+		self.styles[kind] = UF.Store:New({
 			schema = function() return CG:StyleSchema(kind) end, theme = true, validate = true,
 			read = function() return db.profile[kind] end,
 			write = function(style) db.profile[kind] = style end,
 			changed = function() Changed(kind) end,
 		})
 	end
-	self.bindings = UF.Store.New({
+	self.bindings = UF.Store:New({
 		schema = function() return CG.Bindings.schema end, validate = true,
 		read = function() return self:GetBindings() end,
 		write = function(bindings) db.char.loadouts[self:SpecKey()] = bindings end,

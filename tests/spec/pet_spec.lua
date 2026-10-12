@@ -43,7 +43,7 @@ describe("Player pet", function()
 	it("binds pet auras and optional casts without changing player or target data", function()
 		ns.oUF.elements.UF_Auras.update(frame, "UnitFramesRefresh")
 		for _, kind in ipairs({ "buffs", "debuffs" }) do
-			assert.equals("pet", frame.uf:GetAuras():GetContainer(kind):GetUnit())
+			assert.equals("pet", frame.uf:GetPart("auras"):GetContainer(kind):GetUnit())
 		end
 		ns.Config:SetUnitValue("pet", "castbar.placement", "bottom")
 		assert.is_true(frame:IsElementEnabled("UF_Castbar"))

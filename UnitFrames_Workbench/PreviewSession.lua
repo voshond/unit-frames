@@ -1,17 +1,16 @@
 local _, wb = ...
 local UF = UnitFrames
-local Session = {}
-Session.__index = Session
+local Session = UF.Object:Extend("PreviewSession")
 wb.PreviewSession = Session
 
 -- One active preview and source. Inspector pages never capture this session;
 -- their current targets are replaced when the controller selects another entry.
-function Session.New(entry, state, scratch, parent)
+function Session:Init(entry, state, scratch, parent)
 	local handle = entry.create(parent)
-	local session = setmetatable({ entry = entry, state = state, scratch = scratch, handle = handle }, Session)
+	self.entry, self.state, self.scratch, self.handle = entry, state, scratch, handle
 	if handle.SetThemeManaged then
 		handle:SetThemeManaged(true)
-		UF.Events.RegisterCallback(session, "ThemeChanged", function() session:RefreshStyle() end)
+		UF.Events.RegisterCallback(self, "ThemeChanged", function() self:RefreshStyle() end)
 	end
 	-- refreshOn: event names, or { event, match } where the first payload
 	-- argument must equal `match` (e.g. a unit's UnitConfigChanged).
@@ -19,15 +18,14 @@ function Session.New(entry, state, scratch, parent)
 	for _, watch in ipairs(entry.refreshOn or {}) do
 		local event, match = watch, nil
 		if type(watch) == "table" then event, match = watch[1], watch[2] end
-		UF.Events.RegisterCallback(session, event, function(_, key)
+		UF.Events.RegisterCallback(self, event, function(_, key)
 			if match == nil or key == match then
 				if type(watch) == "table" and watch.notifyOnly then
-					if session.onRefresh then session.onRefresh() end
-				else session:RefreshStyle() end
+					if self.onRefresh then self.onRefresh() end
+				else self:RefreshStyle() end
 			end
 		end)
 	end
-	return session
 end
 
 function Session:RefreshStyle()
