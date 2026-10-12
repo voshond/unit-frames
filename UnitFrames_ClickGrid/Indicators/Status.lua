@@ -6,8 +6,8 @@ Group status indicators on a member bar: role, leader/assistant, ready check,
 dead/ghost, resurrection, summon, phase, threat and private aura anchors.
 Widgets are fields named after their oUF elements (status.GroupRoleIndicator,
 ...); ready checks use the shared UnitFrame state instead of a second oUF
-element. Each placed icon's `ufcgHost` positions it, as a member
-of the UnitFrame's DecorationStack. Live frames bind them to oUF, previews call
+element. Each placed icon has an ordinary host in the UnitFrame's
+DecorationStack. Live frames bind them to oUF, previews call
 ShowSample. Only configured geometry positions them.
 
 spec: { unitFrame = the member UnitFrame, live = bind oUF elements on the parent button }
@@ -143,7 +143,6 @@ function Status:OnCreate(button, spec)
 		for _, element in ipairs(item[2]) do
 			local icon = ready and ready:GetWidget() or host:CreateTexture(nil, "OVERLAY")
 			icon:SetAllPoints(host)
-			icon.ufcgHost = host
 			icon.PostUpdate = Reflow
 			icon:Hide()
 			self[element] = icon
@@ -203,8 +202,7 @@ end
 -- only: no reads of native icon dimensions.
 function Status:LayoutIcons()
 	local cfg, stack = self.resolved, self.unitFrame:GetDecorations()
-	self.readyCheckIcon:Apply({ enabled = cfg.ready, anchor = cfg.readyPosition, size = cfg.readySize,
-		order = cfg.readyOrder, gap = cfg.readyGap, offsetX = cfg.readyOffsetX, offsetY = cfg.readyOffsetY })
+	self.readyCheckIcon:Apply(UF.IconPlacement.Read(cfg, UF.IconPlacement.PrefixedKeys("ready")))
 	self.readyCheckIcon:Layout(self.unitFrame:GetLayoutContext())
 	self.frame:SetFrameLevel(self.button:GetFrameLevel() + 20)
 	local function RolePresent() return self:RolePresent() end
@@ -216,11 +214,10 @@ function Status:LayoutIcons()
 		local key, widgets = item[1], {}
 		for i, element in ipairs(item[2]) do widgets[i] = self[element] end
 		if key ~= "ready" then
-			stack:Set(key, { host = self.hosts[key], widgets = widgets, enabled = cfg[key],
-				anchor = cfg[key .. "Position"], size = cfg[key .. "Size"], order = cfg[key .. "Order"], gap = cfg[key .. "Gap"],
-				x = cfg[key .. "OffsetX"], y = cfg[key .. "OffsetY"],
-				present = key == "role" and self.live and CG.Caps.roleEnum and RolePresent
-					or key == "resurrection" and ResurrectionPresent or nil })
+			local placement = UF.IconPlacement.Read(cfg, UF.IconPlacement.PrefixedKeys(key))
+			local present = key == "role" and self.live and CG.Caps.roleEnum and RolePresent
+				or key == "resurrection" and ResurrectionPresent or nil
+			stack:Set(key, UF.IconPlacement.Member(placement, self.hosts[key], widgets, present))
 		end
 	end
 	stack:Reflow()

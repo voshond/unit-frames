@@ -17,25 +17,7 @@ StackIcon.ANCHORS = ns.DecorationStack.ANCHORS
 -- Shared placement options; `defaults` replaces the descriptor defaults
 -- (enabled, anchor, order, gap, size).
 function StackIcon.BuildIconSchema(defaults)
-	local d = defaults or {}
-	local function Default(key, fallback)
-		if d[key] == nil then return fallback end
-		return d[key]
-	end
-	return {
-		{ key = "enabled", type = "toggle", label = "Enabled", default = Default("enabled", true) },
-		{ key = "anchor", type = "select", label = "Anchor", values = StackIcon.ANCHORS, default = Default("anchor", "TOP"),
-			tooltip = "Icons sharing a position line up as one group: edges and the centre keep the group centred, border corners grow inward from the corner. Portrait anchors keep it inside a bottom corner and require an enabled portrait." },
-		{ key = "order", type = "range", label = "Order", min = 1, max = 10, step = 1, default = Default("order", 1),
-			tooltip = "Icons sharing a position run left to right (top to bottom on the sides) by order. Absent icons leave no gap." },
-		{ key = "gap", type = "range", label = "Gap to next icon", min = 0, max = 20, step = 1, default = Default("gap", 2) },
-		{ key = "size", type = "range", label = "Size", min = 8, max = 64, step = 1, default = Default("size", 20),
-			tooltip = "Portrait icons shrink to fit if the portrait is smaller than this size." },
-		{ key = "offsetX", type = "range", label = "Horizontal offset", min = -100, max = 100, step = 1, default = 0,
-			tooltip = "Positive moves right; negative moves left. Moves only this icon, not the rest of its group." },
-		{ key = "offsetY", type = "range", label = "Vertical offset", min = -100, max = 100, step = 1, default = 0,
-			tooltip = "Positive moves up; negative moves down. Moves only this icon, not the rest of its group." },
-	}
+	return ns.IconPlacement.BuildSchema({ defaults = defaults })
 end
 
 function StackIcon:OnCreate(parent)
@@ -67,9 +49,9 @@ function StackIcon:SetEnabled(enabled)
 		self.frame:SetShown(self.enabled)
 		return
 	end
-	local cfg = self.resolved
-	stack:Set(self.stackKey, { host = self.frame, widgets = self:GetStackWidgets(), enabled = self.enabled,
-		anchor = cfg.anchor, size = cfg.size, order = cfg.order, gap = cfg.gap, x = cfg.offsetX, y = cfg.offsetY })
+	local cfg = ns.IconPlacement.Read(self.resolved)
+	cfg.enabled = self.enabled
+	stack:Set(self.stackKey, ns.IconPlacement.Member(cfg, self.frame, self:GetStackWidgets()))
 	stack:Reflow()
 end
 
