@@ -250,8 +250,24 @@ function Status:OnApply(cfg)
 	private:SetShown(cfg.private and CG.Caps.privateAuras)
 	if not cfg.resurrection then self:SetResurrection(false) end
 	self:UpdateResurrectionText()
+	self:ApplyReadyCheckTiming()
 	-- After binding: disabled elements have hidden their art.
 	self:LayoutIcons()
+end
+
+-- The ready check icon holds and fades like the member's bar tints. oUF
+-- reads these options when it enables the element; an existing animation
+-- is updated in place.
+function Status:ApplyReadyCheckTiming()
+	local timing = self.unitFrame.resolved.readyCheck
+	if not timing then return end
+	local icon = self.ReadyCheckIndicator
+	icon.finishedTime, icon.fadeTime = timing.hold, math.max(timing.fade, 0.01)
+	local fade = rawget(icon, "Animation")
+	if fade and fade.Alpha then
+		fade.Alpha:SetStartDelay(icon.finishedTime)
+		fade.Alpha:SetDuration(icon.fadeTime)
+	end
 end
 
 function Status:OnRelease()
@@ -273,8 +289,10 @@ function Status:HideIndicators()
 	self.unitFrame:GetDecorations():Reflow()
 end
 
--- Plain sample art for preview member `index`.
-function Status:ShowSample(index)
+-- Plain sample art for preview member `index`. `ready` is the member's
+-- sample ready check { status, amount } (UnitFrame:GetReadyCheckState), or
+-- nil for the static placement sample.
+function Status:ShowSample(index, ready)
 	local cfg = self.resolved
 	self.GroupRoleIndicator:SetAtlas(index == 1 and "UI-LFG-RoleIcon-Tank-Micro-Raid"
 		or index == 2 and "UI-LFG-RoleIcon-Healer-Micro-Raid" or "UI-LFG-RoleIcon-DPS-Micro-Raid")
@@ -283,8 +301,17 @@ function Status:ShowSample(index)
 	self.LeaderIndicator:SetShown(cfg.leader and index == 1)
 	self.AssistantIndicator:SetTexture([[Interface\GroupFrame\UI-Group-AssistantIcon]])
 	self.AssistantIndicator:SetShown(cfg.leader and index == 2)
-	self.ReadyCheckIndicator:SetAtlas("UI-LFG-ReadyMark-Raid")
-	self.ReadyCheckIndicator:SetShown(cfg.ready and index == 2)
+	if ready then
+		local status, amount = ready[1], ready[2]
+		local atlas = status and amount > 0 and UF.Components.ReadyCheckIcon.ATLASES[status]
+		if atlas then self.ReadyCheckIndicator:SetAtlas(atlas) end
+		self.ReadyCheckIndicator:SetAlpha(atlas and amount or 1)
+		self.ReadyCheckIndicator:SetShown(cfg.ready and atlas ~= nil)
+	else
+		self.ReadyCheckIndicator:SetAtlas("UI-LFG-ReadyMark-Raid")
+		self.ReadyCheckIndicator:SetAlpha(1)
+		self.ReadyCheckIndicator:SetShown(cfg.ready and index == 2)
+	end
 	-- Member 3 is dead with a resurrection on the way; member 5 is a ghost.
 	self.UFCG_DeathIndicator:SetAtlas(DEATH_ATLAS)
 	self.UFCG_DeathIndicator:SetShown(cfg.death and (index == 3 or index == 5))

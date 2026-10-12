@@ -55,6 +55,10 @@ repository's incremental deployment guidance when updating an existing copy.
 - Role, leader/assistant, ready check, dead/ghost, incoming resurrection,
   summon, phase, optional threat and native private-aura anchors, subject to
   client support.
+- Ready check bar tints on member bars (**Member bars > Ready check**): grey
+  while waiting, then green or red, holding and fading after the check with
+  the ready check icon. Without a group, **Preview data > Ready check** shows
+  a sample check; Animated lets members answer in turn and fades out.
   Role, leader/assistant, ready check, dead/ghost, incoming resurrection and
   summon positions offer **Before
   name** (an enabled left-aligned Name text on the health bar), the frame

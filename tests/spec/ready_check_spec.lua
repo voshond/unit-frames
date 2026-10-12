@@ -56,7 +56,7 @@ describe("Ready check tints", function()
 		end
 	end
 
-	it("is offered and bound on every unit frame but not on ClickGrid bars", function()
+	it("is offered and bound on every unit frame and ClickGrid member bars", function()
 		for _, unit in ipairs(ns.Units.order) do
 			local live = ns.Units.frames[unit]
 			assert.is_not_nil(ns.Schema.Find(live.uf:GetSchema(), "readyCheck.fade"), unit)
@@ -70,8 +70,10 @@ describe("Ready check tints", function()
 		ns.Config:SetUnitValue("target", "readyCheck.enabled", true)
 		assert.is_true(ns.Units.frames.target:IsElementEnabled("UF_ReadyCheck"))
 		local _, CG = Helpers.LoadClickGrid()
+		assert.is_not_nil(UnitFrames.Schema.Find(CG:StyleSchema("member"), "readyCheck"))
+		assert.is_nil(UnitFrames.Schema.Find(CG:StyleSchema("target"), "readyCheck"), "targets are not in the check")
 		for _, kind in ipairs({ "member", "target" }) do
-			assert.is_nil(UnitFrames.Schema.Find(CG:StyleSchema(kind), "readyCheck"), kind)
+			assert.is_nil(UnitFrames.Schema.Find(CG:StyleSchema(kind), "readyCheckIcon"), kind .. " has its own icon")
 		end
 	end)
 

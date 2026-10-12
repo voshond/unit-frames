@@ -41,8 +41,10 @@ icon groups, centred on the frame by default; it holds and fades with the
 tints. The **Ready check** section has **Tint bars**, the three colours,
 and the hold and fade durations shared by tints and icon.
 **Preview data > Ready check** previews each state: Static holds it, while
-Animated loops a whole check including the fade. ClickGrid group bars keep
-their own ready check icon instead.
+Animated loops a whole check including the fade. ClickGrid member bars tint
+the same way (Member bars > Ready check) and keep their own ready check icon,
+which holds and fades with the tints; its **Preview data > Ready check**
+shows a sample check with mixed answers.
 
 **UnitFrames ClickGrid** is an optional companion for party/raid healing.
 `/ufcg` opens its Workbench settings;

@@ -68,6 +68,7 @@ function Preview:Apply()
 end
 
 local names = { "Tank", "Healer", "Mage", "Priest", "Druid", "Paladin", "Hunter", "Warlock" }
+local READY_SAMPLES = { "ready", "ready", "notready", "waiting" }
 local sampleBuffIDs = { [1] = 21562, [2] = 1459, [3] = 139, [4] = 774, [6] = 17, [7] = 33763 }
 function Preview:Values(index)
 	local value = UF.Util.Copy(UF.Units.SAMPLE)
@@ -78,6 +79,14 @@ function Preview:Values(index)
 		or (index == 1 and 1 or 0.35 + 0.6 * ((index * 7) % 10) / 10))
 	value.absorb = value.healthMax * 0.2
 	value.raidTarget = index == 1 and 8 or nil
+	-- Ready check demo: mixed answers; one in four never answers. Animated
+	-- members answer one after another, then the check ends and fades.
+	if self.data.readyCheck == "check" then
+		value.readyCheck = READY_SAMPLES[(index - 1) % #READY_SAMPLES + 1]
+		if self.data.source == "animated" then
+			value.readyCheckTime, value.readyCheckAnswerAt = self.time, 0.4 + ((index - 1) % 5) * 0.5
+		end
+	end
 	-- A few plain examples for the artwork already in UnitFrames; unrelated
 	-- sample icons must not match a fixed slot by a made-up default ID.
 	for i, aura in ipairs(value.buffs) do
@@ -159,7 +168,8 @@ function Preview:ShowData(data, dataOnly)
 				cell.member:GetFrame():Show()
 				UF.Units:ShowSample(cell.member, values)
 				cell.slots:ShowSample(values)
-				cell.status:ShowSample(index)
+				local readyStatus, readyAmount = cell.member:GetReadyCheckState()
+				cell.status:ShowSample(index, self.data.readyCheck == "check" and { readyStatus, readyAmount } or nil)
 				local targetValues = UF.Util.Copy(values)
 				targetValues.name, targetValues.class, targetValues.reaction = "Enemy " .. index, nil, "hostile"
 				targetValues.isPlayer = false

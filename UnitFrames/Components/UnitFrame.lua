@@ -313,6 +313,13 @@ function UnitFrame:IsReadyCheckFinishing()
 	return self.readyCheckFinished == true
 end
 
+-- The ready check state last shown: status (or nil), amount.
+function UnitFrame:GetReadyCheckState()
+	local shown = self.readyCheckShown
+	if shown then return shown[1], shown[2] end
+	return nil, 0
+end
+
 -- Whether ready checks show at all: bar tints or the icon.
 function UnitFrame:IsReadyCheckShown()
 	local cfg, icon = self.resolved.readyCheck, self.readyCheckIcon
@@ -339,6 +346,7 @@ end
 -- Tints every row with the status colour and shows the status icon, both
 -- at `amount` (0 removes them).
 function UnitFrame:ShowReadyCheckState(status, amount)
+	self.readyCheckShown = { amount > 0 and status or nil, amount }
 	local cfg = self.resolved.readyCheck
 	local color = status and cfg and cfg.enabled and amount > 0 and cfg[READY_CHECK_COLORS[status]]
 	for _, row in ipairs(self.rows) do

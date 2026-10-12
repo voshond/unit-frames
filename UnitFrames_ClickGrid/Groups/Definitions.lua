@@ -27,11 +27,13 @@ CG.definitions = {
 		auras = { clickThrough = true },
 	}),
 }
--- Group bars show status icons instead of the unit frames' PvP flag and
--- elite icons, and their own ready check icon instead of bar tints.
+-- Group bars show status icons instead of the unit frames' PvP flag, elite
+-- and ready check icons (Status has its own ready check icon). Members tint
+-- during ready checks; their targets are not part of the check.
 for _, def in pairs(CG.definitions) do
-	def.pvp, def.classification, def.readyCheck, def.readyCheckIcon = nil, nil, nil, nil
+	def.pvp, def.classification, def.readyCheckIcon = nil, nil, nil
 end
+CG.definitions.target.readyCheck = nil
 
 CG.LayoutSchema = {
 	{ key = "enabled", type = "toggle", label = "Show healing panel", default = true },

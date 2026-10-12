@@ -7774,6 +7774,13 @@ option range.enabled type="toggle" label="Enabled" default=false
 option range.outsideAlpha type="range" label="Out-of-range opacity" default=0.55 min=0 max=1 step=0.05 tooltip=#31bd172e
 option range.mode type="select" label="Range check" default="group" values=#b1e9e395 tooltip=#2c964cf0
 option range.spell type="text" label="Spell ID or name" default="" tooltip=#a735d466 hidden
+option readyCheck type="group" label="Ready check"
+option readyCheck.enabled type="toggle" label="Tint bars" default=true tooltip=#f63d91dc
+option readyCheck.waitingColor type="color" label="Waiting colour" default={0.5,0.5,0.5,1}
+option readyCheck.readyColor type="color" label="Ready colour" default={0.15,0.8,0.15,1}
+option readyCheck.notReadyColor type="color" label="Not ready colour" default={0.85,0.12,0.12,1}
+option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#01273847
+option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
 option portrait type="group" label="Portrait" defaults={enabled=false}
 option portrait.enabled type="toggle" label="Enabled" default=true
 option portrait.position type="select" label="Side" default="LEFT" values=#11c04b33
@@ -8356,6 +8363,12 @@ default range.enabled = false
 default range.mode = "group"
 default range.outsideAlpha = 0.55
 default range.spell = ""
+default readyCheck.enabled = true
+default readyCheck.fade = 1.5
+default readyCheck.hold = 2
+default readyCheck.notReadyColor = {0.85,0.12,0.12,1}
+default readyCheck.readyColor = {0.15,0.8,0.15,1}
+default readyCheck.waitingColor = {0.5,0.5,0.5,1}
 default spacing = 1
 default width = 150
 resolved auras.border.background = "None"
@@ -8672,6 +8685,12 @@ resolved range.enabled = false
 resolved range.mode = "group"
 resolved range.outsideAlpha = 0.55
 resolved range.spell = ""
+resolved readyCheck.enabled = true
+resolved readyCheck.fade = 1.5
+resolved readyCheck.hold = 2
+resolved readyCheck.notReadyColor = {0.85,0.12,0.12,1}
+resolved readyCheck.readyColor = {0.15,0.8,0.15,1}
+resolved readyCheck.waitingColor = {0.5,0.5,0.5,1}
 resolved spacing = 1
 resolved width = 150
 definition auras.clickThrough = true
@@ -8701,6 +8720,7 @@ definition defaultPosition.y = -235
 definition label = "Group member"
 definition portrait.defaults.enabled = false
 definition raidTarget.defaults.size = 12
+definition readyCheck = true
 definition rows = {{defaults={height=28,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:class"},left="name",right="health:value"}}},{defaults={enabled=false,height=6,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
 definition sample.absorb = 900
 definition sample.castTime = 1.5
