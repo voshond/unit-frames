@@ -109,6 +109,15 @@ positive offsets move right/up. Portrait icons shrink to fit small portraits;
 offsets can deliberately move them outside. **Preview data > Raid target marker** offers all eight markers and
 None. Live markers follow the unit's raid target assignment automatically.
 
+Each frame's **PvP flag icon** section places the unit's PvP flag in the
+same icon groups, enabled by default at the top-left border corner, after
+the raid marker when both share an anchor. The game chooses the Alliance,
+Horde (accounting for mercenary mode) or free-for-all art and its
+visibility, so the flag updates safely in combat; an unflagged unit leaves
+no gap. **Background circle** draws the flag on the default frames' dark
+circle. **Preview data > PvP flag** previews each flag on the icon as well
+as in the level/class texts. ClickGrid group bars do not include this icon.
+
 Each frame's **Out-of-range opacity** section offers an opt-in fade with
 an opacity slider (0 = transparent, 1 = fully opaque; default 0.55).
 **Group range** uses the game's group-member range check, normally 40 yards;

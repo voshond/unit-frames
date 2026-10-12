@@ -80,11 +80,12 @@ Formats.PVP_FLAGS = {
 
 -- Forever's PvP atlases. Only samples select them in Lua; live flags use
 -- Blizzard's secret-safe helper, including mercenary and FFA handling.
-local PVP_ATLASES = {
+Formats.PVP_ATLASES = {
 	Alliance = "UI-HUD-UnitFrame-SmallCircle-Alliance",
 	Horde = "UI-HUD-UnitFrame-SmallCircle-Horde",
 	FFA = "UI-HUD-UnitFrame-Player-PVP-FFAIcon",
 }
+local PVP_ATLASES = Formats.PVP_ATLASES
 
 local function PvPFlag(unit)
 	local info = UnitFrameUtil.GetUnitPvPIndicatorDisplayInfo(unit, true)

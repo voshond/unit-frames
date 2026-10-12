@@ -1,7 +1,7 @@
 local _, ns = ...
 local Backdrop, TextBar = ns.Components.Backdrop, ns.Components.TextBar
 local Castbar, Portrait, Auras = ns.Components.Castbar, ns.Components.Portrait, ns.Components.Auras
-local RaidTarget = ns.Components.RaidTarget
+local RaidTarget, PvPFlag = ns.Components.RaidTarget, ns.Components.PvPFlag
 
 --[[
 A unit frame made of rows stacked top to bottom inside one bordered frame.
@@ -14,8 +14,9 @@ Optional extras:
             row (it covers the health bar only while casting)
   auras     independently positioned buffs and debuffs on any side
   raidTarget  raid marker on a border, the centre or inside a portrait corner
+  pvp       the unit's PvP flag, placed like the raid marker
 
-Edge icons (the raid marker and companions' status icons) share one
+Edge icons (the raid marker, PvP flag and companions' status icons) share one
 DecorationStack per frame, so icons on the same anchor stay grouped.
 
 The component only builds and lays out the visuals. Feeding unit data is
@@ -30,7 +31,7 @@ spec:
               defaults  row option defaults, e.g. { height = 24, right = { size = 9 } }
               options   extra row options (schema entries), e.g. health colour mode
             }
-  portrait, castbar, auras, raidTarget
+  portrait, castbar, auras, raidTarget, pvp
             { defaults, ... } to offer that part (see UnitFrame.PARTS;
             auras also take cancelBuffs and clickThrough)
 ]]
@@ -122,6 +123,9 @@ UnitFrame.PARTS = {
 	{ key = "raidTarget", label = "Raid target icon", stack = true,
 		schema = function() return RaidTarget.schema end,
 		create = function(frame) return RaidTarget:New(frame, {}) end },
+	{ key = "pvp", label = "PvP flag icon", stack = true,
+		schema = function() return PvPFlag.schema end,
+		create = function(frame) return PvPFlag:New(frame, {}) end },
 }
 
 function UnitFrame:OnCreate(parent, spec)
@@ -420,4 +424,8 @@ end
 
 function UnitFrame:GetRaidTarget()
 	return self.raidTarget
+end
+
+function UnitFrame:GetPvPFlag()
+	return self.pvp
 end

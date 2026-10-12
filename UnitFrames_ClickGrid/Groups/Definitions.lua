@@ -27,6 +27,8 @@ CG.definitions = {
 		auras = { clickThrough = true },
 	}),
 }
+-- Group bars show status icons instead of the unit frames' PvP flag.
+for _, def in pairs(CG.definitions) do def.pvp = nil end
 
 CG.LayoutSchema = {
 	{ key = "enabled", type = "toggle", label = "Show healing panel", default = true },

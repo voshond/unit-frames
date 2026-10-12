@@ -167,6 +167,13 @@ function Units:CreateFromDefinition(def, parent, config, frame)
 	return ns.Components.UnitFrame:New(parent, config or {}, self:GetSpec(def, frame))
 end
 
+-- Every unit frame offers a PvP flag. Defined per unit (not in GetSpec) so
+-- companion styles deriving these definitions can leave it out.
+for _, unit in ipairs(Units.order) do
+	local def = Units.definitions[unit]
+	def.pvp = def.pvp or { defaults = {} }
+end
+
 -- Every unit offers a raid target icon, with default settings unless defined.
 function Units:GetSpec(def, frame)
 	local spec = { frame = frame, rows = def.rows, width = def.width, resting = def.resting }

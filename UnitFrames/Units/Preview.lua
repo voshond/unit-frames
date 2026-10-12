@@ -52,6 +52,10 @@ function parts.raidTarget(marker, v)
 	marker:SetIndex(v.raidTarget)
 end
 
+function parts.pvp(flag, v)
+	flag:SetSample(v.pvp)
+end
+
 function Units:ShowSample(uf, values)
 	uf:SetRangeState(values.outOfRange ~= true, true)
 	uf:SetResting(uf.spec.resting and values.resting == true, values.restingAnimated == true)

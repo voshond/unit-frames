@@ -118,6 +118,9 @@ local PART_ELEMENTS = {
 	castbar = { element = "UF_Castbar" },
 	auras = { element = "UF_Auras" },
 	raidTarget = { element = "RaidTargetIndicator", widget = function(marker) return marker:GetWidget() end },
+	-- oUF reads the background circle on enable: re-enable when it changes.
+	pvp = { element = "PvPIndicator", widget = function(flag) return flag:GetWidget() end,
+		subWidget = function(flag) return flag:GetBackground() end },
 }
 
 -- Points oUF elements and tags at the current rows and parts.
@@ -131,10 +134,13 @@ function Units:Bind(frame)
 		SetElement(frame, ELEMENTS[key], widget, rebind)
 		TagRow(frame, row, cfg.enabled)
 	end
+	frame.ufSubWidgets = frame.ufSubWidgets or {}
 	for key, part in uf:Parts() do
 		local binding = PART_ELEMENTS[key]
 		local widget = part:IsEnabled() and (binding.widget and binding.widget(part) or part) or nil
-		SetElement(frame, binding.element, widget)
+		local subWidget = binding.subWidget and binding.subWidget(part)
+		SetElement(frame, binding.element, widget, frame.ufSubWidgets[key] ~= subWidget)
+		frame.ufSubWidgets[key] = subWidget
 	end
 	local range = uf.resolved.range
 	SetElement(frame, "UF_Range", range.enabled and ns.Caps.booleanAlpha and uf or nil,

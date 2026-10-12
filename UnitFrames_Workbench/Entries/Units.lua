@@ -20,7 +20,7 @@ local function UnitStyleTarget(unit)
 		if unit ~= "player" then
 			schema[#schema + 1] = {
 				key = "copyPlayerSettings", type = "action", label = "Copy player settings",
-				tooltip = "Replace this frame's style with the player's current settings, including sizes, text, portrait, castbar, auras, raid target icon and range opacity. Position and player-only XP are not copied. This is a one-time copy, not a link.",
+				tooltip = "Replace this frame's style with the player's current settings, including sizes, text, portrait, castbar, auras, raid target and PvP flag icons and range opacity. Position and player-only XP are not copied. This is a one-time copy, not a link.",
 			}
 		end
 		for _, opt in ipairs(handle.schema) do schema[#schema + 1] = opt end
@@ -99,7 +99,7 @@ local function RegisterUnit(unit)
 		{ key = "raidTarget", type = "select", label = "Raid target marker", default = 8,
 			values = UF.Components.RaidTarget.MARKERS },
 		{ key = "pvp", type = "select", label = "PvP flag", default = "off", values = UF.Formats.PVP_FLAGS,
-			tooltip = "Sample flag shown beside Level + class or Level + class or creature type text." },
+			tooltip = "Sample flag for the PvP flag icon and beside Level + class or Level + class or creature type text." },
 		{ key = "buffsCount", type = "range", label = "Sample buffs", min = 0, max = 40, step = 1, default = 8,
 			tooltip = "The Buffs style's filter and Maximum shown still apply." },
 		{ key = "debuffsCount", type = "range", label = "Sample debuffs", min = 0, max = 40, step = 1, default = 5,

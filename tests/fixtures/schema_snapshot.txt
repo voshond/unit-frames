@@ -1023,6 +1023,15 @@ option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=
 option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
 option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option pvp type="group" label="PvP flag icon" defaults={}
+option pvp.enabled type="toggle" label="Enabled" default=true
+option pvp.anchor type="select" label="Anchor" default="TOPLEFT" values=#f2227030 tooltip=#a1871125
+option pvp.order type="range" label="Order" default=2 min=1 max=10 step=1 tooltip=#07604784
+option pvp.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
+option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option pvp.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option pvp.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option pvp.background type="toggle" label="Background circle" default=true tooltip=#41e3a163
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -1313,6 +1322,14 @@ default power.right.offsetY = 0
 default power.right.shadow = true
 default power.right.size = 9
 default power.right.vertical = "auto"
+default pvp.anchor = "TOPLEFT"
+default pvp.background = true
+default pvp.enabled = true
+default pvp.gap = 2
+default pvp.offsetX = 0
+default pvp.offsetY = 0
+default pvp.order = 2
+default pvp.size = 18
 default raidTarget.anchor = "TOP"
 default raidTarget.enabled = true
 default raidTarget.gap = 2
@@ -1716,6 +1733,14 @@ resolved power.right.outline = ""
 resolved power.right.shadow = true
 resolved power.right.size = 9
 resolved power.right.vertical = "auto"
+resolved pvp.anchor = "TOPLEFT"
+resolved pvp.background = true
+resolved pvp.enabled = true
+resolved pvp.gap = 2
+resolved pvp.offsetX = 0
+resolved pvp.offsetY = 0
+resolved pvp.order = 2
+resolved pvp.size = 18
 resolved raidTarget.anchor = "TOP"
 resolved raidTarget.enabled = true
 resolved raidTarget.gap = 2
@@ -1744,6 +1769,7 @@ definition defaultPosition.x = -280
 definition defaultPosition.y = -160
 definition label = "Player"
 definition portrait.defaults.enabled = true
+definition pvp.defaults = {}
 definition resting = true
 definition rows = {{defaults={height=26},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:class"},left="name",right="health:value"}}},{defaults={height=12,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}},{defaults={center={size=8},height=10},key="experience",label="Experience",spec={colorInherit="colors.experience",formats={"none","level","resting","xp:current","xp:value","xp:percent","xp:current:percent","xp:value:percent","xp:missing","xp:rested"},segments={{colorInherit="colors.rested",key="rested",label="Rested",mode="append"}},textDefaults={center="xp:value:percent"}}}}
 definition width = 230
@@ -2107,6 +2133,15 @@ option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=
 option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
 option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option pvp type="group" label="PvP flag icon" defaults={}
+option pvp.enabled type="toggle" label="Enabled" default=true
+option pvp.anchor type="select" label="Anchor" default="TOPLEFT" values=#f2227030 tooltip=#a1871125
+option pvp.order type="range" label="Order" default=2 min=1 max=10 step=1 tooltip=#07604784
+option pvp.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
+option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option pvp.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option pvp.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option pvp.background type="toggle" label="Background circle" default=true tooltip=#41e3a163
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -2335,6 +2370,14 @@ default power.right.offsetY = 0
 default power.right.shadow = true
 default power.right.size = 8
 default power.right.vertical = "auto"
+default pvp.anchor = "TOPLEFT"
+default pvp.background = true
+default pvp.enabled = true
+default pvp.gap = 2
+default pvp.offsetX = 0
+default pvp.offsetY = 0
+default pvp.order = 2
+default pvp.size = 18
 default raidTarget.anchor = "TOP"
 default raidTarget.enabled = true
 default raidTarget.gap = 2
@@ -2651,6 +2694,14 @@ resolved power.right.outline = ""
 resolved power.right.shadow = true
 resolved power.right.size = 8
 resolved power.right.vertical = "auto"
+resolved pvp.anchor = "TOPLEFT"
+resolved pvp.background = true
+resolved pvp.enabled = true
+resolved pvp.gap = 2
+resolved pvp.offsetX = 0
+resolved pvp.offsetY = 0
+resolved pvp.order = 2
+resolved pvp.size = 18
 resolved raidTarget.anchor = "TOP"
 resolved raidTarget.enabled = true
 resolved raidTarget.gap = 2
@@ -2681,6 +2732,7 @@ definition defaultPosition.x = -90
 definition defaultPosition.y = -235
 definition label = "Player pet"
 definition portrait.defaults.enabled = false
+definition pvp.defaults = {}
 definition rows = {{defaults={height=22,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=10,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
 definition sample.absorb = 900
 definition sample.castTime = 1.5
@@ -3061,6 +3113,15 @@ option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=
 option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
 option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option pvp type="group" label="PvP flag icon" defaults={}
+option pvp.enabled type="toggle" label="Enabled" default=true
+option pvp.anchor type="select" label="Anchor" default="TOPLEFT" values=#f2227030 tooltip=#a1871125
+option pvp.order type="range" label="Order" default=2 min=1 max=10 step=1 tooltip=#07604784
+option pvp.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
+option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option pvp.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option pvp.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option pvp.background type="toggle" label="Background circle" default=true tooltip=#41e3a163
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -3287,6 +3348,14 @@ default power.right.offsetY = 0
 default power.right.shadow = true
 default power.right.size = 9
 default power.right.vertical = "auto"
+default pvp.anchor = "TOPLEFT"
+default pvp.background = true
+default pvp.enabled = true
+default pvp.gap = 2
+default pvp.offsetX = 0
+default pvp.offsetY = 0
+default pvp.order = 2
+default pvp.size = 18
 default raidTarget.anchor = "TOP"
 default raidTarget.enabled = true
 default raidTarget.gap = 2
@@ -3603,6 +3672,14 @@ resolved power.right.outline = ""
 resolved power.right.shadow = true
 resolved power.right.size = 9
 resolved power.right.vertical = "auto"
+resolved pvp.anchor = "TOPLEFT"
+resolved pvp.background = true
+resolved pvp.enabled = true
+resolved pvp.gap = 2
+resolved pvp.offsetX = 0
+resolved pvp.offsetY = 0
+resolved pvp.order = 2
+resolved pvp.size = 18
 resolved raidTarget.anchor = "TOP"
 resolved raidTarget.enabled = true
 resolved raidTarget.gap = 2
@@ -3628,6 +3705,7 @@ definition defaultPosition.y = -160
 definition label = "Target"
 definition portrait.defaults.enabled = true
 definition portrait.defaults.position = "RIGHT"
+definition pvp.defaults = {}
 definition rows = {{defaults={height=26},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=12,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
 definition sample.castTime = 1.5
 definition sample.classification = "elite"
@@ -4003,6 +4081,15 @@ option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=
 option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
 option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option pvp type="group" label="PvP flag icon" defaults={}
+option pvp.enabled type="toggle" label="Enabled" default=true
+option pvp.anchor type="select" label="Anchor" default="TOPLEFT" values=#f2227030 tooltip=#a1871125
+option pvp.order type="range" label="Order" default=2 min=1 max=10 step=1 tooltip=#07604784
+option pvp.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
+option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option pvp.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option pvp.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option pvp.background type="toggle" label="Background circle" default=true tooltip=#41e3a163
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -4231,6 +4318,14 @@ default power.right.offsetY = 0
 default power.right.shadow = true
 default power.right.size = 8
 default power.right.vertical = "auto"
+default pvp.anchor = "TOPLEFT"
+default pvp.background = true
+default pvp.enabled = true
+default pvp.gap = 2
+default pvp.offsetX = 0
+default pvp.offsetY = 0
+default pvp.order = 2
+default pvp.size = 18
 default raidTarget.anchor = "TOP"
 default raidTarget.enabled = true
 default raidTarget.gap = 2
@@ -4547,6 +4642,14 @@ resolved power.right.outline = ""
 resolved power.right.shadow = true
 resolved power.right.size = 8
 resolved power.right.vertical = "auto"
+resolved pvp.anchor = "TOPLEFT"
+resolved pvp.background = true
+resolved pvp.enabled = true
+resolved pvp.gap = 2
+resolved pvp.offsetX = 0
+resolved pvp.offsetY = 0
+resolved pvp.order = 2
+resolved pvp.size = 18
 resolved raidTarget.anchor = "TOP"
 resolved raidTarget.enabled = true
 resolved raidTarget.gap = 2
@@ -4578,6 +4681,7 @@ definition defaultPosition.x = 510
 definition defaultPosition.y = -160
 definition label = "Target of target"
 definition portrait.defaults.enabled = false
+definition pvp.defaults = {}
 definition rows = {{defaults={height=20,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=8,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
 definition sample.class = "WARRIOR"
 definition sample.className = "Warrior"
@@ -4949,6 +5053,15 @@ option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=
 option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
 option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option pvp type="group" label="PvP flag icon" defaults={}
+option pvp.enabled type="toggle" label="Enabled" default=true
+option pvp.anchor type="select" label="Anchor" default="TOPLEFT" values=#f2227030 tooltip=#a1871125
+option pvp.order type="range" label="Order" default=2 min=1 max=10 step=1 tooltip=#07604784
+option pvp.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
+option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option pvp.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option pvp.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option pvp.background type="toggle" label="Background circle" default=true tooltip=#41e3a163
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -5175,6 +5288,14 @@ default power.right.offsetY = 0
 default power.right.shadow = true
 default power.right.size = 9
 default power.right.vertical = "auto"
+default pvp.anchor = "TOPLEFT"
+default pvp.background = true
+default pvp.enabled = true
+default pvp.gap = 2
+default pvp.offsetX = 0
+default pvp.offsetY = 0
+default pvp.order = 2
+default pvp.size = 18
 default raidTarget.anchor = "TOP"
 default raidTarget.enabled = true
 default raidTarget.gap = 2
@@ -5491,6 +5612,14 @@ resolved power.right.outline = ""
 resolved power.right.shadow = true
 resolved power.right.size = 9
 resolved power.right.vertical = "auto"
+resolved pvp.anchor = "TOPLEFT"
+resolved pvp.background = true
+resolved pvp.enabled = true
+resolved pvp.gap = 2
+resolved pvp.offsetX = 0
+resolved pvp.offsetY = 0
+resolved pvp.order = 2
+resolved pvp.size = 18
 resolved raidTarget.anchor = "TOP"
 resolved raidTarget.enabled = true
 resolved raidTarget.gap = 2
@@ -5515,6 +5644,7 @@ definition defaultPosition.x = -280
 definition defaultPosition.y = -290
 definition label = "Focus"
 definition portrait.defaults.enabled = false
+definition pvp.defaults = {}
 definition rows = {{defaults={height=24},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=10,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
 definition sample.castTime = 2.5
 definition sample.class = "MAGE"
@@ -5885,6 +6015,15 @@ option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=
 option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
 option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option pvp type="group" label="PvP flag icon" defaults={}
+option pvp.enabled type="toggle" label="Enabled" default=true
+option pvp.anchor type="select" label="Anchor" default="TOPLEFT" values=#f2227030 tooltip=#a1871125
+option pvp.order type="range" label="Order" default=2 min=1 max=10 step=1 tooltip=#07604784
+option pvp.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
+option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option pvp.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option pvp.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option pvp.background type="toggle" label="Background circle" default=true tooltip=#41e3a163
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -6113,6 +6252,14 @@ default power.right.offsetY = 0
 default power.right.shadow = true
 default power.right.size = 8
 default power.right.vertical = "auto"
+default pvp.anchor = "TOPLEFT"
+default pvp.background = true
+default pvp.enabled = true
+default pvp.gap = 2
+default pvp.offsetX = 0
+default pvp.offsetY = 0
+default pvp.order = 2
+default pvp.size = 18
 default raidTarget.anchor = "TOP"
 default raidTarget.enabled = true
 default raidTarget.gap = 2
@@ -6429,6 +6576,14 @@ resolved power.right.outline = ""
 resolved power.right.shadow = true
 resolved power.right.size = 8
 resolved power.right.vertical = "auto"
+resolved pvp.anchor = "TOPLEFT"
+resolved pvp.background = true
+resolved pvp.enabled = true
+resolved pvp.gap = 2
+resolved pvp.offsetX = 0
+resolved pvp.offsetY = 0
+resolved pvp.order = 2
+resolved pvp.size = 18
 resolved raidTarget.anchor = "TOP"
 resolved raidTarget.enabled = true
 resolved raidTarget.gap = 2
@@ -6460,6 +6615,7 @@ definition defaultPosition.x = -60
 definition defaultPosition.y = -290
 definition label = "Focus target"
 definition portrait.defaults.enabled = false
+definition pvp.defaults = {}
 definition rows = {{defaults={height=20,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=8,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
 definition sample.class = "SHAMAN"
 definition sample.className = "Shaman"
