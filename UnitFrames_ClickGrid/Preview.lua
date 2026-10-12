@@ -36,14 +36,21 @@ function Preview:CreateCell()
 end
 
 function Preview:ShowLive(uf, unit, cell)
-	if not unit or not UnitExists(unit) then uf:GetFrame():Hide(); return end
+	if not unit or not UnitExists(unit) then
+		uf:GetFrame():Hide()
+		if uf:GetAuras() then uf:GetAuras():SetEnabled(false) end
+		return false
+	end
 	uf:GetFrame():Show()
 	cell.calculator = cell.calculator or CreateUnitHealPredictionCalculator()
 	UF.UnitRows.LiveHealth(uf:GetRow("health"), unit, cell.calculator, uf:GetRowConfig("health").colorMode)
 	UF.UnitRows.LivePower(uf:GetRow("power"), unit)
 	uf:SetRangeState(UnitInRange(unit))
-	uf:GetAuras():SetUnit(unit)
+	local auras = uf:GetAuras()
+	auras:SetEnabled(auras.resolved.enabled)
+	auras:SetUnit(unit)
 	uf:GetRaidTarget():SetIndex(GetRaidTargetIndex(unit))
+	return true
 end
 
 function Preview:Apply()
@@ -64,7 +71,70 @@ function Preview:Apply()
 	local cfg = CG.Config:Resolved()
 	self.cfg = cfg
 	CG.Layout.Backdrop(self.background, self.frame, cfg.titles)
+	for _, cell in ipairs(self.cells) do cell.styled = false end
 	self:ShowData(self.data or { source = "static", count = 5 })
+end
+
+function Preview:ChangeSource(source)
+	if self.source == source then return end
+	self.source = source
+	for _, cell in ipairs(self.cells) do
+		for _, uf in ipairs({ cell.member, cell.target }) do
+			uf:SetReadyCheck(nil)
+			uf:SetResting(false)
+			uf:SetRangeState(true, false)
+			if uf:GetCastbar() then uf:GetCastbar():Hide() end
+		end
+		cell.status:HideIndicators()
+	end
+end
+
+function Preview:StyleCell(cell)
+	local cfg = self.cfg.panel
+	cell.member:Apply(CG.Config:GetStyle("member"))
+	cell.member:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", 0, 0)
+	cell.target:Apply(CG.Config:GetStyle("target"))
+	cell.target:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", CG.metrics.member.width + cfg.targetGap, 0)
+	cell.target:GetFrame():SetShown(cfg.targets)
+	if not cfg.targets and cell.target:GetAuras() then cell.target:GetAuras():SetEnabled(false) end
+	cell.slots:Apply(CG:SlotConfig(cell.member))
+	cell.status:Apply(CG.Config:Get().indicators)
+	cell.styled = true
+end
+
+function Preview:FeedCell(cell, index, live, unit)
+	if live then
+		local present = self:ShowLive(cell.member, unit, cell)
+		cell.slots:SetEnabled(present and cell.slots.resolved.enabled)
+		if present then cell.slots:SetUnit(unit) end
+		cell.status:HideIndicators()
+		if self.cfg.panel.targets then self:ShowLive(cell.target, unit and unit .. "target", cell) end
+	else
+		local values = self:Values(index)
+		cell.member:GetFrame():Show()
+		local auras = cell.member:GetAuras()
+		auras:SetEnabled(auras.resolved.enabled)
+		UF.Units:ShowSample(cell.member, values)
+		cell.slots:SetEnabled(cell.slots.resolved.enabled)
+		cell.slots:ShowSample(values)
+		cell.status:ShowSample(index, self.data.readyCheck == "check")
+		if self.cfg.panel.targets then
+			cell.target:GetFrame():Show()
+			local targetAuras = cell.target:GetAuras()
+			targetAuras:SetEnabled(targetAuras.resolved.enabled)
+			local targetValues = UF.Util.Copy(values)
+			targetValues.name, targetValues.class, targetValues.reaction = "Enemy " .. index, nil, "hostile"
+			targetValues.isPlayer = false
+			UF.Units:ShowSample(cell.target, targetValues)
+		end
+	end
+end
+
+function Preview:HideCell(cell)
+	cell.frame:Hide()
+	cell.member:GetAuras():SetEnabled(false)
+	cell.target:GetAuras():SetEnabled(false)
+	cell.slots:SetEnabled(false)
 end
 
 local names = { "Tank", "Healer", "Mage", "Priest", "Druid", "Paladin", "Hunter", "Warlock" }
@@ -98,9 +168,11 @@ function Preview:Values(index)
 	return value
 end
 
-function Preview:ShowData(data, dataOnly)
+function Preview:ShowData(data)
 	self.data = data
 	if InCombatLockdown() then CG.pending = true; return end
+	if self.released then return end
+	self:ChangeSource(data.source)
 	local count = data.count or 5
 	local live = data.source == "live"
 	if live then count = math.max(1, GetNumGroupMembers()) end
@@ -145,39 +217,11 @@ function Preview:ShowData(data, dataOnly)
 			cell.frame:SetPoint("TOPLEFT", self.frame, "TOPLEFT", section.x + x, -(section.y + y))
 			cell.frame:SetSize(layout.cellWidth, layout.cellHeight)
 			cell.frame:Show()
-			if not dataOnly or not cell.styled then
-				cell.member:Apply(CG.Config:GetStyle("member"))
-				cell.member:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", 0, 0)
-				cell.target:Apply(CG.Config:GetStyle("target"))
-				cell.target:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", CG.metrics.member.width + cfg.targetGap, 0)
-				cell.target:GetFrame():SetShown(cfg.targets)
-				if not cfg.targets and cell.target:GetAuras() then cell.target:GetAuras():SetEnabled(false) end
-				cell.slots:Apply(CG:SlotConfig(cell.member))
-				cell.status:Apply(CG.Config:Get().indicators)
-				cell.styled = true
-			end
-			local values = self:Values(index)
-			if live then
-				local source = CG.headers[key] and CG.headers[key]:GetAttribute("child" .. localIndex)
-				local unit = source and source.Member.__unit
-				if not raid and localIndex == 1 and not IsInGroup() then unit = "player" end
-				self:ShowLive(cell.member, unit, cell)
-				if unit then cell.slots:SetUnit(unit) end
-				cell.status:HideIndicators()
-				if cfg.targets then self:ShowLive(cell.target, unit and unit .. "target", cell) end
-			else
-				cell.member:GetFrame():Show()
-				UF.Units:ShowSample(cell.member, values)
-				cell.slots:ShowSample(values)
-				local readyStatus, readyAmount = cell.member:GetReadyCheckState()
-				cell.status:ShowSample(index, self.data.readyCheck == "check" and { readyStatus, readyAmount } or nil)
-				if cfg.targets then
-					local targetValues = UF.Util.Copy(values)
-					targetValues.name, targetValues.class, targetValues.reaction = "Enemy " .. index, nil, "hostile"
-					targetValues.isPlayer = false
-					UF.Units:ShowSample(cell.target, targetValues)
-				end
-			end
+			if not cell.styled then self:StyleCell(cell) end
+			local source = live and CG.headers[key] and CG.headers[key]:GetAttribute("child" .. localIndex)
+			local unit = source and source.Member.__unit
+			if live and not raid and localIndex == 1 and not IsInGroup() then unit = "player" end
+			self:FeedCell(cell, index, live, unit)
 		end
 	end
 	for _, label in pairs(self.labels) do label:Hide() end
@@ -193,7 +237,7 @@ function Preview:ShowData(data, dataOnly)
 			end
 		end
 	end
-	for i = visible + 1, #self.cells do self.cells[i].frame:Hide() end
+	for i = visible + 1, #self.cells do self:HideCell(self.cells[i]) end
 end
 
 function Preview:Tick(elapsed)
@@ -202,7 +246,7 @@ function Preview:Tick(elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
 	if self.elapsed < 0.1 then return end
 	self.elapsed = 0
-	self:ShowData(self.data, true)
+	self:ShowData(self.data)
 end
 
 function Preview:Release()

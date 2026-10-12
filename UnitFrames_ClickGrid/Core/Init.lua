@@ -53,7 +53,8 @@ events:SetScript("OnEvent", function(_, event, name)
 end)
 
 UF.Events.RegisterCallback(CG, "ThemeChanged", function() CG:RequestRefresh() end)
-UF.Events.RegisterCallback(CG, "ProfileChanged", function() CG:RequestRefresh() end)
+-- Core emits ThemeChanged after every profile change, refreshing the panel
+-- and all preview styles through the same owner.
 
 SLASH_UNITFRAMESCLICKGRID1 = "/ufcg"
 SlashCmdList.UNITFRAMESCLICKGRID = function(message)

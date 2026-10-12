@@ -31,6 +31,8 @@ Entries register themselves:
     fitToStage = true,               opt-in for ordinary, plain-sized preview frames
     refreshOn = { "Event", { "Event", match } },  restyle the preview on these core events
                                      (a table entry only matches when the first payload equals `match`)
+                                     notifyOnly = true on a watch updates the inspector/stage only,
+                                     when a runtime owner already refreshed the preview
     reset = function() end,          optional, what the "Reset" button does instead of clearing the config
   })
 

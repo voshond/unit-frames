@@ -2,7 +2,10 @@ local _, CG = ...
 local UF = CG.UF
 
 -- Every ClickGrid setting change restyles the open ClickGrid preview.
-local REFRESH_ON = { "ClickGridConfigChanged" }
+local REFRESH_ON = {
+	{ "ClickGridConfigChanged", notifyOnly = true },
+	{ "ThemeChanged", notifyOnly = true },
+}
 
 local function Report(reason)
 	CG:Print(reason)
@@ -62,7 +65,7 @@ function CG:RegisterBindingEntry(wb)
 		return selected
 	end
 	wb:Register({ id = "clickgrid.bindings", name = "Click spells", category = "ClickGrid", autoSize = true,
-		size = { 700, 350 }, refreshOn = REFRESH_ON,
+		size = { 700, 350 }, refreshOn = { "ClickGridConfigChanged" },
 		create = function(stage)
 			local handle = { frame = CreateFrame("Frame", nil, stage), buttons = {} }
 			handle.frame:SetSize(700, 350)

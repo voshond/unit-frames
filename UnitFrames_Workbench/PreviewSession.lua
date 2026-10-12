@@ -15,11 +15,16 @@ function Session.New(entry, state, scratch, parent)
 	end
 	-- refreshOn: event names, or { event, match } where the first payload
 	-- argument must equal `match` (e.g. a unit's UnitConfigChanged).
+	-- notifyOnly: the runtime owner already restyled and fed this preview.
 	for _, watch in ipairs(entry.refreshOn or {}) do
 		local event, match = watch, nil
 		if type(watch) == "table" then event, match = watch[1], watch[2] end
 		UF.Events.RegisterCallback(session, event, function(_, key)
-			if match == nil or key == match then session:RefreshStyle() end
+			if match == nil or key == match then
+				if type(watch) == "table" and watch.notifyOnly then
+					if session.onRefresh then session.onRefresh() end
+				else session:RefreshStyle() end
+			end
 		end)
 	end
 	return session
