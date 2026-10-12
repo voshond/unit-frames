@@ -81,6 +81,7 @@ order. Every part is a child component stored as self[key].
   schema(partSpec)     the part's option group (beforeRows: listed above the rows)
   create(frame, ps)    builds the component
   apply(part, cfg)     optional, after the part's config is applied
+  stack                a StackIcon: joins the frame's DecorationStack
 ]]
 UnitFrame.PARTS = {
 	{ key = "portrait", label = "Portrait", beforeRows = true,
@@ -118,7 +119,7 @@ UnitFrame.PARTS = {
 		create = function(frame, partSpec)
 			return Auras:New(frame, {}, { cancelBuffs = partSpec.cancelBuffs, clickThrough = partSpec.clickThrough })
 		end },
-	{ key = "raidTarget", label = "Raid target icon",
+	{ key = "raidTarget", label = "Raid target icon", stack = true,
 		schema = function() return RaidTarget.schema end,
 		create = function(frame) return RaidTarget:New(frame, {}) end },
 }
@@ -324,8 +325,8 @@ function UnitFrame:Layout()
 	if self.auras then
 		self.auras:Layout(layout.width, layout.height)
 	end
-	if self.raidTarget then
-		self.raidTarget:Layout(self.layoutContext)
+	for _, part in ipairs(self.parts) do
+		if part.def.stack then part.component:Layout(self.layoutContext) end
 	end
 	self.decorations:Reflow()
 end
