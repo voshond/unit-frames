@@ -29,7 +29,9 @@ CG.definitions = {
 }
 -- Group bars show status icons instead of the unit frames' PvP flag and
 -- elite icons, and their own ready check icon instead of bar tints.
-for _, def in pairs(CG.definitions) do def.pvp, def.classification, def.readyCheck = nil, nil, nil end
+for _, def in pairs(CG.definitions) do
+	def.pvp, def.classification, def.readyCheck, def.readyCheckIcon = nil, nil, nil, nil
+end
 
 CG.LayoutSchema = {
 	{ key = "enabled", type = "toggle", label = "Show healing panel", default = true },

@@ -35,8 +35,11 @@ answered, then green (ready) or red (not ready). When the check ends, units
 without an answer turn red; the result holds for two seconds, then fades back
 to the normal bar colours over 1.5 seconds. The tint is drawn over the
 bars, so class, reaction and health-gradient colours stay intact underneath.
-Units outside the check stay untinted. The **Ready check** section has
-the on/off toggle, the three colours, and the hold and fade durations.
+Units outside the check stay untinted. The **Ready check icon** section
+adds Blizzard's matching check mark (waiting, ready, not ready) to the frame's
+icon groups, centred on the frame by default; it holds and fades with the
+tints. The **Ready check** section has **Tint bars**, the three colours,
+and the hold and fade durations shared by tints and icon.
 **Preview data > Ready check** previews each state: Static holds it, while
 Animated loops a whole check including the fade. ClickGrid group bars keep
 their own ready check icon instead.

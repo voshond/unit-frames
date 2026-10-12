@@ -102,7 +102,7 @@ local function RegisterUnit(unit)
 			values = UF.Components.RaidTarget.MARKERS },
 		{ key = "readyCheck", type = "select", label = "Ready check", default = "off", values = {
 			{ "off", "None" }, { "waiting", "Waiting" }, { "ready", "Ready" }, { "notready", "Not ready" },
-		}, tooltip = "Preview the saved ready check colours. Static holds the answer; Animated loops a whole check: waiting, the answer, then the hold and fade after it ends." },
+		}, tooltip = "Preview the saved ready check tints and icon. Static holds the answer; Animated loops a whole check: waiting, the answer, then the hold and fade after it ends." },
 		{ key = "pvp", type = "select", label = "PvP flag", default = "off", values = UF.Formats.PVP_FLAGS,
 			tooltip = "Sample flag for the PvP flag icon and beside Level + class or Level + class or creature type text." },
 		{ key = "buffsCount", type = "range", label = "Sample buffs", min = 0, max = 40, step = 1, default = 8,

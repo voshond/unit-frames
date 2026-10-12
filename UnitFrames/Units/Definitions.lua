@@ -167,13 +167,15 @@ function Units:CreateFromDefinition(def, parent, config, frame)
 	return ns.Components.UnitFrame:New(parent, config or {}, self:GetSpec(def, frame))
 end
 
--- Every unit frame offers PvP flag and elite icons. Defined per unit (not in
--- GetSpec) so companion styles deriving these definitions can leave them out.
+-- Every unit frame offers PvP flag, elite and ready check icons. Defined per
+-- unit (not in GetSpec) so companion styles deriving these definitions can
+-- leave them out.
 for _, unit in ipairs(Units.order) do
 	local def = Units.definitions[unit]
 	def.pvp = def.pvp or { defaults = {} }
 	def.classification = def.classification or { defaults = {} }
 	def.readyCheck = true
+	def.readyCheckIcon = def.readyCheckIcon or { defaults = {} }
 end
 
 -- Every unit offers a raid target icon, with default settings unless defined.

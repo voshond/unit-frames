@@ -586,12 +586,12 @@ option resting.enabled type="toggle" label="Enabled" default=true
 option resting.color type="color" label="Resting colour" default={1,0.88,0.25,1}
 option resting.period type="range" label="Pulse duration (seconds)" default=4 min=2 max=10 step=0.5 tooltip=#5fabb16e
 option readyCheck type="group" label="Ready check"
-option readyCheck.enabled type="toggle" label="Enabled" default=true tooltip=#a113f24f
+option readyCheck.enabled type="toggle" label="Tint bars" default=true tooltip=#f63d91dc
 option readyCheck.waitingColor type="color" label="Waiting colour" default={0.5,0.5,0.5,1}
 option readyCheck.readyColor type="color" label="Ready colour" default={0.15,0.8,0.15,1}
 option readyCheck.notReadyColor type="color" label="Not ready colour" default={0.85,0.12,0.12,1}
-option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#20f40d48
-option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#a4eee0a7
+option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#01273847
+option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
 option portrait type="group" label="Portrait" defaults={enabled=true}
 option portrait.enabled type="toggle" label="Enabled" default=true
 option portrait.position type="select" label="Side" default="LEFT" values=#11c04b33
@@ -1047,6 +1047,14 @@ option classification.gap type="range" label="Gap to next icon" default=2 min=0 
 option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
 option classification.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option classification.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option readyCheckIcon type="group" label="Ready check icon" defaults={}
+option readyCheckIcon.enabled type="toggle" label="Enabled" default=true
+option readyCheckIcon.anchor type="select" label="Anchor" default="CENTER" values=#f2227030 tooltip=#a1871125
+option readyCheckIcon.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
+option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
+option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#e997fb28
+option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -1369,6 +1377,13 @@ default readyCheck.hold = 2
 default readyCheck.notReadyColor = {0.85,0.12,0.12,1}
 default readyCheck.readyColor = {0.15,0.8,0.15,1}
 default readyCheck.waitingColor = {0.5,0.5,0.5,1}
+default readyCheckIcon.anchor = "CENTER"
+default readyCheckIcon.enabled = true
+default readyCheckIcon.gap = 2
+default readyCheckIcon.offsetX = 0
+default readyCheckIcon.offsetY = 0
+default readyCheckIcon.order = 1
+default readyCheckIcon.size = 22
 default resting.color = {1,0.88,0.25,1}
 default resting.enabled = true
 default resting.period = 4
@@ -1793,6 +1808,13 @@ resolved readyCheck.hold = 2
 resolved readyCheck.notReadyColor = {0.85,0.12,0.12,1}
 resolved readyCheck.readyColor = {0.15,0.8,0.15,1}
 resolved readyCheck.waitingColor = {0.5,0.5,0.5,1}
+resolved readyCheckIcon.anchor = "CENTER"
+resolved readyCheckIcon.enabled = true
+resolved readyCheckIcon.gap = 2
+resolved readyCheckIcon.offsetX = 0
+resolved readyCheckIcon.offsetY = 0
+resolved readyCheckIcon.order = 1
+resolved readyCheckIcon.size = 22
 resolved resting.color = {1,0.88,0.25,1}
 resolved resting.enabled = true
 resolved resting.period = 4
@@ -1813,6 +1835,7 @@ definition label = "Player"
 definition portrait.defaults.enabled = true
 definition pvp.defaults = {}
 definition readyCheck = true
+definition readyCheckIcon.defaults = {}
 definition resting = true
 definition rows = {{defaults={height=26},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:class"},left="name",right="health:value"}}},{defaults={height=12,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}},{defaults={center={size=8},height=10},key="experience",label="Experience",spec={colorInherit="colors.experience",formats={"none","level","resting","xp:current","xp:value","xp:percent","xp:current:percent","xp:value:percent","xp:missing","xp:rested"},segments={{colorInherit="colors.rested",key="rested",label="Rested",mode="append"}},textDefaults={center="xp:value:percent"}}}}
 definition width = 230
@@ -1834,12 +1857,12 @@ option range.outsideAlpha type="range" label="Out-of-range opacity" default=0.55
 option range.mode type="select" label="Range check" default="group" values=#b1e9e395 tooltip=#2c964cf0
 option range.spell type="text" label="Spell ID or name" default="" tooltip=#a735d466 hidden
 option readyCheck type="group" label="Ready check"
-option readyCheck.enabled type="toggle" label="Enabled" default=true tooltip=#a113f24f
+option readyCheck.enabled type="toggle" label="Tint bars" default=true tooltip=#f63d91dc
 option readyCheck.waitingColor type="color" label="Waiting colour" default={0.5,0.5,0.5,1}
 option readyCheck.readyColor type="color" label="Ready colour" default={0.15,0.8,0.15,1}
 option readyCheck.notReadyColor type="color" label="Not ready colour" default={0.85,0.12,0.12,1}
-option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#20f40d48
-option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#a4eee0a7
+option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#01273847
+option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
 option portrait type="group" label="Portrait" defaults={enabled=false}
 option portrait.enabled type="toggle" label="Enabled" default=true
 option portrait.position type="select" label="Side" default="LEFT" values=#11c04b33
@@ -2200,6 +2223,14 @@ option classification.gap type="range" label="Gap to next icon" default=2 min=0 
 option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
 option classification.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option classification.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option readyCheckIcon type="group" label="Ready check icon" defaults={}
+option readyCheckIcon.enabled type="toggle" label="Enabled" default=true
+option readyCheckIcon.anchor type="select" label="Anchor" default="CENTER" values=#f2227030 tooltip=#a1871125
+option readyCheckIcon.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
+option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
+option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#e997fb28
+option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -2460,6 +2491,13 @@ default readyCheck.hold = 2
 default readyCheck.notReadyColor = {0.85,0.12,0.12,1}
 default readyCheck.readyColor = {0.15,0.8,0.15,1}
 default readyCheck.waitingColor = {0.5,0.5,0.5,1}
+default readyCheckIcon.anchor = "CENTER"
+default readyCheckIcon.enabled = true
+default readyCheckIcon.gap = 2
+default readyCheckIcon.offsetX = 0
+default readyCheckIcon.offsetY = 0
+default readyCheckIcon.order = 1
+default readyCheckIcon.size = 22
 default spacing = 1
 default width = 170
 resolved auras.border.background = "None"
@@ -2797,6 +2835,13 @@ resolved readyCheck.hold = 2
 resolved readyCheck.notReadyColor = {0.85,0.12,0.12,1}
 resolved readyCheck.readyColor = {0.15,0.8,0.15,1}
 resolved readyCheck.waitingColor = {0.5,0.5,0.5,1}
+resolved readyCheckIcon.anchor = "CENTER"
+resolved readyCheckIcon.enabled = true
+resolved readyCheckIcon.gap = 2
+resolved readyCheckIcon.offsetX = 0
+resolved readyCheckIcon.offsetY = 0
+resolved readyCheckIcon.order = 1
+resolved readyCheckIcon.size = 22
 resolved spacing = 1
 resolved width = 170
 definition auras.defaults.buffs.max = 6
@@ -2819,6 +2864,7 @@ definition label = "Player pet"
 definition portrait.defaults.enabled = false
 definition pvp.defaults = {}
 definition readyCheck = true
+definition readyCheckIcon.defaults = {}
 definition rows = {{defaults={height=22,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=10,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
 definition sample.absorb = 900
 definition sample.castTime = 1.5
@@ -2857,12 +2903,12 @@ option range.outsideAlpha type="range" label="Out-of-range opacity" default=0.55
 option range.mode type="select" label="Range check" default="group" values=#b1e9e395 tooltip=#2c964cf0
 option range.spell type="text" label="Spell ID or name" default="" tooltip=#a735d466 hidden
 option readyCheck type="group" label="Ready check"
-option readyCheck.enabled type="toggle" label="Enabled" default=true tooltip=#a113f24f
+option readyCheck.enabled type="toggle" label="Tint bars" default=true tooltip=#f63d91dc
 option readyCheck.waitingColor type="color" label="Waiting colour" default={0.5,0.5,0.5,1}
 option readyCheck.readyColor type="color" label="Ready colour" default={0.15,0.8,0.15,1}
 option readyCheck.notReadyColor type="color" label="Not ready colour" default={0.85,0.12,0.12,1}
-option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#20f40d48
-option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#a4eee0a7
+option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#01273847
+option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
 option portrait type="group" label="Portrait" defaults={enabled=true,position="RIGHT"}
 option portrait.enabled type="toggle" label="Enabled" default=true
 option portrait.position type="select" label="Side" default="LEFT" values=#11c04b33
@@ -3223,6 +3269,14 @@ option classification.gap type="range" label="Gap to next icon" default=2 min=0 
 option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
 option classification.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option classification.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option readyCheckIcon type="group" label="Ready check icon" defaults={}
+option readyCheckIcon.enabled type="toggle" label="Enabled" default=true
+option readyCheckIcon.anchor type="select" label="Anchor" default="CENTER" values=#f2227030 tooltip=#a1871125
+option readyCheckIcon.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
+option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
+option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#e997fb28
+option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -3481,6 +3535,13 @@ default readyCheck.hold = 2
 default readyCheck.notReadyColor = {0.85,0.12,0.12,1}
 default readyCheck.readyColor = {0.15,0.8,0.15,1}
 default readyCheck.waitingColor = {0.5,0.5,0.5,1}
+default readyCheckIcon.anchor = "CENTER"
+default readyCheckIcon.enabled = true
+default readyCheckIcon.gap = 2
+default readyCheckIcon.offsetX = 0
+default readyCheckIcon.offsetY = 0
+default readyCheckIcon.order = 1
+default readyCheckIcon.size = 22
 default spacing = 1
 default width = 230
 resolved auras.border.background = "None"
@@ -3818,6 +3879,13 @@ resolved readyCheck.hold = 2
 resolved readyCheck.notReadyColor = {0.85,0.12,0.12,1}
 resolved readyCheck.readyColor = {0.15,0.8,0.15,1}
 resolved readyCheck.waitingColor = {0.5,0.5,0.5,1}
+resolved readyCheckIcon.anchor = "CENTER"
+resolved readyCheckIcon.enabled = true
+resolved readyCheckIcon.gap = 2
+resolved readyCheckIcon.offsetX = 0
+resolved readyCheckIcon.offsetY = 0
+resolved readyCheckIcon.order = 1
+resolved readyCheckIcon.size = 22
 resolved spacing = 1
 resolved width = 230
 definition auras.defaults = {}
@@ -3835,6 +3903,7 @@ definition portrait.defaults.enabled = true
 definition portrait.defaults.position = "RIGHT"
 definition pvp.defaults = {}
 definition readyCheck = true
+definition readyCheckIcon.defaults = {}
 definition rows = {{defaults={height=26},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=12,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
 definition sample.castTime = 1.5
 definition sample.classification = "elite"
@@ -3868,12 +3937,12 @@ option range.outsideAlpha type="range" label="Out-of-range opacity" default=0.55
 option range.mode type="select" label="Range check" default="group" values=#b1e9e395 tooltip=#2c964cf0
 option range.spell type="text" label="Spell ID or name" default="" tooltip=#a735d466 hidden
 option readyCheck type="group" label="Ready check"
-option readyCheck.enabled type="toggle" label="Enabled" default=true tooltip=#a113f24f
+option readyCheck.enabled type="toggle" label="Tint bars" default=true tooltip=#f63d91dc
 option readyCheck.waitingColor type="color" label="Waiting colour" default={0.5,0.5,0.5,1}
 option readyCheck.readyColor type="color" label="Ready colour" default={0.15,0.8,0.15,1}
 option readyCheck.notReadyColor type="color" label="Not ready colour" default={0.85,0.12,0.12,1}
-option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#20f40d48
-option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#a4eee0a7
+option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#01273847
+option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
 option portrait type="group" label="Portrait" defaults={enabled=false}
 option portrait.enabled type="toggle" label="Enabled" default=true
 option portrait.position type="select" label="Side" default="LEFT" values=#11c04b33
@@ -4234,6 +4303,14 @@ option classification.gap type="range" label="Gap to next icon" default=2 min=0 
 option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
 option classification.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option classification.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option readyCheckIcon type="group" label="Ready check icon" defaults={}
+option readyCheckIcon.enabled type="toggle" label="Enabled" default=true
+option readyCheckIcon.anchor type="select" label="Anchor" default="CENTER" values=#f2227030 tooltip=#a1871125
+option readyCheckIcon.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
+option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
+option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#e997fb28
+option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -4494,6 +4571,13 @@ default readyCheck.hold = 2
 default readyCheck.notReadyColor = {0.85,0.12,0.12,1}
 default readyCheck.readyColor = {0.15,0.8,0.15,1}
 default readyCheck.waitingColor = {0.5,0.5,0.5,1}
+default readyCheckIcon.anchor = "CENTER"
+default readyCheckIcon.enabled = true
+default readyCheckIcon.gap = 2
+default readyCheckIcon.offsetX = 0
+default readyCheckIcon.offsetY = 0
+default readyCheckIcon.order = 1
+default readyCheckIcon.size = 22
 default spacing = 1
 default width = 140
 resolved auras.border.background = "None"
@@ -4831,6 +4915,13 @@ resolved readyCheck.hold = 2
 resolved readyCheck.notReadyColor = {0.85,0.12,0.12,1}
 resolved readyCheck.readyColor = {0.15,0.8,0.15,1}
 resolved readyCheck.waitingColor = {0.5,0.5,0.5,1}
+resolved readyCheckIcon.anchor = "CENTER"
+resolved readyCheckIcon.enabled = true
+resolved readyCheckIcon.gap = 2
+resolved readyCheckIcon.offsetX = 0
+resolved readyCheckIcon.offsetY = 0
+resolved readyCheckIcon.order = 1
+resolved readyCheckIcon.size = 22
 resolved spacing = 1
 resolved width = 140
 definition auras.defaults.buffs.max = 8
@@ -4854,6 +4945,7 @@ definition label = "Target of target"
 definition portrait.defaults.enabled = false
 definition pvp.defaults = {}
 definition readyCheck = true
+definition readyCheckIcon.defaults = {}
 definition rows = {{defaults={height=20,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=8,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
 definition sample.class = "WARRIOR"
 definition sample.className = "Warrior"
@@ -4883,12 +4975,12 @@ option range.outsideAlpha type="range" label="Out-of-range opacity" default=0.55
 option range.mode type="select" label="Range check" default="group" values=#b1e9e395 tooltip=#2c964cf0
 option range.spell type="text" label="Spell ID or name" default="" tooltip=#a735d466 hidden
 option readyCheck type="group" label="Ready check"
-option readyCheck.enabled type="toggle" label="Enabled" default=true tooltip=#a113f24f
+option readyCheck.enabled type="toggle" label="Tint bars" default=true tooltip=#f63d91dc
 option readyCheck.waitingColor type="color" label="Waiting colour" default={0.5,0.5,0.5,1}
 option readyCheck.readyColor type="color" label="Ready colour" default={0.15,0.8,0.15,1}
 option readyCheck.notReadyColor type="color" label="Not ready colour" default={0.85,0.12,0.12,1}
-option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#20f40d48
-option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#a4eee0a7
+option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#01273847
+option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
 option portrait type="group" label="Portrait" defaults={enabled=false}
 option portrait.enabled type="toggle" label="Enabled" default=true
 option portrait.position type="select" label="Side" default="LEFT" values=#11c04b33
@@ -5249,6 +5341,14 @@ option classification.gap type="range" label="Gap to next icon" default=2 min=0 
 option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
 option classification.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option classification.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option readyCheckIcon type="group" label="Ready check icon" defaults={}
+option readyCheckIcon.enabled type="toggle" label="Enabled" default=true
+option readyCheckIcon.anchor type="select" label="Anchor" default="CENTER" values=#f2227030 tooltip=#a1871125
+option readyCheckIcon.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
+option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
+option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#e997fb28
+option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -5507,6 +5607,13 @@ default readyCheck.hold = 2
 default readyCheck.notReadyColor = {0.85,0.12,0.12,1}
 default readyCheck.readyColor = {0.15,0.8,0.15,1}
 default readyCheck.waitingColor = {0.5,0.5,0.5,1}
+default readyCheckIcon.anchor = "CENTER"
+default readyCheckIcon.enabled = true
+default readyCheckIcon.gap = 2
+default readyCheckIcon.offsetX = 0
+default readyCheckIcon.offsetY = 0
+default readyCheckIcon.order = 1
+default readyCheckIcon.size = 22
 default spacing = 1
 default width = 200
 resolved auras.border.background = "None"
@@ -5844,6 +5951,13 @@ resolved readyCheck.hold = 2
 resolved readyCheck.notReadyColor = {0.85,0.12,0.12,1}
 resolved readyCheck.readyColor = {0.15,0.8,0.15,1}
 resolved readyCheck.waitingColor = {0.5,0.5,0.5,1}
+resolved readyCheckIcon.anchor = "CENTER"
+resolved readyCheckIcon.enabled = true
+resolved readyCheckIcon.gap = 2
+resolved readyCheckIcon.offsetX = 0
+resolved readyCheckIcon.offsetY = 0
+resolved readyCheckIcon.order = 1
+resolved readyCheckIcon.size = 22
 resolved spacing = 1
 resolved width = 200
 definition auras.defaults = {}
@@ -5860,6 +5974,7 @@ definition label = "Focus"
 definition portrait.defaults.enabled = false
 definition pvp.defaults = {}
 definition readyCheck = true
+definition readyCheckIcon.defaults = {}
 definition rows = {{defaults={height=24},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=10,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
 definition sample.castTime = 2.5
 definition sample.class = "MAGE"
@@ -5888,12 +6003,12 @@ option range.outsideAlpha type="range" label="Out-of-range opacity" default=0.55
 option range.mode type="select" label="Range check" default="group" values=#b1e9e395 tooltip=#2c964cf0
 option range.spell type="text" label="Spell ID or name" default="" tooltip=#a735d466 hidden
 option readyCheck type="group" label="Ready check"
-option readyCheck.enabled type="toggle" label="Enabled" default=true tooltip=#a113f24f
+option readyCheck.enabled type="toggle" label="Tint bars" default=true tooltip=#f63d91dc
 option readyCheck.waitingColor type="color" label="Waiting colour" default={0.5,0.5,0.5,1}
 option readyCheck.readyColor type="color" label="Ready colour" default={0.15,0.8,0.15,1}
 option readyCheck.notReadyColor type="color" label="Not ready colour" default={0.85,0.12,0.12,1}
-option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#20f40d48
-option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#a4eee0a7
+option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#01273847
+option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
 option portrait type="group" label="Portrait" defaults={enabled=false}
 option portrait.enabled type="toggle" label="Enabled" default=true
 option portrait.position type="select" label="Side" default="LEFT" values=#11c04b33
@@ -6254,6 +6369,14 @@ option classification.gap type="range" label="Gap to next icon" default=2 min=0 
 option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
 option classification.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option classification.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option readyCheckIcon type="group" label="Ready check icon" defaults={}
+option readyCheckIcon.enabled type="toggle" label="Enabled" default=true
+option readyCheckIcon.anchor type="select" label="Anchor" default="CENTER" values=#f2227030 tooltip=#a1871125
+option readyCheckIcon.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
+option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
+option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#e997fb28
+option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -6514,6 +6637,13 @@ default readyCheck.hold = 2
 default readyCheck.notReadyColor = {0.85,0.12,0.12,1}
 default readyCheck.readyColor = {0.15,0.8,0.15,1}
 default readyCheck.waitingColor = {0.5,0.5,0.5,1}
+default readyCheckIcon.anchor = "CENTER"
+default readyCheckIcon.enabled = true
+default readyCheckIcon.gap = 2
+default readyCheckIcon.offsetX = 0
+default readyCheckIcon.offsetY = 0
+default readyCheckIcon.order = 1
+default readyCheckIcon.size = 22
 default spacing = 1
 default width = 140
 resolved auras.border.background = "None"
@@ -6851,6 +6981,13 @@ resolved readyCheck.hold = 2
 resolved readyCheck.notReadyColor = {0.85,0.12,0.12,1}
 resolved readyCheck.readyColor = {0.15,0.8,0.15,1}
 resolved readyCheck.waitingColor = {0.5,0.5,0.5,1}
+resolved readyCheckIcon.anchor = "CENTER"
+resolved readyCheckIcon.enabled = true
+resolved readyCheckIcon.gap = 2
+resolved readyCheckIcon.offsetX = 0
+resolved readyCheckIcon.offsetY = 0
+resolved readyCheckIcon.order = 1
+resolved readyCheckIcon.size = 22
 resolved spacing = 1
 resolved width = 140
 definition auras.defaults.buffs.max = 8
@@ -6874,6 +7011,7 @@ definition label = "Focus target"
 definition portrait.defaults.enabled = false
 definition pvp.defaults = {}
 definition readyCheck = true
+definition readyCheckIcon.defaults = {}
 definition rows = {{defaults={height=20,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=8,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
 definition sample.class = "SHAMAN"
 definition sample.className = "Shaman"

@@ -112,7 +112,8 @@ local function TagRow(frame, row, rowEnabled)
 end
 
 -- oUF element per optional part (UnitFrame.PARTS) and the widget it drives;
--- without `widget` the element drives the part component itself.
+-- without `widget` the element drives the part component itself. Parts
+-- without an entry are driven by the UnitFrame (the ready check icon).
 local PART_ELEMENTS = {
 	portrait = { element = "Portrait", widget = function(portrait) return portrait:GetWidget() end },
 	castbar = { element = "UF_Castbar" },
@@ -128,7 +129,7 @@ local PART_ELEMENTS = {
 function Units:Bind(frame)
 	local uf = frame.uf
 	SetElement(frame, "UF_Resting", uf.spec.resting and uf.resolved.resting.enabled and uf or nil)
-	SetElement(frame, "UF_ReadyCheck", uf.spec.readyCheck and uf.resolved.readyCheck.enabled and uf or nil)
+	SetElement(frame, "UF_ReadyCheck", uf.spec.readyCheck and uf:IsReadyCheckShown() and uf or nil)
 	for key, row, cfg in uf:Rows() do
 		local widget, rebind
 		if cfg.enabled then widget, rebind = widgets[key](row) end
@@ -139,10 +140,12 @@ function Units:Bind(frame)
 	frame.ufSubWidgets = frame.ufSubWidgets or {}
 	for key, part in uf:Parts() do
 		local binding = PART_ELEMENTS[key]
-		local widget = part:IsEnabled() and (binding.widget and binding.widget(part) or part) or nil
-		local subWidget = binding.subWidget and binding.subWidget(part)
-		SetElement(frame, binding.element, widget, frame.ufSubWidgets[key] ~= subWidget)
-		frame.ufSubWidgets[key] = subWidget
+		if binding then
+			local widget = part:IsEnabled() and (binding.widget and binding.widget(part) or part) or nil
+			local subWidget = binding.subWidget and binding.subWidget(part)
+			SetElement(frame, binding.element, widget, frame.ufSubWidgets[key] ~= subWidget)
+			frame.ufSubWidgets[key] = subWidget
+		end
 	end
 	local range = uf.resolved.range
 	SetElement(frame, "UF_Range", range.enabled and ns.Caps.booleanAlpha and uf or nil,

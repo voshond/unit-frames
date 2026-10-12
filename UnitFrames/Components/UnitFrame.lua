@@ -2,6 +2,7 @@ local _, ns = ...
 local Backdrop, TextBar = ns.Components.Backdrop, ns.Components.TextBar
 local Castbar, Portrait, Auras = ns.Components.Castbar, ns.Components.Portrait, ns.Components.Auras
 local RaidTarget, PvPFlag, Classification = ns.Components.RaidTarget, ns.Components.PvPFlag, ns.Components.Classification
+local ReadyCheckIcon = ns.Components.ReadyCheckIcon
 
 --[[
 A unit frame made of rows stacked top to bottom inside one bordered frame.
@@ -16,6 +17,7 @@ Optional extras:
   raidTarget  raid marker on a border, the centre or inside a portrait corner
   pvp       the unit's PvP flag, placed like the raid marker
   classification  elite, rare or boss marker, placed like the raid marker
+  readyCheckIcon  ready check mark, driven with the ready check tints
 
 Edge icons (the raid marker, PvP flag, elite marker and companions' status
 icons) share one
@@ -35,7 +37,7 @@ spec:
               defaults  row option defaults, e.g. { height = 24, right = { size = 9 } }
               options   extra row options (schema entries), e.g. health colour mode
             }
-  portrait, castbar, auras, raidTarget, pvp, classification
+  portrait, castbar, auras, raidTarget, pvp, classification, readyCheckIcon
             { defaults, ... } to offer that part (see UnitFrame.PARTS;
             auras also take cancelBuffs and clickThrough)
 ]]
@@ -133,6 +135,9 @@ UnitFrame.PARTS = {
 	{ key = "classification", label = "Elite / rare icon", stack = true,
 		schema = function() return Classification.schema end,
 		create = function(frame) return Classification:New(frame, {}) end },
+	{ key = "readyCheckIcon", label = "Ready check icon", stack = true,
+		schema = function() return ReadyCheckIcon.schema end,
+		create = function(frame) return ReadyCheckIcon:New(frame, {}) end },
 }
 
 function UnitFrame:OnCreate(parent, spec)
@@ -192,15 +197,15 @@ function UnitFrame.BuildSchema(spec)
 	end
 	if spec.readyCheck then
 		schema[#schema + 1] = { key = "readyCheck", type = "group", label = "Ready check", schema = {
-			{ key = "enabled", type = "toggle", label = "Enabled", default = true,
-				tooltip = "During a ready check, grey this frame's bars until the unit answers, then turn them green (ready) or red (not ready). When the check ends, units without an answer turn red, then all bars fade back to their normal colours." },
+			{ key = "enabled", type = "toggle", label = "Tint bars", default = true,
+				tooltip = "During a ready check, grey this frame's bars until the unit answers, then turn them green (ready) or red (not ready). When the check ends, units without an answer turn red, then all bars fade back to their normal colours. The Ready check icon section places the matching check mark." },
 			{ key = "waitingColor", type = "color", label = "Waiting colour", default = { 0.5, 0.5, 0.5, 1 } },
 			{ key = "readyColor", type = "color", label = "Ready colour", default = { 0.15, 0.8, 0.15, 1 } },
 			{ key = "notReadyColor", type = "color", label = "Not ready colour", default = { 0.85, 0.12, 0.12, 1 } },
 			{ key = "hold", type = "range", label = "Hold after the check (seconds)", min = 0, max = 10, step = 0.5, default = 2,
-				tooltip = "How long the result stays after the check ends, before fading." },
+				tooltip = "How long the result (tints and icon) stays after the check ends, before fading." },
 			{ key = "fade", type = "range", label = "Fade duration (seconds)", min = 0, max = 5, step = 0.25, default = 1.5,
-				tooltip = "Time to fade back to the normal bar colours. 0 = switch back at once." },
+				tooltip = "Time to fade back to the normal bar colours and fade out the icon. 0 = switch back at once." },
 		} }
 	end
 	local function AddParts(beforeRows)
@@ -279,13 +284,16 @@ function UnitFrame:SetResting(resting, animated)
 end
 
 --[[
-Ready check bar tints. Statuses are GetReadyCheckStatus's plain results:
-"waiting", "ready", "notready" or nil (no check, or not part of it).
-  SetReadyCheck(status)   during a check; nil removes the tint at once
+Ready check state, shown as bar tints and the ready check icon. Statuses are
+GetReadyCheckStatus's plain results: "waiting", "ready", "notready" or nil
+(no check, or not part of it).
+  SetReadyCheck(status)   during a check; nil removes tints and icon at once
   FinishReadyCheck()      the check ended: an unanswered check counts as not
-                          ready; hold the result, then fade back
-  ShowReadyCheckSample(status, time)  previews: full tint, or with `time`
-                          a looping check, result, hold and fade
+                          ready; hold the result, then fade out
+  ShowReadyCheckSample(status, time, answerAt)  previews: the answer held, or
+                          with `time` a looping check: waiting until `answerAt`
+                          (default 1.5 s), the answer until 3 s, then the end
+                          of the check with hold and fade, then 1 s plain
 ]]
 local READY_CHECK_COLORS = { waiting = "waitingColor", ready = "readyColor", notready = "notReadyColor" }
 
@@ -305,7 +313,13 @@ function UnitFrame:IsReadyCheckFinishing()
 	return self.readyCheckFinished == true
 end
 
--- Tint amount after the check: held, then fading to 0.
+-- Whether ready checks show at all: bar tints or the icon.
+function UnitFrame:IsReadyCheckShown()
+	local cfg, icon = self.resolved.readyCheck, self.readyCheckIcon
+	return cfg ~= nil and (cfg.enabled or (icon ~= nil and icon:IsEnabled()))
+end
+
+-- Amount after the check: held, then fading to 0.
 local function ReadyCheckFade(cfg, elapsed)
 	local fading = elapsed - cfg.hold
 	if fading <= 0 then return 1 end
@@ -322,8 +336,9 @@ local function StepReadyCheck(component, elapsed)
 	end
 end
 
--- Tints every row with the status colour at `amount` (0 removes it).
-function UnitFrame:TintRows(status, amount)
+-- Tints every row with the status colour and shows the status icon, both
+-- at `amount` (0 removes them).
+function UnitFrame:ShowReadyCheckState(status, amount)
 	local cfg = self.resolved.readyCheck
 	local color = status and cfg and cfg.enabled and amount > 0 and cfg[READY_CHECK_COLORS[status]]
 	for _, row in ipairs(self.rows) do
@@ -333,17 +348,19 @@ function UnitFrame:TintRows(status, amount)
 			row.component:SetTint(nil)
 		end
 	end
+	if self.readyCheckIcon then
+		self.readyCheckIcon:SetStatus(amount > 0 and status or nil, amount)
+	end
 end
 
 function UnitFrame:ApplyReadyCheck()
 	local driver = self.readyCheckDriver
 	if not driver then return end
-	local cfg, status = self.resolved.readyCheck, self.readyCheckStatus
-	local amount = 0
-	if status and cfg.enabled then
-		amount = self.readyCheckFinished and ReadyCheckFade(cfg, self.readyCheckElapsed) or 1
+	local status, amount = self.readyCheckStatus, 0
+	if status and self:IsReadyCheckShown() then
+		amount = self.readyCheckFinished and ReadyCheckFade(self.resolved.readyCheck, self.readyCheckElapsed) or 1
 	end
-	self:TintRows(status, amount)
+	self:ShowReadyCheckState(status, amount)
 	if amount > 0 and self.readyCheckFinished then
 		if not driver:GetScript("OnUpdate") then
 			driver:SetScript("OnUpdate", function(_, elapsed) StepReadyCheck(self, elapsed) end)
@@ -353,24 +370,22 @@ function UnitFrame:ApplyReadyCheck()
 	end
 end
 
--- Sample loop: 1.5 s waiting, 1.5 s showing `status`, then the end of the
--- check with the configured hold and fade, then 1 s without a tint.
-function UnitFrame:ShowReadyCheckSample(status, time)
+function UnitFrame:ShowReadyCheckSample(status, time, answerAt)
 	if not self.readyCheckDriver then return end
 	self.readyCheckDriver:SetScript("OnUpdate", nil)
 	self.readyCheckStatus, self.readyCheckFinished = nil, false
 	if not time or not status then
-		self:TintRows(status, status and 1 or 0)
+		self:ShowReadyCheckState(status, status and 1 or 0)
 		return
 	end
 	local cfg = self.resolved.readyCheck
 	local t = time % (4 + cfg.hold + cfg.fade)
-	if t < 1.5 then
-		self:TintRows("waiting", 1)
+	if t < (answerAt or 1.5) then
+		self:ShowReadyCheckState("waiting", 1)
 	elseif t < 3 then
-		self:TintRows(status, 1)
+		self:ShowReadyCheckState(status, 1)
 	else
-		self:TintRows(status == "waiting" and "notready" or status, ReadyCheckFade(cfg, t - 3))
+		self:ShowReadyCheckState(status == "waiting" and "notready" or status, ReadyCheckFade(cfg, t - 3))
 	end
 end
 
@@ -556,4 +571,8 @@ end
 
 function UnitFrame:GetClassification()
 	return self.classification
+end
+
+function UnitFrame:GetReadyCheckIcon()
+	return self.readyCheckIcon
 end
