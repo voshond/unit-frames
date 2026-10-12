@@ -214,6 +214,23 @@ function Methods:GetAlpha()
 	if self.__state.alpha == nil then return 1 end
 	return self.__state.alpha
 end
+function Methods:GetEffectiveAlpha()
+	local own = self:GetAlpha()
+	local parent = self:GetParent()
+	local inherited = not self.__state.ignoreParentAlpha and parent and parent:GetEffectiveAlpha() or 1
+	local secret = AnySecret(own, inherited)
+	-- Native engine oracle only; addon Lua may not multiply these values.
+	if Mock.IsSecret(own) then own = own.secretValue end
+	if Mock.IsSecret(inherited) then inherited = inherited.secretValue end
+	local alpha = own * inherited
+	return secret and Mock.Secret(alpha) or alpha
+end
+function Methods:SetIgnoreParentAlpha(ignore) self.__state.ignoreParentAlpha = ignore end
+function Methods:SetModelAlpha(alpha)
+	assert(Mock.IsSecret(alpha) or type(alpha) == "number", "model alpha must be numeric")
+	self.__state.modelAlpha = alpha
+	Record(self, "SetModelAlpha", alpha)
+end
 function Methods:SetAlphaFromBoolean(value, ifTrue, ifFalse)
 	assert(Mock.IsSecret(value) or type(value) == "boolean", "value must be a boolean")
 	Record(self, "SetAlphaFromBoolean", value, ifTrue, ifFalse)

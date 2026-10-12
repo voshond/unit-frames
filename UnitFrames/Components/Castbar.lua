@@ -171,12 +171,15 @@ function Castbar:OnRelease()
 	self:SetCovered(nil)
 end
 
--- The region this castbar is placed over, or nil.
-function Castbar:SetCovered(region)
+-- The region this castbar is placed over, or nil. An optional notification
+-- lets model artwork synchronize its separate alpha after the region changes.
+function Castbar:SetCovered(region, alphaChanged)
 	if self.covered and self.covered ~= region then
 		self.covered:SetAlpha(1)
+		if self.coveredAlphaChanged then self.coveredAlphaChanged() end
 	end
 	self.covered = region
+	self.coveredAlphaChanged = alphaChanged
 	self:UpdateCovered()
 end
 
@@ -194,6 +197,7 @@ function Castbar:UpdateCovered()
 	else
 		covered:SetAlpha(0)
 	end
+	if self.coveredAlphaChanged then self.coveredAlphaChanged() end
 end
 
 function Castbar:Hide()

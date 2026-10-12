@@ -364,6 +364,7 @@ function UnitFrame:ApplyRangeOpacity()
 	else
 		self.frame:SetAlpha(1)
 	end
+	if self.portrait then self.portrait:SyncAlpha() end
 end
 
 function UnitFrame:SetRangeState(inRange, checkedRange)
@@ -419,7 +420,8 @@ function UnitFrame:Layout()
 		end
 		self.castbar:SetOpaque(placement == "health" or placement == "portrait")
 		self.castbar:SetCovered(placement == "health" and self.rowsByKey.health:GetFrame()
-			or placement == "portrait" and layout.portrait and portrait:GetFrame() or nil)
+			or placement == "portrait" and layout.portrait and portrait:GetFrame() or nil,
+			placement == "portrait" and layout.portrait and function() portrait:SyncAlpha() end or nil)
 	end
 
 	self:Resize(layout.width, layout.height)

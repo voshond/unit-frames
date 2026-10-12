@@ -26,6 +26,9 @@ function Portrait:OnCreate(parent)
 	self.frame = CreateFrame("Frame", nil, parent, "BackdropTemplate")
 	self.background = self.frame:CreateTexture(nil, "BACKGROUND")
 	self.model = CreateFrame("PlayerModel", nil, self.frame)
+	-- oUF can replace the model on unit/visibility changes; restore its material
+	-- opacity after that update as well as when our host opacity changes.
+	self.model.PostUpdate = function() self:SyncAlpha() end
 	self.texture = self.frame:CreateTexture(nil, "ARTWORK")
 end
 
@@ -46,6 +49,20 @@ function Portrait:OnApply(cfg)
 	end
 	-- oUF's Portrait element shows the class icon on textures with showClass.
 	self.texture.showClass = cfg.mode == "class"
+	self:SyncAlpha()
+end
+
+-- PlayerModel artwork has a separate material alpha. Pass the native effective
+-- host alpha straight through: range fading can make it secret, and portrait
+-- coverage adds another parent alpha. Never multiply or inspect it in Lua.
+function Portrait:SyncAlpha()
+	if not self.released and self.resolved and self.resolved.mode == "3D" then
+		self.model:SetModelAlpha(self.frame:GetEffectiveAlpha())
+	end
+end
+
+function Portrait:OnRelease()
+	self.model.PostUpdate = nil
 end
 
 -- The region oUF's Portrait element should drive for the current mode.
@@ -65,6 +82,7 @@ function Portrait:SetUnit(unit)
 		self.model:ClearModel()
 		self.model:SetUnit(unit)
 		self.model:SetPortraitZoom(1)
+		self:SyncAlpha()
 	elseif mode == "2D" then
 		SetPortraitTexture(self.texture, unit)
 	else
