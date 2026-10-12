@@ -228,6 +228,44 @@ describe("ClickGrid companion", function()
 		assert.is_true(CG.headers.party:GetAttribute("child1").Target.__state.unitWatched)
 	end)
 
+	it("stops watching and updating hidden targets, then restores their elements", function()
+		local target = CG.headers.party:GetAttribute("child1").Target
+		assert.is_false(target:IsEnabled(), "disabled by default even though oUF prepares the button")
+		CG.Config:Set("panel.targets", true)
+		assert.is_true(target:IsEnabled())
+		assert.is_false(target:IsElementPaused("Health"))
+		CG.Config:SetStyle("target", "auras.enabled", true)
+		CG.Config:Set("panel.targets", false)
+		assert.is_false(target:IsEnabled())
+		assert.is_false(target:IsShown())
+		assert.is_true(target:IsElementPaused("Health"))
+		assert.is_true(target:IsElementPaused("RaidTargetIndicator"))
+		assert.is_false(target.uf:GetAuras():IsEnabled())
+		target.calls = {}
+		CG:Refresh()
+		for _, call in ipairs(target.calls) do
+			assert.is_false(call:match("^UpdateAllElements") ~= nil, "hidden targets do no forced refresh")
+		end
+		CG.Config:Set("panel.targets", true)
+		assert.is_true(target:IsEnabled())
+		assert.is_false(target:IsElementPaused("Health"))
+		assert.is_true(target.uf:GetAuras():IsEnabled())
+		assert.is_nil(target.__state.drivers["state-visibility"])
+	end)
+
+	it("keeps disabled targets hidden when visibility drivers run before unit watches", function()
+		local target = CG.headers.party:GetAttribute("child1").Target
+		target.__unit = "party1target"
+		Mock.TickUnitVisibility(target)
+		assert.is_false(target:IsShown(), "unit watch must not override the hide driver")
+		CG.Config:Set("panel.targets", true)
+		Mock.TickUnitVisibility(target)
+		assert.is_true(target:IsShown(), "the native watcher shows an existing unit")
+		CG.Config:Set("panel.targets", false)
+		Mock.TickUnitVisibility(target)
+		assert.is_false(target:IsShown(), "hiding again also unregisters the watcher")
+	end)
+
 	it("lets a header assign a different member and its target in combat without building widgets", function()
 		local header = CG.headers.group1
 		local count = #CG.frames
@@ -250,7 +288,8 @@ describe("ClickGrid companion", function()
 	it("registers status and private aura widgets with pre-created anchors", function()
 		local member = CG.headers.party:GetAttribute("child1").Member
 		assert.is_true(member:IsElementEnabled("GroupRoleIndicator"))
-		assert.is_true(member:IsElementEnabled("ReadyCheckIndicator"))
+		assert.is_false(member:IsElementEnabled("ReadyCheckIndicator"))
+		assert.is_true(member:IsElementEnabled("UF_ReadyCheck"))
 		assert.is_true(member:IsElementEnabled("UFCG_DeathIndicator"))
 		-- The base mock has no private aura API. Absence is a capability, not an error.
 		assert.is_false(member:IsElementEnabled("PrivateAuras"))
@@ -304,7 +343,7 @@ describe("ClickGrid companion", function()
 		local name = frame.uf:GetRow("health"):GetText("left")
 		local cfg = CG.Config:Resolved().indicators
 		assert.is_true(role.ufcgHost:GetFrameLevel() > frame.uf:GetRow("health"):GetBar():GetTextParent():GetFrameLevel())
-		assert.is_true(frame.ReadyCheckIndicator:GetParent():GetFrameLevel() > frame:GetFrameLevel())
+		assert.is_true(frame.ufcgStatus.ReadyCheckIndicator:GetParent():GetFrameLevel() > frame:GetFrameLevel())
 		assert.equals(cfg.roleSize + cfg.roleGap, name.leadingSpace)
 		assert.equals(name.resolved.inset + name.resolved.offsetX + name.leadingSpace, select(4, name:GetFrame():GetPoint(1)))
 		local point, relative, relativePoint, x = role.ufcgHost:GetPoint()
@@ -334,8 +373,10 @@ describe("ClickGrid companion", function()
 	end
 
 	it("keeps icons sharing an edge centred as a group and collapses absent icons", function()
+		CG.Config:Set("indicators.readyPosition", "TOP")
+		CG.Config:Set("indicators.readySize", 14)
 		local frame = CG.headers.party:GetAttribute("child1").Member
-		local marker, leader, ready = frame.uf:GetRaidTarget(), frame.LeaderIndicator, frame.ReadyCheckIndicator
+		local marker, leader, ready = frame.uf:GetRaidTarget(), frame.LeaderIndicator, frame.ufcgStatus.ReadyCheckIndicator
 		assert.same({ "CENTER", frame, "TOP", 0, 0 }, Anchor(leader.ufcgHost), "absent icons keep their own position")
 		Native(leader, true)
 		assert.same({ "CENTER", frame, "TOP", 0, 0 }, Anchor(leader.ufcgHost))
@@ -343,7 +384,7 @@ describe("ClickGrid companion", function()
 		Native(marker:GetWidget(), true)
 		assert.same({ "CENTER", frame, "TOP", -8, 0 }, Anchor(marker:GetFrame()))
 		assert.same({ "CENTER", frame, "TOP", 7, 0 }, Anchor(leader.ufcgHost))
-		Native(ready, true)
+		frame.uf:SetReadyCheck("ready")
 		assert.same({ "CENTER", frame, "TOP", -16, 0 }, Anchor(marker:GetFrame()))
 		assert.same({ "CENTER", frame, "TOP", -1, 0 }, Anchor(leader.ufcgHost))
 		assert.same({ "CENTER", frame, "TOP", 15, 0 }, Anchor(ready.ufcgHost))
@@ -362,10 +403,12 @@ describe("ClickGrid companion", function()
 	end)
 
 	it("orders, nudges and grows groups by anchor kind", function()
+		CG.Config:Set("indicators.readyPosition", "TOP")
+		CG.Config:Set("indicators.readySize", 14)
 		local frame = CG.headers.party:GetAttribute("child1").Member
-		local leader, ready = frame.LeaderIndicator, frame.ReadyCheckIndicator
+		local leader, ready = frame.LeaderIndicator, frame.ufcgStatus.ReadyCheckIndicator
 		Native(leader, true)
-		Native(ready, true)
+		frame.uf:SetReadyCheck("ready")
 		CG.Config:Set("indicators.readyOrder", 1)
 		assert.same({ "CENTER", frame, "TOP", -8, 0 }, Anchor(ready.ufcgHost))
 		assert.same({ "CENTER", frame, "TOP", 8, 0 }, Anchor(leader.ufcgHost))
@@ -395,9 +438,11 @@ describe("ClickGrid companion", function()
 	end)
 
 	it("keeps a slot for an opaque shown state and an opaque role", function()
+		CG.Config:Set("indicators.readyPosition", "TOP")
+		CG.Config:Set("indicators.readySize", 14)
 		local frame = CG.headers.party:GetAttribute("child1").Member
-		local role, leader, ready = frame.GroupRoleIndicator, frame.LeaderIndicator, frame.ReadyCheckIndicator
-		Native(ready, true)
+		local role, leader, ready = frame.GroupRoleIndicator, frame.LeaderIndicator, frame.ufcgStatus.ReadyCheckIndicator
+		frame.uf:SetReadyCheck("ready")
 		leader:SetShown(Mock.Secret(true))
 		assert.has_no_error(function() leader:PostUpdate() end)
 		assert.same({ "CENTER", frame, "TOP", -8, 0 }, Anchor(leader.ufcgHost))
@@ -456,8 +501,10 @@ describe("ClickGrid companion", function()
 	end)
 
 	it("shows the same spirit artwork for the dead and ghosts", function()
+		CG.Config:Set("indicators.readyPosition", "TOP")
+		CG.Config:Set("indicators.readySize", 14)
 		local frame = CG.headers.party:GetAttribute("child1").Member
-		local death, ready = frame.UFCG_DeathIndicator, frame.ReadyCheckIndicator
+		local death, ready = frame.UFCG_DeathIndicator, frame.ufcgStatus.ReadyCheckIndicator
 		local element, events = UF.oUF.elements.UFCG_DeathIndicator, {}
 		local function Atlas()
 			for i = #death.__calls, 1, -1 do
@@ -470,7 +517,7 @@ describe("ClickGrid companion", function()
 		assert.is_true(element.enable(frame))
 		assert.same({ UNIT_HEALTH = false, UNIT_CONNECTION = false, PLAYER_DEAD = true, PLAYER_ALIVE = true, PLAYER_UNGHOST = true }, events)
 		frame.__unit = "party1"
-		Native(ready, true)
+		frame.uf:SetReadyCheck("ready")
 		element.update(frame, "UNIT_HEALTH")
 		assert.is_false(death:IsShown())
 		assert.same({ "CENTER", frame, "TOP", 0, 0 }, Anchor(ready.ufcgHost))
@@ -877,6 +924,36 @@ describe("ClickGrid Workbench", function()
 		assert.same({ UF.Colors.Class("MAGE") }, { UF.Colors.Class(Mock.Secret("MAGE")) })
 	end)
 
+	it("does not populate hidden targets in static, animated or live previews", function()
+		local target = wb.handle.cells[1].target
+		local showSample, showLive = UF.Units.ShowSample, wb.handle.ShowLive
+		local samples, liveUpdates = 0, 0
+		UF.Units.ShowSample = function(self, uf, values)
+			if uf == target then samples = samples + 1 end
+			return showSample(self, uf, values)
+		end
+		wb.handle.ShowLive = function(self, uf, ...)
+			if uf == target then liveUpdates = liveUpdates + 1 end
+			return showLive(self, uf, ...)
+		end
+		wb.handle:Apply()
+		wb.dataTarget.set("source", "animated")
+		wb:OnUpdate(0.2)
+		assert.equals(0, samples)
+		assert.is_false(target:GetFrame():IsShown())
+		CG.Config:Set("panel.targets", true)
+		assert.is_true(samples > 0)
+		CG.Config:Set("panel.targets", false)
+		samples = 0
+		wb:OnUpdate(0.2)
+		assert.equals(0, samples)
+		wb.dataTarget.set("source", "live")
+		wb:OnUpdate(0.2)
+		assert.equals(0, liveUpdates)
+		CG.Config:Set("panel.targets", true)
+		assert.is_true(liveUpdates > 0)
+	end)
+
 	it("does not tick or apply config after a preview failed to build", function()
 		local entry = wb.entries["clickgrid.panel"]
 		local create = entry.create
@@ -947,6 +1024,8 @@ describe("ClickGrid Workbench", function()
 	end)
 
 	it("samples ready checks, the dead and ghosts in grouped edge icons", function()
+		CG.Config:Set("indicators.readyPosition", "TOP")
+		CG.Config:Set("indicators.readySize", 14)
 		local function Atlas(icon)
 			for i = #icon.__calls, 1, -1 do
 				if icon.__calls[i][1] == "SetAtlas" then return icon.__calls[i][2] end

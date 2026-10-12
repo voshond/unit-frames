@@ -55,13 +55,16 @@ return function(Mock)
 		local frame = Mock.NewObject("Button", parent or UIParent, name)
 		rawset(frame, "__strict", true)
 		frame.__state.protected = true
+		RegisterUnitWatch(frame)
 		frame.__unit = unit
 		frame.enabledElements = {}
+		frame.pausedElements = {}
 		frame.tags = {}
 		frame.calls = {}
 		for key, value in pairs(attributes or {}) do frame:SetAttribute(key, value) end
 
 		function frame:EnableElement(element)
+			if self:IsElementEnabled(element) then return end
 			if IsKnown(element) and self[element] then
 				self.enabledElements[element] = true
 				table.insert(self.calls, "enable " .. element)
@@ -69,11 +72,22 @@ return function(Mock)
 		end
 		function frame:DisableElement(element)
 			self.enabledElements[element] = nil
+			self.pausedElements[element] = nil
 			table.insert(self.calls, "disable " .. element)
 		end
 		function frame:IsElementEnabled(element)
 			return self.enabledElements[element] == true
 		end
+		function frame:IsElementPaused(element) return self.pausedElements[element] == true end
+		function frame:PauseAllElements()
+			for element in pairs(self.enabledElements) do self.pausedElements[element] = true end
+		end
+		function frame:ResumeAllElements()
+			for element in pairs(self.pausedElements) do self.pausedElements[element] = nil end
+		end
+		frame.Enable = RegisterUnitWatch
+		function frame:Disable() UnregisterUnitWatch(self); self:Hide() end
+		frame.IsEnabled = UnitWatchRegistered
 		function frame:Tag(fs, tagString)
 			self.tags[fs] = tagString
 		end

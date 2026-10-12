@@ -22,6 +22,11 @@ scripts/fetch-libs.sh       # update the embedded libraries (UnitFrames/Libs/VER
 
 In game: `/uf wb` opens the Workbench.
 
+With Titan Panel or another LibDataBroker display installed, enable its
+**UnitFrames** launcher. Left-click the portrait icon to toggle the Workbench,
+using the same load-on-demand handler as `/uf wb`. Registration also works
+when the broker display loads after UnitFrames.
+
 The player's **Resting border** slowly pulses from the configured frame border
 colour to yellow while resting in an inn or city. It is enabled by default;
 its colour and pulse duration (default four seconds) are configurable. A visible

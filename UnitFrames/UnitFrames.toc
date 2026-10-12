@@ -4,7 +4,7 @@
 ## Author: Martin Konstantin Herrmann
 ## Version: 0.1.0-dev
 ## SavedVariables: UnitFramesDB
-## OptionalDeps: Clique, UnitFrames_Media
+## OptionalDeps: Clique, UnitFrames_Media, Titan
 
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
@@ -67,3 +67,4 @@ Units\Preview.lua
 Integration\EditMode.lua
 
 Core\Commands.lua
+Integration\Launcher.lua

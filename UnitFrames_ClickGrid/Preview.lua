@@ -151,6 +151,7 @@ function Preview:ShowData(data, dataOnly)
 				cell.target:Apply(CG.Config:GetStyle("target"))
 				cell.target:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", CG.metrics.member.width + cfg.targetGap, 0)
 				cell.target:GetFrame():SetShown(cfg.targets)
+				if not cfg.targets and cell.target:GetAuras() then cell.target:GetAuras():SetEnabled(false) end
 				cell.slots:Apply(CG:SlotConfig(cell.member))
 				cell.status:Apply(CG.Config:Get().indicators)
 				cell.styled = true
@@ -170,10 +171,12 @@ function Preview:ShowData(data, dataOnly)
 				cell.slots:ShowSample(values)
 				local readyStatus, readyAmount = cell.member:GetReadyCheckState()
 				cell.status:ShowSample(index, self.data.readyCheck == "check" and { readyStatus, readyAmount } or nil)
-				local targetValues = UF.Util.Copy(values)
-				targetValues.name, targetValues.class, targetValues.reaction = "Enemy " .. index, nil, "hostile"
-				targetValues.isPlayer = false
-				UF.Units:ShowSample(cell.target, targetValues)
+				if cfg.targets then
+					local targetValues = UF.Util.Copy(values)
+					targetValues.name, targetValues.class, targetValues.reaction = "Enemy " .. index, nil, "hostile"
+					targetValues.isPlayer = false
+					UF.Units:ShowSample(cell.target, targetValues)
+				end
 			end
 		end
 	end

@@ -9743,8 +9743,8 @@ option indicators.leaderGap type="range" label="Leader icon gap" default=2 min=0
 option indicators.leaderOffsetX type="range" label="Leader icon horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
 option indicators.leaderOffsetY type="range" label="Leader icon vertical offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
 option indicators.ready type="toggle" label="Ready check" default=true
-option indicators.readyPosition type="select" label="Ready check icon position" default="TOP" values=#1fe6f2dd tooltip=#e99bb5ef hidden
-option indicators.readySize type="range" label="Ready check icon size" default=14 min=8 max=64 step=1 hidden
+option indicators.readyPosition type="select" label="Ready check icon position" default="CENTER" values=#1fe6f2dd tooltip=#e99bb5ef hidden
+option indicators.readySize type="range" label="Ready check icon size" default=22 min=8 max=64 step=1 hidden
 option indicators.readyOrder type="range" label="Ready check icon order" default=4 min=1 max=10 step=1 tooltip=#b6361d3f hidden
 option indicators.readyGap type="range" label="Ready check icon gap" default=2 min=0 max=20 step=1 tooltip=#bd35420d hidden
 option indicators.readyOffsetX type="range" label="Ready check icon horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
@@ -9823,8 +9823,8 @@ default indicators.readyGap = 2
 default indicators.readyOffsetX = 0
 default indicators.readyOffsetY = 0
 default indicators.readyOrder = 4
-default indicators.readyPosition = "TOP"
-default indicators.readySize = 14
+default indicators.readyPosition = "CENTER"
+default indicators.readySize = 22
 default indicators.resurrection = true
 default indicators.resurrectionGap = 2
 default indicators.resurrectionOffsetX = 0
@@ -9926,8 +9926,8 @@ resolved indicators.readyGap = 2
 resolved indicators.readyOffsetX = 0
 resolved indicators.readyOffsetY = 0
 resolved indicators.readyOrder = 4
-resolved indicators.readyPosition = "TOP"
-resolved indicators.readySize = 14
+resolved indicators.readyPosition = "CENTER"
+resolved indicators.readySize = 22
 resolved indicators.resurrection = true
 resolved indicators.resurrectionGap = 2
 resolved indicators.resurrectionOffsetX = 0

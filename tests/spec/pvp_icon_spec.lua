@@ -68,6 +68,31 @@ describe("PvP flag icons", function()
 		assert.is_false(flag.background:IsShown())
 	end)
 
+	it("reflows after native element rebinding hides the flag", function()
+		rawset(flag:GetWidget(), "__strict", true)
+		ns.oUF.Private = { GameVersion = { Forever = true }, GameCompatibility = {} }
+		assert(loadfile("UnitFrames/Libs/oUF/elements/pvpindicator.lua"))("oUF", ns)
+		local element = ns.oUF.elements.PvPIndicator
+		frame.RegisterEvent, frame.UnregisterEvent = function() end, function() end
+		local disable, enable = frame.DisableElement, frame.EnableElement
+		frame.DisableElement = function(self, name)
+			if name == "PvPIndicator" then element.disable(self) end
+			disable(self, name)
+		end
+		frame.EnableElement = function(self, name)
+			if name == "PvPIndicator" then element.enable(self, self.__unit) end
+			enable(self, name)
+		end
+		ns.Config:SetUnitValue("player", "pvp.anchor", "TOP")
+		uf:GetRaidTarget():SetIndex(8)
+		flag:SetSample("Alliance")
+		assert.same({ "CENTER", frame, "TOP", -10, 0 }, { uf:GetRaidTarget():GetFrame():GetPoint() })
+		ns.Config:SetUnitValue("player", "pvp.background", false)
+		assert.is_false(flag:GetWidget():IsShown(), "native Disable hides art without PostUpdate")
+		assert.same({ "CENTER", frame, "TOP", 0, 0 }, { uf:GetRaidTarget():GetFrame():GetPoint() },
+			"binding must recalculate the stack after the native disable")
+	end)
+
 	it("lets Blizzard's secret-safe helper choose the art and keeps a slot for an opaque state", function()
 		rawset(flag:GetWidget(), "__strict", true)
 		ns.oUF.Private = { GameVersion = { Forever = true }, GameCompatibility = {} }

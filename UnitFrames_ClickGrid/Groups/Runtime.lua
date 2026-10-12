@@ -147,16 +147,25 @@ function CG:Refresh()
 			if cfg.panel.targets then
 				UnregisterAttributeDriver(frame, "state-visibility")
 				frame:SetAttribute("statehidden", nil)
-				RegisterUnitWatch(frame)
-			else RegisterAttributeDriver(frame, "state-visibility", "hide") end
+				frame:ResumeAllElements()
+				frame:Enable()
+			else
+				frame:Disable()
+				RegisterAttributeDriver(frame, "state-visibility", "hide")
+				frame:PauseAllElements()
+				-- Native aura containers own subscriptions independent of oUF.
+				if frame.uf:GetAuras() then frame.uf:GetAuras():SetEnabled(false) end
+			end
 		else frame:SetPoint("TOPLEFT", cell, "TOPLEFT", 0, 0) end
 		cell:SetSize(layout.cellWidth, layout.cellHeight)
 		if not external then
 			self.Bindings:Apply(frame, plan)
 			if ClickCastFrames then ClickCastFrames[frame] = nil end
 		end
-		frame:UpdateAllElements("UnitFramesClickGridRefresh")
-		frame:UpdateTags()
+		if kind ~= "target" or cfg.panel.targets then
+			frame:UpdateAllElements("UnitFramesClickGridRefresh")
+			frame:UpdateTags()
+		end
 	end
 	-- _ignore itself does not trigger a native header refresh. Recalculate
 	-- after all cell sizes and layout attributes have been applied.

@@ -39,6 +39,8 @@ repository's incremental deployment guidance when updating an existing copy.
 - Member targets beside the bars, with independent target styling. Existing
   UnitFrames health, shields, power, portrait, castbar, text, range, marker,
   font and border controls are reused rather than duplicated.
+  Hidden targets keep their prepared secure buttons but stop unit watches,
+  oUF element updates, native aura subscriptions and preview data updates.
 - Five mouse buttons × eight Alt/Ctrl/Shift combinations, with separate
   friendly/hostile actions: cast, target, assist, focus, menu or unbound.
   Spell IDs/localized names resolve through the client's spell APIs; unknown
@@ -59,11 +61,15 @@ repository's incremental deployment guidance when updating an existing copy.
   while waiting, then green or red, holding and fading after the check with
   the ready check icon. Without a group, **Preview data > Ready check** shows
   a sample check; Animated lets members answer in turn and fades out.
+  The ready check icon uses the same state and fade as the bars, including
+  when bar tinting is disabled; its existing indicator controls place it.
+  Its shared default is a 22-pixel icon at the frame centre.
   Role, leader/assistant, ready check, dead/ghost, incoming resurrection and
   summon positions offer **Before
   name** (an enabled left-aligned Name text on the health bar), the frame
   centre, or any raid-marker border/portrait anchor. Role defaults before
-  name; the others default to the top border with the raid marker. Icons
+  name, ready check to the frame centre, and the others to the top border
+  with the raid marker. Icons
   sharing an anchor form one group with the raid marker that leaves no gap
   for absent icons: edges and the centre keep the group centred, border
   corners and portrait corners grow inward, left/right edges run top to

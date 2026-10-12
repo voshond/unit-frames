@@ -28,8 +28,8 @@ CG.definitions = {
 	}),
 }
 -- Group bars show status icons instead of the unit frames' PvP flag, elite
--- and ready check icons (Status has its own ready check icon). Members tint
--- during ready checks; their targets are not part of the check.
+-- icons. Status places the shared ready check icon using its existing
+-- indicator controls. Their targets are not part of the check.
 for _, def in pairs(CG.definitions) do
 	def.pvp, def.classification, def.readyCheckIcon = nil, nil, nil
 end
@@ -83,14 +83,14 @@ local positions = { { "NAME", "Before name" } }
 for _, anchor in ipairs(UF.DecorationStack.ANCHORS) do positions[#positions + 1] = Copy(anchor) end
 
 -- Options of an icon in the member's decoration stack, sharing a prefix.
-local function Placed(key, label, name, position, order, tooltip)
+local function Placed(key, label, name, position, order, tooltip, size)
 	local function Off(c) return not c[key] end
 	local function NoOffset(c) return not c[key] or c[key .. "Position"] == "NAME" end
 	return {
 		{ key = key, type = "toggle", label = label, default = true },
 		{ key = key .. "Position", type = "select", label = name .. " position", values = positions, default = position,
 			hidden = Off, tooltip = tooltip .. " Icons sharing a position line up as one group and leave no gap for absent icons: edges and the centre keep the group centred, border corners grow inward. Before name uses an enabled left-aligned Name text on the health bar." },
-		{ key = key .. "Size", type = "range", label = name .. " size", min = 8, max = 64, step = 1, default = 14, hidden = Off },
+		{ key = key .. "Size", type = "range", label = name .. " size", min = 8, max = 64, step = 1, default = size or 14, hidden = Off },
 		{ key = key .. "Order", type = "range", label = name .. " order", min = 1, max = 10, step = 1, default = order, hidden = Off,
 			tooltip = "Icons sharing a position run left to right (top to bottom on the sides) by order. The raid marker's order is in the member style." },
 		{ key = key .. "Gap", type = "range", label = name .. " gap", min = 0, max = 20, step = 1, default = 2, hidden = Off,
@@ -102,11 +102,13 @@ local function Placed(key, label, name, position, order, tooltip)
 	}
 end
 
+local readySchema = UF.Components.ReadyCheckIcon.schema
 CG.IndicatorSchema = UF.Schema.Concat(
 	Placed("role", "Group role", "Role icon", "NAME", 2,
 		"An ordinary unassigned role (including solo) takes no space. Opaque roles keep their slot."),
 	Placed("leader", "Leader / assistant", "Leader icon", "TOP", 3, "Leader and assistant share one slot."),
-	Placed("ready", "Ready check", "Ready check icon", "TOP", 4, "Shown during a ready check and briefly after it."),
+	Placed("ready", "Ready check", "Ready check icon", UF.Schema.Find(readySchema, "anchor").default, 4,
+		"Shown during a ready check and briefly after it.", UF.Schema.Find(readySchema, "size").default),
 	Placed("death", "Dead / ghost", "Dead / ghost icon", "TOP", 5, "A spirit icon while dead or after releasing as a ghost."),
 	Placed("resurrection", "Incoming resurrection", "Resurrection icon", "TOP", 6, "Shown while a resurrection is incoming."),
 	{

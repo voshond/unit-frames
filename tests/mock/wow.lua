@@ -634,6 +634,21 @@ function Mock.Install()
 	_G.RegisterUnitWatch = function(frame)
 		frame.__state.unitWatched = true
 	end
+	_G.UnregisterUnitWatch = function(frame)
+		frame.__state.unitWatched = false
+	end
+	_G.UnitWatchRegistered = function(frame) return frame.__state.unitWatched == true end
+	-- Native SecureStateDriverManager resolves visibility first, then unit
+	-- watches. A live watch can therefore override a constant hide driver.
+	Mock.TickUnitVisibility = function(frame)
+		local drivers = frame.__state.drivers or {}
+		if drivers["state-visibility"] == "hide" then frame:Hide(); frame:SetAttribute("statehidden", true) end
+		if UnitWatchRegistered(frame) then
+			local exists = frame.__unit and (UnitExists(frame.__unit) or UnitIsVisible(frame.__unit))
+			frame:SetShown(exists and true or false)
+			frame:SetAttribute("statehidden", not exists and true or nil)
+		end
+	end
 	_G.strtrim = function(s) return (s:gsub("^%s+", ""):gsub("%s+$", "")) end
 	_G.strlenutf8 = function(s) return #s end
 	_G.tinsert = table.insert

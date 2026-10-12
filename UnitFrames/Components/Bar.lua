@@ -238,15 +238,19 @@ function Bar:OnApply(cfg)
 	-- bounds without passing GetSize/OnSizeChanged values to texture setters.
 	-- Extend the glow six units beyond either edge, with a twelve-unit width.
 	if cfg.orientation == "HORIZONTAL" then
+		self.spark:SetTexCoord(0, 1, 0, 1)
 		self.spark:SetWidth(12)
 		self.spark:SetPoint("TOP", fill, "TOP" .. layout.spark, 0, 6)
 		self.spark:SetPoint("BOTTOM", fill, "BOTTOM" .. layout.spark, 0, -6)
 	else
+		-- Rotate the artwork within the already horizontal spark rectangle.
+		-- SetRotation rotates the rendered rectangle too, distorting its
+		-- cross-axis span when width and height have already been swapped.
+		self.spark:SetTexCoord(0, 1, 1, 1, 0, 0, 1, 0)
 		self.spark:SetHeight(12)
 		self.spark:SetPoint("LEFT", fill, layout.spark .. "LEFT", -6, 0)
 		self.spark:SetPoint("RIGHT", fill, layout.spark .. "RIGHT", 6, 0)
 	end
-	self.spark:SetRotation(cfg.orientation == "VERTICAL" and math.pi / 2 or 0)
 	self.spark:SetShown(cfg.spark)
 
 	self:SizeParts(self.bar:GetSize())

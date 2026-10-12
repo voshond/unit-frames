@@ -5,7 +5,8 @@ local UF = CG.UF
 Group status indicators on a member bar: role, leader/assistant, ready check,
 dead/ghost, resurrection, summon, phase, threat and private aura anchors.
 Widgets are fields named after their oUF elements (status.GroupRoleIndicator,
-...); each placed icon's `ufcgHost` is the frame that positions it, as a member
+...); ready checks use the shared UnitFrame state instead of a second oUF
+element. Each placed icon's `ufcgHost` positions it, as a member
 of the UnitFrame's DecorationStack. Live frames bind them to oUF, previews call
 ShowSample. Only configured geometry positions them.
 
@@ -131,10 +132,16 @@ function Status:OnCreate(button, spec)
 	end
 	self.hosts = {}
 	for _, item in ipairs(PLACED) do
-		local host = Host(overlay)
+		local ready = item[1] == "ready" and self:Own(UF.Components.ReadyCheckIcon:New(overlay, {})) or nil
+		if ready then
+			ready.stackKey = "ready"
+			self.unitFrame.readyCheckIcon = ready
+			self.readyCheckIcon = ready
+		end
+		local host = ready and ready:GetFrame() or Host(overlay)
 		self.hosts[item[1]] = host
 		for _, element in ipairs(item[2]) do
-			local icon = host:CreateTexture(nil, "OVERLAY")
+			local icon = ready and ready:GetWidget() or host:CreateTexture(nil, "OVERLAY")
 			icon:SetAllPoints(host)
 			icon.ufcgHost = host
 			icon.PostUpdate = Reflow
@@ -142,9 +149,6 @@ function Status:OnCreate(button, spec)
 			self[element] = icon
 		end
 	end
-	-- The finished ready check fades out after its last update.
-	self.ReadyCheckIndicator.PostUpdateFadeOut = Reflow
-
 	for _, def in ipairs(FIXED) do
 		if def[1] == "PhaseIndicator" then
 			local host = Host(overlay)
@@ -199,6 +203,9 @@ end
 -- only: no reads of native icon dimensions.
 function Status:LayoutIcons()
 	local cfg, stack = self.resolved, self.unitFrame:GetDecorations()
+	self.readyCheckIcon:Apply({ enabled = cfg.ready, anchor = cfg.readyPosition, size = cfg.readySize,
+		order = cfg.readyOrder, gap = cfg.readyGap, offsetX = cfg.readyOffsetX, offsetY = cfg.readyOffsetY })
+	self.readyCheckIcon:Layout(self.unitFrame:GetLayoutContext())
 	self.frame:SetFrameLevel(self.button:GetFrameLevel() + 20)
 	local function RolePresent() return self:RolePresent() end
 	local function ResurrectionPresent()
@@ -208,11 +215,13 @@ function Status:LayoutIcons()
 	for _, item in ipairs(PLACED) do
 		local key, widgets = item[1], {}
 		for i, element in ipairs(item[2]) do widgets[i] = self[element] end
-		stack:Set(key, { host = self.hosts[key], widgets = widgets, enabled = cfg[key],
-			anchor = cfg[key .. "Position"], size = cfg[key .. "Size"], order = cfg[key .. "Order"], gap = cfg[key .. "Gap"],
-			x = cfg[key .. "OffsetX"], y = cfg[key .. "OffsetY"],
-			present = key == "role" and self.live and CG.Caps.roleEnum and RolePresent
-				or key == "resurrection" and ResurrectionPresent or nil })
+		if key ~= "ready" then
+			stack:Set(key, { host = self.hosts[key], widgets = widgets, enabled = cfg[key],
+				anchor = cfg[key .. "Position"], size = cfg[key .. "Size"], order = cfg[key .. "Order"], gap = cfg[key .. "Gap"],
+				x = cfg[key .. "OffsetX"], y = cfg[key .. "OffsetY"],
+				present = key == "role" and self.live and CG.Caps.roleEnum and RolePresent
+					or key == "resurrection" and ResurrectionPresent or nil })
+		end
 	end
 	stack:Reflow()
 end
@@ -224,7 +233,8 @@ function Status:OnApply(cfg)
 	end
 	for _, item in ipairs(PLACED) do
 		for _, element in ipairs(item[2]) do
-			Bind(element, cfg[item[1]] and self[element] or nil)
+			-- The member's UF_ReadyCheck drives the shared icon and bar tints.
+			if item[1] ~= "ready" then Bind(element, cfg[item[1]] and self[element] or nil) end
 			if not cfg[item[1]] then self[element]:Hide() end
 		end
 	end
@@ -250,28 +260,15 @@ function Status:OnApply(cfg)
 	private:SetShown(cfg.private and CG.Caps.privateAuras)
 	if not cfg.resurrection then self:SetResurrection(false) end
 	self:UpdateResurrectionText()
-	self:ApplyReadyCheckTiming()
 	-- After binding: disabled elements have hidden their art.
 	self:LayoutIcons()
-end
-
--- The ready check icon holds and fades like the member's bar tints. oUF
--- reads these options when it enables the element; an existing animation
--- is updated in place.
-function Status:ApplyReadyCheckTiming()
-	local timing = self.unitFrame.resolved.readyCheck
-	if not timing then return end
-	local icon = self.ReadyCheckIndicator
-	icon.finishedTime, icon.fadeTime = timing.hold, math.max(timing.fade, 0.01)
-	local fade = rawget(icon, "Animation")
-	if fade and fade.Alpha then
-		fade.Alpha:SetStartDelay(icon.finishedTime)
-		fade.Alpha:SetDuration(icon.fadeTime)
-	end
+	Bind("UF_ReadyCheck", self.unitFrame:IsReadyCheckShown() and self.unitFrame or nil)
+	self.unitFrame:ApplyReadyCheck()
 end
 
 function Status:OnRelease()
 	self:SetResurrection(false)
+	self.unitFrame.readyCheckIcon = nil
 	local stack = self.unitFrame:GetDecorations()
 	for _, item in ipairs(PLACED) do stack:Remove(item[1]) end
 	stack:Reflow()
@@ -303,14 +300,9 @@ function Status:ShowSample(index, ready)
 	self.AssistantIndicator:SetShown(cfg.leader and index == 2)
 	if ready then
 		local status, amount = ready[1], ready[2]
-		local atlas = status and amount > 0 and UF.Components.ReadyCheckIcon.ATLASES[status]
-		if atlas then self.ReadyCheckIndicator:SetAtlas(atlas) end
-		self.ReadyCheckIndicator:SetAlpha(atlas and amount or 1)
-		self.ReadyCheckIndicator:SetShown(cfg.ready and atlas ~= nil)
+		self.readyCheckIcon:SetStatus(cfg.ready and status or nil, amount)
 	else
-		self.ReadyCheckIndicator:SetAtlas("UI-LFG-ReadyMark-Raid")
-		self.ReadyCheckIndicator:SetAlpha(1)
-		self.ReadyCheckIndicator:SetShown(cfg.ready and index == 2)
+		self.readyCheckIcon:SetStatus(cfg.ready and index == 2 and "ready" or nil, 1)
 	end
 	-- Member 3 is dead with a resurrection on the way; member 5 is a ghost.
 	self.UFCG_DeathIndicator:SetAtlas(DEATH_ATLAS)

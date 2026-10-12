@@ -15,7 +15,10 @@ describe("ClickGrid ready checks", function()
 		assert.is_true(member:IsElementEnabled("UF_ReadyCheck"))
 		assert.equals(member.uf, member.UF_ReadyCheck)
 		assert.is_false(target:IsElementEnabled("UF_ReadyCheck"))
-		assert.is_nil(member.uf:GetReadyCheckIcon(), "members keep their own status icon")
+		assert.equals(member.ufcgStatus.ReadyCheckIndicator, member.uf:GetReadyCheckIcon():GetWidget())
+		assert.equals("CENTER", member.uf:GetReadyCheckIcon().resolved.anchor)
+		assert.equals(22, member.uf:GetReadyCheckIcon().resolved.size)
+		assert.is_false(member:IsElementEnabled("ReadyCheckIndicator"), "one shared state drives bars and icon")
 		member.__unit = "party1"
 		GetReadyCheckStatus = function(unit) return unit == "party1" and "notready" or nil end
 		UF.oUF.elements.UF_ReadyCheck.update(member, "READY_CHECK")
@@ -23,37 +26,40 @@ describe("ClickGrid ready checks", function()
 		assert.same({ 0.85, 0.12, 0.12 }, { r, g, b })
 		CG.Config:SetStyle("member", "readyCheck.enabled", false)
 		assert.is_nil(member.uf:GetRow("health"):GetBar():GetTint())
+		assert.is_true(member:IsElementEnabled("UF_ReadyCheck"), "the icon still needs ready check updates")
+		assert.is_true(member.ufcgStatus.ReadyCheckIndicator:IsShown())
+		CG.Config:Set("indicators.ready", false)
 		assert.is_false(member:IsElementEnabled("UF_ReadyCheck"))
 	end)
 
 	it("holds and fades the status icon like the member's tints", function()
-		local icon = member.ReadyCheckIndicator
-		rawset(icon, "__strict", true)
-		assert.equals(2, icon.finishedTime)
-		assert.equals(1.5, icon.fadeTime)
-		-- The embedded oUF element reads them when enabled.
-		UF.oUF.Private = { unitExists = UnitExists }
-		-- Real animation groups return nil for unset fields such as .Alpha.
-		rawset(icon, "CreateAnimationGroup", function(self)
-			local group = Mock.NewObject("AnimationGroup", self)
-			rawset(group, "__strict", true)
-			return group
-		end)
-		assert(loadfile("UnitFrames/Libs/oUF/elements/readycheckindicator.lua"))("oUF", UF)
-		member.RegisterEvent, member.UnregisterEvent = function() end, function() end
-		assert.is_true(UF.oUF.elements.ReadyCheckIndicator.enable(member, "party1"))
-		local alpha = icon.Animation.Alpha
-		local function Last(name)
-			for i = #alpha.__calls, 1, -1 do
-				if alpha.__calls[i][1] == name then return alpha.__calls[i][2] end
-			end
-		end
-		assert.equals(2, Last("SetStartDelay"))
-		assert.equals(1.5, Last("SetDuration"))
-		CG.Config:SetStyle("member", "readyCheck.hold", 4)
+		CG.Config:Set("indicators.readyPosition", "TOP")
+		CG.Config:Set("indicators.readySize", 14)
+		local icon = member.ufcgStatus.ReadyCheckIndicator
+		member.__unit = "party1"
+		GetReadyCheckStatus = function() return "waiting" end
+		local element = UF.oUF.elements.UF_ReadyCheck
+		element.update(member, "READY_CHECK")
+		assert.equals(ATLASES.waiting, icon.__state.atlas)
+		member.uf:GetRaidTarget():SetIndex(8)
+		assert.same({ "CENTER", member, "TOP", -8, 0 }, { member.uf:GetRaidTarget():GetFrame():GetPoint() })
+		element.update(member, "READY_CHECK_FINISHED")
+		assert.equals(ATLASES.notready, icon.__state.atlas, "an unanswered check ends as not ready")
+		local driver = member.uf.readyCheckDriver
+		driver:RunScript("OnUpdate", 2.75)
+		assert.equals(0.5, icon:GetAlpha())
+		local _, _, _, amount = member.uf:GetRow("health"):GetBar():GetTint()
+		assert.equals(amount, icon:GetAlpha(), "one fade drives both")
+		driver:RunScript("OnUpdate", 0.75)
+		assert.is_false(icon:IsShown())
+		assert.is_nil(driver:GetScript("OnUpdate"))
+		assert.same({ "CENTER", member, "TOP", 0, 0 }, { member.uf:GetRaidTarget():GetFrame():GetPoint() })
+		element.update(member, "READY_CHECK")
+		element.update(member, "READY_CHECK_FINISHED")
+		CG.Config:SetStyle("member", "readyCheck.hold", 0)
 		CG.Config:SetStyle("member", "readyCheck.fade", 0)
-		assert.equals(4, Last("SetStartDelay"), "restyles update the running element")
-		assert.equals(0.01, Last("SetDuration"))
+		driver:RunScript("OnUpdate", 0.01)
+		assert.is_false(icon:IsShown(), "zero fade removes the mark immediately")
 	end)
 end)
 

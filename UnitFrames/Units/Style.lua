@@ -151,6 +151,8 @@ function Units:Bind(frame)
 	SetElement(frame, "UF_Range", range.enabled and ns.Caps.booleanAlpha and uf or nil,
 		frame.ufRangeMode ~= range.mode)
 	frame.ufRangeMode = range.mode
+	-- Element enable/disable can hide artwork after the component layout.
+	uf:GetDecorations():Reflow()
 end
 
 -- Re-applies config to a live frame and refreshes everything shown on it.

@@ -94,7 +94,7 @@ describe("Bar", function()
 	it("anchors the spark without passing secret dimensions to texture setters", function()
 		local bar = C.Bar:New(parent, {}, { segments = HEALTH_SEGMENTS })
 		local width, height = Secret(200), Secret(20)
-		for _, orientation in ipairs({ "HORIZONTAL", "VERTICAL" }) do
+		for _, orientation in ipairs({ "HORIZONTAL", "VERTICAL", "HORIZONTAL" }) do
 			for _, reverse in ipairs({ false, true }) do
 				for _, spark in ipairs({ false, true }) do
 					assert.has_no_error(function()
@@ -110,11 +110,16 @@ describe("Bar", function()
 					local fill = bar.bar:GetStatusBarTexture()
 					local edge = C.Bar.LAYOUT[orientation][reverse].spark
 					if horizontal then
+						assert.same({ 0, 1, 0, 1 }, bar.spark.__state.texCoords)
 						assert.same({ "TOP", fill, "TOP" .. edge, 0, 6 }, bar.spark:GetAnchor("TOP"))
 						assert.same({ "BOTTOM", fill, "BOTTOM" .. edge, 0, -6 }, bar.spark:GetAnchor("BOTTOM"))
 					else
+						assert.same({ 0, 1, 1, 1, 0, 0, 1, 0 }, bar.spark.__state.texCoords)
 						assert.same({ "LEFT", fill, edge .. "LEFT", -6, 0 }, bar.spark:GetAnchor("LEFT"))
 						assert.same({ "RIGHT", fill, edge .. "RIGHT", 6, 0 }, bar.spark:GetAnchor("RIGHT"))
+					end
+					for _, call in ipairs(bar.spark.__calls) do
+						assert.is_false(call[1] == "SetRotation", "spark artwork rotates within its bounds")
 					end
 					for _, seg in ipairs(bar.segments) do
 						assert.equals(horizontal and width or height,
