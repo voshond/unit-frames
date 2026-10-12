@@ -53,7 +53,7 @@ end
 function Cast.Refresh(castbar, state, unit)
 	if not (StartCast(castbar, state, unit) or StartChannel(castbar, state, unit)) then
 		state.casting = false
-		castbar:GetFrame():Hide()
+		castbar:Hide()
 	end
 end
 

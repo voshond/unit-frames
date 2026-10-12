@@ -175,7 +175,7 @@ local function DisableCastbar(self)
 		self:UnregisterEvent(event, UpdateCastbar)
 	end
 	if self.UF_Castbar then
-		self.UF_Castbar:GetFrame():Hide()
+		self.UF_Castbar:Hide()
 	end
 	if self.__unit == "player" and PlayerCastingBarFrame then
 		for _, event in ipairs(BLIZZARD_CAST_EVENTS) do

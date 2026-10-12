@@ -247,6 +247,12 @@ function Methods:CreateFontString(name, layer, inherits)
 	return fs
 end
 function Methods:CreateAnimationGroup() return NewObject("AnimationGroup", self) end
+-- Animation groups keep their play state; tests set __state.progress to
+-- model an animation's eased progress.
+function Methods:Play() Record(self, "Play"); self.__state.playing = true end
+function Methods:Stop() Record(self, "Stop"); self.__state.playing = false end
+function Methods:IsPlaying() return self.__state.playing == true end
+function Methods:GetSmoothProgress() return self.__state.progress or 0 end
 function Methods:CreateAnimation(animationType) return NewObject(animationType or "Animation", self) end
 
 -- StatusBar

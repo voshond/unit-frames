@@ -37,7 +37,7 @@ end
 function parts.castbar(castbar, v)
 	if not castbar:IsEnabled() then return end
 	if v.showCast == false then
-		castbar:GetFrame():Hide()
+		castbar:Hide()
 	else
 		local progress = v.castProgress
 		castbar:Preview({ name = v.spell, icon = v.spellIcon }, progress, string.format("%.1f", v.castTime * (1 - progress)))

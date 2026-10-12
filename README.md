@@ -106,6 +106,10 @@ portrait is too small, and choose **Spell name while casting** or
 picker. The latter restores level/class when idle; a creature-type variant
 is available for NPCs. These choices also work with channels and sample previews.
 
+A castbar placed **Over the health bar** or replacing the portrait hides
+what it covers while it shows and fades it back in as the cast fades out,
+so a translucent out-of-range frame shows only the cast, not both layers.
+
 Each frame's **Raid target icon** section controls its marker, enabled by
 default at the top border. Choose any of the eight border anchors to centre
 the icon on that edge or corner, so it extends outside the frame, or the

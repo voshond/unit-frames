@@ -114,7 +114,7 @@ UnitFrame.PARTS = {
 		end,
 		create = function(frame)
 			local castbar = Castbar:New(frame, {})
-			castbar:GetFrame():Hide()
+			castbar:Hide()
 			return castbar
 		end,
 		-- Placement replaces the on/off toggle.
@@ -438,6 +438,8 @@ function UnitFrame:Layout()
 			castFrame:SetFrameLevel(self.frame:GetFrameLevel() + 1)
 		end
 		self.castbar:SetOpaque(placement == "health" or placement == "portrait")
+		self.castbar:SetCovered(placement == "health" and self.rowsByKey.health:GetFrame()
+			or placement == "portrait" and layout.portrait and portrait:GetFrame() or nil)
 	end
 
 	self:Resize(layout.width, layout.height)

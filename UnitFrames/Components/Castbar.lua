@@ -13,7 +13,13 @@ so casts with secret timings work without any OnUpdate maths.
 Data API:
   :Start({ name, icon, duration, channel, notInterruptible })
   :Stop("success" | "failed" | "interrupted", text?)
+  :Hide()   no cast: hide at once
   :Preview({ name, icon, channel, notInterruptible }, progress, timeText)  static, for styling
+
+Placed over another region (SetCovered: health row, portrait), the castbar
+replaces it: the region fades out while the castbar shows and back in as
+the castbar fades, so nothing shows through when the whole unit frame is
+translucent (out-of-range opacity).
 ]]
 local Castbar = ns.Component:Extend("Castbar")
 
@@ -89,10 +95,8 @@ function Castbar:OnCreate(parent)
 	alpha:SetFromAlpha(1)
 	alpha:SetToAlpha(0)
 	self.fadeAlpha = alpha
-	self.fade:SetScript("OnFinished", function()
-		self.frame:Hide()
-		self.frame:SetAlpha(1)
-	end)
+	self.fade:SetScript("OnUpdate", function() self:UpdateCovered() end)
+	self.fade:SetScript("OnFinished", function() self:Hide() end)
 
 	self.frame:SetScript("OnSizeChanged", function()
 		self:LayoutParts()
@@ -200,6 +204,39 @@ function Castbar:OnRelease()
 	if self.timeBinding then
 		self.timeBinding:SetEnabled(false)
 	end
+	self:SetCovered(nil)
+end
+
+-- The region this castbar is placed over, or nil.
+function Castbar:SetCovered(region)
+	if self.covered and self.covered ~= region then
+		self.covered:SetAlpha(1)
+	end
+	self.covered = region
+	self:UpdateCovered()
+end
+
+-- Covered region opacity: hidden under a shown castbar, returning while it
+-- fades out (the fade's own progress; its start delay counts as 0).
+function Castbar:UpdateCovered()
+	local covered = self.covered
+	if not covered then
+		return
+	end
+	if not self.frame:IsShown() then
+		covered:SetAlpha(1)
+	elseif self.fade:IsPlaying() then
+		covered:SetAlpha(self.fadeAlpha:GetSmoothProgress())
+	else
+		covered:SetAlpha(0)
+	end
+end
+
+function Castbar:Hide()
+	self.fade:Stop()
+	self.frame:Hide()
+	self.frame:SetAlpha(1)
+	self:UpdateCovered()
 end
 
 -- Opaque mode: the castbar covers another bar (e.g. health) and nothing of it
@@ -218,7 +255,7 @@ end
 function Castbar:SetEnabled(enabled)
 	self.enabled = enabled and true or false
 	if not self.enabled then
-		self.frame:Hide()
+		self:Hide()
 	end
 end
 
@@ -244,6 +281,7 @@ function Castbar:ShowCast(info)
 	if self.enabled then
 		self.frame:Show()
 	end
+	self:UpdateCovered()
 end
 
 -- Data API ------------------------------------------------------------------
@@ -277,6 +315,7 @@ function Castbar:Stop(result, text)
 		self.bar:SetColor(Util.UnpackColor(colors.success))
 	end
 	self.fade:Play()
+	self:UpdateCovered()
 end
 
 function Castbar:Preview(info, progress, timeText)
