@@ -22,6 +22,10 @@ scripts/fetch-libs.sh       # update the embedded libraries (UnitFrames/Libs/VER
 
 In game: `/uf wb` opens the Workbench.
 
+Unit-frame settings group raid markers, PvP flags and classification markers
+under **Icons**, and range, resting and ready checks under **State effects**.
+The inspector remembers scrolling separately for each settings page.
+
 With Titan Panel or another LibDataBroker display installed, enable its
 **UnitFrames** launcher. Left-click the portrait icon to toggle the Workbench,
 using the same load-on-demand handler as `/uf wb`. Registration also works
@@ -194,6 +198,12 @@ the frame's `DecorationStack` (`UnitFrame:GetDecorations()`); the Units layer ke
 one sample feeder per part key, and Edit Mode quick settings read the unit
 schema. Derive new definitions with `Units:Derive`, overriding rows by key.
 
+`IconPlacement` shares placement descriptors and adapts the companion's flat
+settings without changing saved keys. `ReadyCheck` owns the shared ready-check
+timeline; companions use `AttachReadyCheckIcon` / `DetachReadyCheckIcon` to lend
+an icon while retaining its component ownership. The Units adapter owns live
+element rebinding when the attached icon's availability changes.
+
 Settings are written through stores (`Core/Store.lua`): set, replace and reset
 in one place with optional validation and one change event, plus a derived
 inspector target. Work blocked by combat goes through the ordered
@@ -203,6 +213,8 @@ inspector target. Work blocked by combat goes through the ordered
 `BuildSchema` and `UnitFrameLayout.Compute` build settings and measure unit
 geometry without creating frames. Decorations use `GetLayoutContext` for
 configured portrait bounds rather than reading native artwork dimensions.
+`CastbarLayout.Compute` similarly measures icon/bar layout before native
+anchors are applied; portrait-only settings visibility belongs to UnitFrame.
 Flowing auras and ClickGrid's fixed slots share `Components/AuraIcon.lua`, but
 retain their separate selection, container and lifecycle policies.
 
@@ -212,6 +224,16 @@ settings navigation (`Sections.lua`) and active preview lifetime
 cached inspector pages dispatch through their current target. Entries declare
 the events that restyle them (`refreshOn`) and build handles with
 `Workbench.Composite` or `Workbench.ComponentHandle`.
+
+Entries can declare `settingsPages` that refer to existing schema paths; the
+inspector retains original defaults, visibility context, override highlighting
+and writes. Generated navigation remains the default. Discarded pages release
+their controls and callbacks, while cached pages remain reusable.
+
+ClickGrid owns refresh of all its registered previews. Its Workbench watches use
+`notifyOnly` for inspector/stage updates, avoiding another style/data refresh.
+Preview source transitions clear previous sample effects explicitly; missing
+live units and hidden cells disable their native aura subscriptions.
 
 ## Adding fonts
 
