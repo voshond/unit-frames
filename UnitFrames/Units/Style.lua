@@ -121,6 +121,7 @@ local PART_ELEMENTS = {
 	-- oUF reads the background circle on enable: re-enable when it changes.
 	pvp = { element = "PvPIndicator", widget = function(flag) return flag:GetWidget() end,
 		subWidget = function(flag) return flag:GetBackground() end },
+	classification = { element = "UF_Classification" },
 }
 
 -- Points oUF elements and tags at the current rows and parts.

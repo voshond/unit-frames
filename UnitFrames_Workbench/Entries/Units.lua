@@ -20,7 +20,7 @@ local function UnitStyleTarget(unit)
 		if unit ~= "player" then
 			schema[#schema + 1] = {
 				key = "copyPlayerSettings", type = "action", label = "Copy player settings",
-				tooltip = "Replace this frame's style with the player's current settings, including sizes, text, portrait, castbar, auras, raid target and PvP flag icons and range opacity. Position and player-only XP are not copied. This is a one-time copy, not a link.",
+				tooltip = "Replace this frame's style with the player's current settings, including sizes, text, portrait, castbar, auras, raid target, PvP flag and elite icons and range opacity. Position and player-only XP are not copied. This is a one-time copy, not a link.",
 			}
 		end
 		for _, opt in ipairs(handle.schema) do schema[#schema + 1] = opt end
@@ -118,7 +118,8 @@ local function RegisterUnit(unit)
 			hidden = function(d) return not d.npc end }
 		schema[#schema + 1] = { key = "classification", type = "select", label = "Classification", default = sample.classification or "normal",
 			values = { { "normal", "Normal" }, { "elite", "Elite" }, { "rare", "Rare" }, { "rareelite", "Rare elite" }, { "worldboss", "Boss" } },
-			hidden = function(d) return not d.npc end }
+			hidden = function(d) return not d.npc end,
+			tooltip = "Sample NPC classification for the elite / rare icon and the level marker texts." }
 	end
 	Workbench:Register({
 		id = "unit." .. unit,

@@ -39,6 +39,7 @@ Components\DecorationStack.lua
 Components\StackIcon.lua
 Components\RaidTarget.lua
 Components\PvPFlag.lua
+Components\Classification.lua
 Components\UnitFrameLayout.lua
 Components\UnitFrame.lua
 

@@ -62,6 +62,33 @@ end
 
 oUF:AddElement("UF_Resting", UpdateResting, EnableResting, DisableResting)
 
+-- UF_Classification: the elite/rare/boss icon (frame.UF_Classification =
+-- Classification component). UnitClassification is not secret; an opaque
+-- result would show nothing rather than be inspected.
+local function UpdateClassification(self, _, unit)
+	if unit and unit ~= self.__unit then return end
+	unit = self.__unit
+	local classification
+	if unit and UnitExists(unit) then
+		classification = UnitClassification(unit)
+		if issecretvalue(classification) then classification = nil end
+	end
+	self.UF_Classification:SetClassification(classification)
+end
+
+local function EnableClassification(self)
+	if not self.UF_Classification then return end
+	self:RegisterEvent("UNIT_CLASSIFICATION_CHANGED", UpdateClassification)
+	return true
+end
+
+local function DisableClassification(self)
+	self:UnregisterEvent("UNIT_CLASSIFICATION_CHANGED", UpdateClassification)
+	self.UF_Classification:SetClassification(nil)
+end
+
+oUF:AddElement("UF_Classification", UpdateClassification, EnableClassification, DisableClassification)
+
 --[[
 UF_Castbar: drives our Castbar component (frame.UF_Castbar = component) from
 the cast events through the shared state machine (Units/Cast.lua).

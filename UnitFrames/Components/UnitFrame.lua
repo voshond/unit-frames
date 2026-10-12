@@ -1,7 +1,7 @@
 local _, ns = ...
 local Backdrop, TextBar = ns.Components.Backdrop, ns.Components.TextBar
 local Castbar, Portrait, Auras = ns.Components.Castbar, ns.Components.Portrait, ns.Components.Auras
-local RaidTarget, PvPFlag = ns.Components.RaidTarget, ns.Components.PvPFlag
+local RaidTarget, PvPFlag, Classification = ns.Components.RaidTarget, ns.Components.PvPFlag, ns.Components.Classification
 
 --[[
 A unit frame made of rows stacked top to bottom inside one bordered frame.
@@ -15,8 +15,10 @@ Optional extras:
   auras     independently positioned buffs and debuffs on any side
   raidTarget  raid marker on a border, the centre or inside a portrait corner
   pvp       the unit's PvP flag, placed like the raid marker
+  classification  elite, rare or boss marker, placed like the raid marker
 
-Edge icons (the raid marker, PvP flag and companions' status icons) share one
+Edge icons (the raid marker, PvP flag, elite marker and companions' status
+icons) share one
 DecorationStack per frame, so icons on the same anchor stay grouped.
 
 The component only builds and lays out the visuals. Feeding unit data is
@@ -31,7 +33,7 @@ spec:
               defaults  row option defaults, e.g. { height = 24, right = { size = 9 } }
               options   extra row options (schema entries), e.g. health colour mode
             }
-  portrait, castbar, auras, raidTarget, pvp
+  portrait, castbar, auras, raidTarget, pvp, classification
             { defaults, ... } to offer that part (see UnitFrame.PARTS;
             auras also take cancelBuffs and clickThrough)
 ]]
@@ -126,6 +128,9 @@ UnitFrame.PARTS = {
 	{ key = "pvp", label = "PvP flag icon", stack = true,
 		schema = function() return PvPFlag.schema end,
 		create = function(frame) return PvPFlag:New(frame, {}) end },
+	{ key = "classification", label = "Elite / rare icon", stack = true,
+		schema = function() return Classification.schema end,
+		create = function(frame) return Classification:New(frame, {}) end },
 }
 
 function UnitFrame:OnCreate(parent, spec)
@@ -428,4 +433,8 @@ end
 
 function UnitFrame:GetPvPFlag()
 	return self.pvp
+end
+
+function UnitFrame:GetClassification()
+	return self.classification
 end

@@ -118,6 +118,13 @@ no gap. **Background circle** draws the flag on the default frames' dark
 circle. **Preview data > PvP flag** previews each flag on the icon as well
 as in the level/class texts. ClickGrid group bars do not include this icon.
 
+The **Elite / rare icon** section adds the game's own classification
+markers, enabled by default at the top-right border corner: a gold dragon
+for elites and bosses, a silver dragon for rare elites and a star for rares,
+matching Blizzard's nameplates. Other units show nothing and leave no gap.
+It is placed like the raid marker and updates when the unit's classification
+changes. Preview it with **Preview data > NPC** and **Classification**.
+
 Each frame's **Out-of-range opacity** section offers an opt-in fade with
 an opacity slider (0 = transparent, 1 = fully opaque; default 0.55).
 **Group range** uses the game's group-member range check, normally 40 yards;

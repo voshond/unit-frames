@@ -56,6 +56,10 @@ function parts.pvp(flag, v)
 	flag:SetSample(v.pvp)
 end
 
+function parts.classification(icon, v)
+	icon:SetClassification(v.isPlayer == false and v.classification or nil)
+end
+
 function Units:ShowSample(uf, values)
 	uf:SetRangeState(values.outOfRange ~= true, true)
 	uf:SetResting(uf.spec.resting and values.resting == true, values.restingAnimated == true)

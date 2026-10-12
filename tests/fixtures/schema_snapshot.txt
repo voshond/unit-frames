@@ -1032,6 +1032,14 @@ option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip
 option pvp.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option pvp.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option pvp.background type="toggle" label="Background circle" default=true tooltip=#41e3a163
+option classification type="group" label="Elite / rare icon" defaults={}
+option classification.enabled type="toggle" label="Enabled" default=true
+option classification.anchor type="select" label="Anchor" default="TOPRIGHT" values=#f2227030 tooltip=#a1871125
+option classification.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
+option classification.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
+option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option classification.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option classification.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -1115,6 +1123,13 @@ default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
 default castbar.time.shadow = true
 default castbar.time.size = 10
+default classification.anchor = "TOPRIGHT"
+default classification.enabled = true
+default classification.gap = 2
+default classification.offsetX = 0
+default classification.offsetY = 0
+default classification.order = 1
+default classification.size = 18
 default experience.bar.background.alpha = 0.25
 default experience.bar.background.color = {0,0,0,0.5}
 default experience.bar.background.enabled = true
@@ -1458,6 +1473,13 @@ resolved castbar.time.justifyH = "RIGHT"
 resolved castbar.time.outline = ""
 resolved castbar.time.shadow = true
 resolved castbar.time.size = 10
+resolved classification.anchor = "TOPRIGHT"
+resolved classification.enabled = true
+resolved classification.gap = 2
+resolved classification.offsetX = 0
+resolved classification.offsetY = 0
+resolved classification.order = 1
+resolved classification.size = 18
 resolved experience.bar.background.alpha = 0.25
 resolved experience.bar.background.color = {0,0,0,0.5}
 resolved experience.bar.background.enabled = true
@@ -1764,6 +1786,7 @@ definition castbar.defaults.height = 18
 definition castbar.defaults.name.size = 10
 definition castbar.defaults.placement = "bottom"
 definition castbar.defaults.time.size = 10
+definition classification.defaults = {}
 definition defaultPosition.point = "CENTER"
 definition defaultPosition.x = -280
 definition defaultPosition.y = -160
@@ -2142,6 +2165,14 @@ option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip
 option pvp.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option pvp.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option pvp.background type="toggle" label="Background circle" default=true tooltip=#41e3a163
+option classification type="group" label="Elite / rare icon" defaults={}
+option classification.enabled type="toggle" label="Enabled" default=true
+option classification.anchor type="select" label="Anchor" default="TOPRIGHT" values=#f2227030 tooltip=#a1871125
+option classification.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
+option classification.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
+option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option classification.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option classification.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -2225,6 +2256,13 @@ default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
 default castbar.time.shadow = true
 default castbar.time.size = 9
+default classification.anchor = "TOPRIGHT"
+default classification.enabled = true
+default classification.gap = 2
+default classification.offsetX = 0
+default classification.offsetY = 0
+default classification.order = 1
+default classification.size = 18
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -2503,6 +2541,13 @@ resolved castbar.time.justifyH = "RIGHT"
 resolved castbar.time.outline = ""
 resolved castbar.time.shadow = true
 resolved castbar.time.size = 9
+resolved classification.anchor = "TOPRIGHT"
+resolved classification.enabled = true
+resolved classification.gap = 2
+resolved classification.offsetX = 0
+resolved classification.offsetY = 0
+resolved classification.order = 1
+resolved classification.size = 18
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -2727,6 +2772,7 @@ definition castbar.defaults.height = 14
 definition castbar.defaults.name.size = 9
 definition castbar.defaults.placement = "off"
 definition castbar.defaults.time.size = 9
+definition classification.defaults = {}
 definition defaultPosition.point = "CENTER"
 definition defaultPosition.x = -90
 definition defaultPosition.y = -235
@@ -3122,6 +3168,14 @@ option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip
 option pvp.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option pvp.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option pvp.background type="toggle" label="Background circle" default=true tooltip=#41e3a163
+option classification type="group" label="Elite / rare icon" defaults={}
+option classification.enabled type="toggle" label="Enabled" default=true
+option classification.anchor type="select" label="Anchor" default="TOPRIGHT" values=#f2227030 tooltip=#a1871125
+option classification.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
+option classification.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
+option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option classification.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option classification.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -3205,6 +3259,13 @@ default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
 default castbar.time.shadow = true
 default castbar.time.size = 10
+default classification.anchor = "TOPRIGHT"
+default classification.enabled = true
+default classification.gap = 2
+default classification.offsetX = 0
+default classification.offsetY = 0
+default classification.order = 1
+default classification.size = 18
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -3481,6 +3542,13 @@ resolved castbar.time.justifyH = "RIGHT"
 resolved castbar.time.outline = ""
 resolved castbar.time.shadow = true
 resolved castbar.time.size = 10
+resolved classification.anchor = "TOPRIGHT"
+resolved classification.enabled = true
+resolved classification.gap = 2
+resolved classification.offsetX = 0
+resolved classification.offsetY = 0
+resolved classification.order = 1
+resolved classification.size = 18
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -3699,6 +3767,7 @@ definition castbar.defaults.height = 18
 definition castbar.defaults.name.size = 10
 definition castbar.defaults.placement = "bottom"
 definition castbar.defaults.time.size = 10
+definition classification.defaults = {}
 definition defaultPosition.point = "CENTER"
 definition defaultPosition.x = 280
 definition defaultPosition.y = -160
@@ -4090,6 +4159,14 @@ option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip
 option pvp.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option pvp.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option pvp.background type="toggle" label="Background circle" default=true tooltip=#41e3a163
+option classification type="group" label="Elite / rare icon" defaults={}
+option classification.enabled type="toggle" label="Enabled" default=true
+option classification.anchor type="select" label="Anchor" default="TOPRIGHT" values=#f2227030 tooltip=#a1871125
+option classification.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
+option classification.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
+option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option classification.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option classification.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -4173,6 +4250,13 @@ default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
 default castbar.time.shadow = true
 default castbar.time.size = 9
+default classification.anchor = "TOPRIGHT"
+default classification.enabled = true
+default classification.gap = 2
+default classification.offsetX = 0
+default classification.offsetY = 0
+default classification.order = 1
+default classification.size = 18
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -4451,6 +4535,13 @@ resolved castbar.time.justifyH = "RIGHT"
 resolved castbar.time.outline = ""
 resolved castbar.time.shadow = true
 resolved castbar.time.size = 9
+resolved classification.anchor = "TOPRIGHT"
+resolved classification.enabled = true
+resolved classification.gap = 2
+resolved classification.offsetX = 0
+resolved classification.offsetY = 0
+resolved classification.order = 1
+resolved classification.size = 18
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -4676,6 +4767,7 @@ definition castbar.defaults.height = 14
 definition castbar.defaults.name.size = 9
 definition castbar.defaults.placement = "off"
 definition castbar.defaults.time.size = 9
+definition classification.defaults = {}
 definition defaultPosition.point = "CENTER"
 definition defaultPosition.x = 510
 definition defaultPosition.y = -160
@@ -5062,6 +5154,14 @@ option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip
 option pvp.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option pvp.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option pvp.background type="toggle" label="Background circle" default=true tooltip=#41e3a163
+option classification type="group" label="Elite / rare icon" defaults={}
+option classification.enabled type="toggle" label="Enabled" default=true
+option classification.anchor type="select" label="Anchor" default="TOPRIGHT" values=#f2227030 tooltip=#a1871125
+option classification.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
+option classification.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
+option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option classification.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option classification.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -5145,6 +5245,13 @@ default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
 default castbar.time.shadow = true
 default castbar.time.size = 10
+default classification.anchor = "TOPRIGHT"
+default classification.enabled = true
+default classification.gap = 2
+default classification.offsetX = 0
+default classification.offsetY = 0
+default classification.order = 1
+default classification.size = 18
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -5421,6 +5528,13 @@ resolved castbar.time.justifyH = "RIGHT"
 resolved castbar.time.outline = ""
 resolved castbar.time.shadow = true
 resolved castbar.time.size = 10
+resolved classification.anchor = "TOPRIGHT"
+resolved classification.enabled = true
+resolved classification.gap = 2
+resolved classification.offsetX = 0
+resolved classification.offsetY = 0
+resolved classification.order = 1
+resolved classification.size = 18
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -5639,6 +5753,7 @@ definition castbar.defaults.height = 18
 definition castbar.defaults.name.size = 10
 definition castbar.defaults.placement = "bottom"
 definition castbar.defaults.time.size = 10
+definition classification.defaults = {}
 definition defaultPosition.point = "CENTER"
 definition defaultPosition.x = -280
 definition defaultPosition.y = -290
@@ -6024,6 +6139,14 @@ option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip
 option pvp.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option pvp.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option pvp.background type="toggle" label="Background circle" default=true tooltip=#41e3a163
+option classification type="group" label="Elite / rare icon" defaults={}
+option classification.enabled type="toggle" label="Enabled" default=true
+option classification.anchor type="select" label="Anchor" default="TOPRIGHT" values=#f2227030 tooltip=#a1871125
+option classification.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
+option classification.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
+option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option classification.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option classification.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -6107,6 +6230,13 @@ default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
 default castbar.time.shadow = true
 default castbar.time.size = 9
+default classification.anchor = "TOPRIGHT"
+default classification.enabled = true
+default classification.gap = 2
+default classification.offsetX = 0
+default classification.offsetY = 0
+default classification.order = 1
+default classification.size = 18
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -6385,6 +6515,13 @@ resolved castbar.time.justifyH = "RIGHT"
 resolved castbar.time.outline = ""
 resolved castbar.time.shadow = true
 resolved castbar.time.size = 9
+resolved classification.anchor = "TOPRIGHT"
+resolved classification.enabled = true
+resolved classification.gap = 2
+resolved classification.offsetX = 0
+resolved classification.offsetY = 0
+resolved classification.order = 1
+resolved classification.size = 18
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -6610,6 +6747,7 @@ definition castbar.defaults.height = 14
 definition castbar.defaults.name.size = 9
 definition castbar.defaults.placement = "off"
 definition castbar.defaults.time.size = 9
+definition classification.defaults = {}
 definition defaultPosition.point = "CENTER"
 definition defaultPosition.x = -60
 definition defaultPosition.y = -290
