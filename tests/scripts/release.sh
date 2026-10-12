@@ -67,7 +67,7 @@ export CF_PROJECT_ID=123 CF_GAME_VERSION_IDS=456,789
 export CF_CHANGELOG=$'Quoted "notes"\nsecond line'
 metadata="$(bash scripts/publish-curseforge.sh --dry-run "$archive" v0.0.0-beta.1)"
 jq -e '.releaseType == "beta" and .gameVersions == [456,789] and .changelog == "Quoted \"notes\"\nsecond line"' <<< "$metadata" >/dev/null
-for tag in v0.0.0-alpha.1 v0.0.0; do
+for tag in v0.0.0-alpha.1 v0.0.0 v0.0.0+build-metadata; do
 	metadata="$(bash scripts/publish-curseforge.sh --dry-run "$archive" "$tag")"
 	if [[ "$tag" == *alpha* ]]; then expected=alpha; else expected=release; fi
 	jq -e --arg type "$expected" '.releaseType == $type' <<< "$metadata" >/dev/null
@@ -75,5 +75,23 @@ done
 if CF_GAME_VERSION_IDS='1,garbage' bash scripts/publish-curseforge.sh --dry-run "$archive" v0.0.0 >/dev/null 2>&1; then
 	echo 'Uploader accepted an invalid game-version list.' >&2; exit 1
 fi
-echo 'Release packaging and CurseForge metadata checks passed.'
+metadata="$(CF_PRERELEASE=true bash scripts/publish-curseforge.sh --dry-run "$archive" v0.0.0)"
+jq -e '.releaseType == "beta"' <<< "$metadata" >/dev/null
 
+# Verify the real upload path and version guard with an offline transport.
+mkdir -p "$release_test_tmp/bin"
+cp "$repo_dir/tests/fixtures/release/curl" "$release_test_tmp/bin/curl"
+chmod +x "$release_test_tmp/bin/curl"
+export PATH="$release_test_tmp/bin:$PATH" CF_API_TOKEN=offline-test-token
+export CF_TEST_UPLOAD_LOG="$release_test_tmp/uploads" CF_TEST_METADATA="$release_test_tmp/metadata.json"
+[[ "$(bash scripts/publish-curseforge.sh "$archive" v0.0.0)" == 42 ]]
+jq -e '.changelog == "Quoted \"notes\"\nsecond line" and .releaseType == "release"' "$CF_TEST_METADATA" >/dev/null
+if CF_TEST_MISSING_VERSION=true bash scripts/publish-curseforge.sh "$archive" v0.0.0 >/dev/null 2>&1; then
+	echo 'Uploader ignored a missing game-version ID.' >&2; exit 1
+fi
+[[ "$(wc -l < "$CF_TEST_UPLOAD_LOG")" -eq 1 ]]
+if CF_TEST_UPLOAD_FAIL=true bash scripts/publish-curseforge.sh "$archive" v0.0.0 >/dev/null 2>&1; then
+	echo 'Uploader ignored a failed upload.' >&2; exit 1
+fi
+[[ "$(wc -l < "$CF_TEST_UPLOAD_LOG")" -eq 2 ]]
+echo 'Release packaging and CurseForge metadata checks passed.'

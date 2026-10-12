@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Populate a fresh checkout with the existing library versions for offline tests.
+# Populate a fresh checkout with the existing libraries for tests and releases.
 # Never replace a developer's library copies. No game installation is needed.
 set -euo pipefail
 
@@ -58,4 +58,3 @@ done
 mv "$test_libs_tmp/core" "$repo_dir/UnitFrames/Libs"
 mv "$test_libs_tmp/media" "$repo_dir/UnitFrames_Media/Libs"
 echo 'Pinned test libraries installed. Existing game addons were not touched.'
-

@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Offline transport fixture: never performs a network request.
+set -euo pipefail
+request="${!#}"
+case "$request" in
+	https://wow.curseforge.com/api/game/versions)
+		if [[ "${CF_TEST_MISSING_VERSION:-false}" == true ]]; then
+			printf '[{"id":456}]\n'
+		else
+			printf '[{"id":456},{"id":789}]\n'
+		fi
+		;;
+	https://wow.curseforge.com/api/projects/123/upload-file)
+		printf 'upload\n' >> "$CF_TEST_UPLOAD_LOG"
+		while [[ $# -gt 0 ]]; do
+			if [[ "$1" == --form-string ]]; then
+				shift
+				[[ "$1" == metadata=* ]]
+				printf '%s\n' "${1#metadata=}" > "$CF_TEST_METADATA"
+			fi
+			shift
+		done
+		if [[ "${CF_TEST_UPLOAD_FAIL:-false}" == true ]]; then exit 22; fi
+		printf '{"id":42}\n'
+		;;
+	*) echo 'Unexpected mock request.' >&2; exit 1 ;;
+esac
+

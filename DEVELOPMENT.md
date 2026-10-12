@@ -11,8 +11,9 @@ lifecycle, API verification and regression-sensitive behaviour.
 
 ## Local setup
 
-You need LuaJIT to run the offline tests. Library fetching and installation
-use Bash, Git and rsync.
+You need LuaJIT, Bash and Git to run the offline tests. The release integration
+checks also need zip, unzip and jq. Library fetching uses curl, tar and
+sha256sum; local installation uses rsync.
 
 The embedded library folders are currently **ignored by Git**, so a fresh
 clone or GitHub source ZIP is not a complete, installable addon. The TOCs
@@ -151,6 +152,100 @@ shields and Edit Mode.
 
 ClickGrid's [reference and validation checklist](UnitFrames_ClickGrid/README.md)
 covers its additional group, binding and combat checks.
+
+## Releases and downloads
+
+The [Release workflow](.github/workflows/release.yml) handles version tags and
+published GitHub releases. Use tags such as `v0.1.0`, `v0.2.0-beta.1` or
+`v0.2.0-alpha.1`:
+
+```sh
+git tag -a v0.1.0 -m 'UnitFrames 0.1.0'
+git push origin v0.1.0
+```
+
+A tag push runs the full suite with pinned dependencies and the matching
+Blizzard source, builds `UnitFrames-v0.1.0.zip` and its SHA-256 file, and
+attaches them to a **draft** GitHub release. Review the notes and publish the
+draft when ready. Publishing a release directly also builds and attaches the
+ZIP, even if the tag was not previously pushed separately.
+
+The ZIP has four top-level addon folders, ready to extract into
+`Interface/AddOns`; no additional containing project directory is used.
+All four TOC versions come from the tag. Library Lua/XML, fonts, license files
+and notices are included. Tests, developer scripts and reference checkouts
+are excluded. The bundle validator checks TOC and nested XML references, Lua
+syntax, versions, font files and license notices before the archive is created.
+
+GitHub's generated source archives are not installable release bundles.
+Releases in a **private** GitHub repository are visible only to people with
+repository access. Make the repository public if GitHub should host public
+downloads; CurseForge can host downloads while the GitHub repository stays private.
+
+To package an existing tag locally, first populate the library folders and
+run tests, then:
+
+```sh
+bash scripts/run-tests.sh
+bash scripts/release.sh v0.1.0
+```
+
+The default output directory is ignored `.release/`; pass a second argument
+to choose another directory. Existing artifacts are not overwritten. The
+script packages committed addon files from the requested tag, excluding dirty
+or untracked source files, and embeds the current local library copies.
+Use a fresh checkout with `scripts/setup-test-libs.sh` for the pinned
+dependencies used in CI. Packaging itself does not run the test suite or
+install anything into a client.
+
+### Optional CurseForge publishing
+
+Register one WoW addon project for the entire UnitFrames bundle through the
+[CurseForge author dashboard](https://authors.curseforge.com/#/projects/create/choose-game).
+Use the README's feature description, the repository's
+[PolyForm Noncommercial license](LICENSE) and your own project icon. If the
+license is not listed, CurseForge's Custom License field can contain the
+existing license text. Project creation and file approval are handled by
+CurseForge; see [their submission guide](https://support.curseforge.com/support/solutions/articles/9000197241-creating-and-submitting-a-project).
+
+Before enabling uploads, check that CurseForge lists a compatible **Forever**
+game version. Interface `16001` is not a CurseForge game-version ID. Do not
+choose Retail or Classic versions just to get an upload accepted. If Forever
+is not supported yet, keep CurseForge publishing disabled and distribute
+through GitHub releases.
+
+In GitHub **Settings > Secrets and variables > Actions**, configure:
+
+| Kind | Name | Value |
+|---|---|---|
+| Secret | `CF_API_TOKEN` | Upload API token from the [CurseForge API token page](https://authors.curseforge.com/#/api-tokens) |
+| Variable | `CF_PROJECT_ID` | Numeric ID of your registered project |
+| Variable | `CF_GAME_VERSION_IDS` | Compatible numeric game-version IDs, comma-separated, without spaces |
+| Variable | `CF_ENABLED` | `true`, only after the project and version mapping are ready |
+
+The upload API's `/api/game/versions` endpoint lists version IDs; use your
+token as the `X-Api-Token` header. The uploader checks that your configured IDs
+exist. You must select the correct client flavour yourself. See the official
+[upload API documentation](https://support.curseforge.com/support/solutions/articles/9000197321-curseforge-api).
+
+Publishing a GitHub release uploads the same tested ZIP to CurseForge when
+`CF_ENABLED` is `true`. Tag pushes only create the draft and do not upload to
+CurseForge. Alpha tags upload as alpha, other prerelease tags as beta, and
+stable tags as release. A release marked prerelease in GitHub uploads as beta
+even without a prerelease suffix. CurseForge receives the GitHub release notes
+as its changelog. Missing credentials or invalid configuration fail the upload
+job, while the GitHub ZIP remains available.
+
+To inspect upload metadata without a token or network request:
+
+```sh
+CF_PROJECT_ID=123 CF_GAME_VERSION_IDS=456,789 \
+  bash scripts/publish-curseforge.sh --dry-run .release/UnitFrames-v0.1.0.zip v0.1.0
+```
+
+These IDs are examples, not actual project or compatible game-version IDs.
+No project registration, release publication or CurseForge upload is done by
+running the packaging tests.
 
 ## Installing a local build
 

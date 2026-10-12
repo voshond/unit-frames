@@ -11,7 +11,7 @@ project_id="${CF_PROJECT_ID:?Set CF_PROJECT_ID to the registered CurseForge proj
 version_ids="${CF_GAME_VERSION_IDS:?Set CF_GAME_VERSION_IDS to compatible CurseForge numeric game-version IDs, comma-separated}"
 [[ "$project_id" =~ ^[1-9][0-9]*$ ]] || exit 1
 [[ "$version_ids" =~ ^[1-9][0-9]*(,[1-9][0-9]*)*$ ]] || exit 1
-case "$tag" in
+case "${tag%%+*}" in
 	*-alpha*) release_type=alpha ;;
 	*-*) release_type=beta ;;
 	*) if [[ "${CF_PRERELEASE:-false}" == true ]]; then release_type=beta; else release_type=release; fi ;;
@@ -35,7 +35,6 @@ fi
 # No automatic upload retry: an accepted upload must not be duplicated.
 response="$(curl --fail --silent --show-error --max-time 180 \
 	-H "X-Api-Token: $CF_API_TOKEN" \
-	-F "metadata=$metadata" -F "file=@$archive;type=application/zip" \
+	--form-string "metadata=$metadata" -F "file=@$archive;type=application/zip" \
 	"$cf_api/projects/$project_id/upload-file")"
 jq -e '.id | numbers' <<< "$response"
-
