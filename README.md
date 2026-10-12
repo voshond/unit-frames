@@ -30,6 +30,17 @@ picker to display `zZz` while the player is resting, and empty text otherwise.
 **Preview data > Resting** tests both effects: Static holds the resting colour,
 while Animated pulses it. Resting is independent of accumulated rested XP.
 
+During a ready check, each frame's bars turn grey while its unit has not
+answered, then green (ready) or red (not ready). When the check ends, units
+without an answer turn red; the result holds for two seconds, then fades back
+to the normal bar colours over 1.5 seconds. The tint is drawn over the
+bars, so class, reaction and health-gradient colours stay intact underneath.
+Units outside the check stay untinted. The **Ready check** section has
+the on/off toggle, the three colours, and the hold and fade durations.
+**Preview data > Ready check** previews each state: Static holds it, while
+Animated loops a whole check including the fade. ClickGrid group bars keep
+their own ready check icon instead.
+
 **UnitFrames ClickGrid** is an optional companion for party/raid healing.
 `/ufcg` opens its Workbench settings;
 `/ufcg bindings` opens the click-spell matrix. It requires UnitFrames and uses

@@ -27,6 +27,8 @@ done by the owner: oUF for live frames (Units/), fake values in the Workbench.
 spec:
   frame     use this frame as the root (the oUF unit button); else one is created
   width     default width (of the rows area, including the border padding)
+  resting   offer the resting border (player)
+  readyCheck  offer ready check bar tints
   rows      array of {
               key, label,
               spec      TextBar spec (segments, colorInherit, formats, textDefaults)
@@ -140,6 +142,10 @@ function UnitFrame:OnCreate(parent, spec)
 	self.border = CreateFrame("Frame", nil, self.frame, "BackdropTemplate")
 	self.border:SetAllPoints(self.frame)
 	self.border:SetFrameLevel(self.frame:GetFrameLevel())
+	if spec.readyCheck then
+		-- Drives the fade after a check; never a script on the unit button.
+		self.readyCheckDriver = CreateFrame("Frame", nil, self.frame)
+	end
 
 	self.rows = {}
 	self.rowsByKey = {}
@@ -184,6 +190,19 @@ function UnitFrame.BuildSchema(spec)
 				tooltip = "Time for one slow fade to the resting colour and back. Requires a visible frame border." },
 		} }
 	end
+	if spec.readyCheck then
+		schema[#schema + 1] = { key = "readyCheck", type = "group", label = "Ready check", schema = {
+			{ key = "enabled", type = "toggle", label = "Enabled", default = true,
+				tooltip = "During a ready check, grey this frame's bars until the unit answers, then turn them green (ready) or red (not ready). When the check ends, units without an answer turn red, then all bars fade back to their normal colours." },
+			{ key = "waitingColor", type = "color", label = "Waiting colour", default = { 0.5, 0.5, 0.5, 1 } },
+			{ key = "readyColor", type = "color", label = "Ready colour", default = { 0.15, 0.8, 0.15, 1 } },
+			{ key = "notReadyColor", type = "color", label = "Not ready colour", default = { 0.85, 0.12, 0.12, 1 } },
+			{ key = "hold", type = "range", label = "Hold after the check (seconds)", min = 0, max = 10, step = 0.5, default = 2,
+				tooltip = "How long the result stays after the check ends, before fading." },
+			{ key = "fade", type = "range", label = "Fade duration (seconds)", min = 0, max = 5, step = 0.25, default = 1.5,
+				tooltip = "Time to fade back to the normal bar colours. 0 = switch back at once." },
+		} }
+	end
 	local function AddParts(beforeRows)
 		for _, part in ipairs(UnitFrame.PARTS) do
 			local partSpec = spec[part.key]
@@ -218,6 +237,7 @@ function UnitFrame:OnApply(cfg)
 	self:Layout()
 	self:ApplyRangeOpacity()
 	self:ApplyRestingBorder()
+	self:ApplyReadyCheck()
 end
 
 -- Resting is a plain player state (IsResting), never opaque unit data.
@@ -256,6 +276,102 @@ end
 function UnitFrame:SetResting(resting, animated)
 	self.resting, self.restingAnimated = resting, animated
 	self:ApplyRestingBorder()
+end
+
+--[[
+Ready check bar tints. Statuses are GetReadyCheckStatus's plain results:
+"waiting", "ready", "notready" or nil (no check, or not part of it).
+  SetReadyCheck(status)   during a check; nil removes the tint at once
+  FinishReadyCheck()      the check ended: an unanswered check counts as not
+                          ready; hold the result, then fade back
+  ShowReadyCheckSample(status, time)  previews: full tint, or with `time`
+                          a looping check, result, hold and fade
+]]
+local READY_CHECK_COLORS = { waiting = "waitingColor", ready = "readyColor", notready = "notReadyColor" }
+
+function UnitFrame:SetReadyCheck(status)
+	self.readyCheckStatus, self.readyCheckFinished = status, false
+	self:ApplyReadyCheck()
+end
+
+function UnitFrame:FinishReadyCheck()
+	if not self.readyCheckStatus then return end
+	if self.readyCheckStatus == "waiting" then self.readyCheckStatus = "notready" end
+	self.readyCheckFinished, self.readyCheckElapsed = true, 0
+	self:ApplyReadyCheck()
+end
+
+function UnitFrame:IsReadyCheckFinishing()
+	return self.readyCheckFinished == true
+end
+
+-- Tint amount after the check: held, then fading to 0.
+local function ReadyCheckFade(cfg, elapsed)
+	local fading = elapsed - cfg.hold
+	if fading <= 0 then return 1 end
+	if cfg.fade <= 0 then return 0 end
+	return math.max(0, 1 - fading / cfg.fade)
+end
+
+local function StepReadyCheck(component, elapsed)
+	component.readyCheckElapsed = component.readyCheckElapsed + elapsed
+	if ReadyCheckFade(component.resolved.readyCheck, component.readyCheckElapsed) <= 0 then
+		component:SetReadyCheck(nil)
+	else
+		component:ApplyReadyCheck()
+	end
+end
+
+-- Tints every row with the status colour at `amount` (0 removes it).
+function UnitFrame:TintRows(status, amount)
+	local cfg = self.resolved.readyCheck
+	local color = status and cfg and cfg.enabled and amount > 0 and cfg[READY_CHECK_COLORS[status]]
+	for _, row in ipairs(self.rows) do
+		if color then
+			row.component:SetTint(color[1], color[2], color[3], amount)
+		else
+			row.component:SetTint(nil)
+		end
+	end
+end
+
+function UnitFrame:ApplyReadyCheck()
+	local driver = self.readyCheckDriver
+	if not driver then return end
+	local cfg, status = self.resolved.readyCheck, self.readyCheckStatus
+	local amount = 0
+	if status and cfg.enabled then
+		amount = self.readyCheckFinished and ReadyCheckFade(cfg, self.readyCheckElapsed) or 1
+	end
+	self:TintRows(status, amount)
+	if amount > 0 and self.readyCheckFinished then
+		if not driver:GetScript("OnUpdate") then
+			driver:SetScript("OnUpdate", function(_, elapsed) StepReadyCheck(self, elapsed) end)
+		end
+	else
+		driver:SetScript("OnUpdate", nil)
+	end
+end
+
+-- Sample loop: 1.5 s waiting, 1.5 s showing `status`, then the end of the
+-- check with the configured hold and fade, then 1 s without a tint.
+function UnitFrame:ShowReadyCheckSample(status, time)
+	if not self.readyCheckDriver then return end
+	self.readyCheckDriver:SetScript("OnUpdate", nil)
+	self.readyCheckStatus, self.readyCheckFinished = nil, false
+	if not time or not status then
+		self:TintRows(status, status and 1 or 0)
+		return
+	end
+	local cfg = self.resolved.readyCheck
+	local t = time % (4 + cfg.hold + cfg.fade)
+	if t < 1.5 then
+		self:TintRows("waiting", 1)
+	elseif t < 3 then
+		self:TintRows(status, 1)
+	else
+		self:TintRows(status == "waiting" and "notready" or status, ReadyCheckFade(cfg, t - 3))
+	end
 end
 
 -- Neither range result may be tested in Lua: both can be secret in combat.
@@ -373,6 +489,7 @@ end
 
 function UnitFrame:OnRelease()
 	self.border:SetScript("OnUpdate", nil)
+	if self.readyCheckDriver then self.readyCheckDriver:SetScript("OnUpdate", nil) end
 	self.decorations:Release()
 end
 

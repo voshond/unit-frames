@@ -20,7 +20,7 @@ local function UnitStyleTarget(unit)
 		if unit ~= "player" then
 			schema[#schema + 1] = {
 				key = "copyPlayerSettings", type = "action", label = "Copy player settings",
-				tooltip = "Replace this frame's style with the player's current settings, including sizes, text, portrait, castbar, auras, raid target, PvP flag and elite icons and range opacity. Position and player-only XP are not copied. This is a one-time copy, not a link.",
+				tooltip = "Replace this frame's style with the player's current settings, including sizes, text, portrait, castbar, auras, raid target, PvP flag and elite icons, range opacity and ready check colours. Position and player-only XP are not copied. This is a one-time copy, not a link.",
 			}
 		end
 		for _, opt in ipairs(handle.schema) do schema[#schema + 1] = opt end
@@ -58,6 +58,8 @@ local function Values(unit, d, healthPct, time)
 	v.outOfRange = d.outOfRange
 	v.resting = unit == "player" and d.resting
 	v.restingAnimated = time ~= nil
+	v.readyCheck = d.readyCheck ~= "off" and d.readyCheck or nil
+	v.readyCheckTime = time
 	v.castProgress = d.castProgress / 100
 	for _, kind in ipairs({ "buffs", "debuffs" }) do
 		local samples = v[kind]
@@ -98,6 +100,9 @@ local function RegisterUnit(unit)
 		Range("castProgress", "Cast progress %", 60),
 		{ key = "raidTarget", type = "select", label = "Raid target marker", default = 8,
 			values = UF.Components.RaidTarget.MARKERS },
+		{ key = "readyCheck", type = "select", label = "Ready check", default = "off", values = {
+			{ "off", "None" }, { "waiting", "Waiting" }, { "ready", "Ready" }, { "notready", "Not ready" },
+		}, tooltip = "Preview the saved ready check colours. Static holds the answer; Animated loops a whole check: waiting, the answer, then the hold and fade after it ends." },
 		{ key = "pvp", type = "select", label = "PvP flag", default = "off", values = UF.Formats.PVP_FLAGS,
 			tooltip = "Sample flag for the PvP flag icon and beside Level + class or Level + class or creature type text." },
 		{ key = "buffsCount", type = "range", label = "Sample buffs", min = 0, max = 40, step = 1, default = 8,

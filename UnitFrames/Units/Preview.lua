@@ -63,6 +63,9 @@ end
 function Units:ShowSample(uf, values)
 	uf:SetRangeState(values.outOfRange ~= true, true)
 	uf:SetResting(uf.spec.resting and values.resting == true, values.restingAnimated == true)
+	-- values.readyCheck: "waiting", "ready", "notready" or nil; with
+	-- readyCheckTime the sample loops through a whole check.
+	uf:ShowReadyCheckSample(values.readyCheck, values.readyCheckTime)
 	for key, row, cfg in uf:Rows() do
 		if cfg.enabled and fillers[key] then
 			fillers[key](row, cfg, values)

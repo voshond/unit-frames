@@ -90,6 +90,47 @@ end
 oUF:AddElement("UF_Classification", UpdateClassification, EnableClassification, DisableClassification)
 
 --[[
+UF_ReadyCheck: bar tints during a ready check (frame.UF_ReadyCheck =
+UnitFrame). The events carry no unit of this frame (confirmations name
+party/raid tokens), so every frame re-reads its own unit's status. The
+status is plain group state; an opaque one counts as none. After the check
+the result fades on its own: only a new check interrupts it.
+]]
+local READY_CHECK_EVENTS = { "READY_CHECK", "READY_CHECK_CONFIRM", "READY_CHECK_FINISHED" }
+
+local function UpdateReadyCheck(self, event)
+	local uf, unit = self.UF_ReadyCheck, self.__unit
+	if event == "READY_CHECK_FINISHED" then
+		uf:FinishReadyCheck()
+		return
+	end
+	if uf:IsReadyCheckFinishing() and event ~= "READY_CHECK" then return end
+	local status
+	if unit and UnitExists(unit) then
+		status = GetReadyCheckStatus(unit)
+		if issecretvalue(status) then status = nil end
+	end
+	uf:SetReadyCheck(status)
+end
+
+local function EnableReadyCheck(self)
+	if not self.UF_ReadyCheck then return end
+	for _, event in ipairs(READY_CHECK_EVENTS) do
+		self:RegisterEvent(event, UpdateReadyCheck, true)
+	end
+	return true
+end
+
+local function DisableReadyCheck(self)
+	for _, event in ipairs(READY_CHECK_EVENTS) do
+		self:UnregisterEvent(event, UpdateReadyCheck)
+	end
+	self.UF_ReadyCheck:SetReadyCheck(nil)
+end
+
+oUF:AddElement("UF_ReadyCheck", UpdateReadyCheck, EnableReadyCheck, DisableReadyCheck)
+
+--[[
 UF_Castbar: drives our Castbar component (frame.UF_Castbar = component) from
 the cast events through the shared state machine (Units/Cast.lua).
 ]]
