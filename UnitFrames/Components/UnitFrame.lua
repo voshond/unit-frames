@@ -108,7 +108,10 @@ UnitFrame.PARTS = {
 			local function OverHealth(cfg)
 				return cfg.placement == "health" or cfg.placement == "portrait" or cfg.placement == "off"
 			end
-			return GroupSchema(Castbar.BuildSchema(), {
+			local schema = ns.Schema.Override(Castbar.BuildSchema(), "portraitLayout", {
+				hidden = function(cfg) return cfg.placement ~= "portrait" end,
+			})
+			return GroupSchema(schema, {
 				{ key = "placement", type = "select", label = "Placement", values = UnitFrame.CASTBAR_PLACEMENTS,
 					default = "bottom" },
 				HeightOption(18, OverHealth),
