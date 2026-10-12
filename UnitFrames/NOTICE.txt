@@ -1,5 +1,17 @@
-Original UnitFrames code: Copyright (c) 2026 Martin Konstantin Herrmann.
-See LICENSE for the UnitFrames Noncommercial License.
+Required Notice: Copyright (c) 2026 Martin Konstantin Herrmann.
+
+Original UnitFrames code and documentation are licensed under the PolyForm
+Noncommercial License 1.0.0; see LICENSE. This covers original work in
+UnitFrames, UnitFrames_Workbench, UnitFrames_Media and UnitFrames_ClickGrid.
+Third-party libraries, fonts, reference projects and Blizzard materials are
+excluded and retain their own terms.
+
+Additional permission for LGPL compatibility:
+The copyright holder additionally permits modification of the original code
+for the user's own use and reverse engineering to debug modifications to an
+LGPL-covered library. Users may modify or replace that library under its
+own terms. This permission does not grant commercial redistribution of the
+original UnitFrames code. Preserve this permission with redistributed copies.
 
 Bundled third-party components retain their own terms:
 - LibStub: public domain. Preserve its credits in Libs/LibStub/LibStub.lua.

@@ -12,10 +12,9 @@ Enable this addon alongside UnitFrames. Open `/ufcg` for **Panel & indicators**,
 the panel. It appears in groups by default; enable **Show when solo** to test
 without a group. Move its enclosing panel in Blizzard Edit Mode.
 
-This change is repository-only. Installing this new addon and its new TOC
-files requires restarting the client. The repository installer discovers its
-folder automatically, but replaces installed addon directories; use the
-repository's incremental deployment guidance when updating an existing copy.
+Install ClickGrid from the same release bundle as UnitFrames and restart the
+client after adding it. For local builds and incremental updates, see the
+[developer guide](../DEVELOPMENT.md).
 
 ## Implemented
 

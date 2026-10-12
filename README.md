@@ -52,18 +52,22 @@ See the [ClickGrid guide](UnitFrames_ClickGrid/README.md) for more details.
 
 ## Getting started
 
-UnitFrames is still in development, and there is no ready-to-install release
-download yet. GitHub's **Download ZIP** contains source code; it needs the
-supporting libraries described in the [developer guide](DEVELOPMENT.md)
-before it can be installed.
+Download the **UnitFrames-v….zip** attachment from the
+[Releases page](https://github.com/voshond/unit-frames/releases). Release ZIPs
+include the supporting libraries and fonts; you do not need to download
+those separately. If no release is listed yet, the first bundle has not
+been published.
 
-If you already have a complete copy, put the `UnitFrames` and
-`UnitFrames_Workbench` folders in your Forever client's `Interface/AddOns`
-folder. You can also add `UnitFrames_Media` for extra fonts and
-`UnitFrames_ClickGrid` for the healing panel.
+Extract the ZIP into your Forever client's `Interface/AddOns` folder. It
+contains four addon folders: `UnitFrames`, `UnitFrames_Workbench`,
+`UnitFrames_Media` and `UnitFrames_ClickGrid`. Keep the first two for frames
+and settings. The extra fonts and ClickGrid healing panel are optional.
 
 Restart the game, enable the addons on the character selection screen,
 then type `/uf wb` to get started.
+
+Use the attached **UnitFrames-v….zip**, rather than GitHub's **Source code**
+archives or **Download ZIP** button, which contain source without dependencies.
 
 This addon is being developed for **WoW Forever**. Other WoW versions
 have not been verified.
@@ -76,9 +80,11 @@ implementation notes.
 ## License
 
 Original UnitFrames code and documentation are source-available under the
-[UnitFrames Noncommercial License](LICENSE). You may use, share, modify and
+[PolyForm Noncommercial License 1.0.0](LICENSE). You may use, share, modify and
 reuse them for noncommercial purposes, retaining the license and attribution.
-Commercial use requires separate written permission from the author.
+Uses outside the license's permitted purposes require separate written
+permission from the author. See [NOTICE.txt](NOTICE.txt) for attribution,
+license scope and the additional permission for LGPL compatibility.
 
 Bundled libraries and Roboto fonts retain their own licenses. Blizzard artwork
 is supplied by the game client. See [third-party notices](THIRD_PARTY_NOTICES.md)

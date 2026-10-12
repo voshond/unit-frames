@@ -13,4 +13,5 @@ if [[ ! -f UnitFrames/Libs/LibStub/LibStub.lua || ! -f UnitFrames_Media/Libs/Lib
 	exit 1
 fi
 if [[ -f tests/scripts/pre-push.sh ]]; then bash tests/scripts/pre-push.sh; fi
+if [[ -f tests/scripts/release.sh ]]; then bash tests/scripts/release.sh; fi
 exec luajit tests/run.lua

@@ -1,10 +1,12 @@
 # Third-party notices and release packaging
 
 Original UnitFrames code and documentation are covered by the
-[UnitFrames Noncommercial License](LICENSE). Third-party components are
+[PolyForm Noncommercial License 1.0.0](LICENSE). Third-party components are
 excluded from that license and retain their own terms, including commercial
 permissions where applicable. A component's full license controls over the
-summaries below.
+summaries below. See [NOTICE.txt](NOTICE.txt) for copyright attribution,
+license scope and the additional permission for LGPL compatibility. The
+PolyForm license text is reproduced unchanged.
 
 ## Bundled components
 
@@ -25,8 +27,8 @@ naming conditions also apply. Do not describe either license as ordinary BSD
 or MIT, or replace the full upstream notices with this summary.
 
 LibSharedMedia is shipped as readable Lua source. Preserve that source and
-allow users to modify or replace it. The UnitFrames license expressly permits
-modification for a user's own use and reverse engineering to debug LGPL library
+allow users to modify or replace it. The additional permission in `NOTICE.txt`
+permits modification for a user's own use and reverse engineering to debug LGPL library
 modifications. Including GPL text alongside the LGPL does not put the original
 UnitFrames code under the GPL.
 
@@ -47,6 +49,9 @@ not bundled here.
 
 - Include `LICENSE` and `NOTICE.txt` from every addon folder you distribute.
   Their copies must stay consistent with the repository's license and notices.
+  Preserve the `Required Notice:` copyright line and the additional LGPL
+  compatibility permission. Repository/source distributions also need the
+  root `NOTICE.txt`.
 - Include `Licenses/` in UnitFrames and UnitFrames_Media, all shipped library
   Lua/XML source and existing upstream license files in `Libs/`.
 - Include `Fonts/RobotoCondensed-OFL.txt` whenever shipping the Roboto fonts.
