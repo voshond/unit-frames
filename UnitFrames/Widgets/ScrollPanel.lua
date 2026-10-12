@@ -40,6 +40,14 @@ function ScrollPanel:GetContent()
 	return self.content
 end
 
+function ScrollPanel:GetScrollPercentage()
+	return self.box:GetScrollPercentage()
+end
+
+function ScrollPanel:SetScrollPercentage(value)
+	self.box:SetScrollPercentage(value, ScrollBoxConstants.NoScrollInterpolation)
+end
+
 function ScrollPanel:SetContentHeight(height)
 	self.content:SetWidth(self.box:GetWidth())
 	self.content:SetHeight(math.max(height, 1))

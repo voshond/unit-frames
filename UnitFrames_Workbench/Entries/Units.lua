@@ -77,6 +77,14 @@ end
 
 local function RegisterUnit(unit)
 	local def, sample = UF.Units:GetDefinition(unit), UF.Units:GetSample(unit)
+	local settingsPages = {
+		{ id = "@icons", label = "Icons", paths = { "raidTarget", "pvp", "classification" } },
+		{ id = "@effects", label = "State effects", paths = { "range" } },
+	}
+	local effects = settingsPages[2].paths
+	if def.resting then effects[#effects + 1] = "resting" end
+	effects[#effects + 1] = "readyCheck"
+	effects[#effects + 1] = "readyCheckIcon"
 	-- Animated health waves; static uses the Data tab's health.
 	local function ShowSample(handle, d, es)
 		local animated = d.source == "animated"
@@ -137,6 +145,7 @@ local function RegisterUnit(unit)
 			return UnitHandle(stage, unit)
 		end,
 		styleTarget = UnitStyleTarget(unit),
+		settingsPages = settingsPages,
 		reset = function() UF.Config:UnitStore(unit):Reset() end,
 		data = {
 			schema = schema,

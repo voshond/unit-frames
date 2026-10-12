@@ -99,8 +99,7 @@ function CG:RegisterBindingEntry(wb)
 			end
 			function handle:Release()
 				for _, button in pairs(self.buttons) do
-					button:GetFrame():SetScript("OnClick", nil)
-					button:Hide()
+					button:Release()
 				end
 				self.frame:Hide()
 			end

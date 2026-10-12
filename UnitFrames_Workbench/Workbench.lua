@@ -25,6 +25,8 @@ Entries register themselves:
       onEvent = function(handle, data, entryState, event, ...) end,
     },
     styleTarget = function(handle) return target end,  optional, replaces the style inspector target
+    settingsPages = { { id = "@icons", label = "Icons", paths = { "raidTarget", "pvp" }, revision? } },
+                                     optional navigation pages referring to existing schema paths
     autoSize = true,                 the component sizes itself (no width/height sliders)
     fitToStage = true,               opt-in for ordinary, plain-sized preview frames
     refreshOn = { "Event", { "Event", match } },  restyle the preview on these core events
@@ -194,6 +196,7 @@ function Workbench:Select(id)
 	if not entry then
 		return
 	end
+	self.inspector:ClearTarget()
 	if self.session then self.session:Release() end
 	self.session, self.handle = nil, nil
 	self.eventFrame:UnregisterAllEvents()

@@ -93,6 +93,11 @@ function Dropdown:GetValue()
 	return self.value
 end
 
+function Dropdown:OnRelease()
+	self.dropdown:CloseMenu()
+	self.dropdown:SetupMenu(function() end)
+end
+
 -- Value list for a LibSharedMedia type, as used by schema media options.
 function Dropdown.MediaValues(kind)
 	return function()

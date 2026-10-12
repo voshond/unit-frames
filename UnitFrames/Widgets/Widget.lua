@@ -20,6 +20,23 @@ end
 
 function Widget:OnCreate(parent, opts) end
 
+-- Temporary controls and discarded inspector pages release callbacks. Cached
+-- pages remain reusable; native frames themselves cannot be destroyed.
+function Widget:Release()
+	if self.released then return end
+	self.released = true
+	self:OnRelease()
+	self.opts.onChange, self.opts.onClick = nil, nil
+	self.opts = {}
+	if self.frame:IsObjectType("Button") then self.frame:SetScript("OnClick", nil) end
+	self.frame:SetScript("OnEnter", nil)
+	self.frame:SetScript("OnLeave", nil)
+	self.frame:Hide()
+	self.frame:ClearAllPoints()
+end
+
+function Widget:OnRelease() end
+
 function Widget:GetFrame()
 	return self.frame
 end

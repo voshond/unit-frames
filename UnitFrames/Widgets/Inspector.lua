@@ -11,6 +11,8 @@ sync with a config. Used by the Workbench and later by the settings window.
 With groupPath (e.g. "health.bar", "" for the top level) only that group's own
 options are shown, not its sub-groups: one settings section at a time.
 Without it, the whole schema is shown with nested groups as headers.
+groupPath may also be { paths = { "range", "readyCheck", ... }, revision? }:
+a presentation page referring to existing groups or individual option paths.
 
   target = {
     schema   = schema,
@@ -48,13 +50,25 @@ function Inspector:OnCreate(parent)
 	end)
 end
 
-function Inspector:SetTarget(target, cacheKey, groupPath)
+function Inspector:ClearTarget()
 	if self.page then
+		self.page.scrollPercentage = self.scroll:GetScrollPercentage()
 		self.page.frame:Hide()
+		self.page.target = nil
+		self.page = nil
 	end
+	self.empty:Hide()
+end
+
+function Inspector:SetTarget(target, cacheKey, groupPath)
+	self:ClearTarget()
 	cacheKey = cacheKey or target
 	local page = self.pages[cacheKey]
-	if not page or page.revision ~= target.revision or page.groupPath ~= groupPath then
+	local selection = type(groupPath) == "table" and groupPath or nil
+	local path = not selection and groupPath or nil
+	if not page or page.revision ~= target.revision or page.groupPath ~= path
+		or not Util.Equals(page.selection, selection) then
+		if page then self:DiscardPage(page) end
 		page = self:BuildPage(target, groupPath)
 		self.pages[cacheKey] = page
 	end
@@ -62,6 +76,22 @@ function Inspector:SetTarget(target, cacheKey, groupPath)
 	self.page = page
 	page.frame:Show()
 	self:Refresh()
+	self.scroll:SetScrollPercentage(page.scrollPercentage or 0)
+end
+
+function Inspector:DiscardPage(page)
+	page.target = nil
+	for _, row in ipairs(page.rows) do
+		if row.control then row.control:Release() end
+		if row.reset then
+			row.reset:SetScript("OnClick", nil)
+			row.reset:SetScript("OnEnter", nil)
+			row.reset:SetScript("OnLeave", nil)
+		end
+	end
+	page.rows = {}
+	page.frame:Hide()
+	page.frame:ClearAllPoints()
 end
 
 function Inspector:BuildPage(target, groupPath)
@@ -69,10 +99,21 @@ function Inspector:BuildPage(target, groupPath)
 		frame = CreateFrame("Frame", nil, self.scroll:GetContent()),
 		rows = {},
 		revision = target.revision,
-		groupPath = groupPath,
+		groupPath = type(groupPath) ~= "table" and groupPath or nil,
+		selection = type(groupPath) == "table" and Util.Copy(groupPath) or nil,
 	}
 	page.frame:SetAllPoints()
-	if groupPath then
+	if type(groupPath) == "table" then
+		for _, path in ipairs(groupPath.paths) do
+			local opt = assert(Schema.Find(target.schema, path), "Inspector: unknown settings path " .. path)
+			if opt.type == "group" then
+				self:AddHeader(page, opt, path, 0)
+				self:BuildRows(page, opt.schema, path .. ".", 1)
+			else
+				self:AddControl(page, opt, path, 0)
+			end
+		end
+	elseif groupPath then
 		local schema, prefix = target.schema, ""
 		if groupPath ~= "" then
 			schema, prefix = Schema.Find(target.schema, groupPath).schema, groupPath .. "."
@@ -84,22 +125,30 @@ function Inspector:BuildPage(target, groupPath)
 	return page
 end
 
+function Inspector:AddHeader(page, opt, path, depth)
+	local header = Skin.FontString(page.frame, "header")
+	header:SetJustifyH("LEFT")
+	header:SetText(opt.label or opt.key)
+	self:AddRow(page, { opt = opt, path = path, depth = depth, region = header, height = 18, isHeader = true })
+end
+
+function Inspector:AddControl(page, opt, path, depth)
+	local control = self:CreateControl(page, opt, path)
+	self:AddRow(page, { opt = opt, path = path, depth = depth, control = control, region = control:GetFrame(),
+		height = control:GetHeight() })
+end
+
 -- flat: skip sub-groups (they are separate sections).
 function Inspector:BuildRows(page, schema, prefix, depth, flat)
 	for _, opt in ipairs(schema) do
 		local path = prefix .. opt.key
 		if opt.type == "group" then
 			if not flat then
-				local header = Skin.FontString(page.frame, "header")
-				header:SetJustifyH("LEFT")
-				header:SetText(opt.label or opt.key)
-				self:AddRow(page, { opt = opt, path = path, depth = depth, region = header, height = 18, isHeader = true })
+				self:AddHeader(page, opt, path, depth)
 				self:BuildRows(page, opt.schema, path .. ".", depth + 1)
 			end
 		else
-			local control = self:CreateControl(page, opt, path)
-			self:AddRow(page, { opt = opt, path = path, depth = depth, control = control, region = control:GetFrame(),
-				height = control:GetHeight() })
+			self:AddControl(page, opt, path, depth)
 		end
 	end
 end
@@ -110,6 +159,7 @@ function Inspector:AddRow(page, row)
 		reset:SetSize(14, 14)
 		reset:SetNormalTexture([[Interface\Buttons\UI-RefreshButton]])
 		reset:SetScript("OnClick", function()
+			if not page.target then return end
 			page.target.set(row.path, nil)
 			self:Refresh()
 		end)
@@ -122,6 +172,7 @@ end
 function Inspector:CreateControl(page, opt, path)
 	local label = opt.label or opt.key
 	local function Set(value)
+		if not page.target then return end
 		page.target.set(path, value)
 		self:Refresh()
 	end
@@ -143,11 +194,24 @@ function Inspector:CreateControl(page, opt, path)
 		return W.EditBox:New(page.frame, { label = label, tooltip = opt.tooltip, onChange = Set })
 	elseif t == "action" then
 		return W.Button:New(page.frame, { text = label, tooltip = opt.tooltip, onClick = function()
+			if not page.target then return end
 			page.target.invoke(path)
 			self:Refresh()
 		end })
 	end
 	error("Inspector: unsupported option type " .. tostring(t))
+end
+
+-- Referred options retain their original ancestors and resolved-group context
+-- even when a presentation page moves them elsewhere in navigation.
+local function Hidden(schema, resolved, path)
+	local group = resolved
+	for key in path:gmatch("[^%.]+") do
+		local opt = assert(Schema.Find(schema, key), "Inspector: unknown option " .. path)
+		if opt.hidden and opt.hidden(group) then return true end
+		schema, group = opt.schema, group and group[key]
+	end
+	return false
 end
 
 -- Re-reads all values, re-evaluates `hidden` and lays the rows out again.
@@ -157,20 +221,12 @@ function Inspector:Refresh()
 		return
 	end
 	local target = page.target
+	if not target then return end
 	local resolved = target.resolved()
 	local width = self.scroll:GetContent():GetWidth()
 	local y = 0
-	local hiddenDepth -- rows deeper than a hidden group are hidden too
 	for _, row in ipairs(page.rows) do
-		if hiddenDepth and row.depth <= hiddenDepth then
-			hiddenDepth = nil
-		end
-		local parentPath = row.path:match("^(.*)%.[^%.]+$")
-		local group = parentPath and Util.GetPath(resolved, parentPath) or resolved
-		local visible = not hiddenDepth and not (row.opt.hidden and row.opt.hidden(group))
-		if not visible and row.isHeader and not hiddenDepth then
-			hiddenDepth = row.depth
-		end
+		local visible = not Hidden(target.schema, resolved, row.path)
 
 		row.region:SetShown(visible)
 		if row.reset then

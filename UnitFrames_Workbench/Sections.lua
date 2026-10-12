@@ -16,16 +16,18 @@ end
 
 -- The settings tree as list items: one item per group, indented by depth.
 -- Groups with only sub-groups are headers (not selectable).
-local function SectionItems(items, schema, prefix, depth)
+local function SectionItems(items, schema, prefix, depth, excluded)
 	for _, opt in ipairs(schema) do
 		if opt.type == "group" then
 			local path = prefix .. opt.key
-			if HasOptions(opt.schema) then
-				items[#items + 1] = { id = path, text = opt.label or opt.key, depth = depth }
-			else
-				items[#items + 1] = { text = opt.label or opt.key, depth = depth, header = true }
+			if not excluded[path] then
+				if HasOptions(opt.schema) then
+					items[#items + 1] = { id = path, text = opt.label or opt.key, depth = depth }
+				else
+					items[#items + 1] = { text = opt.label or opt.key, depth = depth, header = true }
+				end
+				SectionItems(items, opt.schema, path .. ".", depth + 1, excluded)
 			end
-			SectionItems(items, opt.schema, path .. ".", depth + 1)
 		end
 	end
 	return items
@@ -33,16 +35,31 @@ end
 
 function Workbench:FillSections()
 	local items = {}
+	local excluded, pages = {}, {}
+	local wanted = self.state.section
+	for _, page in ipairs(self.entry.settingsPages or {}) do
+		assert(page.id:sub(1, 1) == "@" and page.id ~= DATA_SECTION, "Settings page needs a unique @ id")
+		assert(not pages[page.id], "Duplicate settings page " .. page.id)
+		pages[page.id] = page
+		for _, path in ipairs(page.paths) do
+			assert(Schema.Find(self.styleTarget.schema, path), "Unknown settings page path " .. path)
+			excluded[path] = true
+			if wanted == path or (wanted and wanted:sub(1, #path + 1) == path .. ".") then wanted = page.id end
+		end
+	end
 	if self.dataTarget then
 		items[#items + 1] = { id = DATA_SECTION, text = "Preview data" }
 	end
 	if HasOptions(self.styleTarget.schema) then
 		items[#items + 1] = { id = "", text = "General" }
 	end
-	SectionItems(items, self.styleTarget.schema, "", 0)
+	SectionItems(items, self.styleTarget.schema, "", 0, excluded)
+	for _, page in ipairs(self.entry.settingsPages or {}) do
+		items[#items + 1] = { id = page.id, text = page.label }
+	end
 	self.sections = items
+	self.settingsPages = pages
 
-	local wanted = self.state.section
 	local first
 	for _, item in ipairs(items) do
 		if not item.header then
@@ -74,6 +91,8 @@ function Workbench:SelectSection(id)
 	end
 	if id == DATA_SECTION then
 		self.inspector:SetTarget(self.dataTarget, self.entry.id .. "|" .. DATA_SECTION, "")
+	elseif self.settingsPages[id] then
+		self.inspector:SetTarget(self.styleTarget, self.entry.id .. "|" .. id, self.settingsPages[id])
 	else
 		self.inspector:SetTarget(self.styleTarget, self.entry.id .. "|" .. id, id)
 		-- Breadcrumb for nested sections: "Health > Bar > Background".

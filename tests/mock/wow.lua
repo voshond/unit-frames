@@ -367,6 +367,9 @@ function Methods:GetThumbTexture()
 end
 
 -- DropdownButton (Blizzard menu system): GenerateMenu runs the generator
+function Methods:GetScrollPercentage() return self.__state.scrollPercentage or 0 end
+function Methods:SetScrollPercentage(value) self.__state.scrollPercentage = math.max(0, math.min(1, value)) end
+
 -- against a fake root description so menu code gets exercised.
 function Methods:SetupMenu(generator)
 	self.__state.menuGenerator = generator

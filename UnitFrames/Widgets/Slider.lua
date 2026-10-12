@@ -99,3 +99,11 @@ end
 function Slider:SetRange(min, max)
 	self.slider:SetMinMaxValues(min, max)
 end
+
+function Slider:OnRelease()
+	self.input:SetScript("OnEnterPressed", nil)
+	self.input:SetScript("OnEscapePressed", nil)
+	self.input:ClearFocus()
+	self.slider:SetScript("OnValueChanged", nil)
+	self.slider:SetScript("OnMouseWheel", nil)
+end

@@ -66,7 +66,7 @@ function ColorSwatch:OpenPicker()
 	-- The picker fires its callbacks while it sets itself up; ignore those.
 	local ready = false
 	local function OnPick()
-		if not ready then
+		if not ready or self.released then
 			return
 		end
 		local nr, ng, nb = ColorPickerFrame:GetColorRGB()
@@ -80,7 +80,7 @@ function ColorSwatch:OpenPicker()
 		swatchFunc = OnPick,
 		opacityFunc = OnPick,
 		cancelFunc = function(previous)
-			self:Commit(previous.r, previous.g, previous.b, previous.a or 1)
+			if not self.released then self:Commit(previous.r, previous.g, previous.b, previous.a or 1) end
 		end,
 	})
 	ready = true

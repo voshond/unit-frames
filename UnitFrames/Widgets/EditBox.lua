@@ -51,3 +51,10 @@ end
 function EditBox:GetValue()
 	return self.value
 end
+
+function EditBox:OnRelease()
+	self.input:SetScript("OnEnterPressed", nil)
+	self.input:SetScript("OnEditFocusLost", nil)
+	self.input:SetScript("OnEscapePressed", nil)
+	self.input:ClearFocus()
+end
