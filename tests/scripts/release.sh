@@ -11,20 +11,30 @@ for addon in UnitFrames UnitFrames_Workbench UnitFrames_Media UnitFrames_ClickGr
 done
 cp "$repo_dir/LICENSE" "$fixture/"
 cp "$repo_dir/scripts/release.sh" "$repo_dir/scripts/validate-release.lua" \
-	"$repo_dir/scripts/publish-curseforge.sh" "$fixture/scripts/"
+	"$repo_dir/scripts/publish-curseforge.sh" "$repo_dir/scripts/test-tag.sh" "$fixture/scripts/"
+cp "$repo_dir/tests/fixtures/pre-push/run-tests.sh" "$fixture/scripts/"
+mkdir -p "$fixture/tests"
+cp "$repo_dir/tests/fixtures/pre-push/pass" "$fixture/tests/marker"
 cd "$fixture"
 git init -q
 git config user.name 'Release test'
 git config user.email 'release-test@example.invalid'
 # Libraries are separate build inputs, as in the real repo.
-git add LICENSE scripts UnitFrames UnitFrames_Workbench UnitFrames_Media UnitFrames_ClickGrid
+git add LICENSE scripts tests UnitFrames UnitFrames_Workbench UnitFrames_Media UnitFrames_ClickGrid
 git reset -q -- UnitFrames/Libs UnitFrames_Media/Libs
 git -c core.hooksPath=/dev/null commit -qm 'Release fixture'
 git tag v0.0.0-beta.1
+git tag 1.0.0
 
 # Dirty and untracked runtime files must not leak into the tagged archive.
 cp scripts/release.sh UnitFrames/untracked.sh
 cp scripts/release.sh UnitFrames/Core/Init.lua
+cp "$repo_dir/tests/fixtures/pre-push/fail" tests/marker
+# Recovery must test tagged code, excluding dirty working files.
+export HOOK_TEST_LOG="$release_test_tmp/tag-test-runs"
+bash scripts/test-tag.sh 1.0.0
+[[ "$(wc -l < "$HOOK_TEST_LOG")" -eq 1 ]]
+[[ ! -e "$(< "$HOOK_TEST_LOG")" ]]
 bash scripts/release.sh v0.0.0-beta.1 "$release_test_tmp/output" >/dev/null
 archive="$release_test_tmp/output/UnitFrames-v0.0.0-beta.1.zip"
 unzip -tq "$archive" >/dev/null
@@ -39,6 +49,12 @@ luajit scripts/validate-release.lua "$release_test_tmp/unpacked" 0.0.0-beta.1 >/
 	cd "$release_test_tmp/output"
 	sha256sum --check UnitFrames-v0.0.0-beta.1.zip.sha256 >/dev/null
 )
+
+# Plain version tags must build an installable archive too.
+bash scripts/release.sh 1.0.0 "$release_test_tmp/plain" >/dev/null
+unzip -q "$release_test_tmp/plain/UnitFrames-1.0.0.zip" -d "$release_test_tmp/plain-unpacked"
+cp LICENSE "$release_test_tmp/plain-unpacked/"
+luajit scripts/validate-release.lua "$release_test_tmp/plain-unpacked" 1.0.0 >/dev/null
 
 if bash scripts/release.sh v0.0.0-beta.1 "$release_test_tmp/output" >/dev/null 2>&1; then
 	echo 'Release script overwrote an existing artifact.' >&2; exit 1
@@ -67,9 +83,9 @@ export CF_PROJECT_ID=123 CF_GAME_VERSION_IDS=456,789
 export CF_CHANGELOG=$'Quoted "notes"\nsecond line'
 metadata="$(bash scripts/publish-curseforge.sh --dry-run "$archive" v0.0.0-beta.1)"
 jq -e '.releaseType == "beta" and .gameVersions == [456,789] and .changelog == "Quoted \"notes\"\nsecond line"' <<< "$metadata" >/dev/null
-for tag in v0.0.0-alpha.1 v0.0.0 v0.0.0+build-metadata; do
+for tag in v0.0.0-alpha.1 v0.0.0 v0.0.0+build-metadata 1.0.0 1.0.0-alpha.1 1.0.0-beta.1; do
 	metadata="$(bash scripts/publish-curseforge.sh --dry-run "$archive" "$tag")"
-	if [[ "$tag" == *alpha* ]]; then expected=alpha; else expected=release; fi
+	case "$tag" in *alpha*) expected=alpha ;; *beta*) expected=beta ;; *) expected=release ;; esac
 	jq -e --arg type "$expected" '.releaseType == $type' <<< "$metadata" >/dev/null
 done
 if CF_GAME_VERSION_IDS='1,garbage' bash scripts/publish-curseforge.sh --dry-run "$archive" v0.0.0 >/dev/null 2>&1; then

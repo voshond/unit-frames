@@ -156,8 +156,8 @@ covers its additional group, binding and combat checks.
 ## Releases and downloads
 
 The [Release workflow](.github/workflows/release.yml) handles version tags and
-published GitHub releases. Use tags such as `v0.1.0`, `v0.2.0-beta.1` or
-`v0.2.0-alpha.1`:
+published GitHub releases. Tags may use either `1.0.0` or `v1.0.0`; prerelease
+suffixes such as `1.0.0-beta.1` and `v1.0.0-alpha.1` also work:
 
 ```sh
 git tag -a v0.1.0 -m 'UnitFrames 0.1.0'
@@ -169,6 +169,14 @@ Blizzard source, builds `UnitFrames-v0.1.0.zip` and its SHA-256 file, and
 attaches them to a **draft** GitHub release. Review the notes and publish the
 draft when ready. Publishing a release directly also builds and attaches the
 ZIP, even if the tag was not previously pushed separately.
+
+For an existing release whose packaging failed, push the repaired tooling to
+`main`, then open **Actions > Release > Run workflow**. Select `main`, enter
+the existing tag (for example `1.0.0`), and enable **Also upload to CurseForge**
+if needed. The rebuild uses current packaging tools but tests and packages
+the exact tagged addon files. It replaces the ZIP/checksum assets without
+moving the tag or recreating the release. Simply rerunning an older failed
+run still uses that run's old scripts.
 
 The ZIP has four top-level addon folders, ready to extract into
 `Interface/AddOns`; no additional containing project directory is used.

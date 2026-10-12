@@ -3,9 +3,9 @@
 set -euo pipefail
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_dir"
-tag="${1:?Usage: bash scripts/release.sh vX.Y.Z [output-directory]}"
-if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$ ]]; then
-	echo 'Expected a version tag such as v0.1.0 or v0.1.0-beta.1.' >&2
+tag="${1:?Usage: bash scripts/release.sh [v]X.Y.Z [output-directory]}"
+if [[ ! "$tag" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$ ]]; then
+	echo 'Expected a version tag such as 1.0.0, v1.0.0 or 1.0.0-beta.1.' >&2
 	exit 1
 fi
 git rev-parse --verify "refs/tags/$tag^{commit}" >/dev/null
@@ -56,4 +56,3 @@ mv "$release_tmp/bundle.zip" "$archive"
 	sha256sum "$(basename "$archive")" > "$(basename "$archive").sha256"
 )
 echo "Built $archive"
-

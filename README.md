@@ -52,7 +52,7 @@ See the [ClickGrid guide](UnitFrames_ClickGrid/README.md) for more details.
 
 ## Getting started
 
-Download the **UnitFrames-v….zip** attachment from the
+Download the **UnitFrames-….zip** attachment from the
 [Releases page](https://github.com/voshond/unit-frames/releases). Release ZIPs
 include the supporting libraries and fonts; you do not need to download
 those separately. If no release is listed yet, the first bundle has not
@@ -66,7 +66,7 @@ and settings. The extra fonts and ClickGrid healing panel are optional.
 Restart the game, enable the addons on the character selection screen,
 then type `/uf wb` to get started.
 
-Use the attached **UnitFrames-v….zip**, rather than GitHub's **Source code**
+Use the attached **UnitFrames-….zip**, rather than GitHub's **Source code**
 archives or **Download ZIP** button, which contain source without dependencies.
 
 This addon is being developed for **WoW Forever**. Other WoW versions

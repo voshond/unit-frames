@@ -6,7 +6,7 @@ if [[ "${1:-}" == --dry-run ]]; then dry_run=true; shift; fi
 archive="${1:?ZIP archive required}"
 tag="${2:?Version tag required}"
 [[ -f "$archive" ]] || { echo "Missing archive: $archive" >&2; exit 1; }
-[[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$ ]] || exit 1
+[[ "$tag" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$ ]] || exit 1
 project_id="${CF_PROJECT_ID:?Set CF_PROJECT_ID to the registered CurseForge project ID}"
 version_ids="${CF_GAME_VERSION_IDS:?Set CF_GAME_VERSION_IDS to compatible CurseForge numeric game-version IDs, comma-separated}"
 [[ "$project_id" =~ ^[1-9][0-9]*$ ]] || exit 1
