@@ -297,13 +297,19 @@ end
 -- Native selection also restores full opacity when no range check was made.
 function UnitFrame:ApplyRangeOpacity()
 	local cfg = self.resolved.range
-	if cfg.enabled and ns.Caps.booleanAlpha then
+	local fade = cfg.enabled and ns.Caps.booleanAlpha
+	if fade then
 		self.frame:SetAlphaFromBoolean(self.rangeInRange, 1, cfg.outsideAlpha)
 		self.frame:SetAlphaFromBoolean(self.rangeChecked, self.frame:GetAlpha(), 1)
 	else
 		self.frame:SetAlpha(1)
 	end
-	if self.partsByKey.portrait then self.partsByKey.portrait:SyncAlpha() end
+	-- A 3D model ignores this inherited fade and repeats it on its own frame.
+	local portrait = self.partsByKey.portrait
+	if portrait then
+		if fade then portrait:SetRangeFade(self.rangeInRange, self.rangeChecked, cfg.outsideAlpha)
+		else portrait:SetRangeFade(nil) end
+	end
 end
 
 function UnitFrame:SetRangeState(inRange, checkedRange)
@@ -365,7 +371,7 @@ function UnitFrame:LayoutCastbar(layout)
 	elseif placement == "portrait" and portrait then
 		host = portrait:GetFrame()
 		hostLevel = portrait.model:GetFrameLevel()
-		onCoverChanged = function() portrait:SyncAlpha() end
+		onCoverChanged = function(alpha) portrait:SetCoverAlpha(alpha) end
 	end
 
 	castbar:SetPortraitPlacement(placement == "portrait")

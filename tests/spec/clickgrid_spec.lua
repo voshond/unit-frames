@@ -661,6 +661,20 @@ describe("ClickGrid companion", function()
 		assert.equals(frame.uf, frame.ufcgStatus.componentOwner)
 	end)
 
+	it("defers slot restyling while native aura buttons deny access, then retries at combat end", function()
+		local slots = CG.headers.party:GetAttribute("child1").Member.ufcgSlots
+		local config = UF.Util.Copy(slots.config)
+		config.slot1 = config.slot1 or {}
+		config.slot1.offsetX = 7
+		Mock.aurasSecret = true
+		assert.has_no_error(function() slots:Apply(config) end)
+		assert.is_true(UF.AfterCombat:IsQueued(slots, "restyle"))
+		Mock.aurasSecret = false
+		Mock.FireEvent("PLAYER_REGEN_ENABLED")
+		assert.is_false(UF.AfterCombat:IsQueued(slots, "restyle"))
+		assert.equals(7, select(4, slots.buttons[1]:GetPoint()))
+	end)
+
 	it("keeps profile style separate from character/spec bindings", function()
 		CG.Config:SetStyle("member", "width", 190)
 		CG.Config:SetBinding(1, "none", "friendly", "spell", "2061")

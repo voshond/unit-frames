@@ -172,11 +172,13 @@ function Castbar:OnRelease()
 end
 
 -- The region this castbar is placed over, or nil. An optional notification
--- lets model artwork synchronize its separate alpha after the region changes.
+-- alphaChanged(alpha) receives the plain coverage alpha given to the region, so
+-- model artwork can follow it without reading alpha back (alpha reads below a
+-- secret range fade are secret).
 function Castbar:SetCovered(region, alphaChanged)
 	if self.covered and self.covered ~= region then
 		self.covered:SetAlpha(1)
-		if self.coveredAlphaChanged then self.coveredAlphaChanged() end
+		if self.coveredAlphaChanged then self.coveredAlphaChanged(1) end
 	end
 	self.covered = region
 	self.coveredAlphaChanged = alphaChanged
@@ -190,14 +192,14 @@ function Castbar:UpdateCovered()
 	if not covered then
 		return
 	end
+	local alpha = 0
 	if not self.frame:IsShown() then
-		covered:SetAlpha(1)
+		alpha = 1
 	elseif self.fade:IsPlaying() then
-		covered:SetAlpha(self.fadeAlpha:GetSmoothProgress())
-	else
-		covered:SetAlpha(0)
+		alpha = self.fadeAlpha:GetSmoothProgress()
 	end
-	if self.coveredAlphaChanged then self.coveredAlphaChanged() end
+	covered:SetAlpha(alpha)
+	if self.coveredAlphaChanged then self.coveredAlphaChanged(alpha) end
 end
 
 function Castbar:Hide()

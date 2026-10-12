@@ -52,12 +52,38 @@ function Portrait:OnApply(cfg)
 	self:SyncAlpha()
 end
 
--- PlayerModel artwork has a separate material alpha. Pass the native effective
--- host alpha straight through: range fading can make it secret, and portrait
--- coverage adds another parent alpha. Never multiply or inspect it in Lua.
+-- A covering castbar's plain alpha for this portrait (1 = uncovered).
+function Portrait:SetCoverAlpha(alpha)
+	self.coverAlpha = alpha
+	self:SyncAlpha()
+end
+
+-- The owner's range fade: the native range results (possibly secret) and the
+-- out-of-range alpha, or nil without a fade.
+function Portrait:SetRangeFade(inRange, checkedRange, outsideAlpha)
+	self.rangeFade = inRange ~= nil and { inRange, checkedRange, outsideAlpha } or nil
+	self:SyncAlpha()
+end
+
+--[[
+PlayerModel artwork ignores the alpha it inherits, so it is faded directly,
+without reading any alpha back (below a secret range fade the client returns
+no effective alpha and secret alphas, which SetModelAlpha refuses):
+  material alpha  castbar coverage, a plain number (SetModelAlpha)
+  frame alpha     the range fade, selected natively from the range results
+                  exactly like the unit frame's own fade (SetAlphaFromBoolean)
+]]
 function Portrait:SyncAlpha()
-	if not self.released and self.resolved and self.resolved.mode == "3D" then
-		self.model:SetModelAlpha(self.frame:GetEffectiveAlpha())
+	if self.released or not self.resolved or self.resolved.mode ~= "3D" then
+		return
+	end
+	local model, fade = self.model, self.rangeFade
+	model:SetModelAlpha(self.coverAlpha or 1)
+	if fade then
+		model:SetAlphaFromBoolean(fade[1], 1, fade[3])
+		model:SetAlphaFromBoolean(fade[2], model:GetAlpha(), 1)
+	else
+		model:SetAlpha(1)
 	end
 end
 

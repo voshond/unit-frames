@@ -183,6 +183,7 @@ return {
 		NamePlateType = { Enemy = 1, Friendly = 0 },
 		PowerType = { Alternate = 10, AlternateEncounter = 24, AlternateMount = 25, AlternateQuest = 23, ArcaneCharges = 16, Balance = 26, BurningEmbers = 14, Chi = 12, ComboPoints = 4, DemonicFury = 15, Energy = 3, Essence = 19, Focus = 2, Fury = 17, Happiness = 27, HolyPower = 9, Insanity = 13, LunarPower = 8, Maelstrom = 11, Mana = 0, Pain = 18, Rage = 1, RuneBlood = 20, RuneChromatic = 29, RuneFrost = 21, RuneUnholy = 22, Runes = 5, RunicPower = 6, ShadowOrbs = 28, SoulShards = 7 },
 		PvPUnitClassification = { AssassinAlliance = 6, AssassinHorde = 5, CartRunnerAlliance = 4, CartRunnerHorde = 3, FlagCarrierAlliance = 1, FlagCarrierHorde = 0, FlagCarrierNeutral = 2, OrbCarrierBlue = 7, OrbCarrierGreen = 8, OrbCarrierOrange = 9, OrbCarrierPurple = 10 },
+		ScriptObjectAccessRestriction = { DenyTaintedAccessWhenAurasAreSecret = 1 },
 		SecondsFormatterAbbreviation = { None = 0, OneLetter = 2, Truncate = 1 },
 		SecondsFormatterInterval = { Days = 3, Hours = 2, Minutes = 1, Seconds = 0 },
 		SecondsFormatterIntervalWhitespace = { Preserve = 0, Strip = 1, StripIgnoreLocale = 2 },

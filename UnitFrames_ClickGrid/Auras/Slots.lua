@@ -52,11 +52,28 @@ function Slots:OnApply(cfg)
 		if not ids then self.errors[#self.errors + 1] = key .. ": " .. reason end
 		self.container:SetAuraSlotFilterString(key, slot.own and "HELPFUL|PLAYER" or "HELPFUL")
 		self.container:SetAuraSlotCandidateFilters(key, { includeSpellIDs = slot.enabled and ids or {} })
-		self:StyleButton(button)
-		button:ClearAllPoints()
-		button:SetPoint(slot.anchor, self.frame, slot.anchor, slot.offsetX, slot.offsetY)
 	end
+	self:RestyleButtons()
 	if self.previewData then self:RenderSamples() end
+end
+
+-- Native slot buttons deny addon access while aura data is secret: restyle
+-- them at the next combat end then, like Auras:RestyleButtons.
+local function Restyle(slots)
+	for i = 1, 3 do
+		local slot, button = slots.resolved["slot" .. i], slots.buttons[i]
+		slots:StyleButton(button)
+		button:ClearAllPoints()
+		button:SetPoint(slot.anchor, slots.frame, slot.anchor, slot.offsetX, slot.offsetY)
+	end
+end
+
+function Slots:RestyleButtons()
+	if InCombatLockdown() or not pcall(Restyle, self) then
+		UF.AfterCombat:Queue("restyle", self, Slots.RestyleButtons)
+	else
+		UF.AfterCombat:Cancel(self, "restyle")
+	end
 end
 
 function Slots:SetEnabled(enabled)

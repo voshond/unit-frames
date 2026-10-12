@@ -56,8 +56,10 @@ describe("Castbars covering health or the portrait", function()
 		uf:SetRangeState(Secret(false), Secret(true))
 		Cast()
 		assert.is_true(Mock.IsSecret(uf:GetFrame():GetAlpha()))
-		assert.equals(0, health:GetAlpha())
-		assert.equals(1, castbar:GetFrame():GetAlpha())
+		-- Below a secret alpha, alpha reads are secret too; inspect engine state.
+		assert.is_true(Mock.IsSecret(health:GetAlpha()))
+		assert.equals(0, health.__state.alpha)
+		assert.equals(1, castbar:GetFrame().__state.alpha)
 	end)
 
 	it("restores the region when placement, unit, element or frame changes", function()

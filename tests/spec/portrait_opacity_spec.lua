@@ -1,29 +1,30 @@
 local Helpers = require("helpers")
 local Mock = Helpers.Mock
 
--- Native renderer oracle; production code only passes secret alpha through.
+-- Engine oracle: the model renders with its material alpha times its own
+-- frame alpha (it ignores inherited alpha). Addon code never reads these.
+local function Oracle(value)
+	if Mock.IsSecret(value) then return value.secretValue end
+	return value == nil and 1 or value
+end
 local function ModelAlpha(portrait)
-	local alpha = portrait.model.__state.modelAlpha
-	if Mock.IsSecret(alpha) then return alpha.secretValue end
-	return alpha == nil and 1 or alpha
+	local state = portrait.model.__state
+	return math.floor(Oracle(state.modelAlpha) * Oracle(state.alpha) * 1000 + 0.5) / 1000
 end
 
 describe("3D portrait opacity", function()
-	it("follows secret range opacity, resets, mode changes and model replacement", function()
+	it("follows plain range opacity, resets, mode changes and model replacement", function()
 		local UF = Helpers.LoadAddon(true, true)
 		local uf = UF.Units.frames.target.uf
 		local portrait = uf:GetPart("portrait")
 		UF.Config:SetUnitValue("target", "range.enabled", true)
-		Mock.inCombat = true
 		for _, checked in ipairs({ true, false }) do
 			for _, inside in ipairs({ true, false }) do
-				uf:SetRangeState(Mock.Secret(inside), Mock.Secret(checked))
+				uf:SetRangeState(inside, checked)
 				assert.equals(checked and not inside and 0.55 or 1, ModelAlpha(portrait))
-				assert.is_true(Mock.IsSecret(portrait.model.__state.modelAlpha))
 			end
 		end
-		Mock.inCombat = false
-		uf:SetRangeState(Mock.Secret(false), Mock.Secret(true))
+		uf:SetRangeState(false, true)
 		for _, mode in ipairs({ "2D", "class", "3D" }) do UF.Config:SetUnitValue("target", "portrait.mode", mode) end
 		assert.equals(0.55, ModelAlpha(portrait))
 		portrait.model.__state.modelAlpha = 1 -- native model replacement may reset its material alpha
@@ -33,14 +34,43 @@ describe("3D portrait opacity", function()
 		assert.equals(1, ModelAlpha(portrait))
 	end)
 
-	it("follows cast coverage and restores the model while preserving the parent's secret fade", function()
+	-- Behind a secret fade the client returns no effective alpha and secret
+	-- alphas, and SetModelAlpha refuses both: the fade goes to the model's frame.
+	it("follows a secret range fade on the model's own frame, never reading alpha back", function()
+		local UF = Helpers.LoadAddon(true, true)
+		local uf = UF.Units.frames.target.uf
+		local portrait = uf:GetPart("portrait")
+		UF.Config:SetUnitValue("target", "range.enabled", true)
+		uf:SetRangeState(false, true)
+		Mock.inCombat = true
+		for _, checked in ipairs({ true, false }) do
+			for _, inside in ipairs({ true, false }) do
+				assert.has_no_error(function() uf:SetRangeState(Mock.Secret(inside), Mock.Secret(checked)) end)
+				assert.is_nil(uf:GetFrame():GetEffectiveAlpha())
+				assert.equals(checked and not inside and 0.55 or 1, ModelAlpha(portrait))
+				assert.is_false(Mock.IsSecret(portrait.model.__state.modelAlpha), "material alpha stays plain")
+				assert.is_true(Mock.IsSecret(portrait.model.__state.alpha), "the frame fade stays secret")
+			end
+		end
+		assert.has_no_error(function() portrait.model:PostUpdate("target", true) end)
+		assert.has_no_error(function() UF.Config:SetUnitValue("target", "portrait.border.padding", 2) end)
+		assert.equals(1, ModelAlpha(portrait), "the last result was not checked")
+		uf:SetRangeState(Mock.Secret(false), Mock.Secret(true))
+		portrait.model.__state.alpha = 1 -- native model replacement may reset its alpha
+		portrait.model:PostUpdate("target", true)
+		assert.equals(0.55, ModelAlpha(portrait))
+		UF.Config:SetUnitValue("target", "range.enabled", false)
+		assert.equals(1, ModelAlpha(portrait))
+	end)
+
+	it("follows cast coverage combined with a plain range fade", function()
 		local UF = Helpers.LoadAddon(true, true)
 		UF.Config:SetUnitValue("player", "range.enabled", true)
 		UF.Config:SetUnitValue("player", "range.outsideAlpha", 0.3)
 		UF.Config:SetUnitValue("player", "castbar.placement", "portrait")
 		local uf = UF.Units.frames.player.uf
 		local portrait, castbar = uf:GetPart("portrait"), uf:GetPart("castbar")
-		uf:SetRangeState(Mock.Secret(false), Mock.Secret(true))
+		uf:SetRangeState(false, true)
 		castbar:Start({ name = Mock.Secret("Fireball"), icon = Mock.Secret(1), duration = C_DurationUtil.CreateDuration() })
 		assert.equals(0, ModelAlpha(portrait))
 		castbar:Stop("success")
@@ -52,6 +82,23 @@ describe("3D portrait opacity", function()
 		castbar:Start({ name = "Fireball", icon = 1, duration = C_DurationUtil.CreateDuration() })
 		UF.Config:SetUnitValue("player", "castbar.placement", "bottom")
 		assert.equals(0.3, ModelAlpha(portrait))
+	end)
+
+	it("follows cast coverage combined with a secret range fade", function()
+		local UF = Helpers.LoadAddon(true, true)
+		UF.Config:SetUnitValue("player", "range.enabled", true)
+		UF.Config:SetUnitValue("player", "castbar.placement", "portrait")
+		local uf = UF.Units.frames.player.uf
+		local portrait, castbar = uf:GetPart("portrait"), uf:GetPart("castbar")
+		uf:SetRangeState(Mock.Secret(false), Mock.Secret(true))
+		castbar:Start({ name = Mock.Secret("Fireball"), icon = Mock.Secret(1), duration = C_DurationUtil.CreateDuration() })
+		assert.equals(0, ModelAlpha(portrait), "the cast still hides the model")
+		castbar:Stop("success")
+		castbar.fadeAlpha.__state.progress = 0.5
+		castbar.fade:RunScript("OnUpdate", 0.1)
+		assert.equals(0.275, ModelAlpha(portrait), "coverage and the secret range fade combine")
+		castbar:Hide()
+		assert.equals(0.55, ModelAlpha(portrait))
 	end)
 
 	it("keeps sample models synchronized without an update loop and clears their data callback on release", function()

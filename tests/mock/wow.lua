@@ -96,6 +96,12 @@ local INTRINSIC_MIXINS = { AuraContainer = true, EventFrame = true, DropdownButt
 
 local function CheckMethod(self, key, ...)
 	local objectType = rawget(self, "__type")
+	-- Native aura buttons deny tainted access while aura data is secret
+	-- (Enum.ScriptObjectAccessRestriction.DenyTaintedAccessWhenAurasAreSecret).
+	if Mock.aurasSecret and untainted == 0 and self.__state.auraRestricted then
+		error(string.format("calling '%s' on bad self (Attempt to access forbidden object from code tainted by an AddOn)",
+			key), 3)
+	end
 	local def, modelled = API.Method(objectType, key)
 	if def then
 		if def.protected and untainted == 0 and self.__state.protected and InCombatLockdown() then
@@ -272,24 +278,38 @@ function Methods:SetAlpha(alpha)
 	self.__state.alpha = alpha
 	Record(self, "SetAlpha", alpha)
 end
-function Methods:GetAlpha()
-	if self.__state.alpha == nil then return 1 end
-	return self.__state.alpha
+local function BelowSecretAlpha(self)
+	local parent = self.__state.parent
+	while parent do
+		if parent.__state and Mock.IsSecret(parent.__state.alpha) then return true end
+		parent = parent.__state and parent.__state.parent
+	end
+	return false
 end
+-- Observed in game (Forever, October 2026): a region's own secret alpha, and
+-- any alpha below a secret alpha, reads back secret.
+function Methods:GetAlpha()
+	local alpha = self.__state.alpha
+	if alpha == nil then alpha = 1 end
+	if BelowSecretAlpha(self) and not Mock.IsSecret(alpha) then return Mock.Secret(alpha) end
+	return alpha
+end
+-- Observed in game (Forever, October 2026), unlike its documented secret
+-- aspect: while any alpha in the parent chain is secret, the client withholds
+-- the effective alpha and returns nil.
 function Methods:GetEffectiveAlpha()
 	local own = self:GetAlpha()
-	local parent = self:GetParent()
-	local inherited = not self.__state.ignoreParentAlpha and parent and parent:GetEffectiveAlpha() or 1
-	local secret = AnySecret(own, inherited)
-	-- Native engine oracle only; addon Lua may not multiply these values.
-	if Mock.IsSecret(own) then own = own.secretValue end
-	if Mock.IsSecret(inherited) then inherited = inherited.secretValue end
-	local alpha = own * inherited
-	return secret and Mock.Secret(alpha) or alpha
+	if own == nil or Mock.IsSecret(own) then return nil end
+	local parent = not self.__state.ignoreParentAlpha and self:GetParent()
+	if not parent then return own end
+	local inherited = parent:GetEffectiveAlpha()
+	if inherited == nil then return nil end
+	return own * inherited
 end
 function Methods:SetIgnoreParentAlpha(ignore) self.__state.ignoreParentAlpha = ignore end
 function Methods:SetModelAlpha(alpha)
-	assert(Mock.IsSecret(alpha) or type(alpha) == "number", "model alpha must be numeric")
+	assert(Mock.IsSecret(alpha) or type(alpha) == "number",
+		"bad argument #1 to 'SetModelAlpha' (Usage: self:SetModelAlpha(alpha))")
 	self.__state.modelAlpha = alpha
 	Record(self, "SetModelAlpha", alpha)
 end
@@ -504,6 +524,7 @@ function Mock.DecorateAuraContainer(container)
 		for i = 1, count do
 			local button = NewObject("Button", self)
 			button.__state.template = "CustomAuraButtonTemplate"
+			button.__state.auraRestricted = true
 			button.__state.dispelTextures = {}
 			function button:SetCancelAuraButtons(tokens)
 				assert(tokens == nil or type(tokens) == "string", "cancelAuraButtons must be a string or nil")
@@ -645,6 +666,7 @@ function Mock.Install()
 	Mock.ranges = {}
 	Mock.spellRanges = {}
 	Mock.registeredEvents = {}
+	Mock.aurasSecret = false
 
 	_G.LibStub = nil
 	_G.UnitFrames = nil
