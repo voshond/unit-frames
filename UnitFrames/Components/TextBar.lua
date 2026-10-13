@@ -9,6 +9,7 @@ text above it moves to the top half (unless its position is set by hand).
 
 spec: everything Bar takes (segments, colorInherit), plus
   formats       format ids the texts may show (Core/Formats.lua)
+  textContext   what the host provides to its texts (see Text)
   textDefaults  default format per slot, e.g. { left = "name", right = "health:value" };
                 { format = ..., enabled = false } offers a format but starts switched off
   nativeLayout  the bar can follow native geometry (see Bar); ExtendBar moves
@@ -39,7 +40,7 @@ function TextBar:OnCreate(parent, spec)
 	local host = self.bar:GetTextParent()
 	self.texts = {}
 	for _, slot in ipairs(TextBar.SLOTS) do
-		self.texts[slot.key] = self:Own(Text:New(host, {}, { host = host, formats = spec.formats }))
+		self.texts[slot.key] = self:Own(Text:New(host, {}, { host = host, formats = spec.formats, context = spec.textContext }))
 	end
 end
 
@@ -57,7 +58,8 @@ function TextBar.BuildSchema(spec)
 			format, enabled = default.format, default.enabled ~= false
 		end
 		schema[#schema + 1] = {
-			key = slot.key, type = "group", label = slot.label, schema = Text.BuildSchema({ host = true, formats = spec.formats }),
+			key = slot.key, type = "group", label = slot.label, textSlot = spec.textContext or {},
+			schema = Text.BuildSchema({ host = true, formats = spec.formats, context = spec.textContext }),
 			defaults = { justifyH = slot.justifyH, format = format or "none", enabled = enabled, size = slot.size },
 		}
 	end

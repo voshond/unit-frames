@@ -98,6 +98,25 @@ and updates when the unit's faction/PvP state changes. Enable **Health >
 Small text below left** to show the default level/class line. **Preview data >
 PvP flag** lets you preview each flag or **Not flagged**.
 
+### Custom text
+
+Choose **Custom** in a text slot's **Shows** picker to build the text from up
+to four pieces. Each piece shows one value (name, level, class, PvP flag,
+health/power current, max, percent or missing, spell name, and on the player
+frame XP and resting) with optional **Text before** and **Text after**. That
+text appears only when its piece has a value, so put a separator on the piece
+that may be missing: **Health: Missing** with before ` (-` and after `)`
+shows nothing at full health. **While casting** can replace the whole text
+with the spell name.
+
+The first switch to **Custom** starts from the preset that was selected.
+Switching back to a preset keeps your custom pieces for later; **Edit as custom
+text** replaces them with a fresh copy of the selected preset. Custom pieces
+drop their own spaces when their value is missing, unlike the presets, which
+keep e.g. `42 ` for a unit without a known class. **Copy player settings**
+switches off pieces the destination frame can't show (XP, resting) and keeps
+the others in place.
+
 ## Portraits and cast bars
 
 Under **Portrait > Rows to span**, choose **All rows** (the default) or

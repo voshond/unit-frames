@@ -68,6 +68,7 @@ Units\Definitions.lua
 Units\Cast.lua
 Units\Drivers.lua
 Units\Elements.lua
+Units\TextTags.lua
 Units\Style.lua
 Units\Preview.lua
 

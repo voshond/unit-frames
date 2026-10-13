@@ -27,8 +27,9 @@ local function UnitStyleTarget(unit)
 		-- Writes also refresh the live frame (UnitConfigChanged).
 		local target = UF.Config:UnitStore(unit):Target(nil, function() return handle:Resolved() end)
 		target.schema = schema
+		local invoke = target.invoke
 		target.invoke = function(path)
-			if path == "copyPlayerSettings" then UF.Units:CopyPlayerSettings(unit) end
+			if path == "copyPlayerSettings" then UF.Units:CopyPlayerSettings(unit) else invoke(path) end
 		end
 		return target
 	end

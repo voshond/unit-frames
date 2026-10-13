@@ -147,12 +147,15 @@ function Inspector:AddControl(page, opt, path, depth)
 	end
 end
 
--- flat: skip sub-groups (they are separate sections).
+-- flat: skip sub-groups (they are separate sections) unless they are inline.
 function Inspector:BuildRows(page, schema, prefix, depth, flat)
 	for _, opt in ipairs(schema) do
 		local path = prefix .. opt.key
 		if opt.type == "group" then
-			if not flat then
+			if flat and opt.inline then
+				self:AddHeader(page, opt, path, depth)
+				self:BuildRows(page, opt.schema, path .. ".", depth + 1, true)
+			elseif not flat then
 				self:AddHeader(page, opt, path, depth)
 				self:BuildRows(page, opt.schema, path .. ".", depth + 1)
 			end

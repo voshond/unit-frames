@@ -34,18 +34,63 @@ function Formats.Get(id)
 	return Formats.byId[id] or Formats.byId.none
 end
 
--- Select values for a list of format ids (schema "select" option).
-function Formats.Values(ids)
+-- How much of a preset a host can show: "all", "some" or "none" (only
+-- sources the host can't provide). Presets without sources show "all".
+function Formats.Availability(id, context)
+	local format = Formats.byId[id]
+	if not format then return "none" end
+	local available, missing = 0, 0
+	for _, piece in ipairs(format.pieces) do
+		local source = piece.source and Sources.Get(piece.source)
+		if source then
+			if Template.Available(source, context) then available = available + 1 else missing = missing + 1 end
+		end
+	end
+	if missing == 0 then return "all" end
+	return available > 0 and "some" or "none"
+end
+
+-- Select values for a list of format ids (schema "select" option), leaving
+-- out presets the host can't show at all. `extra` entries are appended.
+function Formats.Values(ids, context, extra)
 	return function()
 		local values = {}
 		for _, id in ipairs(ids) do
 			local format = Formats.byId[id]
-			if format then
+			if format and Formats.Availability(id, context) ~= "none" then
 				values[#values + 1] = { id, format.label }
 			end
 		end
+		for _, entry in ipairs(extra or {}) do values[#values + 1] = entry end
 		return values
 	end
+end
+
+--[[
+A preset as custom pieces { source, before, after } (fresh tables) plus its
+casting behaviour. Literal text joins the next piece's `before` (or the last
+piece's `after`), so it now disappears with that piece: missing identity
+data no longer leaves a trailing space. Sources the host can't provide
+become "none" in place.
+]]
+function Formats.Pieces(id, context)
+	local format = Formats.byId[id]
+	local pieces, pending = {}, ""
+	for _, piece in ipairs(format and format.pieces or {}) do
+		if piece.literal then
+			pending = pending .. piece.literal
+		else
+			local source = Sources.Get(piece.source)
+			local available = source and Template.Available(source, context)
+			pieces[#pieces + 1] = { source = available and piece.source or "none",
+				before = pending .. (piece.before or ""), after = piece.after or "" }
+			pending = ""
+		end
+	end
+	if pending ~= "" and #pieces > 0 then
+		pieces[#pieces].after = pieces[#pieces].after .. pending
+	end
+	return pieces, format and format.whileCasting or "keep"
 end
 
 function Formats.Tag(id)

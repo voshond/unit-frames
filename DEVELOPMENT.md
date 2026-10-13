@@ -302,6 +302,16 @@ inspector retains original defaults, visibility context, override highlighting
 and writes. Generated navigation remains the default. Discarded pages release
 their controls and callbacks, while cached pages remain reusable.
 
+Text slots compose single-value sources (`Core/TextSources.lua`) through one
+composer (`Core/TextTemplate.lua`) used by oUF tags, live previews and samples
+alike; format ids are presets over those sources (`Core/Formats.lua`). Fully
+available presets bind their shared `[uf:<id>]` tag; custom slots bind a
+reusable handle tag (`Units/TextTags.lua`). Sources declare what they need
+(player-only values), slots receive what their frame provides as
+`textContext`, and both the inspector and the compiled template use that.
+`tests/fixtures/formats_golden.lua` records every preset's historical output.
+See `docs/todos/04-design-text-slots.md` for the design.
+
 ClickGrid owns refresh of all its registered previews. Its Workbench watches use
 `notifyOnly` for inspector/stage updates, avoiding another style/data refresh.
 Preview source transitions clear previous sample effects explicitly; missing

@@ -812,6 +812,8 @@ function Mock.Install()
 	_G.strlenutf8 = function(s) return #s end
 	_G.tinsert = table.insert
 	_G.wipe = function(t) for k in pairs(t) do t[k] = nil end return t end
+	-- The client's table library has it too (embedded oUF's tags use it).
+	table.wipe = _G.wipe
 	_G.securecallfunction = function(fn, ...) return fn(...) end
 	_G.geterrorhandler = function() return error end
 	_G.INTERRUPTED = "Interrupted"

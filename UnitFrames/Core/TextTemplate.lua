@@ -5,7 +5,13 @@ local Sources = ns.TextSources
 The text composer: compiles a slot's content into a template that oUF tags,
 live previews and samples all use, so they cannot disagree.
 
-  Template.Compile({ pieces = { ... }, whileCasting = "spell" | "keep" })
+  Template.Compile({ pieces = { ... }, whileCasting = "spell" | "keep" }, context)
+  Template.Get(def, context)   the same, shared between equal contents
+
+context describes the slot's host: { player = true } on the player frame.
+Sources a host can't provide (player-only values elsewhere) compile to
+nothing, like unknown ones. No context means every source (the global
+[uf:<preset>] tags).
 
 Pieces, in order:
   { source = "<id>", before = "", after = "" }
@@ -23,6 +29,8 @@ The template has
   sample(values)  the same for plain sample values
   events          union of the sources' events (space separated, in order)
   sharedEvents    set of those that carry no unit
+  sources         ids of the sources it shows, in order
+  empty           true when it can never show anything
 
 No result is inspected: sources' nil becomes "" by a type check, affixes are
 decided natively, and pieces are joined by string.format with every text and
@@ -46,14 +54,18 @@ local function AddEvents(events, shared, source)
 	end
 end
 
-local function Nodes(pieces)
+function Template.Available(source, context)
+	return not source.player or not context or context.player == true
+end
+
+local function Nodes(pieces, context)
 	local nodes = {}
 	for _, piece in ipairs(pieces or {}) do
 		if piece.literal then
 			nodes[#nodes + 1] = { literal = piece.literal }
 		else
 			local source = piece.source and Sources.Get(piece.source)
-			if source then
+			if source and Template.Available(source, context) then
 				local before, after = piece.before or "", piece.after or ""
 				nodes[#nodes + 1] = { source = source, piece = piece, before = before, after = after,
 					affixed = before ~= "" or after ~= "" }
@@ -104,12 +116,15 @@ end
 local function ReadLive(node, unit) return node.source.live(unit, node.piece) end
 local function ReadSample(node, values) return node.source.sample(values, node.piece) end
 
-function Template.Compile(def)
-	local nodes = Nodes(def.pieces)
+function Template.Compile(def, context)
+	local nodes = Nodes(def.pieces, context)
 	local casting = def.whileCasting == "spell"
-	local events, shared = {}, {}
+	local events, shared, sources = {}, {}, {}
 	for _, node in ipairs(nodes) do
-		if node.source then AddEvents(events, shared, node.source) end
+		if node.source then
+			AddEvents(events, shared, node.source)
+			sources[#sources + 1] = node.source.id
+		end
 	end
 	if casting then AddEvents(events, shared, Sources.Get(CAST_SOURCE)) end
 
@@ -119,6 +134,8 @@ function Template.Compile(def)
 	local template = {
 		events = #events > 0 and table.concat(events, " ") or nil,
 		sharedEvents = next(shared) and shared or nil,
+		sources = sources,
+		empty = #nodes == 0 and not casting,
 	}
 	-- Explicit oUF tag refreshes also run on hidden frames with no unit.
 	-- Avoid reading missing unit data or passing nil into native formatters.
@@ -138,6 +155,40 @@ function Template.Compile(def)
 			if type(name) ~= "nil" then return name end
 		end
 		return composeSample(values)
+	end
+	return template
+end
+
+-- Signature of what a definition shows on a host: only the pieces it can
+-- show, with length-prefixed text so no two contents encode alike.
+local function Encode(text)
+	text = tostring(text or "")
+	return #text .. ":" .. text
+end
+
+function Template.Signature(def, context)
+	local out = { def.whileCasting == "spell" and "c" or "-" }
+	for _, node in ipairs(Nodes(def.pieces, context)) do
+		if node.literal then
+			out[#out + 1] = "l" .. Encode(node.literal)
+		else
+			out[#out + 1] = "s" .. Encode(node.source.id) .. Encode(node.before) .. Encode(node.after)
+		end
+	end
+	return table.concat(out)
+end
+
+-- Templates held by texts, keyed by signature. Weak values: a template no
+-- text holds any more is dropped.
+local cache = setmetatable({}, { __mode = "v" })
+
+function Template.Get(def, context)
+	local signature = Template.Signature(def, context)
+	local template = cache[signature]
+	if not template then
+		template = Template.Compile(def, context)
+		template.signature = signature
+		cache[signature] = template
 	end
 	return template
 end

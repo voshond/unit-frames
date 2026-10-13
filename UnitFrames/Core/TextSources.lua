@@ -17,7 +17,8 @@ Each source has
                   PvP, ...): an inspector hint for where separators belong
   live(unit, piece)     possibly secret text, or nil; never inspected in Lua.
                         Called only for an existing unit.
-  sample(values, piece) the same for plain sample values
+  sample(values, piece) the same for plain sample values; nil when the sample
+                        has no such value (a standalone bar's sample)
 
 Results are strings (level passes its number through), or nil for no value.
 The composer only checks their type.
@@ -82,7 +83,7 @@ Sources.Register("level", {
 	label = "Level", group = "Identity",
 	events = "UNIT_LEVEL PLAYER_LEVEL_UP",
 	live = function(unit) return UnitLevel(unit) end,
-	sample = function(v) return tostring(v.level) end,
+	sample = function(v) if v.level ~= nil then return tostring(v.level) end end,
 })
 
 -- Level with markers: "??" for skull level, "+" elite, "R" rare, "R+" rare
@@ -98,7 +99,7 @@ Sources.Register("smartlevel", {
 	label = "Level with elite/rare marker", group = "Identity",
 	events = "UNIT_LEVEL PLAYER_LEVEL_UP UNIT_CLASSIFICATION_CHANGED",
 	live = function(unit) return SmartLevel(UnitLevel(unit), UnitClassification(unit)) end,
-	sample = function(v) return SmartLevel(v.level, v.classification) end,
+	sample = function(v) if v.level ~= nil then return SmartLevel(v.level, v.classification) end end,
 })
 
 Sources.Register("class", {
@@ -184,7 +185,10 @@ local function RegisterValues(kind, group, events, shared, api)
 		Sources.Register(kind .. "." .. key, {
 			label = label, group = group, optional = optional, player = player,
 			events = events, shared = shared,
-			live = Live(live), sample = sample,
+			live = Live(live),
+			sample = function(v)
+				if v[curKey] ~= nil and v[maxKey] ~= nil then return sample(v) end
+			end,
 		})
 	end
 	Register("current", "Current", false,
@@ -250,5 +254,5 @@ Sources.Register("xp.rested", {
 	live = function(unit)
 		if unit == "player" then return Rested((select(3, XP()))) end
 	end,
-	sample = function(v) return Rested(v.rested) end,
+	sample = function(v) if v.rested ~= nil then return Rested(v.rested) end end,
 })
