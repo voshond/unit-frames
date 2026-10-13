@@ -47,7 +47,7 @@ function CG:RegisterWorkbench()
 end
 
 function CG:RegisterBindingEntry(wb)
-	local B, W = self.Bindings, UF.Widgets
+	local B = self.Bindings
 	local editor = { button = 1, modifier = "none" }
 	local buttonValues, modifierValues = {}, {}
 	for i, name in ipairs(B.buttons) do buttonValues[i] = { i, name } end
@@ -87,55 +87,201 @@ function CG:RegisterBindingEntry(wb)
 		end
 		return selected
 	end
-	-- One matrix line per reaction: icon, name and an inactive state.
-	local function Summary(tag, choice)
-		local info = B:Describe(choice)
-		local color = info.inactive and "ffff5a4d" or choice.action == "none" and "ff94949f" or "ffebebeb"
-		return tag .. " " .. (info.icon and "|T" .. info.icon .. ":12:12|t " or "") .. "|c" .. color .. info.name .. "|r"
-	end
-	wb:Register({ id = "clickgrid.bindings", name = "Click spells", category = "ClickGrid", autoSize = true,
+	local REACTIONS = {
+		{ key = "friendly", tag = "F", color = { 0.31, 0.88, 0.48 }, label = "Friendly" },
+		{ key = "hostile", tag = "H", color = { 1, 0.35, 0.3 }, label = "Hostile" },
+	}
+	-- The grid fills the stage: column widths and row heights follow it, between
+	-- these bounds; the stage scale only zooms the content.
+	local FONT_SIZE, NOTE_HEIGHT, HEADER_HEIGHT, LABEL_WIDTH, GAP = 10, 54, 16, 84, 3
+	local MIN_WIDTH, MIN_HEIGHT, MAX_HEIGHT = 64, 30, 52
+	local function Font() return UF.Media:GetFontObject(UF.Config:GetTheme().font, FONT_SIZE) end
+	wb:Register({ id = "clickgrid.bindings", name = "Click spells", category = "ClickGrid", fillStage = true,
 		size = { 700, 460 }, refreshOn = { "ClickGridConfigChanged", "ClickGridBindingsCompiled" },
 		create = function(stage)
-			local handle = { frame = CreateFrame("Frame", nil, stage), buttons = {} }
-			handle.frame:SetSize(700, 460)
-			local note = handle.frame:CreateFontString(nil, "OVERLAY")
-			note:SetFontObject(UF.Media:GetFontObject(UF.Config:GetTheme().font, 11, ""))
-			note:SetPoint("TOPLEFT", 0, 0)
-			note:SetWidth(700)
+			local handle = { frame = CreateFrame("Frame", nil, stage), cells = {}, columns = {}, rows = {} }
+			local frame = handle.frame
+			frame:SetSize(700, 460)
+			local note = frame:CreateFontString(nil, "OVERLAY")
+			handle.note = note
+			note:SetPoint("TOPLEFT")
+			note:SetPoint("TOPRIGHT")
+			note:SetHeight(NOTE_HEIGHT)
 			note:SetJustifyH("LEFT")
-			function handle:Apply()
-				local owner = B:IsExternal() and "Clique owns live clicks. These saved bindings are inactive while Clique is loaded."
-					or "Click a cell, then drop a spell into its friendly or hostile slot in settings, or type a spell ID or name."
-						.. " All bindings are applied on mouse release."
-				note:SetText(owner .. "\nSpecialization: " .. CG.Config:SpecKey() .. (CG.pending and " — changes pending until combat ends" or "")
-					.. (#(CG.bindingErrors or {}) > 0 and "\n" .. CG.bindingErrors[1]
-						.. (#CG.bindingErrors > 1 and " (and " .. (#CG.bindingErrors - 1) .. " more inactive bindings)" or "") or ""))
-				local all = UF.Schema.Resolve(B.schema, CG.Config:GetBindings())
-				for row, modifier in ipairs(B.modifiers) do
-					for column, name in ipairs(B.buttons) do
-						local key = row .. ":" .. column
-						local button = self.buttons[key]
-						if not button then
-							local selectedButton, selectedModifier = column, modifier[1]
-							button = W.Button:New(self.frame, { onClick = function()
-								editor.button, editor.modifier = selectedButton, selectedModifier
-								wb:RefreshInspector()
-							end })
-							button:SetSize(136, 44)
-							button:SetPoint("TOPLEFT", self.frame, "TOPLEFT", (column - 1) * 140, -90 - (row - 1) * 46)
-							self.buttons[key] = button
+			note:SetJustifyV("TOP")
+
+			-- Spells dropped onto a line, or a click while carrying one, bind that
+			-- line's cell and reaction at once; the cursor is cleared only after saving.
+			function handle:Receive(line)
+				if self.released then return end
+				local value, reason = B:DecodeCursor()
+				if value == nil and reason == nil then return self:Select(line) end
+				-- Set before saving: a saved change redraws the grid through its config event.
+				editor.button, editor.modifier, self.message = line.button, line.modifier, nil
+				local ok = false
+				if value then
+					ok, reason = CG.Config:SetAction(line.button, line.modifier, line.reaction, value)
+					if ok then ClearCursor() end
+				end
+				wb:SelectSection(line.reaction)
+				if not ok then
+					self.message = reason or "The action could not be saved."
+					self:Apply()
+				end
+			end
+			-- A click with an empty cursor opens the line's settings page instead.
+			function handle:Select(line)
+				if self.released then return end
+				editor.button, editor.modifier, self.message = line.button, line.modifier, nil
+				wb:SelectSection(line.reaction)
+				wb:RefreshInspector()
+				self:Apply()
+			end
+			local function ShowTooltip(line)
+				local info = line.info
+				GameTooltip:SetOwner(line, "ANCHOR_RIGHT")
+				GameTooltip:SetText(B.buttons[line.button] .. " / " .. line.title, 1, 1, 1)
+				GameTooltip:AddLine(info.name, 1, 1, 1)
+				GameTooltip:AddLine(info.status, unpack(info.inactive and UF.Skin.colors.warning or UF.Skin.colors.textDim))
+				GameTooltip:AddLine("Drop a spell here, or click with one on the cursor. Click to edit this binding.", nil, nil, nil, true)
+				GameTooltip:Show()
+			end
+			local function CreateLine(cell, button, modifier, reaction)
+				local line = CreateFrame("Button", nil, cell)
+				line.button, line.modifier, line.reaction = button, modifier[1], reaction.key
+				line.title = modifier[2] .. " / " .. reaction.label
+				local highlight = line:CreateTexture(nil, "HIGHLIGHT")
+				highlight:SetAllPoints()
+				highlight:SetColorTexture(unpack(UF.Skin.colors.hover))
+				line.tag = line:CreateFontString(nil, "OVERLAY")
+				line.tag:SetFontObject(Font())
+				line.tag:SetPoint("LEFT", 4, 0)
+				line.tag:SetTextColor(unpack(reaction.color))
+				line.icon = line:CreateTexture(nil, "ARTWORK")
+				line.icon:SetPoint("LEFT", 14, 0)
+				line.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+				line.name = line:CreateFontString(nil, "OVERLAY")
+				line.name:SetFontObject(Font())
+				line.name:SetPoint("LEFT", line.icon, "RIGHT", 3, 0)
+				line.name:SetPoint("RIGHT", -3, 0)
+				line.name:SetJustifyH("LEFT")
+				line.name:SetWordWrap(false)
+				line:SetScript("OnReceiveDrag", function() handle:Receive(line) end)
+				line:SetScript("OnClick", function()
+					if CG.Caps.cursor and GetCursorInfo() ~= nil then handle:Receive(line) else handle:Select(line) end
+				end)
+				line:SetScript("OnEnter", ShowTooltip)
+				line:SetScript("OnLeave", function() GameTooltip:Hide() end)
+				return line
+			end
+			local function Label(justify)
+				local label = frame:CreateFontString(nil, "OVERLAY")
+				label:SetFontObject(Font())
+				label:SetJustifyH(justify)
+				label:SetWordWrap(false)
+				return label
+			end
+			for column, name in ipairs(B.buttons) do
+				handle.columns[column] = Label("CENTER")
+				handle.columns[column]:SetText(name)
+			end
+			for row, modifier in ipairs(B.modifiers) do
+				handle.rows[row] = Label("RIGHT")
+				handle.rows[row]:SetText((modifier[2]:gsub(" %+ ", "+")))
+				for column in ipairs(B.buttons) do
+					local cell = CreateFrame("Frame", nil, frame, "BackdropTemplate")
+					UF.Skin.ApplyPanel(cell, "button")
+					cell.lines = {}
+					for _, reaction in ipairs(REACTIONS) do
+						cell.lines[reaction.key] = CreateLine(cell, column, modifier, reaction)
+					end
+					handle.cells[row .. ":" .. column] = cell
+				end
+			end
+
+			function handle:Layout()
+				local width, height = frame:GetSize()
+				local columns, rows = #B.buttons, #B.modifiers
+				local cellWidth = math.max(MIN_WIDTH, math.floor((width - LABEL_WIDTH - GAP * columns) / columns))
+				local top = NOTE_HEIGHT + 4 + HEADER_HEIGHT
+				local cellHeight = math.floor((height - top - GAP * rows) / rows)
+				cellHeight = math.min(MAX_HEIGHT, math.max(MIN_HEIGHT, cellHeight))
+				local lineHeight = math.floor((cellHeight - 2) / 2)
+				local iconSize = math.min(14, lineHeight - 2)
+				for column, label in ipairs(self.columns) do
+					local x = LABEL_WIDTH + GAP + (column - 1) * (cellWidth + GAP)
+					label:ClearAllPoints()
+					label:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", x, -top)
+					label:SetWidth(cellWidth)
+				end
+				for row, label in ipairs(self.rows) do
+					local y = top + (row - 1) * (cellHeight + GAP)
+					label:ClearAllPoints()
+					label:SetPoint("RIGHT", frame, "TOPLEFT", LABEL_WIDTH, -y - cellHeight / 2)
+					label:SetWidth(LABEL_WIDTH)
+					for column in ipairs(B.buttons) do
+						local cell = self.cells[row .. ":" .. column]
+						cell:ClearAllPoints()
+						cell:SetPoint("TOPLEFT", frame, "TOPLEFT", LABEL_WIDTH + GAP + (column - 1) * (cellWidth + GAP), -y)
+						cell:SetSize(cellWidth, cellHeight)
+						for index, reaction in ipairs(REACTIONS) do
+							local line = cell.lines[reaction.key]
+							line:ClearAllPoints()
+							line:SetPoint("TOPLEFT", cell, "TOPLEFT", 1, -1 - (index - 1) * lineHeight)
+							line:SetPoint("RIGHT", cell, "RIGHT", -1, 0)
+							line:SetHeight(lineHeight)
+							line.icon:SetSize(iconSize, iconSize)
 						end
-						local cell = all["button" .. column][modifier[1]]
-						button:SetText(name .. " / " .. modifier[2] .. "\n" .. Summary("|cff4fe07aF|r", cell.friendly)
-							.. "\n" .. Summary("|cffff5a4dH|r", cell.hostile))
 					end
 				end
 			end
-			function handle:Release()
-				for _, button in pairs(self.buttons) do
-					button:Release()
+			frame:SetScript("OnSizeChanged", function() handle:Layout() end)
+
+			function handle:Apply()
+				local font = Font()
+				local owner = B:IsExternal() and "Clique owns live clicks. These saved bindings are inactive while Clique is loaded."
+					or "Drop a spell from your spellbook or action bars onto a friendly (F) or hostile (H) line, or click a line"
+						.. " to edit it. All bindings are applied on mouse release."
+				local errors = CG.bindingErrors or {}
+				note:SetFontObject(font)
+				note:SetText(owner .. "\nSpecialization: " .. CG.Config:SpecKey() .. (CG.pending and " — changes pending until combat ends" or "")
+					.. (#errors > 0 and "\n" .. errors[1] .. (#errors > 1 and " (and " .. (#errors - 1) .. " more inactive bindings)" or "") or "")
+					.. (self.message and "\n|cffff5a4d" .. self.message .. "|r" or ""))
+				for _, label in ipairs(self.columns) do label:SetFontObject(font) end
+				for _, label in ipairs(self.rows) do label:SetFontObject(font) end
+				local all = UF.Schema.Resolve(B.schema, CG.Config:GetBindings())
+				for row, modifier in ipairs(B.modifiers) do
+					for column in ipairs(B.buttons) do
+						local cell = self.cells[row .. ":" .. column]
+						local selected = editor.button == column and editor.modifier == modifier[1]
+						cell:SetBackdropBorderColor(unpack(UF.Skin.colors[selected and "accent" or "border"]))
+						for _, reaction in ipairs(REACTIONS) do
+							local line, choice = cell.lines[reaction.key], all["button" .. column][modifier[1]][reaction.key]
+							local info = B:Describe(choice)
+							line.info = info
+							line.tag:SetFontObject(font)
+							line.tag:SetText(reaction.tag)
+							line.icon:SetTexture(info.icon)
+							line.icon:SetDesaturated(info.inactive == true)
+							line.name:SetFontObject(font)
+							line.name:SetText(info.name)
+							local color = info.inactive and UF.Skin.colors.warning
+								or choice.action == "none" and UF.Skin.colors.textDim or UF.Skin.colors.text
+							line.name:SetTextColor(color[1], color[2], color[3])
+						end
+					end
 				end
-				self.frame:Hide()
+				self:Layout()
+			end
+			function handle:Release()
+				self.released = true
+				frame:SetScript("OnSizeChanged", nil)
+				for _, cell in pairs(self.cells) do
+					for _, line in pairs(cell.lines) do
+						for _, script in ipairs({ "OnReceiveDrag", "OnClick", "OnEnter", "OnLeave" }) do line:SetScript(script, nil) end
+					end
+				end
+				frame:Hide()
 			end
 			handle:Apply()
 			return handle
@@ -162,7 +308,8 @@ function CG:RegisterBindingEntry(wb)
 							if not ok then Report(reason) end
 						end
 					end
-					handle:Apply()
+					-- Saved changes redraw the grid through their config event.
+					if not ok or path == "button" or path == "modifier" then handle:Apply() end
 					return ok, reason
 				end,
 				resolved = Selected }
