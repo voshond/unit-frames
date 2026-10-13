@@ -94,7 +94,8 @@ function B:Compile(config)
 	for button = 1, #self.buttons do
 		for _, modifier in ipairs(self.modifiers) do
 			local prefix, cfg = modifier[3], resolved["button" .. button][modifier[1]]
-			for _, name in ipairs({ "type", "spell", "macro", "macrotext", "item", "helpbutton", "harmbutton" }) do
+			-- helpbutton/harmbutton are always set below: each key appears once.
+			for _, name in ipairs({ "type", "spell", "macro", "macrotext", "item" }) do
 				Set(prefix .. name .. button, nil)
 			end
 			for _, reaction in ipairs({ "friendly", "hostile" }) do
@@ -118,10 +119,28 @@ function B:Compile(config)
 	return plan, errors
 end
 
+-- What each frame was last given, kept off the secure frames. A plan sets
+-- several hundred attributes; after the first apply only changed ones are
+-- written, so one edit does not rewrite every binding on every frame.
+local applied = setmetatable({}, { __mode = "k" })
+local NIL = {}
+
 function B:Apply(frame, plan)
 	assert(not InCombatLockdown(), "Click bindings must be applied outside combat")
-	for _, attribute in ipairs(plan) do frame:SetAttribute(attribute.key, attribute.value) end
-	frame:RegisterForClicks("AnyUp")
+	local last = applied[frame]
+	if not last then
+		last = {}
+		applied[frame] = last
+		frame:RegisterForClicks("AnyUp")
+	end
+	for _, attribute in ipairs(plan) do
+		local value = attribute.value
+		if value == nil then value = NIL end
+		if last[attribute.key] ~= value then
+			frame:SetAttribute(attribute.key, attribute.value)
+			last[attribute.key] = value
+		end
+	end
 end
 
 function B:IsExternal()

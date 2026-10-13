@@ -140,9 +140,6 @@ function CG:Refresh()
 			header:SetVisibility("custom [group:raid] hide; " .. (cfg.panel.showSolo and "show" or "[group:party] show; hide"))
 		else header:SetVisibility(visible and "custom [group:raid] show; hide" or "custom hide") end
 	end
-	local plan, errors = self.Bindings:Compile(self.Config:GetBindings())
-	self.bindingErrors = errors
-	local external = self.Bindings:IsExternal()
 	for _, frame in ipairs(self.frames) do
 		local button = self:GetGridButton(frame)
 		local kind = button.kind
@@ -171,18 +168,30 @@ function CG:Refresh()
 			end
 		else frame:SetPoint("TOPLEFT", cell, "TOPLEFT", 0, 0) end
 		cell:SetSize(layout.cellWidth, layout.cellHeight)
-		if not external then
-			self.Bindings:Apply(frame, plan)
-			if ClickCastFrames then ClickCastFrames[frame] = nil end
-		end
 		if kind ~= "target" or cfg.panel.targets then
 			frame:UpdateAllElements("UnitFramesClickGridRefresh")
 			frame:UpdateTags()
 		end
 	end
+	self:ApplyBindings(true)
 	-- _ignore itself does not trigger a native header refresh. Recalculate
 	-- after all cell sizes and layout attributes have been applied.
 	self.revision = (self.revision or 0) + 1
 	for _, header in pairs(self.headers) do header:SetAttribute("ufcg-refresh", self.revision) end
 	for preview in pairs(self.previews) do preview:Apply() end
+end
+
+-- Compiles the current specialization's bindings and writes the changed
+-- attributes to every frame. `notify` announces the result to the binding
+-- grid when no config change does (spell and spec updates).
+function CG:ApplyBindings(notify)
+	local plan, errors = self.Bindings:Compile(self.Config:GetBindings())
+	self.bindingErrors = errors
+	if not self.Bindings:IsExternal() then
+		for _, frame in ipairs(self.frames) do
+			self.Bindings:Apply(frame, plan)
+			if ClickCastFrames then ClickCastFrames[frame] = nil end
+		end
+	end
+	if notify then UF.Events:Fire("ClickGridBindingsCompiled") end
 end

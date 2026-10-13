@@ -33,6 +33,18 @@ function CG:RequestRefresh()
 	self:Refresh()
 end
 
+-- Binding edits and spell updates only touch click attributes: no restyle,
+-- element update or header relayout. Combat defers to the full refresh on
+-- PLAYER_REGEN_ENABLED.
+function CG:RequestBindings(notify)
+	if not self.started then return end
+	if InCombatLockdown() then
+		self.pending = true
+		return
+	end
+	self:ApplyBindings(notify)
+end
+
 local events = CreateFrame("Frame")
 for _, event in ipairs({ "ADDON_LOADED", "PLAYER_LOGIN", "PLAYER_REGEN_ENABLED", "SPELLS_CHANGED",
 	"PLAYER_SPECIALIZATION_CHANGED", "PLAYER_TALENT_UPDATE" }) do events:RegisterEvent(event) end
@@ -49,6 +61,8 @@ events:SetScript("OnEvent", function(_, event, name)
 		CG:Start()
 	elseif event == "PLAYER_REGEN_ENABLED" then
 		if not CG.started then CG:Start() elseif CG.pending then CG:RequestRefresh() end
+	elseif event == "SPELLS_CHANGED" then
+		CG:RequestBindings(true)
 	elseif event ~= "PLAYER_SPECIALIZATION_CHANGED" or name == "player" then
 		CG:RequestRefresh()
 	end

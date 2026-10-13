@@ -94,7 +94,7 @@ function CG:RegisterBindingEntry(wb)
 		return tag .. " " .. (info.icon and "|T" .. info.icon .. ":12:12|t " or "") .. "|c" .. color .. info.name .. "|r"
 	end
 	wb:Register({ id = "clickgrid.bindings", name = "Click spells", category = "ClickGrid", autoSize = true,
-		size = { 700, 460 }, refreshOn = { "ClickGridConfigChanged" },
+		size = { 700, 460 }, refreshOn = { "ClickGridConfigChanged", "ClickGridBindingsCompiled" },
 		create = function(stage)
 			local handle = { frame = CreateFrame("Frame", nil, stage), buttons = {} }
 			handle.frame:SetSize(700, 460)
