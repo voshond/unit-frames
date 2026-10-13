@@ -93,6 +93,16 @@ luajit tests/run.lua clickgrid
 The runner also checks addon Lua syntax. Its optional filter matches spec
 filenames, not individual test names. No external busted installation is needed.
 
+For faster local runs while developing, `--quick` skips the release packaging
+check and the API snapshot regeneration from the Blizzard source. Pull request
+CI always runs the complete suite, so run it without `--quick` before relying
+on those checks. `--times` reports how long each spec file took:
+
+```sh
+bash scripts/run-tests.sh --quick
+luajit tests/run.lua --quick --times
+```
+
 ### Pull request checks
 
 The [Tests workflow](.github/workflows/tests.yml) runs for pull requests and
