@@ -10,6 +10,8 @@ CG.Caps = {
 	spellOverride = C_Spell and C_Spell.GetOverrideSpell ~= nil,
 	specialization = C_SpecializationInfo and C_SpecializationInfo.GetSpecialization ~= nil,
 	privateAuras = C_UnitAuras and C_UnitAuras.AddPrivateAuraAnchor ~= nil,
+	cursor = GetCursorInfo ~= nil and ClearCursor ~= nil,
+	spellBook = PlayerSpellsUtil ~= nil and PlayerSpellsUtil.OpenToSpellBookTab ~= nil,
 }
 
 function CG:Print(...)

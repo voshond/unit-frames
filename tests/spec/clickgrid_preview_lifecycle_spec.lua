@@ -90,4 +90,25 @@ describe("ClickGrid preview lifecycle", function()
 		assert.is_nil(CG.previews[old])
 		assert.is_nil(next(CG.retiredPreviews))
 	end)
+	it("releases action drop slots without leaving listeners or callbacks", function()
+		local UF = Helpers.LoadClickGrid(true)
+		local saved = 0
+		local slot = UF.Widgets.ActionSlot:New(UIParent, {
+			accept = function() return { action = "spell", spell = "2061" } end,
+			describe = function(value) return { name = value.action } end,
+			onChange = function() saved = saved + 1; return true end,
+			empty = { action = "none" },
+			extras = { { text = "Open", combatLocked = true, onClick = function() end } },
+		})
+		slot:SetValue({ action = "none" })
+		assert.is_true(slot.frame.__state.events.PLAYER_REGEN_DISABLED)
+		slot:Release()
+		assert.is_nil(next(slot.frame.__state.events))
+		assert.is_nil(slot.slot:GetScript("OnReceiveDrag"))
+		assert.is_nil(slot.slot:GetScript("OnClick"))
+		Mock.cursor = { "spell", 12, "spell", 2061 }
+		slot:Receive()
+		assert.equals(0, saved)
+		assert.is_not_nil(Mock.cursor)
+	end)
 end)

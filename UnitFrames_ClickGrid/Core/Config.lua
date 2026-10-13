@@ -91,3 +91,9 @@ end
 function Config:SetBinding(button, modifier, reaction, field, value)
 	return self.bindings:Set("button" .. button .. "." .. modifier .. "." .. reaction .. "." .. field, value)
 end
+
+-- One commit for a whole action group: never an intermediate action/argument
+-- pair. nil resets the group to its default.
+function Config:SetAction(button, modifier, reaction, action)
+	return self.bindings:Set("button" .. button .. "." .. modifier .. "." .. reaction, action and UF.Util.Copy(action))
+end
