@@ -93,7 +93,7 @@ local function Placed(key, label, name, position, order, tooltip, size)
 		fields = {
 			enabled = { label = label },
 			anchor = { label = name .. " position", values = positions, hidden = Off,
-				tooltip = tooltip .. " Icons sharing a position line up as one group and leave no gap for absent icons: edges and the centre keep the group centred, border corners grow inward. Before name uses an enabled left-aligned Name text on the health bar." },
+				tooltip = tooltip .. " Icons sharing a position line up as one group and leave no gap for absent icons: edges and the centre keep the group centred, border and portrait corners grow inward. Before name uses an enabled left-aligned Name text on the health bar." },
 			size = { label = name .. " size", hidden = Off, tooltip = false },
 			order = { label = name .. " order", hidden = Off,
 				tooltip = "Icons sharing a position run left to right (top to bottom on the sides) by order. The raid marker's order is in the member style." },
