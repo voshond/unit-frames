@@ -26,6 +26,7 @@ Component.schema = {}
 
 -- Live instances, re-applied when the theme changes.
 local live = setmetatable({}, { __mode = "k" })
+local schemas = setmetatable({}, { __mode = "k" })
 
 function Component:Extend(className)
 	local class = ns.Object.Extend(self, className)
@@ -36,17 +37,30 @@ end
 function Component:New(parent, config, spec)
 	local instance = setmetatable({}, self)
 	instance.spec = spec or {}
+	instance.config = config or {}
 	instance.children = {}
 	instance.enabled = true
 	instance:OnCreate(parent, instance.spec)
 	live[instance] = true
-	instance:Apply(config or {})
+	instance:Apply()
 	return instance
 end
 
 function Component:GetSchema()
 	if not self.schemaCache then
-		self.schemaCache = self.BuildSchema and self.BuildSchema(self.spec) or ns.Util.Copy(self.schema)
+		-- Definitions explicitly own immutable structural metadata. Arbitrary
+		-- caller specs retain private schemas; mutable resolved/config never share.
+		local owner, class = self.spec.schemaOwner, getmetatable(self)
+		if not self.BuildSchema then
+			self.schemaCache = self.schema
+		elseif owner then
+			local cache = schemas[class]
+			if not cache then cache = setmetatable({}, { __mode = "k" }); schemas[class] = cache end
+			if not cache[owner] then cache[owner] = self.BuildSchema(self.spec) end
+			self.schemaCache = cache[owner]
+		else
+			self.schemaCache = self.BuildSchema(self.spec)
+		end
 	end
 	return self.schemaCache
 end
@@ -62,6 +76,7 @@ function Component:Apply(config)
 		return
 	end
 	ns.AfterCombat:Cancel(self, "apply")
+	ns.Perf:Count(self.componentOwner and "childApply" or "rootApply")
 	self.resolved = Schema.Resolve(self:GetSchema(), self.config, ns.Config:GetTheme())
 	self:OnApply(self.resolved)
 	if self.resolved.enabled ~= nil then

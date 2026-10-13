@@ -166,7 +166,9 @@ end
 -- Companion styles have many instances and their own configuration keys.
 -- A definition describes the visuals; the live unit token belongs to oUF.
 function Units:CreateFromDefinition(def, parent, config, frame)
-	return ns.Components.UnitFrame:New(parent, config or {}, self:GetSpec(def, frame))
+	local spec = self:GetSpec(def, frame)
+	spec.schemaOwner = def
+	return ns.Components.UnitFrame:New(parent, config or {}, spec)
 end
 
 -- What every unit frame offers, with default settings unless its definition
