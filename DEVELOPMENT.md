@@ -81,7 +81,7 @@ bash scripts/run-tests.sh
 ```
 
 This runs the complete suite and addon Lua syntax checks, using the same
-command as CI and the pre-push hook. Individual test commands remain available:
+command as CI. Individual test commands remain available:
 
 ```sh
 luajit tests/run.lua
@@ -95,39 +95,16 @@ filenames, not individual test names. No external busted installation is needed.
 
 ### Pull request checks
 
-The [Tests workflow](.github/workflows/tests.yml) runs for pull requests,
-pushes to `main`, and manual dispatches. It installs LuaJIT, fetches pinned
-test libraries and checks out the matching Forever Blizzard source, so API
-snapshot freshness is checked as well. The workflow has read-only repository
-permissions and does not install anything into a game client.
+The [Tests workflow](.github/workflows/tests.yml) runs for pull requests and
+manual dispatches, not for pushes, so pushing a branch stays fast. It installs
+LuaJIT, fetches pinned test libraries and checks out the matching Forever
+Blizzard source, so API snapshot freshness is checked as well. The workflow
+has read-only repository permissions and does not install anything into a
+game client.
 
-To require a passing check before merging, select **LuaJIT test suite** in
-the repository's branch protection or ruleset settings after its first run.
-
-### Pre-push checks
-
-Enable the versioned hook once in each local clone:
-
-```sh
-bash scripts/install-hooks.sh
-```
-
-It sets this repository's `core.hooksPath` to `.githooks`, preserving existing
-custom hook setups by refusing to replace them. Hooks are not enabled
-automatically by cloning a repository.
-
-The hook tests each distinct pushed commit in a temporary snapshot, rather
-than testing uncommitted working files. It reuses your local libraries and,
-when present, Blizzard source checkout. A failing test stops the push.
-Deleting a remote branch does not run tests. Multiple refs pointing to the
-same commit run the suite once.
-
-Install LuaJIT and set up the libraries before pushing. Tests do not download
-dependencies themselves. To disable this checkout's hook configuration:
-
-```sh
-git config --local --unset core.hooksPath
-```
+Branch protection on `main` requires the **LuaJIT test suite** check to pass
+before a pull request can be merged. Run `bash scripts/run-tests.sh` locally
+when you want feedback before opening or updating a pull request.
 
 ### API snapshot and client verification
 
