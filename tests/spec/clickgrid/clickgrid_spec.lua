@@ -765,7 +765,7 @@ describe("ClickGrid companion", function()
 		Clique = nil
 	end)
 
-	it("keeps shield scale options correct across placement and repeated toggles", function()
+	it("keeps shield scale options correct across placement and repeated toggles #shields", function()
 		local frame = CG.headers.party:GetAttribute("child1").Member
 		CG.Config:SetStyle("member", "health.bar.segments.absorb.placement", "append")
 		assert.equals(Enum.UnitMaximumHealthMode.WithAbsorbs, frame.Health.maximumHealthClampMode)
@@ -1132,7 +1132,7 @@ describe("ClickGrid Workbench", function()
 		assert.is_nil(text.colorCondition)
 	end)
 
-	it("previews 40 members, animated timers, configured slots and full-health shields", function()
+	it("previews 40 members, animated timers, configured slots and full-health shields #shields", function()
 		wb.dataTarget.set("count", 40)
 		assert.equals(40, #wb.handle.cells)
 		CG.Config:Set("slots.slot1.spell", "139")

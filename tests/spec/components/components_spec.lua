@@ -34,7 +34,7 @@ describe("Bar", function()
 		assert.equals([[Interface\TargetingFrame\UI-StatusBar]], bar.bar.__state.texture)
 	end)
 
-	it("chains append segments and pins inset segments to the fill end", function()
+	it("chains append segments and pins inset segments to the fill end #shields", function()
 		local bar = C.Bar:New(parent, {}, { segments = HEALTH_SEGMENTS })
 		local fill = bar.bar:GetStatusBarTexture()
 		local heal = bar.segmentsByKey.heal.bar
@@ -48,7 +48,7 @@ describe("Bar", function()
 		assert.is_true(healAbsorb.__state.reverseFill, "inset grows back into the fill")
 	end)
 
-	it("skips disabled segments in the chain", function()
+	it("skips disabled segments in the chain #shields", function()
 		local bar = C.Bar:New(parent, { segments = { heal = { enabled = false } } }, { segments = HEALTH_SEGMENTS })
 		local absorb = bar.segmentsByKey.absorb.bar
 		assert.is_false(bar.segmentsByKey.heal.bar:IsShown())
@@ -66,7 +66,7 @@ describe("Bar", function()
 		assert.equals("VERTICAL", heal.__state.orientation)
 	end)
 
-	it("sizes segments to the full bar length", function()
+	it("sizes segments to the full bar length #shields", function()
 		local bar = C.Bar:New(parent, {}, { segments = HEALTH_SEGMENTS })
 		bar.bar:SetSize(200, 20)
 		assert.equals(200, bar.segmentsByKey.absorb.bar:GetWidth())

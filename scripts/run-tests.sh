@@ -1,19 +1,25 @@
 #!/usr/bin/env bash
 # Shared entry point for CI, release tests and manual verification.
-#   bash scripts/run-tests.sh [--times] [repository directory]
+#   bash scripts/run-tests.sh [--times] [-j [N]] [repository directory]
 #   --times   report how long the release check and each spec file took
+#   -j [N]    run spec files in N parallel processes (default: one per CPU)
 set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 runner_args=()
 times=
 target=
-for argument in "$@"; do
-	case "$argument" in
+while [[ $# -gt 0 ]]; do
+	case "$1" in
 		--times) times=1; runner_args+=(--times) ;;
-		--*) echo "Unknown option: $argument" >&2; exit 2 ;;
-		*) target="$argument" ;;
+		-j|--jobs)
+			runner_args+=(-j)
+			if [[ "${2:-}" =~ ^[0-9]+$ ]]; then runner_args+=("$2"); shift; fi
+			;;
+		-*) echo "Unknown option: $1" >&2; exit 2 ;;
+		*) target="$1" ;;
 	esac
+	shift
 done
 cd "${target:-$repo_dir}"
 if ! command -v luajit >/dev/null; then

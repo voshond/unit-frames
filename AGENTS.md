@@ -70,15 +70,16 @@
 Run from the repository root:
 
 ```sh
-luajit tests/run.lua
-luajit tests/run.lua shields
-luajit tests/run.lua workbench
+luajit tests/run.lua -j
+luajit tests/run.lua units/
+luajit tests/run.lua --tag shields
+luajit tests/run.lua workbench -t "preview"
 ```
 
-- The optional filter matches **spec filenames**, not individual test names. The runner includes addon Lua syntax checks. No external busted installation is needed.
-- `--times` (runner or `scripts/run-tests.sh`) reports per-spec durations.
+- Specs live in `tests/spec/<area>/` (`core`, `contract`, `components`, `auras`, `units`, `workbench`, `editmode`, `clickgrid`). Put new specs in the area of the code they exercise; a feature spec keeps its live and Workbench preview tests together. When behaviour also has tests in other areas, tag them in the `describe`/`it` name (`#shields`) and keep existing tags.
+- Path filters match **spec paths** (`units/` is exactly that folder, `name_spec.lua` exactly that file); `-t` matches test names and `--tag` matches tags. `-j [N]` runs spec files in parallel; `--times` (runner or `scripts/run-tests.sh`) reports per-spec durations; `luajit -jp=F tests/run.lua ...` profiles. The runner includes addon Lua syntax checks. No external busted installation is needed.
 - `tests/helpers.lua` loads TOCs into a fresh mocked client; `tests/mock/wow.lua` includes fake secrets and `tests/mock/ouf.lua` supplies the usual oUF stand-in. Some specs exercise embedded oUF paths explicitly.
-- The mock is held to the client API through `tests/fixtures/api_snapshot.lua`, generated from Blizzard's API documentation and Lua source by `luajit scripts/api-snapshot.lua` (regenerate after adding API usage or updating the source checkout, and review the diff). `tests/mock/api.lua` enforces it on every mock call: undocumented widget methods, rejected arguments, secrets passed where addon (tainted) code may not pass them, and protected calls in combat raise errors. `tests/spec/api_contract_spec.lua` checks the mock's functions, methods, enums, restricted secret returns and our event names, and that the snapshot is current when the source checkout exists.
+- The mock is held to the client API through `tests/fixtures/api_snapshot.lua`, generated from Blizzard's API documentation and Lua source by `luajit scripts/api-snapshot.lua` (regenerate after adding API usage or updating the source checkout, and review the diff). `tests/mock/api.lua` enforces it on every mock call: undocumented widget methods, rejected arguments, secrets passed where addon (tainted) code may not pass them, and protected calls in combat raise errors. `tests/spec/contract/api_contract_spec.lua` checks the mock's functions, methods, enums, restricted secret returns and our event names, and that the snapshot is current when the source checkout exists.
 - Specs simulating Blizzard secure code or engine state use `Mock.SecureDelegate`/`Mock.RunUntainted` (secure delegates such as `UnitFrameUtil.UpdateUnitPvPIndicator`) and `Mock.SetEngineSize` (engine-given, possibly secret dimensions) instead of calling addon-facing APIs with values addon code could not pass.
 - Add regression tests for fixes. Keep mocks faithful to native assertions/restrictions; do not weaken a mock simply to make a broken implementation pass. Add new mock API from the snapshot, not from memory.
 - Offline mocks cannot prove rendering, taint safety or combat behaviour. For visual/lifecycle changes, report what still needs in-game verification: Workbench entry switching/release, repeated toggles, sample/live sources, real combat, unit disappearance/replacement, full-health shields, and Edit Mode as relevant.

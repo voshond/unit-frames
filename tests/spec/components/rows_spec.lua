@@ -23,7 +23,7 @@ describe("Live row writers", function()
 		return ns.Components.TextBar:New(CreateFrame("Frame"), config or {}, ns.UnitRows.Spec(key))
 	end
 
-	it("reads every health value from the native calculator, never a nilable direct API", function()
+	it("reads every health value from the native calculator, never a nilable direct API #shields", function()
 		local ns = Helpers.LoadAddon(true)
 		Mock.InstallUI()
 		_G.UnitGetIncomingHeals = function() return nil end -- documented as nilable

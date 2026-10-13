@@ -34,7 +34,7 @@ jobs:
           path: examples/wow-ui-source-forever
           persist-credentials: false
       - name: Run all tests and addon syntax checks
-        run: bash scripts/run-tests.sh --times
+        run: bash scripts/run-tests.sh --times -j
       # TEMPORARY (PR #8): profile the slow specs; remove before merging.
       - name: Profile slow specs (temporary)
         run: |
