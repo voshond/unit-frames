@@ -105,7 +105,9 @@ the first 1–4 visible rows from the top. Disabled rows are skipped; a castbar
 in its own top/bottom row counts, while one over health does not. The span
 stops at the last available row. Rows below the portrait use the full frame
 width. **Width = 0** keeps the portrait square using the height of the rows
-it spans; a fixed width is also supported on either side.
+it spans; a fixed width is also supported on either side. In a wide or tall
+portrait, 2D portraits and class icons keep their proportions: the artwork
+fills the portrait and is trimmed evenly at the edges instead of stretched.
 
 **Castbar > Placement > Replace portrait while casting** covers the portrait
 until the cast finishes and fades out. It requires an enabled portrait and
