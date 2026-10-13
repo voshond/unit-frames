@@ -317,7 +317,7 @@ if childResult then
 	os.exit(0, true)
 end
 
-local function Matches(file)
+local function SpecSelected(file)
 	if #pathFilters == 0 then
 		return true
 	end
@@ -348,7 +348,7 @@ local syntaxSeconds = Now() - startedAt
 local files = {}
 for _, path in ipairs(ListFiles("find " .. SPEC_DIR .. " -name '*_spec.lua'")) do
 	local file = path:sub(#SPEC_DIR + 1)
-	if Matches(file) then
+	if SpecSelected(file) then
 		files[#files + 1] = file
 	end
 end
