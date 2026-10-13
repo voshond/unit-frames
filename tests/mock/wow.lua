@@ -880,6 +880,22 @@ function Mock.Install()
 		LoadAddOn = function() return true end,
 	}
 	_G.C_UIFileAsset = { IsKnownFile = function() return true end }
+	-- Atlas metadata (AtlasInfo); tests may override entries by atlas name.
+	-- Unknown atlases return nil, like the client. Class icons default square.
+	Mock.atlasInfo = {}
+	_G.C_Texture = {
+		GetAtlasInfo = function(atlas)
+			local info = Mock.atlasInfo[atlas]
+			if info == nil and atlas:lower():find("^classicon%-") then
+				info = { width = 64, height = 64 }
+			end
+			if not info then return nil end
+			return { elementName = atlas, width = info.width, height = info.height,
+				rawSize = { x = info.width, y = info.height },
+				leftTexCoord = 0, rightTexCoord = 1, topTexCoord = 0, bottomTexCoord = 1,
+				tilesHorizontally = false, tilesVertically = false }
+		end,
+	}
 	local defaultAuraCurve = NewCurve(false)
 	_G.AuraContainerInbound = {
 		GetDefaultAuraDurationFormatter = function()
