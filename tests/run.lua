@@ -5,10 +5,35 @@ without installing anything:
 
   luajit tests/run.lua            all specs
   luajit tests/run.lua bar        only spec files whose name contains "bar"
+  luajit tests/run.lua --times    also report how long each spec file took
 
 Run from the repository root. Also syntax-checks every addon Lua file.
 ]]
-local filter = arg[1]
+local filter, showTimes
+for _, value in ipairs(arg) do
+	if value == "--times" then
+		showTimes = true
+	elseif value:sub(1, 2) == "--" then
+		error("unknown option " .. value)
+	else
+		filter = value
+	end
+end
+
+-- Wall-clock seconds; os.clock would miss time spent in spawned processes.
+local Now = os.clock
+do
+	local ok, ffi = pcall(require, "ffi")
+	if ok then
+		ffi.cdef("typedef struct { long tv_sec; long tv_nsec; } uf_timespec; int clock_gettime(int, uf_timespec *);")
+		local spec = ffi.new("uf_timespec")
+		Now = function()
+			ffi.C.clock_gettime(1, spec) -- CLOCK_MONOTONIC
+			return tonumber(spec.tv_sec) + tonumber(spec.tv_nsec) / 1e9
+		end
+	end
+end
+local startedAt = Now()
 
 -- Assertions -------------------------------------------------------------------
 
@@ -208,17 +233,34 @@ for _, file in ipairs(ListFiles("find UnitFrames UnitFrames_Workbench UnitFrames
 	end
 end
 
+local syntaxSeconds = Now() - startedAt
+
 package.path = "./tests/?.lua;" .. package.path
+local timings = {}
 for _, file in ipairs(ListFiles("ls tests/spec/*_spec.lua")) do
 	if not filter or file:find(filter, 1, true) then
+		local fileStarted, testsBefore = Now(), passed + failed
 		root = { name = "", tests = {}, before = {}, after = {} }
 		current = root
 		dofile(file)
 		RunBlock(root, "")
+		timings[#timings + 1] = {
+			file = file:match("([^/]+)$"), seconds = Now() - fileStarted, tests = passed + failed - testsBefore,
+		}
 	end
 end
 
 print()
+if showTimes then
+	table.sort(timings, function(a, b) return a.seconds > b.seconds end)
+	print(string.format("%8s %6s %9s  %s", "seconds", "tests", "per test", "spec"))
+	for _, timing in ipairs(timings) do
+		print(string.format("%8.2f %6d %9.3f  %s", timing.seconds, timing.tests,
+			timing.seconds / math.max(timing.tests, 1), timing.file))
+	end
+	print(string.format("%8.2f %6s %9s  %s", syntaxSeconds, "", "", "(addon syntax check)"))
+	print(string.format("%8.2f %6d %9s  %s", Now() - startedAt, passed + failed, "", "(total)"))
+end
 for _, failure in ipairs(failures) do
 	print("FAIL " .. failure)
 end
