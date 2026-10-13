@@ -101,13 +101,19 @@ PvP flag** lets you preview each flag or **Not flagged**.
 ### Custom text
 
 Choose **Custom** in a text slot's **Shows** picker to build the text from up
-to four pieces. Each piece shows one value (name, level, class, PvP flag,
-health/power current, max, percent or missing, spell name, and on the player
-frame XP and resting) with optional **Text before** and **Text after**. That
+to four pieces. Each piece shows one value (name, level, class, creature
+type, PvP flag, **Offline / dead**, health/power current, max, percent, missing
+or missing percent, spell name, and on the player frame XP and resting) with
+optional **Text before** and **Text after**. Current and max take a **Number
+style** (short `12.3K`, full `12,345` or plain `12345`), percentages one
+optional decimal. **This bar** values show whichever bar the text is on, so
+the same choice works on health, power and XP bars and ClickGrid; the **This
+bar** presets in **Shows** do the same. That
 text appears only when its piece has a value, so put a separator on the piece
 that may be missing: **Health: Missing** with before ` (-` and after `)`
-shows nothing at full health. **While casting** can replace the whole text
-with the spell name.
+shows nothing at full health. Missing values are whole numbers so that they
+can disappear at zero. **While casting** can replace the whole text with the
+spell name. **Preview data > Offline / dead** previews the status text.
 
 The first switch to **Custom** starts from the preset that was selected.
 Switching back to a preset keeps your custom pieces for later; **Edit as custom

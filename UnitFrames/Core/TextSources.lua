@@ -40,13 +40,6 @@ local function Short(value)
 	return AbbreviateNumbers(value)
 end
 
-local function Percent(cur, max)
-	if Util.IsSecret(cur) or Util.IsSecret(max) or max == 0 then
-		return 0
-	end
-	return math.floor(cur / max * 100 + 0.5)
-end
-
 local function SampleMissing(cur, max)
 	local missing = max - cur
 	return missing > 0 and Short(missing) or ""
@@ -123,6 +116,39 @@ Sources.Register("info", {
 	end,
 })
 
+Sources.Register("creatureType", {
+	label = "Creature type", group = "Identity",
+	live = function(unit) return UnitCreatureType(unit) end,
+	sample = function(v) return v.creatureType end,
+})
+
+--[[
+Offline or dead (also as a ghost), with Blizzard's own words, as compact
+raid frames show it. These states aren't secret; an opaque one counts as
+neither, like the group bars' death icon. Sample values: status = "offline"
+or "dead".
+]]
+local function Plain(value)
+	if Util.IsSecret(value) then return nil end
+	return value
+end
+
+local STATUS_TEXT = {
+	offline = PLAYER_OFFLINE or "Offline",
+	dead = DEAD or "Dead",
+}
+
+Sources.Register("status", {
+	label = "Offline / dead", group = "Identity", optional = true,
+	events = "UNIT_HEALTH UNIT_CONNECTION PLAYER_DEAD PLAYER_ALIVE PLAYER_UNGHOST",
+	sharedEvents = { PLAYER_DEAD = true, PLAYER_ALIVE = true, PLAYER_UNGHOST = true },
+	live = function(unit)
+		if Plain(UnitIsConnected(unit)) == false then return STATUS_TEXT.offline end
+		if Plain(UnitIsDead(unit)) or Plain(UnitIsGhost(unit)) then return STATUS_TEXT.dead end
+	end,
+	sample = function(v) return STATUS_TEXT[v.status] end,
+})
+
 Sources.Register("pvp", {
 	label = "PvP flag", group = "Identity", optional = true,
 	events = PVP_EVENTS, sharedEvents = PVP_SHARED_EVENTS,
@@ -165,50 +191,123 @@ Sources.Register("cast.spell", {
 -- Values: current, max, percent and missing for health, power and experience --
 
 --[[
-Registers <kind>.current, .max, .percent and .missing. `api` provides
-  live(unit)         current, max (may be secret)
-  livePercent(unit)  0..100 (may be secret)
-  liveMissing(unit)  missing amount as text, "" when nothing is missing
-  sample             keys of current and max in the sample values
-  player             player-only values: other units show nothing
+Piece options a source can use (`options = { number = true }`). Pieces store
+them as their own settings; sources read them from the piece.
 ]]
+Sources.OPTIONS = {
+	{ key = "number", label = "Number style", default = "short", values = {
+		{ "short", "Short (12.3K)" }, { "full", "Full (12,345)" }, { "plain", "Plain (12345)" },
+	} },
+	{ key = "decimals", label = "Decimals", default = 0, values = { { 0, "None (65%)" }, { 1, "One (65.4%)" } } },
+}
+
+local function Option(piece, key)
+	local value = piece and piece[key]
+	if value ~= nil then return value end
+	for _, opt in ipairs(Sources.OPTIONS) do
+		if opt.key == key then return opt.default end
+	end
+end
+
+-- Native, secret-safe number styles.
+function Sources.Number(value, style)
+	if style == "full" then return BreakUpLargeNumbers(value) end
+	if style == "plain" then return string.format("%d", value) end
+	return Short(value)
+end
+
+-- 0..100 as "65%" or "65.4%". Plain values round; secret ones go to the
+-- native formatter as they are.
+local function PercentText(value, decimals)
+	if decimals == 1 then return string.format("%.1f%%", value) end
+	if not Util.IsSecret(value) then value = math.floor(value + 0.5) end
+	return string.format("%d%%", value)
+end
+
+local function PlainPercent(cur, max)
+	if Util.IsSecret(cur) or Util.IsSecret(max) or max == 0 then return 0 end
+	return cur / max * 100
+end
+
+-- Missing share of plain values, rounded down like TruncateWhenZero, and
+-- nothing when nothing is missing.
+local function PlainMissingPercent(cur, max)
+	if Util.IsSecret(cur) or Util.IsSecret(max) or max == 0 then return nil end
+	local missing = math.floor((max - cur) / max * 100)
+	if missing > 0 then return string.format("%d%%", missing) end
+end
+
+-- Maps 0..1 to the missing 100..0 for percent texts, without Lua maths.
+local missingCurve
+local function MissingCurve()
+	if not missingCurve then
+		missingCurve = C_CurveUtil.CreateCurve()
+		missingCurve:AddPoint(0, 100)
+		missingCurve:AddPoint(1, 0)
+	end
+	return missingCurve
+end
+
+-- Integer percent, empty at zero, decided natively for secret values.
+local function NativeMissingPercent(percent)
+	return C_StringUtil.WrapString(C_StringUtil.TruncateWhenZero(percent), "", "%")
+end
+
+--[[
+Registers <kind>.current, .max, .percent, .missing and .missingPercent. `api`
+provides
+  live(unit)                current, max (may be secret)
+  livePercent(unit)         0..100 (may be secret)
+  liveMissing(unit)         missing amount as text, "" when nothing is missing
+  liveMissingPercent(unit)  missing share as text, "" when nothing is missing
+  sample                    keys of current and max in the sample values
+  player                    player-only values: other units show nothing
+]]
+local VALUE_OPTIONS = { current = { number = true }, max = { number = true }, percent = { decimals = true } }
+
 local function RegisterValues(kind, group, events, shared, api)
 	local curKey, maxKey = api.sample[1], api.sample[2]
 	local player = api.player
 	local function Live(read)
 		if not player then return read end
-		return function(unit)
-			if unit == "player" then return read(unit) end
+		return function(unit, piece)
+			if unit == "player" then return read(unit, piece) end
 		end
 	end
 	local function Register(key, label, optional, live, sample)
 		Sources.Register(kind .. "." .. key, {
 			label = label, group = group, optional = optional, player = player,
-			events = events, shared = shared,
+			events = events, shared = shared, options = VALUE_OPTIONS[key],
 			live = Live(live),
-			sample = function(v)
-				if v[curKey] ~= nil and v[maxKey] ~= nil then return sample(v) end
+			sample = function(v, piece)
+				if v[curKey] ~= nil and v[maxKey] ~= nil then return sample(v, piece) end
 			end,
 		})
 	end
 	Register("current", "Current", false,
-		function(unit) return Short((api.live(unit))) end,
-		function(v) return Short(v[curKey]) end)
+		function(unit, piece) return Sources.Number((api.live(unit)), Option(piece, "number")) end,
+		function(v, piece) return Sources.Number(v[curKey], Option(piece, "number")) end)
 	Register("max", "Max", false,
-		function(unit) return Short((select(2, api.live(unit)))) end,
-		function(v) return Short(v[maxKey]) end)
+		function(unit, piece) return Sources.Number((select(2, api.live(unit))), Option(piece, "number")) end,
+		function(v, piece) return Sources.Number(v[maxKey], Option(piece, "number")) end)
 	Register("percent", "Percent", false,
-		function(unit) return string.format("%d%%", api.livePercent(unit)) end,
-		function(v) return string.format("%d%%", Percent(v[curKey], v[maxKey])) end)
+		function(unit, piece) return PercentText(api.livePercent(unit), Option(piece, "decimals")) end,
+		function(v, piece) return PercentText(PlainPercent(v[curKey], v[maxKey]), Option(piece, "decimals")) end)
 	Register("missing", "Missing", true,
 		function(unit) return api.liveMissing(unit) end,
 		function(v) return SampleMissing(v[curKey], v[maxKey]) end)
+	Register("missingPercent", "Missing percent", true,
+		function(unit) return api.liveMissingPercent(unit) end,
+		function(v) return PlainMissingPercent(v[curKey], v[maxKey]) end)
 end
+
+Sources.VALUE_KEYS = { "current", "max", "percent", "missing", "missingPercent" }
 
 RegisterValues("health", "Health", "UNIT_HEALTH UNIT_MAXHEALTH UNIT_CONNECTION", false, {
 	live = function(unit) return UnitHealth(unit), UnitHealthMax(unit) end,
 	livePercent = function(unit) return UnitHealthPercent(unit, true, ns.Colors.PercentCurve()) end,
 	liveMissing = function(unit) return C_StringUtil.TruncateWhenZero(UnitHealthMissing(unit)) end,
+	liveMissingPercent = function(unit) return NativeMissingPercent(UnitHealthPercent(unit, true, MissingCurve())) end,
 	sample = { "health", "healthMax" },
 })
 
@@ -216,6 +315,7 @@ RegisterValues("power", "Power", "UNIT_POWER_UPDATE UNIT_MAXPOWER UNIT_DISPLAYPO
 	live = function(unit) return UnitPower(unit), UnitPowerMax(unit) end,
 	livePercent = function(unit) return UnitPowerPercent(unit, nil, false, ns.Colors.PercentCurve()) end,
 	liveMissing = function(unit) return C_StringUtil.TruncateWhenZero(UnitPowerMissing(unit)) end,
+	liveMissingPercent = function(unit) return NativeMissingPercent(UnitPowerPercent(unit, nil, false, MissingCurve())) end,
 	sample = { "power", "powerMax" },
 })
 
@@ -231,7 +331,7 @@ RegisterValues("xp", "Experience", XP_EVENTS, true, {
 	live = function() return XP() end,
 	livePercent = function()
 		local cur, max = XP()
-		return Percent(cur, max)
+		return PlainPercent(cur, max)
 	end,
 	liveMissing = function()
 		local cur, max = XP()
@@ -239,6 +339,10 @@ RegisterValues("xp", "Experience", XP_EVENTS, true, {
 			return ""
 		end
 		return SampleMissing(cur, max)
+	end,
+	liveMissingPercent = function()
+		local cur, max = XP()
+		return PlainMissingPercent(cur, max)
 	end,
 	sample = { "xp", "xpMax" },
 })
@@ -256,3 +360,28 @@ Sources.Register("xp.rested", {
 	end,
 	sample = function(v) if v.rested ~= nil then return Rested(v.rested) end end,
 })
+
+-- This bar's value -------------------------------------------------------------
+
+--[[
+bar.<key> means <kind>.<key> of the bar the slot is on (its context's `bar`:
+"health", "power" or "xp"). Templates resolve them to the concrete source
+before anything else, so they compile, share and update exactly like it;
+slots outside a bar don't offer them.
+]]
+local BAR_LABELS = { current = "Current", max = "Max", percent = "Percent", missing = "Missing",
+	missingPercent = "Missing percent" }
+
+for _, key in ipairs(Sources.VALUE_KEYS) do
+	Sources.Register("bar." .. key, {
+		label = BAR_LABELS[key], group = "This bar", relative = key,
+		optional = key == "missing" or key == "missingPercent", options = VALUE_OPTIONS[key],
+	})
+end
+
+-- The concrete source behind `source` on a host, or nil when it has none.
+function Sources.Resolve(source, context)
+	if not source.relative then return source end
+	local kind = context and context.bar
+	return kind and Sources.Get(kind .. "." .. source.relative) or nil
+end

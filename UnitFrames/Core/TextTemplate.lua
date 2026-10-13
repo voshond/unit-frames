@@ -8,10 +8,11 @@ live previews and samples all use, so they cannot disagree.
   Template.Compile({ pieces = { ... }, whileCasting = "spell" | "keep" }, context)
   Template.Get(def, context)   the same, shared between equal contents
 
-context describes the slot's host: { player = true } on the player frame.
-Sources a host can't provide (player-only values elsewhere) compile to
-nothing, like unknown ones. No context means every source (the global
-[uf:<preset>] tags).
+context describes the slot's host: { player = false } on frames that don't
+always show the player, { bar = "health" } on a health bar's slots. Sources a
+host can't provide (player-only values elsewhere, this bar's values outside
+a bar) compile to nothing, like unknown ones. No context means every source
+except this bar's values (the global [uf:<preset>] tags).
 
 Pieces, in order:
   { source = "<id>", before = "", after = "" }
@@ -54,8 +55,12 @@ local function AddEvents(events, shared, source)
 	end
 end
 
+-- Whether a host with `context` can show `source`. This bar's values need a
+-- bar; player-only values need a host that isn't known to be another unit.
 function Template.Available(source, context)
-	return not source.player or not context or context.player == true
+	source = Sources.Resolve(source, context)
+	if not source then return false end
+	return not source.player or not context or context.player ~= false
 end
 
 local function Nodes(pieces, context)
@@ -67,8 +72,8 @@ local function Nodes(pieces, context)
 			local source = piece.source and Sources.Get(piece.source)
 			if source and Template.Available(source, context) then
 				local before, after = piece.before or "", piece.after or ""
-				nodes[#nodes + 1] = { source = source, piece = piece, before = before, after = after,
-					affixed = before ~= "" or after ~= "" }
+				nodes[#nodes + 1] = { source = Sources.Resolve(source, context), piece = piece,
+					before = before, after = after, affixed = before ~= "" or after ~= "" }
 			end
 		end
 	end
@@ -160,7 +165,8 @@ function Template.Compile(def, context)
 end
 
 -- Signature of what a definition shows on a host: only the pieces it can
--- show, with length-prefixed text so no two contents encode alike.
+-- show, as concrete sources with the options they use, with length-prefixed
+-- text so no two contents encode alike.
 local function Encode(text)
 	text = tostring(text or "")
 	return #text .. ":" .. text
@@ -172,7 +178,16 @@ function Template.Signature(def, context)
 		if node.literal then
 			out[#out + 1] = "l" .. Encode(node.literal)
 		else
+			local options = {}
+			for _, opt in ipairs(Sources.OPTIONS) do
+				if node.source.options and node.source.options[opt.key] then
+					local value = node.piece[opt.key]
+					if value == nil then value = opt.default end
+					options[#options + 1] = Encode(opt.key) .. Encode(value)
+				end
+			end
 			out[#out + 1] = "s" .. Encode(node.source.id) .. Encode(node.before) .. Encode(node.after)
+				.. #options .. ":" .. table.concat(options)
 		end
 	end
 	return table.concat(out)

@@ -938,6 +938,18 @@ function Mock.Install()
 		end
 		return tostring(value)
 	end
+	-- Digit grouping with the default "," separator.
+	_G.BreakUpLargeNumbers = function(value)
+		if Mock.IsSecret(value) then
+			return Mock.Secret("brokenUp")
+		end
+		local text = tostring(math.floor(value))
+		local grouped
+		repeat
+			text, grouped = text:gsub("^(-?%d+)(%d%d%d)", "%1,%2")
+		until grouped == 0
+		return text
+	end
 	_G.C_CVar = { SetCVar = function() return true end }
 	Mock.EnforceAPI()
 end

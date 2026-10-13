@@ -123,6 +123,19 @@ function Text.AdaptCopy(group, source, context)
 	return group
 end
 
+-- A source option (TextSources.OPTIONS), shown for sources that use it.
+local function PieceOption(key)
+	for _, opt in ipairs(ns.TextSources.OPTIONS) do
+		if opt.key == key then
+			return { key = key, type = "select", label = opt.label, values = opt.values, default = opt.default,
+				hidden = function(cfg)
+					local source = ns.TextSources.Get(cfg.source)
+					return not (source and source.options and source.options[key])
+				end }
+		end
+	end
+end
+
 local function SlotSchema(spec)
 	local context = spec.context
 	local function NotCustom(cfg) return cfg.format ~= Text.CUSTOM end
@@ -153,6 +166,8 @@ local function SlotSchema(spec)
 			hidden = NotCustom, schema = {
 				{ key = "source", type = "select", label = "Source", values = SourceValues(context), default = "none",
 					tooltip = "Values that are often missing (Missing, PvP flag, Resting, Rested, spell name) should carry the separator next to them, so it disappears with them." },
+				PieceOption("number"),
+				PieceOption("decimals"),
 				{ key = "before", type = "text", label = "Text before", default = "",
 					hidden = function(cfg) return cfg.source == "none" end,
 					tooltip = "Shown only when this piece has text, e.g. \" / \" before Health: Max." },
@@ -201,7 +216,7 @@ function Text:CompileTemplate(cfg)
 		return ns.TextTemplate.Get({ pieces = pieces, whileCasting = cfg.whileCasting }, self.spec.context)
 	end
 	local preset = Formats.Get(format)
-	if Formats.Availability(preset.id, self.spec.context) == "all" then
+	if not preset.relative and Formats.Availability(preset.id, self.spec.context) == "all" then
 		return preset.template
 	end
 	return ns.TextTemplate.Get(preset, self.spec.context)

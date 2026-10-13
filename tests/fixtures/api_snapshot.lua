@@ -3,6 +3,7 @@ return {
 	version = "1.60.1.70338",
 	functions = {
 		AbbreviateNumbers = { args = { "number:number", "options:NumberAbbrevOptions?" }, returns = { "result:string" }, secretArguments = "AllowedWhenTainted", system = "Localization" },
+		BreakUpLargeNumbers = { args = { "largeNumber:number", "natural:bool?" }, returns = { "result:string" }, secretArguments = "AllowedWhenTainted", system = "Localization" },
 		["C_AddOns.GetAddOnMetadata"] = { args = { "name:uiAddon", "variable:cstring" }, returns = { "value:cstring" }, secretArguments = "AllowedWhenUntainted", system = "AddOns" },
 		["C_AddOns.LoadAddOn"] = { args = { "name:uiAddon" }, returns = { "loaded:bool?", "value:string?" }, secretArguments = "AllowedWhenUntainted", system = "AddOns" },
 		["C_CVar.SetCVar"] = { args = { "name:cstring", "value:cstring?" }, returns = { "success:bool" }, secretArguments = "NotAllowed", system = "CVarScripts" },
@@ -165,6 +166,7 @@ return {
 		["math.clamp"] = { args = { "value:number", "minimum:number", "maximum:number" }, returns = { "clampedValue:number" }, secretArguments = "AllowedWhenUntainted", system = "LuaMathExtensions" },
 		["math.normalize"] = { args = { "value:number", "minimum:number", "maximum:number" }, returns = { "normalizedValue:number" }, secretArguments = "AllowedWhenUntainted", system = "LuaMathExtensions" },
 		["math.remap"] = { args = { "value:number", "sourceMinimum:number", "sourceMaximum:number", "destinationMinimum:number", "destinationMaximum:number" }, returns = { "remappedValue:number" }, secretArguments = "AllowedWhenUntainted", system = "LuaMathExtensions" },
+		["math.round"] = { args = { "value:number", "decimalPlaces:number?" }, returns = { "roundedValue:number" }, secretArguments = "AllowedWhenUntainted", system = "LuaMathExtensions" },
 		["math.wrap"] = { args = { "value:number", "minimum:number", "maximum:number" }, returns = { "wrapped:number" }, secretArguments = "AllowedWhenUntainted", system = "LuaMathExtensions" },
 		scrubsecretvalues = { args = { "values:LuaValueReference" }, returns = { "scrubbed:LuaValueReference" }, secretArguments = "AllowedWhenUntainted", system = "FrameScript" },
 		["string.contains"] = { args = { "str:stringView", "substring:stringView" }, returns = { "contains:bool" }, secretArguments = "AllowedWhenUntainted", system = "LuaStringExtensions" },

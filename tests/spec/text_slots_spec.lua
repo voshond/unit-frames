@@ -91,11 +91,11 @@ describe("Text presets", function()
 		Mock.InstallUI()
 	end)
 
-	it("cover exactly the historical format ids", function()
+	it("keep every historical format id; new ones are this bar's values", function()
 		local ids = {}
 		for _, format in ipairs(ns.Formats.list) do
 			ids[format.id] = true
-			assert.is_not_nil(GOLDEN.events[format.id], "new format id " .. format.id)
+			assert.is_true(GOLDEN.events[format.id] ~= nil or format.id:find("^bar:") ~= nil, "new format id " .. format.id)
 		end
 		for id in pairs(GOLDEN.events) do assert.is_true(ids[id], "lost format id " .. id) end
 	end)

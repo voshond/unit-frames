@@ -21,8 +21,15 @@ ns.Formats = Formats
 
 function Formats.Register(id, preset)
 	local template = Template.Compile(preset)
+	local relative = false
+	for _, piece in ipairs(preset.pieces or {}) do
+		local source = piece.source and Sources.Get(piece.source)
+		if source and source.relative then relative = true end
+	end
 	local format = {
 		id = id, label = preset.label, pieces = preset.pieces or {}, whileCasting = preset.whileCasting,
+		-- Shows this bar's values: compiled per host, its own tag stays empty.
+		relative = relative,
 		template = template, text = template.live, sample = template.sample,
 		events = template.events, sharedEvents = template.sharedEvents,
 	}
@@ -166,6 +173,8 @@ end
 local HEALTH_VALUES = RegisterValueFormats("health", "Health")
 local POWER_VALUES = RegisterValueFormats("power", "Power")
 local XP_VALUES = RegisterValueFormats("xp", "XP")
+-- The same for whichever bar the slot is on (health, power or XP).
+local BAR_VALUES = RegisterValueFormats("bar", "This bar")
 Formats.Register("xp:rested", { label = "XP: rested", pieces = { Source("xp.rested") } })
 
 -- Format id lists per bar kind (what a text slot on that bar can show).
@@ -180,6 +189,6 @@ local function List(...)
 end
 
 local IDENTITY = { "none", "name", "level", "smartlevel", "level:name", "class", "level:class", "level:info", "resting" }
-Formats.HEALTH = List(IDENTITY, HEALTH_VALUES, { "cast:name", "level:class:cast", "level:info:cast" })
-Formats.POWER = List(IDENTITY, POWER_VALUES)
-Formats.EXPERIENCE = List({ "none", "level", "resting" }, XP_VALUES, { "xp:rested" })
+Formats.HEALTH = List(IDENTITY, HEALTH_VALUES, BAR_VALUES, { "cast:name", "level:class:cast", "level:info:cast" })
+Formats.POWER = List(IDENTITY, POWER_VALUES, BAR_VALUES)
+Formats.EXPERIENCE = List({ "none", "level", "resting" }, XP_VALUES, { "xp:rested" }, BAR_VALUES)

@@ -54,6 +54,7 @@ local function Values(unit, d, healthPct, time)
 	v.power = v.powerMax * d.power / 100
 	if d.xp then v.xp = v.xpMax * d.xp / 100 end
 	v.showCast = d.showCast
+	v.status = d.status ~= "none" and d.status or nil
 	v.raidTarget = d.raidTarget
 	v.pvp = d.pvp
 	v.outOfRange = d.outOfRange
@@ -113,6 +114,9 @@ local function RegisterUnit(unit)
 		{ key = "readyCheck", type = "select", label = "Ready check", default = "off", values = {
 			{ "off", "None" }, { "waiting", "Waiting" }, { "ready", "Ready" }, { "notready", "Not ready" },
 		}, tooltip = "Preview the saved ready check tints and icon. Static holds the answer; Animated loops a whole check: waiting, the answer, then the hold and fade after it ends." },
+		{ key = "status", type = "select", label = "Offline / dead", default = "none",
+			values = { { "none", "Neither" }, { "offline", "Offline" }, { "dead", "Dead" } },
+			tooltip = "Sample state for the Offline / dead text source. The bars still show the sample values." },
 		{ key = "pvp", type = "select", label = "PvP flag", default = "off", values = UF.Formats.PVP_FLAGS,
 			tooltip = "Sample flag for the PvP flag icon and beside Level + class or Level + class or creature type text." },
 		{ key = "buffsCount", type = "range", label = "Sample buffs", min = 0, max = 40, step = 1, default = 8,
