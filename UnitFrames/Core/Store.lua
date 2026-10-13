@@ -15,8 +15,15 @@ A settings store: the one write path for a table of user overrides.
     changed  = function(path) end,                -- after every commit; path nil = whole table
   })
 
-Set/Reset/Replace return true, or false plus a reason when validation fails
-(nothing is written then). Target() is an Inspector target for the store.
+Set/Edit/Reset/Replace return true, or false plus a reason when validation
+fails (nothing is written then). Target() is an Inspector target for the store.
+
+Descriptors may take part in writes (Core/Schema.lua):
+  onSet(group, value, resolvedGroup)   after Set writes the option: further
+                                       changes to its group in the same commit.
+                                       resolvedGroup is the effective group
+                                       before the change.
+  invoke(store, path)                  an "action" option's handler
 ]]
 local Store = ns.Object:Extend("Store")
 ns.Store = Store
@@ -68,15 +75,52 @@ local function Commit(store, candidate, path)
 	return true
 end
 
+local function Candidate(store)
+	return (store.opts.validate or store.opts.check or store.opts.write) and Util.Copy(store:Read()) or store:Read()
+end
+
+local function Parent(path)
+	return path:match("^(.*)%.[^%.]+$")
+end
+
+-- The override group at `path` ("" or nil: the top level), created if needed.
+local function Group(candidate, path)
+	if not path or path == "" then return candidate end
+	local group = Util.GetPath(candidate, path)
+	if type(group) ~= "table" then
+		group = {}
+		Util.SetPath(candidate, path, group)
+	end
+	return group
+end
+
+local function ResolvedGroup(store, path)
+	local resolved = store:Resolved()
+	if not path or path == "" then return resolved end
+	return Util.GetPath(resolved, path) or {}
+end
+
 -- value nil removes the override (back to the inherited/default value).
 function Store:Set(path, value)
-	local candidate = (self.opts.validate or self.opts.check or self.opts.write) and Util.Copy(self:Read()) or self:Read()
+	local opt = Schema.Find(self:GetSchema(), path)
+	local before = opt and opt.onSet and ResolvedGroup(self, Parent(path))
+	local candidate = Candidate(self)
 	if value == nil then
 		Util.ClearPath(candidate, path)
 	else
 		Util.SetPath(candidate, path, value)
 	end
+	if before then opt.onSet(Group(candidate, Parent(path)), value, before) end
 	return Commit(self, candidate, path)
+end
+
+-- Several changes to the group at `path` as one commit:
+-- edit(group, resolvedGroup) changes the override table `group`.
+function Store:Edit(path, edit)
+	local resolved = ResolvedGroup(self, path)
+	local candidate = Candidate(self)
+	edit(Group(candidate, path), resolved)
+	return Commit(self, candidate, path ~= "" and path or nil)
 end
 
 -- Replaces every override at once (copying settings, presets).
@@ -99,5 +143,12 @@ function Store:Target(report, resolved)
 			if not ok and report then report(reason) end
 		end,
 		resolved = resolved or function() return self:Resolved() end,
+		invoke = function(path) self:Invoke(path) end,
 	}
+end
+
+-- Runs an action option's own handler, if it has one.
+function Store:Invoke(path)
+	local opt = Schema.Find(self:GetSchema(), path)
+	if opt and opt.invoke then opt.invoke(self, path) end
 end

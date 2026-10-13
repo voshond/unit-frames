@@ -30,6 +30,8 @@ spec:
   frame     use this frame as the root (the oUF unit button); else one is created
   width     default width (of the rows area, including the border padding)
   resting   offer the resting border (player)
+  playerFrame  the frame always shows the player: its texts offer player-only
+            sources (XP, resting)
   readyCheck  offer ready check bar tints
   rows      array of {
               key, label,
@@ -169,10 +171,10 @@ function UnitFrame:OnCreate(parent, spec)
 	local native = spec.auraBar and spec.auraBar.collapsible or nil
 	self.nativeLayout = native
 	for _, def in ipairs(spec.rows) do
-		local rowSpec = def.spec
+		local rowSpec = UnitFrame.RowSpec(spec, def)
 		-- Its bar follows a collapsing icon row's native extent.
 		if native and def.key == "health" then
-			rowSpec = ns.Util.Merge(ns.Util.Copy(def.spec), { nativeLayout = true })
+			rowSpec.nativeLayout = true
 		end
 		local row = self:Own(TextBar:New(self.frame, {}, rowSpec))
 		self.rows[#self.rows + 1] = { def = def, component = row }
@@ -197,6 +199,11 @@ function UnitFrame:OnCreate(parent, spec)
 		end)
 		self.readyCheck:Attach(self.partsByKey.readyCheckIcon)
 	end
+end
+
+-- A row's spec on this frame: its texts learn what the frame provides.
+function UnitFrame.RowSpec(spec, def)
+	return ns.Util.Merge(ns.Util.Copy(def.spec), { textContext = { player = spec.playerFrame == true } })
 end
 
 function UnitFrame.BuildSchema(spec)
@@ -243,7 +250,7 @@ function UnitFrame.BuildSchema(spec)
 			extra[#extra + 1] = opt
 		end
 		schema[#schema + 1] = { key = row.key, type = "group", label = row.label,
-			schema = GroupSchema(TextBar.BuildSchema(row.spec), extra), defaults = row.defaults }
+			schema = GroupSchema(TextBar.BuildSchema(UnitFrame.RowSpec(spec, row)), extra), defaults = row.defaults }
 	end
 	AddParts(false)
 	return ns.Util.Copy(schema)
@@ -431,7 +438,7 @@ function UnitFrame:GetLeadingName()
 	local row = self.rowsByKey.health
 	if row and row:IsEnabled() then
 		for _, text in row:EnabledTexts() do
-			if text.resolved.justifyH == "LEFT" and (text:GetFormat() == "name" or text:GetFormat() == "level:name") then
+			if text.resolved.justifyH == "LEFT" and text:LeadsWithName() then
 				return text
 			end
 		end

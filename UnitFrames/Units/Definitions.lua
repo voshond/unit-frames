@@ -33,6 +33,8 @@ local EXPERIENCE_ROW = {
 
 Units.definitions.player = {
 	label = "Player",
+	-- Its unit is always the player: player-only texts (XP, resting) apply.
+	playerFrame = true,
 	resting = true,
 	width = 230,
 	defaultPosition = { point = "CENTER", x = -280, y = -160 },
@@ -188,7 +190,8 @@ for _, unit in ipairs(Units.order) do
 end
 
 function Units:GetSpec(def, frame)
-	local spec = { frame = frame, rows = def.rows, width = def.width, resting = def.resting, readyCheck = def.readyCheck }
+	local spec = { frame = frame, rows = def.rows, width = def.width, resting = def.resting, readyCheck = def.readyCheck,
+		playerFrame = def.playerFrame }
 	for _, part in ipairs(ns.Components.UnitFrame.PARTS) do spec[part.key] = def[part.key] end
 	return spec
 end

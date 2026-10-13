@@ -812,6 +812,8 @@ function Mock.Install()
 	_G.strlenutf8 = function(s) return #s end
 	_G.tinsert = table.insert
 	_G.wipe = function(t) for k in pairs(t) do t[k] = nil end return t end
+	-- The client's table library has it too (embedded oUF's tags use it).
+	table.wipe = _G.wipe
 	_G.securecallfunction = function(fn, ...) return fn(...) end
 	_G.geterrorhandler = function() return error end
 	_G.INTERRUPTED = "Interrupted"
@@ -935,6 +937,18 @@ function Mock.Install()
 			return Mock.Secret("abbreviated")
 		end
 		return tostring(value)
+	end
+	-- Digit grouping with the default "," separator.
+	_G.BreakUpLargeNumbers = function(value)
+		if Mock.IsSecret(value) then
+			return Mock.Secret("brokenUp")
+		end
+		local text = tostring(math.floor(value))
+		local grouped
+		repeat
+			text, grouped = text:gsub("^(-?%d+)(%d%d%d)", "%1,%2")
+		until grouped == 0
+		return text
 	end
 	_G.C_CVar = { SetCVar = function() return true end }
 	Mock.EnforceAPI()

@@ -9,6 +9,8 @@ text above it moves to the top half (unless its position is set by hand).
 
 spec: everything Bar takes (segments, colorInherit), plus
   formats       format ids the texts may show (Core/Formats.lua)
+  textContext   what the host provides to its texts (see Text); the bar adds
+                its own `valueKind` ("health", "power", "xp") as `bar`
   textDefaults  default format per slot, e.g. { left = "name", right = "health:value" };
                 { format = ..., enabled = false } offers a format but starts switched off
   nativeLayout  the bar can follow native geometry (see Bar); ExtendBar moves
@@ -27,6 +29,10 @@ TextBar.SLOTS = {
 	{ key = "belowRight", label = "Small text below right", justifyH = "RIGHT", below = "right", size = 9 },
 }
 
+local function TextContext(spec)
+	return ns.Util.Merge(ns.Util.Copy(spec.textContext or {}), { bar = spec.valueKind })
+end
+
 function TextBar:OnCreate(parent, spec)
 	if spec.nativeLayout then
 		self.frame = CreateFrame("Frame", nil, parent)
@@ -39,13 +45,14 @@ function TextBar:OnCreate(parent, spec)
 	local host = self.bar:GetTextParent()
 	self.texts = {}
 	for _, slot in ipairs(TextBar.SLOTS) do
-		self.texts[slot.key] = self:Own(Text:New(host, {}, { host = host, formats = spec.formats }))
+		self.texts[slot.key] = self:Own(Text:New(host, {}, { host = host, formats = spec.formats, context = TextContext(spec) }))
 	end
 end
 
 function TextBar.BuildSchema(spec)
 	spec = spec or {}
 	local textDefaults = spec.textDefaults or {}
+	local context = TextContext(spec)
 	local schema = {
 		{ key = "enabled", type = "toggle", label = "Enabled", default = true },
 		{ key = "bar", type = "group", label = "Bar", schema = Bar.BuildSchema(spec), defaults = ns.Util.Copy(spec.barDefaults) },
@@ -57,7 +64,8 @@ function TextBar.BuildSchema(spec)
 			format, enabled = default.format, default.enabled ~= false
 		end
 		schema[#schema + 1] = {
-			key = slot.key, type = "group", label = slot.label, schema = Text.BuildSchema({ host = true, formats = spec.formats }),
+			key = slot.key, type = "group", label = slot.label, textSlot = context,
+			schema = Text.BuildSchema({ host = true, formats = spec.formats, context = context }),
 			defaults = { justifyH = slot.justifyH, format = format or "none", enabled = enabled, size = slot.size },
 		}
 	end
