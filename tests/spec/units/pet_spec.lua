@@ -9,7 +9,7 @@ describe("Player pet", function()
 		frame = ns.Units.frames.pet
 	end)
 
-	it("spawns a compact pet frame with its own position, health, power, shields and auras", function()
+	it("spawns a compact pet frame with its own position, health, power, shields and auras #shields", function()
 		assert.equals("pet", frame.__unit)
 		assert.equals("UnitFramesPet", frame:GetName())
 		assert.is_true(frame:IsProtected())

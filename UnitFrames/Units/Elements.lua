@@ -10,7 +10,7 @@ for _, format in ipairs(ns.Formats.list) do
 	if format.events then
 		oUF.Tags.Events[name] = format.events
 		for event in format.events:gmatch("%S+") do
-			if format.shared or (format.sharedEvents and format.sharedEvents[event]) then
+			if format.sharedEvents and format.sharedEvents[event] then
 				oUF.Tags.SharedEvents[event] = true
 			end
 		end

@@ -60,14 +60,23 @@ local function BindDriver(frame, driver, component, on)
 	SetElement(frame, driver.element, widget, signature)
 end
 
+-- Presets the host fully shows use their shared [uf:<id>] tag; other slots
+-- a reusable handle tag (Units/TextTags.lua).
 local function TagRow(frame, row, rowEnabled)
+	local TextTags = ns.TextTags
 	for _, slot in ipairs(ns.Components.TextBar.SLOTS) do
 		local text = row:GetText(slot.key)
 		local fs = text:GetFrame()
-		local format = text:GetFormat()
-		if rowEnabled and text:IsEnabled() and format ~= "none" then
-			frame:Tag(fs, Formats.Tag(format))
+		local template, preset = text:GetTemplate(), text:GetPresetTag()
+		if rowEnabled and text:IsEnabled() and not template.empty then
+			if preset then
+				TextTags.Unbind(fs)
+				frame:Tag(fs, Formats.Tag(preset))
+			else
+				TextTags.Bind(frame, fs, template)
+			end
 		else
+			TextTags.Unbind(fs)
 			frame:Untag(fs)
 			fs:SetText("")
 		end
@@ -126,6 +135,22 @@ local function CopySettings(schema, source, overrides, defaults)
 	return result
 end
 
+-- Text slots copy only what the destination can show (Text.AdaptCopy).
+local function AdaptTexts(schema, source, copy)
+	for _, opt in ipairs(schema) do
+		if opt.type == "group" and type(source[opt.key]) == "table" then
+			if opt.textSlot then
+				local group = ns.Components.Text.AdaptCopy(copy[opt.key] or {}, source[opt.key], opt.textSlot)
+				if next(group) then copy[opt.key] = group end
+			else
+				local child = copy[opt.key] or {}
+				AdaptTexts(opt.schema, source[opt.key], child)
+				if next(child) then copy[opt.key] = child end
+			end
+		end
+	end
+end
+
 function Units:CopyPlayerSettings(unit)
 	local player, target = self.frames.player, self.frames[unit]
 	if unit == "player" or not player or not target then return false end
@@ -134,7 +159,9 @@ function Units:CopyPlayerSettings(unit)
 	local source = ns.Schema.Resolve(player.uf:GetSchema(), overrides, theme)
 	local defaults = ns.Schema.Resolve(schema, nil, theme)
 	-- Positions live separately in Edit Mode. The target's schema excludes XP.
-	return ns.Config:UnitStore(unit):Replace(CopySettings(schema, source, overrides, defaults))
+	local copy = CopySettings(schema, source, overrides, defaults)
+	AdaptTexts(schema, source, copy)
+	return ns.Config:UnitStore(unit):Replace(copy)
 end
 
 -- Unit tooltip hooks for oUF frames. Blizzard's UnitFrame_OnEnter reads

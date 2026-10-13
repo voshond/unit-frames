@@ -24,6 +24,8 @@ Core\Theme.lua
 Core\Media.lua
 Core\Config.lua
 Core\Colors.lua
+Core\TextSources.lua
+Core\TextTemplate.lua
 Core\Formats.lua
 
 Components\Component.lua
@@ -67,6 +69,7 @@ Units\Definitions.lua
 Units\Cast.lua
 Units\Drivers.lua
 Units\Elements.lua
+Units\TextTags.lua
 Units\Style.lua
 Units\Preview.lua
 
