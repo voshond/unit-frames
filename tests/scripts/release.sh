@@ -12,9 +12,9 @@ done
 cp "$repo_dir/LICENSE" "$fixture/"
 cp "$repo_dir/scripts/release.sh" "$repo_dir/scripts/validate-release.lua" \
 	"$repo_dir/scripts/publish-curseforge.sh" "$repo_dir/scripts/test-tag.sh" "$fixture/scripts/"
-cp "$repo_dir/tests/fixtures/pre-push/run-tests.sh" "$fixture/scripts/"
+cp "$repo_dir/tests/fixtures/stub-runner/run-tests.sh" "$fixture/scripts/"
 mkdir -p "$fixture/tests"
-cp "$repo_dir/tests/fixtures/pre-push/pass" "$fixture/tests/marker"
+cp "$repo_dir/tests/fixtures/stub-runner/pass" "$fixture/tests/marker"
 cd "$fixture"
 git init -q
 git config user.name 'Release test'
@@ -29,7 +29,7 @@ git tag 1.0.0
 # Dirty and untracked runtime files must not leak into the tagged archive.
 cp scripts/release.sh UnitFrames/untracked.sh
 cp scripts/release.sh UnitFrames/Core/Init.lua
-cp "$repo_dir/tests/fixtures/pre-push/fail" tests/marker
+cp "$repo_dir/tests/fixtures/stub-runner/fail" tests/marker
 # Recovery must test tagged code, excluding dirty working files.
 export HOOK_TEST_LOG="$release_test_tmp/tag-test-runs"
 bash scripts/test-tag.sh 1.0.0

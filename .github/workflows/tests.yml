@@ -1,9 +1,9 @@
 name: Tests
 
+# Runs on pull requests rather than pushes; branch protection requires the
+# "LuaJIT test suite" check before merging into main.
 on:
   pull_request:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
