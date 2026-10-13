@@ -1834,6 +1834,7 @@ definition defaultPosition.y = -160
 definition label = "Player"
 definition portrait.defaults.enabled = true
 definition pvp.defaults = {}
+definition raidTarget.defaults = {}
 definition readyCheck = true
 definition readyCheckIcon.defaults = {}
 definition resting = true
@@ -2863,6 +2864,7 @@ definition defaultPosition.y = -235
 definition label = "Player pet"
 definition portrait.defaults.enabled = false
 definition pvp.defaults = {}
+definition raidTarget.defaults = {}
 definition readyCheck = true
 definition readyCheckIcon.defaults = {}
 definition rows = {{defaults={height=22,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=10,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
@@ -3902,6 +3904,7 @@ definition label = "Target"
 definition portrait.defaults.enabled = true
 definition portrait.defaults.position = "RIGHT"
 definition pvp.defaults = {}
+definition raidTarget.defaults = {}
 definition readyCheck = true
 definition readyCheckIcon.defaults = {}
 definition rows = {{defaults={height=26},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=12,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
@@ -4944,6 +4947,7 @@ definition defaultPosition.y = -160
 definition label = "Target of target"
 definition portrait.defaults.enabled = false
 definition pvp.defaults = {}
+definition raidTarget.defaults = {}
 definition readyCheck = true
 definition readyCheckIcon.defaults = {}
 definition rows = {{defaults={height=20,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=8,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
@@ -5973,6 +5977,7 @@ definition defaultPosition.y = -290
 definition label = "Focus"
 definition portrait.defaults.enabled = false
 definition pvp.defaults = {}
+definition raidTarget.defaults = {}
 definition readyCheck = true
 definition readyCheckIcon.defaults = {}
 definition rows = {{defaults={height=24},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=10,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
@@ -7010,6 +7015,7 @@ definition defaultPosition.y = -290
 definition label = "Focus target"
 definition portrait.defaults.enabled = false
 definition pvp.defaults = {}
+definition raidTarget.defaults = {}
 definition readyCheck = true
 definition readyCheckIcon.defaults = {}
 definition rows = {{defaults={height=20,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={height=8,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
@@ -9677,6 +9683,7 @@ definition defaultPosition.x = 510
 definition defaultPosition.y = -160
 definition label = "Target of target"
 definition portrait.defaults.enabled = false
+definition raidTarget.defaults = {}
 definition rows = {{defaults={height=28,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"}}},{defaults={enabled=false,height=8,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"}}}}
 definition sample.class = "WARRIOR"
 definition sample.className = "Warrior"

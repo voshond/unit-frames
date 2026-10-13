@@ -24,6 +24,25 @@ describe("ClickGrid companion", function()
 		assert.equals(UF.Units.STYLE, UF.oUF:GetActiveStyle())
 	end)
 
+	it("keeps addon state off the secure unit buttons and headers", function()
+		local function NoAddonFields(frame, name)
+			for key in pairs(frame) do
+				local addonKey = type(key) == "string" and (key:match("^ufcg") or key == "ufReady")
+				assert.is_true(not addonKey, name .. " carries " .. tostring(key))
+			end
+		end
+		for _, frame in ipairs(CG.frames) do NoAddonFields(frame, frame:GetName()) end
+		for key, header in pairs(CG.headers) do NoAddonFields(header, key) end
+		for unit, frame in pairs(UF.Units.frames) do NoAddonFields(frame, unit) end
+		local cell = CG.headers.party:GetAttribute("child1")
+		assert.equals("member", CG:GetGridButton(cell.Member).kind)
+		assert.is_not_nil(CG:GetGridButton(cell.Member).status)
+		assert.equals("target", CG:GetGridButton(cell.Target).kind)
+		assert.is_nil(CG:GetGridButton(cell.Target).slots, "targets have no member extras")
+		assert.is_nil(CG:GetGridButton(cell), "the structural cell is not a unit button")
+		assert.is_not_nil(CG:GetHeaderTitles(CG.headers.party).label)
+	end)
+
 	it("runs the embedded oUF header initializer on the structural cell and both unit children", function()
 		local file = assert(io.open("UnitFrames/Libs/oUF/ouf.lua"))
 		local source = file:read("*a"); file:close()
@@ -148,7 +167,7 @@ describe("ClickGrid companion", function()
 	it("reserves title size and gap without changing grid spacing", function()
 		local cfg = CG.Config:Resolved()
 		local original = CG.Layout.Compute(cfg.panel, CG.metrics.member, CG.metrics.target, cfg.titles)
-		assert.equals("Group 1", CG.headers.group1.ufcgLabel:GetText())
+		assert.equals("Group 1", CG:GetHeaderTitles(CG.headers.group1).label:GetText())
 		CG.Config:Set("titles.size", 20)
 		CG.Config:Set("titles.gap", 9)
 		cfg = CG.Config:Resolved()
@@ -164,14 +183,14 @@ describe("ClickGrid companion", function()
 		cfg = CG.Config:Resolved()
 		local hidden = CG.Layout.Compute(cfg.panel, CG.metrics.member, CG.metrics.target, cfg.titles)
 		assert.equals(below.party.height - 31, hidden.party.height)
-		assert.is_false(CG.headers.party.ufcgLabel:IsShown())
+		assert.is_false(CG:GetHeaderTitles(CG.headers.party).label:IsShown())
 		CG.Config:Set("titles.enabled", true)
-		assert.is_true(CG.headers.party.ufcgLabel:IsShown())
+		assert.is_true(CG:GetHeaderTitles(CG.headers.party).label:IsShown())
 	end)
 
 	it("anchors titles to native headers and defers changes during combat", function()
 		local header = CG.headers.party
-		local label = header.ufcgLabel
+		local label = CG:GetHeaderTitles(header).label
 		CG.Config:Set("titles.offsetX", 7)
 		CG.Config:Set("titles.offsetY", -3)
 		assert.same({ "BOTTOMLEFT", header, "TOPLEFT", 7, 14 }, { label:GetPoint() })
@@ -279,7 +298,7 @@ describe("ClickGrid companion", function()
 			UF.oUF.elements.UF_Auras.update(cell.Member)
 			UF.oUF.elements.UFCG_Slots.update(cell.Member)
 		end)
-		assert.equals("raid22", cell.Member.ufcgSlots.container:GetUnit())
+		assert.equals("raid22", CG:GetGridButton(cell.Member).slots.container:GetUnit())
 		assert.equals(count, #CG.frames)
 		header:Assign(1, nil)
 		assert.has_no_error(function() UF.oUF.elements.UF_Auras.update(cell.Member) end)
@@ -294,7 +313,7 @@ describe("ClickGrid companion", function()
 		assert.is_true(member:IsElementEnabled("UFCG_DeathIndicator"))
 		-- The base mock has no private aura API. Absence is a capability, not an error.
 		assert.is_false(member:IsElementEnabled("PrivateAuras"))
-		assert.equals(3, #member.ufcgStatus.PrivateAuras)
+		assert.equals(3, #CG:GetGridButton(member).status.PrivateAuras)
 		assert.is_nil(member.ThreatIndicator)
 		CG.Config:Set("indicators.threat", true)
 		member.__unit = "raid1"
@@ -344,7 +363,7 @@ describe("ClickGrid companion", function()
 		local name = frame.uf:GetRow("health"):GetText("left")
 		local cfg = CG.Config:Resolved().indicators
 		assert.is_true(role:GetParent():GetFrameLevel() > frame.uf:GetRow("health"):GetBar():GetTextParent():GetFrameLevel())
-		assert.is_true(frame.ufcgStatus.ReadyCheckIndicator:GetParent():GetFrameLevel() > frame:GetFrameLevel())
+		assert.is_true(CG:GetGridButton(frame).status.ReadyCheckIndicator:GetParent():GetFrameLevel() > frame:GetFrameLevel())
 		assert.equals(cfg.roleSize + cfg.roleGap, name.leadingSpace)
 		assert.equals(name.resolved.inset + name.resolved.offsetX + name.leadingSpace, select(4, name:GetFrame():GetPoint(1)))
 		local point, relative, relativePoint, x = role:GetParent():GetPoint()
@@ -377,7 +396,7 @@ describe("ClickGrid companion", function()
 		CG.Config:Set("indicators.readyPosition", "TOP")
 		CG.Config:Set("indicators.readySize", 14)
 		local frame = CG.headers.party:GetAttribute("child1").Member
-		local marker, leader, ready = frame.uf:GetPart("raidTarget"), frame.LeaderIndicator, frame.ufcgStatus.ReadyCheckIndicator
+		local marker, leader, ready = frame.uf:GetPart("raidTarget"), frame.LeaderIndicator, CG:GetGridButton(frame).status.ReadyCheckIndicator
 		assert.same({ "CENTER", frame, "TOP", 0, 0 }, Anchor(leader:GetParent()), "absent icons keep their own position")
 		Native(leader, true)
 		assert.same({ "CENTER", frame, "TOP", 0, 0 }, Anchor(leader:GetParent()))
@@ -407,7 +426,7 @@ describe("ClickGrid companion", function()
 		CG.Config:Set("indicators.readyPosition", "TOP")
 		CG.Config:Set("indicators.readySize", 14)
 		local frame = CG.headers.party:GetAttribute("child1").Member
-		local leader, ready = frame.LeaderIndicator, frame.ufcgStatus.ReadyCheckIndicator
+		local leader, ready = frame.LeaderIndicator, CG:GetGridButton(frame).status.ReadyCheckIndicator
 		Native(leader, true)
 		frame.uf:GetReadyCheck():Set("ready")
 		CG.Config:Set("indicators.readyOrder", 1)
@@ -442,7 +461,7 @@ describe("ClickGrid companion", function()
 		CG.Config:Set("indicators.readyPosition", "TOP")
 		CG.Config:Set("indicators.readySize", 14)
 		local frame = CG.headers.party:GetAttribute("child1").Member
-		local role, leader, ready = frame.GroupRoleIndicator, frame.LeaderIndicator, frame.ufcgStatus.ReadyCheckIndicator
+		local role, leader, ready = frame.GroupRoleIndicator, frame.LeaderIndicator, CG:GetGridButton(frame).status.ReadyCheckIndicator
 		frame.uf:GetReadyCheck():Set("ready")
 		Mock.RunUntainted(leader.SetShown, leader, Mock.Secret(true)) -- an engine-owned shown state
 		assert.has_no_error(function() leader:PostUpdate() end)
@@ -505,7 +524,7 @@ describe("ClickGrid companion", function()
 		CG.Config:Set("indicators.readyPosition", "TOP")
 		CG.Config:Set("indicators.readySize", 14)
 		local frame = CG.headers.party:GetAttribute("child1").Member
-		local death, ready = frame.UFCG_DeathIndicator, frame.ufcgStatus.ReadyCheckIndicator
+		local death, ready = frame.UFCG_DeathIndicator, CG:GetGridButton(frame).status.ReadyCheckIndicator
 		local element, events = UF.oUF.elements.UFCG_DeathIndicator, {}
 		local function Atlas()
 			for i = #death.__calls, 1, -1 do
@@ -548,7 +567,7 @@ describe("ClickGrid companion", function()
 
 	it("stacks resurrection and summon and restores health text after resurrection", function()
 		local frame = CG.headers.party:GetAttribute("child1").Member
-		local status, row = frame.ufcgStatus, frame.uf:GetRow("health")
+		local status, row = CG:GetGridButton(frame).status, frame.uf:GetRow("health")
 		local rez, summon = frame.ResurrectIndicator, frame.SummonIndicator
 		Mock.incomingResurrections.party1 = true
 		frame.__unit = "party1"
@@ -652,17 +671,17 @@ describe("ClickGrid companion", function()
 		assert.is_nil(config.font, "inherited values stay inherited")
 		assert.equals("CENTER", config.durationPosition, "member aura group defaults carry over")
 		UF.Config:SetThemeValue("font", "Arial Narrow")
-		assert.equals("Arial Narrow", frame.ufcgSlots.resolved.font)
+		assert.equals("Arial Narrow", CG:GetGridButton(frame).slots.resolved.font)
 		CG.Config:SetStyle("member", "auras.font", "Morpheus")
-		assert.equals("Morpheus", frame.ufcgSlots.resolved.font)
+		assert.equals("Morpheus", CG:GetGridButton(frame).slots.resolved.font)
 		CG.Config:SetStyle("member", "auras.enabled", false)
-		assert.is_false(frame.ufcgSlots:IsEnabled())
-		assert.equals(frame.uf, frame.ufcgSlots.componentOwner)
-		assert.equals(frame.uf, frame.ufcgStatus.componentOwner)
+		assert.is_false(CG:GetGridButton(frame).slots:IsEnabled())
+		assert.equals(frame.uf, CG:GetGridButton(frame).slots.componentOwner)
+		assert.equals(frame.uf, CG:GetGridButton(frame).status.componentOwner)
 	end)
 
 	it("defers slot restyling while native aura buttons deny access, then retries at combat end", function()
-		local slots = CG.headers.party:GetAttribute("child1").Member.ufcgSlots
+		local slots = CG:GetGridButton(CG.headers.party:GetAttribute("child1").Member).slots
 		local config = UF.Util.Copy(slots.config)
 		config.slot1 = config.slot1 or {}
 		config.slot1.offsetX = 7
@@ -743,7 +762,7 @@ describe("ClickGrid companion", function()
 		assert.is_false(CG.Config:Set("slots.slot1.spell", "1e999"))
 		CG.Config:Set("slots.slot1.spell", "139,774")
 		CG.Config:Set("slots.slot1.enabled", true)
-		local slots = CG.headers.party:GetAttribute("child1").Member.ufcgSlots
+		local slots = CG:GetGridButton(CG.headers.party:GetAttribute("child1").Member).slots
 		local native = slots.container.__state.slots.slot1
 		assert.equals("HELPFUL|PLAYER", native.filter)
 		assert.same({ [139] = true, [774] = true }, native.candidateFilters.includeSpellIDs)
@@ -764,10 +783,10 @@ describe("ClickGrid Workbench", function()
 		wb.dataTarget.set("count", 25)
 		local preview, header = wb.handle, CG.headers.raid
 		assert.is_false(preview.labels.raid:IsShown())
-		assert.is_false(header.ufcgLabel:IsShown())
+		assert.is_false(CG:GetHeaderTitles(header).label:IsShown())
 		for column = 1, 5 do
 			assert.equals("Group " .. column, preview.labels["column" .. column]:GetText())
-			assert.equals("Group " .. column, header.ufcgColumnLabels[column]:GetText())
+			assert.equals("Group " .. column, CG:GetHeaderTitles(header).columns[column]:GetText())
 			assert.equals(preview.layout.cellWidth, preview.labels["column" .. column]:GetWidth())
 		end
 		local cfg = CG.Config:Resolved()
@@ -778,13 +797,13 @@ describe("ClickGrid Workbench", function()
 		assert.equals(-CG.Layout.TitleHeight(cfg.titles), select(5, preview.background:GetPoint()))
 		CG.Config:Set("titles.group2", "Healers")
 		assert.equals("Healers", preview.labels.column2:GetText())
-		assert.equals("Healers", header.ufcgColumnLabels[2]:GetText())
+		assert.equals("Healers", CG:GetHeaderTitles(header).columns[2]:GetText())
 		CG.Config:Set("titles.enabled", false)
 		assert.is_false(preview.labels.column2:IsShown())
-		assert.is_false(header.ufcgColumnLabels[2]:IsShown())
+		assert.is_false(CG:GetHeaderTitles(header).columns[2]:IsShown())
 		CG.Config:Set("panel.mode", "subgroups")
 		assert.is_false(preview.labels.column2:IsShown())
-		assert.is_false(header.ufcgColumnLabels[2]:IsVisible())
+		assert.is_false(CG:GetHeaderTitles(header).columns[2]:IsVisible())
 	end)
 
 	it("previews five-by-five preferences with safe overflow rather than rewriting either control", function()
@@ -871,7 +890,7 @@ describe("ClickGrid Workbench", function()
 		CG.Config:Set("titles.color", { 0.2, 0.4, 0.6, 0.8 })
 		CG.Config:Set("titles.alignment", "RIGHT")
 		CG.Config:Set("titles.shadow", false)
-		local live, preview = CG.headers.group1.ufcgLabel, wb.handle.labels.group1
+		local live, preview = CG:GetHeaderTitles(CG.headers.group1).label, wb.handle.labels.group1
 		assert.equals("Healing team", live:GetText())
 		assert.equals(live:GetText(), preview:GetText())
 		assert.equals("Group 2", wb.handle.labels.group2:GetText())

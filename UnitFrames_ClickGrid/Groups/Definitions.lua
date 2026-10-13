@@ -27,9 +27,9 @@ CG.definitions = {
 		auras = { clickThrough = true },
 	}),
 }
--- Group bars show status icons instead of the unit frames' PvP flag, elite
--- icons. Status places the shared ready check icon using its existing
--- indicator controls. Their targets are not part of the check.
+-- Group bars show status icons instead of the unit frames' PvP flag and elite
+-- icon. Status places its own ready check icon among the other indicators and
+-- attaches it to the member's ReadyCheck. Targets are not part of the check.
 for _, def in pairs(CG.definitions) do
 	def.pvp, def.classification, def.readyCheckIcon = nil, nil, nil
 end

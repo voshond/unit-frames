@@ -1,81 +1,43 @@
 local _, ns = ...
-local Units, Colors = ns.Units, ns.Colors
+local Units = ns.Units
 
--- Fills a UnitFrame component with plain sample values (Workbench preview,
--- later Edit Mode test frames). Values: see Units.SAMPLE.
-local fillers = {}
+-- Fills a UnitFrame component without oUF, through the same data drivers
+-- (Units/Drivers.lua) as its live bindings.
 
-function fillers.health(row, cfg, v)
-	ns.UnitRows.SampleHealth(row, v)
-	if cfg.colorMode == "class" then
-		row:SetColor(Colors.Sample(v))
-	elseif cfg.colorMode == "gradient" then
-		row:SetColor(Colors.HealthCurve():Evaluate(v.health / v.healthMax):GetRGB())
-	else
-		row:ClearColor()
-	end
-end
-
-function fillers.power(row, _, v)
-	ns.UnitRows.SamplePower(row, v)
-end
-
-function fillers.experience(row, _, v)
-	ns.UnitRows.Experience(row, v.xp, v.xpMax, v.rested)
-end
-
--- Sample feeders per optional part (UnitFrame.PARTS).
-local parts = {}
-
-function parts.portrait(portrait)
-	if portrait:IsEnabled() then
-		portrait:SetUnit("player") -- the real character; there's no sample model
-	end
-end
-
--- values.showCast = false hides the sample cast (it can cover the health bar).
-function parts.castbar(castbar, v)
-	if not castbar:IsEnabled() then return end
-	if v.showCast == false then
-		castbar:Hide()
-	else
-		local progress = v.castProgress
-		castbar:Preview({ name = v.spell, icon = v.spellIcon }, progress, string.format("%.1f", v.castTime * (1 - progress)))
-	end
-end
-
-function parts.auras(auras, v)
-	auras:ShowSample(v)
-end
-
-function parts.raidTarget(marker, v)
-	marker:SetIndex(v.raidTarget)
-end
-
-function parts.pvp(flag, v)
-	flag:SetSample(v.pvp)
-end
-
-function parts.classification(icon, v)
-	icon:SetClassification(v.isPlayer == false and v.classification or nil)
-end
-
+-- Plain sample values (Workbench, previews); see Units.SAMPLE.
 function Units:ShowSample(uf, values)
-	uf:SetRangeState(values.outOfRange ~= true, true)
-	uf:SetResting(uf.spec.resting and values.resting == true, values.restingAnimated == true)
-	-- values.readyCheck: "waiting", "ready", "notready" or nil; with
-	-- readyCheckTime the sample loops through a whole check (tints and icon).
-	local readyCheck = uf:GetReadyCheck()
-	if readyCheck then
-		readyCheck:Sample(values.readyCheck, values.readyCheckTime, values.readyCheckAnswerAt)
+	local Drivers = ns.UnitDrivers
+	for _, driver in ipairs(Drivers.frame) do
+		if driver.sample then driver.sample(uf, values) end
 	end
 	for key, row, cfg in uf:Rows() do
-		if cfg.enabled and fillers[key] then
-			fillers[key](row, cfg, values)
+		local sample = Drivers.Row(key).sample
+		if cfg.enabled and sample then
+			sample(row, values, cfg)
 			row:ShowSample(values)
 		end
 	end
-	for key, part in uf:Parts() do
-		if parts[key] then parts[key](part, values) end
+	for key, part, cfg in uf:Parts() do
+		local sample = Drivers.Part(key).sample
+		if sample then sample(part, values, cfg) end
+	end
+end
+
+-- An explicit unit polled by the owner (ClickGrid's live preview). `ctx` is
+-- the caller's scratch table for this preview (e.g. its native heal
+-- prediction calculator). Event-driven state (casts, ready checks) is not
+-- polled.
+function Units:ShowLive(uf, unit, ctx)
+	local Drivers = ns.UnitDrivers
+	for _, driver in ipairs(Drivers.frame) do
+		if driver.live then driver.live(uf, unit, ctx) end
+	end
+	for key, row, cfg in uf:Rows() do
+		local live = Drivers.Row(key).live
+		if cfg.enabled and live then live(row, unit, ctx, cfg) end
+	end
+	for key, part, cfg in uf:Parts() do
+		local live = Drivers.Part(key).live
+		if live then live(part, unit, ctx, cfg) end
 	end
 end

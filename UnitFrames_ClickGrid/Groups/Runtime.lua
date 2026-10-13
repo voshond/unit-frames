@@ -1,6 +1,14 @@
 local _, CG = ...
 local UF, oUF = CG.UF, CG.UF.oUF
 
+-- Title font strings per secure header, kept off the header itself:
+-- { label = section title, columns = flat raid column titles }.
+local headerTitles = {}
+
+function CG:GetHeaderTitles(header)
+	return headerTitles[header]
+end
+
 function CG:CreateHeader(key, capacity, filter, role)
 	-- SpawnHeader hides Blizzard party frames only if showParty is supplied
 	-- here. Configure it later through normal header attributes instead.
@@ -34,8 +42,9 @@ function CG:CreateHeader(key, capacity, filter, role)
 	header:SetAttribute("startingIndex", 1)
 	header:SetAttribute("showSolo", false)
 	self.headers[key] = header
-	header.ufcgLabel = header:CreateFontString(nil, "OVERLAY")
-	header.ufcgLabel:Hide()
+	local titles = { label = header:CreateFontString(nil, "OVERLAY"), columns = {} }
+	titles.label:Hide()
+	headerTitles[header] = titles
 	return header
 end
 
@@ -104,28 +113,28 @@ function CG:Refresh()
 	for key, header in pairs(self.headers) do
 		local section = layout.sections[key]
 		local visible = section ~= nil
-		for _, label in ipairs(header.ufcgColumnLabels or {}) do label:Hide() end
+		local titles = headerTitles[header]
+		for _, label in ipairs(titles.columns) do label:Hide() end
 		if section then
 			if key == "raid" then
-				header.ufcgLabel:Hide()
-				header.ufcgColumnLabels = header.ufcgColumnLabels or {}
+				titles.label:Hide()
 				for column = 1, section.grid.columns do
-					local label = header.ufcgColumnLabels[column]
+					local label = titles.columns[column]
 					if not label then
 						label = header:CreateFontString(nil, "OVERLAY")
-						header.ufcgColumnLabels[column] = label
+						titles.columns[column] = label
 					end
 					self.Layout.TitleOnHeader(label, header, "group" .. column,
 						{ grid = { width = layout.cellWidth } }, cfg.titles, cfg.panel.padding,
 						(column - 1) * (layout.cellWidth + cfg.panel.spacingX))
 				end
-			else self.Layout.TitleOnHeader(header.ufcgLabel, header, key, section, cfg.titles, cfg.panel.padding) end
+			else self.Layout.TitleOnHeader(titles.label, header, key, section, cfg.titles, cfg.panel.padding) end
 			header:ClearAllPoints()
 			header:SetPoint("TOPLEFT", self.panel, "TOPLEFT", section.x, -section.y)
 			header:SetAttribute("_ignore", true)
 			for attribute, value in pairs(self.Layout.Attributes(section.grid, cfg.panel)) do header:SetAttribute(attribute, value) end
 			header:SetAttribute("_ignore", nil)
-		else header.ufcgLabel:Hide() end
+		else titles.label:Hide() end
 		if key == "party" then
 			header:SetAttribute("showSolo", cfg.panel.showSolo)
 			header:SetVisibility("custom [group:raid] hide; " .. (cfg.panel.showSolo and "show" or "[group:party] show; hide"))
@@ -135,11 +144,12 @@ function CG:Refresh()
 	self.bindingErrors = errors
 	local external = self.Bindings:IsExternal()
 	for _, frame in ipairs(self.frames) do
-		local kind = frame.ufcgKind
+		local button = self:GetGridButton(frame)
+		local kind = button.kind
 		frame.uf:Apply(self.Config:GetStyle(kind))
 		UF.Units:Bind(frame)
-		if frame.ufcgStatus then frame.ufcgStatus:Apply(self.Config:Get().indicators) end
-		if frame.ufcgSlots then frame.ufcgSlots:Apply(self:SlotConfig(frame.uf)) end
+		if button.status then button.status:Apply(self.Config:Get().indicators) end
+		if button.slots then button.slots:Apply(self:SlotConfig(frame.uf)) end
 		frame:ClearAllPoints()
 		local cell = frame:GetParent()
 		if kind == "target" then

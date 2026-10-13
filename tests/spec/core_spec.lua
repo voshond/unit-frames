@@ -131,6 +131,30 @@ describe("Config", function()
 		ns.Config:SetThemeValue("colors.health", { 0, 1, 0, 1 })
 		assert.equals("colors.health", fired)
 	end)
+
+	-- Listeners run in hash order: a refresh must not depend on another
+	-- listener (e.g. a cache invalidation) having run first.
+	it("gives ThemeChanged listeners a current health gradient in any order", function()
+		local stale = ns.Colors.HealthCurve()
+		local events = ns.Events.callbacks.events
+		local others = events.ThemeChanged
+		events.ThemeChanged = nil -- only the probe listens
+		local seen = {}
+		ns.Events.RegisterCallback({}, "ThemeChanged", function()
+			seen[#seen + 1] = ns.Colors.HealthCurve()
+		end)
+		ns.Config:SetThemeValue("colors.health", { 0, 0, 1, 1 })
+		ns.Config.db:SetProfile("Other")
+		events.ThemeChanged = others
+
+		assert.equals(2, #seen)
+		assert.is_true(stale ~= seen[1], "rebuilt for the new colour")
+		assert.same({ 0, 0, 1 }, { seen[1]:Evaluate(1):GetRGB() })
+		assert.is_true(seen[1] ~= seen[2], "a profile change rebuilds it too")
+		local r, g, b = seen[2]:Evaluate(1):GetRGB()
+		assert.same({ 10, 80, 10 }, { math.floor(r * 100 + 0.5), math.floor(g * 100 + 0.5), math.floor(b * 100 + 0.5) },
+			"the new profile's default health colour")
+	end)
 end)
 
 describe("UnitFrames_Media", function()

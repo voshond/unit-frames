@@ -63,6 +63,7 @@ Widgets\Inspector.lua
 Units\Rows.lua
 Units\Definitions.lua
 Units\Cast.lua
+Units\Drivers.lua
 Units\Elements.lua
 Units\Style.lua
 Units\Preview.lua

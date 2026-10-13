@@ -167,22 +167,27 @@ function Units:CreateFromDefinition(def, parent, config, frame)
 	return ns.Components.UnitFrame:New(parent, config or {}, self:GetSpec(def, frame))
 end
 
--- Every unit frame offers PvP flag, elite and ready check icons. Defined per
--- unit (not in GetSpec) so companion styles deriving these definitions can
--- leave them out.
+-- What every unit frame offers, with default settings unless its definition
+-- sets its own. Set on the definitions (not in GetSpec) so companion styles
+-- deriving them can leave any out by setting the key to nil.
+Units.COMMON = {
+	raidTarget = { defaults = {} },
+	pvp = { defaults = {} },
+	classification = { defaults = {} },
+	readyCheck = true,
+	readyCheckIcon = { defaults = {} },
+}
+
 for _, unit in ipairs(Units.order) do
 	local def = Units.definitions[unit]
-	def.pvp = def.pvp or { defaults = {} }
-	def.classification = def.classification or { defaults = {} }
-	def.readyCheck = true
-	def.readyCheckIcon = def.readyCheckIcon or { defaults = {} }
+	for key, value in pairs(Units.COMMON) do
+		if def[key] == nil then def[key] = ns.Util.Copy(value) end
+	end
 end
 
--- Every unit offers a raid target icon, with default settings unless defined.
 function Units:GetSpec(def, frame)
 	local spec = { frame = frame, rows = def.rows, width = def.width, resting = def.resting, readyCheck = def.readyCheck }
 	for _, part in ipairs(ns.Components.UnitFrame.PARTS) do spec[part.key] = def[part.key] end
-	spec.raidTarget = spec.raidTarget or { defaults = {} }
 	return spec
 end
 

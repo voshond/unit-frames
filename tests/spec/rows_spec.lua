@@ -64,4 +64,22 @@ describe("Derived unit definitions", function()
 		assert.is_nil(Units.definitions.pet.auras.clickThrough)
 		assert.has_error(function() Units:Derive("pet", { rows = { experience = {} } }) end)
 	end)
+
+	it("offers the common parts on every unit and lets derived styles leave any out", function()
+		local ns = Helpers.LoadAddon(true)
+		Helpers.Mock.InstallUI()
+		local Units = ns.Units
+		for _, unit in ipairs(Units.order) do
+			local spec = Units:GetSpec(Units:GetDefinition(unit))
+			for key in pairs(Units.COMMON) do assert.is_not_nil(spec[key], unit .. " offers " .. key) end
+		end
+		assert.is_true(Units.definitions.pet.raidTarget ~= Units.definitions.target.raidTarget, "independent defaults")
+		local def = Units:Derive("pet")
+		def.raidTarget, def.pvp = nil, nil
+		local uf = Units:CreateFromDefinition(def, UIParent, {})
+		assert.is_nil(uf:GetPart("raidTarget"), "the raid marker can be left out like the others")
+		assert.is_nil(uf:GetPart("pvp"))
+		assert.is_not_nil(uf:GetPart("classification"))
+		assert.is_not_nil(Units.definitions.pet.raidTarget, "the base definition keeps it")
+	end)
 end)
