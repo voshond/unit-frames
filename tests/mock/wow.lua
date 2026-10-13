@@ -129,7 +129,7 @@ local function CheckMethod(self, key, ...)
 		if def.protected and untainted == 0 and self.__state.protected and InCombatLockdown() then
 			error(string.format("%s:%s is protected and blocked in combat", objectType, key), 3)
 		end
-		API.CheckArgs(objectType .. ":" .. key, def, Mock.IsSecret, untainted > 0, ...)
+		API.CheckArgs(objectType, key, def, Mock.IsSecret, untainted > 0, ...)
 	elseif modelled and not Mock.HELPERS[key] then
 		local templated = self.__state.template or INTRINSIC_MIXINS[objectType]
 		if not (templated and API.LuaMethod(key)) then
@@ -952,7 +952,7 @@ function Mock.EnforceAPI()
 		local impl = type(owner) == "table" and rawget(owner, key)
 		if type(impl) == "function" and not enforced[impl] then
 			local wrapper = function(...)
-				API.CheckArgs(name, def, Mock.IsSecret, untainted > 0, ...)
+				API.CheckArgs(nil, name, def, Mock.IsSecret, untainted > 0, ...)
 				return impl(...)
 			end
 			enforced[wrapper] = true
