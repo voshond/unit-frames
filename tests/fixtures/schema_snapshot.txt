@@ -334,10 +334,10 @@ resolved enabled = true
 resolved mode = "3D"
 ## raidTarget
 option enabled type="toggle" label="Enabled" default=true
-option anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
+option anchor type="select" label="Anchor" default="TOP" values=#264ec2f3 tooltip=#62138585
 option order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
 option gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
+option size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#d4c36bb1
 option offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default anchor = "TOP"
@@ -1233,35 +1233,35 @@ option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 ma
 option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
-option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
+option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#264ec2f3 tooltip=#62138585
 option raidTarget.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
 option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
+option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#d4c36bb1
 option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option pvp type="group" label="PvP flag icon" defaults={}
 option pvp.enabled type="toggle" label="Enabled" default=true
-option pvp.anchor type="select" label="Anchor" default="TOPLEFT" values=#f2227030 tooltip=#a1871125
+option pvp.anchor type="select" label="Anchor" default="TOPLEFT" values=#264ec2f3 tooltip=#62138585
 option pvp.order type="range" label="Order" default=2 min=1 max=10 step=1 tooltip=#07604784
 option pvp.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#d4c36bb1
 option pvp.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option pvp.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option pvp.background type="toggle" label="Background circle" default=true tooltip=#41e3a163
 option classification type="group" label="Elite / rare icon" defaults={}
 option classification.enabled type="toggle" label="Enabled" default=true
-option classification.anchor type="select" label="Anchor" default="TOPRIGHT" values=#f2227030 tooltip=#a1871125
+option classification.anchor type="select" label="Anchor" default="TOPRIGHT" values=#264ec2f3 tooltip=#62138585
 option classification.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
 option classification.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#d4c36bb1
 option classification.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option classification.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option readyCheckIcon type="group" label="Ready check icon" defaults={}
 option readyCheckIcon.enabled type="toggle" label="Enabled" default=true
-option readyCheckIcon.anchor type="select" label="Anchor" default="CENTER" values=#f2227030 tooltip=#a1871125
+option readyCheckIcon.anchor type="select" label="Anchor" default="CENTER" values=#264ec2f3 tooltip=#62138585
 option readyCheckIcon.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
 option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#e997fb28
+option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1
 option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auraBar.border.background = "None"
@@ -2566,35 +2566,35 @@ option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 ma
 option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
-option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
+option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#264ec2f3 tooltip=#62138585
 option raidTarget.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
 option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
+option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#d4c36bb1
 option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option pvp type="group" label="PvP flag icon" defaults={}
 option pvp.enabled type="toggle" label="Enabled" default=true
-option pvp.anchor type="select" label="Anchor" default="TOPLEFT" values=#f2227030 tooltip=#a1871125
+option pvp.anchor type="select" label="Anchor" default="TOPLEFT" values=#264ec2f3 tooltip=#62138585
 option pvp.order type="range" label="Order" default=2 min=1 max=10 step=1 tooltip=#07604784
 option pvp.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#d4c36bb1
 option pvp.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option pvp.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option pvp.background type="toggle" label="Background circle" default=true tooltip=#41e3a163
 option classification type="group" label="Elite / rare icon" defaults={}
 option classification.enabled type="toggle" label="Enabled" default=true
-option classification.anchor type="select" label="Anchor" default="TOPRIGHT" values=#f2227030 tooltip=#a1871125
+option classification.anchor type="select" label="Anchor" default="TOPRIGHT" values=#264ec2f3 tooltip=#62138585
 option classification.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
 option classification.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#d4c36bb1
 option classification.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option classification.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option readyCheckIcon type="group" label="Ready check icon" defaults={}
 option readyCheckIcon.enabled type="toggle" label="Enabled" default=true
-option readyCheckIcon.anchor type="select" label="Anchor" default="CENTER" values=#f2227030 tooltip=#a1871125
+option readyCheckIcon.anchor type="select" label="Anchor" default="CENTER" values=#264ec2f3 tooltip=#62138585
 option readyCheckIcon.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
 option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#e997fb28
+option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1
 option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auraBar.border.background = "None"
@@ -3769,35 +3769,35 @@ option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 ma
 option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
-option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
+option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#264ec2f3 tooltip=#62138585
 option raidTarget.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
 option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
+option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#d4c36bb1
 option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option pvp type="group" label="PvP flag icon" defaults={}
 option pvp.enabled type="toggle" label="Enabled" default=true
-option pvp.anchor type="select" label="Anchor" default="TOPLEFT" values=#f2227030 tooltip=#a1871125
+option pvp.anchor type="select" label="Anchor" default="TOPLEFT" values=#264ec2f3 tooltip=#62138585
 option pvp.order type="range" label="Order" default=2 min=1 max=10 step=1 tooltip=#07604784
 option pvp.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#d4c36bb1
 option pvp.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option pvp.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option pvp.background type="toggle" label="Background circle" default=true tooltip=#41e3a163
 option classification type="group" label="Elite / rare icon" defaults={}
 option classification.enabled type="toggle" label="Enabled" default=true
-option classification.anchor type="select" label="Anchor" default="TOPRIGHT" values=#f2227030 tooltip=#a1871125
+option classification.anchor type="select" label="Anchor" default="TOPRIGHT" values=#264ec2f3 tooltip=#62138585
 option classification.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
 option classification.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#d4c36bb1
 option classification.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option classification.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option readyCheckIcon type="group" label="Ready check icon" defaults={}
 option readyCheckIcon.enabled type="toggle" label="Enabled" default=true
-option readyCheckIcon.anchor type="select" label="Anchor" default="CENTER" values=#f2227030 tooltip=#a1871125
+option readyCheckIcon.anchor type="select" label="Anchor" default="CENTER" values=#264ec2f3 tooltip=#62138585
 option readyCheckIcon.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
 option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#e997fb28
+option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1
 option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auraBar.border.background = "None"
@@ -4960,35 +4960,35 @@ option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 ma
 option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
-option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
+option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#264ec2f3 tooltip=#62138585
 option raidTarget.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
 option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
+option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#d4c36bb1
 option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option pvp type="group" label="PvP flag icon" defaults={}
 option pvp.enabled type="toggle" label="Enabled" default=true
-option pvp.anchor type="select" label="Anchor" default="TOPLEFT" values=#f2227030 tooltip=#a1871125
+option pvp.anchor type="select" label="Anchor" default="TOPLEFT" values=#264ec2f3 tooltip=#62138585
 option pvp.order type="range" label="Order" default=2 min=1 max=10 step=1 tooltip=#07604784
 option pvp.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#d4c36bb1
 option pvp.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option pvp.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option pvp.background type="toggle" label="Background circle" default=true tooltip=#41e3a163
 option classification type="group" label="Elite / rare icon" defaults={}
 option classification.enabled type="toggle" label="Enabled" default=true
-option classification.anchor type="select" label="Anchor" default="TOPRIGHT" values=#f2227030 tooltip=#a1871125
+option classification.anchor type="select" label="Anchor" default="TOPRIGHT" values=#264ec2f3 tooltip=#62138585
 option classification.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
 option classification.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#d4c36bb1
 option classification.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option classification.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option readyCheckIcon type="group" label="Ready check icon" defaults={}
 option readyCheckIcon.enabled type="toggle" label="Enabled" default=true
-option readyCheckIcon.anchor type="select" label="Anchor" default="CENTER" values=#f2227030 tooltip=#a1871125
+option readyCheckIcon.anchor type="select" label="Anchor" default="CENTER" values=#264ec2f3 tooltip=#62138585
 option readyCheckIcon.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
 option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#e997fb28
+option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1
 option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auraBar.border.background = "None"
@@ -6155,35 +6155,35 @@ option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 ma
 option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
-option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
+option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#264ec2f3 tooltip=#62138585
 option raidTarget.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
 option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
+option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#d4c36bb1
 option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option pvp type="group" label="PvP flag icon" defaults={}
 option pvp.enabled type="toggle" label="Enabled" default=true
-option pvp.anchor type="select" label="Anchor" default="TOPLEFT" values=#f2227030 tooltip=#a1871125
+option pvp.anchor type="select" label="Anchor" default="TOPLEFT" values=#264ec2f3 tooltip=#62138585
 option pvp.order type="range" label="Order" default=2 min=1 max=10 step=1 tooltip=#07604784
 option pvp.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#d4c36bb1
 option pvp.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option pvp.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option pvp.background type="toggle" label="Background circle" default=true tooltip=#41e3a163
 option classification type="group" label="Elite / rare icon" defaults={}
 option classification.enabled type="toggle" label="Enabled" default=true
-option classification.anchor type="select" label="Anchor" default="TOPRIGHT" values=#f2227030 tooltip=#a1871125
+option classification.anchor type="select" label="Anchor" default="TOPRIGHT" values=#264ec2f3 tooltip=#62138585
 option classification.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
 option classification.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#d4c36bb1
 option classification.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option classification.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option readyCheckIcon type="group" label="Ready check icon" defaults={}
 option readyCheckIcon.enabled type="toggle" label="Enabled" default=true
-option readyCheckIcon.anchor type="select" label="Anchor" default="CENTER" values=#f2227030 tooltip=#a1871125
+option readyCheckIcon.anchor type="select" label="Anchor" default="CENTER" values=#264ec2f3 tooltip=#62138585
 option readyCheckIcon.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
 option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#e997fb28
+option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1
 option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auraBar.border.background = "None"
@@ -7340,35 +7340,35 @@ option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 ma
 option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
-option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
+option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#264ec2f3 tooltip=#62138585
 option raidTarget.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
 option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
+option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#d4c36bb1
 option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option pvp type="group" label="PvP flag icon" defaults={}
 option pvp.enabled type="toggle" label="Enabled" default=true
-option pvp.anchor type="select" label="Anchor" default="TOPLEFT" values=#f2227030 tooltip=#a1871125
+option pvp.anchor type="select" label="Anchor" default="TOPLEFT" values=#264ec2f3 tooltip=#62138585
 option pvp.order type="range" label="Order" default=2 min=1 max=10 step=1 tooltip=#07604784
 option pvp.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option pvp.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#d4c36bb1
 option pvp.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option pvp.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option pvp.background type="toggle" label="Background circle" default=true tooltip=#41e3a163
 option classification type="group" label="Elite / rare icon" defaults={}
 option classification.enabled type="toggle" label="Enabled" default=true
-option classification.anchor type="select" label="Anchor" default="TOPRIGHT" values=#f2227030 tooltip=#a1871125
+option classification.anchor type="select" label="Anchor" default="TOPRIGHT" values=#264ec2f3 tooltip=#62138585
 option classification.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
 option classification.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#e997fb28
+option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#d4c36bb1
 option classification.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option classification.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option readyCheckIcon type="group" label="Ready check icon" defaults={}
 option readyCheckIcon.enabled type="toggle" label="Enabled" default=true
-option readyCheckIcon.anchor type="select" label="Anchor" default="CENTER" values=#f2227030 tooltip=#a1871125
+option readyCheckIcon.anchor type="select" label="Anchor" default="CENTER" values=#264ec2f3 tooltip=#62138585
 option readyCheckIcon.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
 option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#e997fb28
+option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1
 option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auraBar.border.background = "None"
@@ -9269,10 +9269,10 @@ option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 ma
 option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={size=12}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
-option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
+option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#264ec2f3 tooltip=#62138585
 option raidTarget.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
 option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
+option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#d4c36bb1
 option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auraBar.border.background = "None"
@@ -10402,10 +10402,10 @@ option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 ma
 option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
-option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
+option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#264ec2f3 tooltip=#62138585
 option raidTarget.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784
 option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
-option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
+option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#d4c36bb1
 option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 default auraBar.border.background = "None"
@@ -11135,35 +11135,35 @@ option titles.group7 type="text" label="Group / column 7 title" default="Group 7
 option titles.group8 type="text" label="Group / column 8 title" default="Group 8"
 option indicators type="group" label="Status indicators"
 option indicators.role type="toggle" label="Group role" default=true
-option indicators.rolePosition type="select" label="Role icon position" default="NAME" values=#1fe6f2dd tooltip=#9f6df31b hidden
+option indicators.rolePosition type="select" label="Role icon position" default="NAME" values=#3c413e60 tooltip=#77ef08c3 hidden
 option indicators.roleSize type="range" label="Role icon size" default=14 min=8 max=64 step=1 hidden
 option indicators.roleOrder type="range" label="Role icon order" default=2 min=1 max=10 step=1 tooltip=#b6361d3f hidden
 option indicators.roleGap type="range" label="Role icon gap" default=2 min=0 max=20 step=1 tooltip=#bd35420d hidden
 option indicators.roleOffsetX type="range" label="Role icon horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
 option indicators.roleOffsetY type="range" label="Role icon vertical offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
 option indicators.leader type="toggle" label="Leader / assistant" default=true
-option indicators.leaderPosition type="select" label="Leader icon position" default="TOP" values=#1fe6f2dd tooltip=#0fb1d625 hidden
+option indicators.leaderPosition type="select" label="Leader icon position" default="TOP" values=#3c413e60 tooltip=#40ae0c0d hidden
 option indicators.leaderSize type="range" label="Leader icon size" default=14 min=8 max=64 step=1 hidden
 option indicators.leaderOrder type="range" label="Leader icon order" default=3 min=1 max=10 step=1 tooltip=#b6361d3f hidden
 option indicators.leaderGap type="range" label="Leader icon gap" default=2 min=0 max=20 step=1 tooltip=#bd35420d hidden
 option indicators.leaderOffsetX type="range" label="Leader icon horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
 option indicators.leaderOffsetY type="range" label="Leader icon vertical offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
 option indicators.ready type="toggle" label="Ready check" default=true
-option indicators.readyPosition type="select" label="Ready check icon position" default="CENTER" values=#1fe6f2dd tooltip=#e99bb5ef hidden
+option indicators.readyPosition type="select" label="Ready check icon position" default="CENTER" values=#3c413e60 tooltip=#e017c417 hidden
 option indicators.readySize type="range" label="Ready check icon size" default=22 min=8 max=64 step=1 hidden
 option indicators.readyOrder type="range" label="Ready check icon order" default=4 min=1 max=10 step=1 tooltip=#b6361d3f hidden
 option indicators.readyGap type="range" label="Ready check icon gap" default=2 min=0 max=20 step=1 tooltip=#bd35420d hidden
 option indicators.readyOffsetX type="range" label="Ready check icon horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
 option indicators.readyOffsetY type="range" label="Ready check icon vertical offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
 option indicators.death type="toggle" label="Dead / ghost" default=true
-option indicators.deathPosition type="select" label="Dead / ghost icon position" default="TOP" values=#1fe6f2dd tooltip=#665adde7 hidden
+option indicators.deathPosition type="select" label="Dead / ghost icon position" default="TOP" values=#3c413e60 tooltip=#0a361f0f hidden
 option indicators.deathSize type="range" label="Dead / ghost icon size" default=14 min=8 max=64 step=1 hidden
 option indicators.deathOrder type="range" label="Dead / ghost icon order" default=5 min=1 max=10 step=1 tooltip=#b6361d3f hidden
 option indicators.deathGap type="range" label="Dead / ghost icon gap" default=2 min=0 max=20 step=1 tooltip=#bd35420d hidden
 option indicators.deathOffsetX type="range" label="Dead / ghost icon horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
 option indicators.deathOffsetY type="range" label="Dead / ghost icon vertical offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
 option indicators.resurrection type="toggle" label="Incoming resurrection" default=true
-option indicators.resurrectionPosition type="select" label="Resurrection icon position" default="TOP" values=#1fe6f2dd tooltip=#7f8c4c92 hidden
+option indicators.resurrectionPosition type="select" label="Resurrection icon position" default="TOP" values=#3c413e60 tooltip=#f7b0cb9a hidden
 option indicators.resurrectionSize type="range" label="Resurrection icon size" default=14 min=8 max=64 step=1 hidden
 option indicators.resurrectionOrder type="range" label="Resurrection icon order" default=6 min=1 max=10 step=1 tooltip=#b6361d3f hidden
 option indicators.resurrectionGap type="range" label="Resurrection icon gap" default=2 min=0 max=20 step=1 tooltip=#bd35420d hidden
@@ -11171,7 +11171,7 @@ option indicators.resurrectionOffsetX type="range" label="Resurrection icon hori
 option indicators.resurrectionOffsetY type="range" label="Resurrection icon vertical offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
 option indicators.resurrectionText type="toggle" label="Green health text for incoming resurrection" default=true hidden
 option indicators.summon type="toggle" label="Summon" default=true
-option indicators.summonPosition type="select" label="Summon icon position" default="TOP" values=#1fe6f2dd tooltip=#af7510dd hidden
+option indicators.summonPosition type="select" label="Summon icon position" default="TOP" values=#3c413e60 tooltip=#4888f1c5 hidden
 option indicators.summonSize type="range" label="Summon icon size" default=14 min=8 max=64 step=1 hidden
 option indicators.summonOrder type="range" label="Summon icon order" default=7 min=1 max=10 step=1 tooltip=#b6361d3f hidden
 option indicators.summonGap type="range" label="Summon icon gap" default=2 min=0 max=20 step=1 tooltip=#bd35420d hidden
