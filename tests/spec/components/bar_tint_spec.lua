@@ -20,6 +20,22 @@ describe("Bar tint", function()
 		end
 	end
 
+	it("reuses owned colour and tint storage while forwarding new secret payloads", function()
+		local bar = C.Bar:New(parent, {})
+		bar:SetColor(Secret(0.2), Secret(0.4), Secret(0.6))
+		local data = bar.dataColor
+		bar:SetColor(Secret(0.3), Secret(0.5), Secret(0.7))
+		assert.equals(data, bar.dataColor)
+		assert.equals(bar.dataColor[1], bar.bar.__state.color[1])
+		bar:SetTint(1, 0, 0, 1)
+		local tint = bar.tint
+		bar:SetTint(0, 1, 0, 0.5)
+		assert.equals(tint, bar.tint)
+		bar:SetTint(nil)
+		bar:SetTint(0, 0, 1, 1)
+		assert.equals(tint, bar.tint)
+	end)
+
 	it("crossfades over a secret data colour without touching it", function()
 		local bar = C.Bar:New(parent, {}, { segments = SEGMENTS })
 		local fill = bar.bar:GetStatusBarTexture()

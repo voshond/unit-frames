@@ -22,12 +22,19 @@ ReadyCheckIcon.schema = StackIcon.BuildIconSchema({ anchor = "CENTER", size = 22
 -- status: "ready", "notready", "waiting" or nil; alpha: 0..1 (fading out).
 function ReadyCheckIcon:SetStatus(status, alpha)
 	local atlas = status and ReadyCheckIcon.ATLASES[status]
-	if atlas and (alpha or 1) > 0 then
-		self.texture:SetAtlas(atlas)
+	local present = atlas ~= nil and (alpha or 1) > 0
+	if present then
+		if self.statusAtlas ~= atlas then
+			self.texture:SetAtlas(atlas)
+			self.statusAtlas = atlas
+		end
 		self.texture:SetAlpha(alpha or 1)
 		self.texture:Show()
 	else
 		self.texture:Hide()
 	end
-	self:Reflow()
+	if self.statusPresent ~= present then
+		self.statusPresent = present
+		self:Reflow()
+	end
 end

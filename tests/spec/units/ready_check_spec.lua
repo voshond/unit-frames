@@ -56,6 +56,25 @@ describe("Ready check tints", function()
 		end
 	end
 
+	it("does no hold-period painting or alpha-only geometry work", function()
+		local ready, stack = uf:GetReadyCheck(), uf:GetDecorations()
+		ready:Set("ready")
+		ready:Finish()
+		local paints, reflows, tint, reflow = 0, 0, ready.tint, stack.Reflow
+		ready.tint = function(...) paints = paints + 1; return tint(...) end
+		stack.Reflow = function(self) reflows = reflows + 1; return reflow(self) end
+		local driver = ready.driver
+		for _ = 1, 60 do driver:GetScript("OnUpdate")(driver, 1 / 60) end
+		assert.equals(0, paints)
+		assert.equals(0, reflows)
+		Step(1.75)
+		assert.is_true(paints > 0)
+		assert.equals(0, reflows)
+		Step(1)
+		assert.equals(1, reflows, "the icon leaves its slot at zero opacity")
+		assert.is_nil(driver:GetScript("OnUpdate"))
+	end)
+
 	it("is offered and bound on every unit frame and ClickGrid member bars", function()
 		for _, unit in ipairs(ns.Units.order) do
 			local live = ns.Units.frames[unit]

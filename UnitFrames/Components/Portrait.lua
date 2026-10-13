@@ -144,7 +144,8 @@ end
 -- The owner's range fade: the native range results (possibly secret) and the
 -- out-of-range alpha, or nil without a fade.
 function Portrait:SetRangeFade(inRange, checkedRange, outsideAlpha)
-	self.rangeFade = inRange ~= nil and { inRange, checkedRange, outsideAlpha } or nil
+	self.hasRangeFade = inRange ~= nil
+	self.rangeInRange, self.rangeChecked, self.rangeOutsideAlpha = inRange, checkedRange, outsideAlpha
 	self:SyncAlpha()
 end
 
@@ -160,11 +161,11 @@ function Portrait:SyncAlpha()
 	if self.released or not self.resolved or self.resolved.mode ~= "3D" then
 		return
 	end
-	local model, fade = self.model, self.rangeFade
+	local model = self.model
 	model:SetModelAlpha(self.coverAlpha or 1)
-	if fade then
-		model:SetAlphaFromBoolean(fade[1], 1, fade[3])
-		model:SetAlphaFromBoolean(fade[2], model:GetAlpha(), 1)
+	if self.hasRangeFade then
+		model:SetAlphaFromBoolean(self.rangeInRange, 1, self.rangeOutsideAlpha)
+		model:SetAlphaFromBoolean(self.rangeChecked, model:GetAlpha(), 1)
 	else
 		model:SetAlpha(1)
 	end

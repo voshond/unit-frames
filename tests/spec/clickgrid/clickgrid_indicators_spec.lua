@@ -5,6 +5,32 @@ describe("ClickGrid status indicators", function()
 	local UF, CG
 	before_each(function() UF, CG = Helpers.LoadClickGrid() end)
 
+	it("only reflows death indicators when their plain presence changes", function()
+		local frame = CG.headers.party:GetAttribute("child1").Member
+		frame.__unit = "party1"
+		local element = UF.oUF.elements.UFCG_DeathIndicator
+		local stack, reflows = frame.uf:GetDecorations(), 0
+		local reflow = stack.Reflow
+		stack.Reflow = function(self) reflows = reflows + 1; return reflow(self) end
+		element.update(frame)
+		local initial = reflows
+		for _ = 1, 100 do element.update(frame) end
+		assert.equals(initial, reflows)
+		Mock.dead.party1 = true
+		element.update(frame)
+		assert.equals(initial + 1, reflows)
+		Mock.dead.party1, Mock.ghosts.party1 = false, true
+		element.update(frame)
+		assert.equals(initial + 1, reflows, "dead to ghost occupies the same slot")
+		Mock.ghosts.party1 = false
+		element.update(frame)
+		assert.equals(initial + 2, reflows)
+		frame.__unit = "party2"
+		Mock.dead.party2 = Mock.Secret(true)
+		element.update(frame)
+		assert.equals(initial + 2, reflows)
+	end)
+
 	it("uses independent member defaults and inherited styles", function()
 		assert.equals(150, CG.definitions.member.width)
 		assert.equals(170, UF.Units.definitions.pet.width)

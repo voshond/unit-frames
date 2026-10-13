@@ -198,6 +198,7 @@ function Text:OnApply(cfg)
 	else
 		fs:SetShadowOffset(0, 0)
 	end
+	self.baseColor = CreateColor(Util.UnpackColor(cfg.color))
 	self:ApplyColor()
 	fs:SetJustifyH(cfg.justifyH)
 	fs:SetWordWrap(false)
@@ -287,7 +288,16 @@ end
 -- Transient status colour; the condition may be secret. Keep the configured
 -- colour as the native false branch, including after a style reapplication.
 function Text:SetColorCondition(condition, color)
-	self.colorCondition = color and { condition = condition, color = color } or nil
+	if color then
+		self.conditionStorage = self.conditionStorage or {}
+		self.conditionStorage.condition, self.conditionStorage.color = condition, color
+		self.colorCondition = self.conditionStorage
+	else
+		self.colorCondition = nil
+		if self.conditionStorage then
+			self.conditionStorage.condition, self.conditionStorage.color = nil, nil
+		end
+	end
 	self:ApplyColor()
 end
 
@@ -296,7 +306,7 @@ function Text:ApplyColor()
 	local override = self.colorCondition
 	if override and ns.Caps.curves then
 		local color = C_CurveUtil.EvaluateColorFromBoolean(override.condition,
-			override.color, CreateColor(Util.UnpackColor(base)))
+			override.color, self.baseColor)
 		self.frame:SetTextColor(color:GetRGBA())
 	else
 		self.frame:SetTextColor(Util.UnpackColor(base))
