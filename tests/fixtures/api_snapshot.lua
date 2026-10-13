@@ -1348,6 +1348,7 @@ return {
 			Show = "Interface/AddOns/Blizzard_EncounterWarnings/EncounterWarningsView.lua",
 			UnitHasIncomingResurrection = "Interface/AddOns/Blizzard_UnitFrame/Shared/CompactUnitFrame.lua",
 			Warrior = "Interface/AddOns/Blizzard_BoostTutorial/Blizzard_TutorialRacialData.lua",
+			action = "Interface/AddOns/Blizzard_SharedXML/ScriptedAnimations/ScriptAnimatedModelScene.lua",
 			addons = "Interface/AddOns/Blizzard_CombatAudioAlerts/Blizzard_CombatAudioAlertManager.lua",
 			after = "Interface/AddOns/Blizzard_RestrictedAddOnEnvironment/SecureAuraHeader.lua",
 			anchor = "Interface/AddOns/Blizzard_SharedXML/Mainline/UIDropDownMenu.lua",

@@ -89,6 +89,28 @@ function Mock.SecureDelegate(fn)
 	return function(...) return Mock.RunUntainted(fn, ...) end
 end
 
+-- Forbidden layout aspect (UntrustedLayoutScriptExecution). Regions get it
+-- from DisableUntrustedLayoutScriptsTemplate at creation, from a native aura
+-- container once it has a group, and from any ancestor that has it. Addon
+-- code may only anchor or parent a region to one of these when the region
+-- carries the aspect as well; their layout scripts (OnSizeChanged) never run.
+local LAYOUT_ASPECT_TEMPLATE = "DisableUntrustedLayoutScriptsTemplate"
+function Mock.HasLayoutAspect(obj)
+	while type(obj) == "table" do
+		local s = rawget(obj, "__state")
+		if not s then return false end
+		if s.layoutAspect then return true end
+		obj = s.parent
+	end
+	return false
+end
+local function CheckLayoutAspect(self, relative, action)
+	if untainted == 0 and Mock.HasLayoutAspect(relative) and not Mock.HasLayoutAspect(self) then
+		error(action .. ": a region without forbidden layout aspects cannot inherit them"
+			.. " (create it with " .. LAYOUT_ASPECT_TEMPLATE .. ")", 4)
+	end
+end
+
 -- Test-only conveniences on mock objects. Addon code must never call them.
 Mock.HELPERS = { GetAnchor = true, RunScript = true }
 -- Intrinsic types whose Lua mixins come without a named template.
@@ -189,14 +211,17 @@ function Methods:IsVisible()
 	return shown and (not parent or parent:IsVisible())
 end
 
-function Methods:SetParent(parent) self.__state.parent = parent end
+function Methods:SetParent(parent)
+	CheckLayoutAspect(self, parent, "SetParent")
+	self.__state.parent = parent
+end
 function Methods:GetParent() return self.__state.parent end
 
 local function Resize(self, width, height)
 	local s = self.__state
 	local changed = s.width ~= width or s.height ~= height
 	s.width, s.height = width, height
-	if changed and s.scripts.OnSizeChanged then
+	if changed and s.scripts.OnSizeChanged and not Mock.HasLayoutAspect(self) then
 		s.scripts.OnSizeChanged(self, width, height)
 	end
 end
@@ -232,6 +257,7 @@ function Methods:SetPoint(point, relativeTo, relativePoint, x, y)
 	if type(relativeTo) == "number" then
 		relativeTo, relativePoint, x, y = nil, point, relativeTo, relativePoint
 	end
+	CheckLayoutAspect(self, relativeTo, "SetPoint")
 	local points = self.__state.points
 	for i, p in ipairs(points) do
 		if p[1] == point then
@@ -242,6 +268,7 @@ function Methods:SetPoint(point, relativeTo, relativePoint, x, y)
 	points[#points + 1] = { point, relativeTo, relativePoint or point, x or 0, y or 0 }
 end
 function Methods:SetAllPoints(relativeTo)
+	CheckLayoutAspect(self, relativeTo, "SetAllPoints")
 	self.__state.points = { { "ALL", relativeTo } }
 end
 function Methods:ClearAllPoints() self.__state.points = {} end
@@ -578,6 +605,9 @@ function Mock.DecorateAuraContainer(container)
 	end
 	function container:AddAuraGroup(key, filter, options)
 		AddFrames(self, key, filter, options, 2)
+		-- Groups resize the container: Blizzard forbids untrusted layout
+		-- scripts on it and on everything depending on its geometry.
+		s.layoutAspect = true
 	end
 	function container:SetAuraGroupEnabled(key, enabled) s.groups[key].enabled = enabled end
 	function container:SetAuraGroupFilterString(key, filter) s.groups[key].filter = filter end
@@ -701,6 +731,7 @@ function Mock.Install()
 		local obj = NewObject(frameType or "Frame", parent, name)
 		obj.__state.template = template
 		if template and template:find("Secure", 1, true) then obj.__state.protected = true end
+		if template and template:find(LAYOUT_ASPECT_TEMPLATE, 1, true) then obj.__state.layoutAspect = true end
 		if frameType == "AuraContainer" then
 			assert(not InCombatLockdown(), "Native aura containers cannot be created in combat")
 			Mock.DecorateAuraContainer(obj)
