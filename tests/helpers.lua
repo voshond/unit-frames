@@ -86,6 +86,7 @@ function Helpers.LoadToc(tocPath, addonName, ns)
 	for _, file in ipairs(TocFiles(tocPath)) do
 		LoadFile(file, addonName, ns)
 	end
+	Mock.loadedAddons[addonName] = true
 	return ns
 end
 

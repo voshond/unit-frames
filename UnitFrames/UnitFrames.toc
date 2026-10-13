@@ -27,6 +27,7 @@ Core\Colors.lua
 Core\TextSources.lua
 Core\TextTemplate.lua
 Core\Formats.lua
+Core\Perf.lua
 
 Components\Component.lua
 Components\Backdrop.lua

@@ -85,6 +85,7 @@ end
 
 -- Points oUF elements and tags at the current frame state, rows and parts.
 function Units:Bind(frame)
+	ns.Perf:Count("unitBind")
 	local uf, Drivers = frame.uf, ns.UnitDrivers
 	-- Companions attach their own ready check icon later: rebind on changes.
 	local readyCheck = uf:GetReadyCheck()
@@ -113,6 +114,7 @@ function Units:Refresh(unit)
 	end
 	frame.uf:Apply(ns.Config:GetUnitConfig(unit))
 	self:Bind(frame)
+	ns.Perf:Count("updateAllElements")
 	frame:UpdateAllElements("UnitFramesRefresh")
 	frame:UpdateTags()
 end

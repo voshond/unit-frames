@@ -891,14 +891,36 @@ function Mock.Install()
 	for _, name in ipairs({ "LFGRole", "CustomAuraButtonDispelTypeTextureStyle", "StatusBarInterpolation",
 		"UnitDamageAbsorbClampMode", "UnitMaximumHealthMode", "StatusBarTimerDirection",
 		"SecondsFormatterAbbreviation", "SecondsFormatterInterval", "SecondsFormatterRounding",
-		"SecondsFormatterIntervalWhitespace" }) do
+		"SecondsFormatterIntervalWhitespace", "AddOnProfilerMetric" }) do
 		local values = assert(API.Snapshot().enums[name], "Enum." .. name .. " is not a client enum")
 		_G.Enum[name] = {}
 		for field, value in pairs(values) do _G.Enum[name][field] = value end
 	end
+	Mock.loadedAddons, Mock.addonMemory, Mock.profilerMetrics = {}, {}, {}
+	Mock.profilerEnabled, Mock.memoryUpdates = false, 0
+	_G.UpdateAddOnMemoryUsage = function() Mock.memoryUpdates = Mock.memoryUpdates + 1 end
+	_G.GetAddOnMemoryUsage = function(name) return Mock.addonMemory[name] or 0 end
+	_G.C_AddOnProfiler = {
+		IsEnabled = function() return Mock.profilerEnabled end,
+		GetAddOnMetric = function(name, metric)
+			local values = Mock.profilerMetrics[name]
+			return values and values[metric] or 0
+		end,
+		GetOverallMetric = function(metric)
+			local values = Mock.profilerMetrics.overall
+			return values and values[metric] or 0
+		end,
+		MeasureCall = function(func, ...)
+			return { elapsedMilliseconds = 0, elapsedTicks = 0, allocatedBytes = 0, deallocatedBytes = 0, events = {} }, func(...)
+		end,
+	}
 	_G.C_AddOns = {
 		GetAddOnMetadata = function() return "test" end,
 		LoadAddOn = function() return true end,
+		IsAddOnLoaded = function(name)
+			local loaded = Mock.loadedAddons[name] == true
+			return loaded, loaded
+		end,
 	}
 	_G.C_UIFileAsset = { IsKnownFile = function() return true end }
 	-- Atlas metadata (AtlasInfo); tests may override entries by atlas name.

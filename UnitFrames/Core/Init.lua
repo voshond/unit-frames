@@ -22,6 +22,10 @@ do
 		booleanAlpha = probe.SetAlphaFromBoolean ~= nil,
 		groupRange = UnitInRange ~= nil,
 		spellRange = C_Spell ~= nil and C_Spell.IsSpellInRange ~= nil,
+		profiler = C_AddOnProfiler ~= nil and C_AddOnProfiler.IsEnabled ~= nil
+			and C_AddOnProfiler.GetAddOnMetric ~= nil and C_AddOnProfiler.GetOverallMetric ~= nil
+			and C_AddOnProfiler.MeasureCall ~= nil and Enum ~= nil and Enum.AddOnProfilerMetric ~= nil,
+		addonMemory = UpdateAddOnMemoryUsage ~= nil and GetAddOnMemoryUsage ~= nil,
 	}
 	probe:Hide()
 end

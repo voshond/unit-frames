@@ -2,6 +2,7 @@ local _, ns = ...
 
 local HELP = {
 	"/uf wb - open the Workbench (component gallery, test mode, frame settings)",
+	"/uf perf - performance snapshot, watch or active measurement",
 }
 
 -- Loads the Workbench on demand and shows it, optionally at an entry.
@@ -29,6 +30,8 @@ SLASH_UNITFRAMES1 = "/uf"
 SLASH_UNITFRAMES2 = "/unitframes"
 SlashCmdList.UNITFRAMES = function(msg)
 	local command = strtrim(msg or ""):lower()
+	local arguments = command:match("^perf%s*(.*)$")
+	if command == "perf" or command:match("^perf%s") then ns.Perf:Command(arguments); return end
 	local handler = commands[command]
 	if handler then
 		handler()
