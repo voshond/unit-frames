@@ -211,6 +211,15 @@ are non-interactive, so use external icons for tooltips and buff cancellation.
 
 **Row background** adds a background texture, colour/opacity and optional border
 behind the entire row, independently of the icon borders. It is off by default.
-The enabled row retains its height when empty. Automatic collapse and borrowing
-height from another bar are not supported: native allocated-button counts do
-not report whether icons are rendered, and live aura visibility can be secret.
+
+**Collapse into health when empty** (every unit frame and ClickGrid style,
+on by default once the icon row is enabled) is experimental. The row sits
+directly above or below the health bar; while it shows no icon, the row and the
+gap disappear and the health bar grows into their space. The first icon shrinks
+health again. Turn it off to keep a fixed row in its own place. Blizzard's own
+aura layout decides this through anchors, so it also works in combat and the
+secure unit button never changes size. Health texts and icons placed before
+the name move with the bar. A castbar over the health bar covers the configured
+health height, and a vertical health bar's prediction and shield bars keep that
+height as their scale. Group previews include members without auras to show
+both states.

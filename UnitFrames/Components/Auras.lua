@@ -113,6 +113,11 @@ function Auras:StyleButton(button)
 	AuraIcon.Apply(button, self:GetArtworkConfig(), self.resolved[button.ufKind].size, self.dispelColors)
 end
 
+-- A group's native candidate filters (nil = none).
+function Auras.CandidateFilters(group)
+	return group.maxDuration > 0 and { maxDuration = group.maxDuration } or nil
+end
+
 function Auras:OnApply(cfg)
 	self.dispelColors = AuraIcon.DispelColors(cfg)
 	for _, kind in ipairs(KINDS) do
@@ -120,7 +125,7 @@ function Auras:OnApply(cfg)
 		container:SetAuraGroupEnabled(kind, group.enabled)
 		container:SetAuraGroupFilterString(kind, group.filter)
 		container:SetAuraGroupMaxFrameCount(kind, group.max)
-		container:SetAuraGroupCandidateFilters(kind, group.maxDuration > 0 and { maxDuration = group.maxDuration } or nil)
+		container:SetAuraGroupCandidateFilters(kind, Auras.CandidateFilters(group))
 		local sort = group.sort == "default" and AuraContainerSortMethod.Default
 			or group.sort == "unitDebuff" and AuraContainerSortMethod.UnitFrameDebuff or AuraContainerSortMethod.ExpirationOnly
 		container:SetAuraGroupSortMethod(kind, sort, AuraContainerSortDirection.Normal)

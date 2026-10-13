@@ -147,6 +147,8 @@ function Preview:Values(index)
 		or (index == 1 and 1 or 0.35 + 0.6 * ((index * 7) % 10) / 10))
 	value.absorb = value.healthMax * 0.2
 	value.raidTarget = index == 1 and 8 or nil
+	-- Some members carry no auras, so a collapsing icon row shows both states.
+	if index % 4 == 0 then value.buffs, value.debuffs = {}, {} end
 	-- Ready check demo: mixed answers; one in four never answers. Animated
 	-- members answer one after another, then the check ends and fades.
 	if self.data.readyCheck == "check" then

@@ -19,8 +19,8 @@ PvPFlag.schema = StackIcon.BuildIconSchema({ anchor = "TOPLEFT", order = 2, size
 PvPFlag.schema[#PvPFlag.schema + 1] = { key = "background", type = "toggle", label = "Background circle", default = true,
 	tooltip = "Draw the flag on the game's dark circle, as on the default unit frames." }
 
-function PvPFlag:OnCreate(parent)
-	StackIcon.OnCreate(self, parent)
+function PvPFlag:OnCreate(parent, spec)
+	StackIcon.OnCreate(self, parent, spec)
 	-- Configured size only: never the atlas size.
 	self.texture.useAtlasSize = false
 	-- The circle art is opaque; keep it below the flag.

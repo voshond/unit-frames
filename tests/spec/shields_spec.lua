@@ -29,7 +29,8 @@ describe("Health shields", function()
 		for _, orientation in ipairs({ "HORIZONTAL", "VERTICAL" }) do
 			for _, reverse in ipairs({ false, true }) do
 				bar:Apply({ orientation = orientation, reverseFill = reverse })
-				bar.bar:SetSize(200, 100)
+				-- Native-layout bars take their length from the laid-out row.
+				local width, height = bar:GetKnownInnerSize()
 				bar:SetRange(0, max)
 				bar:SetValue(max)
 				bar:SetSegmentValue("absorb", shield)
@@ -42,7 +43,7 @@ describe("Health shields", function()
 				assert.equals(shield, sb:GetValue())
 				local _, segMax = sb:GetMinMaxValues()
 				assert.equals(max, segMax)
-				assert.equals(orientation == "HORIZONTAL" and 200 or 100,
+				assert.equals(orientation == "HORIZONTAL" and width or height,
 					orientation == "HORIZONTAL" and sb:GetWidth() or sb:GetHeight())
 			end
 		end

@@ -206,8 +206,12 @@ describe("Cropped aura icon row", function()
 		local first = uf.layout.rows[1]
 		assert.equals(uf.layout.width - first.left - first.right, bar.hostWidth)
 		uf:Apply({ portrait = { enabled = true, rowSpan = 0 }, castbar = { placement = "off" },
-			auraBar = { enabled = true, position = "bottom", height = 12 } })
+			auraBar = { enabled = true, position = "bottom", height = 12, collapse = false } })
 		assert.equals("auraBar", uf.layout.rows[#uf.layout.rows].key)
+		-- Collapsing keeps it beside health instead.
+		uf:Apply({ portrait = { enabled = true, rowSpan = 0 }, castbar = { placement = "off" },
+			auraBar = { enabled = true, position = "bottom", height = 12 } })
+		assert.equals("auraBar", uf.layout.rows[2].key)
 	end)
 
 	it("uses a native assignment animation rather than an OnShow script", function()
