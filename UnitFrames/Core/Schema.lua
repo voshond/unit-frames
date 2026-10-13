@@ -11,6 +11,7 @@ Descriptor fields:
   type      toggle | range | select | color | font | statusbar | border | background | text | group
   label     display name (defaults to key)
   tooltip   help text
+  hint      visible inspector help text (optional)
   default   value used when neither config nor theme provide one
   inherit   dot path into the theme, used when config has no value ("colors.health")
   min, max, step          for range

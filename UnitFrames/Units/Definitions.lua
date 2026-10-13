@@ -171,6 +171,7 @@ end
 -- sets its own. Set on the definitions (not in GetSpec) so companion styles
 -- deriving them can leave any out by setting the key to nil.
 Units.COMMON = {
+	auraBar = { defaults = {} },
 	raidTarget = { defaults = {} },
 	pvp = { defaults = {} },
 	classification = { defaults = {} },
@@ -226,6 +227,15 @@ Units.SAMPLE = {
 		{ icon = [[Interface\Icons\Ability_Gouge]], duration = 15, remaining = 11, sourceUnit = "party1" },
 	},
 }
+
+-- Explicit illustrative ranks for native/raid-priority row previews. Live
+-- containers use Blizzard's comparators and never consult these fixture ranks.
+for _, kind in ipairs({ "buffs", "debuffs" }) do
+	for index, aura in ipairs(Units.SAMPLE[kind]) do
+		aura.sampleNativePriority = index
+		aura.sampleRaidPriority = aura.isRaid and index or 100 + index
+	end
+end
 
 function Units:GetSample(unit)
 	return ns.Util.Merge(ns.Util.Copy(self.SAMPLE), ns.Util.Copy(self.definitions[unit].sample or {}))

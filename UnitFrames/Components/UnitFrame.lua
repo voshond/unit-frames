@@ -135,6 +135,9 @@ UnitFrame.PARTS = {
 		create = function(frame, partSpec)
 			return Auras:New(frame, {}, { cancelBuffs = partSpec.cancelBuffs, clickThrough = partSpec.clickThrough })
 		end },
+	{ key = "auraBar", label = "Buff & debuff icon row",
+		schema = function() return ns.Components.AuraBar.schema end,
+		create = function(frame) return ns.Components.AuraBar:New(frame, {}, { clickThrough = true }) end },
 	{ key = "raidTarget", label = "Raid target icon", stack = true,
 		schema = function() return RaidTarget.schema end,
 		create = function(frame) return RaidTarget:New(frame, {}) end },
@@ -332,11 +335,14 @@ function UnitFrame:Layout()
 	end
 
 	for _, item in ipairs(layout.rows) do
-		local component = item.key == "castbar" and self.partsByKey.castbar or self.rowsByKey[item.key]
+		local component = self.partsByKey[item.key] or self.rowsByKey[item.key]
 		component:ClearAllPoints()
 		component:SetPoint("TOPLEFT", self.frame, "TOPLEFT", item.left, item.y)
 		component:SetPoint("TOPRIGHT", self.frame, "TOPRIGHT", -item.right, item.y)
 		component:GetFrame():SetHeight(item.height)
+		if item.key == "auraBar" then
+			component:Layout(layout.width - item.left - item.right)
+		end
 	end
 	self:LayoutCastbar(layout)
 
