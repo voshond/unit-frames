@@ -1,6 +1,6 @@
 local Helpers = require("helpers")
 
-describe("Health shields", function()
+describe("Health shields #shields", function()
 	local ns
 	before_each(function()
 		ns = Helpers.LoadAddon(true, true)

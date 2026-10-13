@@ -134,14 +134,20 @@ end
 -- design. Their secret policy is not modelled.
 local UNMODELLED_SECRET_POLICY = { FrameScript = true }
 
+local function Label(owner, name)
+	return owner and owner .. ":" .. name or name
+end
+
 -- Raises a client-like error for a call that the client would reject.
 -- Untainted (Blizzard secure) callers may pass secrets wherever allowed.
-function API.CheckArgs(label, def, isSecret, untainted, ...)
+-- `owner` is the object type for methods (nil for functions); the
+-- "Type:Method" label is only built for an error, as this runs on every call.
+function API.CheckArgs(owner, name, def, isSecret, untainted, ...)
 	local policy = not untainted and not UNMODELLED_SECRET_POLICY[def.system] and def.secretArguments
 	if policy and policy ~= "AllowedWhenTainted" then
 		for i = 1, select("#", ...) do
 			if isSecret((select(i, ...))) then
-				error(string.format("%s: secret argument %d is not allowed from addon code (%s)", label, i, policy), 3)
+				error(string.format("%s: secret argument %d is not allowed from addon code (%s)", Label(owner, name), i, policy), 3)
 			end
 		end
 	end
@@ -149,14 +155,14 @@ function API.CheckArgs(label, def, isSecret, untainted, ...)
 		local value = select(i, ...)
 		if field.check and value == nil then
 			if not field.nilable then
-				error(string.format("%s: argument %d (%s) is required", label, i, field.name), 3)
+				error(string.format("%s: argument %d (%s) is required", Label(owner, name), i, field.name), 3)
 			end
 		elseif field.check and not isSecret(value) then
 			local ok
 			if field.check == "number" then ok = type(value) == "number" or (type(value) == "string" and tonumber(value) ~= nil)
 			else ok = type(value) == "string" or type(value) == "number" end
 			if not ok then
-				error(string.format("%s: argument %d (%s) must be %s, got %s", label, i, field.name, field.kind, type(value)), 3)
+				error(string.format("%s: argument %d (%s) must be %s, got %s", Label(owner, name), i, field.name, field.kind, type(value)), 3)
 			end
 		end
 	end

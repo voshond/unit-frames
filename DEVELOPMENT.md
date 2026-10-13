@@ -80,18 +80,29 @@ Run from the repository root:
 bash scripts/run-tests.sh
 ```
 
-This runs the complete suite and addon Lua syntax checks, using the same
-command as CI. Individual test commands remain available:
+This runs the release packaging check, the complete suite and addon Lua syntax
+checks, like CI (which adds `--times -j`). The runner is also usable directly:
 
 ```sh
-luajit tests/run.lua
-luajit tests/run.lua shields
-luajit tests/run.lua workbench
-luajit tests/run.lua clickgrid
+luajit tests/run.lua -j               # everything, one process per CPU
+luajit tests/run.lua units/           # one area folder
+luajit tests/run.lua shields          # spec paths containing "shields"
+luajit tests/run.lua --tag shields    # tests tagged #shields in any area
+luajit tests/run.lua clickgrid -t "full-health"   # tests whose name contains the text
+luajit tests/run.lua --times          # per-spec durations
 ```
 
-The runner also checks addon Lua syntax. Its optional filter matches spec
-filenames, not individual test names. No external busted installation is needed.
+Specs live in `tests/spec/<area>/`: `core`, `contract` (API and schema
+snapshots), `components`, `auras`, `units`, `workbench`, `editmode` and
+`clickgrid`. A feature spec keeps a feature's live and Workbench preview tests
+together. Behaviour that also has tests in other areas carries a `#tag` in its
+`describe` or `it` name (for example `#shields`) so `--tag` can run all of it.
+
+Path filters combine with "or"; a trailing `/` selects exactly one folder and
+a name ending in `.lua` exactly one file. `-t` and `--tag` narrow further. A run
+that selects no tests fails. The runner always checks addon Lua syntax. No
+external busted installation is needed. To see where a spec spends its time,
+use LuaJIT's profiler: `luajit -jp=F tests/run.lua clickgrid_spec.lua`.
 
 ### Pull request checks
 
