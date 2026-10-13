@@ -6,6 +6,16 @@ local Schema, Util = ns.Schema, ns.Util
 local Config = {}
 ns.Config = Config
 
+-- Bumped before every ThemeChanged. Theme-derived caches compare it instead of
+-- listening themselves: listeners run in no fixed order, so a refresh could
+-- otherwise read a cache that has not been invalidated yet.
+Config.themeRevision = 0
+
+local function ThemeChanged(path)
+	Config.themeRevision = Config.themeRevision + 1
+	ns.Events:Fire("ThemeChanged", path)
+end
+
 local function BuildDefaults()
 	return {
 		profile = {
@@ -22,7 +32,7 @@ function Config:Initialize()
 	self.db = LibStub("AceDB-3.0"):New("UnitFramesDB", BuildDefaults(), true)
 	local function OnProfile()
 		ns.Events:Fire("ProfileChanged")
-		ns.Events:Fire("ThemeChanged")
+		ThemeChanged()
 	end
 	self.db.RegisterCallback(self, "OnProfileChanged", OnProfile)
 	self.db.RegisterCallback(self, "OnProfileCopied", OnProfile)
@@ -59,7 +69,7 @@ function Config:SetThemeValue(path, value)
 		value = Util.Copy(Util.GetPath(self:GetThemeDefaults(), path))
 	end
 	Util.SetPath(self:GetTheme(), path, value)
-	ns.Events:Fire("ThemeChanged", path)
+	ThemeChanged(path)
 end
 
 -- Unit frames -------------------------------------------------------------------

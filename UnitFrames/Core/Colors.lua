@@ -88,10 +88,12 @@ function Colors.Sample(values)
 end
 
 -- Health gradient (low -> mid -> full) as a colour curve; use with
--- UnitHealthPercent(unit, true, curve) for secret health.
-local healthCurve
+-- UnitHealthPercent(unit, true, curve) for secret health. Rebuilt after
+-- theme changes (Config.themeRevision).
+local healthCurve, healthCurveRevision
 function Colors.HealthCurve()
-	if not healthCurve then
+	if not healthCurve or healthCurveRevision ~= ns.Config.themeRevision then
+		healthCurveRevision = ns.Config.themeRevision
 		healthCurve = C_CurveUtil.CreateColorCurve()
 		healthCurve:AddPoint(0, CreateColor(Colors.Theme("healthLow")))
 		healthCurve:AddPoint(0.5, CreateColor(Colors.Theme("healthMid")))
@@ -113,7 +115,3 @@ function Colors.PercentCurve()
 	end
 	return percentCurve
 end
-
-ns.Events.RegisterCallback(Colors, "ThemeChanged", function()
-	healthCurve = nil
-end)
