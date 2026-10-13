@@ -15,10 +15,11 @@ local function HasOptions(schema)
 end
 
 -- The settings tree as list items: one item per group, indented by depth.
--- Groups with only sub-groups are headers (not selectable).
+-- Groups with only sub-groups are headers (not selectable). Inline groups
+-- belong to their parent's section.
 local function SectionItems(items, schema, prefix, depth, excluded)
 	for _, opt in ipairs(schema) do
-		if opt.type == "group" then
+		if opt.type == "group" and not opt.inline then
 			local path = prefix .. opt.key
 			if not excluded[path] then
 				if HasOptions(opt.schema) then

@@ -19,20 +19,61 @@ local function Skipped(path)
 	return false
 end
 
+-- Files are read and compiled once per run. Calling a compiled chunk again
+-- runs its main body afresh (new locals and closures), like a fresh load, so
+-- every addon load still starts from a clean state.
+local chunks, includes, tocs = {}, {}, {}
+
+local function Compile(path)
+	local chunk = chunks[path]
+	if not chunk then
+		chunk = assert(loadfile(path))
+		chunks[path] = chunk
+	end
+	return chunk
+end
+
+-- Only <Script file="..."/> and <Include file="..."/> are followed.
+local function XmlIncludes(path)
+	local files = includes[path]
+	if not files then
+		local dir = path:match("^(.*)/[^/]+$")
+		local xml = assert(io.open(path)):read("*a")
+		files = {}
+		for file in xml:gmatch('<%a+%s+file%s*=%s*["\']([^"\']+)["\']') do
+			files[#files + 1] = dir .. "/" .. file:gsub("\\", "/")
+		end
+		includes[path] = files
+	end
+	return files
+end
+
+local function TocFiles(tocPath)
+	local files = tocs[tocPath]
+	if not files then
+		local dir = tocPath:match("^(.*)/[^/]+$")
+		files = {}
+		for line in io.lines(tocPath) do
+			line = line:gsub("\r", ""):gsub("^%s+", ""):gsub("%s+$", "")
+			if line ~= "" and not line:match("^#") then
+				files[#files + 1] = dir .. "/" .. line:gsub("\\", "/")
+			end
+		end
+		tocs[tocPath] = files
+	end
+	return files
+end
+
 local function LoadFile(path, addonName, ns)
 	if Skipped(path) then
 		return
 	end
 	if path:match("%.xml$") then
-		-- Only <Script file="..."/> and <Include file="..."/> are followed.
-		local dir = path:match("^(.*)/[^/]+$")
-		local xml = assert(io.open(path)):read("*a")
-		for file in xml:gmatch('<%a+%s+file%s*=%s*["\']([^"\']+)["\']') do
-			LoadFile(dir .. "/" .. file:gsub("\\", "/"), addonName, ns)
+		for _, file in ipairs(XmlIncludes(path)) do
+			LoadFile(file, addonName, ns)
 		end
 	elseif path:match("%.lua$") then
-		local chunk = assert(loadfile(path))
-		chunk(addonName, ns)
+		Compile(path)(addonName, ns)
 	else
 		error("tests can't load " .. path)
 	end
@@ -41,13 +82,9 @@ end
 -- Loads every file listed in a TOC, in order, passing (addonName, ns) as the
 -- chunk varargs exactly like the client does.
 function Helpers.LoadToc(tocPath, addonName, ns)
-	local dir = tocPath:match("^(.*)/[^/]+$")
 	ns = ns or {}
-	for line in io.lines(tocPath) do
-		line = line:gsub("\r", ""):gsub("^%s+", ""):gsub("%s+$", "")
-		if line ~= "" and not line:match("^#") then
-			LoadFile(dir .. "/" .. line:gsub("\\", "/"), addonName, ns)
-		end
+	for _, file in ipairs(TocFiles(tocPath)) do
+		LoadFile(file, addonName, ns)
 	end
 	return ns
 end

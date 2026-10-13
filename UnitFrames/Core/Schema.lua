@@ -20,6 +20,9 @@ Descriptor fields:
   defaults  for group: per-key default overrides, lets one group schema be reused
             with different defaults (e.g. Bar border off, Castbar border on)
   hidden(resolvedGroup)   hide the control when this returns true
+  inline    for group: shown inside its parent's section instead of as a
+            section of its own
+  onSet, invoke           settings-store hooks (Core/Store.lua)
 ]]
 local Schema = {}
 ns.Schema = Schema
