@@ -222,6 +222,16 @@ Drivers.parts.auras = {
 	end,
 }
 
+Drivers.parts.auraBar = {
+	element = "UF_AuraBar",
+	bind = function(bar) return bar end,
+	sample = function(bar, v) bar:ShowSample(v) end,
+	live = function(bar, unit)
+		bar:SetEnabled(bar.resolved.enabled)
+		bar:SetUnit(unit)
+	end,
+}
+
 Drivers.parts.raidTarget = {
 	element = "RaidTargetIndicator",
 	bind = function(marker) return marker:GetWidget() end,

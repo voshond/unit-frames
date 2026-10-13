@@ -57,6 +57,24 @@ describe("Workbench", function()
 		assert.equals("unit.player", workbench.entry.id)
 	end)
 
+	it("shows aura row hints as help text without editable saved values", function()
+		local inspector = workbench.inspector
+		local config = {}
+		local target = ns.Widgets.Inspector.TableTarget(ns.Components.AuraBar.schema, config)
+		inspector:SetTarget(target, "test.auraBar", "")
+		local hints = 0
+		for _, row in ipairs(inspector.page.rows) do
+			if row.isHint then
+				hints = hints + 1
+				assert.equals(row.opt.hint, row.region:GetText())
+				assert.is_nil(row.control)
+				assert.is_nil(row.reset)
+			end
+		end
+		assert.equals(2, hints)
+		assert.same({}, config)
+	end)
+
 	it("dispatches cached inspector actions to the current target and invalidates revised schemas", function()
 		local inspector, calls = workbench.inspector, {}
 		local schema = { { key = "run", type = "action", label = "Run" } }

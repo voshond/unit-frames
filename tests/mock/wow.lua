@@ -526,6 +526,18 @@ function Mock.DecorateAuraContainer(container)
 			button.__state.template = "CustomAuraButtonTemplate"
 			button.__state.auraRestricted = true
 			button.__state.dispelTextures = {}
+			button.__state.auraAssignedAnimations = {}
+			function button:AddAuraAssignedAnimation(animation)
+				assert(animation:IsObjectType("AnimationGroup"), "expected an AnimationGroup")
+				local ancestor = animation:GetParent()
+				while ancestor and ancestor ~= self do ancestor = ancestor:GetParent() end
+				assert(ancestor == self, "animation must descend from its aura button")
+				assert(not self.__state.auraAssignedAnimations[animation], "animation already registered")
+				self.__state.auraAssignedAnimations[animation] = true
+			end
+			function button:RemoveAuraAssignedAnimation(animation)
+				self.__state.auraAssignedAnimations[animation] = nil
+			end
 			function button:SetCancelAuraButtons(tokens)
 				assert(tokens == nil or type(tokens) == "string", "cancelAuraButtons must be a string or nil")
 				local clicks = {}
@@ -593,7 +605,16 @@ function Mock.DecorateAuraContainer(container)
 	end
 	function container:GetUnit() return s.unit end
 	function container:UpdateAllAuras() s.updates = (s.updates or 0) + 1 end
-	function container:SetEnabled(enabled) s.enabled = enabled end
+	function container:SetEnabled(enabled)
+		s.enabled = enabled
+		if not enabled then
+			for _, group in pairs(s.groups) do
+				for _, button in ipairs(group.frames) do
+					for animation in pairs(button.__state.auraAssignedAnimations) do animation:Stop() end
+				end
+			end
+		end
+	end
 	function container:IsEnabled() return s.enabled == true end
 	function container:SetFlowLayoutAnchorPoint(point) s.flowAnchor = point end
 	function container:SetFlowLayoutAxis(axis) s.flowAxis = axis end
@@ -808,7 +829,8 @@ function Mock.Install()
 			return NewColor(unpack(colors[kind] or { 0.8, 0, 0 }))
 		end,
 	}
-	_G.AuraContainerSortMethod = { ExpirationOnly = 1 }
+	-- Blizzard_AuraContainerShared.lua publishes these global enum tables.
+	_G.AuraContainerSortMethod = { Default = 0, UnitFrameDebuff = 2, ExpirationOnly = 5 }
 	_G.AuraContainerSortDirection = { Normal = 0 }
 	-- The client's values, from the API snapshot.
 	_G.Enum = {}

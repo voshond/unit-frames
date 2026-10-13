@@ -502,6 +502,157 @@ resolved fontOutline = "OUTLINE"
 resolved showCount = true
 resolved showDuration = true
 resolved spacing = 2
+## auraBar
+option enabled type="toggle" label="Enabled" default=false
+option position type="select" label="Row position" default="bottom" values=#4dfc7251
+option height type="range" label="Row height" default=18 min=2 max=100 step=1 tooltip=#7e741a40 hint=#032668bf
+option padding type="range" label="Inner padding" default=0 min=0 max=20 step=1
+option fadeIn type="toggle" label="Fade in new auras" default=true tooltip=#5b290d2d
+option fadeDuration type="range" label="Fade duration" default=0.15 min=0.05 max=0.5 step=0.05
+option sectionGap type="range" label="Gap between categories" default=2 min=0 max=30 step=1
+option buffWidthPercent type="range" label="Buff share of width (%)" default=50 min=0 max=100 step=1 tooltip=#1b23914d
+option rowBackdrop type="group" label="Row background" defaults={border="None",enabled=false,inset=0}
+option rowBackdrop.enabled type="toggle" label="Enabled" default=true
+option rowBackdrop.border type="border" label="Border" inherit="borderTexture"
+option rowBackdrop.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option rowBackdrop.color type="color" label="Border colour" inherit="borderColor"
+option rowBackdrop.background type="background" label="Background" inherit="backgroundTexture"
+option rowBackdrop.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option rowBackdrop.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
+option showDuration type="toggle" label="Show time left" default=true
+option durationPosition type="select" label="Time position" default="BOTTOM" values=#789eefc1 tooltip=#d6ced160 hint=#f9e140c8
+option durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
+option showCount type="toggle" label="Show stacks" default=true
+option countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option font type="font" label="Font" inherit="font"
+option fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
+option dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option dispelColors type="group" label="Debuff border colours"
+option dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
+option dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
+option dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
+option dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
+option dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
+option border.enabled type="toggle" label="Enabled" default=true
+option border.border type="border" label="Border" inherit="borderTexture"
+option border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option border.color type="color" label="Border colour" inherit="borderColor"
+option border.background type="background" label="Background" inherit="backgroundTexture"
+option border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
+option buffs type="group" label="Buffs"
+option buffs.enabled type="toggle" label="Show buffs" default=true
+option buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
+option buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
+option buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option buffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
+option buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
+option debuffs type="group" label="Debuffs"
+option debuffs.enabled type="toggle" label="Show debuffs" default=true
+option debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
+option debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
+option debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option debuffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
+option debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
+default border.background = "None"
+default border.enabled = true
+default border.inset = 1
+default border.padding = 2
+default border.size = 8
+default buffWidthPercent = 50
+default buffs.enabled = true
+default buffs.entrySide = "left"
+default buffs.filter = "HELPFUL"
+default buffs.max = 16
+default buffs.maxDuration = 0
+default buffs.size = 32
+default buffs.sort = "expiration"
+default countSize = 10
+default debuffs.enabled = true
+default debuffs.entrySide = "opposite"
+default debuffs.filter = "HARMFUL"
+default debuffs.max = 16
+default debuffs.maxDuration = 0
+default debuffs.size = 32
+default debuffs.sort = "expiration"
+default dispelBorder = true
+default dispelColors.Curse = {0.6,0,1,1}
+default dispelColors.Disease = {0.6,0.4,0,1}
+default dispelColors.Magic = {0.2,0.6,1,1}
+default dispelColors.None = {0.8,0,0,1}
+default dispelColors.Poison = {0,0.6,0,1}
+default durationPosition = "BOTTOM"
+default durationSize = 10
+default enabled = false
+default fadeDuration = 0.15
+default fadeIn = true
+default fontOutline = "OUTLINE"
+default height = 18
+default padding = 0
+default position = "bottom"
+default rowBackdrop.border = "None"
+default rowBackdrop.enabled = false
+default rowBackdrop.inset = 0
+default sectionGap = 2
+default showCount = true
+default showDuration = true
+default spacing = 2
+resolved border.background = "None"
+resolved border.backgroundColor = {0,0,0,0.75}
+resolved border.border = "Blizzard Tooltip"
+resolved border.color = {0.5,0.5,0.5,1}
+resolved border.enabled = true
+resolved border.inset = 1
+resolved border.padding = 2
+resolved border.size = 8
+resolved buffWidthPercent = 50
+resolved buffs.enabled = true
+resolved buffs.entrySide = "left"
+resolved buffs.filter = "HELPFUL"
+resolved buffs.max = 16
+resolved buffs.maxDuration = 0
+resolved buffs.size = 32
+resolved buffs.sort = "expiration"
+resolved countSize = 10
+resolved debuffs.enabled = true
+resolved debuffs.entrySide = "opposite"
+resolved debuffs.filter = "HARMFUL"
+resolved debuffs.max = 16
+resolved debuffs.maxDuration = 0
+resolved debuffs.size = 32
+resolved debuffs.sort = "expiration"
+resolved dispelBorder = true
+resolved dispelColors.Curse = {0.6,0,1,1}
+resolved dispelColors.Disease = {0.6,0.4,0,1}
+resolved dispelColors.Magic = {0.2,0.6,1,1}
+resolved dispelColors.None = {0.8,0,0,1}
+resolved dispelColors.Poison = {0,0.6,0,1}
+resolved durationPosition = "BOTTOM"
+resolved durationSize = 10
+resolved enabled = false
+resolved fadeDuration = 0.15
+resolved fadeIn = true
+resolved font = "Friz Quadrata TT"
+resolved fontOutline = "OUTLINE"
+resolved height = 18
+resolved padding = 0
+resolved position = "bottom"
+resolved rowBackdrop.background = "Solid"
+resolved rowBackdrop.backgroundColor = {0,0,0,0.75}
+resolved rowBackdrop.border = "None"
+resolved rowBackdrop.color = {0.5,0.5,0.5,1}
+resolved rowBackdrop.enabled = false
+resolved rowBackdrop.inset = 0
+resolved rowBackdrop.size = 12
+resolved sectionGap = 2
+resolved showCount = true
+resolved showDuration = true
+resolved spacing = 2
 ## auraIcon
 option showDuration type="toggle" label="Show time left" default=true
 option durationPosition type="select" label="Time position" default="below" values=#789eefc1
@@ -1022,6 +1173,63 @@ option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 m
 option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
 option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auraBar type="group" label="Buff & debuff icon row" defaults={}
+option auraBar.enabled type="toggle" label="Enabled" default=false
+option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
+option auraBar.height type="range" label="Row height" default=18 min=2 max=100 step=1 tooltip=#7e741a40 hint=#032668bf
+option auraBar.padding type="range" label="Inner padding" default=0 min=0 max=20 step=1
+option auraBar.fadeIn type="toggle" label="Fade in new auras" default=true tooltip=#5b290d2d
+option auraBar.fadeDuration type="range" label="Fade duration" default=0.15 min=0.05 max=0.5 step=0.05
+option auraBar.sectionGap type="range" label="Gap between categories" default=2 min=0 max=30 step=1
+option auraBar.buffWidthPercent type="range" label="Buff share of width (%)" default=50 min=0 max=100 step=1 tooltip=#1b23914d
+option auraBar.rowBackdrop type="group" label="Row background" defaults={border="None",enabled=false,inset=0}
+option auraBar.rowBackdrop.enabled type="toggle" label="Enabled" default=true
+option auraBar.rowBackdrop.border type="border" label="Border" inherit="borderTexture"
+option auraBar.rowBackdrop.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.rowBackdrop.color type="color" label="Border colour" inherit="borderColor"
+option auraBar.rowBackdrop.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.rowBackdrop.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option auraBar.rowBackdrop.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
+option auraBar.showDuration type="toggle" label="Show time left" default=true
+option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" values=#789eefc1 tooltip=#d6ced160 hint=#f9e140c8
+option auraBar.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
+option auraBar.showCount type="toggle" label="Show stacks" default=true
+option auraBar.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auraBar.font type="font" label="Font" inherit="font"
+option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
+option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auraBar.dispelColors type="group" label="Debuff border colours"
+option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
+option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
+option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
+option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
+option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
+option auraBar.border.enabled type="toggle" label="Enabled" default=true
+option auraBar.border.border type="border" label="Border" inherit="borderTexture"
+option auraBar.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.border.color type="color" label="Border colour" inherit="borderColor"
+option auraBar.border.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option auraBar.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
+option auraBar.buffs type="group" label="Buffs"
+option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
+option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
+option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
+option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
+option auraBar.debuffs type="group" label="Debuffs"
+option auraBar.debuffs.enabled type="toggle" label="Show debuffs" default=true
+option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
+option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
+option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
+option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
 option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
@@ -1055,6 +1263,49 @@ option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 
 option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#e997fb28
 option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+default auraBar.border.background = "None"
+default auraBar.border.enabled = true
+default auraBar.border.inset = 1
+default auraBar.border.padding = 2
+default auraBar.border.size = 8
+default auraBar.buffWidthPercent = 50
+default auraBar.buffs.enabled = true
+default auraBar.buffs.entrySide = "left"
+default auraBar.buffs.filter = "HELPFUL"
+default auraBar.buffs.max = 16
+default auraBar.buffs.maxDuration = 0
+default auraBar.buffs.size = 32
+default auraBar.buffs.sort = "expiration"
+default auraBar.countSize = 10
+default auraBar.debuffs.enabled = true
+default auraBar.debuffs.entrySide = "opposite"
+default auraBar.debuffs.filter = "HARMFUL"
+default auraBar.debuffs.max = 16
+default auraBar.debuffs.maxDuration = 0
+default auraBar.debuffs.size = 32
+default auraBar.debuffs.sort = "expiration"
+default auraBar.dispelBorder = true
+default auraBar.dispelColors.Curse = {0.6,0,1,1}
+default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
+default auraBar.dispelColors.Magic = {0.2,0.6,1,1}
+default auraBar.dispelColors.None = {0.8,0,0,1}
+default auraBar.dispelColors.Poison = {0,0.6,0,1}
+default auraBar.durationPosition = "BOTTOM"
+default auraBar.durationSize = 10
+default auraBar.enabled = false
+default auraBar.fadeDuration = 0.15
+default auraBar.fadeIn = true
+default auraBar.fontOutline = "OUTLINE"
+default auraBar.height = 18
+default auraBar.padding = 0
+default auraBar.position = "bottom"
+default auraBar.rowBackdrop.border = "None"
+default auraBar.rowBackdrop.enabled = false
+default auraBar.rowBackdrop.inset = 0
+default auraBar.sectionGap = 2
+default auraBar.showCount = true
+default auraBar.showDuration = true
+default auraBar.spacing = 2
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -1389,6 +1640,57 @@ default resting.enabled = true
 default resting.period = 4
 default spacing = 1
 default width = 230
+resolved auraBar.border.background = "None"
+resolved auraBar.border.backgroundColor = {0,0,0,0.75}
+resolved auraBar.border.border = "Blizzard Tooltip"
+resolved auraBar.border.color = {0.5,0.5,0.5,1}
+resolved auraBar.border.enabled = true
+resolved auraBar.border.inset = 1
+resolved auraBar.border.padding = 2
+resolved auraBar.border.size = 8
+resolved auraBar.buffWidthPercent = 50
+resolved auraBar.buffs.enabled = true
+resolved auraBar.buffs.entrySide = "left"
+resolved auraBar.buffs.filter = "HELPFUL"
+resolved auraBar.buffs.max = 16
+resolved auraBar.buffs.maxDuration = 0
+resolved auraBar.buffs.size = 32
+resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.countSize = 10
+resolved auraBar.debuffs.enabled = true
+resolved auraBar.debuffs.entrySide = "opposite"
+resolved auraBar.debuffs.filter = "HARMFUL"
+resolved auraBar.debuffs.max = 16
+resolved auraBar.debuffs.maxDuration = 0
+resolved auraBar.debuffs.size = 32
+resolved auraBar.debuffs.sort = "expiration"
+resolved auraBar.dispelBorder = true
+resolved auraBar.dispelColors.Curse = {0.6,0,1,1}
+resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
+resolved auraBar.dispelColors.Magic = {0.2,0.6,1,1}
+resolved auraBar.dispelColors.None = {0.8,0,0,1}
+resolved auraBar.dispelColors.Poison = {0,0.6,0,1}
+resolved auraBar.durationPosition = "BOTTOM"
+resolved auraBar.durationSize = 10
+resolved auraBar.enabled = false
+resolved auraBar.fadeDuration = 0.15
+resolved auraBar.fadeIn = true
+resolved auraBar.font = "Friz Quadrata TT"
+resolved auraBar.fontOutline = "OUTLINE"
+resolved auraBar.height = 18
+resolved auraBar.padding = 0
+resolved auraBar.position = "bottom"
+resolved auraBar.rowBackdrop.background = "Solid"
+resolved auraBar.rowBackdrop.backgroundColor = {0,0,0,0.75}
+resolved auraBar.rowBackdrop.border = "None"
+resolved auraBar.rowBackdrop.color = {0.5,0.5,0.5,1}
+resolved auraBar.rowBackdrop.enabled = false
+resolved auraBar.rowBackdrop.inset = 0
+resolved auraBar.rowBackdrop.size = 12
+resolved auraBar.sectionGap = 2
+resolved auraBar.showCount = true
+resolved auraBar.showDuration = true
+resolved auraBar.spacing = 2
 resolved auras.border.background = "None"
 resolved auras.border.backgroundColor = {0,0,0,0.75}
 resolved auras.border.border = "Blizzard Tooltip"
@@ -1820,6 +2122,7 @@ resolved resting.enabled = true
 resolved resting.period = 4
 resolved spacing = 1
 resolved width = 230
+definition auraBar.defaults = {}
 definition auras.cancelBuffs = true
 definition auras.defaults = {}
 definition castbar.defaults.border.enabled = false
@@ -2199,6 +2502,63 @@ option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 m
 option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
 option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auraBar type="group" label="Buff & debuff icon row" defaults={}
+option auraBar.enabled type="toggle" label="Enabled" default=false
+option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
+option auraBar.height type="range" label="Row height" default=18 min=2 max=100 step=1 tooltip=#7e741a40 hint=#032668bf
+option auraBar.padding type="range" label="Inner padding" default=0 min=0 max=20 step=1
+option auraBar.fadeIn type="toggle" label="Fade in new auras" default=true tooltip=#5b290d2d
+option auraBar.fadeDuration type="range" label="Fade duration" default=0.15 min=0.05 max=0.5 step=0.05
+option auraBar.sectionGap type="range" label="Gap between categories" default=2 min=0 max=30 step=1
+option auraBar.buffWidthPercent type="range" label="Buff share of width (%)" default=50 min=0 max=100 step=1 tooltip=#1b23914d
+option auraBar.rowBackdrop type="group" label="Row background" defaults={border="None",enabled=false,inset=0}
+option auraBar.rowBackdrop.enabled type="toggle" label="Enabled" default=true
+option auraBar.rowBackdrop.border type="border" label="Border" inherit="borderTexture"
+option auraBar.rowBackdrop.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.rowBackdrop.color type="color" label="Border colour" inherit="borderColor"
+option auraBar.rowBackdrop.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.rowBackdrop.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option auraBar.rowBackdrop.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
+option auraBar.showDuration type="toggle" label="Show time left" default=true
+option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" values=#789eefc1 tooltip=#d6ced160 hint=#f9e140c8
+option auraBar.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
+option auraBar.showCount type="toggle" label="Show stacks" default=true
+option auraBar.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auraBar.font type="font" label="Font" inherit="font"
+option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
+option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auraBar.dispelColors type="group" label="Debuff border colours"
+option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
+option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
+option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
+option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
+option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
+option auraBar.border.enabled type="toggle" label="Enabled" default=true
+option auraBar.border.border type="border" label="Border" inherit="borderTexture"
+option auraBar.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.border.color type="color" label="Border colour" inherit="borderColor"
+option auraBar.border.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option auraBar.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
+option auraBar.buffs type="group" label="Buffs"
+option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
+option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
+option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
+option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
+option auraBar.debuffs type="group" label="Debuffs"
+option auraBar.debuffs.enabled type="toggle" label="Show debuffs" default=true
+option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
+option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
+option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
+option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
 option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
@@ -2232,6 +2592,49 @@ option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 
 option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#e997fb28
 option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+default auraBar.border.background = "None"
+default auraBar.border.enabled = true
+default auraBar.border.inset = 1
+default auraBar.border.padding = 2
+default auraBar.border.size = 8
+default auraBar.buffWidthPercent = 50
+default auraBar.buffs.enabled = true
+default auraBar.buffs.entrySide = "left"
+default auraBar.buffs.filter = "HELPFUL"
+default auraBar.buffs.max = 16
+default auraBar.buffs.maxDuration = 0
+default auraBar.buffs.size = 32
+default auraBar.buffs.sort = "expiration"
+default auraBar.countSize = 10
+default auraBar.debuffs.enabled = true
+default auraBar.debuffs.entrySide = "opposite"
+default auraBar.debuffs.filter = "HARMFUL"
+default auraBar.debuffs.max = 16
+default auraBar.debuffs.maxDuration = 0
+default auraBar.debuffs.size = 32
+default auraBar.debuffs.sort = "expiration"
+default auraBar.dispelBorder = true
+default auraBar.dispelColors.Curse = {0.6,0,1,1}
+default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
+default auraBar.dispelColors.Magic = {0.2,0.6,1,1}
+default auraBar.dispelColors.None = {0.8,0,0,1}
+default auraBar.dispelColors.Poison = {0,0.6,0,1}
+default auraBar.durationPosition = "BOTTOM"
+default auraBar.durationSize = 10
+default auraBar.enabled = false
+default auraBar.fadeDuration = 0.15
+default auraBar.fadeIn = true
+default auraBar.fontOutline = "OUTLINE"
+default auraBar.height = 18
+default auraBar.padding = 0
+default auraBar.position = "bottom"
+default auraBar.rowBackdrop.border = "None"
+default auraBar.rowBackdrop.enabled = false
+default auraBar.rowBackdrop.inset = 0
+default auraBar.sectionGap = 2
+default auraBar.showCount = true
+default auraBar.showDuration = true
+default auraBar.spacing = 2
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -2501,6 +2904,57 @@ default readyCheckIcon.order = 1
 default readyCheckIcon.size = 22
 default spacing = 1
 default width = 170
+resolved auraBar.border.background = "None"
+resolved auraBar.border.backgroundColor = {0,0,0,0.75}
+resolved auraBar.border.border = "Blizzard Tooltip"
+resolved auraBar.border.color = {0.5,0.5,0.5,1}
+resolved auraBar.border.enabled = true
+resolved auraBar.border.inset = 1
+resolved auraBar.border.padding = 2
+resolved auraBar.border.size = 8
+resolved auraBar.buffWidthPercent = 50
+resolved auraBar.buffs.enabled = true
+resolved auraBar.buffs.entrySide = "left"
+resolved auraBar.buffs.filter = "HELPFUL"
+resolved auraBar.buffs.max = 16
+resolved auraBar.buffs.maxDuration = 0
+resolved auraBar.buffs.size = 32
+resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.countSize = 10
+resolved auraBar.debuffs.enabled = true
+resolved auraBar.debuffs.entrySide = "opposite"
+resolved auraBar.debuffs.filter = "HARMFUL"
+resolved auraBar.debuffs.max = 16
+resolved auraBar.debuffs.maxDuration = 0
+resolved auraBar.debuffs.size = 32
+resolved auraBar.debuffs.sort = "expiration"
+resolved auraBar.dispelBorder = true
+resolved auraBar.dispelColors.Curse = {0.6,0,1,1}
+resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
+resolved auraBar.dispelColors.Magic = {0.2,0.6,1,1}
+resolved auraBar.dispelColors.None = {0.8,0,0,1}
+resolved auraBar.dispelColors.Poison = {0,0.6,0,1}
+resolved auraBar.durationPosition = "BOTTOM"
+resolved auraBar.durationSize = 10
+resolved auraBar.enabled = false
+resolved auraBar.fadeDuration = 0.15
+resolved auraBar.fadeIn = true
+resolved auraBar.font = "Friz Quadrata TT"
+resolved auraBar.fontOutline = "OUTLINE"
+resolved auraBar.height = 18
+resolved auraBar.padding = 0
+resolved auraBar.position = "bottom"
+resolved auraBar.rowBackdrop.background = "Solid"
+resolved auraBar.rowBackdrop.backgroundColor = {0,0,0,0.75}
+resolved auraBar.rowBackdrop.border = "None"
+resolved auraBar.rowBackdrop.color = {0.5,0.5,0.5,1}
+resolved auraBar.rowBackdrop.enabled = false
+resolved auraBar.rowBackdrop.inset = 0
+resolved auraBar.rowBackdrop.size = 12
+resolved auraBar.sectionGap = 2
+resolved auraBar.showCount = true
+resolved auraBar.showDuration = true
+resolved auraBar.spacing = 2
 resolved auras.border.background = "None"
 resolved auras.border.backgroundColor = {0,0,0,0.75}
 resolved auras.border.border = "Blizzard Tooltip"
@@ -2845,6 +3299,7 @@ resolved readyCheckIcon.order = 1
 resolved readyCheckIcon.size = 22
 resolved spacing = 1
 resolved width = 170
+definition auraBar.defaults = {}
 definition auras.defaults.buffs.max = 6
 definition auras.defaults.buffs.size = 18
 definition auras.defaults.countSize = 8
@@ -3246,6 +3701,63 @@ option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 m
 option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
 option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auraBar type="group" label="Buff & debuff icon row" defaults={}
+option auraBar.enabled type="toggle" label="Enabled" default=false
+option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
+option auraBar.height type="range" label="Row height" default=18 min=2 max=100 step=1 tooltip=#7e741a40 hint=#032668bf
+option auraBar.padding type="range" label="Inner padding" default=0 min=0 max=20 step=1
+option auraBar.fadeIn type="toggle" label="Fade in new auras" default=true tooltip=#5b290d2d
+option auraBar.fadeDuration type="range" label="Fade duration" default=0.15 min=0.05 max=0.5 step=0.05
+option auraBar.sectionGap type="range" label="Gap between categories" default=2 min=0 max=30 step=1
+option auraBar.buffWidthPercent type="range" label="Buff share of width (%)" default=50 min=0 max=100 step=1 tooltip=#1b23914d
+option auraBar.rowBackdrop type="group" label="Row background" defaults={border="None",enabled=false,inset=0}
+option auraBar.rowBackdrop.enabled type="toggle" label="Enabled" default=true
+option auraBar.rowBackdrop.border type="border" label="Border" inherit="borderTexture"
+option auraBar.rowBackdrop.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.rowBackdrop.color type="color" label="Border colour" inherit="borderColor"
+option auraBar.rowBackdrop.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.rowBackdrop.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option auraBar.rowBackdrop.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
+option auraBar.showDuration type="toggle" label="Show time left" default=true
+option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" values=#789eefc1 tooltip=#d6ced160 hint=#f9e140c8
+option auraBar.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
+option auraBar.showCount type="toggle" label="Show stacks" default=true
+option auraBar.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auraBar.font type="font" label="Font" inherit="font"
+option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
+option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auraBar.dispelColors type="group" label="Debuff border colours"
+option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
+option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
+option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
+option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
+option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
+option auraBar.border.enabled type="toggle" label="Enabled" default=true
+option auraBar.border.border type="border" label="Border" inherit="borderTexture"
+option auraBar.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.border.color type="color" label="Border colour" inherit="borderColor"
+option auraBar.border.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option auraBar.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
+option auraBar.buffs type="group" label="Buffs"
+option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
+option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
+option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
+option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
+option auraBar.debuffs type="group" label="Debuffs"
+option auraBar.debuffs.enabled type="toggle" label="Show debuffs" default=true
+option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
+option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
+option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
+option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
 option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
@@ -3279,6 +3791,49 @@ option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 
 option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#e997fb28
 option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+default auraBar.border.background = "None"
+default auraBar.border.enabled = true
+default auraBar.border.inset = 1
+default auraBar.border.padding = 2
+default auraBar.border.size = 8
+default auraBar.buffWidthPercent = 50
+default auraBar.buffs.enabled = true
+default auraBar.buffs.entrySide = "left"
+default auraBar.buffs.filter = "HELPFUL"
+default auraBar.buffs.max = 16
+default auraBar.buffs.maxDuration = 0
+default auraBar.buffs.size = 32
+default auraBar.buffs.sort = "expiration"
+default auraBar.countSize = 10
+default auraBar.debuffs.enabled = true
+default auraBar.debuffs.entrySide = "opposite"
+default auraBar.debuffs.filter = "HARMFUL"
+default auraBar.debuffs.max = 16
+default auraBar.debuffs.maxDuration = 0
+default auraBar.debuffs.size = 32
+default auraBar.debuffs.sort = "expiration"
+default auraBar.dispelBorder = true
+default auraBar.dispelColors.Curse = {0.6,0,1,1}
+default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
+default auraBar.dispelColors.Magic = {0.2,0.6,1,1}
+default auraBar.dispelColors.None = {0.8,0,0,1}
+default auraBar.dispelColors.Poison = {0,0.6,0,1}
+default auraBar.durationPosition = "BOTTOM"
+default auraBar.durationSize = 10
+default auraBar.enabled = false
+default auraBar.fadeDuration = 0.15
+default auraBar.fadeIn = true
+default auraBar.fontOutline = "OUTLINE"
+default auraBar.height = 18
+default auraBar.padding = 0
+default auraBar.position = "bottom"
+default auraBar.rowBackdrop.border = "None"
+default auraBar.rowBackdrop.enabled = false
+default auraBar.rowBackdrop.inset = 0
+default auraBar.sectionGap = 2
+default auraBar.showCount = true
+default auraBar.showDuration = true
+default auraBar.spacing = 2
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -3546,6 +4101,57 @@ default readyCheckIcon.order = 1
 default readyCheckIcon.size = 22
 default spacing = 1
 default width = 230
+resolved auraBar.border.background = "None"
+resolved auraBar.border.backgroundColor = {0,0,0,0.75}
+resolved auraBar.border.border = "Blizzard Tooltip"
+resolved auraBar.border.color = {0.5,0.5,0.5,1}
+resolved auraBar.border.enabled = true
+resolved auraBar.border.inset = 1
+resolved auraBar.border.padding = 2
+resolved auraBar.border.size = 8
+resolved auraBar.buffWidthPercent = 50
+resolved auraBar.buffs.enabled = true
+resolved auraBar.buffs.entrySide = "left"
+resolved auraBar.buffs.filter = "HELPFUL"
+resolved auraBar.buffs.max = 16
+resolved auraBar.buffs.maxDuration = 0
+resolved auraBar.buffs.size = 32
+resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.countSize = 10
+resolved auraBar.debuffs.enabled = true
+resolved auraBar.debuffs.entrySide = "opposite"
+resolved auraBar.debuffs.filter = "HARMFUL"
+resolved auraBar.debuffs.max = 16
+resolved auraBar.debuffs.maxDuration = 0
+resolved auraBar.debuffs.size = 32
+resolved auraBar.debuffs.sort = "expiration"
+resolved auraBar.dispelBorder = true
+resolved auraBar.dispelColors.Curse = {0.6,0,1,1}
+resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
+resolved auraBar.dispelColors.Magic = {0.2,0.6,1,1}
+resolved auraBar.dispelColors.None = {0.8,0,0,1}
+resolved auraBar.dispelColors.Poison = {0,0.6,0,1}
+resolved auraBar.durationPosition = "BOTTOM"
+resolved auraBar.durationSize = 10
+resolved auraBar.enabled = false
+resolved auraBar.fadeDuration = 0.15
+resolved auraBar.fadeIn = true
+resolved auraBar.font = "Friz Quadrata TT"
+resolved auraBar.fontOutline = "OUTLINE"
+resolved auraBar.height = 18
+resolved auraBar.padding = 0
+resolved auraBar.position = "bottom"
+resolved auraBar.rowBackdrop.background = "Solid"
+resolved auraBar.rowBackdrop.backgroundColor = {0,0,0,0.75}
+resolved auraBar.rowBackdrop.border = "None"
+resolved auraBar.rowBackdrop.color = {0.5,0.5,0.5,1}
+resolved auraBar.rowBackdrop.enabled = false
+resolved auraBar.rowBackdrop.inset = 0
+resolved auraBar.rowBackdrop.size = 12
+resolved auraBar.sectionGap = 2
+resolved auraBar.showCount = true
+resolved auraBar.showDuration = true
+resolved auraBar.spacing = 2
 resolved auras.border.background = "None"
 resolved auras.border.backgroundColor = {0,0,0,0.75}
 resolved auras.border.border = "Blizzard Tooltip"
@@ -3890,6 +4496,7 @@ resolved readyCheckIcon.order = 1
 resolved readyCheckIcon.size = 22
 resolved spacing = 1
 resolved width = 230
+definition auraBar.defaults = {}
 definition auras.defaults = {}
 definition castbar.defaults.border.enabled = false
 definition castbar.defaults.height = 18
@@ -4281,6 +4888,63 @@ option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 m
 option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
 option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auraBar type="group" label="Buff & debuff icon row" defaults={}
+option auraBar.enabled type="toggle" label="Enabled" default=false
+option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
+option auraBar.height type="range" label="Row height" default=18 min=2 max=100 step=1 tooltip=#7e741a40 hint=#032668bf
+option auraBar.padding type="range" label="Inner padding" default=0 min=0 max=20 step=1
+option auraBar.fadeIn type="toggle" label="Fade in new auras" default=true tooltip=#5b290d2d
+option auraBar.fadeDuration type="range" label="Fade duration" default=0.15 min=0.05 max=0.5 step=0.05
+option auraBar.sectionGap type="range" label="Gap between categories" default=2 min=0 max=30 step=1
+option auraBar.buffWidthPercent type="range" label="Buff share of width (%)" default=50 min=0 max=100 step=1 tooltip=#1b23914d
+option auraBar.rowBackdrop type="group" label="Row background" defaults={border="None",enabled=false,inset=0}
+option auraBar.rowBackdrop.enabled type="toggle" label="Enabled" default=true
+option auraBar.rowBackdrop.border type="border" label="Border" inherit="borderTexture"
+option auraBar.rowBackdrop.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.rowBackdrop.color type="color" label="Border colour" inherit="borderColor"
+option auraBar.rowBackdrop.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.rowBackdrop.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option auraBar.rowBackdrop.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
+option auraBar.showDuration type="toggle" label="Show time left" default=true
+option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" values=#789eefc1 tooltip=#d6ced160 hint=#f9e140c8
+option auraBar.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
+option auraBar.showCount type="toggle" label="Show stacks" default=true
+option auraBar.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auraBar.font type="font" label="Font" inherit="font"
+option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
+option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auraBar.dispelColors type="group" label="Debuff border colours"
+option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
+option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
+option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
+option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
+option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
+option auraBar.border.enabled type="toggle" label="Enabled" default=true
+option auraBar.border.border type="border" label="Border" inherit="borderTexture"
+option auraBar.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.border.color type="color" label="Border colour" inherit="borderColor"
+option auraBar.border.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option auraBar.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
+option auraBar.buffs type="group" label="Buffs"
+option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
+option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
+option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
+option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
+option auraBar.debuffs type="group" label="Debuffs"
+option auraBar.debuffs.enabled type="toggle" label="Show debuffs" default=true
+option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
+option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
+option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
+option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
 option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
@@ -4314,6 +4978,49 @@ option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 
 option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#e997fb28
 option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+default auraBar.border.background = "None"
+default auraBar.border.enabled = true
+default auraBar.border.inset = 1
+default auraBar.border.padding = 2
+default auraBar.border.size = 8
+default auraBar.buffWidthPercent = 50
+default auraBar.buffs.enabled = true
+default auraBar.buffs.entrySide = "left"
+default auraBar.buffs.filter = "HELPFUL"
+default auraBar.buffs.max = 16
+default auraBar.buffs.maxDuration = 0
+default auraBar.buffs.size = 32
+default auraBar.buffs.sort = "expiration"
+default auraBar.countSize = 10
+default auraBar.debuffs.enabled = true
+default auraBar.debuffs.entrySide = "opposite"
+default auraBar.debuffs.filter = "HARMFUL"
+default auraBar.debuffs.max = 16
+default auraBar.debuffs.maxDuration = 0
+default auraBar.debuffs.size = 32
+default auraBar.debuffs.sort = "expiration"
+default auraBar.dispelBorder = true
+default auraBar.dispelColors.Curse = {0.6,0,1,1}
+default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
+default auraBar.dispelColors.Magic = {0.2,0.6,1,1}
+default auraBar.dispelColors.None = {0.8,0,0,1}
+default auraBar.dispelColors.Poison = {0,0.6,0,1}
+default auraBar.durationPosition = "BOTTOM"
+default auraBar.durationSize = 10
+default auraBar.enabled = false
+default auraBar.fadeDuration = 0.15
+default auraBar.fadeIn = true
+default auraBar.fontOutline = "OUTLINE"
+default auraBar.height = 18
+default auraBar.padding = 0
+default auraBar.position = "bottom"
+default auraBar.rowBackdrop.border = "None"
+default auraBar.rowBackdrop.enabled = false
+default auraBar.rowBackdrop.inset = 0
+default auraBar.sectionGap = 2
+default auraBar.showCount = true
+default auraBar.showDuration = true
+default auraBar.spacing = 2
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -4583,6 +5290,57 @@ default readyCheckIcon.order = 1
 default readyCheckIcon.size = 22
 default spacing = 1
 default width = 140
+resolved auraBar.border.background = "None"
+resolved auraBar.border.backgroundColor = {0,0,0,0.75}
+resolved auraBar.border.border = "Blizzard Tooltip"
+resolved auraBar.border.color = {0.5,0.5,0.5,1}
+resolved auraBar.border.enabled = true
+resolved auraBar.border.inset = 1
+resolved auraBar.border.padding = 2
+resolved auraBar.border.size = 8
+resolved auraBar.buffWidthPercent = 50
+resolved auraBar.buffs.enabled = true
+resolved auraBar.buffs.entrySide = "left"
+resolved auraBar.buffs.filter = "HELPFUL"
+resolved auraBar.buffs.max = 16
+resolved auraBar.buffs.maxDuration = 0
+resolved auraBar.buffs.size = 32
+resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.countSize = 10
+resolved auraBar.debuffs.enabled = true
+resolved auraBar.debuffs.entrySide = "opposite"
+resolved auraBar.debuffs.filter = "HARMFUL"
+resolved auraBar.debuffs.max = 16
+resolved auraBar.debuffs.maxDuration = 0
+resolved auraBar.debuffs.size = 32
+resolved auraBar.debuffs.sort = "expiration"
+resolved auraBar.dispelBorder = true
+resolved auraBar.dispelColors.Curse = {0.6,0,1,1}
+resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
+resolved auraBar.dispelColors.Magic = {0.2,0.6,1,1}
+resolved auraBar.dispelColors.None = {0.8,0,0,1}
+resolved auraBar.dispelColors.Poison = {0,0.6,0,1}
+resolved auraBar.durationPosition = "BOTTOM"
+resolved auraBar.durationSize = 10
+resolved auraBar.enabled = false
+resolved auraBar.fadeDuration = 0.15
+resolved auraBar.fadeIn = true
+resolved auraBar.font = "Friz Quadrata TT"
+resolved auraBar.fontOutline = "OUTLINE"
+resolved auraBar.height = 18
+resolved auraBar.padding = 0
+resolved auraBar.position = "bottom"
+resolved auraBar.rowBackdrop.background = "Solid"
+resolved auraBar.rowBackdrop.backgroundColor = {0,0,0,0.75}
+resolved auraBar.rowBackdrop.border = "None"
+resolved auraBar.rowBackdrop.color = {0.5,0.5,0.5,1}
+resolved auraBar.rowBackdrop.enabled = false
+resolved auraBar.rowBackdrop.inset = 0
+resolved auraBar.rowBackdrop.size = 12
+resolved auraBar.sectionGap = 2
+resolved auraBar.showCount = true
+resolved auraBar.showDuration = true
+resolved auraBar.spacing = 2
 resolved auras.border.background = "None"
 resolved auras.border.backgroundColor = {0,0,0,0.75}
 resolved auras.border.border = "Blizzard Tooltip"
@@ -4927,6 +5685,7 @@ resolved readyCheckIcon.order = 1
 resolved readyCheckIcon.size = 22
 resolved spacing = 1
 resolved width = 140
+definition auraBar.defaults = {}
 definition auras.defaults.buffs.max = 8
 definition auras.defaults.buffs.size = 16
 definition auras.defaults.countSize = 8
@@ -5320,6 +6079,63 @@ option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 m
 option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
 option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auraBar type="group" label="Buff & debuff icon row" defaults={}
+option auraBar.enabled type="toggle" label="Enabled" default=false
+option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
+option auraBar.height type="range" label="Row height" default=18 min=2 max=100 step=1 tooltip=#7e741a40 hint=#032668bf
+option auraBar.padding type="range" label="Inner padding" default=0 min=0 max=20 step=1
+option auraBar.fadeIn type="toggle" label="Fade in new auras" default=true tooltip=#5b290d2d
+option auraBar.fadeDuration type="range" label="Fade duration" default=0.15 min=0.05 max=0.5 step=0.05
+option auraBar.sectionGap type="range" label="Gap between categories" default=2 min=0 max=30 step=1
+option auraBar.buffWidthPercent type="range" label="Buff share of width (%)" default=50 min=0 max=100 step=1 tooltip=#1b23914d
+option auraBar.rowBackdrop type="group" label="Row background" defaults={border="None",enabled=false,inset=0}
+option auraBar.rowBackdrop.enabled type="toggle" label="Enabled" default=true
+option auraBar.rowBackdrop.border type="border" label="Border" inherit="borderTexture"
+option auraBar.rowBackdrop.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.rowBackdrop.color type="color" label="Border colour" inherit="borderColor"
+option auraBar.rowBackdrop.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.rowBackdrop.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option auraBar.rowBackdrop.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
+option auraBar.showDuration type="toggle" label="Show time left" default=true
+option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" values=#789eefc1 tooltip=#d6ced160 hint=#f9e140c8
+option auraBar.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
+option auraBar.showCount type="toggle" label="Show stacks" default=true
+option auraBar.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auraBar.font type="font" label="Font" inherit="font"
+option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
+option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auraBar.dispelColors type="group" label="Debuff border colours"
+option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
+option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
+option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
+option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
+option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
+option auraBar.border.enabled type="toggle" label="Enabled" default=true
+option auraBar.border.border type="border" label="Border" inherit="borderTexture"
+option auraBar.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.border.color type="color" label="Border colour" inherit="borderColor"
+option auraBar.border.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option auraBar.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
+option auraBar.buffs type="group" label="Buffs"
+option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
+option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
+option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
+option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
+option auraBar.debuffs type="group" label="Debuffs"
+option auraBar.debuffs.enabled type="toggle" label="Show debuffs" default=true
+option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
+option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
+option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
+option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
 option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
@@ -5353,6 +6169,49 @@ option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 
 option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#e997fb28
 option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+default auraBar.border.background = "None"
+default auraBar.border.enabled = true
+default auraBar.border.inset = 1
+default auraBar.border.padding = 2
+default auraBar.border.size = 8
+default auraBar.buffWidthPercent = 50
+default auraBar.buffs.enabled = true
+default auraBar.buffs.entrySide = "left"
+default auraBar.buffs.filter = "HELPFUL"
+default auraBar.buffs.max = 16
+default auraBar.buffs.maxDuration = 0
+default auraBar.buffs.size = 32
+default auraBar.buffs.sort = "expiration"
+default auraBar.countSize = 10
+default auraBar.debuffs.enabled = true
+default auraBar.debuffs.entrySide = "opposite"
+default auraBar.debuffs.filter = "HARMFUL"
+default auraBar.debuffs.max = 16
+default auraBar.debuffs.maxDuration = 0
+default auraBar.debuffs.size = 32
+default auraBar.debuffs.sort = "expiration"
+default auraBar.dispelBorder = true
+default auraBar.dispelColors.Curse = {0.6,0,1,1}
+default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
+default auraBar.dispelColors.Magic = {0.2,0.6,1,1}
+default auraBar.dispelColors.None = {0.8,0,0,1}
+default auraBar.dispelColors.Poison = {0,0.6,0,1}
+default auraBar.durationPosition = "BOTTOM"
+default auraBar.durationSize = 10
+default auraBar.enabled = false
+default auraBar.fadeDuration = 0.15
+default auraBar.fadeIn = true
+default auraBar.fontOutline = "OUTLINE"
+default auraBar.height = 18
+default auraBar.padding = 0
+default auraBar.position = "bottom"
+default auraBar.rowBackdrop.border = "None"
+default auraBar.rowBackdrop.enabled = false
+default auraBar.rowBackdrop.inset = 0
+default auraBar.sectionGap = 2
+default auraBar.showCount = true
+default auraBar.showDuration = true
+default auraBar.spacing = 2
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -5620,6 +6479,57 @@ default readyCheckIcon.order = 1
 default readyCheckIcon.size = 22
 default spacing = 1
 default width = 200
+resolved auraBar.border.background = "None"
+resolved auraBar.border.backgroundColor = {0,0,0,0.75}
+resolved auraBar.border.border = "Blizzard Tooltip"
+resolved auraBar.border.color = {0.5,0.5,0.5,1}
+resolved auraBar.border.enabled = true
+resolved auraBar.border.inset = 1
+resolved auraBar.border.padding = 2
+resolved auraBar.border.size = 8
+resolved auraBar.buffWidthPercent = 50
+resolved auraBar.buffs.enabled = true
+resolved auraBar.buffs.entrySide = "left"
+resolved auraBar.buffs.filter = "HELPFUL"
+resolved auraBar.buffs.max = 16
+resolved auraBar.buffs.maxDuration = 0
+resolved auraBar.buffs.size = 32
+resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.countSize = 10
+resolved auraBar.debuffs.enabled = true
+resolved auraBar.debuffs.entrySide = "opposite"
+resolved auraBar.debuffs.filter = "HARMFUL"
+resolved auraBar.debuffs.max = 16
+resolved auraBar.debuffs.maxDuration = 0
+resolved auraBar.debuffs.size = 32
+resolved auraBar.debuffs.sort = "expiration"
+resolved auraBar.dispelBorder = true
+resolved auraBar.dispelColors.Curse = {0.6,0,1,1}
+resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
+resolved auraBar.dispelColors.Magic = {0.2,0.6,1,1}
+resolved auraBar.dispelColors.None = {0.8,0,0,1}
+resolved auraBar.dispelColors.Poison = {0,0.6,0,1}
+resolved auraBar.durationPosition = "BOTTOM"
+resolved auraBar.durationSize = 10
+resolved auraBar.enabled = false
+resolved auraBar.fadeDuration = 0.15
+resolved auraBar.fadeIn = true
+resolved auraBar.font = "Friz Quadrata TT"
+resolved auraBar.fontOutline = "OUTLINE"
+resolved auraBar.height = 18
+resolved auraBar.padding = 0
+resolved auraBar.position = "bottom"
+resolved auraBar.rowBackdrop.background = "Solid"
+resolved auraBar.rowBackdrop.backgroundColor = {0,0,0,0.75}
+resolved auraBar.rowBackdrop.border = "None"
+resolved auraBar.rowBackdrop.color = {0.5,0.5,0.5,1}
+resolved auraBar.rowBackdrop.enabled = false
+resolved auraBar.rowBackdrop.inset = 0
+resolved auraBar.rowBackdrop.size = 12
+resolved auraBar.sectionGap = 2
+resolved auraBar.showCount = true
+resolved auraBar.showDuration = true
+resolved auraBar.spacing = 2
 resolved auras.border.background = "None"
 resolved auras.border.backgroundColor = {0,0,0,0.75}
 resolved auras.border.border = "Blizzard Tooltip"
@@ -5964,6 +6874,7 @@ resolved readyCheckIcon.order = 1
 resolved readyCheckIcon.size = 22
 resolved spacing = 1
 resolved width = 200
+definition auraBar.defaults = {}
 definition auras.defaults = {}
 definition castbar.defaults.border.enabled = false
 definition castbar.defaults.height = 18
@@ -6349,6 +7260,63 @@ option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 m
 option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
 option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auraBar type="group" label="Buff & debuff icon row" defaults={}
+option auraBar.enabled type="toggle" label="Enabled" default=false
+option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
+option auraBar.height type="range" label="Row height" default=18 min=2 max=100 step=1 tooltip=#7e741a40 hint=#032668bf
+option auraBar.padding type="range" label="Inner padding" default=0 min=0 max=20 step=1
+option auraBar.fadeIn type="toggle" label="Fade in new auras" default=true tooltip=#5b290d2d
+option auraBar.fadeDuration type="range" label="Fade duration" default=0.15 min=0.05 max=0.5 step=0.05
+option auraBar.sectionGap type="range" label="Gap between categories" default=2 min=0 max=30 step=1
+option auraBar.buffWidthPercent type="range" label="Buff share of width (%)" default=50 min=0 max=100 step=1 tooltip=#1b23914d
+option auraBar.rowBackdrop type="group" label="Row background" defaults={border="None",enabled=false,inset=0}
+option auraBar.rowBackdrop.enabled type="toggle" label="Enabled" default=true
+option auraBar.rowBackdrop.border type="border" label="Border" inherit="borderTexture"
+option auraBar.rowBackdrop.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.rowBackdrop.color type="color" label="Border colour" inherit="borderColor"
+option auraBar.rowBackdrop.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.rowBackdrop.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option auraBar.rowBackdrop.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
+option auraBar.showDuration type="toggle" label="Show time left" default=true
+option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" values=#789eefc1 tooltip=#d6ced160 hint=#f9e140c8
+option auraBar.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
+option auraBar.showCount type="toggle" label="Show stacks" default=true
+option auraBar.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auraBar.font type="font" label="Font" inherit="font"
+option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
+option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auraBar.dispelColors type="group" label="Debuff border colours"
+option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
+option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
+option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
+option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
+option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
+option auraBar.border.enabled type="toggle" label="Enabled" default=true
+option auraBar.border.border type="border" label="Border" inherit="borderTexture"
+option auraBar.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.border.color type="color" label="Border colour" inherit="borderColor"
+option auraBar.border.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option auraBar.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
+option auraBar.buffs type="group" label="Buffs"
+option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
+option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
+option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
+option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
+option auraBar.debuffs type="group" label="Debuffs"
+option auraBar.debuffs.enabled type="toggle" label="Show debuffs" default=true
+option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
+option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
+option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
+option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
 option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
@@ -6382,6 +7350,49 @@ option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 
 option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#e997fb28
 option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+default auraBar.border.background = "None"
+default auraBar.border.enabled = true
+default auraBar.border.inset = 1
+default auraBar.border.padding = 2
+default auraBar.border.size = 8
+default auraBar.buffWidthPercent = 50
+default auraBar.buffs.enabled = true
+default auraBar.buffs.entrySide = "left"
+default auraBar.buffs.filter = "HELPFUL"
+default auraBar.buffs.max = 16
+default auraBar.buffs.maxDuration = 0
+default auraBar.buffs.size = 32
+default auraBar.buffs.sort = "expiration"
+default auraBar.countSize = 10
+default auraBar.debuffs.enabled = true
+default auraBar.debuffs.entrySide = "opposite"
+default auraBar.debuffs.filter = "HARMFUL"
+default auraBar.debuffs.max = 16
+default auraBar.debuffs.maxDuration = 0
+default auraBar.debuffs.size = 32
+default auraBar.debuffs.sort = "expiration"
+default auraBar.dispelBorder = true
+default auraBar.dispelColors.Curse = {0.6,0,1,1}
+default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
+default auraBar.dispelColors.Magic = {0.2,0.6,1,1}
+default auraBar.dispelColors.None = {0.8,0,0,1}
+default auraBar.dispelColors.Poison = {0,0.6,0,1}
+default auraBar.durationPosition = "BOTTOM"
+default auraBar.durationSize = 10
+default auraBar.enabled = false
+default auraBar.fadeDuration = 0.15
+default auraBar.fadeIn = true
+default auraBar.fontOutline = "OUTLINE"
+default auraBar.height = 18
+default auraBar.padding = 0
+default auraBar.position = "bottom"
+default auraBar.rowBackdrop.border = "None"
+default auraBar.rowBackdrop.enabled = false
+default auraBar.rowBackdrop.inset = 0
+default auraBar.sectionGap = 2
+default auraBar.showCount = true
+default auraBar.showDuration = true
+default auraBar.spacing = 2
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -6651,6 +7662,57 @@ default readyCheckIcon.order = 1
 default readyCheckIcon.size = 22
 default spacing = 1
 default width = 140
+resolved auraBar.border.background = "None"
+resolved auraBar.border.backgroundColor = {0,0,0,0.75}
+resolved auraBar.border.border = "Blizzard Tooltip"
+resolved auraBar.border.color = {0.5,0.5,0.5,1}
+resolved auraBar.border.enabled = true
+resolved auraBar.border.inset = 1
+resolved auraBar.border.padding = 2
+resolved auraBar.border.size = 8
+resolved auraBar.buffWidthPercent = 50
+resolved auraBar.buffs.enabled = true
+resolved auraBar.buffs.entrySide = "left"
+resolved auraBar.buffs.filter = "HELPFUL"
+resolved auraBar.buffs.max = 16
+resolved auraBar.buffs.maxDuration = 0
+resolved auraBar.buffs.size = 32
+resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.countSize = 10
+resolved auraBar.debuffs.enabled = true
+resolved auraBar.debuffs.entrySide = "opposite"
+resolved auraBar.debuffs.filter = "HARMFUL"
+resolved auraBar.debuffs.max = 16
+resolved auraBar.debuffs.maxDuration = 0
+resolved auraBar.debuffs.size = 32
+resolved auraBar.debuffs.sort = "expiration"
+resolved auraBar.dispelBorder = true
+resolved auraBar.dispelColors.Curse = {0.6,0,1,1}
+resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
+resolved auraBar.dispelColors.Magic = {0.2,0.6,1,1}
+resolved auraBar.dispelColors.None = {0.8,0,0,1}
+resolved auraBar.dispelColors.Poison = {0,0.6,0,1}
+resolved auraBar.durationPosition = "BOTTOM"
+resolved auraBar.durationSize = 10
+resolved auraBar.enabled = false
+resolved auraBar.fadeDuration = 0.15
+resolved auraBar.fadeIn = true
+resolved auraBar.font = "Friz Quadrata TT"
+resolved auraBar.fontOutline = "OUTLINE"
+resolved auraBar.height = 18
+resolved auraBar.padding = 0
+resolved auraBar.position = "bottom"
+resolved auraBar.rowBackdrop.background = "Solid"
+resolved auraBar.rowBackdrop.backgroundColor = {0,0,0,0.75}
+resolved auraBar.rowBackdrop.border = "None"
+resolved auraBar.rowBackdrop.color = {0.5,0.5,0.5,1}
+resolved auraBar.rowBackdrop.enabled = false
+resolved auraBar.rowBackdrop.inset = 0
+resolved auraBar.rowBackdrop.size = 12
+resolved auraBar.sectionGap = 2
+resolved auraBar.showCount = true
+resolved auraBar.showDuration = true
+resolved auraBar.spacing = 2
 resolved auras.border.background = "None"
 resolved auras.border.backgroundColor = {0,0,0,0.75}
 resolved auras.border.border = "Blizzard Tooltip"
@@ -6995,6 +8057,7 @@ resolved readyCheckIcon.order = 1
 resolved readyCheckIcon.size = 22
 resolved spacing = 1
 resolved width = 140
+definition auraBar.defaults = {}
 definition auras.defaults.buffs.max = 8
 definition auras.defaults.buffs.size = 16
 definition auras.defaults.countSize = 8
@@ -8122,6 +9185,63 @@ option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 m
 option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
 option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auraBar type="group" label="Buff & debuff icon row" defaults={}
+option auraBar.enabled type="toggle" label="Enabled" default=false
+option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
+option auraBar.height type="range" label="Row height" default=18 min=2 max=100 step=1 tooltip=#7e741a40 hint=#032668bf
+option auraBar.padding type="range" label="Inner padding" default=0 min=0 max=20 step=1
+option auraBar.fadeIn type="toggle" label="Fade in new auras" default=true tooltip=#5b290d2d
+option auraBar.fadeDuration type="range" label="Fade duration" default=0.15 min=0.05 max=0.5 step=0.05
+option auraBar.sectionGap type="range" label="Gap between categories" default=2 min=0 max=30 step=1
+option auraBar.buffWidthPercent type="range" label="Buff share of width (%)" default=50 min=0 max=100 step=1 tooltip=#1b23914d
+option auraBar.rowBackdrop type="group" label="Row background" defaults={border="None",enabled=false,inset=0}
+option auraBar.rowBackdrop.enabled type="toggle" label="Enabled" default=true
+option auraBar.rowBackdrop.border type="border" label="Border" inherit="borderTexture"
+option auraBar.rowBackdrop.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.rowBackdrop.color type="color" label="Border colour" inherit="borderColor"
+option auraBar.rowBackdrop.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.rowBackdrop.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option auraBar.rowBackdrop.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
+option auraBar.showDuration type="toggle" label="Show time left" default=true
+option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" values=#789eefc1 tooltip=#d6ced160 hint=#f9e140c8
+option auraBar.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
+option auraBar.showCount type="toggle" label="Show stacks" default=true
+option auraBar.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auraBar.font type="font" label="Font" inherit="font"
+option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
+option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auraBar.dispelColors type="group" label="Debuff border colours"
+option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
+option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
+option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
+option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
+option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
+option auraBar.border.enabled type="toggle" label="Enabled" default=true
+option auraBar.border.border type="border" label="Border" inherit="borderTexture"
+option auraBar.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.border.color type="color" label="Border colour" inherit="borderColor"
+option auraBar.border.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option auraBar.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
+option auraBar.buffs type="group" label="Buffs"
+option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
+option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
+option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
+option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
+option auraBar.debuffs type="group" label="Debuffs"
+option auraBar.debuffs.enabled type="toggle" label="Show debuffs" default=true
+option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
+option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
+option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
+option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={size=12}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
 option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
@@ -8130,6 +9250,49 @@ option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=
 option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
 option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+default auraBar.border.background = "None"
+default auraBar.border.enabled = true
+default auraBar.border.inset = 1
+default auraBar.border.padding = 2
+default auraBar.border.size = 8
+default auraBar.buffWidthPercent = 50
+default auraBar.buffs.enabled = true
+default auraBar.buffs.entrySide = "left"
+default auraBar.buffs.filter = "HELPFUL"
+default auraBar.buffs.max = 16
+default auraBar.buffs.maxDuration = 0
+default auraBar.buffs.size = 32
+default auraBar.buffs.sort = "expiration"
+default auraBar.countSize = 10
+default auraBar.debuffs.enabled = true
+default auraBar.debuffs.entrySide = "opposite"
+default auraBar.debuffs.filter = "HARMFUL"
+default auraBar.debuffs.max = 16
+default auraBar.debuffs.maxDuration = 0
+default auraBar.debuffs.size = 32
+default auraBar.debuffs.sort = "expiration"
+default auraBar.dispelBorder = true
+default auraBar.dispelColors.Curse = {0.6,0,1,1}
+default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
+default auraBar.dispelColors.Magic = {0.2,0.6,1,1}
+default auraBar.dispelColors.None = {0.8,0,0,1}
+default auraBar.dispelColors.Poison = {0,0.6,0,1}
+default auraBar.durationPosition = "BOTTOM"
+default auraBar.durationSize = 10
+default auraBar.enabled = false
+default auraBar.fadeDuration = 0.15
+default auraBar.fadeIn = true
+default auraBar.fontOutline = "OUTLINE"
+default auraBar.height = 18
+default auraBar.padding = 0
+default auraBar.position = "bottom"
+default auraBar.rowBackdrop.border = "None"
+default auraBar.rowBackdrop.enabled = false
+default auraBar.rowBackdrop.inset = 0
+default auraBar.sectionGap = 2
+default auraBar.showCount = true
+default auraBar.showDuration = true
+default auraBar.spacing = 2
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -8377,6 +9540,57 @@ default readyCheck.readyColor = {0.15,0.8,0.15,1}
 default readyCheck.waitingColor = {0.5,0.5,0.5,1}
 default spacing = 1
 default width = 150
+resolved auraBar.border.background = "None"
+resolved auraBar.border.backgroundColor = {0,0,0,0.75}
+resolved auraBar.border.border = "Blizzard Tooltip"
+resolved auraBar.border.color = {0.5,0.5,0.5,1}
+resolved auraBar.border.enabled = true
+resolved auraBar.border.inset = 1
+resolved auraBar.border.padding = 2
+resolved auraBar.border.size = 8
+resolved auraBar.buffWidthPercent = 50
+resolved auraBar.buffs.enabled = true
+resolved auraBar.buffs.entrySide = "left"
+resolved auraBar.buffs.filter = "HELPFUL"
+resolved auraBar.buffs.max = 16
+resolved auraBar.buffs.maxDuration = 0
+resolved auraBar.buffs.size = 32
+resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.countSize = 10
+resolved auraBar.debuffs.enabled = true
+resolved auraBar.debuffs.entrySide = "opposite"
+resolved auraBar.debuffs.filter = "HARMFUL"
+resolved auraBar.debuffs.max = 16
+resolved auraBar.debuffs.maxDuration = 0
+resolved auraBar.debuffs.size = 32
+resolved auraBar.debuffs.sort = "expiration"
+resolved auraBar.dispelBorder = true
+resolved auraBar.dispelColors.Curse = {0.6,0,1,1}
+resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
+resolved auraBar.dispelColors.Magic = {0.2,0.6,1,1}
+resolved auraBar.dispelColors.None = {0.8,0,0,1}
+resolved auraBar.dispelColors.Poison = {0,0.6,0,1}
+resolved auraBar.durationPosition = "BOTTOM"
+resolved auraBar.durationSize = 10
+resolved auraBar.enabled = false
+resolved auraBar.fadeDuration = 0.15
+resolved auraBar.fadeIn = true
+resolved auraBar.font = "Friz Quadrata TT"
+resolved auraBar.fontOutline = "OUTLINE"
+resolved auraBar.height = 18
+resolved auraBar.padding = 0
+resolved auraBar.position = "bottom"
+resolved auraBar.rowBackdrop.background = "Solid"
+resolved auraBar.rowBackdrop.backgroundColor = {0,0,0,0.75}
+resolved auraBar.rowBackdrop.border = "None"
+resolved auraBar.rowBackdrop.color = {0.5,0.5,0.5,1}
+resolved auraBar.rowBackdrop.enabled = false
+resolved auraBar.rowBackdrop.inset = 0
+resolved auraBar.rowBackdrop.size = 12
+resolved auraBar.sectionGap = 2
+resolved auraBar.showCount = true
+resolved auraBar.showDuration = true
+resolved auraBar.spacing = 2
 resolved auras.border.background = "None"
 resolved auras.border.backgroundColor = {0,0,0,0.75}
 resolved auras.border.border = "Blizzard Tooltip"
@@ -8699,6 +9913,7 @@ resolved readyCheck.readyColor = {0.15,0.8,0.15,1}
 resolved readyCheck.waitingColor = {0.5,0.5,0.5,1}
 resolved spacing = 1
 resolved width = 150
+definition auraBar.defaults = {}
 definition auras.clickThrough = true
 definition auras.defaults.buffs.alignment = "end"
 definition auras.defaults.buffs.filter = "HELPFUL|PLAYER"
@@ -9099,6 +10314,63 @@ option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 m
 option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
 option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auraBar type="group" label="Buff & debuff icon row" defaults={}
+option auraBar.enabled type="toggle" label="Enabled" default=false
+option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
+option auraBar.height type="range" label="Row height" default=18 min=2 max=100 step=1 tooltip=#7e741a40 hint=#032668bf
+option auraBar.padding type="range" label="Inner padding" default=0 min=0 max=20 step=1
+option auraBar.fadeIn type="toggle" label="Fade in new auras" default=true tooltip=#5b290d2d
+option auraBar.fadeDuration type="range" label="Fade duration" default=0.15 min=0.05 max=0.5 step=0.05
+option auraBar.sectionGap type="range" label="Gap between categories" default=2 min=0 max=30 step=1
+option auraBar.buffWidthPercent type="range" label="Buff share of width (%)" default=50 min=0 max=100 step=1 tooltip=#1b23914d
+option auraBar.rowBackdrop type="group" label="Row background" defaults={border="None",enabled=false,inset=0}
+option auraBar.rowBackdrop.enabled type="toggle" label="Enabled" default=true
+option auraBar.rowBackdrop.border type="border" label="Border" inherit="borderTexture"
+option auraBar.rowBackdrop.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.rowBackdrop.color type="color" label="Border colour" inherit="borderColor"
+option auraBar.rowBackdrop.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.rowBackdrop.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option auraBar.rowBackdrop.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
+option auraBar.showDuration type="toggle" label="Show time left" default=true
+option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" values=#789eefc1 tooltip=#d6ced160 hint=#f9e140c8
+option auraBar.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
+option auraBar.showCount type="toggle" label="Show stacks" default=true
+option auraBar.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auraBar.font type="font" label="Font" inherit="font"
+option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
+option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auraBar.dispelColors type="group" label="Debuff border colours"
+option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
+option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
+option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
+option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
+option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
+option auraBar.border.enabled type="toggle" label="Enabled" default=true
+option auraBar.border.border type="border" label="Border" inherit="borderTexture"
+option auraBar.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.border.color type="color" label="Border colour" inherit="borderColor"
+option auraBar.border.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option auraBar.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
+option auraBar.buffs type="group" label="Buffs"
+option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
+option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
+option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
+option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
+option auraBar.debuffs type="group" label="Debuffs"
+option auraBar.debuffs.enabled type="toggle" label="Show debuffs" default=true
+option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
+option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
+option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
+option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={}
 option raidTarget.enabled type="toggle" label="Enabled" default=true
 option raidTarget.anchor type="select" label="Anchor" default="TOP" values=#f2227030 tooltip=#a1871125
@@ -9107,6 +10379,49 @@ option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=
 option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#e997fb28
 option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+default auraBar.border.background = "None"
+default auraBar.border.enabled = true
+default auraBar.border.inset = 1
+default auraBar.border.padding = 2
+default auraBar.border.size = 8
+default auraBar.buffWidthPercent = 50
+default auraBar.buffs.enabled = true
+default auraBar.buffs.entrySide = "left"
+default auraBar.buffs.filter = "HELPFUL"
+default auraBar.buffs.max = 16
+default auraBar.buffs.maxDuration = 0
+default auraBar.buffs.size = 32
+default auraBar.buffs.sort = "expiration"
+default auraBar.countSize = 10
+default auraBar.debuffs.enabled = true
+default auraBar.debuffs.entrySide = "opposite"
+default auraBar.debuffs.filter = "HARMFUL"
+default auraBar.debuffs.max = 16
+default auraBar.debuffs.maxDuration = 0
+default auraBar.debuffs.size = 32
+default auraBar.debuffs.sort = "expiration"
+default auraBar.dispelBorder = true
+default auraBar.dispelColors.Curse = {0.6,0,1,1}
+default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
+default auraBar.dispelColors.Magic = {0.2,0.6,1,1}
+default auraBar.dispelColors.None = {0.8,0,0,1}
+default auraBar.dispelColors.Poison = {0,0.6,0,1}
+default auraBar.durationPosition = "BOTTOM"
+default auraBar.durationSize = 10
+default auraBar.enabled = false
+default auraBar.fadeDuration = 0.15
+default auraBar.fadeIn = true
+default auraBar.fontOutline = "OUTLINE"
+default auraBar.height = 18
+default auraBar.padding = 0
+default auraBar.position = "bottom"
+default auraBar.rowBackdrop.border = "None"
+default auraBar.rowBackdrop.enabled = false
+default auraBar.rowBackdrop.inset = 0
+default auraBar.sectionGap = 2
+default auraBar.showCount = true
+default auraBar.showDuration = true
+default auraBar.spacing = 2
 default auras.border.background = "None"
 default auras.border.enabled = true
 default auras.border.inset = 1
@@ -9348,6 +10663,57 @@ default range.outsideAlpha = 0.55
 default range.spell = ""
 default spacing = 1
 default width = 85
+resolved auraBar.border.background = "None"
+resolved auraBar.border.backgroundColor = {0,0,0,0.75}
+resolved auraBar.border.border = "Blizzard Tooltip"
+resolved auraBar.border.color = {0.5,0.5,0.5,1}
+resolved auraBar.border.enabled = true
+resolved auraBar.border.inset = 1
+resolved auraBar.border.padding = 2
+resolved auraBar.border.size = 8
+resolved auraBar.buffWidthPercent = 50
+resolved auraBar.buffs.enabled = true
+resolved auraBar.buffs.entrySide = "left"
+resolved auraBar.buffs.filter = "HELPFUL"
+resolved auraBar.buffs.max = 16
+resolved auraBar.buffs.maxDuration = 0
+resolved auraBar.buffs.size = 32
+resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.countSize = 10
+resolved auraBar.debuffs.enabled = true
+resolved auraBar.debuffs.entrySide = "opposite"
+resolved auraBar.debuffs.filter = "HARMFUL"
+resolved auraBar.debuffs.max = 16
+resolved auraBar.debuffs.maxDuration = 0
+resolved auraBar.debuffs.size = 32
+resolved auraBar.debuffs.sort = "expiration"
+resolved auraBar.dispelBorder = true
+resolved auraBar.dispelColors.Curse = {0.6,0,1,1}
+resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
+resolved auraBar.dispelColors.Magic = {0.2,0.6,1,1}
+resolved auraBar.dispelColors.None = {0.8,0,0,1}
+resolved auraBar.dispelColors.Poison = {0,0.6,0,1}
+resolved auraBar.durationPosition = "BOTTOM"
+resolved auraBar.durationSize = 10
+resolved auraBar.enabled = false
+resolved auraBar.fadeDuration = 0.15
+resolved auraBar.fadeIn = true
+resolved auraBar.font = "Friz Quadrata TT"
+resolved auraBar.fontOutline = "OUTLINE"
+resolved auraBar.height = 18
+resolved auraBar.padding = 0
+resolved auraBar.position = "bottom"
+resolved auraBar.rowBackdrop.background = "Solid"
+resolved auraBar.rowBackdrop.backgroundColor = {0,0,0,0.75}
+resolved auraBar.rowBackdrop.border = "None"
+resolved auraBar.rowBackdrop.color = {0.5,0.5,0.5,1}
+resolved auraBar.rowBackdrop.enabled = false
+resolved auraBar.rowBackdrop.inset = 0
+resolved auraBar.rowBackdrop.size = 12
+resolved auraBar.sectionGap = 2
+resolved auraBar.showCount = true
+resolved auraBar.showDuration = true
+resolved auraBar.spacing = 2
 resolved auras.border.background = "None"
 resolved auras.border.backgroundColor = {0,0,0,0.75}
 resolved auras.border.border = "Blizzard Tooltip"
@@ -9664,6 +11030,7 @@ resolved range.outsideAlpha = 0.55
 resolved range.spell = ""
 resolved spacing = 1
 resolved width = 85
+definition auraBar.defaults = {}
 definition auras.clickThrough = true
 definition auras.defaults.buffs.max = 8
 definition auras.defaults.buffs.size = 16

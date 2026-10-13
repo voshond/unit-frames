@@ -136,6 +136,15 @@ function Inspector:AddControl(page, opt, path, depth)
 	local control = self:CreateControl(page, opt, path)
 	self:AddRow(page, { opt = opt, path = path, depth = depth, control = control, region = control:GetFrame(),
 		height = control:GetHeight() })
+	if opt.hint then
+		local hint = Skin.FontString(page.frame)
+		hint:SetJustifyH("LEFT")
+		hint:SetWordWrap(true)
+		hint:SetTextColor(unpack(Skin.colors.textDim))
+		hint:SetText(opt.hint)
+		hint:SetHeight(36)
+		self:AddRow(page, { opt = opt, path = path, depth = depth, region = hint, height = 36, isHint = true })
+	end
 end
 
 -- flat: skip sub-groups (they are separate sections).
