@@ -269,6 +269,52 @@ describe("ClickGrid companion", function()
 		assert.equals(0, #CG.bindingErrors)
 	end)
 
+	it("applies binding edits as changed attributes only, without a panel refresh #bindings", function()
+		local frame = CG.headers.party:GetAttribute("child1").Member
+		local refreshes, writes = 0, {}
+		local refresh, set = CG.Refresh, frame.SetAttribute
+		CG.Refresh = function(...) refreshes = refreshes + 1; return refresh(...) end
+		rawset(frame, "SetAttribute", function(self, key, value)
+			writes[#writes + 1] = key
+			return set(self, key, value)
+		end)
+		CG.Config:SetAction(2, "shift", "friendly", { action = "spell", spell = "2061" })
+		assert.equals(0, refreshes)
+		table.sort(writes)
+		assert.same({ "shift-spell-heal2", "shift-type-heal2" }, writes)
+		assert.equals("spell", frame:GetAttribute("shift-type-heal2"))
+		assert.equals(2061, frame:GetAttribute("shift-spell-heal2"))
+		-- Spell and macro updates take the same path; unchanged plans write nothing.
+		writes = {}
+		Mock.FireEvent("SPELLS_CHANGED")
+		Mock.FireEvent("UPDATE_MACROS")
+		assert.equals(0, refreshes)
+		assert.same({}, writes)
+		Mock.spellOverrides[2061] = 2062
+		Mock.FireEvent("SPELLS_CHANGED")
+		assert.same({ "shift-spell-heal2" }, writes)
+		-- A full refresh rewrites nothing either; a reset clears what was set.
+		writes = {}
+		CG.Config:Set("panel.columns", 3)
+		assert.equals(1, refreshes)
+		assert.same({}, writes)
+		CG.Config:SetAction(2, "shift", "friendly", nil)
+		assert.is_nil(frame:GetAttribute("shift-type-heal2"))
+		assert.is_nil(frame:GetAttribute("shift-spell-heal2"))
+		CG.Refresh = refresh
+	end)
+
+	it("defers binding edits in combat to the refresh after it #bindings", function()
+		local frame = CG.headers.party:GetAttribute("child1").Member
+		Mock.inCombat = true
+		CG.Config:SetAction(3, "none", "hostile", { action = "spell", spell = "139" })
+		assert.is_nil(frame:GetAttribute("spell-harm3"))
+		assert.is_true(CG.pending)
+		Mock.inCombat = false
+		Mock.FireEvent("PLAYER_REGEN_ENABLED")
+		assert.equals(139, frame:GetAttribute("spell-harm3"))
+	end)
+
 	it("respects Clique ownership and does not rewrite its attributes", function()
 		local frame = CG.headers.party:GetAttribute("child1").Member
 		Clique = {}

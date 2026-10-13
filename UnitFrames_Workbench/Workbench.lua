@@ -29,6 +29,8 @@ Entries register themselves:
                                      optional navigation pages referring to existing schema paths
     autoSize = true,                 the component sizes itself (no width/height sliders)
     fitToStage = true,               opt-in for ordinary, plain-sized preview frames
+    fillStage = true,                the frame is anchored to fill the stage (implies autoSize);
+                                     the entry lays itself out from its own OnSizeChanged
     refreshOn = { "Event", { "Event", match } },  restyle the preview on these core events
                                      (a table entry only matches when the first payload equals `match`)
                                      notifyOnly = true on a watch updates the inspector/stage only,
@@ -50,6 +52,7 @@ UF.Workbench = Workbench
 wb.Workbench = Workbench
 
 Workbench.entries = {}
+local STAGE_INSET = 8
 Workbench.order = {}
 
 -- Combat restriction CVars: with these on, the live API returns real secret
@@ -217,7 +220,13 @@ function Workbench:Select(id)
 	end
 	session:WatchSize(function() if self.session == session then self:FitStage() end end)
 	handle.frame:ClearAllPoints()
-	handle.frame:SetPoint("CENTER", self.holder, "CENTER")
+	if entry.fillStage then
+		-- Anchors resolve on screen, so the stage scale only scales the content.
+		handle.frame:SetPoint("TOPLEFT", self.stage, "TOPLEFT", STAGE_INSET, -STAGE_INSET)
+		handle.frame:SetPoint("BOTTOMRIGHT", self.stage, "BOTTOMRIGHT", -STAGE_INSET, STAGE_INSET)
+	else
+		handle.frame:SetPoint("CENTER", self.holder, "CENTER")
+	end
 	handle:Apply(state.config)
 	self:ApplySize()
 	self.bounds:ClearAllPoints()

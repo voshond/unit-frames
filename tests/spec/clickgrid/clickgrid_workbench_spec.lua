@@ -403,16 +403,18 @@ describe("ClickGrid Workbench", function()
 	it("edits another binding cell and refreshes on saves without rebuilding the preview", function()
 		wb:Select("clickgrid.bindings")
 		local session, handle = wb.session, wb.handle
-		handle.buttons["2:3"].opts.onClick()
+		handle.cells["2:3"].lines.friendly:RunScript("OnClick")
 		assert.equals(3, wb.styleTarget.resolved().button)
 		assert.equals("shift", wb.styleTarget.resolved().modifier)
+		assert.equals("friendly", wb.state.section)
 		wb.styleTarget.set("friendly.action", "focus")
 		assert.equals(session, wb.session)
 		assert.is_false(handle.released == true)
 		assert.equals("focus", CG.Config:GetBindings().button3.shift.friendly.action)
 		CG.Config:SetBinding(1, "none", "hostile", "action", "assist")
 		assert.equals(session, wb.session)
-		assert.is_true(handle.buttons["1:1"].text:GetText():find("Target", 1, true) ~= nil)
+		assert.equals("Target", handle.cells["1:1"].lines.friendly.name:GetText())
+		assert.equals("Assist", handle.cells["1:1"].lines.hostile.name:GetText())
 	end)
 
 	local function DropSlot(reaction)
@@ -443,7 +445,7 @@ describe("ClickGrid Workbench", function()
 		assert.equals("Active", slot.status:GetText())
 		assert.equals(137061, slot.icon:GetTexture())
 		-- A click while carrying a spell takes the same path, into the newly selected cell.
-		wb.handle.buttons["2:3"].opts.onClick()
+		wb.handle.cells["2:3"].lines.hostile:RunScript("OnClick")
 		Mock.cursorInfo = { "spell", 3, "spell", 139 }
 		slot.slot:RunScript("OnClick")
 		assert.is_nil(Mock.cursorInfo)
@@ -458,12 +460,16 @@ describe("ClickGrid Workbench", function()
 
 	it("rejects unsupported or unsaved drops without touching the binding or the cursor", function()
 		local slot = DropSlot("friendly")
-		for _, cursor in ipairs({ { "item", 6948, "item:6948" }, { "macro", 3 }, { "petaction", 5 } }) do
+		for _, cursor in ipairs({ { "item", 6948, "item:6948" }, { "petaction", 5 } }) do
 			Mock.cursorInfo = cursor
 			slot.slot:RunScript("OnReceiveDrag")
 			assert.equals(cursor, Mock.cursorInfo)
-			assert.equals("Only spells can be dropped here", slot.status:GetText())
+			assert.equals("Only spells and macros can be dropped here", slot.status:GetText())
 		end
+		Mock.cursorInfo = { "macro", 3 }
+		slot.slot:RunScript("OnReceiveDrag")
+		assert.same({ "macro", 3 }, Mock.cursorInfo)
+		assert.equals("Macro information unavailable", slot.status:GetText())
 		assert.is_nil(CG.Config:GetBindings().button1)
 		Mock.cursorInfo = nil
 		slot.slot:RunScript("OnClick")
@@ -487,19 +493,175 @@ describe("ClickGrid Workbench", function()
 		assert.is_nil(Mock.cursorInfo)
 		assert.equals("Not learned in this specialization", slot.status:GetText())
 		assert.is_true(LastCall(slot.icon, "SetDesaturated")[2])
-		local cell = wb.handle.buttons["1:1"].text:GetText()
-		assert.is_true(cell:find("|T135139:12:12|t |cffff5a4dSpell 139|r", 1, true) ~= nil)
-		assert.is_true(cell:find("Target", 1, true) ~= nil)
+		local cell = wb.handle.cells["1:1"]
+		assert.equals("Spell 139", cell.lines.friendly.name:GetText())
+		assert.equals(135139, cell.lines.friendly.icon:GetTexture())
+		assert.is_true(LastCall(cell.lines.friendly.icon, "SetDesaturated")[2])
+		assert.equals(UF.Skin.colors.warning[1], cell.lines.friendly.name.__state.textColor[1])
+		assert.equals("Target", cell.lines.hostile.name:GetText())
 		slot.clear.opts.onClick()
 		assert.same({ action = "none" }, CG.Config:GetBindings().button1.none.friendly)
 		assert.is_nil(CG.headers.party:GetAttribute("child1").Member:GetAttribute("type-heal1"))
 		assert.equals("Unbound", slot.name:GetText())
 		assert.is_false(LastCall(slot.clear.frame, "SetEnabled")[2])
-		assert.is_true(wb.handle.buttons["1:1"].text:GetText():find("Unbound", 1, true) ~= nil)
+		assert.equals("Unbound", cell.lines.friendly.name:GetText())
 		-- The manual alternative still edits the same group.
 		wb.styleTarget.set("friendly.action", "spell")
 		wb.styleTarget.set("friendly.spell", "Flash Heal")
 		assert.equals(2061, CG.headers.party:GetAttribute("child1").Member:GetAttribute("spell-heal1"))
+	end)
+
+	it("binds spells dropped straight onto a grid line, like the drop slots", function()
+		wb:Select("clickgrid.bindings")
+		local handle, frame = wb.handle, CG.headers.party:GetAttribute("child1").Member
+		local line = handle.cells["3:2"].lines.friendly
+		Mock.cursorInfo = { "spell", 12, "spell", 2061 }
+		line:RunScript("OnReceiveDrag")
+		assert.is_nil(Mock.cursorInfo)
+		assert.same({ action = "spell", spell = "2061" }, CG.Config:GetBindings().button2.ctrl.friendly)
+		assert.equals(2061, frame:GetAttribute("ctrl-spell-heal2"))
+		assert.equals("Flash Heal", line.name:GetText())
+		assert.equals(137061, line.icon:GetTexture())
+		-- The dropped cell becomes the edited one, on the dropped reaction's page.
+		assert.equals(2, wb.styleTarget.resolved().button)
+		assert.equals("ctrl", wb.styleTarget.resolved().modifier)
+		assert.equals("friendly", wb.state.section)
+		assert.equals("Flash Heal", wb.inspector.page.rows[1].control.name:GetText())
+		assert.same(UF.Skin.colors.accent, handle.cells["3:2"].__state.backdropBorderColor)
+		assert.same(UF.Skin.colors.border, handle.cells["1:1"].__state.backdropBorderColor)
+		-- A click while carrying a spell binds instead of selecting.
+		Mock.cursorInfo = { "spell", 3, "spell", 139 }
+		handle.cells["3:2"].lines.hostile:RunScript("OnClick")
+		assert.is_nil(Mock.cursorInfo)
+		assert.equals(139, frame:GetAttribute("ctrl-spell-harm2"))
+		assert.equals("hostile", wb.state.section)
+	end)
+
+	it("rejects grid drops without touching the binding or the cursor, and says why", function()
+		wb:Select("clickgrid.bindings")
+		local handle = wb.handle
+		local line = handle.cells["1:1"].lines.friendly
+		Mock.cursorInfo = { "item", 6948, "item:6948" }
+		line:RunScript("OnReceiveDrag")
+		assert.same({ "item", 6948, "item:6948" }, Mock.cursorInfo)
+		assert.is_nil(CG.Config:GetBindings().button1)
+		assert.equals("Target", line.name:GetText())
+		assert.is_true(handle.note:GetText():find("Only spells and macros can be dropped here", 1, true) ~= nil)
+		local setAction = CG.Config.SetAction
+		CG.Config.SetAction = function() return false, "Store rejected the action" end
+		Mock.cursorInfo = { "spell", 12, "spell", 2061 }
+		line:RunScript("OnClick")
+		CG.Config.SetAction = setAction
+		assert.same({ "spell", 12, "spell", 2061 }, Mock.cursorInfo)
+		assert.is_true(handle.note:GetText():find("Store rejected the action", 1, true) ~= nil)
+		assert.is_nil(CG.Config:GetBindings().button1)
+		-- Selecting with an empty cursor clears the message.
+		Mock.cursorInfo = nil
+		line:RunScript("OnClick")
+		assert.is_nil(handle.note:GetText():find("rejected", 1, true))
+	end)
+
+	it("binds dropped macros by name and follows them when macro indices shift #macros", function()
+		Mock.macros.account = { { "Heal Focus", 136001, "/cast [@focus] Flash Heal" } }
+		Mock.macros.character = { { "Cleanse", 136002, "/cast Purify" } }
+		wb:Select("clickgrid.bindings")
+		local handle, frame = wb.handle, CG.headers.party:GetAttribute("child1").Member
+		local line = handle.cells["1:2"].lines.friendly
+		Mock.cursorInfo = { "macro", 121 }
+		line:RunScript("OnReceiveDrag")
+		assert.is_nil(Mock.cursorInfo)
+		assert.same({ action = "macro", macro = "Cleanse" }, CG.Config:GetBindings().button2.none.friendly)
+		assert.equals("macro", frame:GetAttribute("type-heal2"))
+		assert.equals(121, frame:GetAttribute("macro-heal2"))
+		assert.equals("Cleanse", line.name:GetText())
+		assert.equals(136002, line.icon:GetTexture())
+		-- The inspector slot takes macros too, and shows the bound one.
+		wb:SelectSection("hostile")
+		local slot = wb.inspector.page.rows[1].control
+		Mock.cursorInfo = { "macro", 1 }
+		slot.slot:RunScript("OnReceiveDrag")
+		assert.same({ action = "macro", macro = "Heal Focus" }, CG.Config:GetBindings().button2.none.hostile)
+		assert.equals("Heal Focus", slot.name:GetText())
+		assert.equals(136001, slot.icon:GetTexture())
+		assert.equals(1, frame:GetAttribute("macro-harm2"))
+		-- A new account macro shifts indices; the stored name keeps the binding.
+		table.insert(Mock.macros.account, 1, { "Assist Tank", 136003, "/assist tank" })
+		Mock.FireEvent("UPDATE_MACROS")
+		assert.equals(2, frame:GetAttribute("macro-harm2"))
+		assert.equals(121, frame:GetAttribute("macro-heal2"))
+		-- A deleted macro leaves the binding inactive, shown in the open grid.
+		Mock.macros.character = {}
+		Mock.FireEvent("UPDATE_MACROS")
+		assert.is_nil(frame:GetAttribute("type-heal2"))
+		assert.is_nil(frame:GetAttribute("macro-heal2"))
+		assert.equals("Right / None / friendly: Macro not found", CG.bindingErrors[1])
+		assert.equals(UF.Skin.colors.warning[1], line.name.__state.textColor[1])
+		assert.equals("Macro not found", line.info.status)
+		-- Typed names are the manual alternative; switching to a spell clears the macro.
+		wb.styleTarget.set("hostile.action", "spell")
+		wb.styleTarget.set("hostile.spell", "2061")
+		assert.equals("spell", frame:GetAttribute("type-harm2"))
+		assert.is_nil(frame:GetAttribute("macro-harm2"))
+		wb.styleTarget.set("friendly.macro", "Assist Tank")
+		assert.equals(1, frame:GetAttribute("macro-heal2"))
+	end)
+
+	it("opens the macro window only outside combat #macros", function()
+		local opener = DropSlot("friendly").buttons[3]
+		opener.opts.onClick()
+		assert.equals(1, Mock.macroFrameOpened)
+		Mock.FireEvent("PLAYER_REGEN_DISABLED")
+		Mock.inCombat = true
+		opener.opts.onClick()
+		assert.equals(1, Mock.macroFrameOpened)
+		Mock.inCombat = false
+		Mock.FireEvent("PLAYER_REGEN_ENABLED")
+	end)
+
+	it("fills the stage and fits the binding grid to its size", function()
+		wb:Select("clickgrid.bindings")
+		local handle = wb.handle
+		local point, relativeTo = handle.frame:GetPoint(1)
+		assert.equals("TOPLEFT", point)
+		assert.equals(wb.stage, relativeTo)
+		assert.equals(wb.stage, select(2, handle.frame:GetPoint(2)))
+		assert.is_false(wb.widthSlider:GetFrame():IsShown())
+		local function Cell(key) return handle.cells[key] end
+		handle.frame:SetSize(1000, 600)
+		local wide, tall = Cell("1:1"):GetWidth(), Cell("1:1"):GetHeight()
+		assert.equals(180, wide)
+		assert.equals(select(4, Cell("1:1"):GetPoint()) + wide + 3, select(4, Cell("1:2"):GetPoint()))
+		assert.is_true(tall > 30 and tall <= 52)
+		assert.equals("Left", handle.columns[1]:GetText())
+		assert.equals("Alt+Ctrl+Shift", handle.rows[8]:GetText())
+		handle.frame:SetSize(500, 300)
+		assert.equals(80, Cell("1:1"):GetWidth())
+		assert.equals(30, Cell("1:1"):GetHeight())
+		assert.equals(14, Cell("1:1").lines.friendly:GetHeight())
+		assert.equals(select(4, Cell("8:5"):GetPoint()), 84 + 3 + 4 * 83)
+	end)
+
+	it("releases the binding grid's drop targets when switching entries", function()
+		wb:Select("clickgrid.bindings")
+		local handle, line = wb.handle, wb.handle.cells["1:1"].lines.friendly
+		wb:Select("clickgrid.panel")
+		assert.is_true(handle.released)
+		assert.is_nil(line:GetScript("OnReceiveDrag"))
+		assert.is_nil(line:GetScript("OnClick"))
+	end)
+
+	it("gives a drop slot's name and status the full width above its buttons", function()
+		local slot = DropSlot("friendly")
+		assert.equals(76, slot.frame:GetHeight())
+		for _, text in ipairs({ slot.name, slot.status }) do
+			local point, relativeTo, relativePoint = text:GetPoint(2)
+			assert.same({ "RIGHT", slot.frame, "RIGHT" }, { point, relativeTo, relativePoint })
+		end
+		local point, _, relativePoint, x, y = slot.slot:GetPoint()
+		assert.same({ "TOPLEFT", "TOPLEFT", 0, -18 }, { point, relativePoint, x, y })
+		assert.equals("BOTTOMRIGHT", (slot.clear.frame:GetPoint()))
+		wb.handle.cells["2:1"].lines.friendly:RunScript("OnClick")
+		assert.equals("Drop a spell or macro here", wb.inspector.page.rows[1].control.status:GetText())
 	end)
 
 	it("opens the spellbook only outside combat", function()

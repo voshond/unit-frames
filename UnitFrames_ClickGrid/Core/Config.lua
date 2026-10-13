@@ -49,7 +49,11 @@ function Config:Initialize()
 		schema = function() return CG.Bindings.schema end, validate = true,
 		read = function() return self:GetBindings() end,
 		write = function(bindings) db.char.loadouts[self:SpecKey()] = bindings end,
-		changed = function() Changed("bindings") end,
+		-- The config event that follows refreshes the binding grid.
+		changed = function()
+			CG:RequestBindings(false)
+			UF.Events:Fire("ClickGridConfigChanged", "bindings")
+		end,
 	})
 end
 

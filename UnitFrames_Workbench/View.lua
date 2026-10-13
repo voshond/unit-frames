@@ -275,7 +275,7 @@ function Workbench:SetEntrySize(width, height)
 end
 
 function Workbench:ApplySize()
-	local state, autoSize = self.state, self.entry.autoSize
+	local state, autoSize = self.state, self.entry.autoSize or self.entry.fillStage
 	self.widthSlider:SetShown(not autoSize)
 	self.heightSlider:SetShown(not autoSize)
 	if autoSize then
