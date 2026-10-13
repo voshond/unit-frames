@@ -171,7 +171,8 @@ end
 -- sets its own. Set on the definitions (not in GetSpec) so companion styles
 -- deriving them can leave any out by setting the key to nil.
 Units.COMMON = {
-	auraBar = { defaults = {} },
+	-- The icon row can collapse into the health bar while it shows nothing.
+	auraBar = { defaults = {}, collapsible = true },
 	raidTarget = { defaults = {} },
 	pvp = { defaults = {} },
 	classification = { defaults = {} },

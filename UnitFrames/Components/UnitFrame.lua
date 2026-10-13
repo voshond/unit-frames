@@ -37,9 +37,10 @@ spec:
               defaults  row option defaults, e.g. { height = 24, right = { size = 9 } }
               options   extra row options (schema entries), e.g. health colour mode
             }
-  portrait, castbar, auras, raidTarget, pvp, classification, readyCheckIcon
+  portrait, castbar, auras, auraBar, raidTarget, pvp, classification, readyCheckIcon
             { defaults, ... } to offer that part (see UnitFrame.PARTS;
-            auras also take cancelBuffs and clickThrough)
+            auras also take cancelBuffs and clickThrough; auraBar takes
+            collapsible: the row can lend its space to the health bar)
 
 Access: GetRow(key) and GetPart(key) return a row's TextBar or a present
 part's component; Rows() and Parts() iterate them with their resolved config.
@@ -92,7 +93,8 @@ order. Every part is an owned child component, found with GetPart(key).
 Adding a part here is enough for schema, lifecycle and iteration; its data
 (oUF binding, samples, polled previews) is declared in Units/Drivers.lua.
   schema(partSpec)     the part's option group (beforeRows: listed above the rows)
-  create(frame, ps)    builds the component
+  create(frame, ps, native)  builds the component; native: the frame uses
+                       native layout (see IsNativeLayout)
   apply(part, cfg)     optional, after the part's config is applied
   stack                a StackIcon: joins the frame's DecorationStack
 ]]
@@ -136,20 +138,22 @@ UnitFrame.PARTS = {
 			return Auras:New(frame, {}, { cancelBuffs = partSpec.cancelBuffs, clickThrough = partSpec.clickThrough })
 		end },
 	{ key = "auraBar", label = "Buff & debuff icon row",
-		schema = function() return ns.Components.AuraBar.schema end,
-		create = function(frame) return ns.Components.AuraBar:New(frame, {}, { clickThrough = true }) end },
+		schema = function(partSpec) return ns.Components.AuraBar.BuildSchema(partSpec) end,
+		create = function(frame, partSpec)
+			return ns.Components.AuraBar:New(frame, {}, { clickThrough = true, collapsible = partSpec.collapsible })
+		end },
 	{ key = "raidTarget", label = "Raid target icon", stack = true,
 		schema = function() return RaidTarget.schema end,
-		create = function(frame) return RaidTarget:New(frame, {}) end },
+		create = function(frame, _, native) return RaidTarget:New(frame, {}, { nativeLayout = native }) end },
 	{ key = "pvp", label = "PvP flag icon", stack = true,
 		schema = function() return PvPFlag.schema end,
-		create = function(frame) return PvPFlag:New(frame, {}) end },
+		create = function(frame, _, native) return PvPFlag:New(frame, {}, { nativeLayout = native }) end },
 	{ key = "classification", label = "Elite / rare icon", stack = true,
 		schema = function() return Classification.schema end,
-		create = function(frame) return Classification:New(frame, {}) end },
+		create = function(frame, _, native) return Classification:New(frame, {}, { nativeLayout = native }) end },
 	{ key = "readyCheckIcon", label = "Ready check icon", stack = true,
 		schema = function() return ReadyCheckIcon.schema end,
-		create = function(frame) return ReadyCheckIcon:New(frame, {}) end },
+		create = function(frame, _, native) return ReadyCheckIcon:New(frame, {}, { nativeLayout = native }) end },
 }
 
 function UnitFrame:OnCreate(parent, spec)
@@ -162,8 +166,15 @@ function UnitFrame:OnCreate(parent, spec)
 
 	self.rows = {}
 	self.rowsByKey = {}
+	local native = spec.auraBar and spec.auraBar.collapsible or nil
+	self.nativeLayout = native
 	for _, def in ipairs(spec.rows) do
-		local row = self:Own(TextBar:New(self.frame, {}, def.spec))
+		local rowSpec = def.spec
+		-- Its bar follows a collapsing icon row's native extent.
+		if native and def.key == "health" then
+			rowSpec = ns.Util.Merge(ns.Util.Copy(def.spec), { nativeLayout = true })
+		end
+		local row = self:Own(TextBar:New(self.frame, {}, rowSpec))
 		self.rows[#self.rows + 1] = { def = def, component = row }
 		self.rowsByKey[def.key] = row
 	end
@@ -172,7 +183,7 @@ function UnitFrame:OnCreate(parent, spec)
 	self.partsByKey = {}
 	for _, part in ipairs(UnitFrame.PARTS) do
 		if spec[part.key] then
-			local component = self:Own(part.create(self.frame, spec[part.key]))
+			local component = self:Own(part.create(self.frame, spec[part.key], native))
 			self.parts[#self.parts + 1] = { def = part, component = component }
 			self.partsByKey[part.key] = component
 		end
@@ -334,6 +345,8 @@ function UnitFrame:Layout()
 		end
 	end
 
+	local auraBar = self.partsByKey.auraBar
+	if auraBar then auraBar:SetCollapse(layout.auraBarCollapses and self.resolved.spacing or nil) end
 	for _, item in ipairs(layout.rows) do
 		local component = self.partsByKey[item.key] or self.rowsByKey[item.key]
 		component:ClearAllPoints()
@@ -344,6 +357,7 @@ function UnitFrame:Layout()
 			component:Layout(layout.width - item.left - item.right)
 		end
 	end
+	if auraBar and auraBar.spec.collapsible then self:LayoutCollapse(layout) end
 	self:LayoutCastbar(layout)
 
 	self:Resize(layout.width, layout.height)
@@ -360,6 +374,24 @@ function UnitFrame:Layout()
 		if part.def.stack then part.component:Layout(self.layoutContext) end
 	end
 	self.decorations:Reflow()
+end
+
+-- A collapsible icon row lends its space to the health bar: the bar's edge
+-- next to the row follows the row's native viewport, its texts with it. The
+-- row frame (a covering castbar's host) keeps the configured health height.
+function UnitFrame:LayoutCollapse(layout)
+	local health, rowItem, barItem = self.rowsByKey.health
+	for _, item in ipairs(layout.rows) do
+		if item.key == "health" then rowItem = item elseif item.key == "auraBar" then barItem = item end
+	end
+	if rowItem then health:SetKnownSize(layout.width - rowItem.left - rowItem.right, rowItem.height) end
+	if not layout.auraBarCollapses then
+		health:ExtendBar(nil)
+	elseif self.resolved.auraBar.position == "top" then
+		health:ExtendBar("TOP", self.partsByKey.auraBar:GetViewport(), rowItem.left - barItem.left)
+	else
+		health:ExtendBar("BOTTOM", self.partsByKey.auraBar:GetViewport(), barItem.right - rowItem.right)
+	end
 end
 
 -- Row placements are positioned with the rows. A covering castbar ("health",
@@ -404,6 +436,13 @@ function UnitFrame:GetLeadingName()
 			end
 		end
 	end
+end
+
+-- Whether the health bar and its texts can follow native (secret) geometry.
+-- Frames a companion may anchor to them, such as icons placed before the
+-- name, must then be created with DisableUntrustedLayoutScriptsTemplate.
+function UnitFrame:IsNativeLayout()
+	return self.nativeLayout == true
 end
 
 -- The edge icon stack; members join through DecorationStack:Set.

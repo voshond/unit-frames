@@ -3,10 +3,17 @@ local Auras = ns.Components.Auras
 local AuraBar = Auras:Extend("AuraBar")
 local KINDS = { "buffs", "debuffs" }
 local Backdrop = ns.Components.Backdrop
+local LAYOUT_TEMPLATE = "DisableUntrustedLayoutScriptsTemplate"
 
 -- A separate structural row, using the same native aura presentation as blocks.
 -- Only horizontal capacity matters: square artwork may exceed the row height
 -- and is centred behind fixed, addon-owned clipping viewports.
+--
+-- spec.collapsible: the row can collapse while it shows no icon, lending its
+-- space to a neighbouring bar (UnitFrame). Whether any live icon is shown is
+-- never read in Lua: a hidden native "presence" container sizes a clipping
+-- viewport through anchors, and the neighbour anchors to that viewport.
+-- Everything depending on it opts into the forbidden layout aspect.
 local schema = ns.Schema.Without(ns.Util.Copy(Auras.schema), { buffs = true, debuffs = true })
 schema = ns.Schema.Override(schema, "enabled", { default = false })
 schema = ns.Schema.Override(schema, "durationPosition", { default = "BOTTOM",
@@ -48,6 +55,16 @@ for _, kind in ipairs(KINDS) do
 	AuraBar.schema[#AuraBar.schema + 1] = { key = kind, type = "group", label = source.label, schema = group }
 end
 
+-- Offered where the owner can lend the row's space to its health bar.
+function AuraBar.BuildSchema(spec)
+	local out = ns.Util.Copy(AuraBar.schema)
+	if not (spec and spec.collapsible) then return out end
+	return ns.Schema.Insert(out, "position", {
+		{ key = "collapse", type = "toggle", label = "Collapse into health when empty", default = true,
+			tooltip = "While neither category shows an icon, the row and the gap to the health bar disappear and health grows into their space. The row then sits directly above or below the health bar. Health texts keep their place." },
+	})
+end
+
 -- hostWidth is the known row width, supplied by UnitFrameLayout.
 function AuraBar.Geometry(cfg, hostWidth)
 	local width = math.max(0, hostWidth - 2 * cfg.padding)
@@ -74,10 +91,24 @@ function AuraBar.Geometry(cfg, hostWidth)
 	return result
 end
 
+-- Where the row draws: the row frame, or for collapsible rows a clipping
+-- viewport that native anchors size (always created with the aspect).
+function AuraBar:GetViewport()
+	if not self.viewport then
+		if self.spec.collapsible then
+			self.viewport = CreateFrame("Frame", nil, self.frame, LAYOUT_TEMPLATE)
+			self.viewport:SetClipsChildren(true)
+		else
+			self.viewport = self.frame
+		end
+	end
+	return self.viewport
+end
+
 function AuraBar:GetContainerParent(kind)
 	self.sections = self.sections or {}
 	if not self.sections[kind] then
-		local section = CreateFrame("Frame", nil, self.frame)
+		local section = CreateFrame("Frame", nil, self:GetViewport())
 		section:SetClipsChildren(true)
 		self.sections[kind] = section
 	end
@@ -88,17 +119,41 @@ function AuraBar:GetArtworkConfig()
 	return self.artConfig
 end
 
-function AuraBar:OnCreate(parent)
+function AuraBar:OnCreate(parent, spec)
 	Auras.OnCreate(self, parent)
 	self.frame:ClearAllPoints()
-	self.background = CreateFrame("Frame", nil, self.frame, "BackdropTemplate")
-	self.background:SetFrameLevel(self.frame:GetFrameLevel())
+	local viewport = self:GetViewport()
+	self.background = CreateFrame("Frame", nil, viewport, "BackdropTemplate")
+	self.background:SetFrameLevel(viewport:GetFrameLevel())
 	self.background:SetAllPoints(self.frame)
+	if spec.collapsible then
+		-- At most one artless button per category, mirroring the row's
+		-- filters and capacity: its flow extent is one cell exactly while
+		-- the row would show any icon, else Blizzard's 1-unit minimum.
+		local presence = CreateFrame("AuraContainer", nil, self.frame, "CustomAuraContainerTemplate")
+		for _, kind in ipairs(KINDS) do
+			presence:AddAuraGroup(kind, kind == "buffs" and "HELPFUL" or "HARMFUL", {
+				maxFrameCount = 1,
+				sortMethod = AuraContainerSortMethod.ExpirationOnly,
+				sortDirection = AuraContainerSortDirection.Normal,
+				initializeFrame = function(button) button:EnableMouse(false) end,
+			})
+		end
+		presence:SetFlowLayoutAxis(AnchorUtil.FlowLayoutAxis.Horizontal)
+		presence:SetEnabled(false)
+		self.presence = presence
+	end
 end
 
 function AuraBar:OnApply(cfg)
 	self.artConfig = ns.Util.Copy(cfg)
 	if cfg.durationPosition == "below" then self.artConfig.durationPosition = "BOTTOM" end
+	if self.presence then
+		for _, kind in ipairs(KINDS) do
+			self.presence:SetAuraGroupFilterString(kind, cfg[kind].filter)
+			self.presence:SetAuraGroupCandidateFilters(kind, Auras.CandidateFilters(cfg[kind]))
+		end
+	end
 	Auras.OnApply(self, cfg)
 end
 
@@ -166,6 +221,7 @@ end
 
 function AuraBar:SetEnabled(enabled)
 	Auras.SetEnabled(self, enabled)
+	self:UpdatePresence()
 	if self.previewContainers then
 		for _, kind in ipairs(KINDS) do
 			for _, button in ipairs(self.previewContainers[kind].ufButtons) do
@@ -175,6 +231,74 @@ function AuraBar:SetEnabled(enabled)
 				end
 			end
 		end
+	end
+end
+
+-- The presence container follows the live unit only while collapsing.
+function AuraBar:UpdatePresence()
+	if not self.presence then return end
+	local live = self.enabled and self.collapseGap ~= nil and not self.previewData
+	self.presence:SetShown(live)
+	self.presence:SetEnabled(live)
+end
+
+-- Set by the owner before Layout: the gap to the bar lent the row's space,
+-- or nil while the row keeps its space.
+function AuraBar:SetCollapse(gap)
+	self.collapseGap = gap
+	self:UpdatePresence()
+end
+
+function AuraBar:SetUnit(unit)
+	Auras.SetUnit(self, unit)
+	local presence = self.presence
+	if presence then
+		if presence:GetUnit() ~= unit then presence:SetUnit(unit) else presence:UpdateAllAuras() end
+	end
+end
+
+-- Collapsing, the viewport covers the row plus the gap while any icon is
+-- shown, else nothing. Samples are plain; live auras size it natively: an
+-- icon makes the presence extent one cell (row + gap + 1), none leaves the
+-- 1-unit minimum, and the viewport's -1 offset removes that unit.
+function AuraBar:AnchorViewport()
+	local viewport, gap = self.viewport, self.collapseGap
+	if viewport == self.frame then return end
+	viewport:ClearAllPoints()
+	if not gap then
+		viewport:SetAllPoints(self.frame)
+		return
+	end
+	local top = self.resolved.position == "top"
+	local height = self.resolved.height + gap
+	if self.previewData then
+		local shown = #self.previewContainers.buffs.ufElements + #self.previewContainers.debuffs.ufElements > 0
+		local extent = shown and height or 0
+		if top then
+			viewport:SetPoint("TOPLEFT", self.frame, "TOPLEFT", 0, 0)
+			viewport:SetPoint("BOTTOMRIGHT", self.frame, "TOPRIGHT", 0, -extent)
+		else
+			viewport:SetPoint("BOTTOMLEFT", self.frame, "BOTTOMLEFT", 0, 0)
+			viewport:SetPoint("TOPRIGHT", self.frame, "BOTTOMRIGHT", 0, extent)
+		end
+		return
+	end
+	local presence = self.presence
+	local edge = top and "TOPLEFT" or "BOTTOMLEFT"
+	presence:ClearAllPoints()
+	presence:SetPoint(edge, self.frame, edge, 0, 0)
+	presence:SetFlowLayoutAnchorPoint(edge)
+	presence:SetFlowLayoutGrowthDirection(AnchorUtil.FlowDirection.Right,
+		top and AnchorUtil.FlowDirection.Down or AnchorUtil.FlowDirection.Up)
+	for _, kind in ipairs(KINDS) do
+		presence:SetAuraGroupLayout(kind, { elementWidth = 1, elementHeight = height + 1, elementSpacing = 0, lineSpacing = 0 })
+	end
+	if top then
+		viewport:SetPoint("BOTTOMLEFT", presence, "BOTTOMLEFT", 0, 1)
+		viewport:SetPoint("TOPRIGHT", self.frame, "TOPRIGHT", 0, 0)
+	else
+		viewport:SetPoint("TOPLEFT", presence, "TOPLEFT", 0, -1)
+		viewport:SetPoint("BOTTOMRIGHT", self.frame, "BOTTOMRIGHT", 0, 0)
 	end
 end
 
@@ -191,6 +315,7 @@ function AuraBar:Layout(width)
 		local live = self.containers[kind]
 		live:SetAuraGroupMaxFrameCount(kind, geometry.capacity)
 		live:SetAuraGroupEnabled(kind, geometry.capacity > 0)
+		if self.presence then self.presence:SetAuraGroupEnabled(kind, geometry.capacity > 0) end
 		live:SetAuraGroupLayout(kind, { elementWidth = group.size, elementHeight = geometry.height,
 			elementSpacing = self.resolved.spacing, lineSpacing = 0 })
 		local container = self.previewData and self.previewContainers[kind] or live
@@ -212,6 +337,7 @@ function AuraBar:Layout(width)
 			container:SetFlowLayoutMaximumLineSize(geometry.lineSize)
 		end
 	end
+	self:AnchorViewport()
 	if self.previewData and not self.renderingSamples then self:RenderSamples() end
 end
 

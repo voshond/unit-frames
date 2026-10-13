@@ -14,8 +14,8 @@ RaidTarget.MARKERS = {
 
 RaidTarget.schema = RaidTarget.BuildIconSchema()
 
-function RaidTarget:OnCreate(parent)
-	ns.Components.StackIcon.OnCreate(self, parent)
+function RaidTarget:OnCreate(parent, spec)
+	ns.Components.StackIcon.OnCreate(self, parent, spec)
 	self.texture:SetTexture([[Interface\TargetingFrame\UI-RaidTargetingIcons]])
 end
 

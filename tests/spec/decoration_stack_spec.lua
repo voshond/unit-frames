@@ -13,8 +13,10 @@ describe("Decoration stacks", function()
 	end)
 
 	-- A companion icon: size 10, gap 4, after the marker by default.
+	-- Names follow the health bar's native layout: hosts that may sit
+	-- before them carry the forbidden layout aspect, like companion icons.
 	local function Join(key, overrides)
-		local host = CreateFrame("Frame", nil, frame)
+		local host = CreateFrame("Frame", nil, frame, "DisableUntrustedLayoutScriptsTemplate")
 		local icon = host:CreateTexture(nil, "OVERLAY")
 		icon:Hide() -- like real indicator art until a value shows it
 		local member = { host = host, widgets = { icon }, enabled = true, anchor = "TOP", size = 10, order = 2, gap = 4 }
@@ -131,7 +133,7 @@ describe("Decoration stacks", function()
 		assert.equals(14, name.leadingSpace)
 		local preview = ns.Units:CreateFrame("player", UIParent)
 		local previewName = preview:GetLayoutContext().name
-		local icon = CreateFrame("Frame", nil, preview:GetFrame()):CreateTexture()
+		local icon = CreateFrame("Frame", nil, preview:GetFrame(), "DisableUntrustedLayoutScriptsTemplate"):CreateTexture()
 		preview:GetDecorations():Set("extra", { host = icon:GetParent(), widgets = { icon }, enabled = true,
 			anchor = "NAME", size = 10, gap = 2 })
 		preview:GetDecorations():Reflow()
