@@ -328,6 +328,44 @@ ClickGrid owns refresh of all its registered previews. Its Workbench watches use
 Preview source transitions clear previous sample effects explicitly; missing
 live units and hidden cells disable their native aura subscriptions.
 
+## Performance verification
+
+Run `luajit scripts/performance-probe.lua` for a deterministic mock census of
+ClickGrid schemas, widgets, death/ready-check reflows, inactive-layout refreshes
+and warmed preview copies. The same script can run from a baseline checkout
+using unchanged libraries. Mock counts do not measure WoW CPU, native memory,
+rendering or taint. The probe leaves Workbench unloaded during its runtime
+census, then explicitly creates a preview for the final workload.
+
+`/uf perf` samples coarse Lua memory outside timed operations and reports
+recent profiler milliseconds per tick, session peaks and session threshold
+counts. `/uf perf watch 60` reports threshold deltas and addon-owned operation
+counts over one bounded observation window; it does not report a window peak
+or treat ticks as rendered frames. `/uf perf measure units|clickgrid|preview|schema`
+actively runs one prepared operation outside combat and reports native elapsed
+milliseconds and allocated/deallocated bytes. Cancel a watch before measuring.
+Measurements are session-local and optional APIs have capability checks.
+
+Schemas returned by components are immutable metadata. Definition-created
+frames explicitly share schema ownership, including row text contexts;
+arbitrary caller specs retain independent dynamic schemas. Derive a definition
+before construction to alter its structure. Copy a schema before editing it;
+user overrides and resolved configuration remain private per instance.
+
+ClickGrid prepares enabled portrait backends during deferred style application,
+before any combat assignment, and reuses them on subsequent toggles. Other
+portrait callers retain eager backends. Retained headers absent from the
+selected layout disable raid eligibility, oUF elements, native aura feeds and
+tags; reactivation reapplies the latest style and bindings before restoring
+raid eligibility. Party and selected raid headers stay prepared even when
+currently hidden by roster visibility.
+
+Client verification still needs real combat, subgroup/flat/tank switches,
+profile changes, missing/reassigned members, ready-check fades and portrait
+cast coverage, sample/live/source transitions and release, Edit Mode and
+full/damaged-health shields in both placements. Compare warmed S1–S8 runs at
+fixed client settings; offline counts establish removed work, not FPS gains.
+
 ## Adding fonts
 
 1. Copy a static `.ttf`/`.otf` file (one per weight) and its licence into

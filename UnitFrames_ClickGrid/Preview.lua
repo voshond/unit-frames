@@ -26,6 +26,7 @@ function Preview:SetSizeChangedCallback(callback)
 end
 
 function Preview:CreateCell()
+	UF.Perf:Count("previewCellCreate")
 	local host = CreateFrame("Frame", nil, self.frame)
 	local member = UF.Units:CreateFromDefinition(CG.definitions.member, host, CG.Config:GetStyle("member"))
 	local target = UF.Units:CreateFromDefinition(CG.definitions.target, host, CG.Config:GetStyle("target"))
@@ -102,6 +103,7 @@ function Preview:StyleCell(cell)
 end
 
 function Preview:FeedCell(cell, index, live, unit)
+	UF.Perf:Count("previewFeed")
 	if live then
 		local present = self:ShowLive(cell.member, unit, cell)
 		cell.slots:SetEnabled(present and cell.slots.resolved.enabled)
@@ -109,7 +111,12 @@ function Preview:FeedCell(cell, index, live, unit)
 		cell.status:HideIndicators()
 		if self.cfg.panel.targets then self:ShowLive(cell.target, unit and unit .. "target", cell) end
 	else
-		local values = self:Values(index)
+		if cell.sampleIndex ~= index then
+			cell.memberValues, cell.targetValues = nil, nil
+			cell.sampleIndex = index
+		end
+		local values = self:Values(index, cell.memberValues)
+		cell.memberValues = values
 		cell.member:GetFrame():Show()
 		EnableAuras(cell.member, true)
 		UF.Units:ShowSample(cell.member, values)
@@ -119,7 +126,8 @@ function Preview:FeedCell(cell, index, live, unit)
 		if self.cfg.panel.targets then
 			cell.target:GetFrame():Show()
 			EnableAuras(cell.target, true)
-			local targetValues = UF.Util.Copy(values)
+			local targetValues = self:Values(index, cell.targetValues)
+			cell.targetValues = targetValues
 			targetValues.name, targetValues.class, targetValues.reaction = "Enemy " .. index, nil, "hostile"
 			targetValues.isPlayer = false
 			UF.Units:ShowSample(cell.target, targetValues)
@@ -137,8 +145,12 @@ end
 local names = { "Tank", "Healer", "Mage", "Priest", "Druid", "Paladin", "Hunter", "Warlock" }
 local READY_SAMPLES = { "ready", "ready", "notready", "waiting" }
 local sampleBuffIDs = { [1] = 21562, [2] = 1459, [3] = 139, [4] = 774, [6] = 17, [7] = 33763 }
-function Preview:Values(index)
-	local value = UF.Util.Copy(UF.Units.SAMPLE)
+function Preview:Values(index, value)
+	if not value then
+		value = UF.Util.Copy(UF.Units.SAMPLE)
+		-- Empty members still own their lists, like members with sample auras.
+		if index % 4 == 0 then value.buffs, value.debuffs = {}, {} end
+	end
 	value.animateAuras = self.data.source == "animated"
 	value.name = names[(index - 1) % #names + 1] .. " " .. index
 	value.class = index % 3 == 0 and "MAGE" or index % 3 == 1 and "WARRIOR" or "PALADIN"
@@ -147,10 +159,9 @@ function Preview:Values(index)
 		or (index == 1 and 1 or 0.35 + 0.6 * ((index * 7) % 10) / 10))
 	value.absorb = value.healthMax * 0.2
 	value.raidTarget = index == 1 and 8 or nil
-	-- Some members carry no auras, so a collapsing icon row shows both states.
-	if index % 4 == 0 then value.buffs, value.debuffs = {}, {} end
 	-- Ready check demo: mixed answers; one in four never answers. Animated
 	-- members answer one after another, then the check ends and fades.
+	value.readyCheck, value.readyCheckTime, value.readyCheckAnswerAt = nil, nil, nil
 	if self.data.readyCheck == "check" then
 		value.readyCheck = READY_SAMPLES[(index - 1) % #READY_SAMPLES + 1]
 		if self.data.source == "animated" then
@@ -161,9 +172,9 @@ function Preview:Values(index)
 	-- sample icons must not match a fixed slot by a made-up default ID.
 	for i, aura in ipairs(value.buffs) do
 		aura.spellId = sampleBuffIDs[i]
-		if self.data.source == "animated" and aura.duration > 0 then
-			aura.remaining = (aura.remaining - self.time - index) % aura.duration + 1
-		end
+		local remaining = UF.Units.SAMPLE.buffs[i].remaining
+		aura.remaining = self.data.source == "animated" and aura.duration > 0
+			and (remaining - self.time - index) % aura.duration + 1 or remaining
 	end
 	return value
 end
@@ -269,6 +280,7 @@ function Preview:ReleaseComponents()
 	for _, cell in ipairs(self.cells) do
 		cell.member:Release() -- with its status indicators and slots
 		cell.target:Release()
+		cell.memberValues, cell.targetValues = nil, nil
 		cell.frame:Hide()
 	end
 end
