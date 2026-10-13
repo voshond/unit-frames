@@ -772,10 +772,10 @@ function Mock.Install()
 	}
 	Mock.spellOverrides, Mock.unknownSpells = {}, {}
 	_G.C_SpellBook = { IsSpellKnown = function(id) return not Mock.unknownSpells[id] end }
-	-- Mock.cursor holds GetCursorInfo's returns, e.g. { "spell", slot, bank, spellID }.
-	Mock.cursor, Mock.spellBookOpened = nil, 0
-	_G.GetCursorInfo = function() if Mock.cursor then return unpack(Mock.cursor) end end
-	_G.ClearCursor = function() Mock.cursor = nil end
+	-- Mock.cursorInfo holds GetCursorInfo's returns, e.g. { "spell", slot, bank, spellID }.
+	Mock.cursorInfo, Mock.spellBookOpened = nil, 0
+	_G.GetCursorInfo = function() if Mock.cursorInfo then return unpack(Mock.cursorInfo) end end
+	_G.ClearCursor = function() Mock.cursorInfo = nil end
 	_G.PlayerSpellsUtil = { OpenToSpellBookTab = function()
 		assert(not InCombatLockdown(), "The spellbook opener is disabled in combat")
 		Mock.spellBookOpened = Mock.spellBookOpened + 1

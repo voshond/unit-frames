@@ -106,9 +106,9 @@ describe("ClickGrid preview lifecycle", function()
 		assert.is_nil(next(slot.frame.__state.events))
 		assert.is_nil(slot.slot:GetScript("OnReceiveDrag"))
 		assert.is_nil(slot.slot:GetScript("OnClick"))
-		Mock.cursor = { "spell", 12, "spell", 2061 }
+		Mock.cursorInfo = { "spell", 12, "spell", 2061 }
 		slot:Receive()
 		assert.equals(0, saved)
-		assert.is_not_nil(Mock.cursor)
+		assert.is_not_nil(Mock.cursorInfo)
 	end)
 end)

@@ -1221,9 +1221,9 @@ describe("ClickGrid Workbench", function()
 	it("saves a dropped spell as one action group and clears the cursor only after saving", function()
 		local slot = DropSlot("hostile")
 		local frame = CG.headers.party:GetAttribute("child1").Member
-		Mock.cursor = { "spell", 12, "spell", 2061 }
+		Mock.cursorInfo = { "spell", 12, "spell", 2061 }
 		slot.slot:RunScript("OnReceiveDrag")
-		assert.is_nil(Mock.cursor)
+		assert.is_nil(Mock.cursorInfo)
 		assert.same({ action = "spell", spell = "2061" }, CG.Config:GetBindings().button1.none.hostile)
 		assert.equals(2061, frame:GetAttribute("spell-harm1"))
 		assert.equals("target", frame:GetAttribute("type-heal1"))
@@ -1233,9 +1233,9 @@ describe("ClickGrid Workbench", function()
 		assert.equals(137061, slot.icon:GetTexture())
 		-- A click while carrying a spell takes the same path, into the newly selected cell.
 		wb.handle.buttons["2:3"].opts.onClick()
-		Mock.cursor = { "spell", 3, "spell", 139 }
+		Mock.cursorInfo = { "spell", 3, "spell", 139 }
 		slot.slot:RunScript("OnClick")
-		assert.is_nil(Mock.cursor)
+		assert.is_nil(Mock.cursorInfo)
 		assert.same({ action = "spell", spell = "139" }, CG.Config:GetBindings().button3.shift.hostile)
 		assert.same({ action = "spell", spell = "2061" }, CG.Config:GetBindings().button1.none.hostile)
 		assert.equals(139, frame:GetAttribute("shift-spell-harm3"))
@@ -1248,21 +1248,21 @@ describe("ClickGrid Workbench", function()
 	it("rejects unsupported or unsaved drops without touching the binding or the cursor", function()
 		local slot = DropSlot("friendly")
 		for _, cursor in ipairs({ { "item", 6948, "item:6948" }, { "macro", 3 }, { "petaction", 5 } }) do
-			Mock.cursor = cursor
+			Mock.cursorInfo = cursor
 			slot.slot:RunScript("OnReceiveDrag")
-			assert.equals(cursor, Mock.cursor)
+			assert.equals(cursor, Mock.cursorInfo)
 			assert.equals("Only spells can be dropped here", slot.status:GetText())
 		end
 		assert.is_nil(CG.Config:GetBindings().button1)
-		Mock.cursor = nil
+		Mock.cursorInfo = nil
 		slot.slot:RunScript("OnClick")
 		assert.is_nil(CG.Config:GetBindings().button1)
 		local setAction = CG.Config.SetAction
 		CG.Config.SetAction = function() return false, "Store rejected the action" end
-		Mock.cursor = { "spell", 12, "spell", 2061 }
+		Mock.cursorInfo = { "spell", 12, "spell", 2061 }
 		slot.slot:RunScript("OnReceiveDrag")
 		CG.Config.SetAction = setAction
-		assert.same({ "spell", 12, "spell", 2061 }, Mock.cursor)
+		assert.same({ "spell", 12, "spell", 2061 }, Mock.cursorInfo)
 		assert.equals("Store rejected the action", slot.status:GetText())
 		assert.is_nil(CG.Config:GetBindings().button1)
 		assert.equals("target", CG.headers.party:GetAttribute("child1").Member:GetAttribute("type-heal1"))
@@ -1271,9 +1271,9 @@ describe("ClickGrid Workbench", function()
 	it("clears a slot to unbound and summarises both reactions with inactive states", function()
 		Mock.unknownSpells[139] = true
 		local slot = DropSlot("friendly")
-		Mock.cursor = { "spell", 12, "spell", 139 }
+		Mock.cursorInfo = { "spell", 12, "spell", 139 }
 		slot.slot:RunScript("OnReceiveDrag")
-		assert.is_nil(Mock.cursor)
+		assert.is_nil(Mock.cursorInfo)
 		assert.equals("Not learned in this specialization", slot.status:GetText())
 		assert.is_true(LastCall(slot.icon, "SetDesaturated")[2])
 		local cell = wb.handle.buttons["1:1"].text:GetText()
