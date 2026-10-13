@@ -59,6 +59,7 @@ Widgets\Slider.lua
 Widgets\EditBox.lua
 Widgets\Dropdown.lua
 Widgets\ColorSwatch.lua
+Widgets\ActionSlot.lua
 Widgets\ScrollList.lua
 Widgets\ScrollPanel.lua
 Widgets\Inspector.lua

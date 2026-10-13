@@ -766,12 +766,20 @@ function Mock.Install()
 		end,
 		GetSpellInfo = function(spell)
 			local id = tonumber(spell) or (spell == "Flash Heal" and 2061 or nil)
-			if id then return { spellID = id, name = id == 2061 and "Flash Heal" or "Spell " .. id } end
+			if id then return { spellID = id, name = id == 2061 and "Flash Heal" or "Spell " .. id, iconID = 135000 + id } end
 		end,
 		GetOverrideSpell = function(id) return Mock.spellOverrides[id] or id end,
 	}
 	Mock.spellOverrides, Mock.unknownSpells = {}, {}
 	_G.C_SpellBook = { IsSpellKnown = function(id) return not Mock.unknownSpells[id] end }
+	-- Mock.cursorInfo holds GetCursorInfo's returns, e.g. { "spell", slot, bank, spellID }.
+	Mock.cursorInfo, Mock.spellBookOpened = nil, 0
+	_G.GetCursorInfo = function() if Mock.cursorInfo then return unpack(Mock.cursorInfo) end end
+	_G.ClearCursor = function() Mock.cursorInfo = nil end
+	_G.PlayerSpellsUtil = { OpenToSpellBookTab = function()
+		assert(not InCombatLockdown(), "The spellbook opener is disabled in combat")
+		Mock.spellBookOpened = Mock.spellBookOpened + 1
+	end }
 	Mock.specIndex = 1
 	_G.C_SpecializationInfo = { GetSpecialization = function() return Mock.specIndex end }
 	_G.IsInRaid = function() return Mock.inRaid == true end

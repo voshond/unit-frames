@@ -141,6 +141,7 @@ function Store:Target(report, resolved)
 		set = function(path, value)
 			local ok, reason = self:Set(path, value)
 			if not ok and report then report(reason) end
+			return ok, reason
 		end,
 		resolved = resolved or function() return self:Resolved() end,
 		invoke = function(path) self:Invoke(path) end,

@@ -52,23 +52,52 @@ function CG:RegisterBindingEntry(wb)
 	local buttonValues, modifierValues = {}, {}
 	for i, name in ipairs(B.buttons) do buttonValues[i] = { i, name } end
 	for i, modifier in ipairs(B.modifiers) do modifierValues[i] = { modifier[1], modifier[2] } end
+	-- Openers are disabled in combat rather than queueing a window to open later.
+	local extras = {}
+	if self.Caps.spellBook then
+		extras[#extras + 1] = { text = "Spellbook", combatLocked = true,
+			tooltip = "Open the spellbook to drag a spell from it. Unavailable in combat.",
+			onClick = function() PlayerSpellsUtil.OpenToSpellBookTab() end }
+	end
+	-- The editor-only drop slot shows and replaces its whole reaction group;
+	-- the action list and typed spell remain the manual alternative.
+	local function ReactionSchema(reaction)
+		return UF.Schema.Concat({
+			{ key = "drop", type = "actionslot", label = reaction == "friendly" and "Friendly action" or "Hostile action",
+				tooltip = "Drop a spell from your spellbook or action bars, or click here while carrying one."
+					.. " It is used on " .. reaction .. " units only, whatever the spell itself does.",
+				accept = function() return B:DecodeCursor() end,
+				describe = function(choice) return B:Describe(choice) end,
+				empty = { action = "none" }, extras = extras },
+		}, B.actionSchema)
+	end
 	local schema = {
 		{ key = "button", type = "select", label = "Mouse button", default = 1, values = buttonValues },
 		{ key = "modifier", type = "select", label = "Modifiers", default = "none", values = modifierValues },
-		{ key = "friendly", type = "group", label = "Friendly unit", schema = B.actionSchema },
-		{ key = "hostile", type = "group", label = "Hostile unit", schema = B.actionSchema },
+		{ key = "friendly", type = "group", label = "Friendly unit", schema = ReactionSchema("friendly") },
+		{ key = "hostile", type = "group", label = "Hostile unit", schema = ReactionSchema("hostile") },
 	}
 	local function Selected()
 		local all = UF.Schema.Resolve(B.schema, CG.Config:GetBindings())
 		local selected = UF.Util.Copy(all["button" .. editor.button][editor.modifier])
 		selected.button, selected.modifier = editor.button, editor.modifier
+		for _, reaction in ipairs({ "friendly", "hostile" }) do
+			local choice = selected[reaction]
+			choice.drop = { action = choice.action, spell = choice.action == "spell" and choice.spell or nil }
+		end
 		return selected
 	end
+	-- One matrix line per reaction: icon, name and an inactive state.
+	local function Summary(tag, choice)
+		local info = B:Describe(choice)
+		local color = info.inactive and "ffff5a4d" or choice.action == "none" and "ff94949f" or "ffebebeb"
+		return tag .. " " .. (info.icon and "|T" .. info.icon .. ":12:12|t " or "") .. "|c" .. color .. info.name .. "|r"
+	end
 	wb:Register({ id = "clickgrid.bindings", name = "Click spells", category = "ClickGrid", autoSize = true,
-		size = { 700, 350 }, refreshOn = { "ClickGridConfigChanged" },
+		size = { 700, 460 }, refreshOn = { "ClickGridConfigChanged" },
 		create = function(stage)
 			local handle = { frame = CreateFrame("Frame", nil, stage), buttons = {} }
-			handle.frame:SetSize(700, 350)
+			handle.frame:SetSize(700, 460)
 			local note = handle.frame:CreateFontString(nil, "OVERLAY")
 			note:SetFontObject(UF.Media:GetFontObject(UF.Config:GetTheme().font, 11, ""))
 			note:SetPoint("TOPLEFT", 0, 0)
@@ -76,7 +105,8 @@ function CG:RegisterBindingEntry(wb)
 			note:SetJustifyH("LEFT")
 			function handle:Apply()
 				local owner = B:IsExternal() and "Clique owns live clicks. These saved bindings are inactive while Clique is loaded."
-					or "Click a cell, then choose friendly/hostile actions in settings. All bindings are applied on mouse release."
+					or "Click a cell, then drop a spell into its friendly or hostile slot in settings, or type a spell ID or name."
+						.. " All bindings are applied on mouse release."
 				note:SetText(owner .. "\nSpecialization: " .. CG.Config:SpecKey() .. (CG.pending and " — changes pending until combat ends" or "")
 					.. (#(CG.bindingErrors or {}) > 0 and "\n" .. CG.bindingErrors[1]
 						.. (#CG.bindingErrors > 1 and " (and " .. (#CG.bindingErrors - 1) .. " more inactive bindings)" or "") or ""))
@@ -91,12 +121,13 @@ function CG:RegisterBindingEntry(wb)
 								editor.button, editor.modifier = selectedButton, selectedModifier
 								wb:RefreshInspector()
 							end })
-							button:SetSize(136, 30)
-							button:SetPoint("TOPLEFT", self.frame, "TOPLEFT", (column - 1) * 140, -90 - (row - 1) * 32)
+							button:SetSize(136, 44)
+							button:SetPoint("TOPLEFT", self.frame, "TOPLEFT", (column - 1) * 140, -90 - (row - 1) * 46)
 							self.buttons[key] = button
 						end
-						local choice = all["button" .. column][modifier[1]].friendly
-						button:SetText(name .. " / " .. modifier[2] .. "\n" .. (choice.action == "spell" and choice.spell or choice.action))
+						local cell = all["button" .. column][modifier[1]]
+						button:SetText(name .. " / " .. modifier[2] .. "\n" .. Summary("|cff4fe07aF|r", cell.friendly)
+							.. "\n" .. Summary("|cffff5a4dH|r", cell.hostile))
 					end
 				end
 			end
@@ -113,16 +144,26 @@ function CG:RegisterBindingEntry(wb)
 			return { schema = schema,
 				get = function(path)
 					if path == "button" or path == "modifier" then return editor[path] end
+					-- A drop slot is overridden when its whole group is.
+					path = path:gsub("%.drop$", "")
 					return UF.Util.GetPath(CG.Config:GetBindings(), "button" .. editor.button .. "." .. editor.modifier .. "." .. path)
 				end,
+				-- Returns the save result: drop slots clear the cursor only on success
+				-- and show their own rejection reason.
 				set = function(path, value)
+					local ok, reason = true, nil
 					if path == "button" or path == "modifier" then editor[path] = value or (path == "button" and 1 or "none")
 					else
 						local reaction, field = path:match("^(%w+)%.(%w+)$")
-						local ok, reason = CG.Config:SetBinding(editor.button, editor.modifier, reaction, field, value)
-						if not ok then Report(reason) end
+						if field == "drop" then
+							ok, reason = CG.Config:SetAction(editor.button, editor.modifier, reaction, value)
+						else
+							ok, reason = CG.Config:SetBinding(editor.button, editor.modifier, reaction, field, value)
+							if not ok then Report(reason) end
+						end
 					end
 					handle:Apply()
+					return ok, reason
 				end,
 				resolved = Selected }
 		end,

@@ -412,7 +412,108 @@ describe("ClickGrid Workbench", function()
 		assert.equals("focus", CG.Config:GetBindings().button3.shift.friendly.action)
 		CG.Config:SetBinding(1, "none", "hostile", "action", "assist")
 		assert.equals(session, wb.session)
-		assert.is_true(handle.buttons["1:1"].text:GetText():find("target", 1, true) ~= nil)
+		assert.is_true(handle.buttons["1:1"].text:GetText():find("Target", 1, true) ~= nil)
+	end)
+
+	local function DropSlot(reaction)
+		wb:Select("clickgrid.bindings")
+		wb:SelectSection(reaction)
+		local row = wb.inspector.page.rows[1]
+		assert.equals(reaction .. ".drop", row.path)
+		return row.control
+	end
+
+	local function LastCall(object, name)
+		for i = #object.__calls, 1, -1 do
+			if object.__calls[i][1] == name then return object.__calls[i] end
+		end
+	end
+
+	it("saves a dropped spell as one action group and clears the cursor only after saving", function()
+		local slot = DropSlot("hostile")
+		local frame = CG.headers.party:GetAttribute("child1").Member
+		Mock.cursorInfo = { "spell", 12, "spell", 2061 }
+		slot.slot:RunScript("OnReceiveDrag")
+		assert.is_nil(Mock.cursorInfo)
+		assert.same({ action = "spell", spell = "2061" }, CG.Config:GetBindings().button1.none.hostile)
+		assert.equals(2061, frame:GetAttribute("spell-harm1"))
+		assert.equals("target", frame:GetAttribute("type-heal1"))
+		assert.is_nil(frame:GetAttribute("spell-heal1"))
+		assert.equals("Flash Heal", slot.name:GetText())
+		assert.equals("Active", slot.status:GetText())
+		assert.equals(137061, slot.icon:GetTexture())
+		-- A click while carrying a spell takes the same path, into the newly selected cell.
+		wb.handle.buttons["2:3"].opts.onClick()
+		Mock.cursorInfo = { "spell", 3, "spell", 139 }
+		slot.slot:RunScript("OnClick")
+		assert.is_nil(Mock.cursorInfo)
+		assert.same({ action = "spell", spell = "139" }, CG.Config:GetBindings().button3.shift.hostile)
+		assert.same({ action = "spell", spell = "2061" }, CG.Config:GetBindings().button1.none.hostile)
+		assert.equals(139, frame:GetAttribute("shift-spell-harm3"))
+		-- Dropped IDs keep their intent and resolve overrides at compile time.
+		Mock.spellOverrides[139] = 140
+		Mock.FireEvent("SPELLS_CHANGED")
+		assert.equals(140, frame:GetAttribute("shift-spell-harm3"))
+	end)
+
+	it("rejects unsupported or unsaved drops without touching the binding or the cursor", function()
+		local slot = DropSlot("friendly")
+		for _, cursor in ipairs({ { "item", 6948, "item:6948" }, { "macro", 3 }, { "petaction", 5 } }) do
+			Mock.cursorInfo = cursor
+			slot.slot:RunScript("OnReceiveDrag")
+			assert.equals(cursor, Mock.cursorInfo)
+			assert.equals("Only spells can be dropped here", slot.status:GetText())
+		end
+		assert.is_nil(CG.Config:GetBindings().button1)
+		Mock.cursorInfo = nil
+		slot.slot:RunScript("OnClick")
+		assert.is_nil(CG.Config:GetBindings().button1)
+		local setAction = CG.Config.SetAction
+		CG.Config.SetAction = function() return false, "Store rejected the action" end
+		Mock.cursorInfo = { "spell", 12, "spell", 2061 }
+		slot.slot:RunScript("OnReceiveDrag")
+		CG.Config.SetAction = setAction
+		assert.same({ "spell", 12, "spell", 2061 }, Mock.cursorInfo)
+		assert.equals("Store rejected the action", slot.status:GetText())
+		assert.is_nil(CG.Config:GetBindings().button1)
+		assert.equals("target", CG.headers.party:GetAttribute("child1").Member:GetAttribute("type-heal1"))
+	end)
+
+	it("clears a slot to unbound and summarises both reactions with inactive states", function()
+		Mock.unknownSpells[139] = true
+		local slot = DropSlot("friendly")
+		Mock.cursorInfo = { "spell", 12, "spell", 139 }
+		slot.slot:RunScript("OnReceiveDrag")
+		assert.is_nil(Mock.cursorInfo)
+		assert.equals("Not learned in this specialization", slot.status:GetText())
+		assert.is_true(LastCall(slot.icon, "SetDesaturated")[2])
+		local cell = wb.handle.buttons["1:1"].text:GetText()
+		assert.is_true(cell:find("|T135139:12:12|t |cffff5a4dSpell 139|r", 1, true) ~= nil)
+		assert.is_true(cell:find("Target", 1, true) ~= nil)
+		slot.clear.opts.onClick()
+		assert.same({ action = "none" }, CG.Config:GetBindings().button1.none.friendly)
+		assert.is_nil(CG.headers.party:GetAttribute("child1").Member:GetAttribute("type-heal1"))
+		assert.equals("Unbound", slot.name:GetText())
+		assert.is_false(LastCall(slot.clear.frame, "SetEnabled")[2])
+		assert.is_true(wb.handle.buttons["1:1"].text:GetText():find("Unbound", 1, true) ~= nil)
+		-- The manual alternative still edits the same group.
+		wb.styleTarget.set("friendly.action", "spell")
+		wb.styleTarget.set("friendly.spell", "Flash Heal")
+		assert.equals(2061, CG.headers.party:GetAttribute("child1").Member:GetAttribute("spell-heal1"))
+	end)
+
+	it("opens the spellbook only outside combat", function()
+		local opener = DropSlot("friendly").buttons[2]
+		opener.opts.onClick()
+		assert.equals(1, Mock.spellBookOpened)
+		Mock.FireEvent("PLAYER_REGEN_DISABLED")
+		Mock.inCombat = true
+		assert.is_false(LastCall(opener.frame, "SetEnabled")[2])
+		opener.opts.onClick()
+		assert.equals(1, Mock.spellBookOpened)
+		Mock.inCombat = false
+		Mock.FireEvent("PLAYER_REGEN_ENABLED")
+		assert.is_true(LastCall(opener.frame, "SetEnabled")[2])
 	end)
 
 	it("restyles only the ClickGrid entries when ClickGrid settings change", function()

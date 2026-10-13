@@ -42,6 +42,10 @@ client after adding it. For local builds and incremental updates, see the
   oUF element updates, native aura subscriptions and preview data updates.
 - Five mouse buttons × eight Alt/Ctrl/Shift combinations, with separate
   friendly/hostile actions: cast, target, assist, focus, menu or unbound.
+  Drop a spell from the spellbook or action bars into a cell's **Friendly** or
+  **Hostile** slot (or click the slot while carrying one); a **Spellbook**
+  button opens it outside combat, and the matrix shows both reactions with
+  icons and inactive states. Typed spell IDs/localized names remain available.
   Spell IDs/localized names resolve through the client's spell APIs; unknown
   spells retain saved intent and stay inactive. Spell/talent/spec updates
   rebuild bindings outside combat. With Clique loaded, Clique owns clicks
@@ -121,7 +125,10 @@ Before relying on the panel for healing, verify on the actual Forever client:
    subgroup/role changes, unit disappearance and vehicle replacement in combat
    must not create new addon widgets or produce taint/protected-action errors.
 2. Every modifier/button/reaction binding, mouse-release casting, override
-   spells, spec/talent updates, unknown spells and Clique ownership.
+   spells, spec/talent updates, unknown spells and Clique ownership. Spell
+   drops from the spellbook and action bars (drag and click-carry), rejected
+   item/macro drops keeping the cursor, the Spellbook opener and its combat
+   lock, and switching cells or Workbench entries after a drop.
 3. Targets appearing/disappearing, native buff slots, aura timers/counts/dispel
    colors, private auras, status transitions and opaque values during combat.
 4. Full-health/damaged shields in both placements, style/theme/profile switches,

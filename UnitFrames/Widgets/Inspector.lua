@@ -27,8 +27,11 @@ Controls are built once per cacheKey and reused when switching back.
 Options whose value is set (not inherited) show their label in the accent
 colour and get a reset button.
 
-Extra option type understood only here:
-  action   { key, type = "action", label } -> target.invoke(path)
+Extra option types understood only here:
+  action     { key, type = "action", label } -> target.invoke(path)
+  actionslot { key, type = "actionslot", label, accept, describe, empty, extras }
+             -> an ActionSlot drop target (see Widgets/ActionSlot.lua). It
+             needs target.set to return true, or false plus a reason.
 ]]
 local Inspector = ns.Widget:Extend("Inspector")
 
@@ -184,9 +187,10 @@ end
 function Inspector:CreateControl(page, opt, path)
 	local label = opt.label or opt.key
 	local function Set(value)
-		if not page.target then return end
-		page.target.set(path, value)
+		if not page.target then return false end
+		local ok, reason = page.target.set(path, value)
 		self:Refresh()
+		return ok, reason
 	end
 	local t = opt.type
 	if t == "toggle" then
@@ -204,6 +208,9 @@ function Inspector:CreateControl(page, opt, path)
 		return W.ColorSwatch:New(page.frame, { label = label, tooltip = opt.tooltip, hasAlpha = opt.hasAlpha, onChange = Set })
 	elseif t == "text" then
 		return W.EditBox:New(page.frame, { label = label, tooltip = opt.tooltip, onChange = Set })
+	elseif t == "actionslot" then
+		return W.ActionSlot:New(page.frame, { label = label, tooltip = opt.tooltip, accept = opt.accept,
+			describe = opt.describe, empty = opt.empty, extras = opt.extras, onChange = Set })
 	elseif t == "action" then
 		return W.Button:New(page.frame, { text = label, tooltip = opt.tooltip, onClick = function()
 			if not page.target then return end

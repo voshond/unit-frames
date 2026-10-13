@@ -43,6 +43,44 @@ function B:ResolveSpell(text)
 	return id
 end
 
+-- Spells dropped from the spellbook or action bars, following Blizzard's
+-- click-binding UI (AddFromCursorInfo): the spell ID is the fourth return.
+-- The ID is saved as text, the same intent typed IDs have; overrides still
+-- resolve at compile time. Returns nil, nil when the cursor is empty.
+function B:DecodeCursor()
+	if not CG.Caps.cursor then return nil, "Dropping actions is unavailable in this client" end
+	local kind, _, _, spellID = GetCursorInfo()
+	if kind == nil then return nil end
+	if kind ~= "spell" then return nil, "Only spells can be dropped here" end
+	if issecretvalue(spellID) or type(spellID) ~= "number" then return nil, "Spell information unavailable" end
+	return { action = "spell", spell = tostring(spellID) }
+end
+
+local ACTION_NAMES = {}
+for _, action in ipairs(B.actions) do ACTION_NAMES[action[1]] = action[2] end
+
+-- Shown metadata for one action group; never stored in the config.
+function B:Describe(choice)
+	if choice.action ~= "spell" then
+		return { name = choice.action == "none" and "Unbound" or ACTION_NAMES[choice.action] or choice.action,
+			status = choice.action == "none" and "Drop a spell here, or click with one on the cursor" or "Unit action" }
+	end
+	local text = strtrim(choice.spell or "")
+	local described = { name = text ~= "" and text or "No spell" }
+	local info = text ~= "" and CG.Caps.spellInfo and C_Spell.GetSpellInfo(tonumber(text) or text)
+	if info and not issecretvalue(info.name) and not issecretvalue(info.iconID) then
+		described.name, described.icon = info.name, info.iconID
+	end
+	local id, reason = self:ResolveSpell(text)
+	described.inactive = id == nil
+	described.status = reason or "Active"
+	if id and info and not issecretvalue(info.spellID) and id ~= info.spellID then
+		local override = C_Spell.GetSpellInfo(id)
+		if override and not issecretvalue(override.name) then described.status = "Active as " .. override.name end
+	end
+	return described
+end
+
 -- A complete plan includes nil removals, including wildcard oUF defaults.
 -- Never choose an action from live health, aura, range or cooldown values.
 function B:Compile(config)
