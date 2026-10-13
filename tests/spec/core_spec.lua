@@ -91,6 +91,37 @@ describe("Schema", function()
 		assert.equals(1, Schema.Resolve(schema, {}, nil).border.color[1])
 	end)
 
+	it("layers nested group defaults, outer over inner, without changing them", function()
+		local nested = {
+			{ key = "row", type = "group", defaults = { bar = { color = { 0, 0, 1 }, size = 5, mode = "x" } }, schema = {
+				{ key = "bar", type = "group", defaults = { color = { 1, 0, 0, 1 }, size = 2, inner = { depth = 1 } }, schema = {
+					{ key = "color", type = "color", default = { 1, 1, 1, 1 } },
+					{ key = "size", type = "range", default = 1 },
+					{ key = "mode", type = "select", default = "y" },
+					{ key = "inner", type = "group", defaults = { depth = 3, on = true }, schema = {
+						{ key = "depth", type = "range", default = 0 },
+						{ key = "on", type = "toggle", default = false },
+					} },
+				} },
+			} },
+		}
+		local Util = Helpers.LoadAddon().Util
+		local before = Util.Copy(nested)
+		local resolved = Schema.Resolve(nested, { row = { bar = { inner = { on = false } } } }, nil)
+		assert.same({ color = { 0, 0, 1, 1 }, size = 5, mode = "x", inner = { depth = 1, on = false } }, resolved.row.bar)
+		resolved.row.bar.color[1] = 9
+		assert.same(before, nested, "schema defaults stay unchanged")
+		assert.same({ 0, 0, 1, 1 }, Schema.Resolve(nested, nil, nil).row.bar.color)
+	end)
+
+	it("reads theme paths per theme table", function()
+		local Util = Helpers.LoadAddon().Util
+		assert.equals(1, Util.GetPath({ colors = { health = 1 } }, "colors.health"))
+		assert.equals(2, Util.GetPath({ colors = { health = 2 } }, "colors.health"))
+		assert.is_nil(Util.GetPath({ colors = 3 }, "colors.health"))
+		assert.is_nil(Util.GetPath({}, "colors.health"))
+	end)
+
 	it("validates types, ranges and choices", function()
 		assert.same({}, Schema.Validate(schema, { size = 5, mode = "b" }))
 		local errors = Schema.Validate(schema, { size = 50, mode = "z", texture = 3, border = { enabled = "yes" } })

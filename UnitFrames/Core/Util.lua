@@ -43,10 +43,24 @@ function Util.Merge(target, source)
 	return target
 end
 
+-- Split once per path: schema resolution reads theme paths on every apply.
+local pathKeys = {}
+local function PathKeys(path)
+	local keys = pathKeys[path]
+	if not keys then
+		keys = {}
+		for key in string.gmatch(path, "[^%.]+") do
+			keys[#keys + 1] = key
+		end
+		pathKeys[path] = keys
+	end
+	return keys
+end
+
 -- Paths are dot separated: "background.color".
 function Util.GetPath(tbl, path)
 	local node = tbl
-	for key in string.gmatch(path, "[^%.]+") do
+	for _, key in ipairs(PathKeys(path)) do
 		if type(node) ~= "table" then
 			return nil
 		end
