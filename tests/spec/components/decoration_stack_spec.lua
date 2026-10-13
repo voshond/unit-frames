@@ -110,6 +110,102 @@ describe("Decoration stacks", function()
 		assert.is_false(disabled:IsShown())
 	end)
 
+	it("stacks groups at all nine portrait positions through presence, offsets and toggles", function()
+		ns.Config:SetUnitValue("player", "portrait.enabled", true)
+		ns.Config:SetUnitValue("player", "portrait.size", 40)
+		local portrait = uf:GetLayoutContext().portrait.frame
+		local a, aHost, aMember = Join("a", { anchor = "PORTRAIT_TOPLEFT", order = 1, size = 10, gap = 4 })
+		local b, bHost, bMember = Join("b", { anchor = "PORTRAIT_TOPLEFT", order = 2, size = 6, gap = 9 })
+		a:Show()
+		b:Show()
+		-- a 10 + gap 4 + b 6 = 20; the last gap is dropped.
+		local expected = {
+			TOPLEFT = { { 0, 0 }, { 14, 0 } }, BOTTOMLEFT = { { 0, 0 }, { 14, 0 } },
+			TOPRIGHT = { { -10, 0 }, { 0, 0 } }, BOTTOMRIGHT = { { -10, 0 }, { 0, 0 } },
+			TOP = { { -5, 0 }, { 7, 0 } }, BOTTOM = { { -5, 0 }, { 7, 0 } }, CENTER = { { -5, 0 }, { 7, 0 } },
+			LEFT = { { 0, 5 }, { 0, -7 } }, RIGHT = { { 0, 5 }, { 0, -7 } },
+		}
+		local function Expect(point, aAt, bAt, message)
+			assert.same({ point, portrait, point, aAt[1], aAt[2] }, Anchor(aHost), point .. message)
+			assert.same({ point, portrait, point, bAt[1], bAt[2] }, Anchor(bHost), point .. message)
+		end
+		for point, at in pairs(expected) do
+			aMember.anchor, bMember.anchor = "PORTRAIT_" .. point, "PORTRAIT_" .. point
+			stack:Reflow()
+			Expect(point, at[1], at[2], "")
+			bMember.x, bMember.y = 1, 2
+			stack:Reflow()
+			Expect(point, at[1], { at[2][1] + 1, at[2][2] + 2 }, " nudges one icon")
+			bMember.x, bMember.y = nil, nil
+			aMember.order = 3
+			stack:Reflow()
+			-- b 6 + gap 9 + a 10 = 25: order runs left to right or top to bottom.
+			local layout = { TOPLEFT = { 15, 0 }, BOTTOMLEFT = { 15, 0 }, TOPRIGHT = { 0, -19 }, BOTTOMRIGHT = { 0, -19 },
+				TOP = { 7.5, -9.5 }, BOTTOM = { 7.5, -9.5 }, CENTER = { 7.5, -9.5 }, LEFT = { -7.5, 9.5 }, RIGHT = { -7.5, 9.5 } }
+			local aAlong, bAlong = layout[point][1], layout[point][2]
+			if point == "LEFT" or point == "RIGHT" then
+				Expect(point, { 0, aAlong }, { 0, bAlong }, " in order")
+			else
+				Expect(point, { aAlong, 0 }, { bAlong, 0 }, " in order")
+			end
+			aMember.order = 1
+			b:Hide()
+			stack:Reflow()
+			-- Alone, each icon sits on the position itself.
+			Expect(point, { 0, 0 }, { 0, 0 }, " alone")
+			b:Show()
+			bMember.present = function() return nil end
+			b:Hide()
+			stack:Reflow()
+			Expect(point, at[1], at[2], " keeps an unknown member's slot")
+			bMember.present = nil
+			b:Show()
+		end
+		aMember.anchor, bMember.anchor = "PORTRAIT_TOP", "PORTRAIT_TOP"
+		ns.Config:SetUnitValue("player", "portrait.enabled", false)
+		assert.is_false(aHost:IsShown())
+		assert.is_false(bHost:IsShown())
+		ns.Config:SetUnitValue("player", "portrait.enabled", true)
+		portrait = uf:GetLayoutContext().portrait.frame
+		assert.is_true(aHost:IsShown())
+		Expect("TOP", { -5, 0 }, { 7, 0 }, " after re-enabling")
+	end)
+
+	it("fits every portrait position to square, wide and tall portraits", function()
+		ns.Config:SetUnitValue("player", "portrait.enabled", true)
+		local _, host, member = Join("extra", { anchor = "PORTRAIT_TOP", size = 64 })
+		for _, size in ipairs({ 0, 12, 80 }) do -- square, tall, wide
+			ns.Config:SetUnitValue("player", "portrait.size", size)
+			local portrait = uf:GetLayoutContext().portrait
+			for _, anchor in ipairs(ns.DecorationStack.ANCHORS) do
+				if anchor[1]:match("^PORTRAIT_") then
+					member.anchor = anchor[1]
+					stack:Reflow()
+					assert.equals(math.min(64, portrait.width, portrait.height), host:GetWidth())
+					assert.equals(host:GetWidth(), host:GetHeight())
+				end
+			end
+		end
+	end)
+
+	it("offers every portrait position to each indicator and validates them", function()
+		local values = {}
+		for _, anchor in ipairs(ns.DecorationStack.ANCHORS) do values[anchor[1]] = true end
+		for _, point in ipairs({ "TOPLEFT", "TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT", "BOTTOMLEFT", "BOTTOM", "BOTTOMRIGHT" }) do
+			assert.is_true(values[point], point)
+			assert.is_true(values["PORTRAIT_" .. point], "PORTRAIT_" .. point)
+		end
+		ns.Config:SetUnitValue("player", "portrait.enabled", true)
+		local portrait = uf:GetLayoutContext().portrait.frame
+		marker:SetIndex(8)
+		for _, key in ipairs({ "raidTarget", "pvp", "classification", "readyCheckIcon" }) do
+			ns.Config:SetUnitValue("player", key .. ".anchor", "PORTRAIT_TOP")
+		end
+		assert.same({}, ns.Schema.Validate(uf:GetSchema(), ns.Config:GetUnitConfig("player")))
+		assert.equals("TOP", (marker:GetFrame():GetPoint()))
+		assert.equals(portrait, select(2, marker:GetFrame():GetPoint()))
+	end)
+
 	it("makes room before the name and returns it when members leave or the frame is released", function()
 		local name = uf:GetLayoutContext().name
 		local first, firstHost = Join("first", { anchor = "NAME", order = 1, size = 12, gap = 2 })

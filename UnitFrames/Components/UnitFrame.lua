@@ -14,7 +14,7 @@ Optional extras:
   castbar   placed as an extra row at the top or bottom, or over the health
             row (it covers the health bar only while casting)
   auras     independently positioned buffs and debuffs on any side
-  raidTarget  raid marker on a border, the centre or inside a portrait corner
+  raidTarget  raid marker on a border, the centre or inside the portrait
   pvp       the unit's PvP flag, placed like the raid marker
   classification  elite, rare or boss marker, placed like the raid marker
   readyCheckIcon  ready check mark, driven with the ready check tints

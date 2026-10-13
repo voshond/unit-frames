@@ -9,7 +9,9 @@ and stays aligned to its anchor:
   LEFT, RIGHT               a column centred on the point, top to bottom
   TOPLEFT, BOTTOMLEFT       a row whose first icon is centred on the corner
   TOPRIGHT, BOTTOMRIGHT     a row whose last icon is centred on the corner
-  PORTRAIT_<corner>         a row inside the portrait corner, growing inward
+  PORTRAIT_<position>       the same nine positions inside the portrait: corners
+                            grow inward from the corner, top, bottom and the
+                            centre keep a row centred, left and right a column
   NAME                      a row before the leading name text, which makes room
 
 Members run in `order` (left to right, top to bottom); `gap` follows each
@@ -40,16 +42,33 @@ Stack.ANCHORS = {
 	{ "BOTTOMLEFT", "Border: bottom left" },
 	{ "LEFT", "Border: left" },
 	{ "CENTER", "Frame centre" },
-	{ "PORTRAIT_BOTTOMLEFT", "Inside portrait: bottom left" },
+	{ "PORTRAIT_TOPLEFT", "Inside portrait: top left" },
+	{ "PORTRAIT_TOP", "Inside portrait: top" },
+	{ "PORTRAIT_TOPRIGHT", "Inside portrait: top right" },
+	{ "PORTRAIT_RIGHT", "Inside portrait: right" },
 	{ "PORTRAIT_BOTTOMRIGHT", "Inside portrait: bottom right" },
+	{ "PORTRAIT_BOTTOM", "Inside portrait: bottom" },
+	{ "PORTRAIT_BOTTOMLEFT", "Inside portrait: bottom left" },
+	{ "PORTRAIT_LEFT", "Inside portrait: left" },
+	{ "PORTRAIT_CENTER", "Inside portrait: centre" },
 }
 
--- Where the group is pinned along its axis: its centre, or the centre of
--- its first or last icon.
-local PIN = {
-	TOP = "centre", BOTTOM = "centre", CENTER = "centre", LEFT = "centre", RIGHT = "centre",
-	TOPLEFT = "first", BOTTOMLEFT = "first", TOPRIGHT = "last", BOTTOMRIGHT = "last",
-}
+-- How each anchor lays out its group. `point` is the anchor point, `axis`
+-- the stacking direction and `pin` the part of the group held there: the
+-- centre of the group, or of its first or last icon. Border icons are
+-- centred on their point; portrait icons sit inside it, so their corner
+-- pins hold an edge of the group instead.
+local LAYOUT = {}
+for point, layout in pairs({
+	TOPLEFT = { axis = "x", pin = "first" }, TOP = { axis = "x", pin = "centre" },
+	TOPRIGHT = { axis = "x", pin = "last" }, RIGHT = { axis = "y", pin = "centre" },
+	BOTTOMRIGHT = { axis = "x", pin = "last" }, BOTTOM = { axis = "x", pin = "centre" },
+	BOTTOMLEFT = { axis = "x", pin = "first" }, LEFT = { axis = "y", pin = "centre" },
+	CENTER = { axis = "x", pin = "centre" },
+}) do
+	LAYOUT[point] = { point = point, axis = layout.axis, pin = layout.pin }
+	LAYOUT["PORTRAIT_" .. point] = { point = point, axis = layout.axis, pin = layout.pin, portrait = true }
+end
 
 function Stack:Init()
 	self.members = {}
@@ -84,11 +103,13 @@ local function Size(member, context)
 	if not member.enabled or not context then return nil end
 	if member.anchor == "NAME" then
 		return context.name and member.size or nil
-	elseif member.anchor:match("^PORTRAIT_") then
+	end
+	local layout = LAYOUT[member.anchor]
+	if layout and layout.portrait then
 		local portrait = context.portrait
 		return portrait and math.min(member.size, portrait.width, portrait.height) or nil
 	end
-	return member.size
+	return layout and member.size or nil
 end
 
 -- Puts one item of a group: `start` is its distance from the group's
@@ -97,21 +118,26 @@ local function Place(item, context, start, total, first, last)
 	local member, size, host = item.member, item.size, item.member.host
 	local anchor, x, y = member.anchor, member.x or 0, member.y or 0
 	host:ClearAllPoints()
-	local corner = anchor:match("^PORTRAIT_(.+)$")
 	if anchor == "NAME" then
 		host:SetPoint("RIGHT", context.name:GetFrame(), "LEFT", -(total - start - size), 0)
-	elseif corner then
-		local along = corner:find("LEFT") and start or start + size - total
-		host:SetPoint(corner, context.portrait.frame, corner, along + x, y)
+		return
+	end
+	local layout = LAYOUT[anchor]
+	local along
+	if layout.portrait then
+		-- Offset of the icon's own point from the group's matching point.
+		along = layout.pin == "first" and start or layout.pin == "last" and start + size - total
+			or start + (size - total) / 2
 	else
-		local pin = PIN[anchor]
-		pin = pin == "first" and first / 2 or pin == "last" and total - last / 2 or total / 2
-		local along = start + size / 2 - pin
-		if anchor == "LEFT" or anchor == "RIGHT" then
-			host:SetPoint("CENTER", context.root, anchor, x, -along + y)
-		else
-			host:SetPoint("CENTER", context.root, anchor, along + x, y)
-		end
+		local pin = layout.pin == "first" and first / 2 or layout.pin == "last" and total - last / 2 or total / 2
+		along = start + size / 2 - pin
+	end
+	local point = layout.portrait and layout.point or "CENTER"
+	local relative = layout.portrait and context.portrait.frame or context.root
+	if layout.axis == "y" then
+		host:SetPoint(point, relative, layout.point, x, -along + y)
+	else
+		host:SetPoint(point, relative, layout.point, along + x, y)
 	end
 end
 

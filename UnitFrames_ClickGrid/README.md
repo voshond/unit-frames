@@ -66,7 +66,8 @@ client after adding it. For local builds and incremental updates, see the
   Role, leader/assistant, ready check, dead/ghost, incoming resurrection and
   summon positions offer **Before
   name** (an enabled left-aligned Name text on the health bar), the frame
-  centre, or any raid-marker border/portrait anchor. Role defaults before
+  centre, or any raid-marker border/portrait anchor (nine positions inside the
+  portrait as well as on the border). Role defaults before
   name, ready check to the frame centre, and the others to the top border
   with the raid marker. Icons
   sharing an anchor form one group with the raid marker that leaves no gap

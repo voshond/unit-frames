@@ -316,6 +316,19 @@ describe("ClickGrid status indicators", function()
 		Mock.FireEvent("PLAYER_REGEN_ENABLED")
 		assert.same({ "CENTER", frame, "TOP", 0, 0 }, Anchor(role:GetParent()))
 		assert.same({ "BOTTOMRIGHT", portrait, "BOTTOMRIGHT", 0, 0 }, Anchor(marker:GetFrame()))
+		-- Every shared portrait position reaches the member options.
+		local values = {}
+		for _, value in ipairs(UF.Schema.Find(CG.IndicatorSchema, "rolePosition").values) do values[value[1]] = true end
+		for _, anchor in ipairs(UF.DecorationStack.ANCHORS) do assert.is_true(values[anchor[1]], anchor[1]) end
+		CG.Config:SetStyle("member", "raidTarget.anchor", "PORTRAIT_TOP")
+		CG.Config:Set("indicators.rolePosition", "PORTRAIT_TOP")
+		local markerAt, roleAt = Anchor(marker:GetFrame()), Anchor(role:GetParent())
+		assert.same({ "TOP", portrait, "TOP" }, { markerAt[1], markerAt[2], markerAt[3] })
+		assert.same({ "TOP", portrait, "TOP" }, { roleAt[1], roleAt[2], roleAt[3] })
+		-- One row centred on the portrait: its left and right edges mirror each other.
+		local markerSize, roleSize = marker:GetFrame():GetWidth(), role:GetParent():GetWidth()
+		assert.is_true(roleAt[4] > markerAt[4])
+		assert.equals(-(roleAt[4] + roleSize / 2), markerAt[4] - markerSize / 2)
 	end)
 
 	it("shows the same spirit artwork for the dead and ghosts", function()
