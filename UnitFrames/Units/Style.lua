@@ -12,6 +12,12 @@ Re-binding after a config change enables/disables elements and re-tags texts.
 
 Units.STYLE = "UnitFrames"
 
+-- Frames whose elements oUF has enabled. Init callbacks run right after it
+-- enabled them, for every frame of this oUF (unit buttons and companions'
+-- header children alike).
+local ready = setmetatable({}, { __mode = "k" })
+oUF:RegisterInitCallback(function(frame) ready[frame] = true end)
+
 -- What oUF read when it last enabled each element, per frame (driver
 -- signatures). Compared entry by entry: signatures may contain nils.
 local signatures = setmetatable({}, { __mode = "k" })
@@ -33,12 +39,12 @@ local function SetElement(frame, element, widget, signature)
 	signatures[frame] = bound
 	local changed = not SameSignature(bound[element], signature)
 	bound[element] = signature
-	local ready = frame.ufReady
-	if ready and frame:IsElementEnabled(element) and (widget ~= frame[element] or changed) then
+	local enabled = ready[frame]
+	if enabled and frame:IsElementEnabled(element) and (widget ~= frame[element] or changed) then
 		frame:DisableElement(element)
 	end
 	frame[element] = widget
-	if ready and widget and not frame:IsElementEnabled(element) then
+	if enabled and widget and not frame:IsElementEnabled(element) then
 		frame:EnableElement(element)
 	end
 end
@@ -160,7 +166,6 @@ local function Spawn(factory, unit)
 	local def = Units.definitions[unit]
 	local name = "UnitFrames" .. unit:gsub("^%l", string.upper)
 	local frame = factory:Spawn(unit, name)
-	frame.ufReady = true -- oUF has enabled the elements now
 	Units.frames[unit] = frame
 	ns.EditMode:Register(frame, unit, "UnitFrames: " .. def.label, def.defaultPosition)
 	return frame

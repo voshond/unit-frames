@@ -33,10 +33,19 @@ function CG:Measure()
 	end
 end
 
+-- ClickGrid's own state per unit button, kept off the secure buttons:
+-- { kind = "member" or "target", status, slots } (members only have extras).
+local buttons = {}
+
+function CG:GetGridButton(frame)
+	return buttons[frame]
+end
+
 oUF:RegisterStyle(CG.STYLE, function(frame)
 	local target = frame:GetAttribute("ufcg-target")
 	local kind = target and "target" or "member"
-	frame.ufcgKind = kind
+	local button = { kind = kind }
+	buttons[frame] = button
 	frame.uf = UF.Units:CreateFromDefinition(CG.definitions[kind], frame, CG.Config:GetStyle(kind), frame)
 	frame.uf:SetCombatDeferred(true)
 	frame.uf:SetThemeManaged(true)
@@ -45,13 +54,8 @@ oUF:RegisterStyle(CG.STYLE, function(frame)
 	frame:HookScript("OnLeave", UF.Units.HideTooltip)
 	UF.Units:Bind(frame)
 	if not target then
-		frame.ufcgStatus, frame.ufcgSlots = CG:AddMemberExtras(frame.uf, frame, true)
-		UF.Units.SetElement(frame, "UFCG_Slots", frame.ufcgSlots)
+		button.status, button.slots = CG:AddMemberExtras(frame.uf, frame, true)
+		UF.Units.SetElement(frame, "UFCG_Slots", button.slots)
 	end
 	CG.frames[#CG.frames + 1] = frame
-end)
-
--- Initialization callbacks run after oUF enables the frame's elements.
-oUF:RegisterInitCallback(function(frame)
-	if frame.ufcgKind then frame.ufReady = true end
 end)

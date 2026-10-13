@@ -15,7 +15,7 @@ describe("ClickGrid ready checks", function()
 		assert.is_true(member:IsElementEnabled("UF_ReadyCheck"))
 		assert.equals(member.uf:GetReadyCheck(), member.UF_ReadyCheck)
 		assert.is_false(target:IsElementEnabled("UF_ReadyCheck"))
-		assert.equals(member.ufcgStatus.ReadyCheckIndicator, member.uf:GetReadyCheck():GetIcon():GetWidget())
+		assert.equals(CG:GetGridButton(member).status.ReadyCheckIndicator, member.uf:GetReadyCheck():GetIcon():GetWidget())
 		assert.equals("CENTER", member.uf:GetReadyCheck():GetIcon().resolved.anchor)
 		assert.equals(22, member.uf:GetReadyCheck():GetIcon().resolved.size)
 		assert.is_false(member:IsElementEnabled("ReadyCheckIndicator"), "one shared state drives bars and icon")
@@ -27,7 +27,7 @@ describe("ClickGrid ready checks", function()
 		CG.Config:SetStyle("member", "readyCheck.enabled", false)
 		assert.is_nil(member.uf:GetRow("health"):GetBar():GetTint())
 		assert.is_true(member:IsElementEnabled("UF_ReadyCheck"), "the icon still needs ready check updates")
-		assert.is_true(member.ufcgStatus.ReadyCheckIndicator:IsShown())
+		assert.is_true(CG:GetGridButton(member).status.ReadyCheckIndicator:IsShown())
 		CG.Config:Set("indicators.ready", false)
 		assert.is_false(member:IsElementEnabled("UF_ReadyCheck"))
 	end)
@@ -35,7 +35,7 @@ describe("ClickGrid ready checks", function()
 	it("holds and fades the status icon like the member's tints", function()
 		CG.Config:Set("indicators.readyPosition", "TOP")
 		CG.Config:Set("indicators.readySize", 14)
-		local icon = member.ufcgStatus.ReadyCheckIndicator
+		local icon = CG:GetGridButton(member).status.ReadyCheckIndicator
 		member.__unit = "party1"
 		GetReadyCheckStatus = function() return "waiting" end
 		local element = UF.oUF.elements.UF_ReadyCheck
