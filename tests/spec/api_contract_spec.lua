@@ -149,11 +149,6 @@ describe("Client API contract", function()
 	end)
 
 	it("matches a snapshot regenerated from the local Blizzard source, when present", function()
-		local options = require("test-options")
-		if options.quick then
-			table.insert(options.skipped, "API snapshot regeneration from the Blizzard source")
-			return
-		end
 		local source = "examples/wow-ui-source-forever"
 		local version = io.open(source .. "/version.txt")
 		if not version then return end

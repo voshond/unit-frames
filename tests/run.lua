@@ -6,24 +6,13 @@ without installing anything:
   luajit tests/run.lua            all specs
   luajit tests/run.lua bar        only spec files whose name contains "bar"
   luajit tests/run.lua --times    also report how long each spec file took
-  luajit tests/run.lua --quick    skip slow whole-repository checks (see below)
-
---quick is for local development. It skips checks that rarely change between
-edits: regenerating the API snapshot from the Blizzard source checkout. CI and
-scripts/run-tests.sh (without --quick) always run everything.
 
 Run from the repository root. Also syntax-checks every addon Lua file.
 ]]
--- Run options for specs: require("test-options").
-local options = { quick = false, skipped = {} }
-package.loaded["test-options"] = options
-
 local filter, showTimes
 for _, value in ipairs(arg) do
 	if value == "--times" then
 		showTimes = true
-	elseif value == "--quick" then
-		options.quick = true
 	elseif value:sub(1, 2) == "--" then
 		error("unknown option " .. value)
 	else
@@ -272,11 +261,9 @@ if showTimes then
 	print(string.format("%8.2f %6s %9s  %s", syntaxSeconds, "", "", "(addon syntax check)"))
 	print(string.format("%8.2f %6d %9s  %s", Now() - startedAt, passed + failed, "", "(total)"))
 end
-for _, reason in ipairs(options.skipped) do
-	print("SKIP (--quick) " .. reason)
-end
 for _, failure in ipairs(failures) do
 	print("FAIL " .. failure)
 end
 print(string.format("%d passed, %d failed, %d syntax errors", passed, failed, syntaxErrors))
-os.exit((failed == 0 and syntaxErrors == 0) and 0 or 1)
+-- Closing the Lua state lets LuaJIT's profiler (luajit -jp=F tests/run.lua ...) report.
+os.exit((failed == 0 and syntaxErrors == 0) and 0 or 1, true)

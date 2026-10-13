@@ -76,7 +76,7 @@ luajit tests/run.lua workbench
 ```
 
 - The optional filter matches **spec filenames**, not individual test names. The runner includes addon Lua syntax checks. No external busted installation is needed.
-- `--quick` (runner or `scripts/run-tests.sh`) skips the release packaging check and API snapshot regeneration for faster local iteration; `--times` reports per-spec durations. CI runs the full suite; do not rely on `--quick` alone after API usage or packaging changes.
+- `--times` (runner or `scripts/run-tests.sh`) reports per-spec durations.
 - `tests/helpers.lua` loads TOCs into a fresh mocked client; `tests/mock/wow.lua` includes fake secrets and `tests/mock/ouf.lua` supplies the usual oUF stand-in. Some specs exercise embedded oUF paths explicitly.
 - The mock is held to the client API through `tests/fixtures/api_snapshot.lua`, generated from Blizzard's API documentation and Lua source by `luajit scripts/api-snapshot.lua` (regenerate after adding API usage or updating the source checkout, and review the diff). `tests/mock/api.lua` enforces it on every mock call: undocumented widget methods, rejected arguments, secrets passed where addon (tainted) code may not pass them, and protected calls in combat raise errors. `tests/spec/api_contract_spec.lua` checks the mock's functions, methods, enums, restricted secret returns and our event names, and that the snapshot is current when the source checkout exists.
 - Specs simulating Blizzard secure code or engine state use `Mock.SecureDelegate`/`Mock.RunUntainted` (secure delegates such as `UnitFrameUtil.UpdateUnitPvPIndicator`) and `Mock.SetEngineSize` (engine-given, possibly secret dimensions) instead of calling addon-facing APIs with values addon code could not pass.

@@ -35,3 +35,13 @@ jobs:
           persist-credentials: false
       - name: Run all tests and addon syntax checks
         run: bash scripts/run-tests.sh --times
+      # TEMPORARY (PR #8): profile the slow specs; remove before merging.
+      - name: Profile slow specs (temporary)
+        run: |
+          for spec in clickgrid_ready_check workbench_spec; do
+            for mode in F l -3F; do
+              echo "=== $spec, -jp=$mode ==="
+              luajit -jp=$mode,/tmp/profile.txt tests/run.lua $spec > /dev/null || true
+              head -n 45 /tmp/profile.txt
+            done
+          done
