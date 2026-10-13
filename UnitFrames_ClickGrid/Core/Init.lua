@@ -12,6 +12,8 @@ CG.Caps = {
 	privateAuras = C_UnitAuras and C_UnitAuras.AddPrivateAuraAnchor ~= nil,
 	cursor = GetCursorInfo ~= nil and ClearCursor ~= nil,
 	spellBook = PlayerSpellsUtil ~= nil and PlayerSpellsUtil.OpenToSpellBookTab ~= nil,
+	macros = GetNumMacros ~= nil and GetMacroInfo ~= nil and Constants ~= nil and Constants.MacroConsts ~= nil,
+	macroFrame = ShowMacroFrame ~= nil,
 }
 
 function CG:Print(...)
@@ -33,9 +35,9 @@ function CG:RequestRefresh()
 	self:Refresh()
 end
 
--- Binding edits and spell updates only touch click attributes: no restyle,
--- element update or header relayout. Combat defers to the full refresh on
--- PLAYER_REGEN_ENABLED.
+-- Binding edits and spell/macro updates only touch click attributes: no
+-- restyle, element update or header relayout. Combat defers to the full
+-- refresh on PLAYER_REGEN_ENABLED.
 function CG:RequestBindings(notify)
 	if not self.started then return end
 	if InCombatLockdown() then
@@ -47,7 +49,7 @@ end
 
 local events = CreateFrame("Frame")
 for _, event in ipairs({ "ADDON_LOADED", "PLAYER_LOGIN", "PLAYER_REGEN_ENABLED", "SPELLS_CHANGED",
-	"PLAYER_SPECIALIZATION_CHANGED", "PLAYER_TALENT_UPDATE" }) do events:RegisterEvent(event) end
+	"PLAYER_SPECIALIZATION_CHANGED", "PLAYER_TALENT_UPDATE", "UPDATE_MACROS" }) do events:RegisterEvent(event) end
 events:SetScript("OnEvent", function(_, event, name)
 	if event == "ADDON_LOADED" then
 		if name == addonName then
@@ -61,7 +63,7 @@ events:SetScript("OnEvent", function(_, event, name)
 		CG:Start()
 	elseif event == "PLAYER_REGEN_ENABLED" then
 		if not CG.started then CG:Start() elseif CG.pending then CG:RequestRefresh() end
-	elseif event == "SPELLS_CHANGED" then
+	elseif event == "SPELLS_CHANGED" or event == "UPDATE_MACROS" then
 		CG:RequestBindings(true)
 	elseif event ~= "PLAYER_SPECIALIZATION_CHANGED" or name == "player" then
 		CG:RequestRefresh()

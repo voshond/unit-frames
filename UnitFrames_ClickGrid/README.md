@@ -41,14 +41,18 @@ client after adding it. For local builds and incremental updates, see the
   Hidden targets keep their prepared secure buttons but stop unit watches,
   oUF element updates, native aura subscriptions and preview data updates.
 - Five mouse buttons × eight Alt/Ctrl/Shift combinations, with separate
-  friendly/hostile actions: cast, target, assist, focus, menu or unbound.
-  Drop a spell from the spellbook or action bars into a cell's **Friendly** or
-  **Hostile** slot (or click the slot while carrying one); a **Spellbook**
-  button opens it outside combat, and the matrix shows both reactions with
-  icons and inactive states. Typed spell IDs/localized names remain available.
-  Spell IDs/localized names resolve through the client's spell APIs; unknown
-  spells retain saved intent and stay inactive. Spell/talent/spec updates
-  rebuild bindings outside combat. With Clique loaded, Clique owns clicks
+  friendly/hostile actions: cast, macro, target, assist, focus, menu or unbound.
+  The **Click spells** grid fills the Workbench stage and shows each cell's
+  friendly (F) and hostile (H) action with its icon and name. Drop a spell or
+  macro from the spellbook, action bars or macro window straight onto a line
+  (or click it while carrying one); clicking a line otherwise opens its
+  **Friendly**/**Hostile** settings page, which has the same drop slot plus
+  **Spellbook** and **Macros** openers (disabled in combat). Typed spell
+  IDs/localized names and macro names remain available. Spells resolve through
+  the client's spell APIs; macros are stored by name and resolved to their
+  current index. Unknown spells and missing macros retain saved intent and
+  stay inactive. Spell/talent/spec/macro updates rebuild bindings outside
+  combat. With Clique loaded, Clique owns clicks
   and this addon's binding editor does not control live actions.
 - Independent native buff/debuff rows, own-cast/dispel filters, timers,
   stacks, borders, duration limits and native sorting. The default buff row
@@ -113,7 +117,7 @@ layouts retain hidden reusable frames for the session.
 
 Blizzard party/raid frames remain visible. This is currently an additive panel,
 not a verified replacement. Missing-buff warnings, action icons,
-macros/items, communications, plugins and sound alerts remain future work.
+items, communications, plugins and sound alerts remain future work.
 Arbitrary spell-ID priority logic for restricted friendly debuffs is not
 promised; native selection and private-aura presentation are used instead.
 
@@ -125,10 +129,11 @@ Before relying on the panel for healing, verify on the actual Forever client:
    subgroup/role changes, unit disappearance and vehicle replacement in combat
    must not create new addon widgets or produce taint/protected-action errors.
 2. Every modifier/button/reaction binding, mouse-release casting, override
-   spells, spec/talent updates, unknown spells and Clique ownership. Spell
-   drops from the spellbook and action bars (drag and click-carry), rejected
-   item/macro drops keeping the cursor, the Spellbook opener and its combat
-   lock, and switching cells or Workbench entries after a drop.
+   spells, spec/talent updates, unknown spells and Clique ownership. Spell and
+   macro drops onto grid lines and settings slots (drag and click-carry),
+   rejected item drops keeping the cursor, macro creation/deletion/renaming,
+   the Spellbook and Macros openers and their combat lock, grid resizing and
+   tooltips, and switching cells or Workbench entries after a drop.
 3. Targets appearing/disappearing, native buff slots, aura timers/counts/dispel
    colors, private auras, status transitions and opaque values during combat.
 4. Full-health/damaged shields in both placements, style/theme/profile switches,

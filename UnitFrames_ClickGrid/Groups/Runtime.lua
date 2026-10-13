@@ -183,7 +183,7 @@ end
 
 -- Compiles the current specialization's bindings and writes the changed
 -- attributes to every frame. `notify` announces the result to the binding
--- grid when no config change does (spell and spec updates).
+-- grid when no config change does (spell, macro and spec updates).
 function CG:ApplyBindings(notify)
 	local plan, errors = self.Bindings:Compile(self.Config:GetBindings())
 	self.bindingErrors = errors

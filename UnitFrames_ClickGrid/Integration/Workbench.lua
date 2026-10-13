@@ -59,13 +59,18 @@ function CG:RegisterBindingEntry(wb)
 			tooltip = "Open the spellbook to drag a spell from it. Unavailable in combat.",
 			onClick = function() PlayerSpellsUtil.OpenToSpellBookTab() end }
 	end
+	if self.Caps.macroFrame then
+		extras[#extras + 1] = { text = "Macros", combatLocked = true,
+			tooltip = "Open the macro window to drag a macro from it. Unavailable in combat.",
+			onClick = function() ShowMacroFrame() end }
+	end
 	-- The editor-only drop slot shows and replaces its whole reaction group;
 	-- the action list and typed spell remain the manual alternative.
 	local function ReactionSchema(reaction)
 		return UF.Schema.Concat({
 			{ key = "drop", type = "actionslot", label = reaction == "friendly" and "Friendly action" or "Hostile action",
-				tooltip = "Drop a spell from your spellbook or action bars, or click here while carrying one."
-					.. " It is used on " .. reaction .. " units only, whatever the spell itself does.",
+				tooltip = "Drop a spell or macro from your spellbook, action bars or macro window, or click here while"
+					.. " carrying one. It is used on " .. reaction .. " units only, whatever the spell itself does.",
 				accept = function() return B:DecodeCursor() end,
 				describe = function(choice) return B:Describe(choice) end,
 				empty = { action = "none" }, extras = extras },
@@ -83,7 +88,8 @@ function CG:RegisterBindingEntry(wb)
 		selected.button, selected.modifier = editor.button, editor.modifier
 		for _, reaction in ipairs({ "friendly", "hostile" }) do
 			local choice = selected[reaction]
-			choice.drop = { action = choice.action, spell = choice.action == "spell" and choice.spell or nil }
+			choice.drop = { action = choice.action, spell = choice.action == "spell" and choice.spell or nil,
+				macro = choice.action == "macro" and choice.macro or nil }
 		end
 		return selected
 	end
@@ -143,7 +149,8 @@ function CG:RegisterBindingEntry(wb)
 				GameTooltip:SetText(B.buttons[line.button] .. " / " .. line.title, 1, 1, 1)
 				GameTooltip:AddLine(info.name, 1, 1, 1)
 				GameTooltip:AddLine(info.status, unpack(info.inactive and UF.Skin.colors.warning or UF.Skin.colors.textDim))
-				GameTooltip:AddLine("Drop a spell here, or click with one on the cursor. Click to edit this binding.", nil, nil, nil, true)
+				GameTooltip:AddLine("Drop a spell or macro here, or click with one on the cursor. Click to edit this binding.",
+					nil, nil, nil, true)
 				GameTooltip:Show()
 			end
 			local function CreateLine(cell, button, modifier, reaction)
@@ -240,8 +247,8 @@ function CG:RegisterBindingEntry(wb)
 			function handle:Apply()
 				local font = Font()
 				local owner = B:IsExternal() and "Clique owns live clicks. These saved bindings are inactive while Clique is loaded."
-					or "Drop a spell from your spellbook or action bars onto a friendly (F) or hostile (H) line, or click a line"
-						.. " to edit it. All bindings are applied on mouse release."
+					or "Drop a spell or macro from your spellbook, action bars or macro window onto a friendly (F) or hostile (H)"
+						.. " line, or click a line to edit it. All bindings are applied on mouse release."
 				local errors = CG.bindingErrors or {}
 				note:SetFontObject(font)
 				note:SetText(owner .. "\nSpecialization: " .. CG.Config:SpecKey() .. (CG.pending and " — changes pending until combat ends" or "")

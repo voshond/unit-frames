@@ -284,9 +284,10 @@ describe("ClickGrid companion", function()
 		assert.same({ "shift-spell-heal2", "shift-type-heal2" }, writes)
 		assert.equals("spell", frame:GetAttribute("shift-type-heal2"))
 		assert.equals(2061, frame:GetAttribute("shift-spell-heal2"))
-		-- Spell updates take the same path; unchanged plans write nothing.
+		-- Spell and macro updates take the same path; unchanged plans write nothing.
 		writes = {}
 		Mock.FireEvent("SPELLS_CHANGED")
+		Mock.FireEvent("UPDATE_MACROS")
 		assert.equals(0, refreshes)
 		assert.same({}, writes)
 		Mock.spellOverrides[2061] = 2062

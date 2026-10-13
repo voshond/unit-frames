@@ -780,6 +780,19 @@ function Mock.Install()
 		assert(not InCombatLockdown(), "The spellbook opener is disabled in combat")
 		Mock.spellBookOpened = Mock.spellBookOpened + 1
 	end }
+	-- Mock.macros: { account = { { name, icon, body }, ... }, character = { ... } }.
+	-- Character macros start after MAX_ACCOUNT_MACROS, as in the client.
+	Mock.macros, Mock.macroFrameOpened = { account = {}, character = {} }, 0
+	_G.Constants = { MacroConsts = { MAX_ACCOUNT_MACROS = 120, MAX_CHARACTER_MACROS = 30 } }
+	_G.GetNumMacros = function() return #Mock.macros.account, #Mock.macros.character end
+	_G.GetMacroInfo = function(index)
+		local macro = index > 120 and Mock.macros.character[index - 120] or Mock.macros.account[index]
+		if macro then return macro[1], macro[2], macro[3] end
+	end
+	_G.ShowMacroFrame = function()
+		assert(not InCombatLockdown(), "The macro window opener is disabled in combat")
+		Mock.macroFrameOpened = Mock.macroFrameOpened + 1
+	end
 	Mock.specIndex = 1
 	_G.C_SpecializationInfo = { GetSpecialization = function() return Mock.specIndex end }
 	_G.IsInRaid = function() return Mock.inRaid == true end

@@ -460,12 +460,16 @@ describe("ClickGrid Workbench", function()
 
 	it("rejects unsupported or unsaved drops without touching the binding or the cursor", function()
 		local slot = DropSlot("friendly")
-		for _, cursor in ipairs({ { "item", 6948, "item:6948" }, { "macro", 3 }, { "petaction", 5 } }) do
+		for _, cursor in ipairs({ { "item", 6948, "item:6948" }, { "petaction", 5 } }) do
 			Mock.cursorInfo = cursor
 			slot.slot:RunScript("OnReceiveDrag")
 			assert.equals(cursor, Mock.cursorInfo)
-			assert.equals("Only spells can be dropped here", slot.status:GetText())
+			assert.equals("Only spells and macros can be dropped here", slot.status:GetText())
 		end
+		Mock.cursorInfo = { "macro", 3 }
+		slot.slot:RunScript("OnReceiveDrag")
+		assert.same({ "macro", 3 }, Mock.cursorInfo)
+		assert.equals("Macro information unavailable", slot.status:GetText())
 		assert.is_nil(CG.Config:GetBindings().button1)
 		Mock.cursorInfo = nil
 		slot.slot:RunScript("OnClick")
@@ -542,7 +546,7 @@ describe("ClickGrid Workbench", function()
 		assert.same({ "item", 6948, "item:6948" }, Mock.cursorInfo)
 		assert.is_nil(CG.Config:GetBindings().button1)
 		assert.equals("Target", line.name:GetText())
-		assert.is_true(handle.note:GetText():find("Only spells can be dropped here", 1, true) ~= nil)
+		assert.is_true(handle.note:GetText():find("Only spells and macros can be dropped here", 1, true) ~= nil)
 		local setAction = CG.Config.SetAction
 		CG.Config.SetAction = function() return false, "Store rejected the action" end
 		Mock.cursorInfo = { "spell", 12, "spell", 2061 }
@@ -555,6 +559,63 @@ describe("ClickGrid Workbench", function()
 		Mock.cursorInfo = nil
 		line:RunScript("OnClick")
 		assert.is_nil(handle.note:GetText():find("rejected", 1, true))
+	end)
+
+	it("binds dropped macros by name and follows them when macro indices shift #macros", function()
+		Mock.macros.account = { { "Heal Focus", 136001, "/cast [@focus] Flash Heal" } }
+		Mock.macros.character = { { "Cleanse", 136002, "/cast Purify" } }
+		wb:Select("clickgrid.bindings")
+		local handle, frame = wb.handle, CG.headers.party:GetAttribute("child1").Member
+		local line = handle.cells["1:2"].lines.friendly
+		Mock.cursorInfo = { "macro", 121 }
+		line:RunScript("OnReceiveDrag")
+		assert.is_nil(Mock.cursorInfo)
+		assert.same({ action = "macro", macro = "Cleanse" }, CG.Config:GetBindings().button2.none.friendly)
+		assert.equals("macro", frame:GetAttribute("type-heal2"))
+		assert.equals(121, frame:GetAttribute("macro-heal2"))
+		assert.equals("Cleanse", line.name:GetText())
+		assert.equals(136002, line.icon:GetTexture())
+		-- The inspector slot takes macros too, and shows the bound one.
+		wb:SelectSection("hostile")
+		local slot = wb.inspector.page.rows[1].control
+		Mock.cursorInfo = { "macro", 1 }
+		slot.slot:RunScript("OnReceiveDrag")
+		assert.same({ action = "macro", macro = "Heal Focus" }, CG.Config:GetBindings().button2.none.hostile)
+		assert.equals("Heal Focus", slot.name:GetText())
+		assert.equals(136001, slot.icon:GetTexture())
+		assert.equals(1, frame:GetAttribute("macro-harm2"))
+		-- A new account macro shifts indices; the stored name keeps the binding.
+		table.insert(Mock.macros.account, 1, { "Assist Tank", 136003, "/assist tank" })
+		Mock.FireEvent("UPDATE_MACROS")
+		assert.equals(2, frame:GetAttribute("macro-harm2"))
+		assert.equals(121, frame:GetAttribute("macro-heal2"))
+		-- A deleted macro leaves the binding inactive, shown in the open grid.
+		Mock.macros.character = {}
+		Mock.FireEvent("UPDATE_MACROS")
+		assert.is_nil(frame:GetAttribute("type-heal2"))
+		assert.is_nil(frame:GetAttribute("macro-heal2"))
+		assert.equals("Right / None / friendly: Macro not found", CG.bindingErrors[1])
+		assert.equals(UF.Skin.colors.warning[1], line.name.__state.textColor[1])
+		assert.equals("Macro not found", line.info.status)
+		-- Typed names are the manual alternative; switching to a spell clears the macro.
+		wb.styleTarget.set("hostile.action", "spell")
+		wb.styleTarget.set("hostile.spell", "2061")
+		assert.equals("spell", frame:GetAttribute("type-harm2"))
+		assert.is_nil(frame:GetAttribute("macro-harm2"))
+		wb.styleTarget.set("friendly.macro", "Assist Tank")
+		assert.equals(1, frame:GetAttribute("macro-heal2"))
+	end)
+
+	it("opens the macro window only outside combat #macros", function()
+		local opener = DropSlot("friendly").buttons[3]
+		opener.opts.onClick()
+		assert.equals(1, Mock.macroFrameOpened)
+		Mock.FireEvent("PLAYER_REGEN_DISABLED")
+		Mock.inCombat = true
+		opener.opts.onClick()
+		assert.equals(1, Mock.macroFrameOpened)
+		Mock.inCombat = false
+		Mock.FireEvent("PLAYER_REGEN_ENABLED")
 	end)
 
 	it("fills the stage and fits the binding grid to its size", function()

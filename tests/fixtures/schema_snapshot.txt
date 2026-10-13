@@ -18722,605 +18722,845 @@ resolved slot3.spell = ""
 option button1 type="group" label="Left"
 option button1.none type="group" label="None"
 option button1.none.friendly type="group" label="friendly" defaults={action="target"}
-option button1.none.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button1.none.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button1.none.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button1.none.friendly.macro type="text" label="Macro name" default="" hidden
 option button1.none.hostile type="group" label="hostile" defaults={action="target"}
-option button1.none.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button1.none.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button1.none.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button1.none.hostile.macro type="text" label="Macro name" default="" hidden
 option button1.shift type="group" label="Shift"
 option button1.shift.friendly type="group" label="friendly" defaults={action="none"}
-option button1.shift.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button1.shift.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button1.shift.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button1.shift.friendly.macro type="text" label="Macro name" default="" hidden
 option button1.shift.hostile type="group" label="hostile" defaults={action="none"}
-option button1.shift.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button1.shift.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button1.shift.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button1.shift.hostile.macro type="text" label="Macro name" default="" hidden
 option button1.ctrl type="group" label="Ctrl"
 option button1.ctrl.friendly type="group" label="friendly" defaults={action="none"}
-option button1.ctrl.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button1.ctrl.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button1.ctrl.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button1.ctrl.friendly.macro type="text" label="Macro name" default="" hidden
 option button1.ctrl.hostile type="group" label="hostile" defaults={action="none"}
-option button1.ctrl.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button1.ctrl.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button1.ctrl.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button1.ctrl.hostile.macro type="text" label="Macro name" default="" hidden
 option button1.alt type="group" label="Alt"
 option button1.alt.friendly type="group" label="friendly" defaults={action="none"}
-option button1.alt.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button1.alt.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button1.alt.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button1.alt.friendly.macro type="text" label="Macro name" default="" hidden
 option button1.alt.hostile type="group" label="hostile" defaults={action="none"}
-option button1.alt.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button1.alt.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button1.alt.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button1.alt.hostile.macro type="text" label="Macro name" default="" hidden
 option button1.ctrlshift type="group" label="Ctrl + Shift"
 option button1.ctrlshift.friendly type="group" label="friendly" defaults={action="none"}
-option button1.ctrlshift.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button1.ctrlshift.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button1.ctrlshift.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button1.ctrlshift.friendly.macro type="text" label="Macro name" default="" hidden
 option button1.ctrlshift.hostile type="group" label="hostile" defaults={action="none"}
-option button1.ctrlshift.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button1.ctrlshift.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button1.ctrlshift.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button1.ctrlshift.hostile.macro type="text" label="Macro name" default="" hidden
 option button1.altshift type="group" label="Alt + Shift"
 option button1.altshift.friendly type="group" label="friendly" defaults={action="none"}
-option button1.altshift.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button1.altshift.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button1.altshift.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button1.altshift.friendly.macro type="text" label="Macro name" default="" hidden
 option button1.altshift.hostile type="group" label="hostile" defaults={action="none"}
-option button1.altshift.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button1.altshift.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button1.altshift.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button1.altshift.hostile.macro type="text" label="Macro name" default="" hidden
 option button1.altctrl type="group" label="Alt + Ctrl"
 option button1.altctrl.friendly type="group" label="friendly" defaults={action="none"}
-option button1.altctrl.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button1.altctrl.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button1.altctrl.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button1.altctrl.friendly.macro type="text" label="Macro name" default="" hidden
 option button1.altctrl.hostile type="group" label="hostile" defaults={action="none"}
-option button1.altctrl.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button1.altctrl.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button1.altctrl.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button1.altctrl.hostile.macro type="text" label="Macro name" default="" hidden
 option button1.altctrlshift type="group" label="Alt + Ctrl + Shift"
 option button1.altctrlshift.friendly type="group" label="friendly" defaults={action="none"}
-option button1.altctrlshift.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button1.altctrlshift.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button1.altctrlshift.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button1.altctrlshift.friendly.macro type="text" label="Macro name" default="" hidden
 option button1.altctrlshift.hostile type="group" label="hostile" defaults={action="none"}
-option button1.altctrlshift.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button1.altctrlshift.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button1.altctrlshift.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button1.altctrlshift.hostile.macro type="text" label="Macro name" default="" hidden
 option button2 type="group" label="Right"
 option button2.none type="group" label="None"
 option button2.none.friendly type="group" label="friendly" defaults={action="togglemenu"}
-option button2.none.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button2.none.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button2.none.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button2.none.friendly.macro type="text" label="Macro name" default="" hidden
 option button2.none.hostile type="group" label="hostile" defaults={action="togglemenu"}
-option button2.none.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button2.none.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button2.none.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button2.none.hostile.macro type="text" label="Macro name" default="" hidden
 option button2.shift type="group" label="Shift"
 option button2.shift.friendly type="group" label="friendly" defaults={action="none"}
-option button2.shift.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button2.shift.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button2.shift.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button2.shift.friendly.macro type="text" label="Macro name" default="" hidden
 option button2.shift.hostile type="group" label="hostile" defaults={action="none"}
-option button2.shift.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button2.shift.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button2.shift.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button2.shift.hostile.macro type="text" label="Macro name" default="" hidden
 option button2.ctrl type="group" label="Ctrl"
 option button2.ctrl.friendly type="group" label="friendly" defaults={action="none"}
-option button2.ctrl.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button2.ctrl.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button2.ctrl.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button2.ctrl.friendly.macro type="text" label="Macro name" default="" hidden
 option button2.ctrl.hostile type="group" label="hostile" defaults={action="none"}
-option button2.ctrl.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button2.ctrl.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button2.ctrl.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button2.ctrl.hostile.macro type="text" label="Macro name" default="" hidden
 option button2.alt type="group" label="Alt"
 option button2.alt.friendly type="group" label="friendly" defaults={action="none"}
-option button2.alt.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button2.alt.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button2.alt.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button2.alt.friendly.macro type="text" label="Macro name" default="" hidden
 option button2.alt.hostile type="group" label="hostile" defaults={action="none"}
-option button2.alt.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button2.alt.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button2.alt.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button2.alt.hostile.macro type="text" label="Macro name" default="" hidden
 option button2.ctrlshift type="group" label="Ctrl + Shift"
 option button2.ctrlshift.friendly type="group" label="friendly" defaults={action="none"}
-option button2.ctrlshift.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button2.ctrlshift.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button2.ctrlshift.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button2.ctrlshift.friendly.macro type="text" label="Macro name" default="" hidden
 option button2.ctrlshift.hostile type="group" label="hostile" defaults={action="none"}
-option button2.ctrlshift.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button2.ctrlshift.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button2.ctrlshift.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button2.ctrlshift.hostile.macro type="text" label="Macro name" default="" hidden
 option button2.altshift type="group" label="Alt + Shift"
 option button2.altshift.friendly type="group" label="friendly" defaults={action="none"}
-option button2.altshift.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button2.altshift.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button2.altshift.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button2.altshift.friendly.macro type="text" label="Macro name" default="" hidden
 option button2.altshift.hostile type="group" label="hostile" defaults={action="none"}
-option button2.altshift.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button2.altshift.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button2.altshift.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button2.altshift.hostile.macro type="text" label="Macro name" default="" hidden
 option button2.altctrl type="group" label="Alt + Ctrl"
 option button2.altctrl.friendly type="group" label="friendly" defaults={action="none"}
-option button2.altctrl.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button2.altctrl.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button2.altctrl.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button2.altctrl.friendly.macro type="text" label="Macro name" default="" hidden
 option button2.altctrl.hostile type="group" label="hostile" defaults={action="none"}
-option button2.altctrl.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button2.altctrl.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button2.altctrl.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button2.altctrl.hostile.macro type="text" label="Macro name" default="" hidden
 option button2.altctrlshift type="group" label="Alt + Ctrl + Shift"
 option button2.altctrlshift.friendly type="group" label="friendly" defaults={action="none"}
-option button2.altctrlshift.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button2.altctrlshift.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button2.altctrlshift.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button2.altctrlshift.friendly.macro type="text" label="Macro name" default="" hidden
 option button2.altctrlshift.hostile type="group" label="hostile" defaults={action="none"}
-option button2.altctrlshift.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button2.altctrlshift.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button2.altctrlshift.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button2.altctrlshift.hostile.macro type="text" label="Macro name" default="" hidden
 option button3 type="group" label="Middle"
 option button3.none type="group" label="None"
 option button3.none.friendly type="group" label="friendly" defaults={action="none"}
-option button3.none.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button3.none.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button3.none.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button3.none.friendly.macro type="text" label="Macro name" default="" hidden
 option button3.none.hostile type="group" label="hostile" defaults={action="none"}
-option button3.none.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button3.none.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button3.none.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button3.none.hostile.macro type="text" label="Macro name" default="" hidden
 option button3.shift type="group" label="Shift"
 option button3.shift.friendly type="group" label="friendly" defaults={action="none"}
-option button3.shift.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button3.shift.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button3.shift.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button3.shift.friendly.macro type="text" label="Macro name" default="" hidden
 option button3.shift.hostile type="group" label="hostile" defaults={action="none"}
-option button3.shift.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button3.shift.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button3.shift.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button3.shift.hostile.macro type="text" label="Macro name" default="" hidden
 option button3.ctrl type="group" label="Ctrl"
 option button3.ctrl.friendly type="group" label="friendly" defaults={action="none"}
-option button3.ctrl.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button3.ctrl.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button3.ctrl.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button3.ctrl.friendly.macro type="text" label="Macro name" default="" hidden
 option button3.ctrl.hostile type="group" label="hostile" defaults={action="none"}
-option button3.ctrl.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button3.ctrl.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button3.ctrl.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button3.ctrl.hostile.macro type="text" label="Macro name" default="" hidden
 option button3.alt type="group" label="Alt"
 option button3.alt.friendly type="group" label="friendly" defaults={action="none"}
-option button3.alt.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button3.alt.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button3.alt.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button3.alt.friendly.macro type="text" label="Macro name" default="" hidden
 option button3.alt.hostile type="group" label="hostile" defaults={action="none"}
-option button3.alt.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button3.alt.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button3.alt.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button3.alt.hostile.macro type="text" label="Macro name" default="" hidden
 option button3.ctrlshift type="group" label="Ctrl + Shift"
 option button3.ctrlshift.friendly type="group" label="friendly" defaults={action="none"}
-option button3.ctrlshift.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button3.ctrlshift.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button3.ctrlshift.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button3.ctrlshift.friendly.macro type="text" label="Macro name" default="" hidden
 option button3.ctrlshift.hostile type="group" label="hostile" defaults={action="none"}
-option button3.ctrlshift.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button3.ctrlshift.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button3.ctrlshift.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button3.ctrlshift.hostile.macro type="text" label="Macro name" default="" hidden
 option button3.altshift type="group" label="Alt + Shift"
 option button3.altshift.friendly type="group" label="friendly" defaults={action="none"}
-option button3.altshift.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button3.altshift.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button3.altshift.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button3.altshift.friendly.macro type="text" label="Macro name" default="" hidden
 option button3.altshift.hostile type="group" label="hostile" defaults={action="none"}
-option button3.altshift.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button3.altshift.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button3.altshift.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button3.altshift.hostile.macro type="text" label="Macro name" default="" hidden
 option button3.altctrl type="group" label="Alt + Ctrl"
 option button3.altctrl.friendly type="group" label="friendly" defaults={action="none"}
-option button3.altctrl.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button3.altctrl.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button3.altctrl.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button3.altctrl.friendly.macro type="text" label="Macro name" default="" hidden
 option button3.altctrl.hostile type="group" label="hostile" defaults={action="none"}
-option button3.altctrl.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button3.altctrl.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button3.altctrl.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button3.altctrl.hostile.macro type="text" label="Macro name" default="" hidden
 option button3.altctrlshift type="group" label="Alt + Ctrl + Shift"
 option button3.altctrlshift.friendly type="group" label="friendly" defaults={action="none"}
-option button3.altctrlshift.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button3.altctrlshift.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button3.altctrlshift.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button3.altctrlshift.friendly.macro type="text" label="Macro name" default="" hidden
 option button3.altctrlshift.hostile type="group" label="hostile" defaults={action="none"}
-option button3.altctrlshift.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button3.altctrlshift.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button3.altctrlshift.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button3.altctrlshift.hostile.macro type="text" label="Macro name" default="" hidden
 option button4 type="group" label="Button 4"
 option button4.none type="group" label="None"
 option button4.none.friendly type="group" label="friendly" defaults={action="none"}
-option button4.none.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button4.none.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button4.none.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button4.none.friendly.macro type="text" label="Macro name" default="" hidden
 option button4.none.hostile type="group" label="hostile" defaults={action="none"}
-option button4.none.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button4.none.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button4.none.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button4.none.hostile.macro type="text" label="Macro name" default="" hidden
 option button4.shift type="group" label="Shift"
 option button4.shift.friendly type="group" label="friendly" defaults={action="none"}
-option button4.shift.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button4.shift.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button4.shift.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button4.shift.friendly.macro type="text" label="Macro name" default="" hidden
 option button4.shift.hostile type="group" label="hostile" defaults={action="none"}
-option button4.shift.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button4.shift.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button4.shift.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button4.shift.hostile.macro type="text" label="Macro name" default="" hidden
 option button4.ctrl type="group" label="Ctrl"
 option button4.ctrl.friendly type="group" label="friendly" defaults={action="none"}
-option button4.ctrl.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button4.ctrl.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button4.ctrl.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button4.ctrl.friendly.macro type="text" label="Macro name" default="" hidden
 option button4.ctrl.hostile type="group" label="hostile" defaults={action="none"}
-option button4.ctrl.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button4.ctrl.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button4.ctrl.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button4.ctrl.hostile.macro type="text" label="Macro name" default="" hidden
 option button4.alt type="group" label="Alt"
 option button4.alt.friendly type="group" label="friendly" defaults={action="none"}
-option button4.alt.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button4.alt.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button4.alt.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button4.alt.friendly.macro type="text" label="Macro name" default="" hidden
 option button4.alt.hostile type="group" label="hostile" defaults={action="none"}
-option button4.alt.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button4.alt.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button4.alt.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button4.alt.hostile.macro type="text" label="Macro name" default="" hidden
 option button4.ctrlshift type="group" label="Ctrl + Shift"
 option button4.ctrlshift.friendly type="group" label="friendly" defaults={action="none"}
-option button4.ctrlshift.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button4.ctrlshift.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button4.ctrlshift.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button4.ctrlshift.friendly.macro type="text" label="Macro name" default="" hidden
 option button4.ctrlshift.hostile type="group" label="hostile" defaults={action="none"}
-option button4.ctrlshift.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button4.ctrlshift.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button4.ctrlshift.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button4.ctrlshift.hostile.macro type="text" label="Macro name" default="" hidden
 option button4.altshift type="group" label="Alt + Shift"
 option button4.altshift.friendly type="group" label="friendly" defaults={action="none"}
-option button4.altshift.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button4.altshift.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button4.altshift.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button4.altshift.friendly.macro type="text" label="Macro name" default="" hidden
 option button4.altshift.hostile type="group" label="hostile" defaults={action="none"}
-option button4.altshift.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button4.altshift.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button4.altshift.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button4.altshift.hostile.macro type="text" label="Macro name" default="" hidden
 option button4.altctrl type="group" label="Alt + Ctrl"
 option button4.altctrl.friendly type="group" label="friendly" defaults={action="none"}
-option button4.altctrl.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button4.altctrl.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button4.altctrl.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button4.altctrl.friendly.macro type="text" label="Macro name" default="" hidden
 option button4.altctrl.hostile type="group" label="hostile" defaults={action="none"}
-option button4.altctrl.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button4.altctrl.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button4.altctrl.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button4.altctrl.hostile.macro type="text" label="Macro name" default="" hidden
 option button4.altctrlshift type="group" label="Alt + Ctrl + Shift"
 option button4.altctrlshift.friendly type="group" label="friendly" defaults={action="none"}
-option button4.altctrlshift.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button4.altctrlshift.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button4.altctrlshift.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button4.altctrlshift.friendly.macro type="text" label="Macro name" default="" hidden
 option button4.altctrlshift.hostile type="group" label="hostile" defaults={action="none"}
-option button4.altctrlshift.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button4.altctrlshift.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button4.altctrlshift.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button4.altctrlshift.hostile.macro type="text" label="Macro name" default="" hidden
 option button5 type="group" label="Button 5"
 option button5.none type="group" label="None"
 option button5.none.friendly type="group" label="friendly" defaults={action="none"}
-option button5.none.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button5.none.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button5.none.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button5.none.friendly.macro type="text" label="Macro name" default="" hidden
 option button5.none.hostile type="group" label="hostile" defaults={action="none"}
-option button5.none.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button5.none.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button5.none.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button5.none.hostile.macro type="text" label="Macro name" default="" hidden
 option button5.shift type="group" label="Shift"
 option button5.shift.friendly type="group" label="friendly" defaults={action="none"}
-option button5.shift.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button5.shift.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button5.shift.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button5.shift.friendly.macro type="text" label="Macro name" default="" hidden
 option button5.shift.hostile type="group" label="hostile" defaults={action="none"}
-option button5.shift.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button5.shift.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button5.shift.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button5.shift.hostile.macro type="text" label="Macro name" default="" hidden
 option button5.ctrl type="group" label="Ctrl"
 option button5.ctrl.friendly type="group" label="friendly" defaults={action="none"}
-option button5.ctrl.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button5.ctrl.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button5.ctrl.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button5.ctrl.friendly.macro type="text" label="Macro name" default="" hidden
 option button5.ctrl.hostile type="group" label="hostile" defaults={action="none"}
-option button5.ctrl.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button5.ctrl.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button5.ctrl.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button5.ctrl.hostile.macro type="text" label="Macro name" default="" hidden
 option button5.alt type="group" label="Alt"
 option button5.alt.friendly type="group" label="friendly" defaults={action="none"}
-option button5.alt.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button5.alt.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button5.alt.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button5.alt.friendly.macro type="text" label="Macro name" default="" hidden
 option button5.alt.hostile type="group" label="hostile" defaults={action="none"}
-option button5.alt.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button5.alt.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button5.alt.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button5.alt.hostile.macro type="text" label="Macro name" default="" hidden
 option button5.ctrlshift type="group" label="Ctrl + Shift"
 option button5.ctrlshift.friendly type="group" label="friendly" defaults={action="none"}
-option button5.ctrlshift.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button5.ctrlshift.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button5.ctrlshift.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button5.ctrlshift.friendly.macro type="text" label="Macro name" default="" hidden
 option button5.ctrlshift.hostile type="group" label="hostile" defaults={action="none"}
-option button5.ctrlshift.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button5.ctrlshift.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button5.ctrlshift.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button5.ctrlshift.hostile.macro type="text" label="Macro name" default="" hidden
 option button5.altshift type="group" label="Alt + Shift"
 option button5.altshift.friendly type="group" label="friendly" defaults={action="none"}
-option button5.altshift.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button5.altshift.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button5.altshift.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button5.altshift.friendly.macro type="text" label="Macro name" default="" hidden
 option button5.altshift.hostile type="group" label="hostile" defaults={action="none"}
-option button5.altshift.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button5.altshift.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button5.altshift.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button5.altshift.hostile.macro type="text" label="Macro name" default="" hidden
 option button5.altctrl type="group" label="Alt + Ctrl"
 option button5.altctrl.friendly type="group" label="friendly" defaults={action="none"}
-option button5.altctrl.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button5.altctrl.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button5.altctrl.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button5.altctrl.friendly.macro type="text" label="Macro name" default="" hidden
 option button5.altctrl.hostile type="group" label="hostile" defaults={action="none"}
-option button5.altctrl.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button5.altctrl.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button5.altctrl.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button5.altctrl.hostile.macro type="text" label="Macro name" default="" hidden
 option button5.altctrlshift type="group" label="Alt + Ctrl + Shift"
 option button5.altctrlshift.friendly type="group" label="friendly" defaults={action="none"}
-option button5.altctrlshift.friendly.action type="select" label="Action" default="none" values=#e8eab17f
+option button5.altctrlshift.friendly.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button5.altctrlshift.friendly.spell type="text" label="Spell ID or localized name" default="" hidden
+option button5.altctrlshift.friendly.macro type="text" label="Macro name" default="" hidden
 option button5.altctrlshift.hostile type="group" label="hostile" defaults={action="none"}
-option button5.altctrlshift.hostile.action type="select" label="Action" default="none" values=#e8eab17f
+option button5.altctrlshift.hostile.action type="select" label="Action" default="none" values=#8ff8f2f0
 option button5.altctrlshift.hostile.spell type="text" label="Spell ID or localized name" default="" hidden
+option button5.altctrlshift.hostile.macro type="text" label="Macro name" default="" hidden
 default button1.alt.friendly.action = "none"
+default button1.alt.friendly.macro = ""
 default button1.alt.friendly.spell = ""
 default button1.alt.hostile.action = "none"
+default button1.alt.hostile.macro = ""
 default button1.alt.hostile.spell = ""
 default button1.altctrl.friendly.action = "none"
+default button1.altctrl.friendly.macro = ""
 default button1.altctrl.friendly.spell = ""
 default button1.altctrl.hostile.action = "none"
+default button1.altctrl.hostile.macro = ""
 default button1.altctrl.hostile.spell = ""
 default button1.altctrlshift.friendly.action = "none"
+default button1.altctrlshift.friendly.macro = ""
 default button1.altctrlshift.friendly.spell = ""
 default button1.altctrlshift.hostile.action = "none"
+default button1.altctrlshift.hostile.macro = ""
 default button1.altctrlshift.hostile.spell = ""
 default button1.altshift.friendly.action = "none"
+default button1.altshift.friendly.macro = ""
 default button1.altshift.friendly.spell = ""
 default button1.altshift.hostile.action = "none"
+default button1.altshift.hostile.macro = ""
 default button1.altshift.hostile.spell = ""
 default button1.ctrl.friendly.action = "none"
+default button1.ctrl.friendly.macro = ""
 default button1.ctrl.friendly.spell = ""
 default button1.ctrl.hostile.action = "none"
+default button1.ctrl.hostile.macro = ""
 default button1.ctrl.hostile.spell = ""
 default button1.ctrlshift.friendly.action = "none"
+default button1.ctrlshift.friendly.macro = ""
 default button1.ctrlshift.friendly.spell = ""
 default button1.ctrlshift.hostile.action = "none"
+default button1.ctrlshift.hostile.macro = ""
 default button1.ctrlshift.hostile.spell = ""
 default button1.none.friendly.action = "target"
+default button1.none.friendly.macro = ""
 default button1.none.friendly.spell = ""
 default button1.none.hostile.action = "target"
+default button1.none.hostile.macro = ""
 default button1.none.hostile.spell = ""
 default button1.shift.friendly.action = "none"
+default button1.shift.friendly.macro = ""
 default button1.shift.friendly.spell = ""
 default button1.shift.hostile.action = "none"
+default button1.shift.hostile.macro = ""
 default button1.shift.hostile.spell = ""
 default button2.alt.friendly.action = "none"
+default button2.alt.friendly.macro = ""
 default button2.alt.friendly.spell = ""
 default button2.alt.hostile.action = "none"
+default button2.alt.hostile.macro = ""
 default button2.alt.hostile.spell = ""
 default button2.altctrl.friendly.action = "none"
+default button2.altctrl.friendly.macro = ""
 default button2.altctrl.friendly.spell = ""
 default button2.altctrl.hostile.action = "none"
+default button2.altctrl.hostile.macro = ""
 default button2.altctrl.hostile.spell = ""
 default button2.altctrlshift.friendly.action = "none"
+default button2.altctrlshift.friendly.macro = ""
 default button2.altctrlshift.friendly.spell = ""
 default button2.altctrlshift.hostile.action = "none"
+default button2.altctrlshift.hostile.macro = ""
 default button2.altctrlshift.hostile.spell = ""
 default button2.altshift.friendly.action = "none"
+default button2.altshift.friendly.macro = ""
 default button2.altshift.friendly.spell = ""
 default button2.altshift.hostile.action = "none"
+default button2.altshift.hostile.macro = ""
 default button2.altshift.hostile.spell = ""
 default button2.ctrl.friendly.action = "none"
+default button2.ctrl.friendly.macro = ""
 default button2.ctrl.friendly.spell = ""
 default button2.ctrl.hostile.action = "none"
+default button2.ctrl.hostile.macro = ""
 default button2.ctrl.hostile.spell = ""
 default button2.ctrlshift.friendly.action = "none"
+default button2.ctrlshift.friendly.macro = ""
 default button2.ctrlshift.friendly.spell = ""
 default button2.ctrlshift.hostile.action = "none"
+default button2.ctrlshift.hostile.macro = ""
 default button2.ctrlshift.hostile.spell = ""
 default button2.none.friendly.action = "togglemenu"
+default button2.none.friendly.macro = ""
 default button2.none.friendly.spell = ""
 default button2.none.hostile.action = "togglemenu"
+default button2.none.hostile.macro = ""
 default button2.none.hostile.spell = ""
 default button2.shift.friendly.action = "none"
+default button2.shift.friendly.macro = ""
 default button2.shift.friendly.spell = ""
 default button2.shift.hostile.action = "none"
+default button2.shift.hostile.macro = ""
 default button2.shift.hostile.spell = ""
 default button3.alt.friendly.action = "none"
+default button3.alt.friendly.macro = ""
 default button3.alt.friendly.spell = ""
 default button3.alt.hostile.action = "none"
+default button3.alt.hostile.macro = ""
 default button3.alt.hostile.spell = ""
 default button3.altctrl.friendly.action = "none"
+default button3.altctrl.friendly.macro = ""
 default button3.altctrl.friendly.spell = ""
 default button3.altctrl.hostile.action = "none"
+default button3.altctrl.hostile.macro = ""
 default button3.altctrl.hostile.spell = ""
 default button3.altctrlshift.friendly.action = "none"
+default button3.altctrlshift.friendly.macro = ""
 default button3.altctrlshift.friendly.spell = ""
 default button3.altctrlshift.hostile.action = "none"
+default button3.altctrlshift.hostile.macro = ""
 default button3.altctrlshift.hostile.spell = ""
 default button3.altshift.friendly.action = "none"
+default button3.altshift.friendly.macro = ""
 default button3.altshift.friendly.spell = ""
 default button3.altshift.hostile.action = "none"
+default button3.altshift.hostile.macro = ""
 default button3.altshift.hostile.spell = ""
 default button3.ctrl.friendly.action = "none"
+default button3.ctrl.friendly.macro = ""
 default button3.ctrl.friendly.spell = ""
 default button3.ctrl.hostile.action = "none"
+default button3.ctrl.hostile.macro = ""
 default button3.ctrl.hostile.spell = ""
 default button3.ctrlshift.friendly.action = "none"
+default button3.ctrlshift.friendly.macro = ""
 default button3.ctrlshift.friendly.spell = ""
 default button3.ctrlshift.hostile.action = "none"
+default button3.ctrlshift.hostile.macro = ""
 default button3.ctrlshift.hostile.spell = ""
 default button3.none.friendly.action = "none"
+default button3.none.friendly.macro = ""
 default button3.none.friendly.spell = ""
 default button3.none.hostile.action = "none"
+default button3.none.hostile.macro = ""
 default button3.none.hostile.spell = ""
 default button3.shift.friendly.action = "none"
+default button3.shift.friendly.macro = ""
 default button3.shift.friendly.spell = ""
 default button3.shift.hostile.action = "none"
+default button3.shift.hostile.macro = ""
 default button3.shift.hostile.spell = ""
 default button4.alt.friendly.action = "none"
+default button4.alt.friendly.macro = ""
 default button4.alt.friendly.spell = ""
 default button4.alt.hostile.action = "none"
+default button4.alt.hostile.macro = ""
 default button4.alt.hostile.spell = ""
 default button4.altctrl.friendly.action = "none"
+default button4.altctrl.friendly.macro = ""
 default button4.altctrl.friendly.spell = ""
 default button4.altctrl.hostile.action = "none"
+default button4.altctrl.hostile.macro = ""
 default button4.altctrl.hostile.spell = ""
 default button4.altctrlshift.friendly.action = "none"
+default button4.altctrlshift.friendly.macro = ""
 default button4.altctrlshift.friendly.spell = ""
 default button4.altctrlshift.hostile.action = "none"
+default button4.altctrlshift.hostile.macro = ""
 default button4.altctrlshift.hostile.spell = ""
 default button4.altshift.friendly.action = "none"
+default button4.altshift.friendly.macro = ""
 default button4.altshift.friendly.spell = ""
 default button4.altshift.hostile.action = "none"
+default button4.altshift.hostile.macro = ""
 default button4.altshift.hostile.spell = ""
 default button4.ctrl.friendly.action = "none"
+default button4.ctrl.friendly.macro = ""
 default button4.ctrl.friendly.spell = ""
 default button4.ctrl.hostile.action = "none"
+default button4.ctrl.hostile.macro = ""
 default button4.ctrl.hostile.spell = ""
 default button4.ctrlshift.friendly.action = "none"
+default button4.ctrlshift.friendly.macro = ""
 default button4.ctrlshift.friendly.spell = ""
 default button4.ctrlshift.hostile.action = "none"
+default button4.ctrlshift.hostile.macro = ""
 default button4.ctrlshift.hostile.spell = ""
 default button4.none.friendly.action = "none"
+default button4.none.friendly.macro = ""
 default button4.none.friendly.spell = ""
 default button4.none.hostile.action = "none"
+default button4.none.hostile.macro = ""
 default button4.none.hostile.spell = ""
 default button4.shift.friendly.action = "none"
+default button4.shift.friendly.macro = ""
 default button4.shift.friendly.spell = ""
 default button4.shift.hostile.action = "none"
+default button4.shift.hostile.macro = ""
 default button4.shift.hostile.spell = ""
 default button5.alt.friendly.action = "none"
+default button5.alt.friendly.macro = ""
 default button5.alt.friendly.spell = ""
 default button5.alt.hostile.action = "none"
+default button5.alt.hostile.macro = ""
 default button5.alt.hostile.spell = ""
 default button5.altctrl.friendly.action = "none"
+default button5.altctrl.friendly.macro = ""
 default button5.altctrl.friendly.spell = ""
 default button5.altctrl.hostile.action = "none"
+default button5.altctrl.hostile.macro = ""
 default button5.altctrl.hostile.spell = ""
 default button5.altctrlshift.friendly.action = "none"
+default button5.altctrlshift.friendly.macro = ""
 default button5.altctrlshift.friendly.spell = ""
 default button5.altctrlshift.hostile.action = "none"
+default button5.altctrlshift.hostile.macro = ""
 default button5.altctrlshift.hostile.spell = ""
 default button5.altshift.friendly.action = "none"
+default button5.altshift.friendly.macro = ""
 default button5.altshift.friendly.spell = ""
 default button5.altshift.hostile.action = "none"
+default button5.altshift.hostile.macro = ""
 default button5.altshift.hostile.spell = ""
 default button5.ctrl.friendly.action = "none"
+default button5.ctrl.friendly.macro = ""
 default button5.ctrl.friendly.spell = ""
 default button5.ctrl.hostile.action = "none"
+default button5.ctrl.hostile.macro = ""
 default button5.ctrl.hostile.spell = ""
 default button5.ctrlshift.friendly.action = "none"
+default button5.ctrlshift.friendly.macro = ""
 default button5.ctrlshift.friendly.spell = ""
 default button5.ctrlshift.hostile.action = "none"
+default button5.ctrlshift.hostile.macro = ""
 default button5.ctrlshift.hostile.spell = ""
 default button5.none.friendly.action = "none"
+default button5.none.friendly.macro = ""
 default button5.none.friendly.spell = ""
 default button5.none.hostile.action = "none"
+default button5.none.hostile.macro = ""
 default button5.none.hostile.spell = ""
 default button5.shift.friendly.action = "none"
+default button5.shift.friendly.macro = ""
 default button5.shift.friendly.spell = ""
 default button5.shift.hostile.action = "none"
+default button5.shift.hostile.macro = ""
 default button5.shift.hostile.spell = ""
 resolved button1.alt.friendly.action = "none"
+resolved button1.alt.friendly.macro = ""
 resolved button1.alt.friendly.spell = ""
 resolved button1.alt.hostile.action = "none"
+resolved button1.alt.hostile.macro = ""
 resolved button1.alt.hostile.spell = ""
 resolved button1.altctrl.friendly.action = "none"
+resolved button1.altctrl.friendly.macro = ""
 resolved button1.altctrl.friendly.spell = ""
 resolved button1.altctrl.hostile.action = "none"
+resolved button1.altctrl.hostile.macro = ""
 resolved button1.altctrl.hostile.spell = ""
 resolved button1.altctrlshift.friendly.action = "none"
+resolved button1.altctrlshift.friendly.macro = ""
 resolved button1.altctrlshift.friendly.spell = ""
 resolved button1.altctrlshift.hostile.action = "none"
+resolved button1.altctrlshift.hostile.macro = ""
 resolved button1.altctrlshift.hostile.spell = ""
 resolved button1.altshift.friendly.action = "none"
+resolved button1.altshift.friendly.macro = ""
 resolved button1.altshift.friendly.spell = ""
 resolved button1.altshift.hostile.action = "none"
+resolved button1.altshift.hostile.macro = ""
 resolved button1.altshift.hostile.spell = ""
 resolved button1.ctrl.friendly.action = "none"
+resolved button1.ctrl.friendly.macro = ""
 resolved button1.ctrl.friendly.spell = ""
 resolved button1.ctrl.hostile.action = "none"
+resolved button1.ctrl.hostile.macro = ""
 resolved button1.ctrl.hostile.spell = ""
 resolved button1.ctrlshift.friendly.action = "none"
+resolved button1.ctrlshift.friendly.macro = ""
 resolved button1.ctrlshift.friendly.spell = ""
 resolved button1.ctrlshift.hostile.action = "none"
+resolved button1.ctrlshift.hostile.macro = ""
 resolved button1.ctrlshift.hostile.spell = ""
 resolved button1.none.friendly.action = "target"
+resolved button1.none.friendly.macro = ""
 resolved button1.none.friendly.spell = ""
 resolved button1.none.hostile.action = "target"
+resolved button1.none.hostile.macro = ""
 resolved button1.none.hostile.spell = ""
 resolved button1.shift.friendly.action = "none"
+resolved button1.shift.friendly.macro = ""
 resolved button1.shift.friendly.spell = ""
 resolved button1.shift.hostile.action = "none"
+resolved button1.shift.hostile.macro = ""
 resolved button1.shift.hostile.spell = ""
 resolved button2.alt.friendly.action = "none"
+resolved button2.alt.friendly.macro = ""
 resolved button2.alt.friendly.spell = ""
 resolved button2.alt.hostile.action = "none"
+resolved button2.alt.hostile.macro = ""
 resolved button2.alt.hostile.spell = ""
 resolved button2.altctrl.friendly.action = "none"
+resolved button2.altctrl.friendly.macro = ""
 resolved button2.altctrl.friendly.spell = ""
 resolved button2.altctrl.hostile.action = "none"
+resolved button2.altctrl.hostile.macro = ""
 resolved button2.altctrl.hostile.spell = ""
 resolved button2.altctrlshift.friendly.action = "none"
+resolved button2.altctrlshift.friendly.macro = ""
 resolved button2.altctrlshift.friendly.spell = ""
 resolved button2.altctrlshift.hostile.action = "none"
+resolved button2.altctrlshift.hostile.macro = ""
 resolved button2.altctrlshift.hostile.spell = ""
 resolved button2.altshift.friendly.action = "none"
+resolved button2.altshift.friendly.macro = ""
 resolved button2.altshift.friendly.spell = ""
 resolved button2.altshift.hostile.action = "none"
+resolved button2.altshift.hostile.macro = ""
 resolved button2.altshift.hostile.spell = ""
 resolved button2.ctrl.friendly.action = "none"
+resolved button2.ctrl.friendly.macro = ""
 resolved button2.ctrl.friendly.spell = ""
 resolved button2.ctrl.hostile.action = "none"
+resolved button2.ctrl.hostile.macro = ""
 resolved button2.ctrl.hostile.spell = ""
 resolved button2.ctrlshift.friendly.action = "none"
+resolved button2.ctrlshift.friendly.macro = ""
 resolved button2.ctrlshift.friendly.spell = ""
 resolved button2.ctrlshift.hostile.action = "none"
+resolved button2.ctrlshift.hostile.macro = ""
 resolved button2.ctrlshift.hostile.spell = ""
 resolved button2.none.friendly.action = "togglemenu"
+resolved button2.none.friendly.macro = ""
 resolved button2.none.friendly.spell = ""
 resolved button2.none.hostile.action = "togglemenu"
+resolved button2.none.hostile.macro = ""
 resolved button2.none.hostile.spell = ""
 resolved button2.shift.friendly.action = "none"
+resolved button2.shift.friendly.macro = ""
 resolved button2.shift.friendly.spell = ""
 resolved button2.shift.hostile.action = "none"
+resolved button2.shift.hostile.macro = ""
 resolved button2.shift.hostile.spell = ""
 resolved button3.alt.friendly.action = "none"
+resolved button3.alt.friendly.macro = ""
 resolved button3.alt.friendly.spell = ""
 resolved button3.alt.hostile.action = "none"
+resolved button3.alt.hostile.macro = ""
 resolved button3.alt.hostile.spell = ""
 resolved button3.altctrl.friendly.action = "none"
+resolved button3.altctrl.friendly.macro = ""
 resolved button3.altctrl.friendly.spell = ""
 resolved button3.altctrl.hostile.action = "none"
+resolved button3.altctrl.hostile.macro = ""
 resolved button3.altctrl.hostile.spell = ""
 resolved button3.altctrlshift.friendly.action = "none"
+resolved button3.altctrlshift.friendly.macro = ""
 resolved button3.altctrlshift.friendly.spell = ""
 resolved button3.altctrlshift.hostile.action = "none"
+resolved button3.altctrlshift.hostile.macro = ""
 resolved button3.altctrlshift.hostile.spell = ""
 resolved button3.altshift.friendly.action = "none"
+resolved button3.altshift.friendly.macro = ""
 resolved button3.altshift.friendly.spell = ""
 resolved button3.altshift.hostile.action = "none"
+resolved button3.altshift.hostile.macro = ""
 resolved button3.altshift.hostile.spell = ""
 resolved button3.ctrl.friendly.action = "none"
+resolved button3.ctrl.friendly.macro = ""
 resolved button3.ctrl.friendly.spell = ""
 resolved button3.ctrl.hostile.action = "none"
+resolved button3.ctrl.hostile.macro = ""
 resolved button3.ctrl.hostile.spell = ""
 resolved button3.ctrlshift.friendly.action = "none"
+resolved button3.ctrlshift.friendly.macro = ""
 resolved button3.ctrlshift.friendly.spell = ""
 resolved button3.ctrlshift.hostile.action = "none"
+resolved button3.ctrlshift.hostile.macro = ""
 resolved button3.ctrlshift.hostile.spell = ""
 resolved button3.none.friendly.action = "none"
+resolved button3.none.friendly.macro = ""
 resolved button3.none.friendly.spell = ""
 resolved button3.none.hostile.action = "none"
+resolved button3.none.hostile.macro = ""
 resolved button3.none.hostile.spell = ""
 resolved button3.shift.friendly.action = "none"
+resolved button3.shift.friendly.macro = ""
 resolved button3.shift.friendly.spell = ""
 resolved button3.shift.hostile.action = "none"
+resolved button3.shift.hostile.macro = ""
 resolved button3.shift.hostile.spell = ""
 resolved button4.alt.friendly.action = "none"
+resolved button4.alt.friendly.macro = ""
 resolved button4.alt.friendly.spell = ""
 resolved button4.alt.hostile.action = "none"
+resolved button4.alt.hostile.macro = ""
 resolved button4.alt.hostile.spell = ""
 resolved button4.altctrl.friendly.action = "none"
+resolved button4.altctrl.friendly.macro = ""
 resolved button4.altctrl.friendly.spell = ""
 resolved button4.altctrl.hostile.action = "none"
+resolved button4.altctrl.hostile.macro = ""
 resolved button4.altctrl.hostile.spell = ""
 resolved button4.altctrlshift.friendly.action = "none"
+resolved button4.altctrlshift.friendly.macro = ""
 resolved button4.altctrlshift.friendly.spell = ""
 resolved button4.altctrlshift.hostile.action = "none"
+resolved button4.altctrlshift.hostile.macro = ""
 resolved button4.altctrlshift.hostile.spell = ""
 resolved button4.altshift.friendly.action = "none"
+resolved button4.altshift.friendly.macro = ""
 resolved button4.altshift.friendly.spell = ""
 resolved button4.altshift.hostile.action = "none"
+resolved button4.altshift.hostile.macro = ""
 resolved button4.altshift.hostile.spell = ""
 resolved button4.ctrl.friendly.action = "none"
+resolved button4.ctrl.friendly.macro = ""
 resolved button4.ctrl.friendly.spell = ""
 resolved button4.ctrl.hostile.action = "none"
+resolved button4.ctrl.hostile.macro = ""
 resolved button4.ctrl.hostile.spell = ""
 resolved button4.ctrlshift.friendly.action = "none"
+resolved button4.ctrlshift.friendly.macro = ""
 resolved button4.ctrlshift.friendly.spell = ""
 resolved button4.ctrlshift.hostile.action = "none"
+resolved button4.ctrlshift.hostile.macro = ""
 resolved button4.ctrlshift.hostile.spell = ""
 resolved button4.none.friendly.action = "none"
+resolved button4.none.friendly.macro = ""
 resolved button4.none.friendly.spell = ""
 resolved button4.none.hostile.action = "none"
+resolved button4.none.hostile.macro = ""
 resolved button4.none.hostile.spell = ""
 resolved button4.shift.friendly.action = "none"
+resolved button4.shift.friendly.macro = ""
 resolved button4.shift.friendly.spell = ""
 resolved button4.shift.hostile.action = "none"
+resolved button4.shift.hostile.macro = ""
 resolved button4.shift.hostile.spell = ""
 resolved button5.alt.friendly.action = "none"
+resolved button5.alt.friendly.macro = ""
 resolved button5.alt.friendly.spell = ""
 resolved button5.alt.hostile.action = "none"
+resolved button5.alt.hostile.macro = ""
 resolved button5.alt.hostile.spell = ""
 resolved button5.altctrl.friendly.action = "none"
+resolved button5.altctrl.friendly.macro = ""
 resolved button5.altctrl.friendly.spell = ""
 resolved button5.altctrl.hostile.action = "none"
+resolved button5.altctrl.hostile.macro = ""
 resolved button5.altctrl.hostile.spell = ""
 resolved button5.altctrlshift.friendly.action = "none"
+resolved button5.altctrlshift.friendly.macro = ""
 resolved button5.altctrlshift.friendly.spell = ""
 resolved button5.altctrlshift.hostile.action = "none"
+resolved button5.altctrlshift.hostile.macro = ""
 resolved button5.altctrlshift.hostile.spell = ""
 resolved button5.altshift.friendly.action = "none"
+resolved button5.altshift.friendly.macro = ""
 resolved button5.altshift.friendly.spell = ""
 resolved button5.altshift.hostile.action = "none"
+resolved button5.altshift.hostile.macro = ""
 resolved button5.altshift.hostile.spell = ""
 resolved button5.ctrl.friendly.action = "none"
+resolved button5.ctrl.friendly.macro = ""
 resolved button5.ctrl.friendly.spell = ""
 resolved button5.ctrl.hostile.action = "none"
+resolved button5.ctrl.hostile.macro = ""
 resolved button5.ctrl.hostile.spell = ""
 resolved button5.ctrlshift.friendly.action = "none"
+resolved button5.ctrlshift.friendly.macro = ""
 resolved button5.ctrlshift.friendly.spell = ""
 resolved button5.ctrlshift.hostile.action = "none"
+resolved button5.ctrlshift.hostile.macro = ""
 resolved button5.ctrlshift.hostile.spell = ""
 resolved button5.none.friendly.action = "none"
+resolved button5.none.friendly.macro = ""
 resolved button5.none.friendly.spell = ""
 resolved button5.none.hostile.action = "none"
+resolved button5.none.hostile.macro = ""
 resolved button5.none.hostile.spell = ""
 resolved button5.shift.friendly.action = "none"
+resolved button5.shift.friendly.macro = ""
 resolved button5.shift.friendly.spell = ""
 resolved button5.shift.hostile.action = "none"
+resolved button5.shift.hostile.macro = ""
 resolved button5.shift.hostile.spell = ""
