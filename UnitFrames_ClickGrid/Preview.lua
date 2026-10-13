@@ -3,6 +3,13 @@ local UF = CG.UF
 local Preview = UF.Object:Extend("ClickGridPreview")
 CG.Preview = Preview
 
+local function EnableAuras(uf, enabled)
+	for _, key in ipairs({ "auras", "auraBar" }) do
+		local part = uf:GetPart(key)
+		if part then part:SetEnabled(enabled and part.resolved.enabled) end
+	end
+end
+
 function Preview:Init(parent)
 	self.frame, self.cells, self.labels, self.time = CreateFrame("Frame", nil, parent), {}, {}, 0
 	self.background = CreateFrame("Frame", nil, self.frame, "BackdropTemplate")
@@ -36,8 +43,7 @@ end
 function Preview:ShowLive(uf, unit, cell)
 	if not unit or not UnitExists(unit) then
 		uf:GetFrame():Hide()
-		local auras = uf:GetPart("auras")
-		if auras then auras:SetEnabled(false) end
+		EnableAuras(uf, false)
 		return false
 	end
 	uf:GetFrame():Show()
@@ -89,8 +95,7 @@ function Preview:StyleCell(cell)
 	cell.target:Apply(CG.Config:GetStyle("target"))
 	cell.target:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", CG.metrics.member.width + cfg.targetGap, 0)
 	cell.target:GetFrame():SetShown(cfg.targets)
-	local targetAuras = cell.target:GetPart("auras")
-	if not cfg.targets and targetAuras then targetAuras:SetEnabled(false) end
+	if not cfg.targets then EnableAuras(cell.target, false) end
 	cell.slots:Apply(CG:SlotConfig(cell.member))
 	cell.status:Apply(CG.Config:Get().indicators)
 	cell.styled = true
@@ -106,16 +111,14 @@ function Preview:FeedCell(cell, index, live, unit)
 	else
 		local values = self:Values(index)
 		cell.member:GetFrame():Show()
-		local auras = cell.member:GetPart("auras")
-		auras:SetEnabled(auras.resolved.enabled)
+		EnableAuras(cell.member, true)
 		UF.Units:ShowSample(cell.member, values)
 		cell.slots:SetEnabled(cell.slots.resolved.enabled)
 		cell.slots:ShowSample(values)
 		cell.status:ShowSample(index, self.data.readyCheck == "check")
 		if self.cfg.panel.targets then
 			cell.target:GetFrame():Show()
-			local targetAuras = cell.target:GetPart("auras")
-			targetAuras:SetEnabled(targetAuras.resolved.enabled)
+			EnableAuras(cell.target, true)
 			local targetValues = UF.Util.Copy(values)
 			targetValues.name, targetValues.class, targetValues.reaction = "Enemy " .. index, nil, "hostile"
 			targetValues.isPlayer = false
@@ -126,8 +129,8 @@ end
 
 function Preview:HideCell(cell)
 	cell.frame:Hide()
-	cell.member:GetPart("auras"):SetEnabled(false)
-	cell.target:GetPart("auras"):SetEnabled(false)
+	EnableAuras(cell.member, false)
+	EnableAuras(cell.target, false)
 	cell.slots:SetEnabled(false)
 end
 
@@ -136,6 +139,7 @@ local READY_SAMPLES = { "ready", "ready", "notready", "waiting" }
 local sampleBuffIDs = { [1] = 21562, [2] = 1459, [3] = 139, [4] = 774, [6] = 17, [7] = 33763 }
 function Preview:Values(index)
 	local value = UF.Util.Copy(UF.Units.SAMPLE)
+	value.animateAuras = self.data.source == "animated"
 	value.name = names[(index - 1) % #names + 1] .. " " .. index
 	value.class = index % 3 == 0 and "MAGE" or index % 3 == 1 and "WARRIOR" or "PALADIN"
 	value.showCast = false

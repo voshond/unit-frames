@@ -66,7 +66,7 @@ function Auras:OnCreate(parent)
 	self.frame:SetAllPoints(parent)
 	self.containers = {}
 	for _, kind in ipairs(KINDS) do
-		local container = CreateFrame("AuraContainer", nil, self.frame, "CustomAuraContainerTemplate")
+		local container = CreateFrame("AuraContainer", nil, self:GetContainerParent(kind), "CustomAuraContainerTemplate")
 		self.containers[kind] = container
 		container:AddAuraGroup(kind, kind == "buffs" and "HELPFUL" or "HARMFUL", {
 			maxFrameCount = 16,
@@ -77,6 +77,32 @@ function Auras:OnCreate(parent)
 	end
 end
 
+function Auras:GetContainerParent(kind)
+	return self.frame
+end
+
+function Auras:GetArtworkConfig()
+	return self.resolved
+end
+
+function Auras:GetSampleLimit(kind)
+	return self.resolved[kind].max
+end
+
+-- Blocks retain their supplied fixture order. Other presentations may define
+-- a plain-data ordering policy without touching live native selection.
+function Auras:GetSampleOrder(kind)
+	return self.previewData[kind] or {}
+end
+
+function Auras:DrawSample(button, aura)
+	AuraIcon.DrawSample(button, aura, self.dispelColors)
+end
+
+function Auras:HideSample(button)
+	button:Hide()
+end
+
 function Auras:InitButton(button, kind, preview)
 	AuraIcon.Create(button, kind, preview, { harmful = kind == "debuffs",
 		cancelBuffs = self.spec.cancelBuffs, clickThrough = self.spec.clickThrough })
@@ -84,7 +110,7 @@ function Auras:InitButton(button, kind, preview)
 end
 
 function Auras:StyleButton(button)
-	AuraIcon.Apply(button, self.resolved, self.resolved[button.ufKind].size, self.dispelColors)
+	AuraIcon.Apply(button, self:GetArtworkConfig(), self.resolved[button.ufKind].size, self.dispelColors)
 end
 
 function Auras:OnApply(cfg)
@@ -99,7 +125,7 @@ function Auras:OnApply(cfg)
 			or group.sort == "unitDebuff" and AuraContainerSortMethod.UnitFrameDebuff or AuraContainerSortMethod.ExpirationOnly
 		container:SetAuraGroupSortMethod(kind, sort, AuraContainerSortDirection.Normal)
 		container:SetAuraGroupLayout(kind, {
-			elementWidth = group.size, elementHeight = group.size + AuraIcon.TextRoom(cfg),
+			elementWidth = group.size, elementHeight = group.size + AuraIcon.TextRoom(self:GetArtworkConfig()),
 			elementSpacing = cfg.spacing, lineSpacing = cfg.spacing,
 		})
 	end
@@ -236,7 +262,7 @@ function Auras:ShowSample(values)
 	if not self.previewContainers then
 		self.previewContainers = {}
 		for _, kind in ipairs(KINDS) do
-			local container = CreateFrame("Frame", nil, self.frame)
+			local container = CreateFrame("Frame", nil, self:GetContainerParent(kind))
 			container.ufFlow = AnchorUtil.CreateFlowLayout()
 			container.ufButtons, container.ufElements = {}, {}
 			self.previewContainers[kind] = container
@@ -257,12 +283,13 @@ end
 
 -- Shared artwork for flowing groups and companion fixed-slot samples.
 function Auras:RenderSamples()
+	self.renderingSamples = true
 	for _, kind in ipairs(KINDS) do
 		local container, cfg = self.previewContainers[kind], self.resolved[kind]
 		local elements = {}
 		if cfg.enabled then
-			for _, aura in ipairs(self.previewData[kind] or {}) do
-				if #elements >= cfg.max then break end
+			for _, aura in ipairs(self:GetSampleOrder(kind)) do
+				if #elements >= self:GetSampleLimit(kind) then break end
 				if MatchesSampleFilter(aura, cfg.filter, cfg.maxDuration) then
 					local index = #elements + 1
 					local button = container.ufButtons[index]
@@ -271,14 +298,15 @@ function Auras:RenderSamples()
 						self:InitButton(button, kind, true)
 						container.ufButtons[index] = button
 					end
-					AuraIcon.DrawSample(button, aura, self.dispelColors)
+					self:DrawSample(button, aura)
 					button:Show()
 					elements[index] = button
 				end
 			end
 		end
-		for index = #elements + 1, #container.ufButtons do container.ufButtons[index]:Hide() end
+		for index = #elements + 1, #container.ufButtons do self:HideSample(container.ufButtons[index]) end
 		container.ufElements = elements
 	end
 	self:Layout()
+	self.renderingSamples = nil
 end

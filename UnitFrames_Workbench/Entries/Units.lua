@@ -60,6 +60,7 @@ local function Values(unit, d, healthPct, time)
 	v.restingAnimated = time ~= nil
 	v.readyCheck = d.readyCheck ~= "off" and d.readyCheck or nil
 	v.readyCheckTime = time
+	v.animateAuras = time ~= nil
 	v.castProgress = d.castProgress / 100
 	for _, kind in ipairs({ "buffs", "debuffs" }) do
 		local samples = v[kind]

@@ -1,0 +1,241 @@
+local _, ns = ...
+local Auras = ns.Components.Auras
+local AuraBar = Auras:Extend("AuraBar")
+local KINDS = { "buffs", "debuffs" }
+local Backdrop = ns.Components.Backdrop
+
+-- A separate structural row, using the same native aura presentation as blocks.
+-- Only horizontal capacity matters: square artwork may exceed the row height
+-- and is centred behind fixed, addon-owned clipping viewports.
+local schema = ns.Schema.Without(ns.Util.Copy(Auras.schema), { buffs = true, debuffs = true })
+schema = ns.Schema.Override(schema, "enabled", { default = false })
+schema = ns.Schema.Override(schema, "durationPosition", { default = "BOTTOM",
+	tooltip = "Below the icon resolves to inside-bottom for this row. Text remains inside the visible strip.",
+	hint = "Below the icon is shown inside-bottom in this row; the saved choice is retained." })
+AuraBar.schema = ns.Schema.Insert(schema, "enabled", {
+	{ key = "position", type = "select", label = "Row position", default = "bottom",
+		values = { { "top", "Top" }, { "bottom", "Bottom" } } },
+	{ key = "height", type = "range", label = "Row height", min = 2, max = 100, step = 1, default = 18,
+		tooltip = "Crops centred square icons vertically; icon width controls their size. This row can coexist with Buffs & debuffs.",
+		hint = "Square icons are centred and cropped by height. A section too narrow for one icon stays empty. Icons do not receive mouse input." },
+	{ key = "padding", type = "range", label = "Inner padding", min = 0, max = 20, step = 1, default = 0 },
+	{ key = "fadeIn", type = "toggle", label = "Fade in new auras", default = true,
+		tooltip = "Native assignment fades the artwork on arrival and replacement, without moving click regions. Static samples do not animate." },
+	{ key = "fadeDuration", type = "range", label = "Fade duration", min = 0.05, max = 0.5, step = 0.05, default = 0.15 },
+	{ key = "sectionGap", type = "range", label = "Gap between categories", min = 0, max = 30, step = 1, default = 2 },
+	{ key = "buffWidthPercent", type = "range", label = "Buff share of width (%)", min = 0, max = 100, step = 1, default = 50,
+		tooltip = "Enabled categories keep their share even when empty. Disable a category to give the other the full width." },
+	{ key = "rowBackdrop", type = "group", label = "Row background", schema = ns.Schema.Without(Backdrop.schema, { padding = true }),
+		defaults = { enabled = false, border = "None", inset = 0 } },
+})
+for _, kind in ipairs(KINDS) do
+	local source = ns.Schema.Find(Auras.schema, kind)
+	local group = ns.Schema.Without(ns.Util.Copy(source.schema), {
+		position = true, alignment = true, growth = true, gap = true, offsetX = true, offsetY = true, lineSize = true,
+	})
+	group = ns.Schema.Override(group, "size", { label = "Icon width", default = 32,
+		tooltip = "Artwork stays square and centred vertically. Icons wider than their section show none." })
+	group = ns.Schema.Override(group, "sort", {
+		hint = "Time samples sort by remaining time, permanent last. Native and raid priority previews are illustrative; Blizzard selects live auras." })
+	local sides = { { "left", "Left" }, { "right", "Right" } }
+	if kind == "debuffs" then table.insert(sides, 1, { "opposite", "Opposite buffs" }) end
+	group = ns.Schema.Insert(group, "size", {
+		{ key = "entrySide", type = "select", label = "Fill from", default = kind == "buffs" and "left" or "opposite",
+			values = sides,
+			tooltip = kind == "buffs" and "Chooses the buff section's side and fill direction. Debuffs occupy the opposite section."
+				or "Chooses the fill direction within the debuff section. Opposite buffs preserves inward filling when the buff side changes." },
+	})
+	AuraBar.schema[#AuraBar.schema + 1] = { key = kind, type = "group", label = source.label, schema = group }
+end
+
+-- hostWidth is the known row width, supplied by UnitFrameLayout.
+function AuraBar.Geometry(cfg, hostWidth)
+	local width = math.max(0, hostWidth - 2 * cfg.padding)
+	local height = math.max(0, cfg.height - 2 * cfg.padding)
+	local both = cfg.buffs.enabled and cfg.debuffs.enabled
+	local gap = both and math.min(width, cfg.sectionGap) or 0
+	local available = width - gap
+	local buffWidth = cfg.buffs.enabled and (both and available * cfg.buffWidthPercent / 100 or available) or 0
+	local widths = { buffs = buffWidth, debuffs = cfg.debuffs.enabled and available - buffWidth or 0 }
+	local buffsLeft = cfg.buffs.entrySide == "left"
+	local leftWidth = buffsLeft and widths.buffs or widths.debuffs
+	local result = {}
+	for _, kind in ipairs(KINDS) do
+		local group, sectionWidth = cfg[kind], widths[kind]
+		local sectionLeft = kind == "buffs" and buffsLeft or kind == "debuffs" and not buffsLeft
+		local left = sectionLeft
+		if kind == "debuffs" and group.entrySide ~= "opposite" then left = group.entrySide == "left" end
+		local columns = math.max(0, math.floor((sectionWidth + cfg.spacing) / (group.size + cfg.spacing)))
+		result[kind] = { width = sectionWidth, height = height, left = left,
+			x = cfg.padding + (sectionLeft and 0 or leftWidth + gap),
+			capacity = group.enabled and height > 0 and math.min(group.max, columns) or 0,
+			lineSize = columns > 0 and columns * group.size + (columns - 1) * cfg.spacing or group.size }
+	end
+	return result
+end
+
+function AuraBar:GetContainerParent(kind)
+	self.sections = self.sections or {}
+	if not self.sections[kind] then
+		local section = CreateFrame("Frame", nil, self.frame)
+		section:SetClipsChildren(true)
+		self.sections[kind] = section
+	end
+	return self.sections[kind]
+end
+
+function AuraBar:GetArtworkConfig()
+	return self.artConfig
+end
+
+function AuraBar:OnCreate(parent)
+	Auras.OnCreate(self, parent)
+	self.frame:ClearAllPoints()
+	self.background = CreateFrame("Frame", nil, self.frame, "BackdropTemplate")
+	self.background:SetFrameLevel(self.frame:GetFrameLevel())
+	self.background:SetAllPoints(self.frame)
+end
+
+function AuraBar:OnApply(cfg)
+	self.artConfig = ns.Util.Copy(cfg)
+	if cfg.durationPosition == "below" then self.artConfig.durationPosition = "BOTTOM" end
+	Auras.OnApply(self, cfg)
+end
+
+function AuraBar:InitButton(button, kind, preview)
+	button.ufEntryAnimation, button.ufEntryRegistered, button.ufSampleIcon = false, false, false
+	Auras.InitButton(self, button, kind, preview)
+	-- Clipping of hit regions is not proven on the client. No mouse input,
+	-- tooltips or buff cancellation in this strip, even outside combat.
+	button:EnableMouse(false)
+	local animation = button.ufIconFrame:CreateAnimationGroup()
+	local alpha = animation:CreateAnimation("Alpha")
+	alpha:SetFromAlpha(0)
+	alpha:SetToAlpha(1)
+	alpha:SetDuration(0.15)
+	button.ufEntryAnimation, button.ufEntryAlpha = animation, alpha
+	if self.resolved then self:ConfigureAnimation(button) end
+end
+
+function AuraBar:ConfigureAnimation(button)
+	local animation = button.ufEntryAnimation
+	if not animation then return end
+	animation:Stop()
+	button.ufEntryAlpha:SetDuration(self.resolved.fadeDuration)
+	if not button.ufPreview then
+		if button.ufEntryRegistered then button:RemoveAuraAssignedAnimation(animation) end
+		button.ufEntryRegistered = self.resolved.fadeIn
+		if button.ufEntryRegistered then button:AddAuraAssignedAnimation(animation) end
+	end
+end
+
+function AuraBar:StyleButton(button)
+	Auras.StyleButton(self, button)
+	local size = self.resolved[button.ufKind].size
+	local height = math.max(0, self.resolved.height - 2 * self.resolved.padding)
+	button:SetHeight(height)
+	button.ufIconFrame:ClearAllPoints()
+	button.ufIconFrame:SetPoint("TOPLEFT", button, "TOPLEFT", 0, (size - height) / 2)
+	-- Text belongs to the visible strip, while texture/cooldown/border stay square.
+	button.ufCount:ClearAllPoints()
+	button.ufCount:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -2, 2)
+	button.ufTime:ClearAllPoints()
+	local position = self.artConfig.durationPosition
+	button.ufTime:SetPoint(position, button, position, 0, position == "TOP" and -2 or position == "BOTTOM" and 2 or 0)
+	self:ConfigureAnimation(button)
+end
+
+function AuraBar:DrawSample(button, aura)
+	Auras.DrawSample(self, button, aura)
+	-- Plain sample identity only. Animated previews fade when a slot changes;
+	-- static previews stay fully visible, including frozen timers.
+	if self.enabled and self.previewData.animateAuras and self.resolved.fadeIn and button.ufSampleIcon ~= aura.icon then
+		button.ufEntryAnimation:Stop()
+		button.ufEntryAnimation:Play()
+	elseif not self.enabled or not self.previewData.animateAuras or not self.resolved.fadeIn then
+		button.ufEntryAnimation:Stop()
+	end
+	button.ufSampleIcon = aura.icon
+end
+
+function AuraBar:HideSample(button)
+	button.ufEntryAnimation:Stop()
+	button.ufSampleIcon = nil
+	button:Hide()
+end
+
+function AuraBar:SetEnabled(enabled)
+	Auras.SetEnabled(self, enabled)
+	if self.previewContainers then
+		for _, kind in ipairs(KINDS) do
+			for _, button in ipairs(self.previewContainers[kind].ufButtons) do
+				if not self.enabled or not self.previewData or not self.resolved[kind].enabled then
+					button.ufEntryAnimation:Stop()
+					button.ufSampleIcon = nil
+				end
+			end
+		end
+	end
+end
+
+function AuraBar:Layout(width)
+	self.hostWidth = width or self.hostWidth or self.frame:GetParent():GetWidth()
+	Backdrop.ApplyToFixedSize(self.background, self.resolved.rowBackdrop, self.hostWidth, self.resolved.height)
+	self.geometry = AuraBar.Geometry(self.resolved, self.hostWidth)
+	for _, kind in ipairs(KINDS) do
+		local geometry, group = self.geometry[kind], self.resolved[kind]
+		local section = self.sections[kind]
+		section:ClearAllPoints()
+		section:SetPoint("TOPLEFT", self.frame, "TOPLEFT", geometry.x, -self.resolved.padding)
+		section:SetSize(geometry.width, geometry.height)
+		local live = self.containers[kind]
+		live:SetAuraGroupMaxFrameCount(kind, geometry.capacity)
+		live:SetAuraGroupEnabled(kind, geometry.capacity > 0)
+		live:SetAuraGroupLayout(kind, { elementWidth = group.size, elementHeight = geometry.height,
+			elementSpacing = self.resolved.spacing, lineSpacing = 0 })
+		local container = self.previewData and self.previewContainers[kind] or live
+		local anchor = geometry.left and "TOPLEFT" or "TOPRIGHT"
+		local direction = geometry.left and AnchorUtil.FlowDirection.Right or AnchorUtil.FlowDirection.Left
+		container:ClearAllPoints()
+		container:SetPoint(anchor, section, anchor, 0, 0)
+		if self.previewData then
+			local flow = container.ufFlow
+			flow:SetLayoutAxis(AnchorUtil.FlowLayoutAxis.Horizontal)
+			flow:SetAnchorPoint(anchor)
+			flow:SetGrowthDirection(direction, AnchorUtil.FlowDirection.Down)
+			flow:SetMaximumLineSize(geometry.lineSize)
+			flow:Apply(container, { { elements = container.ufElements, elementSpacing = self.resolved.spacing, lineSpacing = 0 } })
+		else
+			container:SetFlowLayoutAxis(AnchorUtil.FlowLayoutAxis.Horizontal)
+			container:SetFlowLayoutAnchorPoint(anchor)
+			container:SetFlowLayoutGrowthDirection(direction, AnchorUtil.FlowDirection.Down)
+			container:SetFlowLayoutMaximumLineSize(geometry.lineSize)
+		end
+	end
+	if self.previewData and not self.renderingSamples then self:RenderSamples() end
+end
+
+function AuraBar:GetSampleLimit(kind)
+	return self.geometry[kind].capacity
+end
+
+-- Time samples sort by remaining time, permanent last, stable fixture ties.
+-- Native/raid priority use explicit illustrative fixture ranks, not live IDs
+-- or a reimplementation of Blizzard's hidden priorities.
+function AuraBar:GetSampleOrder(kind)
+	local entries = {}
+	local sort = self.resolved[kind].sort
+	for index, aura in ipairs(self.previewData[kind] or {}) do
+		local rank
+		if sort == "expiration" then
+			rank = (aura.duration or 0) > 0 and (aura.remaining or aura.duration) or math.huge
+		else
+			rank = aura[sort == "unitDebuff" and "sampleRaidPriority" or "sampleNativePriority"] or index
+		end
+		entries[#entries + 1] = { aura = aura, rank = rank, index = index }
+	end
+	table.sort(entries, function(a, b) return a.rank < b.rank or a.rank == b.rank and a.index < b.index end)
+	local ordered = {}
+	for index, entry in ipairs(entries) do ordered[index] = entry.aura end
+	return ordered
+end

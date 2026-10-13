@@ -202,6 +202,17 @@ local function DisableAuras() end
 
 oUF:AddElement("UF_Auras", UpdateAuras, EnableAuras, DisableAuras)
 
+-- Independent native containers allow the row and external icons to coexist.
+local function UpdateAuraBar(self)
+	if self.__unit then self.UF_AuraBar:SetUnit(self.__unit) end
+end
+
+local function EnableAuraBar(self)
+	return self.UF_AuraBar ~= nil
+end
+
+oUF:AddElement("UF_AuraBar", UpdateAuraBar, EnableAuraBar, DisableAuras)
+
 -- UF_Range: group checks are event-driven; spell checks also poll because
 -- SPELL_RANGE_CHECK_UPDATE only describes the player's current target, not
 -- focus/target-of-target. Never inspect a live range boolean in Lua

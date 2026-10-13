@@ -186,3 +186,31 @@ border by type** to use **Icon frame > Border colour** for every icon.
 **Preview data** includes sample buff/debuff counts. Static previews freeze
 their timers; Animated previews cycle them. Samples include stacks, a
 permanent buff, and all four debuff dispel types, using the saved aura style.
+
+**Buff & debuff icon row** is a separate, optional row at the top or bottom
+of the frame. Enable it alongside the external icons, or disable **Buffs &
+debuffs** to use only the row. It has its own filters, limits and artwork settings.
+It also appears in ClickGrid member and target styles.
+
+**Icon width** sets the size of square artwork. Icons are centred vertically;
+**Row height** crops the top and bottom when the art is taller than the row.
+Timers and stack text sit inside the visible strip. The row fills from both
+ends by default: choose the buff side, and debuffs occupy the opposite section.
+Debuffs have their own **Fill from** control; **Opposite buffs** keeps inward
+filling when the buff side changes. **Buff share of width** allocates space
+between them. An empty enabled category keeps its
+space; disabling it gives the other category the whole width. Icons too wide
+for their section show none. Excess auras remain undisplayed until native
+sorting selects them; this is not a first-in-first-out queue.
+
+**Fade in new auras** uses Blizzard's native assignment animation, including
+replacement on an already visible icon. Static previews stay still; animated
+previews fade sample slot replacements. Time-left samples sort with permanent
+auras last; native and raid-priority preview orders are illustrative. Bar icons
+are non-interactive, so use external icons for tooltips and buff cancellation.
+
+**Row background** adds a background texture, colour/opacity and optional border
+behind the entire row, independently of the icon borders. It is off by default.
+The enabled row retains its height when empty. Automatic collapse and borrowing
+height from another bar are not supported: native allocated-button counts do
+not report whether icons are rendered, and live aura visibility can be secret.

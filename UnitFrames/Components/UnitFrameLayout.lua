@@ -15,11 +15,14 @@ function Layout.Compute(spec, cfg)
 	local pad = cfg.border.enabled and cfg.border.padding or 0
 	local placement = Layout.CastbarPlacement(spec, cfg)
 	local items = {}
+	local auraBar = spec.auraBar and cfg.auraBar.enabled and cfg.auraBar
+	if auraBar and auraBar.position == "top" then items[#items + 1] = { key = "auraBar", height = auraBar.height } end
 	if placement == "top" then items[#items + 1] = { key = "castbar", height = cfg.castbar.height } end
 	for _, row in ipairs(spec.rows) do
 		if cfg[row.key].enabled then items[#items + 1] = { key = row.key, height = cfg[row.key].height } end
 	end
 	if placement == "bottom" then items[#items + 1] = { key = "castbar", height = cfg.castbar.height } end
+	if auraBar and auraBar.position == "bottom" then items[#items + 1] = { key = "auraBar", height = auraBar.height } end
 	local stackHeight = 0
 	for i, item in ipairs(items) do stackHeight = stackHeight + item.height + (i > 1 and cfg.spacing or 0) end
 

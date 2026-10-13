@@ -47,6 +47,7 @@ local function Options(schema, prefix, out)
 			fields[#fields + 1] = "values=" .. Hash(Inline(type(opt.values) == "function" and opt.values() or opt.values))
 		end
 		if opt.tooltip then fields[#fields + 1] = "tooltip=" .. Hash(opt.tooltip) end
+		if opt.hint then fields[#fields + 1] = "hint=" .. Hash(opt.hint) end
 		if opt.hidden then fields[#fields + 1] = "hidden" end
 		if opt.defaults then fields[#fields + 1] = "defaults=" .. Inline(opt.defaults) end
 		out[#out + 1] = path .. " " .. table.concat(fields, " ")
@@ -88,6 +89,7 @@ local function Subjects()
 	Add("portrait", C.Portrait.schema)
 	Add("raidTarget", C.RaidTarget.schema)
 	Add("auras", C.Auras.schema)
+	Add("auraBar", C.AuraBar.schema)
 	Add("auraIcon", UF.AuraIcon.schema)
 	for _, unit in ipairs(UF.Units.order) do
 		local def = UF.Units:GetDefinition(unit)

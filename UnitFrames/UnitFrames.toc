@@ -36,6 +36,7 @@ Components\Castbar.lua
 Components\Portrait.lua
 Components\AuraIcon.lua
 Components\Auras.lua
+Components\AuraBar.lua
 Components\DecorationStack.lua
 Components\IconPlacement.lua
 Components\StackIcon.lua
