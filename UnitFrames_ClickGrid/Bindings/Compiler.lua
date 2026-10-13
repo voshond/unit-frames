@@ -100,7 +100,7 @@ function B:Describe(choice)
 	end
 	if choice.action ~= "spell" then
 		return { name = choice.action == "none" and "Unbound" or ACTION_NAMES[choice.action] or choice.action,
-			status = choice.action == "none" and "Drop a spell or macro here, or click with one on the cursor" or "Unit action" }
+			status = choice.action == "none" and "Drop a spell or macro here" or "Unit action" }
 	end
 	local text = strtrim(choice.spell or "")
 	local described = { name = text ~= "" and text or "No spell" }

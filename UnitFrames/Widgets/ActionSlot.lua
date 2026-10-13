@@ -18,17 +18,19 @@ unsaved drops leave both the previous value and the cursor untouched.
 ]]
 local ActionSlot = ns.Widget:Extend("ActionSlot")
 
-local SLOT = 34
+local SLOT, LABEL, BUTTON, GAP = 34, 18, 20, 4
 
 function ActionSlot:OnCreate(parent, opts)
 	local frame = CreateFrame("Frame", nil, parent)
 	self.frame = frame
-	frame:SetHeight(SLOT + 18)
+	-- Label, then the slot with its name and status, then the buttons on their
+	-- own row so a narrow settings panel never squeezes the action's name.
+	frame:SetHeight(LABEL + SLOT + GAP + BUTTON)
 	self:CreateLabel(frame, opts.label):SetPoint("TOPLEFT")
 
 	local slot = CreateFrame("Button", nil, frame, "BackdropTemplate")
 	slot:SetSize(SLOT, SLOT)
-	slot:SetPoint("BOTTOMLEFT")
+	slot:SetPoint("TOPLEFT", 0, -LABEL)
 	Skin.ApplyPanel(slot, "button")
 	slot:RegisterForClicks("LeftButtonUp")
 	self.icon = slot:CreateTexture(nil, "ARTWORK")
@@ -47,11 +49,11 @@ function ActionSlot:OnCreate(parent, opts)
 	self.buttons = {}
 	local anchor
 	local function AddButton(text, tooltip, onClick)
-		local button = ns.Widgets.Button:New(frame, { text = text, tooltip = tooltip, height = 20, onClick = onClick })
+		local button = ns.Widgets.Button:New(frame, { text = text, tooltip = tooltip, height = BUTTON, onClick = onClick })
 		if anchor then
-			button:SetPoint("RIGHT", anchor:GetFrame(), "LEFT", -4, 0)
+			button:SetPoint("RIGHT", anchor:GetFrame(), "LEFT", -GAP, 0)
 		else
-			button:SetPoint("BOTTOMRIGHT", 0, (SLOT - 20) / 2)
+			button:SetPoint("BOTTOMRIGHT")
 		end
 		anchor = button
 		self.buttons[#self.buttons + 1] = button
@@ -72,12 +74,12 @@ function ActionSlot:OnCreate(parent, opts)
 
 	self.name = Skin.FontString(frame)
 	self.name:SetJustifyH("LEFT")
-	self.name:SetPoint("TOPLEFT", slot, "TOPRIGHT", 6, -2)
-	self.name:SetPoint("RIGHT", anchor:GetFrame(), "LEFT", -6, 0)
+	self.name:SetPoint("TOPLEFT", slot, "TOPRIGHT", 6, -4)
+	self.name:SetPoint("RIGHT", frame, "RIGHT")
 	self.status = Skin.FontString(frame)
 	self.status:SetJustifyH("LEFT")
-	self.status:SetPoint("BOTTOMLEFT", slot, "BOTTOMRIGHT", 6, 2)
-	self.status:SetPoint("RIGHT", anchor:GetFrame(), "LEFT", -6, 0)
+	self.status:SetPoint("BOTTOMLEFT", slot, "BOTTOMRIGHT", 6, 4)
+	self.status:SetPoint("RIGHT", frame, "RIGHT")
 
 	-- PLAYER_REGEN_DISABLED fires before lockdown begins, so the events
 	-- themselves decide; the click guard above covers the rest.

@@ -650,6 +650,20 @@ describe("ClickGrid Workbench", function()
 		assert.is_nil(line:GetScript("OnClick"))
 	end)
 
+	it("gives a drop slot's name and status the full width above its buttons", function()
+		local slot = DropSlot("friendly")
+		assert.equals(76, slot.frame:GetHeight())
+		for _, text in ipairs({ slot.name, slot.status }) do
+			local point, relativeTo, relativePoint = text:GetPoint(2)
+			assert.same({ "RIGHT", slot.frame, "RIGHT" }, { point, relativeTo, relativePoint })
+		end
+		local point, _, relativePoint, x, y = slot.slot:GetPoint()
+		assert.same({ "TOPLEFT", "TOPLEFT", 0, -18 }, { point, relativePoint, x, y })
+		assert.equals("BOTTOMRIGHT", (slot.clear.frame:GetPoint()))
+		wb.handle.cells["2:1"].lines.friendly:RunScript("OnClick")
+		assert.equals("Drop a spell or macro here", wb.inspector.page.rows[1].control.status:GetText())
+	end)
+
 	it("opens the spellbook only outside combat", function()
 		local opener = DropSlot("friendly").buttons[2]
 		opener.opts.onClick()
