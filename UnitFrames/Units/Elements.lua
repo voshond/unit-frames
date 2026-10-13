@@ -1,5 +1,5 @@
 local _, ns = ...
-local oUF = ns.oUF
+local oUF, Drivers = ns.oUF, ns.UnitDrivers
 
 -- Text formats as oUF tags: [uf:<format id>], e.g. [uf:health:value].
 for _, format in ipairs(ns.Formats.list) do
@@ -22,7 +22,7 @@ UF_Experience: player experience on a TextBar (frame.UF_Experience = row).
 Fills the bar and its "rested" segment. XP events carry no unit.
 ]]
 local function UpdateExperience(self)
-	ns.UnitRows.Experience(self.UF_Experience, UnitXP("player"), UnitXPMax("player"), GetXPExhaustion() or 0)
+	ns.UnitRows.PlayerExperience(self.UF_Experience)
 end
 
 local function EnableExperience(self, unit)
@@ -63,17 +63,10 @@ end
 oUF:AddElement("UF_Resting", UpdateResting, EnableResting, DisableResting)
 
 -- UF_Classification: the elite/rare/boss icon (frame.UF_Classification =
--- Classification component). UnitClassification is not secret; an opaque
--- result would show nothing rather than be inspected.
+-- Classification component), read by Drivers.Classification.
 local function UpdateClassification(self, _, unit)
 	if unit and unit ~= self.__unit then return end
-	unit = self.__unit
-	local classification
-	if unit and UnitExists(unit) then
-		classification = UnitClassification(unit)
-		if issecretvalue(classification) then classification = nil end
-	end
-	self.UF_Classification:SetClassification(classification)
+	self.UF_Classification:SetClassification(Drivers.Classification(self.__unit))
 end
 
 local function EnableClassification(self)
@@ -211,31 +204,10 @@ oUF:AddElement("UF_Auras", UpdateAuras, EnableAuras, DisableAuras)
 
 -- UF_Range: group checks are event-driven; spell checks also poll because
 -- SPELL_RANGE_CHECK_UPDATE only describes the player's current target, not
--- focus/target-of-target. Never inspect a live range boolean in Lua.
+-- focus/target-of-target. Never inspect a live range boolean in Lua
+-- (Drivers.RangeState).
 local function UpdateRange(self)
-	local uf, unit = self.UF_Range, self.__unit
-	if not unit or not UnitExists(unit) or not UnitIsConnected(unit) then
-		uf:SetRangeState(true, false)
-		return
-	end
-	local cfg = uf.resolved.range
-	if cfg.mode == "spell" then
-		local spell = cfg.spell:match("^%s*(.-)%s*$")
-		if not ns.Caps.spellRange or spell == "" then
-			uf:SetRangeState(true, false)
-			return
-		end
-		local inRange = C_Spell.IsSpellInRange(tonumber(spell) or spell, unit)
-		if type(inRange) == "nil" then
-			uf:SetRangeState(true, false)
-		else
-			uf:SetRangeState(inRange, true)
-		end
-	elseif ns.Caps.groupRange then
-		uf:SetRangeState(UnitInRange(unit))
-	else
-		uf:SetRangeState(true, false)
-	end
+	self.UF_Range:SetRangeState(Drivers.RangeState(self.UF_Range, self.__unit))
 end
 
 -- A separate, unprotected driver avoids changing scripts on secure buttons.

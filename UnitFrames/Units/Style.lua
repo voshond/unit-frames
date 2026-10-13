@@ -1,92 +1,40 @@
 local _, ns = ...
-local oUF, Units, Colors, Formats = ns.oUF, ns.Units, ns.Colors, ns.Formats
+local oUF, Units, Formats = ns.oUF, ns.Units, ns.Formats
 
 --[[
 oUF integration: the style builds our UnitFrame component inside the oUF unit
-button, then binds rows to oUF elements. oUF decides when values update (and
-keeps to the secret-safe paths); our components decide how it looks.
+button, then binds it to oUF elements through the data drivers
+(Units/Drivers.lua). oUF decides when values update (and keeps to the
+secret-safe paths); our components decide how it looks.
 
 Re-binding after a config change enables/disables elements and re-tags texts.
 ]]
 
 Units.STYLE = "UnitFrames"
 
--- oUF element name per row key.
-local ELEMENTS = {
-	health = "Health",
-	power = "Power",
-	experience = "UF_Experience",
-}
+-- What oUF read when it last enabled each element, per frame (driver
+-- signatures). Compared entry by entry: signatures may contain nils.
+local signatures = setmetatable({}, { __mode = "k" })
 
-local function Smoothing(bar)
-	if bar.resolved.smooth and ns.Caps.smoothBars then
-		return Enum.StatusBarInterpolation.ExponentialEaseOut
-	end
-	return Enum.StatusBarInterpolation.Immediate
-end
-
--- Colour overrides (oUF calls these after every update). Values may be secret.
-local function UpdateHealthColor(self, _, unit)
-	if not unit or self.__unit ~= unit then -- same guard as oUF's own elements
-		return
-	end
-	ns.UnitRows.LiveHealthColor(self.uf:GetRow("health"), self.uf:GetRowConfig("health").colorMode, unit)
-end
-
-local function UpdatePowerColor(self, _, unit)
-	if not unit or self.__unit ~= unit then -- same guard as oUF's own elements
-		return
-	end
-	local _, token = UnitPowerType(unit)
-	self.uf:GetRow("power"):SetColor(Colors.Power(token))
-end
-
--- Row widgets for oUF, with their sub-widgets and options set.
-local widgets = {}
-
-function widgets.health(row)
-	local bar = row:GetBar()
-	local health = bar:GetStatusBar()
-	local healing, absorb, healAbsorb = bar:GetSegmentBar("heal"), bar:GetSegmentBar("absorb"), bar:GetSegmentBar("healAbsorb")
-	local predictionChanged = health.HealingAll ~= healing or health.DamageAbsorb ~= absorb or health.HealAbsorb ~= healAbsorb
-	health.HealingAll, health.DamageAbsorb, health.HealAbsorb = healing, absorb, healAbsorb
-	-- Both placements must show shields at full health. Appending reserves
-	-- shield space inside the frame by including it in the native bar scale.
-	-- Set initial oUF options AND the existing calculator when re-styling.
-	health.maximumHealthClampMode = ns.UnitRows.HealthMaximumMode(bar)
-	health.damageAbsorbClampMode = Enum.UnitDamageAbsorbClampMode.MaximumHealth
-	if health.values then
-		health.values:SetMaximumHealthMode(health.maximumHealthClampMode)
-		health.values:SetDamageAbsorbClampMode(health.damageAbsorbClampMode)
-	end
-	health.smoothing = Smoothing(bar)
-	-- Keep reaction/tap colours current even when health hasn't changed.
-	health.colorReaction = true
-	health.colorTapping = true
-	health.UpdateColor = UpdateHealthColor
-	return health, predictionChanged
-end
-
-function widgets.power(row)
-	local bar = row:GetBar()
-	local power = bar:GetStatusBar()
-	power.CostPrediction = bar:GetSegmentBar("cost")
-	power.smoothing = Smoothing(bar)
-	power.frequentUpdates = true
-	power.UpdateColor = UpdatePowerColor
-	return power
-end
-
-function widgets.experience(row)
-	return row
+local function SameSignature(a, b)
+	if a == b then return true end
+	if not a or not b then return false end
+	for k, v in pairs(a) do if b[k] ~= v then return false end end
+	for k, v in pairs(b) do if a[k] ~= v then return false end end
+	return true
 end
 
 -- Points an oUF element at `widget` (nil switches it off). A different widget
--- (e.g. 3D model vs. texture portrait) needs the element re-enabled. Before
--- oUF has enabled the elements (inside the style function) only the key is set.
-local function SetElement(frame, element, widget, rebind)
+-- (e.g. 3D model vs. texture portrait) or a changed `signature` (sub-widgets
+-- or modes oUF reads on enable) needs the element re-enabled. Before oUF has
+-- enabled the elements (inside the style function) only the key is set.
+local function SetElement(frame, element, widget, signature)
+	local bound = signatures[frame] or {}
+	signatures[frame] = bound
+	local changed = not SameSignature(bound[element], signature)
+	bound[element] = signature
 	local ready = frame.ufReady
-	if ready and frame:IsElementEnabled(element) and (widget ~= frame[element] or rebind) then
+	if ready and frame:IsElementEnabled(element) and (widget ~= frame[element] or changed) then
 		frame:DisableElement(element)
 	end
 	frame[element] = widget
@@ -96,6 +44,15 @@ local function SetElement(frame, element, widget, rebind)
 end
 
 Units.SetElement = SetElement
+
+-- Binds a driver's element (Units/Drivers.lua); `on` false switches it off.
+-- Drivers without a binding are driven by something else.
+local function BindDriver(frame, driver, component, on)
+	if not driver.bind then return end
+	local widget, signature
+	if on then widget, signature = driver.bind(component) end
+	SetElement(frame, driver.element, widget, signature)
+end
 
 local function TagRow(frame, row, rowEnabled)
 	for _, slot in ipairs(ns.Components.TextBar.SLOTS) do
@@ -111,56 +68,24 @@ local function TagRow(frame, row, rowEnabled)
 	end
 end
 
--- oUF element per optional part (UnitFrame.PARTS) and the widget it drives;
--- without `widget` the element drives the part component itself. Parts
--- without an entry are driven by the UnitFrame (the ready check icon).
-local PART_ELEMENTS = {
-	portrait = { element = "Portrait", widget = function(portrait) return portrait:GetWidget() end },
-	castbar = { element = "UF_Castbar" },
-	auras = { element = "UF_Auras" },
-	raidTarget = { element = "RaidTargetIndicator", widget = function(marker) return marker:GetWidget() end },
-	-- oUF reads the background circle on enable: re-enable when it changes.
-	pvp = { element = "PvPIndicator", widget = function(flag) return flag:GetWidget() end,
-		subWidget = function(flag) return flag:GetBackground() end },
-	classification = { element = "UF_Classification" },
-}
-
--- Companions attach their own ready check icon later: rebind on changes.
-local function BindReadyCheck(frame)
-	local readyCheck = frame.uf:GetReadyCheck()
-	SetElement(frame, "UF_ReadyCheck", readyCheck and readyCheck:IsShown() and readyCheck or nil)
-end
-
--- Points oUF elements and tags at the current rows and parts.
+-- Points oUF elements and tags at the current frame state, rows and parts.
 function Units:Bind(frame)
-	local uf = frame.uf
+	local uf, Drivers = frame.uf, ns.UnitDrivers
+	-- Companions attach their own ready check icon later: rebind on changes.
 	local readyCheck = uf:GetReadyCheck()
 	if readyCheck then
-		readyCheck:SetChangedCallback(function() BindReadyCheck(frame) end)
+		readyCheck:SetChangedCallback(function() BindDriver(frame, Drivers.frame.readyCheck, uf, true) end)
 	end
-	SetElement(frame, "UF_Resting", uf.spec.resting and uf.resolved.resting.enabled and uf or nil)
-	BindReadyCheck(frame)
+	for _, driver in ipairs(Drivers.frame) do
+		BindDriver(frame, driver, uf, true)
+	end
 	for key, row, cfg in uf:Rows() do
-		local widget, rebind
-		if cfg.enabled then widget, rebind = widgets[key](row) end
-		-- Prediction subscriptions depend on which sub-widgets are enabled.
-		SetElement(frame, ELEMENTS[key], widget, rebind)
+		BindDriver(frame, Drivers.Row(key), row, cfg.enabled)
 		TagRow(frame, row, cfg.enabled)
 	end
-	frame.ufSubWidgets = frame.ufSubWidgets or {}
 	for key, part in uf:Parts() do
-		local binding = PART_ELEMENTS[key]
-		if binding then
-			local widget = part:IsEnabled() and (binding.widget and binding.widget(part) or part) or nil
-			local subWidget = binding.subWidget and binding.subWidget(part)
-			SetElement(frame, binding.element, widget, frame.ufSubWidgets[key] ~= subWidget)
-			frame.ufSubWidgets[key] = subWidget
-		end
+		BindDriver(frame, Drivers.Part(key), part, part:IsEnabled())
 	end
-	local range = uf.resolved.range
-	SetElement(frame, "UF_Range", range.enabled and ns.Caps.booleanAlpha and uf or nil,
-		frame.ufRangeMode ~= range.mode)
-	frame.ufRangeMode = range.mode
 	-- Element enable/disable can hide artwork after the component layout.
 	uf:GetDecorations():Reflow()
 end

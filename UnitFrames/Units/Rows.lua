@@ -68,6 +68,10 @@ function Rows.Experience(row, current, maximum, rested)
 	row:SetSegmentValue("rested", rested)
 end
 
+function Rows.PlayerExperience(row)
+	Rows.Experience(row, UnitXP("player"), UnitXPMax("player"), GetXPExhaustion() or 0)
+end
+
 -- Health bar colour for a live unit: "class" uses classColor(unit)
 -- (default: class for players, reaction/tapped for NPCs), "gradient" the
 -- secret-safe health curve, anything else the configured bar colour.

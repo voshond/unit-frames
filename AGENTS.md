@@ -15,7 +15,7 @@
 - Classes (`Core/Class.lua`): configurable visuals extend `Component`, settings controls extend `Widget`, other stateful helpers extend `Object` (`Class:New(...)` calls `Init(...)`). Stateless calculations stay plain module tables of functions.
 - `UnitFrames/Widgets/`: the shared settings toolkit and schema-driven inspector. Reuse these controls instead of introducing a separate settings framework.
 - `UnitFrames/Units/Definitions.lua`: unit composition, structural specs, defaults and sample data. Current unit keys/order are `player`, `pet`, `target`, `targettarget`, `focus`, `focustarget`; XP is player-only. Derive definitions with `Units:Derive` (row overrides by key) rather than changing shared ones.
-- `UnitFrames/Units/Style.lua`: oUF style, spawning, element binding, tags and live refresh. `Units/Elements.lua` implements custom data elements; `Units/Preview.lua` feeds sample values into the same components.
+- `UnitFrames/Units/Drivers.lua`: one data driver per frame state, row and part, declaring its oUF binding, sample feed and polled live feed together (`false` with a reason where a source is unsupported). `Units/Style.lua` (oUF style, spawning, element binding, tags and live refresh) and `Units/Preview.lua` (`Units:ShowSample`/`ShowLive`) loop over them; `Units/Elements.lua` implements custom oUF elements. A new row or part needs a driver; `drivers_spec` enforces it.
 - `UnitFrames/Integration/EditMode.lua`: layout-specific positions and snapping through LibEditMode.
 - `UnitFrames_Workbench/`: load-on-demand settings and previews, opened with `/uf wb`. `Entries/Units.lua` edits the real saved unit style; `Data.lua` defines preview sources. Keep static, animated and live previews consistent with runtime behaviour.
 - `UnitFrames_Media/`: independently registered LibSharedMedia fonts and their licences.
@@ -30,7 +30,7 @@
 - Component lifecycle is `New`/`OnCreate`, repeatable `Apply`/`OnApply`, `SetEnabled`, then `Release`/`OnRelease`. Applying the same config twice must be safe. Release must remove pending work and callbacks as applicable; released instances must not be used again.
 - Use `Config:SetUnitValue`/`SetThemeValue`, settings stores (`Config:UnitStore`, ClickGrid's `Config.settings/styles/bindings`) and existing events rather than bypassing refresh or writing saved tables directly. Profile changes, theme changes, resets and toggles must update both live widgets and previews.
 - Style is stored in AceDB `UnitFramesDB`; positions are separate, per Edit Mode layout. **Copy player settings** is a one-time independent copy of effective style, accounting for different unit defaults, excluding positions and player-only XP. Preserve theme inheritance where possible.
-- When rebinding oUF, disable/re-enable elements if their widgets or prediction sub-widgets change. Updating only an element field can leave stale subscriptions.
+- When rebinding oUF, disable/re-enable elements if their widgets or prediction sub-widgets change. Updating only an element field can leave stale subscriptions. A driver's `bind` returns a signature of whatever oUF reads on enable (sub-widgets, modes); `Units.SetElement` re-enables the element when it changes.
 
 ## Secret values and protected frames
 

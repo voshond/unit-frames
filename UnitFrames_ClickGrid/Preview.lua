@@ -41,14 +41,7 @@ function Preview:ShowLive(uf, unit, cell)
 		return false
 	end
 	uf:GetFrame():Show()
-	cell.calculator = cell.calculator or CreateUnitHealPredictionCalculator()
-	UF.UnitRows.LiveHealth(uf:GetRow("health"), unit, cell.calculator, uf:GetRowConfig("health").colorMode)
-	UF.UnitRows.LivePower(uf:GetRow("power"), unit)
-	uf:SetRangeState(UnitInRange(unit))
-	local auras = uf:GetPart("auras")
-	auras:SetEnabled(auras.resolved.enabled)
-	auras:SetUnit(unit)
-	uf:GetPart("raidTarget"):SetIndex(GetRaidTargetIndex(unit))
+	UF.Units:ShowLive(uf, unit, cell)
 	return true
 end
 

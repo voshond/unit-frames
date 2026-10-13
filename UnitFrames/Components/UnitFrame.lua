@@ -89,8 +89,8 @@ end
 Optional parts, declared once. A unit offers a part when its spec has the
 key ({ defaults, ... }); the order is creation, apply, binding and frame-level
 order. Every part is an owned child component, found with GetPart(key).
-Adding a part here is enough for schema, lifecycle and iteration; live data
-binds through Units/Style.lua PART_ELEMENTS, samples through Units/Preview.lua.
+Adding a part here is enough for schema, lifecycle and iteration; its data
+(oUF binding, samples, polled previews) is declared in Units/Drivers.lua.
   schema(partSpec)     the part's option group (beforeRows: listed above the rows)
   create(frame, ps)    builds the component
   apply(part, cfg)     optional, after the part's config is applied
