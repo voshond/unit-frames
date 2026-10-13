@@ -20,6 +20,9 @@ Descriptor fields:
   defaults  for group: per-key default overrides, lets one group schema be reused
             with different defaults (e.g. Bar border off, Castbar border on)
   hidden(resolvedGroup)   hide the control when this returns true
+  inline    for group: shown inside its parent's section instead of as a
+            section of its own
+  onSet, invoke           settings-store hooks (Core/Store.lua)
 ]]
 local Schema = {}
 ns.Schema = Schema
@@ -67,17 +70,63 @@ Resolves the effective value of every option:
   3. the theme value at `inherit`
   4. the descriptor `default`
 Returns a fresh table; callers may keep it.
+
+Group default overrides are kept as layers (lowest priority first) rather
+than merged copies. Each group's effective overrides are its `defaults`
+merged with (Util.Merge) the outer group's effective overrides at its key, so
+a key's value folds the layers from the highest down: the highest value
+wins, except that tables merge with the tables beneath them. Values are only
+computed where config leaves an option unset. Layers are shared schema and
+caller tables and are never modified.
 ]]
-function Schema.Resolve(schema, config, theme, overrides)
+local NO_LAYERS, NO_DEFAULTS = {}, {}
+
+local function LayeredValue(layers, key)
+	local value
+	for i = #layers, 1, -1 do
+		local layerValue = layers[i][key]
+		if layerValue ~= nil then
+			if value == nil then
+				value = layerValue
+			elseif type(value) ~= "table" then
+				break
+			elseif type(layerValue) == "table" then
+				value = Util.Merge(Util.Copy(layerValue), value)
+			end
+		end
+	end
+	return value
+end
+
+-- The layers for group `opt`: its own defaults beneath the tables the outer
+-- layers hold at its key. A non-table above every table leaves only the
+-- defaults (as the merged form treated a missing or false group override).
+local function GroupLayers(opt, layers)
+	local above = {}
+	for i = #layers, 1, -1 do
+		local layerValue = layers[i][opt.key]
+		if type(layerValue) == "table" then
+			above[#above + 1] = layerValue
+		elseif layerValue ~= nil and #above == 0 then
+			break
+		end
+	end
+	local out = { opt.defaults or NO_DEFAULTS }
+	for i = #above, 1, -1 do
+		out[#out + 1] = above[i]
+	end
+	return out
+end
+
+local function Resolve(schema, config, theme, layers)
 	local out = {}
 	for _, opt in ipairs(schema) do
 		local value = config and config[opt.key]
 		if opt.type == "group" then
-			local groupOverrides = Util.Merge(Util.Copy(opt.defaults or {}), (overrides and overrides[opt.key]) or {})
-			out[opt.key] = Schema.Resolve(opt.schema, type(value) == "table" and value or nil, theme, groupOverrides)
+			out[opt.key] = Resolve(opt.schema, type(value) == "table" and value or nil, theme, GroupLayers(opt, layers))
 		else
-			if value == nil and overrides and overrides[opt.key] ~= nil then
-				value = overrides[opt.key]
+			if value == nil then
+				value = LayeredValue(layers, opt.key)
 			end
 			if value == nil and opt.inherit and theme then
 				value = Util.GetPath(theme, opt.inherit)
@@ -89,6 +138,10 @@ function Schema.Resolve(schema, config, theme, overrides)
 		end
 	end
 	return out
+end
+
+function Schema.Resolve(schema, config, theme, overrides)
+	return Resolve(schema, config, theme, overrides and { overrides } or NO_LAYERS)
 end
 
 -- Composition. Each returns a new list and never mutates its inputs; the

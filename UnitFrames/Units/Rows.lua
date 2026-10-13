@@ -12,19 +12,19 @@ local specs = {
 				appendToFill = true, colorInherit = "colors.absorb" },
 			{ key = "healAbsorb", label = "Heal absorbs", mode = "inset", colorInherit = "colors.healAbsorb" },
 		},
-		formats = ns.Formats.HEALTH,
+		formats = ns.Formats.HEALTH, valueKind = "health",
 		textDefaults = { left = "name", right = "health:value", belowLeft = { format = "level:class", enabled = false } },
 	},
 	power = {
 		colorInherit = "colors.mana",
 		segments = { { key = "cost", label = "Spell cost", mode = "inset", colorInherit = "colors.powerCost" } },
-		formats = ns.Formats.POWER,
+		formats = ns.Formats.POWER, valueKind = "power",
 		textDefaults = { right = "power:value" },
 	},
 	experience = {
 		colorInherit = "colors.experience",
 		segments = { { key = "rested", label = "Rested", mode = "append", colorInherit = "colors.rested" } },
-		formats = ns.Formats.EXPERIENCE,
+		formats = ns.Formats.EXPERIENCE, valueKind = "xp",
 		textDefaults = { center = "xp:value:percent" },
 	},
 }

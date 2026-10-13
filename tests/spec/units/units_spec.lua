@@ -121,7 +121,7 @@ describe("Player frame", function()
 		assert.same({ "TOPLEFT", frame, "TOPLEFT", 4, -44 }, Row("experience"):GetFrame():GetAnchor("TOPLEFT"))
 	end)
 
-	it("binds rows and segments to oUF elements", function()
+	it("binds rows and segments to oUF elements #shields", function()
 		local health = Row("health"):GetBar()
 		assert.equals(health:GetStatusBar(), frame.Health)
 		assert.equals(health.segmentsByKey.heal.bar, frame.Health.HealingAll)

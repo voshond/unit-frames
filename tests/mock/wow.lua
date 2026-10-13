@@ -129,7 +129,7 @@ local function CheckMethod(self, key, ...)
 		if def.protected and untainted == 0 and self.__state.protected and InCombatLockdown() then
 			error(string.format("%s:%s is protected and blocked in combat", objectType, key), 3)
 		end
-		API.CheckArgs(objectType .. ":" .. key, def, Mock.IsSecret, untainted > 0, ...)
+		API.CheckArgs(objectType, key, def, Mock.IsSecret, untainted > 0, ...)
 	elseif modelled and not Mock.HELPERS[key] then
 		local templated = self.__state.template or INTRINSIC_MIXINS[objectType]
 		if not (templated and API.LuaMethod(key)) then
@@ -812,6 +812,8 @@ function Mock.Install()
 	_G.strlenutf8 = function(s) return #s end
 	_G.tinsert = table.insert
 	_G.wipe = function(t) for k in pairs(t) do t[k] = nil end return t end
+	-- The client's table library has it too (embedded oUF's tags use it).
+	table.wipe = _G.wipe
 	_G.securecallfunction = function(fn, ...) return fn(...) end
 	_G.geterrorhandler = function() return error end
 	_G.INTERRUPTED = "Interrupted"
@@ -878,6 +880,22 @@ function Mock.Install()
 		LoadAddOn = function() return true end,
 	}
 	_G.C_UIFileAsset = { IsKnownFile = function() return true end }
+	-- Atlas metadata (AtlasInfo); tests may override entries by atlas name.
+	-- Unknown atlases return nil, like the client. Class icons default square.
+	Mock.atlasInfo = {}
+	_G.C_Texture = {
+		GetAtlasInfo = function(atlas)
+			local info = Mock.atlasInfo[atlas]
+			if info == nil and atlas:lower():find("^classicon%-") then
+				info = { width = 64, height = 64 }
+			end
+			if not info then return nil end
+			return { elementName = atlas, width = info.width, height = info.height,
+				rawSize = { x = info.width, y = info.height },
+				leftTexCoord = 0, rightTexCoord = 1, topTexCoord = 0, bottomTexCoord = 1,
+				tilesHorizontally = false, tilesVertically = false }
+		end,
+	}
 	local defaultAuraCurve = NewCurve(false)
 	_G.AuraContainerInbound = {
 		GetDefaultAuraDurationFormatter = function()
@@ -936,6 +954,18 @@ function Mock.Install()
 		end
 		return tostring(value)
 	end
+	-- Digit grouping with the default "," separator.
+	_G.BreakUpLargeNumbers = function(value)
+		if Mock.IsSecret(value) then
+			return Mock.Secret("brokenUp")
+		end
+		local text = tostring(math.floor(value))
+		local grouped
+		repeat
+			text, grouped = text:gsub("^(-?%d+)(%d%d%d)", "%1,%2")
+		until grouped == 0
+		return text
+	end
 	_G.C_CVar = { SetCVar = function() return true end }
 	Mock.EnforceAPI()
 end
@@ -952,7 +982,7 @@ function Mock.EnforceAPI()
 		local impl = type(owner) == "table" and rawget(owner, key)
 		if type(impl) == "function" and not enforced[impl] then
 			local wrapper = function(...)
-				API.CheckArgs(name, def, Mock.IsSecret, untainted > 0, ...)
+				API.CheckArgs(nil, name, def, Mock.IsSecret, untainted > 0, ...)
 				return impl(...)
 			end
 			enforced[wrapper] = true
