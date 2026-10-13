@@ -110,8 +110,10 @@ function Status:UpdateResurrectionText()
 	end
 end
 
-local function Host(parent)
-	local host = CreateFrame("Frame", nil, parent)
+-- Hosts may sit before the member's name, which follows native geometry
+-- on native-layout bars: those hosts carry the forbidden layout aspect.
+local function Host(parent, native)
+	local host = CreateFrame("Frame", nil, parent, native and "DisableUntrustedLayoutScriptsTemplate" or nil)
 	host:EnableMouse(false)
 	return host
 end
@@ -131,13 +133,15 @@ function Status:OnCreate(button, spec)
 		if not self.released then self.unitFrame:GetDecorations():Reflow() end
 	end
 	self.hosts = {}
+	local native = self.unitFrame:IsNativeLayout()
 	for _, item in ipairs(PLACED) do
-		local ready = item[1] == "ready" and self:Own(UF.Components.ReadyCheckIcon:New(overlay, {})) or nil
+		local ready = item[1] == "ready"
+			and self:Own(UF.Components.ReadyCheckIcon:New(overlay, {}, { nativeLayout = native })) or nil
 		if ready then
 			ready.stackKey = "ready"
 			self.readyCheckIcon = ready
 		end
-		local host = ready and ready:GetFrame() or Host(overlay)
+		local host = ready and ready:GetFrame() or Host(overlay, native)
 		self.hosts[item[1]] = host
 		for _, element in ipairs(item[2]) do
 			local icon = ready and ready:GetWidget() or host:CreateTexture(nil, "OVERLAY")

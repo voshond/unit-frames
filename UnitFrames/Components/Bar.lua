@@ -25,6 +25,11 @@ way oUF does heal prediction. They are declared per instance through `spec`:
 Segment positions are pure anchoring and every value goes straight into a
 StatusBar, so all of this works with secret values.
 
+spec.nativeLayout: the owner may anchor the bar to native, possibly secret
+geometry (a collapsing aura row). The root opts into Blizzard's forbidden
+layout aspect at creation, so no size script runs: the owner supplies its
+plain row size through SetKnownSize for the border and segment lengths.
+
 SetTint(r, g, b, amount) temporarily recolours the bar (ready checks). The
 data colour may be secret, so instead of blending it the tint is drawn over
 the fill and background and crossfaded by opacity. Segment colours are
@@ -94,6 +99,7 @@ local LAYOUT = {
 Bar.LAYOUT = LAYOUT
 
 local SPARK_TEXTURE = [[Interface\CastingBar\UI-CastingBar-Spark]]
+local NATIVE_LAYOUT_TEMPLATE = "BackdropTemplate,DisableUntrustedLayoutScriptsTemplate"
 
 function Bar.BuildSchema(spec)
 	spec = spec or {}
@@ -127,7 +133,7 @@ function Bar.BuildSchema(spec)
 end
 
 function Bar:OnCreate(parent, spec)
-	self.frame = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+	self.frame = CreateFrame("Frame", nil, parent, spec.nativeLayout and NATIVE_LAYOUT_TEMPLATE or "BackdropTemplate")
 
 	self.bar = CreateFrame("StatusBar", nil, self.frame)
 	self.bar:SetMinMaxValues(0, 1)
@@ -171,13 +177,28 @@ function Bar:OnCreate(parent, spec)
 	self.spark:SetTexture(SPARK_TEXTURE)
 	self.spark:SetBlendMode("ADD")
 
-	self.bar:SetScript("OnSizeChanged", function(_, width, height)
-		self:SizeParts(width, height)
-	end)
+	if spec.nativeLayout then
+		-- oUF's health element reads the StatusBar's size on every update to
+		-- size prediction bars; anchored to native geometry it is secret.
+		-- Lua callers get the plain known size instead (methods only shadow
+		-- the widget's Lua table; the engine keeps using the real geometry).
+		local bar = self.bar
+		function bar.GetWidth() return (self:GetKnownInnerSize()) end
+		function bar.GetHeight() return select(2, self:GetKnownInnerSize()) end
+		function bar.GetSize() return self:GetKnownInnerSize() end
+	else
+		self.bar:SetScript("OnSizeChanged", function(_, width, height)
+			self:SizeParts(width, height)
+		end)
+	end
 end
 
 function Bar:OnApply(cfg)
-	Backdrop.ApplyTo(self.frame, cfg.border)
+	if self.spec.nativeLayout then
+		Backdrop.ApplyToFixedSize(self.frame, cfg.border, self:GetKnownSize())
+	else
+		Backdrop.ApplyTo(self.frame, cfg.border)
+	end
 	Backdrop.Inset(self.bar, self.frame, cfg.border)
 
 	local texture = Media:Fetch("statusbar", cfg.texture)
@@ -253,7 +274,35 @@ function Bar:OnApply(cfg)
 	end
 	self.spark:SetShown(cfg.spark)
 
-	self:SizeParts(self.bar:GetSize())
+	if self.spec.nativeLayout then
+		self:SizeParts(self:GetKnownInnerSize())
+	else
+		self:SizeParts(self.bar:GetSize())
+	end
+end
+
+-- Native-layout bars: the row size the owner laid out, in plain numbers.
+-- A collapsing row can make the bar longer than this; a horizontal bar
+-- keeps its width, so only vertical bars' segments then use a stale length.
+function Bar:SetKnownSize(width, height)
+	self.knownWidth, self.knownHeight = width, height
+	if self.resolved then
+		Backdrop.ApplyToFixedSize(self.frame, self.resolved.border, width, height)
+		self:SizeParts(self:GetKnownInnerSize())
+	end
+end
+
+function Bar:GetKnownSize()
+	return self.knownWidth or 1, self.knownHeight or 1
+end
+
+-- The StatusBar's share of the known size, inside the border padding.
+function Bar:GetKnownInnerSize()
+	local width, height = self:GetKnownSize()
+	if not self.resolved then return width, height end
+	local border = self.resolved.border
+	local pad = border.enabled and border.padding or 0
+	return math.max(0, width - 2 * pad), math.max(0, height - 2 * pad)
 end
 
 -- Segments must be as long as the whole bar so their values use the same scale.

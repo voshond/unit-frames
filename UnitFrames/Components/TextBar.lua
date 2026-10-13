@@ -11,6 +11,11 @@ spec: everything Bar takes (segments, colorInherit), plus
   formats       format ids the texts may show (Core/Formats.lua)
   textDefaults  default format per slot, e.g. { left = "name", right = "health:value" };
                 { format = ..., enabled = false } offers a format but starts switched off
+  nativeLayout  the bar can follow native geometry (see Bar); ExtendBar moves
+                its top or bottom edge. The row frame stays an ordinary frame
+                at the configured height (a covering castbar uses it). Texts
+                live on the bar and follow it, so frames anchored to them
+                (icons before the name) need the forbidden layout aspect too.
 ]]
 local TextBar = ns.Component:Extend("TextBar")
 
@@ -23,8 +28,14 @@ TextBar.SLOTS = {
 }
 
 function TextBar:OnCreate(parent, spec)
-	self.bar = self:Own(Bar:New(parent, {}, spec))
-	self.frame = self.bar:GetFrame()
+	if spec.nativeLayout then
+		self.frame = CreateFrame("Frame", nil, parent)
+		self.bar = self:Own(Bar:New(self.frame, {}, spec))
+		self.bar:GetFrame():SetAllPoints(self.frame)
+	else
+		self.bar = self:Own(Bar:New(parent, {}, spec))
+		self.frame = self.bar:GetFrame()
+	end
 	local host = self.bar:GetTextParent()
 	self.texts = {}
 	for _, slot in ipairs(TextBar.SLOTS) do
@@ -78,6 +89,28 @@ end
 
 function TextBar:GetBar()
 	return self.bar
+end
+
+-- Native-layout rows: the bar's far edge follows `region`, which must carry
+-- the forbidden layout aspect itself ("BOTTOM": the bar's bottom meets the
+-- region's top; "TOP": its top meets the region's bottom). The other edges
+-- stay on the row; x shifts the followed side. No edge: back on the row.
+function TextBar:ExtendBar(edge, region, x)
+	local root = self.bar:GetFrame()
+	root:ClearAllPoints()
+	if edge == "BOTTOM" then
+		root:SetPoint("TOPLEFT", self.frame, "TOPLEFT", 0, 0)
+		root:SetPoint("BOTTOMRIGHT", region, "TOPRIGHT", x, 0)
+	elseif edge == "TOP" then
+		root:SetPoint("BOTTOMRIGHT", self.frame, "BOTTOMRIGHT", 0, 0)
+		root:SetPoint("TOPLEFT", region, "BOTTOMLEFT", x, 0)
+	else
+		root:SetAllPoints(self.frame)
+	end
+end
+
+function TextBar:SetKnownSize(width, height)
+	self.bar:SetKnownSize(width, height)
 end
 
 function TextBar:GetText(key)

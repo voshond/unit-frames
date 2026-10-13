@@ -1176,6 +1176,7 @@ option auras.debuffs.lineSize type="range" label="Row / column length" default=0
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
+option auraBar.collapse type="toggle" label="Collapse into health when empty" default=true tooltip=#74623da9
 option auraBar.height type="range" label="Row height" default=18 min=2 max=100 step=1 tooltip=#7e741a40 hint=#032668bf
 option auraBar.padding type="range" label="Inner padding" default=0 min=0 max=20 step=1
 option auraBar.fadeIn type="toggle" label="Fade in new auras" default=true tooltip=#5b290d2d
@@ -1276,6 +1277,7 @@ default auraBar.buffs.max = 16
 default auraBar.buffs.maxDuration = 0
 default auraBar.buffs.size = 32
 default auraBar.buffs.sort = "expiration"
+default auraBar.collapse = true
 default auraBar.countSize = 10
 default auraBar.debuffs.enabled = true
 default auraBar.debuffs.entrySide = "opposite"
@@ -1656,6 +1658,7 @@ resolved auraBar.buffs.max = 16
 resolved auraBar.buffs.maxDuration = 0
 resolved auraBar.buffs.size = 32
 resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.collapse = true
 resolved auraBar.countSize = 10
 resolved auraBar.debuffs.enabled = true
 resolved auraBar.debuffs.entrySide = "opposite"
@@ -2122,6 +2125,7 @@ resolved resting.enabled = true
 resolved resting.period = 4
 resolved spacing = 1
 resolved width = 230
+definition auraBar.collapsible = true
 definition auraBar.defaults = {}
 definition auras.cancelBuffs = true
 definition auras.defaults = {}
@@ -2505,6 +2509,7 @@ option auras.debuffs.lineSize type="range" label="Row / column length" default=0
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
+option auraBar.collapse type="toggle" label="Collapse into health when empty" default=true tooltip=#74623da9
 option auraBar.height type="range" label="Row height" default=18 min=2 max=100 step=1 tooltip=#7e741a40 hint=#032668bf
 option auraBar.padding type="range" label="Inner padding" default=0 min=0 max=20 step=1
 option auraBar.fadeIn type="toggle" label="Fade in new auras" default=true tooltip=#5b290d2d
@@ -2605,6 +2610,7 @@ default auraBar.buffs.max = 16
 default auraBar.buffs.maxDuration = 0
 default auraBar.buffs.size = 32
 default auraBar.buffs.sort = "expiration"
+default auraBar.collapse = true
 default auraBar.countSize = 10
 default auraBar.debuffs.enabled = true
 default auraBar.debuffs.entrySide = "opposite"
@@ -2920,6 +2926,7 @@ resolved auraBar.buffs.max = 16
 resolved auraBar.buffs.maxDuration = 0
 resolved auraBar.buffs.size = 32
 resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.collapse = true
 resolved auraBar.countSize = 10
 resolved auraBar.debuffs.enabled = true
 resolved auraBar.debuffs.entrySide = "opposite"
@@ -3299,6 +3306,7 @@ resolved readyCheckIcon.order = 1
 resolved readyCheckIcon.size = 22
 resolved spacing = 1
 resolved width = 170
+definition auraBar.collapsible = true
 definition auraBar.defaults = {}
 definition auras.defaults.buffs.max = 6
 definition auras.defaults.buffs.size = 18
@@ -3704,6 +3712,7 @@ option auras.debuffs.lineSize type="range" label="Row / column length" default=0
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
+option auraBar.collapse type="toggle" label="Collapse into health when empty" default=true tooltip=#74623da9
 option auraBar.height type="range" label="Row height" default=18 min=2 max=100 step=1 tooltip=#7e741a40 hint=#032668bf
 option auraBar.padding type="range" label="Inner padding" default=0 min=0 max=20 step=1
 option auraBar.fadeIn type="toggle" label="Fade in new auras" default=true tooltip=#5b290d2d
@@ -3804,6 +3813,7 @@ default auraBar.buffs.max = 16
 default auraBar.buffs.maxDuration = 0
 default auraBar.buffs.size = 32
 default auraBar.buffs.sort = "expiration"
+default auraBar.collapse = true
 default auraBar.countSize = 10
 default auraBar.debuffs.enabled = true
 default auraBar.debuffs.entrySide = "opposite"
@@ -4117,6 +4127,7 @@ resolved auraBar.buffs.max = 16
 resolved auraBar.buffs.maxDuration = 0
 resolved auraBar.buffs.size = 32
 resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.collapse = true
 resolved auraBar.countSize = 10
 resolved auraBar.debuffs.enabled = true
 resolved auraBar.debuffs.entrySide = "opposite"
@@ -4496,6 +4507,7 @@ resolved readyCheckIcon.order = 1
 resolved readyCheckIcon.size = 22
 resolved spacing = 1
 resolved width = 230
+definition auraBar.collapsible = true
 definition auraBar.defaults = {}
 definition auras.defaults = {}
 definition castbar.defaults.border.enabled = false
@@ -4891,6 +4903,7 @@ option auras.debuffs.lineSize type="range" label="Row / column length" default=0
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
+option auraBar.collapse type="toggle" label="Collapse into health when empty" default=true tooltip=#74623da9
 option auraBar.height type="range" label="Row height" default=18 min=2 max=100 step=1 tooltip=#7e741a40 hint=#032668bf
 option auraBar.padding type="range" label="Inner padding" default=0 min=0 max=20 step=1
 option auraBar.fadeIn type="toggle" label="Fade in new auras" default=true tooltip=#5b290d2d
@@ -4991,6 +5004,7 @@ default auraBar.buffs.max = 16
 default auraBar.buffs.maxDuration = 0
 default auraBar.buffs.size = 32
 default auraBar.buffs.sort = "expiration"
+default auraBar.collapse = true
 default auraBar.countSize = 10
 default auraBar.debuffs.enabled = true
 default auraBar.debuffs.entrySide = "opposite"
@@ -5306,6 +5320,7 @@ resolved auraBar.buffs.max = 16
 resolved auraBar.buffs.maxDuration = 0
 resolved auraBar.buffs.size = 32
 resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.collapse = true
 resolved auraBar.countSize = 10
 resolved auraBar.debuffs.enabled = true
 resolved auraBar.debuffs.entrySide = "opposite"
@@ -5685,6 +5700,7 @@ resolved readyCheckIcon.order = 1
 resolved readyCheckIcon.size = 22
 resolved spacing = 1
 resolved width = 140
+definition auraBar.collapsible = true
 definition auraBar.defaults = {}
 definition auras.defaults.buffs.max = 8
 definition auras.defaults.buffs.size = 16
@@ -6082,6 +6098,7 @@ option auras.debuffs.lineSize type="range" label="Row / column length" default=0
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
+option auraBar.collapse type="toggle" label="Collapse into health when empty" default=true tooltip=#74623da9
 option auraBar.height type="range" label="Row height" default=18 min=2 max=100 step=1 tooltip=#7e741a40 hint=#032668bf
 option auraBar.padding type="range" label="Inner padding" default=0 min=0 max=20 step=1
 option auraBar.fadeIn type="toggle" label="Fade in new auras" default=true tooltip=#5b290d2d
@@ -6182,6 +6199,7 @@ default auraBar.buffs.max = 16
 default auraBar.buffs.maxDuration = 0
 default auraBar.buffs.size = 32
 default auraBar.buffs.sort = "expiration"
+default auraBar.collapse = true
 default auraBar.countSize = 10
 default auraBar.debuffs.enabled = true
 default auraBar.debuffs.entrySide = "opposite"
@@ -6495,6 +6513,7 @@ resolved auraBar.buffs.max = 16
 resolved auraBar.buffs.maxDuration = 0
 resolved auraBar.buffs.size = 32
 resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.collapse = true
 resolved auraBar.countSize = 10
 resolved auraBar.debuffs.enabled = true
 resolved auraBar.debuffs.entrySide = "opposite"
@@ -6874,6 +6893,7 @@ resolved readyCheckIcon.order = 1
 resolved readyCheckIcon.size = 22
 resolved spacing = 1
 resolved width = 200
+definition auraBar.collapsible = true
 definition auraBar.defaults = {}
 definition auras.defaults = {}
 definition castbar.defaults.border.enabled = false
@@ -7263,6 +7283,7 @@ option auras.debuffs.lineSize type="range" label="Row / column length" default=0
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
+option auraBar.collapse type="toggle" label="Collapse into health when empty" default=true tooltip=#74623da9
 option auraBar.height type="range" label="Row height" default=18 min=2 max=100 step=1 tooltip=#7e741a40 hint=#032668bf
 option auraBar.padding type="range" label="Inner padding" default=0 min=0 max=20 step=1
 option auraBar.fadeIn type="toggle" label="Fade in new auras" default=true tooltip=#5b290d2d
@@ -7363,6 +7384,7 @@ default auraBar.buffs.max = 16
 default auraBar.buffs.maxDuration = 0
 default auraBar.buffs.size = 32
 default auraBar.buffs.sort = "expiration"
+default auraBar.collapse = true
 default auraBar.countSize = 10
 default auraBar.debuffs.enabled = true
 default auraBar.debuffs.entrySide = "opposite"
@@ -7678,6 +7700,7 @@ resolved auraBar.buffs.max = 16
 resolved auraBar.buffs.maxDuration = 0
 resolved auraBar.buffs.size = 32
 resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.collapse = true
 resolved auraBar.countSize = 10
 resolved auraBar.debuffs.enabled = true
 resolved auraBar.debuffs.entrySide = "opposite"
@@ -8057,6 +8080,7 @@ resolved readyCheckIcon.order = 1
 resolved readyCheckIcon.size = 22
 resolved spacing = 1
 resolved width = 140
+definition auraBar.collapsible = true
 definition auraBar.defaults = {}
 definition auras.defaults.buffs.max = 8
 definition auras.defaults.buffs.size = 16
@@ -9188,6 +9212,7 @@ option auras.debuffs.lineSize type="range" label="Row / column length" default=0
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
+option auraBar.collapse type="toggle" label="Collapse into health when empty" default=true tooltip=#74623da9
 option auraBar.height type="range" label="Row height" default=18 min=2 max=100 step=1 tooltip=#7e741a40 hint=#032668bf
 option auraBar.padding type="range" label="Inner padding" default=0 min=0 max=20 step=1
 option auraBar.fadeIn type="toggle" label="Fade in new auras" default=true tooltip=#5b290d2d
@@ -9263,6 +9288,7 @@ default auraBar.buffs.max = 16
 default auraBar.buffs.maxDuration = 0
 default auraBar.buffs.size = 32
 default auraBar.buffs.sort = "expiration"
+default auraBar.collapse = true
 default auraBar.countSize = 10
 default auraBar.debuffs.enabled = true
 default auraBar.debuffs.entrySide = "opposite"
@@ -9556,6 +9582,7 @@ resolved auraBar.buffs.max = 16
 resolved auraBar.buffs.maxDuration = 0
 resolved auraBar.buffs.size = 32
 resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.collapse = true
 resolved auraBar.countSize = 10
 resolved auraBar.debuffs.enabled = true
 resolved auraBar.debuffs.entrySide = "opposite"
@@ -9913,6 +9940,7 @@ resolved readyCheck.readyColor = {0.15,0.8,0.15,1}
 resolved readyCheck.waitingColor = {0.5,0.5,0.5,1}
 resolved spacing = 1
 resolved width = 150
+definition auraBar.collapsible = true
 definition auraBar.defaults = {}
 definition auras.clickThrough = true
 definition auras.defaults.buffs.alignment = "end"
@@ -10317,6 +10345,7 @@ option auras.debuffs.lineSize type="range" label="Row / column length" default=0
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
+option auraBar.collapse type="toggle" label="Collapse into health when empty" default=true tooltip=#74623da9
 option auraBar.height type="range" label="Row height" default=18 min=2 max=100 step=1 tooltip=#7e741a40 hint=#032668bf
 option auraBar.padding type="range" label="Inner padding" default=0 min=0 max=20 step=1
 option auraBar.fadeIn type="toggle" label="Fade in new auras" default=true tooltip=#5b290d2d
@@ -10392,6 +10421,7 @@ default auraBar.buffs.max = 16
 default auraBar.buffs.maxDuration = 0
 default auraBar.buffs.size = 32
 default auraBar.buffs.sort = "expiration"
+default auraBar.collapse = true
 default auraBar.countSize = 10
 default auraBar.debuffs.enabled = true
 default auraBar.debuffs.entrySide = "opposite"
@@ -10679,6 +10709,7 @@ resolved auraBar.buffs.max = 16
 resolved auraBar.buffs.maxDuration = 0
 resolved auraBar.buffs.size = 32
 resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.collapse = true
 resolved auraBar.countSize = 10
 resolved auraBar.debuffs.enabled = true
 resolved auraBar.debuffs.entrySide = "opposite"
@@ -11030,6 +11061,7 @@ resolved range.outsideAlpha = 0.55
 resolved range.spell = ""
 resolved spacing = 1
 resolved width = 85
+definition auraBar.collapsible = true
 definition auraBar.defaults = {}
 definition auras.clickThrough = true
 definition auras.defaults.buffs.max = 8

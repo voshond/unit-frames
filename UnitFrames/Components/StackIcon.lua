@@ -9,6 +9,9 @@ build their schema with StackIcon.BuildIconSchema.
   icon:Layout(context)   join the frame's stack (UnitFrame:Layout calls this)
   icon:Reflow()          after the art was shown or hidden
   icon:GetWidget()       the texture for oUF
+
+spec.nativeLayout: the frame's texts follow native geometry, so the icon is
+created with the forbidden layout aspect to be able to sit before the name.
 ]]
 local StackIcon = ns.Component:Extend("StackIcon")
 
@@ -20,8 +23,8 @@ function StackIcon.BuildIconSchema(defaults)
 	return ns.IconPlacement.BuildSchema({ defaults = defaults })
 end
 
-function StackIcon:OnCreate(parent)
-	self.frame = CreateFrame("Frame", nil, parent)
+function StackIcon:OnCreate(parent, spec)
+	self.frame = CreateFrame("Frame", nil, parent, spec.nativeLayout and "DisableUntrustedLayoutScriptsTemplate" or nil)
 	self.texture = self.frame:CreateTexture(nil, "OVERLAY")
 	self.texture:SetAllPoints(self.frame)
 	self.texture:Hide()
