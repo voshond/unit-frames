@@ -608,6 +608,55 @@ describe("Player buffs and debuffs", function()
 		assert.equals(0, #Group("buffs").frames[1].ufDispelTextures)
 	end)
 
+	-- Natively these rebuild every aura or request relayout even when unchanged.
+	it("sends only changed candidate filters, sort and group layout to native containers", function()
+		local calls = {}
+		for _, kind in ipairs({ "buffs", "debuffs" }) do
+			local container = Container(kind)
+			for _, method in ipairs({ "SetAuraGroupCandidateFilters", "SetAuraGroupSortMethod", "SetAuraGroupLayout" }) do
+				local original = container[method]
+				container[method] = function(...)
+					calls[#calls + 1] = method
+					return original(...)
+				end
+			end
+		end
+		ns.Units:Refresh("player")
+		ns.Config:SetUnitValue("player", "auras.showCount", false)
+		assert.same({}, calls)
+		ns.Config:SetUnitValue("player", "auras.buffs.maxDuration", 60)
+		assert.same({ "SetAuraGroupCandidateFilters" }, calls)
+		assert.same({ maxDuration = 60 }, Group("buffs").candidateFilters)
+		calls = {}
+		ns.Config:SetUnitValue("player", "auras.debuffs.sort", "default")
+		assert.same({ "SetAuraGroupSortMethod" }, calls)
+		calls = {}
+		ns.Config:SetUnitValue("player", "auras.buffs.size", 28)
+		assert.same({ "SetAuraGroupLayout" }, calls)
+		assert.equals(28, Group("buffs").layout.elementWidth)
+	end)
+
+	-- Each engine registration copies its options and redraws the button.
+	it("re-registers dispel textures only when their artwork, size or colours change", function()
+		local button = Group("debuffs").frames[1]
+		local adds, add = 0, button.AddDispelTypeTexture
+		button.AddDispelTypeTexture = function(...) adds = adds + 1; return add(...) end
+		local tinted = button.ufDispelTextures[1]
+		ns.Units:Refresh("player")
+		ns.Config:SetUnitValue("player", "auras.showCount", false)
+		assert.equals(0, adds)
+		assert.equals(tinted, button.ufDispelTextures[1])
+		assert.same({ AuraUtil.GetAuraBorderColor("Magic"):GetRGBA() }, tinted.__state.vertexColor)
+		assert.same({ 0, 0, 0, 0 }, button.ufIconFrame.__state.backdropBorderColor,
+			"the icon frame border stays hidden under the dispel border")
+		ns.Config:SetUnitValue("player", "auras.dispelColors.Curse", { 1, 1, 0, 1 })
+		assert.equals(8, adds)
+		ns.Config:SetUnitValue("player", "auras.debuffs.size", 30)
+		assert.equals(16, adds)
+		ns.Config:SetUnitValue("player", "auras.border.size", 6)
+		assert.equals(24, adds)
+	end)
+
 	it("updates the engine palette and restores the fixed colour when type colouring is off", function()
 		local button = Group("debuffs").frames[1]
 		local magic, fixed = { 1, 0.4, 0.1, 1 }, { 0.2, 0.8, 0.7, 0.5 }

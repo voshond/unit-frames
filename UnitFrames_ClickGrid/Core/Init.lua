@@ -27,7 +27,7 @@ function CG:RequestRefresh()
 		self.pending = true
 		return
 	end
-	self.pending = nil
+	self.pending, self.pendingBindings = nil, nil
 	for preview in pairs(self.retiredPreviews or {}) do
 		preview:ReleaseComponents()
 		self.retiredPreviews[preview] = nil
@@ -37,13 +37,14 @@ end
 
 -- Binding edits and spell/macro updates only touch click attributes: no
 -- restyle, element update or header relayout. Combat defers to the full
--- refresh on PLAYER_REGEN_ENABLED.
+-- refresh on PLAYER_REGEN_ENABLED only when a style change is also pending.
 function CG:RequestBindings(notify)
 	if not self.started then return end
 	if InCombatLockdown() then
-		self.pending = true
+		self.pendingBindings = true
 		return
 	end
+	self.pendingBindings = nil
 	self:ApplyBindings(notify)
 end
 
@@ -62,11 +63,12 @@ events:SetScript("OnEvent", function(_, event, name)
 	elseif event == "PLAYER_LOGIN" then
 		CG:Start()
 	elseif event == "PLAYER_REGEN_ENABLED" then
-		if not CG.started then CG:Start() elseif CG.pending then CG:RequestRefresh() end
-	elseif event == "SPELLS_CHANGED" or event == "UPDATE_MACROS" then
-		CG:RequestBindings(true)
+		if not CG.started then CG:Start()
+		elseif CG.pending then CG:RequestRefresh()
+		elseif CG.pendingBindings then CG:RequestBindings(true) end
 	elseif event ~= "PLAYER_SPECIALIZATION_CHANGED" or name == "player" then
-		CG:RequestRefresh()
+		-- Spells, macros, talents and specialization select bindings, not styles.
+		CG:RequestBindings(true)
 	end
 end)
 

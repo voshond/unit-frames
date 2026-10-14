@@ -78,6 +78,12 @@ have not been verified.
 See [DEVELOPMENT.md](DEVELOPMENT.md) for setup, tests, the code map and
 implementation notes.
 
+For optional performance diagnostics, `/uf perf` reports loaded addon memory
+and profiler metrics. `/uf perf watch 60` observes a bounded window;
+`/uf perf cancel` stops it. Outside combat, `/uf perf measure units` actively
+measures a unit refresh; `clickgrid`, `preview` and `schema` are also supported.
+Diagnostics do not load Workbench and stay off until requested.
+
 ## License
 
 Original UnitFrames code and documentation are source-available under the

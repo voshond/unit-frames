@@ -85,6 +85,8 @@ end
 
 -- Points oUF elements and tags at the current frame state, rows and parts.
 function Units:Bind(frame)
+	ns.Perf:Count("unitBind")
+	ns.Perf:Begin("bind")
 	local uf, Drivers = frame.uf, ns.UnitDrivers
 	-- Companions attach their own ready check icon later: rebind on changes.
 	local readyCheck = uf:GetReadyCheck()
@@ -103,6 +105,19 @@ function Units:Bind(frame)
 	end
 	-- Element enable/disable can hide artwork after the component layout.
 	uf:GetDecorations():Reflow()
+	ns.Perf:End("bind")
+end
+
+-- oUF's own refresh of every element and tag on a live frame.
+function Units:UpdateFrame(frame, reason)
+	local Perf = ns.Perf
+	Perf:Count("updateAllElements")
+	Perf:Begin("oUF elements")
+	frame:UpdateAllElements(reason)
+	Perf:End("oUF elements")
+	Perf:Begin("oUF tags")
+	frame:UpdateTags()
+	Perf:End("oUF tags")
 end
 
 -- Re-applies config to a live frame and refreshes everything shown on it.
@@ -113,8 +128,7 @@ function Units:Refresh(unit)
 	end
 	frame.uf:Apply(ns.Config:GetUnitConfig(unit))
 	self:Bind(frame)
-	frame:UpdateAllElements("UnitFramesRefresh")
-	frame:UpdateTags()
+	self:UpdateFrame(frame, "UnitFramesRefresh")
 end
 
 -- Copy effective settings, not just overrides: the units have different

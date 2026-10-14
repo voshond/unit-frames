@@ -45,7 +45,8 @@ function TextBar:OnCreate(parent, spec)
 	local host = self.bar:GetTextParent()
 	self.texts = {}
 	for _, slot in ipairs(TextBar.SLOTS) do
-		self.texts[slot.key] = self:Own(Text:New(host, {}, { host = host, formats = spec.formats, context = TextContext(spec) }))
+		self.texts[slot.key] = self:Own(Text:New(host, {}, { host = host, formats = spec.formats,
+			context = TextContext(spec), schemaOwner = spec.schemaOwner }))
 	end
 end
 

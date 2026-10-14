@@ -57,33 +57,48 @@ local function ClassIconAspect()
 	return classAspect
 end
 
-function Portrait:OnCreate(parent)
+function Portrait:OnCreate(parent, spec)
 	self.frame = CreateFrame("Frame", nil, parent, "BackdropTemplate")
 	self.background = self.frame:CreateTexture(nil, "BACKGROUND")
-	self.model = CreateFrame("PlayerModel", nil, self.frame)
-	-- oUF can replace the model on unit/visibility changes; restore its material
-	-- opacity after that update as well as when our host opacity changes.
-	self.model.PostUpdate = function() self:SyncAlpha() end
-	-- 2D/class artwork clips to this viewport, not the root, so borders,
-	-- indicators and cast overlays anchored to the root keep their geometry.
-	self.viewport = CreateFrame("Frame", nil, self.frame)
-	self.viewport:SetClipsChildren(true)
-	self.texture = self.viewport:CreateTexture(nil, "ARTWORK")
-	self.texture:SetPoint("CENTER", self.viewport, "CENTER")
-	-- oUF replaces the artwork (SetPortraitTexture/SetAtlas) on unit updates.
-	self.texture.PostUpdate = function() self:PresentArtwork() end
+	-- Deferred compositions can prepare selected artwork at style time.
+	-- Other callers keep both backends available for combat style changes.
+	if not spec.lazyBackends then self:Prepare("3D"); self:Prepare("2D") end
+end
+
+-- Called during style preparation, never from live data/getters. Backends
+-- remain owned once created, so mode and enable toggles reuse native objects.
+function Portrait:Prepare(mode)
+	if mode == "3D" then
+		if self.model then return end
+		self.model = CreateFrame("PlayerModel", nil, self.frame)
+		-- oUF can replace the model on unit/visibility changes; restore its material
+		-- opacity after that update as well as when our host opacity changes.
+		self.model.PostUpdate = function() self:SyncAlpha() end
+	else
+		if self.texture then return end
+		-- 2D/class artwork clips to this viewport, not the root, so borders,
+		-- indicators and cast overlays anchored to the root keep their geometry.
+		self.viewport = CreateFrame("Frame", nil, self.frame)
+		self.viewport:SetClipsChildren(true)
+		self.texture = self.viewport:CreateTexture(nil, "ARTWORK")
+		self.texture:SetPoint("CENTER", self.viewport, "CENTER")
+		-- oUF replaces the artwork (SetPortraitTexture/SetAtlas) on unit updates.
+		self.texture.PostUpdate = function() self:PresentArtwork() end
+	end
 end
 
 function Portrait:OnApply(cfg)
 	Backdrop.ApplyTo(self.frame, cfg.border)
 	Backdrop.Inset(self.background, self.frame, cfg.border)
-	Backdrop.Inset(self.model, self.frame, cfg.border)
-	Backdrop.Inset(self.viewport, self.frame, cfg.border)
 	self.background:SetColorTexture(Util.UnpackColor(cfg.background))
+	if cfg.enabled then self:Prepare(cfg.mode) end
+	if self.model then Backdrop.Inset(self.model, self.frame, cfg.border) end
+	if self.viewport then Backdrop.Inset(self.viewport, self.frame, cfg.border) end
 
 	local is3D = cfg.mode == "3D"
-	self.model:SetShown(is3D)
-	self.texture:SetShown(not is3D)
+	if self.model then self.model:SetShown(is3D) end
+	if self.texture then self.texture:SetShown(not is3D) end
+	if not self.texture then self:SyncAlpha(); return end
 	-- oUF's Portrait element shows the class icon on textures with showClass.
 	self.texture.showClass = cfg.mode == "class"
 	-- Leaving 2D drops its crop once; the next artwork (atlas) brings its own
@@ -117,7 +132,7 @@ end
 
 function Portrait:LayoutArtwork()
 	local cfg = self.resolved
-	if self.released or not cfg or cfg.mode == "3D" then
+	if self.released or not cfg or cfg.mode == "3D" or not self.texture then
 		if self.viewport then self.viewport:SetShown(false) end
 		return
 	end
@@ -144,7 +159,8 @@ end
 -- The owner's range fade: the native range results (possibly secret) and the
 -- out-of-range alpha, or nil without a fade.
 function Portrait:SetRangeFade(inRange, checkedRange, outsideAlpha)
-	self.rangeFade = inRange ~= nil and { inRange, checkedRange, outsideAlpha } or nil
+	self.hasRangeFade = inRange ~= nil
+	self.rangeInRange, self.rangeChecked, self.rangeOutsideAlpha = inRange, checkedRange, outsideAlpha
 	self:SyncAlpha()
 end
 
@@ -157,22 +173,22 @@ no effective alpha and secret alphas, which SetModelAlpha refuses):
                   exactly like the unit frame's own fade (SetAlphaFromBoolean)
 ]]
 function Portrait:SyncAlpha()
-	if self.released or not self.resolved or self.resolved.mode ~= "3D" then
+	if self.released or not self.resolved or self.resolved.mode ~= "3D" or not self.model then
 		return
 	end
-	local model, fade = self.model, self.rangeFade
+	local model = self.model
 	model:SetModelAlpha(self.coverAlpha or 1)
-	if fade then
-		model:SetAlphaFromBoolean(fade[1], 1, fade[3])
-		model:SetAlphaFromBoolean(fade[2], model:GetAlpha(), 1)
+	if self.hasRangeFade then
+		model:SetAlphaFromBoolean(self.rangeInRange, 1, self.rangeOutsideAlpha)
+		model:SetAlphaFromBoolean(self.rangeChecked, model:GetAlpha(), 1)
 	else
 		model:SetAlpha(1)
 	end
 end
 
 function Portrait:OnRelease()
-	self.model.PostUpdate = nil
-	self.texture.PostUpdate = nil
+	if self.model then self.model.PostUpdate = nil end
+	if self.texture then self.texture.PostUpdate = nil end
 end
 
 -- The region oUF's Portrait element should drive for the current mode.

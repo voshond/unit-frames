@@ -252,6 +252,7 @@ function Methods:GetWidth() return self.__state.width end
 function Methods:GetHeight() return self.__state.height end
 function Methods:SetScale(scale) self.__state.scale = scale end
 function Methods:GetScale() return self.__state.scale or 1 end
+function Methods:GetEffectiveScale() return self.__state.scale or 1 end
 
 function Methods:SetPoint(point, relativeTo, relativePoint, x, y)
 	if type(relativeTo) == "number" then
@@ -457,6 +458,8 @@ local borderPieces = { "TopLeftCorner", "TopRightCorner", "BottomLeftCorner", "B
 	"TopEdge", "BottomEdge", "LeftEdge", "RightEdge" }
 function Methods:SetBackdrop(info)
 	if not info or not (info.edgeFile or info.bgFile) then self:ClearBackdrop(); return end
+	-- BackdropTemplateMixin:SetBackdrop ignores the info table it already holds.
+	if self.__state.backdrop == info then return end
 	self.__state.backdrop = info
 	for _, key in ipairs(borderPieces) do
 		local texture = rawget(self, key) or self:CreateTexture(nil, "BORDER")
@@ -465,6 +468,10 @@ function Methods:SetBackdrop(info)
 	end
 end
 function Methods:GetBackdrop() return self.__state.backdrop end
+function Methods:GetEdgeSize()
+	local size = self.__state.backdrop.edgeSize
+	return size and size > 0 and size or 39
+end
 function Methods:ClearBackdrop()
 	self.__state.backdrop = nil
 	for _, key in ipairs(borderPieces) do
@@ -877,6 +884,17 @@ function Mock.Install()
 			return flow
 		end,
 	}
+	-- Blizzard_SharedXML/Backdrop.lua: UV setup is Lua arithmetic on the
+	-- frame's dimensions, so secret sizes fail here as in the client.
+	_G.BackdropTemplateMixin = {
+		SetupTextureCoordinates = function(self)
+			local edgeSize, scale = self:GetEdgeSize(), self:GetEffectiveScale()
+			self.__state.backdropRepeat = {
+				math.max(0, self:GetWidth() / edgeSize * scale - 2),
+				math.max(0, self:GetHeight() / edgeSize * scale - 2),
+			}
+		end,
+	}
 	_G.AuraUtil = {
 		GetAuraBorderColor = function(kind)
 			local colors = { Magic = { 0.2, 0.6, 1 }, Curse = { 0.6, 0, 1 }, Disease = { 0.6, 0.4, 0 }, Poison = { 0, 0.6, 0 } }
@@ -891,14 +909,56 @@ function Mock.Install()
 	for _, name in ipairs({ "LFGRole", "CustomAuraButtonDispelTypeTextureStyle", "StatusBarInterpolation",
 		"UnitDamageAbsorbClampMode", "UnitMaximumHealthMode", "StatusBarTimerDirection",
 		"SecondsFormatterAbbreviation", "SecondsFormatterInterval", "SecondsFormatterRounding",
-		"SecondsFormatterIntervalWhitespace" }) do
+		"SecondsFormatterIntervalWhitespace", "AddOnProfilerMetric" }) do
 		local values = assert(API.Snapshot().enums[name], "Enum." .. name .. " is not a client enum")
 		_G.Enum[name] = {}
 		for field, value in pairs(values) do _G.Enum[name][field] = value end
 	end
+	Mock.loadedAddons, Mock.addonMemory, Mock.profilerMetrics = {}, {}, {}
+	Mock.profilerEnabled, Mock.memoryUpdates = false, 0
+	_G.UpdateAddOnMemoryUsage = function() Mock.memoryUpdates = Mock.memoryUpdates + 1 end
+	_G.GetAddOnMemoryUsage = function(name) return Mock.addonMemory[name] or 0 end
+	_G.C_AddOnProfiler = {
+		IsEnabled = function() return Mock.profilerEnabled end,
+		GetAddOnMetric = function(name, metric)
+			local values = Mock.profilerMetrics[name]
+			return values and values[metric] or 0
+		end,
+		GetOverallMetric = function(metric)
+			local values = Mock.profilerMetrics.overall
+			return values and values[metric] or 0
+		end,
+		-- Offline stand-in figures: CPU clock and Lua heap growth (GC paused).
+		MeasureCall = function(func, ...)
+			local events, start, heap = {}, os.clock(), collectgarbage("count")
+			local function Snapshot(results)
+				results.elapsedMilliseconds = (os.clock() - start) * 1000
+				results.elapsedTicks = 0
+				results.allocatedBytes = math.max(0, collectgarbage("count") - heap) * 1024
+				results.deallocatedBytes = 0
+				return results
+			end
+			local outer = Mock.measuredEvents
+			Mock.measuredEvents = { record = function(name) events[#events + 1] = Snapshot({ name = name }) end }
+			collectgarbage("stop")
+			local returns = { pcall(func, ...) }
+			collectgarbage("restart")
+			Mock.measuredEvents = outer
+			if not returns[1] then error(returns[2], 0) end
+			return Snapshot({ events = events }), unpack(returns, 2)
+		end,
+		AddMeasuredCallEvent = function(name)
+			assert(type(name) == "string", "AddMeasuredCallEvent requires a name")
+			if Mock.measuredEvents then Mock.measuredEvents.record(name) end
+		end,
+	}
 	_G.C_AddOns = {
 		GetAddOnMetadata = function() return "test" end,
 		LoadAddOn = function() return true end,
+		IsAddOnLoaded = function(name)
+			local loaded = Mock.loadedAddons[name] == true
+			return loaded, loaded
+		end,
 	}
 	_G.C_UIFileAsset = { IsKnownFile = function() return true end }
 	-- Atlas metadata (AtlasInfo); tests may override entries by atlas name.

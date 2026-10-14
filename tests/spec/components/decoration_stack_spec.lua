@@ -30,6 +30,30 @@ describe("Decoration stacks", function()
 		return { region:GetPoint() }
 	end
 
+	it("reuses scratch storage and leaves unchanged geometry alone", function()
+		local icon, host, member = Join("extra")
+		icon:Show()
+		stack:Reflow()
+		local item, group = stack.items.extra, stack.groups.TOP
+		local writes, point = 0, host.SetPoint
+		host.SetPoint = function(self, ...)
+			writes = writes + 1
+			return point(self, ...)
+		end
+		for _ = 1, 100 do stack:Reflow() end
+		assert.equals(0, writes)
+		assert.equals(item, stack.items.extra)
+		assert.equals(group, stack.groups.TOP)
+		member.x = 3
+		stack:Reflow()
+		assert.equals(1, writes)
+		member.size = 14
+		stack:Reflow()
+		assert.equals(14, host:GetWidth())
+		member.present = function() return Mock.Secret(false) end
+		assert.has_no_error(function() stack:Reflow() end)
+	end)
+
 	it("groups companion icons with the raid marker through frame layouts and order changes", function()
 		local icon, host = Join("extra")
 		icon:Show()

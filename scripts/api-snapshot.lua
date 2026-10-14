@@ -172,6 +172,11 @@ for _, path in ipairs(Lines("find '" .. sourceDir .. "/Interface' -name '*.lua' 
 			elseif mixin and words[method] then
 				local first = snapshot.lua.methods[method]
 				if not first or mixin < first then snapshot.lua.methods[method] = mixin end
+				-- The mock may also define the mixin table itself ("BackdropTemplateMixin").
+				if mixin:match("^[A-Z]") and mockWords[mixin] and mockWords[method] then
+					local full = mixin .. "." .. method
+					snapshot.lua.globals[full] = snapshot.lua.globals[full] or relative
+				end
 			end
 			if not line:match("^%s*%-%-") then
 				for call in (" " .. line):gmatch("[^%w_.:]([%w_]+)%s*%(") do

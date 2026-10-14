@@ -72,6 +72,7 @@ end
 
 function Stack:Init()
 	self.members = {}
+	self.items, self.groups, self.ordered = {}, {}, {}
 end
 
 function Stack:SetContext(context)
@@ -84,14 +85,16 @@ end
 
 function Stack:Remove(key)
 	self.members[key] = nil
+	self.items[key] = nil
+	self.orderDirty = true
 end
 
 local function Present(member)
 	if member.present then
 		local present = member.present()
-		return present == nil or present
+		return issecretvalue(present) or present == nil or present
 	end
-	for _, widget in ipairs(member.widgets or {}) do
+	for _, widget in ipairs(member.widgets or member) do
 		local shown = widget:IsShown()
 		if issecretvalue(shown) or shown then return true end
 	end
@@ -117,35 +120,40 @@ end
 local function Place(item, context, start, total, first, last)
 	local member, size, host = item.member, item.size, item.member.host
 	local anchor, x, y = member.anchor, member.x or 0, member.y or 0
-	host:ClearAllPoints()
+	local point, relative, relativePoint
 	if anchor == "NAME" then
-		host:SetPoint("RIGHT", context.name:GetFrame(), "LEFT", -(total - start - size), 0)
-		return
-	end
-	local layout = LAYOUT[anchor]
-	local along
-	if layout.portrait then
-		-- Offset of the icon's own point from the group's matching point.
-		along = layout.pin == "first" and start or layout.pin == "last" and start + size - total
-			or start + (size - total) / 2
+		point, relative, relativePoint, x, y = "RIGHT", context.name:GetFrame(), "LEFT", -(total - start - size), 0
 	else
-		local pin = layout.pin == "first" and first / 2 or layout.pin == "last" and total - last / 2 or total / 2
-		along = start + size / 2 - pin
+		local layout = LAYOUT[anchor]
+		local along
+		if layout.portrait then
+			-- Offset of the icon's own point from the group's matching point.
+			along = layout.pin == "first" and start or layout.pin == "last" and start + size - total
+				or start + (size - total) / 2
+		else
+			local pin = layout.pin == "first" and first / 2 or layout.pin == "last" and total - last / 2 or total / 2
+			along = start + size / 2 - pin
+		end
+		point = layout.portrait and layout.point or "CENTER"
+		relative = layout.portrait and context.portrait.frame or context.root
+		relativePoint = layout.point
+		if layout.axis == "y" then y = -along + y else x = along + x end
 	end
-	local point = layout.portrait and layout.point or "CENTER"
-	local relative = layout.portrait and context.portrait.frame or context.root
-	if layout.axis == "y" then
-		host:SetPoint(point, relative, layout.point, x, -along + y)
-	else
-		host:SetPoint(point, relative, layout.point, along + x, y)
+	-- Only addon-computed geometry is compared, never native bounds.
+	if item.host ~= host or item.point ~= point or item.relative ~= relative
+		or item.relativePoint ~= relativePoint or item.x ~= x or item.y ~= y then
+		host:ClearAllPoints()
+		host:SetPoint(point, relative, relativePoint, x, y)
+		item.host, item.point, item.relative, item.relativePoint, item.x, item.y = host, point, relative, relativePoint, x, y
 	end
 end
 
+local function Order(a, b)
+	if a.member.order ~= b.member.order then return (a.member.order or 0) < (b.member.order or 0) end
+	return a.key < b.key
+end
+
 local function Arrange(items, context, anchor)
-	table.sort(items, function(a, b)
-		if a.member.order ~= b.member.order then return (a.member.order or 0) < (b.member.order or 0) end
-		return a.key < b.key
-	end)
 	local position = 0
 	for _, item in ipairs(items) do
 		item.start = position
@@ -161,25 +169,53 @@ end
 
 function Stack:Reflow()
 	if self.released then return end
-	local context, groups = self.context, {}
+	ns.Perf:Count("decorationReflow")
+	local context, groups = self.context, self.groups
 	for key, member in pairs(self.members) do
+		local item = self.items[key]
+		if not item then
+			item = { key = key }
+			self.items[key], self.orderDirty = item, true
+		end
+		if item.member ~= member or item.order ~= member.order then self.orderDirty = true end
+		item.order = member.order
+		if item.member ~= member or item.appliedHost ~= member.host then
+			item.member, item.host, item.shown, item.appliedSize = member, nil, nil, nil
+			item.appliedHost = member.host
+		end
+	end
+	if self.orderDirty then
+		for i = #self.ordered, 1, -1 do self.ordered[i] = nil end
+		for _, item in pairs(self.items) do self.ordered[#self.ordered + 1] = item end
+		table.sort(self.ordered, Order)
+		self.orderDirty = nil
+	end
+	for _, items in pairs(groups) do
+		for i = #items, 1, -1 do items[i] = nil end
+	end
+	for _, item in ipairs(self.ordered) do
+		local member = item.member
 		local size = Size(member, context)
-		member.host:SetShown(size ~= nil)
+		local shown = size ~= nil
+		if item.shown ~= shown then member.host:SetShown(shown); item.shown = shown end
 		if size then
-			member.host:SetSize(size, size)
-			local item = { key = key, member = member, size = size }
-			-- Absent icons keep the position they would have alone.
-			Place(item, context, 0, size, size, size)
+			if item.appliedSize ~= size then member.host:SetSize(size, size); item.appliedSize = size end
+			item.size = size
 			if Present(member) then
 				groups[member.anchor] = groups[member.anchor] or {}
 				table.insert(groups[member.anchor], item)
+			else
+				-- Absent icons keep the position they would have alone.
+				Place(item, context, 0, size, size, size)
 			end
 		end
 	end
 	local nameSpace = 0
 	for anchor, items in pairs(groups) do
-		local total = Arrange(items, context, anchor)
-		if anchor == "NAME" then nameSpace = total end
+		if #items > 0 then
+			local total = Arrange(items, context, anchor)
+			if anchor == "NAME" then nameSpace = total end
+		end
 	end
 	local name = context and context.name
 	if self.nameText and (self.nameText ~= name or nameSpace == 0) then
@@ -188,8 +224,9 @@ function Stack:Reflow()
 	end
 	if nameSpace > 0 then
 		self.nameText = name
-		name:SetLeadingSpace(nameSpace)
+		if self.nameSpace ~= nameSpace or self.appliedName ~= name then name:SetLeadingSpace(nameSpace) end
 	end
+	self.nameSpace, self.appliedName = nameSpace, name
 end
 
 function Stack:Release()
@@ -200,4 +237,5 @@ function Stack:Release()
 		self.nameText = nil
 	end
 	self.members = {}
+	self.items, self.groups, self.ordered, self.context = {}, {}, {}, nil
 end

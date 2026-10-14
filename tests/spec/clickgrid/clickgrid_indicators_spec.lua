@@ -5,6 +5,78 @@ describe("ClickGrid status indicators", function()
 	local UF, CG
 	before_each(function() UF, CG = Helpers.LoadClickGrid() end)
 
+	it("prepares only enabled portrait backends outside combat and reuses them", function()
+		local frame = CG.headers.party:GetAttribute("child1").Member
+		local portrait = frame.uf:GetPart("portrait")
+		assert.is_nil(portrait.model)
+		assert.is_nil(portrait.texture)
+		CG.Config:SetStyle("member", "portrait.mode", "2D")
+		CG.Config:SetStyle("member", "portrait.enabled", true)
+		assert.is_nil(portrait.model)
+		local texture = portrait.texture
+		assert.is_not_nil(texture)
+		Mock.inCombat = true
+		CG.Config:SetStyle("member", "portrait.mode", "3D")
+		assert.is_nil(portrait.model)
+		Mock.inCombat = false
+		Mock.FireEvent("PLAYER_REGEN_ENABLED")
+		local model = portrait.model
+		assert.is_not_nil(model)
+		for _ = 1, 3 do
+			CG.Config:SetStyle("member", "portrait.enabled", false)
+			CG.Config:SetStyle("member", "portrait.enabled", true)
+			CG.Config:SetStyle("member", "portrait.mode", "2D")
+			CG.Config:SetStyle("member", "portrait.mode", "3D")
+		end
+		assert.equals(model, portrait.model)
+		assert.equals(texture, portrait.texture)
+	end)
+
+	it("retires unused layouts and fully refreshes them before reactivation", function()
+		local frame = CG.headers.group1:GetAttribute("child1").Member
+		CG.Config:Set("panel.mode", "flat")
+		assert.is_true(CG:GetGridButton(frame).inactive)
+		assert.is_false(frame:IsEnabled())
+		assert.is_false(frame.uf:GetPart("auras").containers.buffs:IsEnabled())
+		local applies, apply = 0, frame.uf.Apply
+		frame.uf.Apply = function(self, ...) applies = applies + 1; return apply(self, ...) end
+		CG.Config:SetStyle("member", "width", 180)
+		CG.Config:Set("indicators.death", true)
+		assert.equals(0, applies)
+		CG.Config:Set("panel.mode", "subgroups")
+		assert.is_nil(CG:GetGridButton(frame).inactive)
+		assert.is_true(frame:IsEnabled())
+		assert.equals(180, frame.uf.resolved.width)
+		assert.is_true(applies > 0)
+		assert.is_true(frame.uf:GetPart("auras").containers.buffs:IsEnabled())
+	end)
+
+	it("only reflows death indicators when their plain presence changes", function()
+		local frame = CG.headers.party:GetAttribute("child1").Member
+		frame.__unit = "party1"
+		local element = UF.oUF.elements.UFCG_DeathIndicator
+		local stack, reflows = frame.uf:GetDecorations(), 0
+		local reflow = stack.Reflow
+		stack.Reflow = function(self) reflows = reflows + 1; return reflow(self) end
+		element.update(frame)
+		local initial = reflows
+		for _ = 1, 100 do element.update(frame) end
+		assert.equals(initial, reflows)
+		Mock.dead.party1 = true
+		element.update(frame)
+		assert.equals(initial + 1, reflows)
+		Mock.dead.party1, Mock.ghosts.party1 = false, true
+		element.update(frame)
+		assert.equals(initial + 1, reflows, "dead to ghost occupies the same slot")
+		Mock.ghosts.party1 = false
+		element.update(frame)
+		assert.equals(initial + 2, reflows)
+		frame.__unit = "party2"
+		Mock.dead.party2 = Mock.Secret(true)
+		element.update(frame)
+		assert.equals(initial + 2, reflows)
+	end)
+
 	it("uses independent member defaults and inherited styles", function()
 		assert.equals(150, CG.definitions.member.width)
 		assert.equals(170, UF.Units.definitions.pet.width)

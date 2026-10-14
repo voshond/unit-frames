@@ -378,7 +378,8 @@ end
 -- Colour set by the data source (class colour, power colour, curve result).
 -- It survives re-styling until ClearColor.
 function Bar:SetColor(r, g, b, a)
-	self.dataColor = { r, g, b, a or 1 }
+	self.dataColor = self.dataColor or {}
+	self.dataColor[1], self.dataColor[2], self.dataColor[3], self.dataColor[4] = r, g, b, a or 1
 	self:ApplyColor(r, g, b, a)
 end
 
@@ -394,7 +395,9 @@ function Bar:SetTint(r, g, b, amount)
 	if r == nil or amount <= 0 then
 		self.tint = nil
 	else
-		self.tint = { r, g, b, math.min(amount, 1) }
+		self.tintStorage = self.tintStorage or {}
+		self.tint = self.tintStorage
+		self.tint[1], self.tint[2], self.tint[3], self.tint[4] = r, g, b, math.min(amount, 1)
 	end
 	self:ApplyTint()
 end

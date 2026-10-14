@@ -112,7 +112,9 @@ UnitFrame.PARTS = {
 				{ key = "gap", type = "range", label = "Gap to the bars", min = 0, max = 20, step = 1, default = 2 },
 			})
 		end,
-		create = function(frame) return Portrait:New(frame, {}) end },
+		create = function(frame, partSpec, _, config)
+			return Portrait:New(frame, config, { lazyBackends = partSpec.lazyBackends })
+		end },
 	{ key = "castbar", label = "Castbar",
 		schema = function()
 			local function OverHealth(cfg)
@@ -185,7 +187,7 @@ function UnitFrame:OnCreate(parent, spec)
 	self.partsByKey = {}
 	for _, part in ipairs(UnitFrame.PARTS) do
 		if spec[part.key] then
-			local component = self:Own(part.create(self.frame, spec[part.key], native))
+			local component = self:Own(part.create(self.frame, spec[part.key], native, self:ChildConfig(part.key)))
 			self.parts[#self.parts + 1] = { def = part, component = component }
 			self.partsByKey[part.key] = component
 		end
@@ -202,8 +204,16 @@ function UnitFrame:OnCreate(parent, spec)
 end
 
 -- A row's spec on this frame: its texts learn what the frame provides.
+local rowSchemaOwners = setmetatable({}, { __mode = "k" })
 function UnitFrame.RowSpec(spec, def)
-	return ns.Util.Merge(ns.Util.Copy(def.spec), { textContext = { player = spec.playerFrame == true } })
+	local rowSpec = ns.Util.Merge(ns.Util.Copy(def.spec), { textContext = { player = spec.playerFrame == true } })
+	if spec.schemaOwner then
+		local owners = rowSchemaOwners[spec.schemaOwner]
+		if not owners then owners = {}; rowSchemaOwners[spec.schemaOwner] = owners end
+		owners[def.key] = owners[def.key] or {}
+		rowSpec.schemaOwner = owners[def.key]
+	end
+	return rowSpec
 end
 
 function UnitFrame.BuildSchema(spec)
@@ -415,7 +425,7 @@ function UnitFrame:LayoutCastbar(layout)
 		hostLevel = host:GetFrameLevel()
 	elseif placement == "portrait" and portrait then
 		host = portrait:GetFrame()
-		hostLevel = portrait.model:GetFrameLevel()
+		hostLevel = (portrait.model or portrait.viewport or host):GetFrameLevel()
 		onCoverChanged = function(alpha) portrait:SetCoverAlpha(alpha) end
 	end
 

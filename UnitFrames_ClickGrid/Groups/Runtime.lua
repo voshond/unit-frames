@@ -10,6 +10,7 @@ function CG:GetHeaderTitles(header)
 end
 
 function CG:CreateHeader(key, capacity, filter, role)
+	UF.Perf:Count("headerCreate")
 	-- SpawnHeader hides Blizzard party frames only if showParty is supplied
 	-- here. Configure it later through normal header attributes instead.
 	local header = oUF:SpawnHeader("UnitFramesClickGrid" .. key, "SecureGroupHeaderTemplate", {
@@ -86,12 +87,14 @@ function CG:EnsureHeaders(panel)
 end
 
 function CG:Refresh()
+	UF.Perf:Count("clickgridRefresh")
 	assert(not InCombatLockdown(), "Healing panel changes must wait until combat ends")
 	self:Measure()
 	local cfg = self.Config:Resolved()
 	self:EnsureHeaders(cfg.panel)
 	local layout = self.Layout.Compute(cfg.panel, self.metrics.member, self.metrics.target, cfg.titles)
 	self.layout = layout
+	local activeHeaders = {}
 	self.panel:SetScale(cfg.panel.scale)
 	for _, state in ipairs({ "party", "raid", "solo" }) do
 		self.panel:SetAttribute(state .. "-width", layout[state].width)
@@ -113,6 +116,9 @@ function CG:Refresh()
 	for key, header in pairs(self.headers) do
 		local section = layout.sections[key]
 		local visible = section ~= nil
+		activeHeaders[header] = visible
+		-- Layouts absent from this selection cannot acquire combat members.
+		if key ~= "party" and not visible then header:SetAttribute("showRaid", false) end
 		local titles = headerTitles[header]
 		for _, label in ipairs(titles.columns) do label:Hide() end
 		if section then
@@ -143,41 +149,73 @@ function CG:Refresh()
 	for _, frame in ipairs(self.frames) do
 		local button = self:GetGridButton(frame)
 		local kind = button.kind
-		frame.uf:Apply(self.Config:GetStyle(kind))
-		UF.Units:Bind(frame)
-		if button.status then button.status:Apply(self.Config:Get().indicators) end
-		if button.slots then button.slots:Apply(self:SlotConfig(frame.uf)) end
-		frame:ClearAllPoints()
 		local cell = frame:GetParent()
-		if kind == "target" then
-			frame:SetPoint("TOPLEFT", cell, "TOPLEFT", self.metrics.member.width + cfg.panel.targetGap, 0)
-			if cfg.panel.targets then
-				UnregisterAttributeDriver(frame, "state-visibility")
-				frame:SetAttribute("statehidden", nil)
-				frame:ResumeAllElements()
-				frame:Enable()
-			else
+		if not activeHeaders[cell:GetParent()] then
+			if not button.inactive then
 				frame:Disable()
 				RegisterAttributeDriver(frame, "state-visibility", "hide")
 				frame:PauseAllElements()
-				-- Native aura containers own subscriptions independent of oUF.
 				for _, key in ipairs({ "auras", "auraBar" }) do
 					local auras = frame.uf:GetPart(key)
 					if auras then auras:SetEnabled(false) end
 				end
+				if button.slots then button.slots:SetEnabled(false) end
+				if frame.uf:GetReadyCheck() then frame.uf:GetReadyCheck():Set(nil) end
+				for _, row in frame.uf:Rows() do
+					for _, text in pairs(row.texts) do
+						UF.TextTags.Unbind(text:GetFrame())
+						frame:Untag(text:GetFrame())
+					end
+				end
+				button.inactive = true
 			end
-		else frame:SetPoint("TOPLEFT", cell, "TOPLEFT", 0, 0) end
-		cell:SetSize(layout.cellWidth, layout.cellHeight)
-		if kind ~= "target" or cfg.panel.targets then
-			frame:UpdateAllElements("UnitFramesClickGridRefresh")
-			frame:UpdateTags()
+		else
+			if button.inactive then
+				button.inactive = nil
+				UnregisterAttributeDriver(frame, "state-visibility")
+				frame:SetAttribute("statehidden", nil)
+				frame:ResumeAllElements()
+				frame:Enable()
+			end
+			frame.uf:Apply(self.Config:GetStyle(kind))
+			UF.Units:Bind(frame)
+			if button.status then button.status:Apply(self.Config:Get().indicators) end
+			if button.slots then button.slots:Apply(self:SlotConfig(frame.uf)) end
+			frame:ClearAllPoints()
+			if kind == "target" then
+				frame:SetPoint("TOPLEFT", cell, "TOPLEFT", self.metrics.member.width + cfg.panel.targetGap, 0)
+				if cfg.panel.targets then
+					UnregisterAttributeDriver(frame, "state-visibility")
+					frame:SetAttribute("statehidden", nil)
+					frame:ResumeAllElements()
+					frame:Enable()
+				else
+					frame:Disable()
+					RegisterAttributeDriver(frame, "state-visibility", "hide")
+					frame:PauseAllElements()
+					-- Native aura containers own subscriptions independent of oUF.
+					for _, key in ipairs({ "auras", "auraBar" }) do
+						local auras = frame.uf:GetPart(key)
+						if auras then auras:SetEnabled(false) end
+					end
+				end
+			else frame:SetPoint("TOPLEFT", cell, "TOPLEFT", 0, 0) end
+			cell:SetSize(layout.cellWidth, layout.cellHeight)
+			if kind ~= "target" or cfg.panel.targets then
+				UF.Units:UpdateFrame(frame, "UnitFramesClickGridRefresh")
+			end
 		end
 	end
+	UF.Perf:Begin("bindings")
 	self:ApplyBindings(true)
+	UF.Perf:End("bindings")
 	-- _ignore itself does not trigger a native header refresh. Recalculate
 	-- after all cell sizes and layout attributes have been applied.
 	self.revision = (self.revision or 0) + 1
-	for _, header in pairs(self.headers) do header:SetAttribute("ufcg-refresh", self.revision) end
+	for key, header in pairs(self.headers) do
+		if key ~= "party" and activeHeaders[header] then header:SetAttribute("showRaid", true) end
+		header:SetAttribute("ufcg-refresh", self.revision)
+	end
 	for preview in pairs(self.previews) do preview:Apply() end
 end
 
@@ -189,8 +227,10 @@ function CG:ApplyBindings(notify)
 	self.bindingErrors = errors
 	if not self.Bindings:IsExternal() then
 		for _, frame in ipairs(self.frames) do
-			self.Bindings:Apply(frame, plan)
-			if ClickCastFrames then ClickCastFrames[frame] = nil end
+			if not self:GetGridButton(frame).inactive then
+				self.Bindings:Apply(frame, plan)
+				if ClickCastFrames then ClickCastFrames[frame] = nil end
+			end
 		end
 	end
 	if notify then UF.Events:Fire("ClickGridBindingsCompiled") end

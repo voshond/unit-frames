@@ -102,7 +102,12 @@ function ReadyCheck:Apply(cfg)
 		if not self.driver:GetScript("OnUpdate") then
 			self.driver:SetScript("OnUpdate", function(_, elapsed)
 				self.elapsed = self.elapsed + elapsed
-				if Fade(self.cfg, self.elapsed) <= 0 then self:Set(nil) else self:Apply(self.cfg) end
+				local nextAmount = Fade(self.cfg, self.elapsed)
+				if nextAmount <= 0 then
+					self:Set(nil)
+				elseif nextAmount ~= self.shownAmount then
+					self:Show(self.status, nextAmount)
+				end
 			end)
 		end
 	else
@@ -133,7 +138,8 @@ function ReadyCheck:Detach(icon)
 end
 
 function ReadyCheck:Sample(status, time, answerAt)
-	self.sample = { status = status, time = time, answerAt = answerAt }
+	self.sample = self.sample or {}
+	self.sample.status, self.sample.time, self.sample.answerAt = status, time, answerAt
 	self.driver:SetScript("OnUpdate", nil)
 	self.status, self.finished = nil, false
 	if not time or not status then

@@ -251,7 +251,7 @@ function CG:RegisterBindingEntry(wb)
 						.. " line, or click a line to edit it. All bindings are applied on mouse release."
 				local errors = CG.bindingErrors or {}
 				note:SetFontObject(font)
-				note:SetText(owner .. "\nSpecialization: " .. CG.Config:SpecKey() .. (CG.pending and " — changes pending until combat ends" or "")
+				note:SetText(owner .. "\nSpecialization: " .. CG.Config:SpecKey() .. ((CG.pending or CG.pendingBindings) and " — changes pending until combat ends" or "")
 					.. (#errors > 0 and "\n" .. errors[1] .. (#errors > 1 and " (and " .. (#errors - 1) .. " more inactive bindings)" or "") or "")
 					.. (self.message and "\n|cffff5a4d" .. self.message .. "|r" or ""))
 				for _, label in ipairs(self.columns) do label:SetFontObject(font) end

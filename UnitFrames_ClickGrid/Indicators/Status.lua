@@ -33,6 +33,7 @@ local PLACED = {
 
 -- Spirit healer artwork used by the original resurrection indicator.
 local DEATH_ATLAS = "RaidFrame-Icon-Rez"
+local RESURRECTION_COLOR = CreateColor(0, 1, 0, 1)
 
 --[[
 UFCG_DeathIndicator: a texture shown while the unit is dead or a ghost.
@@ -45,6 +46,9 @@ local function UpdateDeath(frame)
 	if unit then dead, ghost = UnitIsDead(unit), UnitIsGhost(unit) end
 	if issecretvalue(dead) then dead = false end
 	if issecretvalue(ghost) then ghost = false end
+	local present = dead or ghost
+	if element.deathPresent == present then return end
+	element.deathPresent = present
 	if dead or ghost then
 		element:SetAtlas(DEATH_ATLAS)
 		element:Show()
@@ -56,6 +60,7 @@ end
 
 local function EnableDeath(frame)
 	if not frame.UFCG_DeathIndicator then return end
+	frame.UFCG_DeathIndicator.deathPresent = nil
 	frame:RegisterEvent("UNIT_HEALTH", UpdateDeath)
 	frame:RegisterEvent("UNIT_CONNECTION", UpdateDeath)
 	for _, event in ipairs({ "PLAYER_DEAD", "PLAYER_ALIVE", "PLAYER_UNGHOST" }) do
@@ -69,6 +74,7 @@ local function DisableDeath(frame)
 		frame:UnregisterEvent(event, UpdateDeath)
 	end
 	local element = frame.UFCG_DeathIndicator
+	element.deathPresent = nil
 	element:Hide()
 	if element.PostUpdate then element:PostUpdate(false, false) end
 end
@@ -104,7 +110,7 @@ function Status:UpdateResurrectionText()
 	local row = self.unitFrame:GetRow("health")
 	if not row then return end
 	local cfg = self.resolved
-	local color = not self.released and cfg.resurrection and cfg.resurrectionText and CreateColor(0, 1, 0, 1) or nil
+	local color = not self.released and cfg.resurrection and cfg.resurrectionText and RESURRECTION_COLOR or nil
 	for _, text in pairs(row.texts) do
 		text:SetColorCondition(self.incomingResurrection, color)
 	end
