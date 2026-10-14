@@ -249,13 +249,10 @@ local function RunBlock(block, prefix)
 			end, debug.traceback)
 			if ok then
 				passed = passed + 1
-				io.write(".")
 			else
 				failed = failed + 1
-				io.write("F")
 				failures[#failures + 1] = fullName .. "\n    " .. tostring(err):gsub("\n", "\n    ")
 			end
-			io.flush()
 		end
 	end
 end
@@ -306,7 +303,6 @@ local function RunFile(file)
 		RunBlock(root, "")
 	else
 		failed = failed + 1
-		io.write("F")
 		failures[#failures + 1] = file .. " failed to load\n    " .. tostring(err):gsub("\n", "\n    ")
 	end
 	RestoreGlobals(globals)
@@ -318,8 +314,21 @@ local function RunFile(file)
 	return result
 end
 
+-- One complete line per spec file, written at once so parallel processes
+-- sharing the terminal never interleave within a line.
+local function ReportFile(result)
+	local tests = result.passed + result.failed
+	if tests == 0 then return end
+	local counts = result.failed > 0 and string.format("%d passed, %d failed", result.passed, result.failed)
+		or string.format("%d passed", result.passed)
+	io.write(string.format("  %-4s %-52s %-22s %6.2fs\n", result.failed > 0 and "FAIL" or "ok",
+		result.file, counts, result.seconds))
+	io.flush()
+end
+
 if childResult then
 	local result = RunFile(pathFilters[1])
+	ReportFile(result)
 	local out = assert(io.open(childResult, "w"))
 	out:write(string.format("return { file = %q, passed = %d, failed = %d, seconds = %.6f, failures = {\n",
 		result.file, result.passed, result.failed, result.seconds))
@@ -349,7 +358,8 @@ end
 
 -- Syntax check of all addon code (catches typos in files the specs don't load).
 local syntaxErrors = 0
-for _, file in ipairs(ListFiles("find UnitFrames UnitFrames_Workbench UnitFrames_ClickGrid -name '*.lua' -not -path '*/Libs/*'")) do
+local addonFiles = ListFiles("find UnitFrames UnitFrames_Workbench UnitFrames_ClickGrid -name '*.lua' -not -path '*/Libs/*'")
+for _, file in ipairs(addonFiles) do
 	local _, err = loadfile(file)
 	if err then
 		syntaxErrors = syntaxErrors + 1
@@ -358,6 +368,7 @@ for _, file in ipairs(ListFiles("find UnitFrames UnitFrames_Workbench UnitFrames
 end
 
 local syntaxSeconds = Now() - startedAt
+print(string.format("Syntax check: %d addon files, %d errors (%.2fs)", #addonFiles, syntaxErrors, syntaxSeconds))
 
 local files = {}
 for _, path in ipairs(ListFiles("find " .. SPEC_DIR .. " -name '*_spec.lua'")) do
@@ -371,8 +382,12 @@ if jobs == 0 then
 	jobs = tonumber(Lines("nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 1")[1]) or 1
 end
 
+local parallel = jobs and jobs > 1 and #files > 1
+print(string.format("Running %d spec file%s%s", #files, #files == 1 and "" or "s", parallel and string.format(" in %d processes", jobs) or ""))
+io.flush()
+
 local results = {}
-if jobs and jobs > 1 and #files > 1 then
+if parallel then
 	-- One process per spec file; xargs starts the next file as soon as a
 	-- process finishes. Larger files go first, so long specs start early.
 	local dir = Lines("mktemp -d")[1]
@@ -407,6 +422,7 @@ if jobs and jobs > 1 and #files > 1 then
 else
 	for _, file in ipairs(files) do
 		results[#results + 1] = RunFile(file)
+		ReportFile(results[#results])
 	end
 end
 
