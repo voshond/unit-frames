@@ -283,9 +283,22 @@ end
 local SPEC_DIR = "tests/spec/"
 package.path = "./tests/?.lua;" .. package.path
 
+-- Restores the globals a spec file assigned, so a serial run isolates files
+-- like the one-process-per-file parallel run does.
+local function RestoreGlobals(saved)
+	for name in pairs(_G) do
+		if saved[name] == nil then _G[name] = nil end
+	end
+	for name, value in pairs(saved) do
+		_G[name] = value
+	end
+end
+
 -- Runs one spec file (path relative to tests/spec/) in this process.
 local function RunFile(file)
 	local started, before = Now(), { passed = passed, failed = failed, failures = #failures }
+	local globals = {}
+	for name, value in pairs(_G) do globals[name] = value end
 	root = { name = "", tests = {}, before = {}, after = {} }
 	current = root
 	local ok, err = xpcall(function() dofile(SPEC_DIR .. file) end, debug.traceback)
@@ -296,6 +309,7 @@ local function RunFile(file)
 		io.write("F")
 		failures[#failures + 1] = file .. " failed to load\n    " .. tostring(err):gsub("\n", "\n    ")
 	end
+	RestoreGlobals(globals)
 	local result = { file = file, passed = passed - before.passed, failed = failed - before.failed,
 		seconds = Now() - started, failures = {} }
 	for i = before.failures + 1, #failures do
