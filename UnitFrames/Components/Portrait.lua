@@ -165,24 +165,32 @@ function Portrait:SetRangeFade(inRange, checkedRange, outsideAlpha)
 end
 
 --[[
-PlayerModel artwork ignores the alpha it inherits, so it is faded directly,
-without reading any alpha back (below a secret range fade the client returns
-no effective alpha and secret alphas, which SetModelAlpha refuses):
-  material alpha  castbar coverage, a plain number (SetModelAlpha)
-  frame alpha     the range fade, selected natively from the range results
-                  exactly like the unit frame's own fade (SetAlphaFromBoolean)
+PlayerModel artwork renders with its material alpha only: it ignores frame
+alpha, inherited or its own, so it is faded through SetModelAlpha without
+reading any alpha back (below a secret range fade the client returns no
+effective alpha and secret alphas, which SetModelAlpha refuses):
+  plain range results   material alpha = coverage x range fade
+  secret range results  material alpha = coverage; the range fade is only
+                        selected natively on the model's frame
+                        (SetAlphaFromBoolean), which keeps the frame's own
+                        state consistent but may not fade the artwork
 ]]
 function Portrait:SyncAlpha()
 	if self.released or not self.resolved or self.resolved.mode ~= "3D" or not self.model then
 		return
 	end
-	local model = self.model
-	model:SetModelAlpha(self.coverAlpha or 1)
-	if self.hasRangeFade then
-		model:SetAlphaFromBoolean(self.rangeInRange, 1, self.rangeOutsideAlpha)
-		model:SetAlphaFromBoolean(self.rangeChecked, model:GetAlpha(), 1)
-	else
+	local model, cover = self.model, self.coverAlpha or 1
+	local inRange, checked = self.rangeInRange, self.rangeChecked
+	if not self.hasRangeFade then
 		model:SetAlpha(1)
+		model:SetModelAlpha(cover)
+	elseif not Util.IsSecret(inRange) and not Util.IsSecret(checked) then
+		model:SetAlpha(1)
+		model:SetModelAlpha(checked and not inRange and cover * self.rangeOutsideAlpha or cover)
+	else
+		model:SetModelAlpha(cover)
+		model:SetAlphaFromBoolean(inRange, 1, self.rangeOutsideAlpha)
+		model:SetAlphaFromBoolean(checked, model:GetAlpha(), 1)
 	end
 end
 
