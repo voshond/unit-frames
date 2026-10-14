@@ -54,6 +54,7 @@ Theme.schema = {
 		{ "energy", "Energy", 1, 0.85, 0.1 },
 		{ "focus", "Focus", 1, 0.5, 0.25 },
 		{ "runicPower", "Runic power", 0, 0.82, 1 },
+		{ "comboPoints", "Combo points", 1, 0.96, 0.41 },
 		{ "powerCost", "Power cost", 0.4, 0.4, 1, 0.6 },
 		{ "experience", "Experience", 0.58, 0, 0.55 },
 		{ "rested", "Rested", 0, 0.39, 0.88, 0.6 },

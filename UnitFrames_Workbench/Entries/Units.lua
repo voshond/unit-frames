@@ -20,7 +20,7 @@ local function UnitStyleTarget(unit)
 		if unit ~= "player" then
 			schema[#schema + 1] = {
 				key = "copyPlayerSettings", type = "action", label = "Copy player settings",
-				tooltip = "Replace this frame's style with the player's current settings, including sizes, text, portrait, castbar, auras, raid target, PvP flag and elite icons, range opacity and ready check colours. Position and player-only XP are not copied. This is a one-time copy, not a link.",
+				tooltip = "Replace this frame's style with the player's current settings, including sizes, text, portrait, castbar, auras, raid target, PvP flag and elite icons, range opacity and ready check colours. Position, player-only XP and combo points are not copied. This is a one-time copy, not a link.",
 			}
 		end
 		for _, opt in ipairs(handle.schema) do schema[#schema + 1] = opt end
@@ -53,6 +53,10 @@ local function Values(unit, d, healthPct, time)
 	v.absorb = v.healthMax * d.absorb / 100
 	v.power = v.powerMax * d.power / 100
 	if d.xp then v.xp = v.xpMax * d.xp / 100 end
+	-- Animated: one more point per second, then empty again.
+	if d.comboPoints then
+		v.comboPoints = time and math.floor(time) % (v.comboPointsMax + 1) or d.comboPoints
+	end
 	v.showCast = d.showCast
 	v.status = d.status ~= "none" and d.status or nil
 	v.raidTarget = d.raidTarget
@@ -139,6 +143,12 @@ local function RegisterUnit(unit)
 			values = { { "normal", "Normal" }, { "elite", "Elite" }, { "rare", "Rare" }, { "rareelite", "Rare elite" }, { "worldboss", "Boss" } },
 			hidden = function(d) return not d.npc end,
 			tooltip = "Sample NPC classification for the elite / rare icon and the level marker texts." }
+	end
+	if def.comboPoints then
+		schema[#schema + 1] = { key = "comboPoints", type = "range", label = "Combo points", min = 0,
+			max = sample.comboPointsMax, step = 1, default = sample.comboPoints,
+			hidden = function() return not UF.Units.PlayerHasComboPoints() end,
+			tooltip = "Static holds this count; Animated counts up and empties again. Shown for rogues and druids, while the frame's Combo points row is enabled." }
 	end
 	Workbench:Register({
 		id = "unit." .. unit,

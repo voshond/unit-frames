@@ -110,7 +110,12 @@ describe("Client API contract", function()
 			local takesUnit = def.args and def.args[1]:match(":UnitToken")
 			local impl = not name:find(".", 1, true) and rawget(_G, name)
 			if restricted and takesUnit and type(impl) == "function" and not PLAIN_DEFAULTS[name] then
-				local results = { impl("target") }
+				-- Every unit argument names the target (GetComboPoints takes two).
+				local args = {}
+				for i, arg in ipairs(def.args) do
+					if arg:match(":UnitToken") then args[i] = "target" end
+				end
+				local results = { impl(unpack(args, 1, #def.args)) }
 				for i = 1, table.maxn(results) do
 					-- Only plain values can be secret; returned objects are opaque handles.
 					local primitive = type(results[i]) ~= "table" or Mock.IsSecret(results[i])

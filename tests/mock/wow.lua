@@ -909,7 +909,7 @@ function Mock.Install()
 	for _, name in ipairs({ "LFGRole", "CustomAuraButtonDispelTypeTextureStyle", "StatusBarInterpolation",
 		"UnitDamageAbsorbClampMode", "UnitMaximumHealthMode", "StatusBarTimerDirection",
 		"SecondsFormatterAbbreviation", "SecondsFormatterInterval", "SecondsFormatterRounding",
-		"SecondsFormatterIntervalWhitespace", "AddOnProfilerMetric" }) do
+		"SecondsFormatterIntervalWhitespace", "AddOnProfilerMetric", "PowerType" }) do
 		local values = assert(API.Snapshot().enums[name], "Enum." .. name .. " is not a client enum")
 		_G.Enum[name] = {}
 		for field, value in pairs(values) do _G.Enum[name][field] = value end
@@ -1170,6 +1170,10 @@ function Mock.InstallUI()
 	_G.UnitPowerType = function() return 0, "MANA" end
 	_G.UnitPower = function() return Secret(300) end
 	_G.UnitPowerMax = function() return Secret(600) end
+	-- Combo points the player has on the target (Mock.comboPoints), secret
+	-- like other power values.
+	Mock.comboPoints = 0
+	_G.GetComboPoints = function() return Secret(Mock.comboPoints) end
 	_G.UnitPowerMissing = function() return Secret(300) end
 	_G.UnitXP = function() return 1200 end
 	Mock.resting = false

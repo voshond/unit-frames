@@ -2,7 +2,7 @@ local _, ns = ...
 local Backdrop, TextBar = ns.Components.Backdrop, ns.Components.TextBar
 local Castbar, Portrait, Auras = ns.Components.Castbar, ns.Components.Portrait, ns.Components.Auras
 local RaidTarget, PvPFlag, Classification = ns.Components.RaidTarget, ns.Components.PvPFlag, ns.Components.Classification
-local ReadyCheckIcon = ns.Components.ReadyCheckIcon
+local ReadyCheckIcon, PointBar = ns.Components.ReadyCheckIcon, ns.Components.PointBar
 
 --[[
 A unit frame made of rows stacked top to bottom inside one bordered frame.
@@ -13,6 +13,7 @@ Optional extras:
   portrait  a column left or right, spanning all or the first few visible rows
   castbar   placed as an extra row at the top or bottom, or over the health
             row (it covers the health bar only while casting)
+  comboPoints  a row of points at the top, below the power bar or at the bottom
   auras     independently positioned buffs and debuffs on any side
   raidTarget  raid marker on a border, the centre or inside the portrait
   pvp       the unit's PvP flag, placed like the raid marker
@@ -39,10 +40,13 @@ spec:
               defaults  row option defaults, e.g. { height = 24, right = { size = 9 } }
               options   extra row options (schema entries), e.g. health colour mode
             }
-  portrait, castbar, auras, auraBar, raidTarget, pvp, classification, readyCheckIcon
+  portrait, castbar, comboPoints, auras, auraBar, raidTarget, pvp, classification,
+  readyCheckIcon
             { defaults, ... } to offer that part (see UnitFrame.PARTS;
             auras also take cancelBuffs and clickThrough; auraBar takes
-            collapsible: the row can lend its space to the health bar)
+            collapsible: the row can lend its space to the health bar;
+            comboPoints takes available = false: the player's class has none,
+            so the row takes no space)
 
 Access: GetRow(key) and GetPart(key) return a row's TextBar or a present
 part's component; Rows() and Parts() iterate them with their resolved config.
@@ -56,6 +60,12 @@ UnitFrame.CASTBAR_PLACEMENTS = {
 	{ "bottom", "Extra row at the bottom" },
 	{ "health", "Over the health bar" },
 	{ "portrait", "Replace portrait while casting" },
+}
+
+UnitFrame.POINT_BAR_POSITIONS = {
+	{ "top", "Extra row at the top" },
+	{ "power", "Below the power bar" },
+	{ "bottom", "Extra row at the bottom" },
 }
 
 UnitFrame.SIDES = {
@@ -136,6 +146,20 @@ UnitFrame.PARTS = {
 		end,
 		-- Placement replaces the on/off toggle.
 		apply = function(castbar, cfg) castbar:SetEnabled(cfg.placement ~= "off") end },
+	{ key = "comboPoints", label = "Combo points",
+		schema = function()
+			local schema = ns.Schema.Override(PointBar.schema, "enabled", {
+				tooltip = "Rogues and druids. Combo points are stored on your target: the target frame shows yours on it, and a player frame row shows those on your current target. For other classes the row takes no space.",
+			})
+			return GroupSchema(schema, {
+				{ key = "position", type = "select", label = "Placement", values = UnitFrame.POINT_BAR_POSITIONS,
+					default = "power" },
+				HeightOption(8),
+			})
+		end,
+		create = function(frame, partSpec) return PointBar:New(frame, {}, { available = partSpec.available }) end,
+		-- A class without combo points neither shows nor binds the row.
+		apply = function(points, cfg) points:SetEnabled(cfg.enabled and points.spec.available ~= false) end },
 	{ key = "auras", label = "Buffs & debuffs",
 		schema = function() return Auras.schema end,
 		create = function(frame, partSpec)
@@ -370,7 +394,7 @@ function UnitFrame:Layout()
 		component:SetPoint("TOPLEFT", self.frame, "TOPLEFT", item.left, item.y)
 		component:SetPoint("TOPRIGHT", self.frame, "TOPRIGHT", -item.right, item.y)
 		component:GetFrame():SetHeight(item.height)
-		if item.key == "auraBar" then
+		if item.key == "auraBar" or item.key == "comboPoints" then
 			component:Layout(layout.width - item.left - item.right)
 		end
 	end

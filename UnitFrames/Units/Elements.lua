@@ -42,6 +42,47 @@ end
 
 oUF:AddElement("UF_Experience", UpdateExperience, EnableExperience, DisableExperience)
 
+--[[
+UF_ComboPoints: the player's combo points on a PointBar (frame.UF_ComboPoints),
+on a target frame or a player frame (Drivers.ComboPoints). Forever stores them
+on the target, like Blizzard's own ComboFrame: a target change, or points
+moving to a new target (COMBO_TARGET_CHANGED, same count), redraws them too.
+The power events are the player's, also on a target frame, so they are
+registered unit-less and filtered here.
+]]
+local COMBO_POINT_POWER_EVENTS = { UNIT_POWER_UPDATE = true, UNIT_POWER_FREQUENT = true,
+	UNIT_POWER_POINT_CHARGE = true, UNIT_MAXPOWER = true }
+local COMBO_POINT_EVENTS = { "UNIT_POWER_UPDATE", "UNIT_POWER_FREQUENT", "UNIT_POWER_POINT_CHARGE", "UNIT_MAXPOWER",
+	"PLAYER_TARGET_CHANGED", "COMBO_TARGET_CHANGED", "PLAYER_ENTERING_WORLD" }
+
+local function UpdateComboPoints(self, event, unit, powerType)
+	if COMBO_POINT_POWER_EVENTS[event] then
+		if unit ~= "player" then return end
+		-- Other power types (energy ticks) change no combo points.
+		if type(powerType) == "string" and not issecretvalue(powerType) and powerType ~= "COMBO_POINTS" then return end
+	end
+	local points, max = Drivers.ComboPoints(self.__unit)
+	self.UF_ComboPoints:SetMax(max)
+	self.UF_ComboPoints:SetValue(points)
+end
+
+local function EnableComboPoints(self, unit)
+	if not self.UF_ComboPoints or (unit ~= "player" and unit ~= "target") then return end
+	for _, event in ipairs(COMBO_POINT_EVENTS) do
+		self:RegisterEvent(event, UpdateComboPoints, true)
+	end
+	return true
+end
+
+local function DisableComboPoints(self)
+	for _, event in ipairs(COMBO_POINT_EVENTS) do
+		self:UnregisterEvent(event, UpdateComboPoints)
+	end
+	self.UF_ComboPoints:SetValue(0)
+end
+
+oUF:AddElement("UF_ComboPoints", UpdateComboPoints, EnableComboPoints, DisableComboPoints)
+
 local function UpdateResting(self)
 	self.UF_Resting:SetResting(self.__unit == "player" and IsResting())
 end
