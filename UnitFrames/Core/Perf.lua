@@ -12,6 +12,26 @@ function Perf:Count(key)
 	if self.counters then self.counters[key] = (self.counters[key] or 0) + 1 end
 end
 
+-- Phase markers for an active measurement only; elsewhere they are no-ops.
+-- Labels are short static names (under the 48-byte allocation limit), cached
+-- with their begin/end prefixes.
+local function Prefixed(prefix)
+	return setmetatable({}, { __index = function(labels, label)
+		local value = prefix .. label
+		labels[label] = value
+		return value
+	end })
+end
+local BEGIN, END = Prefixed(">"), Prefixed("<")
+
+function Perf:Begin(label)
+	if self.measuring then C_AddOnProfiler.AddMeasuredCallEvent(BEGIN[label]) end
+end
+
+function Perf:End(label)
+	if self.measuring then C_AddOnProfiler.AddMeasuredCallEvent(END[label]) end
+end
+
 local function ProfilerEnabled()
 	return ns.Caps.profiler and C_AddOnProfiler.IsEnabled()
 end
@@ -102,6 +122,44 @@ function Perf:Watch(seconds)
 	ns:Print("observing for", seconds, "seconds; /uf perf cancel stops the window")
 end
 
+-- Exclusive time and allocation per phase: each interval between markers
+-- belongs to the innermost open phase (outside any phase: "unmarked").
+local function Phases(results)
+	local phases, stack, ms, bytes = {}, {}, 0, 0
+	local function Add(name, toMS, toBytes)
+		local phase = phases[name] or { name = name, ms = 0, bytes = 0, calls = 0 }
+		phases[name] = phase
+		phase.ms, phase.bytes = phase.ms + toMS - ms, phase.bytes + toBytes - bytes
+		ms, bytes = toMS, toBytes
+		return phase
+	end
+	for _, event in ipairs(results.events or {}) do
+		Add(stack[#stack] or "unmarked", event.elapsedMilliseconds, event.allocatedBytes)
+		local kind, name = event.name:sub(1, 1), event.name:sub(2)
+		if kind == ">" then
+			stack[#stack + 1] = name
+			local phase = phases[name] or { name = name, ms = 0, bytes = 0, calls = 0 }
+			phases[name], phase.calls = phase, phase.calls + 1
+		elseif kind == "<" then
+			stack[#stack] = nil
+		end
+	end
+	Add("unmarked", results.elapsedMilliseconds, results.allocatedBytes)
+	local list = {}
+	for _, phase in pairs(phases) do list[#list + 1] = phase end
+	table.sort(list, function(a, b) return a.bytes > b.bytes end)
+	return list
+end
+Perf.Phases = Phases
+
+local function ReportPhases(results)
+	for index, phase in ipairs(Phases(results)) do
+		if index > 15 then break end
+		ns:Print(string.format("  %s: %.3f ms, %.1f KB allocated, %d calls (exclusive)",
+			phase.name, phase.ms, phase.bytes / 1024, phase.calls))
+	end
+end
+
 local operations = {
 	units = function() for _, unit in ipairs(ns.Units.order) do ns.Units:Refresh(unit) end end,
 	clickgrid = function()
@@ -125,15 +183,16 @@ function Perf:Measure(operation)
 	if InCombatLockdown() then ns:Print("active measurements must wait until combat ends"); return end
 	if not ProfilerEnabled() then ns:Print("native addon profiler unavailable/disabled"); return end
 	if self.counters then ns:Print("cancel the observation window before an active measurement"); return end
-	self.counters = {}
+	self.counters, self.measuring = {}, true
 	-- A diagnostic operation can fail; always retire its instrumentation.
 	local ok, result = pcall(C_AddOnProfiler.MeasureCall, run)
 	local counters = self.counters
-	self.counters = nil
+	self.counters, self.measuring = nil, nil
 	if not ok then ns:Print("measurement failed:", result); return end
 	ns:Print(string.format("active %s: %.3f ms; allocated %s bytes; deallocated %s bytes", operation,
 		result.elapsedMilliseconds, tostring(result.allocatedBytes), tostring(result.deallocatedBytes)))
 	ReportCounters(counters)
+	ReportPhases(result)
 end
 
 function Perf:Command(arguments)

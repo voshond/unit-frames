@@ -202,13 +202,13 @@ function CG:Refresh()
 			else frame:SetPoint("TOPLEFT", cell, "TOPLEFT", 0, 0) end
 			cell:SetSize(layout.cellWidth, layout.cellHeight)
 			if kind ~= "target" or cfg.panel.targets then
-				UF.Perf:Count("updateAllElements")
-				frame:UpdateAllElements("UnitFramesClickGridRefresh")
-				frame:UpdateTags()
+				UF.Units:UpdateFrame(frame, "UnitFramesClickGridRefresh")
 			end
 		end
 	end
+	UF.Perf:Begin("bindings")
 	self:ApplyBindings(true)
+	UF.Perf:End("bindings")
 	-- _ignore itself does not trigger a native header refresh. Recalculate
 	-- after all cell sizes and layout attributes have been applied.
 	self.revision = (self.revision or 0) + 1

@@ -76,12 +76,17 @@ function Component:Apply(config)
 		return
 	end
 	ns.AfterCombat:Cancel(self, "apply")
-	ns.Perf:Count(self.componentOwner and "childApply" or "rootApply")
+	local Perf = ns.Perf
+	Perf:Count(self.componentOwner and "childApply" or "rootApply")
+	Perf:Begin(self.className)
+	Perf:Begin("resolve")
 	self.resolved = Schema.Resolve(self:GetSchema(), self.config, ns.Config:GetTheme())
+	Perf:End("resolve")
 	self:OnApply(self.resolved)
 	if self.resolved.enabled ~= nil then
 		self:SetEnabled(self.resolved.enabled)
 	end
+	Perf:End(self.className)
 end
 
 function Component:SetCombatDeferred(deferred)

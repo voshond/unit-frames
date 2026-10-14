@@ -72,6 +72,40 @@ describe("Opt-in performance diagnostics", function()
 		assert.equals(0, calls)
 	end)
 
+	it("attributes exclusive phase cost and marks phases only while measuring", function()
+		local events = {}
+		local add = C_AddOnProfiler.AddMeasuredCallEvent
+		C_AddOnProfiler.AddMeasuredCallEvent = function(name) events[#events + 1] = name; return add(name) end
+		UF.Units:Refresh("player")
+		assert.same({}, events, "no markers outside a measurement")
+		local phases = UF.Perf.Phases({ elapsedMilliseconds = 10, allocatedBytes = 1000, events = {
+			{ name = ">UnitFrame", elapsedMilliseconds = 1, allocatedBytes = 100 },
+			{ name = ">resolve", elapsedMilliseconds = 2, allocatedBytes = 300 },
+			{ name = "<resolve", elapsedMilliseconds = 5, allocatedBytes = 700 },
+			{ name = "<UnitFrame", elapsedMilliseconds = 6, allocatedBytes = 800 },
+		} })
+		local byName = {}
+		for _, phase in ipairs(phases) do byName[phase.name] = phase end
+		assert.equals("resolve", phases[1].name)
+		assert.same({ name = "resolve", ms = 3, bytes = 400, calls = 1 }, byName.resolve)
+		assert.same({ name = "UnitFrame", ms = 2, bytes = 300, calls = 1 }, byName.UnitFrame)
+		assert.same({ name = "unmarked", ms = 5, bytes = 300, calls = 0 }, byName.unmarked)
+		Mock.profilerEnabled = true
+		UF.Perf:Measure("units")
+		C_AddOnProfiler.AddMeasuredCallEvent = add
+		assert.is_nil(UF.Perf.measuring)
+		local opened = {}
+		for _, name in ipairs(events) do
+			local kind, label = name:sub(1, 1), name:sub(2)
+			opened[label] = (opened[label] or 0) + (kind == ">" and 1 or -1)
+			assert.is_true(#name < 48)
+		end
+		for _, label in ipairs({ "UnitFrame", "resolve", "bind", "oUF elements", "oUF tags" }) do
+			assert.is_not_nil(opened[label], label)
+		end
+		for label, open in pairs(opened) do assert.equals(0, open, label .. " is balanced") end
+	end)
+
 	it("dispatches slash commands and degrades when optional APIs are absent", function()
 		SlashCmdList.UNITFRAMES("perf watch 2")
 		assert.equals(2, UF.Perf.seconds)
