@@ -871,6 +871,8 @@ option health.bar.segments.healAbsorb type="group" label="Heal absorbs"
 option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" default=true
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
+option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
+option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
 option health.left.format type="select" label="Shows" default="none" values=#785d5c3c
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
@@ -1101,6 +1103,8 @@ option power.bar.segments.cost type="group" label="Spell cost"
 option power.bar.segments.cost.enabled type="toggle" label="Enabled" default=true
 option power.bar.segments.cost.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.powerCost"
 option power.bar.segments.cost.texture type="statusbar" label="Texture" inherit="barTexture"
+option power.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
+option power.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option power.left type="group" label="Left text" defaults={enabled=false,format="none",justifyH="LEFT"}
 option power.left.format type="select" label="Shows" default="none" values=#de1dc13b
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
@@ -1331,6 +1335,8 @@ option experience.bar.segments.rested type="group" label="Rested"
 option experience.bar.segments.rested.enabled type="toggle" label="Enabled" default=true
 option experience.bar.segments.rested.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.rested"
 option experience.bar.segments.rested.texture type="statusbar" label="Texture" inherit="barTexture"
+option experience.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
+option experience.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option experience.left type="group" label="Left text" defaults={enabled=false,format="none",justifyH="LEFT"}
 option experience.left.format type="select" label="Shows" default="none" values=#9d1dcdcc
 option experience.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
@@ -2017,6 +2023,7 @@ default experience.left.piece4.source = "none"
 default experience.left.shadow = true
 default experience.left.vertical = "auto"
 default experience.left.whileCasting = "keep"
+default experience.lineGap = 1
 default experience.right.color = {1,1,1,1}
 default experience.right.customInitialized = false
 default experience.right.enabled = false
@@ -2048,6 +2055,7 @@ default experience.right.piece4.source = "none"
 default experience.right.shadow = true
 default experience.right.vertical = "auto"
 default experience.right.whileCasting = "keep"
+default experience.textLayout = "edges"
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -2196,6 +2204,7 @@ default health.left.piece4.source = "none"
 default health.left.shadow = true
 default health.left.vertical = "auto"
 default health.left.whileCasting = "keep"
+default health.lineGap = 1
 default health.right.color = {1,1,1,1}
 default health.right.customInitialized = false
 default health.right.enabled = true
@@ -2227,6 +2236,7 @@ default health.right.piece4.source = "none"
 default health.right.shadow = true
 default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
+default health.textLayout = "edges"
 default portrait.background = {0,0,0,0.6}
 default portrait.border.enabled = false
 default portrait.border.inset = 3
@@ -2379,6 +2389,7 @@ default power.left.piece4.source = "none"
 default power.left.shadow = true
 default power.left.vertical = "auto"
 default power.left.whileCasting = "keep"
+default power.lineGap = 1
 default power.right.color = {1,1,1,1}
 default power.right.customInitialized = false
 default power.right.enabled = true
@@ -2411,6 +2422,7 @@ default power.right.shadow = true
 default power.right.size = 9
 default power.right.vertical = "auto"
 default power.right.whileCasting = "keep"
+default power.textLayout = "edges"
 default pvp.anchor = "TOPLEFT"
 default pvp.background = true
 default pvp.enabled = true
@@ -2779,6 +2791,7 @@ resolved experience.left.shadow = true
 resolved experience.left.size = 11
 resolved experience.left.vertical = "auto"
 resolved experience.left.whileCasting = "keep"
+resolved experience.lineGap = 1
 resolved experience.right.color = {1,1,1,1}
 resolved experience.right.customInitialized = false
 resolved experience.right.enabled = false
@@ -2813,6 +2826,7 @@ resolved experience.right.shadow = true
 resolved experience.right.size = 11
 resolved experience.right.vertical = "auto"
 resolved experience.right.whileCasting = "keep"
+resolved experience.textLayout = "edges"
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -2981,6 +2995,7 @@ resolved health.left.shadow = true
 resolved health.left.size = 11
 resolved health.left.vertical = "auto"
 resolved health.left.whileCasting = "keep"
+resolved health.lineGap = 1
 resolved health.right.color = {1,1,1,1}
 resolved health.right.customInitialized = false
 resolved health.right.enabled = true
@@ -3015,6 +3030,7 @@ resolved health.right.shadow = true
 resolved health.right.size = 11
 resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
+resolved health.textLayout = "edges"
 resolved portrait.background = {0,0,0,0.6}
 resolved portrait.border.background = "Solid"
 resolved portrait.border.backgroundColor = {0,0,0,0.75}
@@ -3190,6 +3206,7 @@ resolved power.left.shadow = true
 resolved power.left.size = 11
 resolved power.left.vertical = "auto"
 resolved power.left.whileCasting = "keep"
+resolved power.lineGap = 1
 resolved power.right.color = {1,1,1,1}
 resolved power.right.customInitialized = false
 resolved power.right.enabled = true
@@ -3224,6 +3241,7 @@ resolved power.right.shadow = true
 resolved power.right.size = 9
 resolved power.right.vertical = "auto"
 resolved power.right.whileCasting = "keep"
+resolved power.textLayout = "edges"
 resolved pvp.anchor = "TOPLEFT"
 resolved pvp.background = true
 resolved pvp.enabled = true
@@ -3365,6 +3383,8 @@ option health.bar.segments.healAbsorb type="group" label="Heal absorbs"
 option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" default=true
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
+option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
+option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
 option health.left.format type="select" label="Shows" default="none" values=#00390e8d
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
@@ -3595,6 +3615,8 @@ option power.bar.segments.cost type="group" label="Spell cost"
 option power.bar.segments.cost.enabled type="toggle" label="Enabled" default=true
 option power.bar.segments.cost.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.powerCost"
 option power.bar.segments.cost.texture type="statusbar" label="Texture" inherit="barTexture"
+option power.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
+option power.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option power.left type="group" label="Left text" defaults={enabled=false,format="none",justifyH="LEFT"}
 option power.left.format type="select" label="Shows" default="none" values=#003c64ec
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
@@ -4287,6 +4309,7 @@ default health.left.shadow = true
 default health.left.size = 10
 default health.left.vertical = "auto"
 default health.left.whileCasting = "keep"
+default health.lineGap = 1
 default health.right.color = {1,1,1,1}
 default health.right.customInitialized = false
 default health.right.enabled = true
@@ -4319,6 +4342,7 @@ default health.right.shadow = true
 default health.right.size = 9
 default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
+default health.textLayout = "edges"
 default portrait.background = {0,0,0,0.6}
 default portrait.border.enabled = false
 default portrait.border.inset = 3
@@ -4471,6 +4495,7 @@ default power.left.piece4.source = "none"
 default power.left.shadow = true
 default power.left.vertical = "auto"
 default power.left.whileCasting = "keep"
+default power.lineGap = 1
 default power.right.color = {1,1,1,1}
 default power.right.customInitialized = false
 default power.right.enabled = true
@@ -4503,6 +4528,7 @@ default power.right.shadow = true
 default power.right.size = 8
 default power.right.vertical = "auto"
 default power.right.whileCasting = "keep"
+default power.textLayout = "edges"
 default pvp.anchor = "TOPLEFT"
 default pvp.background = true
 default pvp.enabled = true
@@ -4876,6 +4902,7 @@ resolved health.left.shadow = true
 resolved health.left.size = 10
 resolved health.left.vertical = "auto"
 resolved health.left.whileCasting = "keep"
+resolved health.lineGap = 1
 resolved health.right.color = {1,1,1,1}
 resolved health.right.customInitialized = false
 resolved health.right.enabled = true
@@ -4910,6 +4937,7 @@ resolved health.right.shadow = true
 resolved health.right.size = 9
 resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
+resolved health.textLayout = "edges"
 resolved portrait.background = {0,0,0,0.6}
 resolved portrait.border.background = "Solid"
 resolved portrait.border.backgroundColor = {0,0,0,0.75}
@@ -5085,6 +5113,7 @@ resolved power.left.shadow = true
 resolved power.left.size = 11
 resolved power.left.vertical = "auto"
 resolved power.left.whileCasting = "keep"
+resolved power.lineGap = 1
 resolved power.right.color = {1,1,1,1}
 resolved power.right.customInitialized = false
 resolved power.right.enabled = true
@@ -5119,6 +5148,7 @@ resolved power.right.shadow = true
 resolved power.right.size = 8
 resolved power.right.vertical = "auto"
 resolved power.right.whileCasting = "keep"
+resolved power.textLayout = "edges"
 resolved pvp.anchor = "TOPLEFT"
 resolved pvp.background = true
 resolved pvp.enabled = true
@@ -5278,6 +5308,8 @@ option health.bar.segments.healAbsorb type="group" label="Heal absorbs"
 option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" default=true
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
+option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
+option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
 option health.left.format type="select" label="Shows" default="none" values=#00390e8d
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
@@ -5508,6 +5540,8 @@ option power.bar.segments.cost type="group" label="Spell cost"
 option power.bar.segments.cost.enabled type="toggle" label="Enabled" default=true
 option power.bar.segments.cost.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.powerCost"
 option power.bar.segments.cost.texture type="statusbar" label="Texture" inherit="barTexture"
+option power.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
+option power.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option power.left type="group" label="Left text" defaults={enabled=false,format="none",justifyH="LEFT"}
 option power.left.format type="select" label="Shows" default="none" values=#003c64ec
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
@@ -6199,6 +6233,7 @@ default health.left.piece4.source = "none"
 default health.left.shadow = true
 default health.left.vertical = "auto"
 default health.left.whileCasting = "keep"
+default health.lineGap = 1
 default health.right.color = {1,1,1,1}
 default health.right.customInitialized = false
 default health.right.enabled = true
@@ -6230,6 +6265,7 @@ default health.right.piece4.source = "none"
 default health.right.shadow = true
 default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
+default health.textLayout = "edges"
 default portrait.background = {0,0,0,0.6}
 default portrait.border.enabled = false
 default portrait.border.inset = 3
@@ -6382,6 +6418,7 @@ default power.left.piece4.source = "none"
 default power.left.shadow = true
 default power.left.vertical = "auto"
 default power.left.whileCasting = "keep"
+default power.lineGap = 1
 default power.right.color = {1,1,1,1}
 default power.right.customInitialized = false
 default power.right.enabled = true
@@ -6414,6 +6451,7 @@ default power.right.shadow = true
 default power.right.size = 9
 default power.right.vertical = "auto"
 default power.right.whileCasting = "keep"
+default power.textLayout = "edges"
 default pvp.anchor = "TOPLEFT"
 default pvp.background = true
 default pvp.enabled = true
@@ -6787,6 +6825,7 @@ resolved health.left.shadow = true
 resolved health.left.size = 11
 resolved health.left.vertical = "auto"
 resolved health.left.whileCasting = "keep"
+resolved health.lineGap = 1
 resolved health.right.color = {1,1,1,1}
 resolved health.right.customInitialized = false
 resolved health.right.enabled = true
@@ -6821,6 +6860,7 @@ resolved health.right.shadow = true
 resolved health.right.size = 11
 resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
+resolved health.textLayout = "edges"
 resolved portrait.background = {0,0,0,0.6}
 resolved portrait.border.background = "Solid"
 resolved portrait.border.backgroundColor = {0,0,0,0.75}
@@ -6996,6 +7036,7 @@ resolved power.left.shadow = true
 resolved power.left.size = 11
 resolved power.left.vertical = "auto"
 resolved power.left.whileCasting = "keep"
+resolved power.lineGap = 1
 resolved power.right.color = {1,1,1,1}
 resolved power.right.customInitialized = false
 resolved power.right.enabled = true
@@ -7030,6 +7071,7 @@ resolved power.right.shadow = true
 resolved power.right.size = 9
 resolved power.right.vertical = "auto"
 resolved power.right.whileCasting = "keep"
+resolved power.textLayout = "edges"
 resolved pvp.anchor = "TOPLEFT"
 resolved pvp.background = true
 resolved pvp.enabled = true
@@ -7179,6 +7221,8 @@ option health.bar.segments.healAbsorb type="group" label="Heal absorbs"
 option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" default=true
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
+option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
+option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
 option health.left.format type="select" label="Shows" default="none" values=#00390e8d
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
@@ -7409,6 +7453,8 @@ option power.bar.segments.cost type="group" label="Spell cost"
 option power.bar.segments.cost.enabled type="toggle" label="Enabled" default=true
 option power.bar.segments.cost.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.powerCost"
 option power.bar.segments.cost.texture type="statusbar" label="Texture" inherit="barTexture"
+option power.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
+option power.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option power.left type="group" label="Left text" defaults={enabled=false,format="none",justifyH="LEFT"}
 option power.left.format type="select" label="Shows" default="none" values=#003c64ec
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
@@ -8101,6 +8147,7 @@ default health.left.shadow = true
 default health.left.size = 10
 default health.left.vertical = "auto"
 default health.left.whileCasting = "keep"
+default health.lineGap = 1
 default health.right.color = {1,1,1,1}
 default health.right.customInitialized = false
 default health.right.enabled = true
@@ -8133,6 +8180,7 @@ default health.right.shadow = true
 default health.right.size = 9
 default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
+default health.textLayout = "edges"
 default portrait.background = {0,0,0,0.6}
 default portrait.border.enabled = false
 default portrait.border.inset = 3
@@ -8285,6 +8333,7 @@ default power.left.piece4.source = "none"
 default power.left.shadow = true
 default power.left.vertical = "auto"
 default power.left.whileCasting = "keep"
+default power.lineGap = 1
 default power.right.color = {1,1,1,1}
 default power.right.customInitialized = false
 default power.right.enabled = true
@@ -8317,6 +8366,7 @@ default power.right.shadow = true
 default power.right.size = 8
 default power.right.vertical = "auto"
 default power.right.whileCasting = "keep"
+default power.textLayout = "edges"
 default pvp.anchor = "TOPLEFT"
 default pvp.background = true
 default pvp.enabled = true
@@ -8690,6 +8740,7 @@ resolved health.left.shadow = true
 resolved health.left.size = 10
 resolved health.left.vertical = "auto"
 resolved health.left.whileCasting = "keep"
+resolved health.lineGap = 1
 resolved health.right.color = {1,1,1,1}
 resolved health.right.customInitialized = false
 resolved health.right.enabled = true
@@ -8724,6 +8775,7 @@ resolved health.right.shadow = true
 resolved health.right.size = 9
 resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
+resolved health.textLayout = "edges"
 resolved portrait.background = {0,0,0,0.6}
 resolved portrait.border.background = "Solid"
 resolved portrait.border.backgroundColor = {0,0,0,0.75}
@@ -8899,6 +8951,7 @@ resolved power.left.shadow = true
 resolved power.left.size = 11
 resolved power.left.vertical = "auto"
 resolved power.left.whileCasting = "keep"
+resolved power.lineGap = 1
 resolved power.right.color = {1,1,1,1}
 resolved power.right.customInitialized = false
 resolved power.right.enabled = true
@@ -8933,6 +8986,7 @@ resolved power.right.shadow = true
 resolved power.right.size = 8
 resolved power.right.vertical = "auto"
 resolved power.right.whileCasting = "keep"
+resolved power.textLayout = "edges"
 resolved pvp.anchor = "TOPLEFT"
 resolved pvp.background = true
 resolved pvp.enabled = true
@@ -9084,6 +9138,8 @@ option health.bar.segments.healAbsorb type="group" label="Heal absorbs"
 option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" default=true
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
+option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
+option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
 option health.left.format type="select" label="Shows" default="none" values=#00390e8d
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
@@ -9314,6 +9370,8 @@ option power.bar.segments.cost type="group" label="Spell cost"
 option power.bar.segments.cost.enabled type="toggle" label="Enabled" default=true
 option power.bar.segments.cost.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.powerCost"
 option power.bar.segments.cost.texture type="statusbar" label="Texture" inherit="barTexture"
+option power.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
+option power.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option power.left type="group" label="Left text" defaults={enabled=false,format="none",justifyH="LEFT"}
 option power.left.format type="select" label="Shows" default="none" values=#003c64ec
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
@@ -10005,6 +10063,7 @@ default health.left.piece4.source = "none"
 default health.left.shadow = true
 default health.left.vertical = "auto"
 default health.left.whileCasting = "keep"
+default health.lineGap = 1
 default health.right.color = {1,1,1,1}
 default health.right.customInitialized = false
 default health.right.enabled = true
@@ -10036,6 +10095,7 @@ default health.right.piece4.source = "none"
 default health.right.shadow = true
 default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
+default health.textLayout = "edges"
 default portrait.background = {0,0,0,0.6}
 default portrait.border.enabled = false
 default portrait.border.inset = 3
@@ -10188,6 +10248,7 @@ default power.left.piece4.source = "none"
 default power.left.shadow = true
 default power.left.vertical = "auto"
 default power.left.whileCasting = "keep"
+default power.lineGap = 1
 default power.right.color = {1,1,1,1}
 default power.right.customInitialized = false
 default power.right.enabled = true
@@ -10220,6 +10281,7 @@ default power.right.shadow = true
 default power.right.size = 9
 default power.right.vertical = "auto"
 default power.right.whileCasting = "keep"
+default power.textLayout = "edges"
 default pvp.anchor = "TOPLEFT"
 default pvp.background = true
 default pvp.enabled = true
@@ -10593,6 +10655,7 @@ resolved health.left.shadow = true
 resolved health.left.size = 11
 resolved health.left.vertical = "auto"
 resolved health.left.whileCasting = "keep"
+resolved health.lineGap = 1
 resolved health.right.color = {1,1,1,1}
 resolved health.right.customInitialized = false
 resolved health.right.enabled = true
@@ -10627,6 +10690,7 @@ resolved health.right.shadow = true
 resolved health.right.size = 11
 resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
+resolved health.textLayout = "edges"
 resolved portrait.background = {0,0,0,0.6}
 resolved portrait.border.background = "Solid"
 resolved portrait.border.backgroundColor = {0,0,0,0.75}
@@ -10802,6 +10866,7 @@ resolved power.left.shadow = true
 resolved power.left.size = 11
 resolved power.left.vertical = "auto"
 resolved power.left.whileCasting = "keep"
+resolved power.lineGap = 1
 resolved power.right.color = {1,1,1,1}
 resolved power.right.customInitialized = false
 resolved power.right.enabled = true
@@ -10836,6 +10901,7 @@ resolved power.right.shadow = true
 resolved power.right.size = 9
 resolved power.right.vertical = "auto"
 resolved power.right.whileCasting = "keep"
+resolved power.textLayout = "edges"
 resolved pvp.anchor = "TOPLEFT"
 resolved pvp.background = true
 resolved pvp.enabled = true
@@ -10979,6 +11045,8 @@ option health.bar.segments.healAbsorb type="group" label="Heal absorbs"
 option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" default=true
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
+option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
+option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
 option health.left.format type="select" label="Shows" default="none" values=#00390e8d
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
@@ -11209,6 +11277,8 @@ option power.bar.segments.cost type="group" label="Spell cost"
 option power.bar.segments.cost.enabled type="toggle" label="Enabled" default=true
 option power.bar.segments.cost.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.powerCost"
 option power.bar.segments.cost.texture type="statusbar" label="Texture" inherit="barTexture"
+option power.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
+option power.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option power.left type="group" label="Left text" defaults={enabled=false,format="none",justifyH="LEFT"}
 option power.left.format type="select" label="Shows" default="none" values=#003c64ec
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
@@ -11901,6 +11971,7 @@ default health.left.shadow = true
 default health.left.size = 10
 default health.left.vertical = "auto"
 default health.left.whileCasting = "keep"
+default health.lineGap = 1
 default health.right.color = {1,1,1,1}
 default health.right.customInitialized = false
 default health.right.enabled = true
@@ -11933,6 +12004,7 @@ default health.right.shadow = true
 default health.right.size = 9
 default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
+default health.textLayout = "edges"
 default portrait.background = {0,0,0,0.6}
 default portrait.border.enabled = false
 default portrait.border.inset = 3
@@ -12085,6 +12157,7 @@ default power.left.piece4.source = "none"
 default power.left.shadow = true
 default power.left.vertical = "auto"
 default power.left.whileCasting = "keep"
+default power.lineGap = 1
 default power.right.color = {1,1,1,1}
 default power.right.customInitialized = false
 default power.right.enabled = true
@@ -12117,6 +12190,7 @@ default power.right.shadow = true
 default power.right.size = 8
 default power.right.vertical = "auto"
 default power.right.whileCasting = "keep"
+default power.textLayout = "edges"
 default pvp.anchor = "TOPLEFT"
 default pvp.background = true
 default pvp.enabled = true
@@ -12490,6 +12564,7 @@ resolved health.left.shadow = true
 resolved health.left.size = 10
 resolved health.left.vertical = "auto"
 resolved health.left.whileCasting = "keep"
+resolved health.lineGap = 1
 resolved health.right.color = {1,1,1,1}
 resolved health.right.customInitialized = false
 resolved health.right.enabled = true
@@ -12524,6 +12599,7 @@ resolved health.right.shadow = true
 resolved health.right.size = 9
 resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
+resolved health.textLayout = "edges"
 resolved portrait.background = {0,0,0,0.6}
 resolved portrait.border.background = "Solid"
 resolved portrait.border.backgroundColor = {0,0,0,0.75}
@@ -12699,6 +12775,7 @@ resolved power.left.shadow = true
 resolved power.left.size = 11
 resolved power.left.vertical = "auto"
 resolved power.left.whileCasting = "keep"
+resolved power.lineGap = 1
 resolved power.right.color = {1,1,1,1}
 resolved power.right.customInitialized = false
 resolved power.right.enabled = true
@@ -12733,6 +12810,7 @@ resolved power.right.shadow = true
 resolved power.right.size = 8
 resolved power.right.vertical = "auto"
 resolved power.right.whileCasting = "keep"
+resolved power.textLayout = "edges"
 resolved pvp.anchor = "TOPLEFT"
 resolved pvp.background = true
 resolved pvp.enabled = true
@@ -12837,6 +12915,8 @@ option bar.segments.healAbsorb type="group" label="Heal absorbs"
 option bar.segments.healAbsorb.enabled type="toggle" label="Enabled" default=true
 option bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
+option textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
+option lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
 option left.format type="select" label="Shows" default="none" values=#785d5c3c
 option left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
@@ -13183,6 +13263,7 @@ default left.piece4.source = "none"
 default left.shadow = true
 default left.vertical = "auto"
 default left.whileCasting = "keep"
+default lineGap = 1
 default right.color = {1,1,1,1}
 default right.customInitialized = false
 default right.enabled = true
@@ -13214,6 +13295,7 @@ default right.piece4.source = "none"
 default right.shadow = true
 default right.vertical = "auto"
 default right.whileCasting = "keep"
+default textLayout = "edges"
 resolved bar.background.alpha = 0.25
 resolved bar.background.color = {0,0,0,0.5}
 resolved bar.background.enabled = true
@@ -13380,6 +13462,7 @@ resolved left.shadow = true
 resolved left.size = 11
 resolved left.vertical = "auto"
 resolved left.whileCasting = "keep"
+resolved lineGap = 1
 resolved right.color = {1,1,1,1}
 resolved right.customInitialized = false
 resolved right.enabled = true
@@ -13414,6 +13497,7 @@ resolved right.shadow = true
 resolved right.size = 11
 resolved right.vertical = "auto"
 resolved right.whileCasting = "keep"
+resolved textLayout = "edges"
 ## row.power
 option enabled type="toggle" label="Enabled" default=true
 option bar type="group" label="Bar"
@@ -13443,6 +13527,8 @@ option bar.segments.cost type="group" label="Spell cost"
 option bar.segments.cost.enabled type="toggle" label="Enabled" default=true
 option bar.segments.cost.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.powerCost"
 option bar.segments.cost.texture type="statusbar" label="Texture" inherit="barTexture"
+option textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
+option lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option left type="group" label="Left text" defaults={enabled=false,format="none",justifyH="LEFT"}
 option left.format type="select" label="Shows" default="none" values=#de1dc13b
 option left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
@@ -13784,6 +13870,7 @@ default left.piece4.source = "none"
 default left.shadow = true
 default left.vertical = "auto"
 default left.whileCasting = "keep"
+default lineGap = 1
 default right.color = {1,1,1,1}
 default right.customInitialized = false
 default right.enabled = true
@@ -13815,6 +13902,7 @@ default right.piece4.source = "none"
 default right.shadow = true
 default right.vertical = "auto"
 default right.whileCasting = "keep"
+default textLayout = "edges"
 resolved bar.background.alpha = 0.25
 resolved bar.background.color = {0,0,0,0.5}
 resolved bar.background.enabled = true
@@ -13974,6 +14062,7 @@ resolved left.shadow = true
 resolved left.size = 11
 resolved left.vertical = "auto"
 resolved left.whileCasting = "keep"
+resolved lineGap = 1
 resolved right.color = {1,1,1,1}
 resolved right.customInitialized = false
 resolved right.enabled = true
@@ -14008,6 +14097,7 @@ resolved right.shadow = true
 resolved right.size = 11
 resolved right.vertical = "auto"
 resolved right.whileCasting = "keep"
+resolved textLayout = "edges"
 ## row.experience
 option enabled type="toggle" label="Enabled" default=true
 option bar type="group" label="Bar"
@@ -14037,6 +14127,8 @@ option bar.segments.rested type="group" label="Rested"
 option bar.segments.rested.enabled type="toggle" label="Enabled" default=true
 option bar.segments.rested.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.rested"
 option bar.segments.rested.texture type="statusbar" label="Texture" inherit="barTexture"
+option textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
+option lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option left type="group" label="Left text" defaults={enabled=false,format="none",justifyH="LEFT"}
 option left.format type="select" label="Shows" default="none" values=#9d1dcdcc
 option left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
@@ -14378,6 +14470,7 @@ default left.piece4.source = "none"
 default left.shadow = true
 default left.vertical = "auto"
 default left.whileCasting = "keep"
+default lineGap = 1
 default right.color = {1,1,1,1}
 default right.customInitialized = false
 default right.enabled = false
@@ -14409,6 +14502,7 @@ default right.piece4.source = "none"
 default right.shadow = true
 default right.vertical = "auto"
 default right.whileCasting = "keep"
+default textLayout = "edges"
 resolved bar.background.alpha = 0.25
 resolved bar.background.color = {0,0,0,0.5}
 resolved bar.background.enabled = true
@@ -14568,6 +14662,7 @@ resolved left.shadow = true
 resolved left.size = 11
 resolved left.vertical = "auto"
 resolved left.whileCasting = "keep"
+resolved lineGap = 1
 resolved right.color = {1,1,1,1}
 resolved right.customInitialized = false
 resolved right.enabled = false
@@ -14602,6 +14697,7 @@ resolved right.shadow = true
 resolved right.size = 11
 resolved right.vertical = "auto"
 resolved right.whileCasting = "keep"
+resolved textLayout = "edges"
 ## clickgrid.member
 option width type="range" label="Width" default=150 min=60 max=600 step=1
 option spacing type="range" label="Row spacing" default=1 min=0 max=20 step=1
@@ -14683,6 +14779,8 @@ option health.bar.segments.healAbsorb type="group" label="Heal absorbs"
 option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" default=true
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
+option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
+option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
 option health.left.format type="select" label="Shows" default="none" values=#00390e8d
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
@@ -14913,6 +15011,8 @@ option power.bar.segments.cost type="group" label="Spell cost"
 option power.bar.segments.cost.enabled type="toggle" label="Enabled" default=true
 option power.bar.segments.cost.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.powerCost"
 option power.bar.segments.cost.texture type="statusbar" label="Texture" inherit="barTexture"
+option power.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
+option power.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option power.left type="group" label="Left text" defaults={enabled=false,format="none",justifyH="LEFT"}
 option power.left.format type="select" label="Shows" default="none" values=#003c64ec
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
@@ -15573,6 +15673,7 @@ default health.left.shadow = true
 default health.left.size = 10
 default health.left.vertical = "auto"
 default health.left.whileCasting = "keep"
+default health.lineGap = 1
 default health.right.color = {1,1,1,1}
 default health.right.customInitialized = false
 default health.right.enabled = true
@@ -15605,6 +15706,7 @@ default health.right.shadow = true
 default health.right.size = 9
 default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
+default health.textLayout = "edges"
 default portrait.background = {0,0,0,0.6}
 default portrait.border.enabled = false
 default portrait.border.inset = 3
@@ -15757,6 +15859,7 @@ default power.left.piece4.source = "none"
 default power.left.shadow = true
 default power.left.vertical = "auto"
 default power.left.whileCasting = "keep"
+default power.lineGap = 1
 default power.right.color = {1,1,1,1}
 default power.right.customInitialized = false
 default power.right.enabled = true
@@ -15789,6 +15892,7 @@ default power.right.shadow = true
 default power.right.size = 8
 default power.right.vertical = "auto"
 default power.right.whileCasting = "keep"
+default power.textLayout = "edges"
 default raidTarget.anchor = "TOP"
 default raidTarget.enabled = true
 default raidTarget.gap = 2
@@ -16140,6 +16244,7 @@ resolved health.left.shadow = true
 resolved health.left.size = 10
 resolved health.left.vertical = "auto"
 resolved health.left.whileCasting = "keep"
+resolved health.lineGap = 1
 resolved health.right.color = {1,1,1,1}
 resolved health.right.customInitialized = false
 resolved health.right.enabled = true
@@ -16174,6 +16279,7 @@ resolved health.right.shadow = true
 resolved health.right.size = 9
 resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
+resolved health.textLayout = "edges"
 resolved portrait.background = {0,0,0,0.6}
 resolved portrait.border.background = "Solid"
 resolved portrait.border.backgroundColor = {0,0,0,0.75}
@@ -16349,6 +16455,7 @@ resolved power.left.shadow = true
 resolved power.left.size = 11
 resolved power.left.vertical = "auto"
 resolved power.left.whileCasting = "keep"
+resolved power.lineGap = 1
 resolved power.right.color = {1,1,1,1}
 resolved power.right.customInitialized = false
 resolved power.right.enabled = true
@@ -16383,6 +16490,7 @@ resolved power.right.shadow = true
 resolved power.right.size = 8
 resolved power.right.vertical = "auto"
 resolved power.right.whileCasting = "keep"
+resolved power.textLayout = "edges"
 resolved raidTarget.anchor = "TOP"
 resolved raidTarget.enabled = true
 resolved raidTarget.gap = 2
@@ -16527,6 +16635,8 @@ option health.bar.segments.healAbsorb type="group" label="Heal absorbs"
 option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" default=true
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
+option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
+option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
 option health.left.format type="select" label="Shows" default="none" values=#00390e8d
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
@@ -16757,6 +16867,8 @@ option power.bar.segments.cost type="group" label="Spell cost"
 option power.bar.segments.cost.enabled type="toggle" label="Enabled" default=true
 option power.bar.segments.cost.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.powerCost"
 option power.bar.segments.cost.texture type="statusbar" label="Texture" inherit="barTexture"
+option power.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
+option power.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option power.left type="group" label="Left text" defaults={enabled=false,format="none",justifyH="LEFT"}
 option power.left.format type="select" label="Shows" default="none" values=#003c64ec
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
@@ -17417,6 +17529,7 @@ default health.left.shadow = true
 default health.left.size = 10
 default health.left.vertical = "auto"
 default health.left.whileCasting = "keep"
+default health.lineGap = 1
 default health.right.color = {1,1,1,1}
 default health.right.customInitialized = false
 default health.right.enabled = true
@@ -17449,6 +17562,7 @@ default health.right.shadow = true
 default health.right.size = 9
 default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
+default health.textLayout = "edges"
 default portrait.background = {0,0,0,0.6}
 default portrait.border.enabled = false
 default portrait.border.inset = 3
@@ -17601,6 +17715,7 @@ default power.left.piece4.source = "none"
 default power.left.shadow = true
 default power.left.vertical = "auto"
 default power.left.whileCasting = "keep"
+default power.lineGap = 1
 default power.right.color = {1,1,1,1}
 default power.right.customInitialized = false
 default power.right.enabled = true
@@ -17633,6 +17748,7 @@ default power.right.shadow = true
 default power.right.size = 8
 default power.right.vertical = "auto"
 default power.right.whileCasting = "keep"
+default power.textLayout = "edges"
 default raidTarget.anchor = "TOP"
 default raidTarget.enabled = true
 default raidTarget.gap = 2
@@ -17978,6 +18094,7 @@ resolved health.left.shadow = true
 resolved health.left.size = 10
 resolved health.left.vertical = "auto"
 resolved health.left.whileCasting = "keep"
+resolved health.lineGap = 1
 resolved health.right.color = {1,1,1,1}
 resolved health.right.customInitialized = false
 resolved health.right.enabled = true
@@ -18012,6 +18129,7 @@ resolved health.right.shadow = true
 resolved health.right.size = 9
 resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
+resolved health.textLayout = "edges"
 resolved portrait.background = {0,0,0,0.6}
 resolved portrait.border.background = "Solid"
 resolved portrait.border.backgroundColor = {0,0,0,0.75}
@@ -18187,6 +18305,7 @@ resolved power.left.shadow = true
 resolved power.left.size = 11
 resolved power.left.vertical = "auto"
 resolved power.left.whileCasting = "keep"
+resolved power.lineGap = 1
 resolved power.right.color = {1,1,1,1}
 resolved power.right.customInitialized = false
 resolved power.right.enabled = true
@@ -18221,6 +18340,7 @@ resolved power.right.shadow = true
 resolved power.right.size = 8
 resolved power.right.vertical = "auto"
 resolved power.right.whileCasting = "keep"
+resolved power.textLayout = "edges"
 resolved raidTarget.anchor = "TOP"
 resolved raidTarget.enabled = true
 resolved raidTarget.gap = 2
