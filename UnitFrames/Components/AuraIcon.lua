@@ -54,7 +54,18 @@ AuraIcon.schema = {
 		defaults = { size = 8, inset = 1, padding = 2, background = "None" } },
 }
 
-function AuraIcon.DispelColors(cfg)
+-- Returns `previous` when every colour is unchanged, so registered dispel
+-- textures can keep their engine-side copy of the map.
+function AuraIcon.DispelColors(cfg, previous)
+	if previous then
+		local same = true
+		for _, kind in ipairs(DISPEL_TYPES) do
+			local r, g, b, a = ns.Util.UnpackColor(cfg.dispelColors[kind])
+			local pr, pg, pb, pa = previous[kind]:GetRGBA()
+			if r ~= pr or g ~= pg or b ~= pb or a ~= pa then same = false; break end
+		end
+		if same then return previous end
+	end
 	local colors = {}
 	for _, kind in ipairs(DISPEL_TYPES) do colors[kind] = CreateColor(ns.Util.UnpackColor(cfg.dispelColors[kind])) end
 	return colors
@@ -148,24 +159,45 @@ function AuraIcon.Apply(button, cfg, size, dispelColors)
 	AuraIcon.ApplyDispelBorder(button, cfg, size, dispelColors)
 end
 
+-- Per button: the reused border settings (the icon border without a
+-- background) and what the dispel textures were last registered with.
+local dispelBorders = setmetatable({}, { __mode = "k" })
 function AuraIcon.ApplyDispelBorder(button, cfg, size, dispelColors)
+	local enabled = cfg.border.enabled and cfg.dispelBorder and button.ufHarmful or false
+	local state = dispelBorders[button]
+	if not state then
+		state = { border = {} }
+		dispelBorders[button] = state
+	end
+	local border = state.border
+	for key, value in pairs(cfg.border) do border[key] = value end
+	border.background = "None"
+	local info = enabled and Backdrop.Info(border) or nil
+	-- Registration is expensive in the engine (options are copied and the
+	-- button redrawn per texture). Unchanged artwork, size and colours keep
+	-- the engine's tint; only the icon frame's border, which applying the
+	-- icon backdrop recoloured, is hidden again.
+	if state.applied and state.enabled == enabled and state.info == info and state.size == size
+		and state.colors == dispelColors then
+		if state.registered then button.ufIconFrame:SetBackdropBorderColor(0, 0, 0, 0) end
+		return
+	end
+	state.applied, state.enabled, state.info, state.size, state.colors = true, enabled, info, size, dispelColors
+	state.registered = false
 	-- Re-register after applying the backdrop: its setters reset vertex
 	-- colours, and inbound options are copied by the engine, not shared.
 	if not button.ufPreview then
 		for _, texture in ipairs(button.ufDispelTextures) do button:RemoveDispelTypeTexture(texture) end
 	end
 	button.ufDispelTextures = {}
-	local enabled = cfg.border.enabled and cfg.dispelBorder and button.ufHarmful
 	button.ufBorder:SetShown(enabled)
 	if not enabled then
 		button.ufBorder:ClearBackdrop()
 		return
 	end
-	local border = ns.Util.Copy(cfg.border)
-	border.background = "None"
-	Backdrop.ApplyToFixedSize(button.ufBorder, border, size, size)
-	local backdrop = button.ufBorder:GetBackdrop()
-	if backdrop and backdrop.edgeFile and backdrop.edgeFile ~= "" then
+	local backdrop = Backdrop.ApplyToFixedSize(button.ufBorder, border, size, size)
+	if backdrop and backdrop.edgeFile then
+		state.registered = true
 		button.ufIconFrame:SetBackdropBorderColor(0, 0, 0, 0)
 		for _, piece in ipairs(BORDER_PIECES) do
 			local texture = button.ufBorder[piece]

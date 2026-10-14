@@ -118,21 +118,60 @@ function Auras.CandidateFilters(group)
 	return group.maxDuration > 0 and { maxDuration = group.maxDuration } or nil
 end
 
+-- Native setters that do engine work even for unchanged values: candidate
+-- filters re-register events and rebuild every aura; sort and group layout
+-- request reassignment/relayout. Repeats are skipped per container and group.
+-- (Enabled, filter string, maximum count and flow layout compare natively.)
+local appliedGroups = setmetatable({}, { __mode = "k" })
+local function Applied(container, kind)
+	local groups = appliedGroups[container]
+	if not groups then
+		groups = {}
+		appliedGroups[container] = groups
+	end
+	local applied = groups[kind]
+	if not applied then
+		applied = {}
+		groups[kind] = applied
+	end
+	return applied
+end
+
+function Auras.ApplyGroupCandidates(container, kind, group)
+	local applied = Applied(container, kind)
+	if applied.maxDuration == group.maxDuration then return end
+	applied.maxDuration = group.maxDuration
+	container:SetAuraGroupCandidateFilters(kind, Auras.CandidateFilters(group))
+end
+
+function Auras.ApplyGroupSort(container, kind, method, direction)
+	local applied = Applied(container, kind)
+	if applied.sortMethod == method and applied.sortDirection == direction then return end
+	applied.sortMethod, applied.sortDirection = method, direction
+	container:SetAuraGroupSortMethod(kind, method, direction)
+end
+
+function Auras.ApplyGroupLayout(container, kind, width, height, spacing, lineSpacing)
+	local applied = Applied(container, kind)
+	if applied.width == width and applied.height == height and applied.spacing == spacing
+		and applied.lineSpacing == lineSpacing then return end
+	applied.width, applied.height, applied.spacing, applied.lineSpacing = width, height, spacing, lineSpacing
+	container:SetAuraGroupLayout(kind, {
+		elementWidth = width, elementHeight = height, elementSpacing = spacing, lineSpacing = lineSpacing,
+	})
+end
+
 function Auras:OnApply(cfg)
-	self.dispelColors = AuraIcon.DispelColors(cfg)
+	self.dispelColors = AuraIcon.DispelColors(cfg, self.dispelColors)
 	for _, kind in ipairs(KINDS) do
 		local container, group = self.containers[kind], cfg[kind]
 		container:SetAuraGroupEnabled(kind, group.enabled)
 		container:SetAuraGroupFilterString(kind, group.filter)
 		container:SetAuraGroupMaxFrameCount(kind, group.max)
-		container:SetAuraGroupCandidateFilters(kind, Auras.CandidateFilters(group))
+		Auras.ApplyGroupCandidates(container, kind, group)
 		local sort = group.sort == "default" and AuraContainerSortMethod.Default
 			or group.sort == "unitDebuff" and AuraContainerSortMethod.UnitFrameDebuff or AuraContainerSortMethod.ExpirationOnly
-		container:SetAuraGroupSortMethod(kind, sort, AuraContainerSortDirection.Normal)
-		container:SetAuraGroupLayout(kind, {
-			elementWidth = group.size, elementHeight = group.size + AuraIcon.TextRoom(self:GetArtworkConfig()),
-			elementSpacing = cfg.spacing, lineSpacing = cfg.spacing,
-		})
+		Auras.ApplyGroupSort(container, kind, sort, AuraContainerSortDirection.Normal)
 	end
 	self:Layout()
 	self:RestyleButtons()
@@ -145,6 +184,8 @@ function Auras:Layout(width, height)
 	self.hostHeight = height or self.hostHeight or self.frame:GetParent():GetHeight()
 	for _, kind in ipairs(KINDS) do
 		local group = self.resolved[kind]
+		Auras.ApplyGroupLayout(self.containers[kind], kind, group.size,
+			group.size + AuraIcon.TextRoom(self:GetArtworkConfig()), self.resolved.spacing, self.resolved.spacing)
 		local container = self.previewData and self.previewContainers[kind] or self.containers[kind]
 		local side = group.position
 		local vertical = side == "left" or side == "right"

@@ -151,7 +151,7 @@ function AuraBar:OnApply(cfg)
 	if self.presence then
 		for _, kind in ipairs(KINDS) do
 			self.presence:SetAuraGroupFilterString(kind, cfg[kind].filter)
-			self.presence:SetAuraGroupCandidateFilters(kind, Auras.CandidateFilters(cfg[kind]))
+			Auras.ApplyGroupCandidates(self.presence, kind, cfg[kind])
 		end
 	end
 	Auras.OnApply(self, cfg)
@@ -291,7 +291,7 @@ function AuraBar:AnchorViewport()
 	presence:SetFlowLayoutGrowthDirection(AnchorUtil.FlowDirection.Right,
 		top and AnchorUtil.FlowDirection.Down or AnchorUtil.FlowDirection.Up)
 	for _, kind in ipairs(KINDS) do
-		presence:SetAuraGroupLayout(kind, { elementWidth = 1, elementHeight = height + 1, elementSpacing = 0, lineSpacing = 0 })
+		Auras.ApplyGroupLayout(presence, kind, 1, height + 1, 0, 0)
 	end
 	if top then
 		viewport:SetPoint("BOTTOMLEFT", presence, "BOTTOMLEFT", 0, 1)
@@ -316,8 +316,7 @@ function AuraBar:Layout(width)
 		live:SetAuraGroupMaxFrameCount(kind, geometry.capacity)
 		live:SetAuraGroupEnabled(kind, geometry.capacity > 0)
 		if self.presence then self.presence:SetAuraGroupEnabled(kind, geometry.capacity > 0) end
-		live:SetAuraGroupLayout(kind, { elementWidth = group.size, elementHeight = geometry.height,
-			elementSpacing = self.resolved.spacing, lineSpacing = 0 })
+		Auras.ApplyGroupLayout(live, kind, group.size, geometry.height, self.resolved.spacing, 0)
 		local container = self.previewData and self.previewContainers[kind] or live
 		local anchor = geometry.left and "TOPLEFT" or "TOPRIGHT"
 		local direction = geometry.left and AnchorUtil.FlowDirection.Right or AnchorUtil.FlowDirection.Left

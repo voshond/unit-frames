@@ -356,4 +356,40 @@ describe("Backdrop", function()
 		assert.equals(12, info.edgeSize)
 		assert.same({ 0.5, 0.5, 0.5, 1 }, backdrop.frame.__state.backdropBorderColor)
 	end)
+
+	-- BackdropTemplate rebuilds its whole nine-slice layout for any other table.
+	it("passes equal settings as the same info table so BackdropTemplate skips rebuilding", function()
+		local ns = Helpers.LoadAddon(true)
+		local Backdrop = ns.Components.Backdrop
+		local a = Backdrop:New(CreateFrame("Frame"), {})
+		local b = Backdrop:New(CreateFrame("Frame"), {})
+		local info = a.frame.__state.backdrop
+		a:Apply({})
+		assert.equals(info, a.frame.__state.backdrop)
+		assert.equals(info, b.frame.__state.backdrop)
+		a:Apply({ size = 8 })
+		assert.is_true(info ~= a.frame.__state.backdrop)
+		assert.equals(8, a.frame.__state.backdrop.edgeSize)
+		assert.equals(12, info.edgeSize, "shared info is never modified")
+		a:Apply({ enabled = false })
+		assert.is_nil(a.frame.__state.backdrop)
+		a:Apply({})
+		assert.equals(info, a.frame.__state.backdrop, "re-enabling reapplies the cleared backdrop")
+	end)
+
+	it("recomputes fixed-size texture coordinates when only the size changes", function()
+		local ns = Helpers.LoadAddon(true)
+		local Backdrop = ns.Components.Backdrop
+		local frame = CreateFrame("Frame", nil, nil, "BackdropTemplate")
+		local cfg = ns.Schema.Resolve(Backdrop.schema, {}, ns.Config:GetTheme())
+		local info = Backdrop.ApplyToFixedSize(frame, cfg, 24, 24)
+		assert.equals(info, frame.__state.backdrop)
+		frame.__state.backdropRepeat = nil
+		assert.equals(info, Backdrop.ApplyToFixedSize(frame, cfg, 24, 24))
+		assert.is_nil(frame.__state.backdropRepeat, "unchanged backdrop and size do no UV work")
+		Backdrop.ApplyToFixedSize(frame, cfg, 48, 36)
+		assert.same({ 2, 1 }, frame.__state.backdropRepeat)
+		cfg.enabled = false
+		assert.is_nil(Backdrop.ApplyToFixedSize(frame, cfg, 60, 60))
+	end)
 end)

@@ -29,23 +29,51 @@ local function Path(kind, key)
 	return path
 end
 
+-- BackdropTemplate rebuilds its nine-slice layout and texture coordinates
+-- unless it receives the info table it already holds, so equal settings share
+-- one immutable table. Live tables are held by the frames that use them.
+local infos = setmetatable({}, { __mode = "v" })
+local function Info(cfg)
+	local bgFile, edgeFile = Path("background", cfg.background), Path("border", cfg.border)
+	if not (bgFile or edgeFile) then
+		return nil
+	end
+	local inset = cfg.inset
+	local key = tostring(bgFile) .. "\0" .. tostring(edgeFile) .. "\0" .. cfg.size .. "\0" .. inset
+	local info = infos[key]
+	if not info then
+		info = {
+			bgFile = bgFile,
+			edgeFile = edgeFile,
+			edgeSize = cfg.size,
+			tile = true,
+			tileSize = 16,
+			insets = { left = inset, right = inset, top = inset, bottom = inset },
+		}
+		infos[key] = info
+	end
+	return info
+end
+
+-- The shared info for resolved settings, without applying it (nil: nothing drawn).
+Backdrop.Info = Info
+
 -- Applies resolved backdrop settings to a frame created with "BackdropTemplate".
+-- Returns the applied info (shared; never modify it), or nil when nothing is drawn.
 function Backdrop.ApplyTo(frame, cfg)
 	if not cfg.enabled then
 		frame:ClearBackdrop()
-		return
+		return nil
 	end
-	local inset = cfg.inset
-	frame:SetBackdrop({
-		bgFile = Path("background", cfg.background),
-		edgeFile = Path("border", cfg.border),
-		edgeSize = cfg.size,
-		tile = true,
-		tileSize = 16,
-		insets = { left = inset, right = inset, top = inset, bottom = inset },
-	})
+	local info = Info(cfg)
+	if info then
+		frame:SetBackdrop(info)
+	else
+		frame:ClearBackdrop()
+	end
 	frame:SetBackdropColor(Util.UnpackColor(cfg.backgroundColor))
 	frame:SetBackdropBorderColor(Util.UnpackColor(cfg.color))
+	return info
 end
 
 -- Aura descendants can report secret dimensions even outside combat.
@@ -69,8 +97,16 @@ function Backdrop.ApplyToFixedSize(frame, cfg, width, height)
 			BackdropTemplateMixin.SetupTextureCoordinates(geometry)
 		end
 	end
+	local resized = geometry.width ~= width or geometry.height ~= height
 	geometry.width, geometry.height = width, height
-	Backdrop.ApplyTo(frame, cfg)
+	local previous = geometry.info
+	local info = Backdrop.ApplyTo(frame, cfg)
+	geometry.info = info
+	-- An unchanged backdrop is not reapplied; its UVs still follow the new size.
+	if info and info == previous and resized then
+		frame:SetupTextureCoordinates()
+	end
+	return info
 end
 
 -- Anchors `content` inside `frame`, leaving room for the border.
