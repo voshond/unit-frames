@@ -304,15 +304,46 @@ describe("ClickGrid companion", function()
 		CG.Refresh = refresh
 	end)
 
-	it("defers binding edits in combat to the refresh after it #bindings", function()
+	it("defers binding edits in combat to binding application after it, without a restyle #bindings", function()
 		local frame = CG.headers.party:GetAttribute("child1").Member
+		local refreshes, refresh = 0, CG.Refresh
+		CG.Refresh = function(...) refreshes = refreshes + 1; return refresh(...) end
 		Mock.inCombat = true
 		CG.Config:SetAction(3, "none", "hostile", { action = "spell", spell = "139" })
+		Mock.FireEvent("SPELLS_CHANGED")
 		assert.is_nil(frame:GetAttribute("spell-harm3"))
-		assert.is_true(CG.pending)
+		assert.is_true(CG.pendingBindings)
+		assert.is_nil(CG.pending)
 		Mock.inCombat = false
 		Mock.FireEvent("PLAYER_REGEN_ENABLED")
 		assert.equals(139, frame:GetAttribute("spell-harm3"))
+		assert.is_nil(CG.pendingBindings)
+		assert.equals(0, refreshes)
+		-- A style change in the same combat still restyles once, bindings included.
+		Mock.inCombat = true
+		CG.Config:SetAction(3, "none", "hostile", { action = "spell", spell = "2061" })
+		CG.Config:Set("panel.columns", 3)
+		Mock.inCombat = false
+		Mock.FireEvent("PLAYER_REGEN_ENABLED")
+		assert.equals(1, refreshes)
+		assert.equals(2061, frame:GetAttribute("spell-harm3"))
+		assert.is_nil(CG.pending)
+		assert.is_nil(CG.pendingBindings)
+		CG.Refresh = refresh
+	end)
+
+	it("recompiles bindings for talent and specialization changes without restyling #bindings", function()
+		local refreshes, refresh = 0, CG.Refresh
+		CG.Refresh = function(...) refreshes = refreshes + 1; return refresh(...) end
+		local owner, compiled = {}, 0
+		UF.Events.RegisterCallback(owner, "ClickGridBindingsCompiled", function() compiled = compiled + 1 end)
+		Mock.FireEvent("PLAYER_TALENT_UPDATE")
+		Mock.FireEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
+		Mock.FireEvent("PLAYER_SPECIALIZATION_CHANGED", "party1")
+		assert.equals(0, refreshes)
+		assert.equals(2, compiled)
+		UF.Events.UnregisterCallback(owner, "ClickGridBindingsCompiled")
+		CG.Refresh = refresh
 	end)
 
 	it("respects Clique ownership and does not rewrite its attributes", function()
