@@ -262,6 +262,9 @@ function Text:Layout()
 		end
 		-- top/bottom sit 1px inside the edge; middle is centred.
 		local edge, y = "", cfg.offsetY
+		if cfg.vertical == "auto" then
+			y = y + (self.autoOffset or 0)
+		end
 		if vertical == "top" then
 			edge, y = "TOP", y - 1
 		elseif vertical == "bottom" then
@@ -273,10 +276,11 @@ function Text:Layout()
 	end
 end
 
--- Where "auto" vertical position goes ("middle", "top", "bottom"); set by the
--- owner before applying.
-function Text:SetAutoVertical(vertical)
-	self.autoVertical = vertical
+-- Where "auto" vertical position goes ("middle", "top", "bottom"), plus a
+-- plain y offset (e.g. a line of a centred block); set by the owner before
+-- applying. No offset clears it.
+function Text:SetAutoVertical(vertical, offset)
+	self.autoVertical, self.autoOffset = vertical, offset
 end
 
 function Text:GetFormat()

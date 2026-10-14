@@ -6,6 +6,8 @@ A Bar with text slots spanning the bar: left, centre, right, plus a smaller
 text below the left and below the right one. Each slot can be turned on/off,
 aligned and given a format (what it shows). When a "below" text is on, the
 text above it moves to the top half (unless its position is set by hand).
+The centred text layout instead keeps both lines together as one block
+around the bar's middle, so a taller bar adds space around the block.
 
 spec: everything Bar takes (segments, colorInherit), plus
   formats       format ids the texts may show (Core/Formats.lua)
@@ -27,6 +29,11 @@ TextBar.SLOTS = {
 	{ key = "right", label = "Right text", justifyH = "RIGHT" },
 	{ key = "belowLeft", label = "Small text below left", justifyH = "LEFT", below = "left", size = 9 },
 	{ key = "belowRight", label = "Small text below right", justifyH = "RIGHT", below = "right", size = 9 },
+}
+
+TextBar.TEXT_LAYOUTS = {
+	{ "edges", "Top and bottom" },
+	{ "centred", "Centred block" },
 }
 
 local function TextContext(spec)
@@ -57,6 +64,11 @@ function TextBar.BuildSchema(spec)
 	local schema = {
 		{ key = "enabled", type = "toggle", label = "Enabled", default = true },
 		{ key = "bar", type = "group", label = "Bar", schema = Bar.BuildSchema(spec), defaults = ns.Util.Copy(spec.barDefaults) },
+		{ key = "textLayout", type = "select", label = "Text layout", values = TextBar.TEXT_LAYOUTS, default = "edges",
+			tooltip = "Centred block: a text and the small text below it form one block in the middle of the bar. A taller bar adds space around the block instead of between its lines." },
+		{ key = "lineGap", type = "range", label = "Line spacing", min = 0, max = 20, step = 1, default = 1,
+			tooltip = "Space between the two lines of a centred block.",
+			hidden = function(cfg) return cfg.textLayout ~= "centred" end },
 	}
 	for _, slot in ipairs(TextBar.SLOTS) do
 		local default = textDefaults[slot.key]
@@ -75,12 +87,24 @@ end
 
 function TextBar:OnApply(cfg)
 	self:ApplyChild(self.bar, "bar")
+	local centred = cfg.textLayout == "centred"
 	for _, slot in ipairs(TextBar.SLOTS) do
 		local text = self.texts[slot.key]
-		if slot.below then
+		local above, below = slot.below, self:BelowSlot(slot.key)
+		if centred then
+			-- A block's lines sit around the middle by their font sizes and
+			-- the gap: plain settings, never the (possibly secret) geometry.
+			local gap = cfg.lineGap
+			if above and cfg[above].enabled and cfg[slot.key].enabled then
+				text:SetAutoVertical("middle", -(cfg[above].size + gap) / 2)
+			elseif below and cfg[below].enabled and cfg[slot.key].enabled then
+				text:SetAutoVertical("middle", (cfg[below].size + gap) / 2)
+			else
+				text:SetAutoVertical("middle")
+			end
+		elseif above then
 			text:SetAutoVertical("bottom")
 		else
-			local below = self:BelowSlot(slot.key)
 			text:SetAutoVertical(below and cfg[below].enabled and "top" or "middle")
 		end
 		self:ApplyChild(text, slot.key)
