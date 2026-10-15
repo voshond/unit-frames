@@ -14,7 +14,7 @@ Each format has
   events          oUF tag update events.
   sharedEvents    set of unitless events among them.
 
-Sample values: { name, level, className, pvp, health, healthMax, power, powerMax, xp, xpMax, rested }
+Sample values: { name, lastname, level, className, pvp, health, healthMax, power, powerMax, xp, xpMax, rested }
 ]]
 local Formats = { list = {}, byId = {} }
 ns.Formats = Formats
@@ -125,7 +125,8 @@ local PVP = Source("pvp", " ")
 
 Formats.Register("none", { label = "None" })
 Formats.Register("resting", { label = "Resting (zZz)", pieces = { Source("resting") } })
-Formats.Register("name", { label = "Name", pieces = { Source("name") } })
+Formats.Register("name", { label = "Character name", pieces = { Source("name") } })
+Formats.Register("fullname", { label = "Full name", pieces = { Source("name"), Source("lastname", " ") } })
 Formats.Register("level", { label = "Level", pieces = { Source("level") } })
 Formats.Register("level:name", { label = "Level + name", pieces = { Source("level"), SPACE, Source("name") } })
 Formats.Register("class", { label = "Class", pieces = { Source("class") } })
@@ -188,7 +189,7 @@ local function List(...)
 	return out
 end
 
-local IDENTITY = { "none", "name", "level", "smartlevel", "level:name", "class", "level:class", "level:info", "resting" }
+local IDENTITY = { "none", "name", "fullname", "level", "smartlevel", "level:name", "class", "level:class", "level:info", "resting" }
 Formats.HEALTH = List(IDENTITY, HEALTH_VALUES, BAR_VALUES, { "cast:name", "level:class:cast", "level:info:cast" })
 Formats.POWER = List(IDENTITY, POWER_VALUES, BAR_VALUES)
 Formats.EXPERIENCE = List({ "none", "level", "resting" }, XP_VALUES, { "xp:rested" }, BAR_VALUES)

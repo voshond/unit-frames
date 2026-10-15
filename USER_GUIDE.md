@@ -120,6 +120,11 @@ Health bar preview has the same settings; set **Health %** to 100 to test.
 
 ## Text formats
 
+**Character name** shows the unit's name without its Forever surname.
+**Full name** adds the last name with a space, when present. **Last name**
+is also available as a **Custom** text piece. Put any separator in that
+piece's **Text before** so it disappears when the unit has no last name.
+
 The **Level + class** and **Level + class or creature type** text formats
 include a small PvP flag after the text when the unit is flagged. The flag
 shows Alliance, Horde (accounting for mercenary mode), or free-for-all PvP
@@ -130,7 +135,7 @@ PvP flag** lets you preview each flag or **Not flagged**.
 ### Custom text
 
 Choose **Custom** in a text slot's **Shows** picker to build the text from up
-to four pieces. Each piece shows one value (name, level, class, creature
+to four pieces. Each piece shows one value (name, last name, level, class, creature
 type, PvP flag, **Offline / dead**, health/power current, max, percent, missing
 or missing percent, spell name, and on the player frame XP and resting) with
 optional **Text before** and **Text after**. Current and max take a **Number
