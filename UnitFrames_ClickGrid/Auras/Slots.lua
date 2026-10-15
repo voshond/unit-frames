@@ -78,7 +78,13 @@ local function Restyle(slots)
 end
 
 function Slots:RestyleButtons()
-	if InCombatLockdown() or not pcall(Restyle, self) then
+	if InCombatLockdown() then
+		UF.AfterCombat:Queue("restyle", self, Slots.RestyleButtons)
+		return
+	end
+	local ok, reason = pcall(Restyle, self)
+	if not ok then
+		if not UF.AfterCombat:IsQueued(self, "restyle") then UF.Logs:Error("ClickGrid slots restyle deferred", reason) end
 		UF.AfterCombat:Queue("restyle", self, Slots.RestyleButtons)
 	else
 		UF.AfterCombat:Cancel(self, "restyle")

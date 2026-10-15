@@ -235,9 +235,15 @@ local function Run(self, title, fn, ...)
 	local counters = self.counters
 	self.counters, self.measuring = nil, nil
 	Divider(title)
-	if not ok then ns:Print("measurement failed:", result); return false, result end
-	ns:Print(string.format("active %s: %.3f ms; allocated %s bytes; deallocated %s bytes", title,
-		result.elapsedMilliseconds, tostring(result.allocatedBytes), tostring(result.deallocatedBytes)))
+	if not ok then
+		ns.Logs:Error(title, result)
+		ns:Print("measurement failed:", result)
+		return false, result
+	end
+	local summary = string.format("active %s: %.3f ms; allocated %s bytes; deallocated %s bytes", title,
+		result.elapsedMilliseconds, tostring(result.allocatedBytes), tostring(result.deallocatedBytes))
+	ns.Logs:Info(title, summary)
+	ns:Print(summary)
 	ReportCounters(counters)
 	ReportPhases(result)
 	return true

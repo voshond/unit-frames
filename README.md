@@ -92,6 +92,11 @@ Outside combat, `/uf perf measure units` actively
 measures a unit refresh; `clickgrid`, `preview` and `schema` are also supported.
 Diagnostics do not load Workbench and stay off until requested.
 
+`/uf logs` shows the last 10 addon-owned errors and 20 general diagnostic
+entries, retained across reloads in `UnitFramesLogs` with Unix timestamps.
+`/uf logs clear` clears them. Caught aura restyle failures and active measurement
+results/failures are recorded; this does not replace a global Lua error reporter.
+
 ## License
 
 Original UnitFrames code and documentation are source-available under the

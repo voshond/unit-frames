@@ -77,6 +77,7 @@ return {
 		GetRaidTargetIndex = { args = { "target:UnitToken" }, returns = { "result:luaIndex?" }, secretArguments = "AllowedWhenUntainted", secretReturns = true, system = "RaidMarkers" },
 		GetRealmName = { returns = { "realmName:cstring" }, system = "ConnectionScript" },
 		GetRuneCooldown = { args = { "runeIndex:luaIndex" }, returns = { "startTime:number", "duration:number", "isRuneReady:bool" }, secretArguments = "AllowedWhenUntainted", system = "PlayerScript" },
+		GetServerTime = { returns = { "time:number" }, system = "SystemTime" },
 		GetThreatStatusColor = { args = { "gameErrorIndex:number" }, returns = { "colorR:number", "colorG:number", "colorB:number" }, secretArguments = "AllowedWhenUntainted", system = "Threat" },
 		GetTime = { returns = { "time:number" }, system = "SystemTime" },
 		GetTotemDuration = { args = { "slot:luaIndex" }, returns = { "duration:LuaDurationObject" }, secretArguments = "AllowedWhenUntainted", system = "Totem" },
