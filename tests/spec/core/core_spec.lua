@@ -114,6 +114,24 @@ describe("Schema", function()
 		assert.same({ 0, 0, 1, 1 }, Schema.Resolve(nested, nil, nil).row.bar.color)
 	end)
 
+	it("keeps group default layers per resolve when reusing them", function()
+		local inner = { key = "bar", type = "group", defaults = { size = 2 }, schema = {
+			{ key = "size", type = "range", default = 1 },
+			{ key = "mode", type = "select", default = "y" },
+		} }
+		local outer = { { key = "row", type = "group", schema = { inner } } }
+		assert.same({ size = 2, mode = "y" }, Schema.Resolve(outer, nil, nil).row.bar)
+		assert.same({ size = 5, mode = "x" },
+			Schema.Resolve(outer, nil, nil, { row = { bar = { size = 5, mode = "x" } } }).row.bar)
+		assert.same({ size = 2, mode = "y" }, Schema.Resolve(outer, nil, nil).row.bar, "no layer kept")
+		assert.same({ size = 2, mode = "y" }, Schema.Resolve(outer, nil, nil, { row = { bar = false } }).row.bar,
+			"a non-table override leaves the group defaults")
+		local resolved = Schema.Resolve({ inner }, nil, nil)
+		resolved.bar.size = 9
+		assert.equals(2, Schema.Resolve({ inner }, nil, nil).bar.size)
+		assert.same({ size = 2 }, inner.defaults)
+	end)
+
 	it("reads theme paths per theme table", function()
 		local Util = Helpers.LoadAddon().Util
 		assert.equals(1, Util.GetPath({ colors = { health = 1 } }, "colors.health"))

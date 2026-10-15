@@ -1329,6 +1329,7 @@ return {
 			[":gsub"] = "Interface/AddOns/Blizzard_ChatFrame/Shared/TextToSpeechCommands.lua",
 			[":lower"] = "Interface/AddOns/Blizzard_AccountStore/Blizzard_AccountStoreCardTemplates.lua",
 			[":match"] = "Interface/AddOns/Blizzard_ChatFrame/Shared/TextToSpeechFrame.lua",
+			[":new"] = "Interface/AddOns/Blizzard_BoostTutorial/Blizzard_TutorialLogic.lua",
 			[":update"] = "Interface/AddOns/Blizzard_GroupFinder/Mainline/PVEFrame.lua",
 			API = "Interface/AddOns/Blizzard_ObjectAPI/Mainline/AsyncCallbackSystem.lua",
 			AddPoint = "Interface/AddOns/Blizzard_LegacySystem/Blizzard_LegacySystem.lua",

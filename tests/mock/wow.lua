@@ -712,6 +712,12 @@ string.format = function(fmt, ...)
 	return format(fmt, ...)
 end
 
+-- The client's presized table constructor (LuaTableExtensions).
+local newTable = require("table.new")
+table.create = function(arraySizeHint, nodeSizeHint)
+	return newTable(arraySizeHint, nodeSizeHint or 0)
+end
+
 function Mock.Install()
 	_G.C_ClassColor = nil
 	registry = {}

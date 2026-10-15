@@ -98,28 +98,49 @@ local function LayeredValue(layers, key)
 	return value
 end
 
+-- Lists holding only a group's own defaults, shared per descriptor: most
+-- groups have no outer override, and layer lists are never modified.
+local defaultLayers = setmetatable({}, { __mode = "k" })
+
+local function DefaultLayers(opt)
+	local layers = defaultLayers[opt]
+	if not layers then
+		layers = { opt.defaults or NO_DEFAULTS }
+		defaultLayers[opt] = layers
+	end
+	return layers
+end
+
 -- The layers for group `opt`: its own defaults beneath the tables the outer
 -- layers hold at its key. A non-table above every table leaves only the
 -- defaults (as the merged form treated a missing or false group override).
 local function GroupLayers(opt, layers)
-	local above = {}
+	local key, first = opt.key, nil
 	for i = #layers, 1, -1 do
-		local layerValue = layers[i][opt.key]
+		local layerValue = layers[i][key]
 		if type(layerValue) == "table" then
-			above[#above + 1] = layerValue
-		elseif layerValue ~= nil and #above == 0 then
+			first = i
+			break
+		elseif layerValue ~= nil then
 			break
 		end
 	end
+	if not first then
+		return DefaultLayers(opt)
+	end
 	local out = { opt.defaults or NO_DEFAULTS }
-	for i = #above, 1, -1 do
-		out[#out + 1] = above[i]
+	for i = 1, first do
+		local layerValue = layers[i][key]
+		if type(layerValue) == "table" then
+			out[#out + 1] = layerValue
+		end
 	end
 	return out
 end
 
 local function Resolve(schema, config, theme, layers)
-	local out = {}
+	-- Presized: growing a table key by key reallocates it several times.
+	local out = table.create(0, #schema)
 	for _, opt in ipairs(schema) do
 		local value = config and config[opt.key]
 		if opt.type == "group" then
