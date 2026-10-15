@@ -62,7 +62,14 @@ function Perf:Snapshot()
 	return snapshot
 end
 
+-- Separates consecutive reports in the chat frame.
+local DIVIDER = string.rep("=", 12)
+local function Divider(title)
+	ns:Print(string.format("|cff808080%s|r %s |cff808080%s|r", DIVIDER, title, DIVIDER))
+end
+
 function Perf:Report(snapshot, baseline)
+	Divider("snapshot")
 	ns:Print("performance snapshot; profiler", snapshot.profiler and "enabled" or "unavailable/disabled")
 	for _, name in ipairs(ADDONS) do
 		local addon, before = snapshot.addons[name], baseline and baseline.addons[name]
@@ -188,6 +195,7 @@ function Perf:Measure(operation)
 	local ok, result = pcall(C_AddOnProfiler.MeasureCall, run)
 	local counters = self.counters
 	self.counters, self.measuring = nil, nil
+	Divider("measure " .. operation)
 	if not ok then ns:Print("measurement failed:", result); return end
 	ns:Print(string.format("active %s: %.3f ms; allocated %s bytes; deallocated %s bytes", operation,
 		result.elapsedMilliseconds, tostring(result.allocatedBytes), tostring(result.deallocatedBytes)))

@@ -55,6 +55,15 @@ describe("Opt-in performance diagnostics", function()
 		assert.is_nil(UF.Perf.counters)
 	end)
 
+	it("starts each report with a divider naming it", function()
+		Mock.profilerEnabled = true
+		UF.Perf:Measure("units")
+		assert.is_not_nil(messages[1][1]:find("=|r measure units |c", 1, true))
+		messages = {}
+		UF.Perf:Report(UF.Perf:Snapshot())
+		assert.is_not_nil(messages[1][1]:find("=|r snapshot |c", 1, true))
+	end)
+
 	it("measures only explicit prepared operations outside combat and cleans up failures", function()
 		Mock.profilerEnabled = true
 		assert.has_no_error(function() UF.Perf:Measure("units") end)
