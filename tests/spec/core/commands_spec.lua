@@ -9,11 +9,11 @@ describe("Slash command help", function()
 		ns.Print = function(_, ...) messages[#messages + 1] = { ... } end
 	end)
 
-	it("announces the addon once after its own initialization", function()
+	it("announces the version in green once after its own initialization", function()
 		Mock.FireEvent("ADDON_LOADED", "OtherAddon")
 		assert.equals(0, #messages)
 		Mock.FireEvent("ADDON_LOADED", "UnitFrames")
-		assert.same({ { "loaded. Use /uf for a list of commands." } }, messages)
+		assert.same({ { "|cff00ff00" .. ns.version .. "|r loaded. Use /uf for a list of commands." } }, messages)
 		Mock.FireEvent("ADDON_LOADED", "UnitFrames_Workbench")
 		Mock.FireEvent("ADDON_LOADED", "UnitFrames")
 		assert.equals(1, #messages)
