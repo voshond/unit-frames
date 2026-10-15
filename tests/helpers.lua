@@ -111,8 +111,15 @@ end
 
 -- Core + Workbench, with the extra UI mocks and the player frame spawned.
 -- Returns core ns and the Workbench.
-function Helpers.LoadWorkbench()
+function Helpers.LoadWorkbench(build)
 	Mock.Install()
+	if build then
+		local metadata = C_AddOns.GetAddOnMetadata
+		C_AddOns.GetAddOnMetadata = function(name, key)
+			if build[key] ~= nil then return build[key] end
+			return metadata(name, key)
+		end
+	end
 	_G.UnitFramesLogs = nil
 	Mock.InstallUI()
 	local ns = { oUF = NewStubOUF(Mock) }

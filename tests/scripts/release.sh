@@ -9,8 +9,9 @@ mkdir -p "$fixture/scripts"
 for addon in UnitFrames UnitFrames_Workbench UnitFrames_Media UnitFrames_ClickGrid; do
 	cp -a "$repo_dir/$addon" "$fixture/"
 done
-cp "$repo_dir/LICENSE" "$fixture/"
+cp "$repo_dir/LICENSE" "$repo_dir/.gitignore" "$fixture/"
 cp "$repo_dir/scripts/release.sh" "$repo_dir/scripts/validate-release.lua" \
+	"$repo_dir/scripts/build-info.sh" "$repo_dir/scripts/build-dev.sh" \
 	"$repo_dir/scripts/publish-curseforge.sh" "$repo_dir/scripts/test-tag.sh" "$fixture/scripts/"
 cp "$repo_dir/tests/fixtures/stub-runner/run-tests.sh" "$fixture/scripts/"
 mkdir -p "$fixture/tests"
@@ -20,16 +21,31 @@ git init -q
 git config user.name 'Release test'
 git config user.email 'release-test@example.invalid'
 # Libraries are separate build inputs, as in the real repo.
-git add LICENSE scripts tests UnitFrames UnitFrames_Workbench UnitFrames_Media UnitFrames_ClickGrid
+git add .gitignore LICENSE scripts tests UnitFrames UnitFrames_Workbench UnitFrames_Media UnitFrames_ClickGrid
 git reset -q -- UnitFrames/Libs UnitFrames_Media/Libs
 git -c core.hooksPath=/dev/null commit -qm 'Release fixture'
 git tag v0.0.0-beta.1
 git tag 1.0.0
 
+# Development staging uses HEAD, includes local edits, and leaves source TOCs alone.
+bash scripts/build-dev.sh "$release_test_tmp/dev-clean" >/dev/null
+dev_commit="$(git rev-parse HEAD)"
+dev_version="dev-$(git rev-parse --short=12 HEAD)"
+luajit scripts/validate-release.lua "$release_test_tmp/dev-clean" "$dev_version" development "$dev_commit" >/dev/null
+git diff --exit-code
+if bash scripts/build-dev.sh "$release_test_tmp/dev-clean" >/dev/null 2>&1; then
+	echo 'Development build overwrote an existing directory.' >&2; exit 1
+fi
+
 # Dirty and untracked runtime files must not leak into the tagged archive.
 cp scripts/release.sh UnitFrames/untracked.sh
-cp scripts/release.sh UnitFrames/Core/Init.lua
+printf '\n-- Local development changes\n' >> UnitFrames/Core/Init.lua
 cp "$repo_dir/tests/fixtures/stub-runner/fail" tests/marker
+bash scripts/build-dev.sh "$release_test_tmp/dev-dirty" >/dev/null
+luajit scripts/validate-release.lua "$release_test_tmp/dev-dirty" "$dev_version-dirty" development "$dev_commit" >/dev/null
+cmp UnitFrames/Core/Init.lua "$release_test_tmp/dev-dirty/UnitFrames/Core/Init.lua"
+# Release provenance must come from the tag even when HEAD has moved on.
+git -c core.hooksPath=/dev/null commit --allow-empty -qm 'Move HEAD beyond the release tags'
 # Recovery must test tagged code, excluding dirty working files.
 export HOOK_TEST_LOG="$release_test_tmp/tag-test-runs"
 bash scripts/test-tag.sh 1.0.0
@@ -44,7 +60,7 @@ unzip -q "$archive" -d "$release_test_tmp/unpacked"
 [[ ! -e "$release_test_tmp/unpacked/UnitFrames/untracked.sh" ]]
 cmp "$release_test_tmp/unpacked/UnitFrames/Core/Init.lua" <(git show v0.0.0-beta.1:UnitFrames/Core/Init.lua)
 cp LICENSE "$release_test_tmp/unpacked/"
-luajit scripts/validate-release.lua "$release_test_tmp/unpacked" 0.0.0-beta.1 >/dev/null
+luajit scripts/validate-release.lua "$release_test_tmp/unpacked" 0.0.0-beta.1 release "$dev_commit" >/dev/null
 (
 	cd "$release_test_tmp/output"
 	sha256sum --check UnitFrames-v0.0.0-beta.1.zip.sha256 >/dev/null
@@ -54,7 +70,7 @@ luajit scripts/validate-release.lua "$release_test_tmp/unpacked" 0.0.0-beta.1 >/
 bash scripts/release.sh 1.0.0 "$release_test_tmp/plain" >/dev/null
 unzip -q "$release_test_tmp/plain/UnitFrames-1.0.0.zip" -d "$release_test_tmp/plain-unpacked"
 cp LICENSE "$release_test_tmp/plain-unpacked/"
-luajit scripts/validate-release.lua "$release_test_tmp/plain-unpacked" 1.0.0 >/dev/null
+luajit scripts/validate-release.lua "$release_test_tmp/plain-unpacked" 1.0.0 release "$dev_commit" >/dev/null
 
 if bash scripts/release.sh v0.0.0-beta.1 "$release_test_tmp/output" >/dev/null 2>&1; then
 	echo 'Release script overwrote an existing artifact.' >&2; exit 1

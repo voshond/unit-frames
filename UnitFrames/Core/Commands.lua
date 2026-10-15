@@ -1,9 +1,10 @@
 local _, ns = ...
 
 local HELP = {
-	"/uf wb - open the Workbench (component gallery, test mode, frame settings)",
-	"/uf perf - performance snapshot, watch or active measurement",
+	"/uf help - show this list of commands",
+	"/uf wb - open settings and previews",
 	"/uf logs [clear] - show or clear saved diagnostic entries",
+	"/uf perf help - show developer performance commands",
 }
 
 -- Loads the Workbench on demand and shows it, optionally at an entry.
@@ -21,6 +22,13 @@ function ns:OpenWorkbench(entryId)
 end
 
 local commands = {}
+
+function commands.help()
+	ns:Print("version", ns.version)
+	for _, line in ipairs(HELP) do
+		ns:Print(line)
+	end
+end
 
 function commands.wb()
 	ns:OpenWorkbench()
@@ -41,9 +49,6 @@ SlashCmdList.UNITFRAMES = function(msg)
 	if handler then
 		handler()
 	else
-		ns:Print("version", ns.version)
-		for _, line in ipairs(HELP) do
-			print("  " .. line)
-		end
+		commands.help()
 	end
 end

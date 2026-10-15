@@ -2,7 +2,9 @@
 ## Title: UnitFrames
 ## Notes: Modular, customisable unit frames for WoW Forever.
 ## Author: Martin Konstantin Herrmann
-## Version: 0.1.0-dev
+## Version: dev
+## X-Build-Channel: development
+## X-Build-Commit: unknown
 ## SavedVariables: UnitFramesDB, UnitFramesLogs
 ## OptionalDeps: Clique, UnitFrames_Media, Titan
 

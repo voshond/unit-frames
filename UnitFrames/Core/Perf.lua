@@ -299,5 +299,12 @@ function Perf:Command(arguments)
 	elseif command == "startup" then self:ArmStartup()
 	elseif command == "combat" then self:Combat()
 	elseif not command then self:Report(self:Snapshot())
-	else ns:Print("/uf perf [watch <seconds> | combat | cancel | measure <operation> | startup]") end
+	else
+		ns:Print("/uf perf - performance snapshot")
+		ns:Print("/uf perf watch <seconds> - observe a bounded window")
+		ns:Print("/uf perf combat - observe the next complete combat")
+		ns:Print("/uf perf cancel - cancel performance observation")
+		ns:Print("/uf perf measure <operation> - actively measure an operation")
+		ns:Print("/uf perf startup - measure startup after the next /reload")
+	end
 end

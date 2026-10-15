@@ -50,6 +50,38 @@ Verify unfamiliar APIs against the actual client or Blizzard's UI/API
 documentation. The optional local source checkout is
 `examples/wow-ui-source-forever`, using Gethe/wow-ui-source's `forever` branch.
 
+## Build versions and development previews
+
+The addon reads its version and build channel from TOC metadata. `/uf` prints
+the version, and the Workbench title displays it. An unstamped source checkout
+uses `dev`; WoW cannot read Git itself.
+
+To stage the current working files with libraries and a version such as
+`dev-0123456789ab` (or `dev-0123456789ab-dirty` for local changes), run:
+
+```sh
+bash scripts/build-dev.sh
+```
+
+The script creates a new directory under ignored `.build/` and prints its
+location. You can supply a new output directory as the first argument.
+It does not modify source files or install into the game. Deploy the staged
+addon folders using the incremental installation guidance below. Rebuild
+after changing source or HEAD; the stamped version describes that build.
+Direct source symlinks retain the unstamped `dev` version.
+
+Development builds include the Workbench's **Bars** and **Basics** component
+gallery. Their settings only affect those demonstrations. Packaged releases,
+including alpha/beta tags, omit these entries from navigation and registration;
+unit settings, their previews, Theme, Profiles and ClickGrid remain available.
+Theme controls shared appearance defaults.
+
+Release packaging stamps all four TOCs with the version tag (without an
+optional `v` prefix), the tag's full commit SHA, and the `release` channel.
+The existing GitHub workflow selects the tag automatically and uploads that
+same stamped ZIP to CurseForge when publishing is enabled. No version bump
+in source is needed before tagging.
+
 ## Code map
 
 | Folder | Purpose |

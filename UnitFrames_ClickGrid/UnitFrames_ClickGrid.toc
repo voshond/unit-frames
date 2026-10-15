@@ -2,7 +2,9 @@
 ## Title: UnitFrames |cff4fa3ffClickGrid|r
 ## Notes: Configurable healing groups, native aura indicators and modifier click casting.
 ## Author: Martin Konstantin Herrmann
-## Version: 0.1.0-dev
+## Version: dev
+## X-Build-Channel: development
+## X-Build-Commit: unknown
 ## Dependencies: UnitFrames
 ## OptionalDeps: Clique
 

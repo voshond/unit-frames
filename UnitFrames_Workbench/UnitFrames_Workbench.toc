@@ -1,8 +1,10 @@
 ## Interface: 16001
 ## Title: UnitFrames |cff4fa3ffWorkbench|r
-## Notes: Component gallery and test mode for UnitFrames. Open with /uf wb.
+## Notes: Settings and previews for UnitFrames. Open with /uf wb.
 ## Author: Martin Konstantin Herrmann
-## Version: 0.1.0-dev
+## Version: dev
+## X-Build-Channel: development
+## X-Build-Commit: unknown
 ## Dependencies: UnitFrames
 ## LoadOnDemand: 1
 ## SavedVariables: UnitFramesWorkbenchDB

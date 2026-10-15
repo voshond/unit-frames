@@ -4,7 +4,9 @@ local addonName, ns = ...
 UnitFrames = ns
 
 ns.name = addonName
-ns.version = C_AddOns and C_AddOns.GetAddOnMetadata(addonName, "Version") or "dev"
+ns.version = C_AddOns.GetAddOnMetadata(addonName, "Version") or "dev"
+ns.isDevelopment = C_AddOns.GetAddOnMetadata(addonName, "X-Build-Channel") ~= "release"
+ns.commit = C_AddOns.GetAddOnMetadata(addonName, "X-Build-Commit")
 
 ns.Components = {} -- component classes by name, filled by Component:Extend
 ns.Widgets = {}    -- widget classes by name, filled by Widget:Extend
@@ -48,4 +50,5 @@ loader:SetScript("OnEvent", function(self, event, name)
 	ns.Config:Initialize()
 	ns.Media:Initialize()
 	ns.Events:Fire("Initialized")
+	ns:Print("loaded. Use /uf for a list of commands.")
 end)
