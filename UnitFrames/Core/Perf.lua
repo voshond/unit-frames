@@ -62,7 +62,15 @@ function Perf:Snapshot()
 	return snapshot
 end
 
-function Perf:Report(snapshot, baseline)
+-- Separates consecutive reports in the chat frame.
+local DIVIDER = string.rep("=", 12)
+local function Divider(title)
+	ns:Print(string.format("|cff808080%s|r %s |cff808080%s|r", DIVIDER, title, DIVIDER))
+end
+
+-- `untitled`: the caller has already started the report with its divider.
+function Perf:Report(snapshot, baseline, untitled)
+	if not untitled then Divider("snapshot") end
 	ns:Print("performance snapshot; profiler", snapshot.profiler and "enabled" or "unavailable/disabled")
 	for _, name in ipairs(ADDONS) do
 		local addon, before = snapshot.addons[name], baseline and baseline.addons[name]
@@ -115,8 +123,9 @@ function Perf:Watch(seconds)
 		if self.elapsed < self.seconds then return end
 		local counters, baseline, duration = self.counters, self.baseline, self.elapsed
 		self:Cancel()
+		Divider(string.format("watch %g s", seconds))
 		ns:Print(string.format("passive observation %.2f seconds", duration))
-		self:Report(self:Snapshot(), baseline)
+		self:Report(self:Snapshot(), baseline, true)
 		ReportCounters(counters)
 	end)
 	ns:Print("observing for", seconds, "seconds; /uf perf cancel stops the window")
@@ -170,6 +179,15 @@ local operations = {
 		assert(ns.ClickGrid and next(ns.ClickGrid.previews), "open a ClickGrid preview first")
 		for preview in pairs(ns.ClickGrid.previews) do preview:ShowData(preview.data) end
 	end,
+	-- Builds and releases a hidden ClickGrid preview: 5 member/target cells
+	-- composed like live grid members, as a stand-in for the panel's startup.
+	-- Frames cannot be destroyed, so each run keeps their widgets until reload.
+	create = function()
+		assert(ns.ClickGrid and ns.ClickGrid.started, "ClickGrid must already be loaded and prepared")
+		local preview = ns.ClickGrid.Preview:New(UIParent)
+		preview.frame:Hide()
+		preview:Release()
+	end,
 	schema = function()
 		for _, unit in ipairs(ns.Units.order) do
 			ns.Schema.Resolve(ns.Units:GetSchema(unit), ns.Config:GetUnitConfig(unit), ns.Config:GetTheme())
@@ -177,22 +195,52 @@ local operations = {
 	end,
 }
 
-function Perf:Measure(operation)
-	local run = operations[operation]
-	if not run then ns:Print("measure operations: units, clickgrid, preview, schema"); return end
-	if InCombatLockdown() then ns:Print("active measurements must wait until combat ends"); return end
-	if not ProfilerEnabled() then ns:Print("native addon profiler unavailable/disabled"); return end
-	if self.counters then ns:Print("cancel the observation window before an active measurement"); return end
+-- Runs fn(...) inside an active measurement and reports it under `title`.
+-- Returns whether it succeeded and the error otherwise.
+local function Run(self, title, fn, ...)
 	self.counters, self.measuring = {}, true
 	-- A diagnostic operation can fail; always retire its instrumentation.
-	local ok, result = pcall(C_AddOnProfiler.MeasureCall, run)
+	local ok, result = pcall(C_AddOnProfiler.MeasureCall, fn, ...)
 	local counters = self.counters
 	self.counters, self.measuring = nil, nil
-	if not ok then ns:Print("measurement failed:", result); return end
-	ns:Print(string.format("active %s: %.3f ms; allocated %s bytes; deallocated %s bytes", operation,
+	Divider(title)
+	if not ok then ns:Print("measurement failed:", result); return false, result end
+	ns:Print(string.format("active %s: %.3f ms; allocated %s bytes; deallocated %s bytes", title,
 		result.elapsedMilliseconds, tostring(result.allocatedBytes), tostring(result.deallocatedBytes)))
 	ReportCounters(counters)
 	ReportPhases(result)
+	return true
+end
+
+function Perf:Measure(operation)
+	local run = operations[operation]
+	if not run then ns:Print("measure operations: units, clickgrid, preview, create, schema"); return end
+	if InCombatLockdown() then ns:Print("active measurements must wait until combat ends"); return end
+	if not ProfilerEnabled() then ns:Print("native addon profiler unavailable/disabled"); return end
+	if self.counters then ns:Print("cancel the observation window before an active measurement"); return end
+	Run(self, "measure " .. operation, run)
+end
+
+-- Startup measurement. "/uf perf startup" arms it for the next load only;
+-- there each Perf:Startup call (unit frame spawning, the ClickGrid panel)
+-- runs inside an active measurement. Otherwise it simply calls fn(...).
+function Perf:ArmStartup()
+	ns.Config.db.global.measureStartup = true
+	ns:Print("startup will be measured once after the next /reload")
+end
+
+function Perf:Startup(label, fn, ...)
+	local global = ns.Config.db and ns.Config.db.global
+	if global and global.measureStartup then
+		global.measureStartup = nil
+		self.startupArmed = true
+	end
+	if not self.startupArmed or self.counters or InCombatLockdown() or not ProfilerEnabled() then
+		return fn(...)
+	end
+	local ok, err = Run(self, "startup " .. label, fn, ...)
+	-- Fail as an unmeasured startup would.
+	if not ok then error(err, 0) end
 end
 
 function Perf:Command(arguments)
@@ -202,6 +250,7 @@ function Perf:Command(arguments)
 		self:Watch(value ~= "" and value or nil)
 	elseif command == "cancel" then self:Cancel(); ns:Print("performance observation cancelled")
 	elseif command == "measure" then self:Measure(value)
+	elseif command == "startup" then self:ArmStartup()
 	elseif not command then self:Report(self:Snapshot())
-	else ns:Print("/uf perf [watch <seconds> | cancel | measure <operation>]") end
+	else ns:Print("/uf perf [watch <seconds> | cancel | measure <operation> | startup]") end
 end

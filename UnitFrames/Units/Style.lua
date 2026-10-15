@@ -217,7 +217,9 @@ end
 
 oUF:Factory(function(factory)
 	factory:SetActiveStyle(Units.STYLE)
-	for _, unit in ipairs(Units.order) do Spawn(factory, unit) end
+	ns.Perf:Startup("units", function()
+		for _, unit in ipairs(Units.order) do Spawn(factory, unit) end
+	end)
 end)
 
 ns.Events.RegisterCallback(Units, "UnitConfigChanged", function(_, unit)

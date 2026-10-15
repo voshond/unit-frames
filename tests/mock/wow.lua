@@ -611,7 +611,9 @@ function Mock.DecorateAuraContainer(container)
 		return group
 	end
 	function container:AddAuraGroup(key, filter, options)
-		AddFrames(self, key, filter, options, 2)
+		-- Blizzard builds a batch up front (CustomAuraContainerConstants
+		-- .FrameCreationBatchSize), whatever the group's maximum.
+		AddFrames(self, key, filter, options, 10)
 		-- Groups resize the container: Blizzard forbids untrusted layout
 		-- scripts on it and on everything depending on its geometry.
 		s.layoutAspect = true
@@ -665,6 +667,7 @@ local function NewColor(r, g, b, a)
 	local color = { r = r, g = g, b = b, a = a or 1 }
 	function color:GetRGB() return self.r, self.g, self.b end
 	function color:GetRGBA() return self.r, self.g, self.b, self.a end
+	function color:SetRGBA(nr, ng, nb, na) self.r, self.g, self.b, self.a = nr, ng, nb, na or 1 end
 	return color
 end
 
@@ -710,6 +713,12 @@ string.format = function(fmt, ...)
 		end
 	end
 	return format(fmt, ...)
+end
+
+-- The client's presized table constructor (LuaTableExtensions).
+local newTable = require("table.new")
+table.create = function(arraySizeHint, nodeSizeHint)
+	return newTable(arraySizeHint, nodeSizeHint or 0)
 end
 
 function Mock.Install()

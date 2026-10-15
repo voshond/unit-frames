@@ -85,10 +85,10 @@ function Castbar:OnCreate(parent)
 	self.icon = self.frame:CreateTexture(nil, "ARTWORK")
 	self.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
-	self.bar = self:Own(Bar:New(self.frame, {}, { colorInherit = "colors.cast" }))
+	self.bar = self:Own(Bar:New(self.frame, self:ChildConfig("bar"), { colorInherit = "colors.cast" }))
 	local textParent = self.bar:GetTextParent()
-	self.nameText = self:Own(Text:New(textParent, {}))
-	self.timeText = self:Own(Text:New(textParent, {}))
+	self.nameText = self:Own(Text:New(textParent, self:ChildConfig("name")))
+	self.timeText = self:Own(Text:New(textParent, self:ChildConfig("time")))
 
 	self.fade = self.frame:CreateAnimationGroup()
 	local alpha = self.fade:CreateAnimation("Alpha")
@@ -237,8 +237,15 @@ function Castbar:ApplyCastColor(info)
 		self.bar:SetColor(Util.UnpackColor(base))
 		return
 	end
-	local color = C_CurveUtil.EvaluateColorFromBoolean(info.notInterruptible,
-		CreateColor(Util.UnpackColor(colors.nonInterruptible)), CreateColor(Util.UnpackColor(base)))
+	-- Reused per cast: CreateColor copies every ColorMixin method into a new table.
+	local branches = self.castColorBranches
+	if not branches then
+		branches = { CreateColor(0, 0, 0, 1), CreateColor(0, 0, 0, 1) }
+		self.castColorBranches = branches
+	end
+	branches[1]:SetRGBA(Util.UnpackColor(colors.nonInterruptible))
+	branches[2]:SetRGBA(Util.UnpackColor(base))
+	local color = C_CurveUtil.EvaluateColorFromBoolean(info.notInterruptible, branches[1], branches[2])
 	self.bar:SetColor(color:GetRGBA())
 end
 

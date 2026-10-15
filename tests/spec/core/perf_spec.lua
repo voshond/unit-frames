@@ -55,6 +55,64 @@ describe("Opt-in performance diagnostics", function()
 		assert.is_nil(UF.Perf.counters)
 	end)
 
+	it("starts each report with a divider naming it", function()
+		Mock.profilerEnabled = true
+		UF.Perf:Measure("units")
+		assert.is_not_nil(messages[1][1]:find("=|r measure units |c", 1, true))
+		messages = {}
+		UF.Perf:Report(UF.Perf:Snapshot())
+		assert.is_not_nil(messages[1][1]:find("=|r snapshot |c", 1, true))
+		UF.Perf:Watch(1)
+		messages = {}
+		local driver = UF.Perf.driver
+		driver:GetScript("OnUpdate")(driver, 1)
+		assert.is_not_nil(messages[1][1]:find("=|r watch 1 s |c", 1, true), "a watch report starts with its divider")
+		for i = 2, #messages do
+			assert.is_nil(tostring(messages[i][1]):find("=|r", 1, true), "only one divider per report")
+		end
+	end)
+
+	it("measures startup on the next load only after arming it, and fails as unmeasured", function()
+		Mock.profilerEnabled = true
+		local runs = 0
+		UF.Perf:Startup("units", function(n) runs = runs + n end, 1)
+		assert.equals(1, runs)
+		assert.same({}, messages, "unarmed: no measurement")
+		UF.Perf:Command("startup")
+		assert.is_true(UF.Config.db.global.measureStartup)
+		messages = {}
+		UF.Perf:Startup("units", function(n) runs = runs + n end, 2)
+		assert.equals(3, runs)
+		assert.is_nil(UF.Config.db.global.measureStartup, "armed for one load")
+		assert.is_not_nil(messages[1][1]:find("=|r startup units |c", 1, true))
+		messages = {}
+		UF.Perf:Startup("clickgrid", function() end)
+		assert.is_not_nil(messages[1][1]:find("=|r startup clickgrid |c", 1, true), "every startup of that load")
+		assert.is_nil(UF.Perf.counters)
+		assert.has_error(function() UF.Perf:Startup("clickgrid", function() error("boom") end) end)
+		assert.is_nil(UF.Perf.counters)
+	end)
+
+	it("measures creating a released ClickGrid preview as a startup stand-in", function()
+		local _, CG = Helpers.LoadClickGrid()
+		UF = CG.UF
+		UF.Print = function(_, ...) messages[#messages + 1] = { ... } end
+		Mock.profilerEnabled = true
+		local created
+		local new = CG.Preview.New
+		CG.Preview.New = function(...) created = new(...); return created end
+		UF.Perf:Measure("create")
+		assert.is_true(created.released)
+		assert.equals(5, #created.cells)
+		assert.is_nil(next(CG.previews))
+		assert.is_nil(UF.Perf.counters)
+		local reported
+		for _, message in ipairs(messages) do
+			if message[1] == "componentCreate" then reported = message[2] end
+		end
+		assert.is_true(reported > 0)
+	end)
+
 	it("measures only explicit prepared operations outside combat and cleans up failures", function()
 		Mock.profilerEnabled = true
 		assert.has_no_error(function() UF.Perf:Measure("units") end)

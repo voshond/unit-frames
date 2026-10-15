@@ -126,7 +126,13 @@ function AuraBar:OnCreate(parent, spec)
 	self.background = CreateFrame("Frame", nil, viewport, "BackdropTemplate")
 	self.background:SetFrameLevel(viewport:GetFrameLevel())
 	self.background:SetAllPoints(self.frame)
-	if spec.collapsible then
+end
+
+-- Created with the live containers, when the row is first enabled.
+function AuraBar:CreateContainers()
+	if not Auras.CreateContainers(self) then return false end
+	if self.spec.collapsible then
+		ns.Perf:Begin("aura containers")
 		-- At most one artless button per category, mirroring the row's
 		-- filters and capacity: its flow extent is one cell exactly while
 		-- the row would show any icon, else Blizzard's 1-unit minimum.
@@ -141,19 +147,26 @@ function AuraBar:OnCreate(parent, spec)
 		end
 		presence:SetFlowLayoutAxis(AnchorUtil.FlowLayoutAxis.Horizontal)
 		presence:SetEnabled(false)
+		if self.unit then presence:SetUnit(self.unit) end
 		self.presence = presence
+		ns.Perf:End("aura containers")
 	end
+	return true
 end
 
 function AuraBar:OnApply(cfg)
+	ns.Perf:Begin("aura art config")
 	self.artConfig = ns.Util.Copy(cfg)
 	if cfg.durationPosition == "below" then self.artConfig.durationPosition = "BOTTOM" end
+	-- New buttons are styled with the art config at once.
+	if cfg.enabled then self:CreateContainers() end
 	if self.presence then
 		for _, kind in ipairs(KINDS) do
 			self.presence:SetAuraGroupFilterString(kind, cfg[kind].filter)
 			Auras.ApplyGroupCandidates(self.presence, kind, cfg[kind])
 		end
 	end
+	ns.Perf:End("aura art config")
 	Auras.OnApply(self, cfg)
 end
 
@@ -265,7 +278,7 @@ function AuraBar:AnchorViewport()
 	local viewport, gap = self.viewport, self.collapseGap
 	if viewport == self.frame then return end
 	viewport:ClearAllPoints()
-	if not gap then
+	if not gap or not (self.previewData or self.presence) then
 		viewport:SetAllPoints(self.frame)
 		return
 	end
@@ -308,21 +321,25 @@ function AuraBar:Layout(width)
 	self.geometry = AuraBar.Geometry(self.resolved, self.hostWidth)
 	for _, kind in ipairs(KINDS) do
 		local geometry, group = self.geometry[kind], self.resolved[kind]
-		local section = self.sections[kind]
+		local section = self:GetContainerParent(kind)
 		section:ClearAllPoints()
 		section:SetPoint("TOPLEFT", self.frame, "TOPLEFT", geometry.x, -self.resolved.padding)
 		section:SetSize(geometry.width, geometry.height)
 		local live = self.containers[kind]
-		live:SetAuraGroupMaxFrameCount(kind, geometry.capacity)
-		live:SetAuraGroupEnabled(kind, geometry.capacity > 0)
-		if self.presence then self.presence:SetAuraGroupEnabled(kind, geometry.capacity > 0) end
-		Auras.ApplyGroupLayout(live, kind, group.size, geometry.height, self.resolved.spacing, 0)
+		if live then
+			live:SetAuraGroupMaxFrameCount(kind, geometry.capacity)
+			live:SetAuraGroupEnabled(kind, geometry.capacity > 0)
+			if self.presence then self.presence:SetAuraGroupEnabled(kind, geometry.capacity > 0) end
+			Auras.ApplyGroupLayout(live, kind, group.size, geometry.height, self.resolved.spacing, 0)
+		end
 		local container = self.previewData and self.previewContainers[kind] or live
 		local anchor = geometry.left and "TOPLEFT" or "TOPRIGHT"
 		local direction = geometry.left and AnchorUtil.FlowDirection.Right or AnchorUtil.FlowDirection.Left
-		container:ClearAllPoints()
-		container:SetPoint(anchor, section, anchor, 0, 0)
-		if self.previewData then
+		if not container then
+			-- Never enabled: no live containers yet.
+		elseif self.previewData then
+			container:ClearAllPoints()
+			container:SetPoint(anchor, section, anchor, 0, 0)
 			local flow = container.ufFlow
 			flow:SetLayoutAxis(AnchorUtil.FlowLayoutAxis.Horizontal)
 			flow:SetAnchorPoint(anchor)
@@ -330,6 +347,8 @@ function AuraBar:Layout(width)
 			flow:SetMaximumLineSize(geometry.lineSize)
 			flow:Apply(container, { { elements = container.ufElements, elementSpacing = self.resolved.spacing, lineSpacing = 0 } })
 		else
+			container:ClearAllPoints()
+			container:SetPoint(anchor, section, anchor, 0, 0)
 			container:SetFlowLayoutAxis(AnchorUtil.FlowLayoutAxis.Horizontal)
 			container:SetFlowLayoutAnchorPoint(anchor)
 			container:SetFlowLayoutGrowthDirection(direction, AnchorUtil.FlowDirection.Down)

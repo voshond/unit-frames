@@ -65,6 +65,16 @@ function Auras:OnCreate(parent)
 	self.frame = CreateFrame("Frame", nil, parent)
 	self.frame:SetAllPoints(parent)
 	self.containers = {}
+end
+
+-- Live containers are created when the part is first enabled. Adding a
+-- native aura group immediately builds a batch of ten buttons (each with
+-- its artwork), so parts that are never shown (aura bars and target auras
+-- by default) would otherwise cost ~20 buttons each. Frames cannot be
+-- destroyed: once created, containers stay. Returns true when created now.
+function Auras:CreateContainers()
+	if self.containers.buffs then return false end
+	ns.Perf:Begin("aura containers")
 	for _, kind in ipairs(KINDS) do
 		local container = CreateFrame("AuraContainer", nil, self:GetContainerParent(kind), "CustomAuraContainerTemplate")
 		self.containers[kind] = container
@@ -74,7 +84,10 @@ function Auras:OnCreate(parent)
 			sortDirection = AuraContainerSortDirection.Normal,
 			initializeFrame = function(button) self:InitButton(button, kind) end,
 		})
+		if self.unit then container:SetUnit(self.unit) end
 	end
+	ns.Perf:End("aura containers")
+	return true
 end
 
 function Auras:GetContainerParent(kind)
@@ -106,10 +119,33 @@ end
 function Auras:InitButton(button, kind, preview)
 	AuraIcon.Create(button, kind, preview, { harmful = kind == "debuffs",
 		cancelBuffs = self.spec.cancelBuffs, clickThrough = self.spec.clickThrough })
-	if self.resolved then self:StyleButton(button) end
+	if self.resolved then
+		self:StyleButton(button)
+		button.ufStyleToken = self.styleToken
+	end
+end
+
+-- Restyling every owned button dominates an apply (containers keep their
+-- buttons, ~20 each, with or without auras), and most applies change
+-- nothing about them. Buttons remember the token they were styled with; it
+-- changes with anything their style reads: resolved settings, dispel
+-- colours, and the font and border artwork those name (media can register
+-- late).
+local function StyleToken(auras, previous)
+	local art = auras:GetArtworkConfig()
+	local token = { resolved = auras.resolved, dispelColors = auras.dispelColors,
+		font = ns.Media:Fetch("font", art.font), border = ns.Components.Backdrop.Info(art.border) }
+	if previous and previous.dispelColors == token.dispelColors and previous.font == token.font
+		and previous.border == token.border
+		-- Shared settings (Schema.Shared) are compared once per refresh.
+		and ns.Schema.Memo(ns.Util.Equals, previous.resolved, token.resolved) then
+		return previous
+	end
+	return token
 end
 
 function Auras:StyleButton(button)
+	ns.Perf:Count("auraButtonStyle")
 	AuraIcon.Apply(button, self:GetArtworkConfig(), self.resolved[button.ufKind].size, self.dispelColors)
 end
 
@@ -162,8 +198,11 @@ function Auras.ApplyGroupLayout(container, kind, width, height, spacing, lineSpa
 end
 
 function Auras:OnApply(cfg)
+	local Perf = ns.Perf
+	Perf:Begin("aura groups")
 	self.dispelColors = AuraIcon.DispelColors(cfg, self.dispelColors)
-	for _, kind in ipairs(KINDS) do
+	if cfg.enabled then self:CreateContainers() end
+	for _, kind in ipairs(self.containers.buffs and KINDS or {}) do
 		local container, group = self.containers[kind], cfg[kind]
 		container:SetAuraGroupEnabled(kind, group.enabled)
 		container:SetAuraGroupFilterString(kind, group.filter)
@@ -173,8 +212,14 @@ function Auras:OnApply(cfg)
 			or group.sort == "unitDebuff" and AuraContainerSortMethod.UnitFrameDebuff or AuraContainerSortMethod.ExpirationOnly
 		Auras.ApplyGroupSort(container, kind, sort, AuraContainerSortDirection.Normal)
 	end
+	self.styleToken = StyleToken(self, self.styleToken)
+	Perf:End("aura groups")
+	Perf:Begin("aura layout")
 	self:Layout()
+	Perf:End("aura layout")
+	Perf:Begin("aura restyle")
 	self:RestyleButtons()
+	Perf:End("aura restyle")
 end
 
 -- Only the container's anchor refers to our ordinary host. We never read
@@ -184,9 +229,12 @@ function Auras:Layout(width, height)
 	self.hostHeight = height or self.hostHeight or self.frame:GetParent():GetHeight()
 	for _, kind in ipairs(KINDS) do
 		local group = self.resolved[kind]
-		Auras.ApplyGroupLayout(self.containers[kind], kind, group.size,
-			group.size + AuraIcon.TextRoom(self:GetArtworkConfig()), self.resolved.spacing, self.resolved.spacing)
+		if self.containers[kind] then
+			Auras.ApplyGroupLayout(self.containers[kind], kind, group.size,
+				group.size + AuraIcon.TextRoom(self:GetArtworkConfig()), self.resolved.spacing, self.resolved.spacing)
+		end
 		local container = self.previewData and self.previewContainers[kind] or self.containers[kind]
+		if not container then break end
 		local side = group.position
 		local vertical = side == "left" or side == "right"
 		local reverse = group.growth == "reverse"
@@ -235,10 +283,14 @@ end
 -- Access to existing buttons (including enumeration) may be denied while
 -- aura data is secret. Reapply at the next combat end in that case.
 local function Restyle(auras)
-	for _, kind in ipairs(KINDS) do
+	for _, kind in ipairs(auras.containers.buffs and KINDS or {}) do
 		local container = auras.containers[kind]
 		for index = 1, container:GetAuraGroupFrameCount(kind) do
-			auras:StyleButton(container:GetAuraGroupFrame(kind, index))
+			local button = container:GetAuraGroupFrame(kind, index)
+			if button.ufStyleToken ~= auras.styleToken then
+				auras:StyleButton(button)
+				button.ufStyleToken = auras.styleToken
+			end
 		end
 	end
 end
@@ -263,11 +315,16 @@ end
 
 function Auras:SetEnabled(enabled)
 	self.enabled = enabled and true or false
+	-- Enabled without enabled settings (an owner's override): configure the
+	-- containers created now as an apply would have.
+	if self.enabled and self:CreateContainers() then self:OnApply(self.resolved) end
 	self.frame:SetShown(self.enabled)
 	for _, kind in ipairs(KINDS) do
 		local enabledGroup = self.enabled and self.resolved[kind].enabled
-		self.containers[kind]:SetShown(enabledGroup and not self.previewData)
-		self.containers[kind]:SetEnabled(enabledGroup and not self.previewData)
+		if self.containers[kind] then
+			self.containers[kind]:SetShown(enabledGroup and not self.previewData)
+			self.containers[kind]:SetEnabled(enabledGroup and not self.previewData)
+		end
 		if self.previewContainers then
 			self.previewContainers[kind]:SetShown(enabledGroup and self.previewData ~= nil)
 		end
@@ -291,7 +348,8 @@ function Auras:SetUnit(unit)
 		self:Layout()
 		self:RestyleButtons()
 	end
-	for _, kind in ipairs(KINDS) do
+	self.unit = unit
+	for _, kind in ipairs(self.containers.buffs and KINDS or {}) do
 		local container = self.containers[kind]
 		if container:GetUnit() ~= unit then
 			container:SetUnit(unit)

@@ -15,6 +15,9 @@ function Util.Copy(value)
 end
 
 function Util.Equals(a, b)
+	if a == b then
+		return true
+	end
 	if type(a) ~= "table" or type(b) ~= "table" then
 		return a == b
 	end

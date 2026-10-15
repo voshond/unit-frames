@@ -49,8 +49,16 @@ function CG:CreateHeader(key, capacity, filter, role)
 	return header
 end
 
+local Start
+
 function CG:Start()
 	if self.started or not self.loaded or InCombatLockdown() then return end
+	-- Members and targets are built from one style each: share their
+	-- resolution while creating them, as a refresh does (Schema.Shared).
+	UF.Perf:Startup("clickgrid", UF.Schema.Shared, Start, self)
+end
+
+function Start(self)
 	self:Measure()
 	self.panel = CreateFrame("Frame", "UnitFramesClickGridPanel", UIParent, "SecureHandlerStateTemplate")
 	self.background = CreateFrame("Frame", nil, self.panel, "BackdropTemplate")
@@ -86,7 +94,15 @@ function CG:EnsureHeaders(panel)
 	oUF:SetActiveStyle(previous)
 end
 
+local Refresh
+
+-- Members and targets share one style each, so a refresh resolves each
+-- style once (Schema.Shared) instead of per frame.
 function CG:Refresh()
+	UF.Schema.Shared(Refresh, self)
+end
+
+function Refresh(self)
 	UF.Perf:Count("clickgridRefresh")
 	assert(not InCombatLockdown(), "Healing panel changes must wait until combat ends")
 	self:Measure()
