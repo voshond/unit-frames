@@ -40,7 +40,11 @@ function Component:New(parent, config, spec)
 	instance.config = config or {}
 	instance.children = {}
 	instance.enabled = true
+	local Perf = ns.Perf
+	Perf:Count("componentCreate")
+	Perf:Begin("create")
 	instance:OnCreate(parent, instance.spec)
+	Perf:End("create")
 	live[instance] = true
 	instance:Apply()
 	return instance

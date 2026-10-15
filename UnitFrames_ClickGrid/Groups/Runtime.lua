@@ -49,8 +49,14 @@ function CG:CreateHeader(key, capacity, filter, role)
 	return header
 end
 
+local Start
+
 function CG:Start()
 	if self.started or not self.loaded or InCombatLockdown() then return end
+	UF.Perf:Startup("clickgrid", Start, self)
+end
+
+function Start(self)
 	self:Measure()
 	self.panel = CreateFrame("Frame", "UnitFramesClickGridPanel", UIParent, "SecureHandlerStateTemplate")
 	self.background = CreateFrame("Frame", nil, self.panel, "BackdropTemplate")
