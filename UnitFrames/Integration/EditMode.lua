@@ -204,7 +204,7 @@ end
 local PART_SETTINGS = {
 	{ "portrait", "portrait.enabled", "Show portrait" },
 	{ "auras", "auras.enabled", "Show buffs & debuffs" },
-	{ "castbar", "castbar.placement", "Castbar" },
+	{ "castbar", "castbar.enabled", "Show castbar" },
 }
 
 -- A quick setting built from the unit's schema descriptor at `path`. Its value

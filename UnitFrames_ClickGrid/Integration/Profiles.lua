@@ -21,7 +21,9 @@ local function Prepare(stores, data, parts)
 	local clean, dropped = {}, {}
 	for _, part in ipairs(parts) do
 		local store = stores[part]
-		clean[part] = UF.Schema.Sanitize(store:GetSchema(), data[part], part .. ".", dropped)
+		local config = UF.Util.Copy(data[part])
+		if part == "member" or part == "target" then config = UF.Units:MigrateConfig(config) end
+		clean[part] = UF.Schema.Sanitize(store:GetSchema(), config, part .. ".", dropped)
 		local ok, reason = store:Check(clean[part])
 		if not ok then return nil, "ClickGrid: " .. reason end
 	end

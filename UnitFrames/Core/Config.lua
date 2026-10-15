@@ -138,7 +138,7 @@ end
 
 function Config:GetUnitConfig(unit)
 	if self.db then
-		return self.db.profile.units[unit]
+		return ns.Units:MigrateConfig(self.db.profile.units[unit])
 	end
 	self.unitConfigs = self.unitConfigs or {}
 	self.unitConfigs[unit] = self.unitConfigs[unit] or {}

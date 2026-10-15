@@ -40,7 +40,7 @@ function Config:Initialize()
 	for _, kind in ipairs({ "member", "target" }) do
 		self.styles[kind] = UF.Store:New({
 			schema = function() return CG:StyleSchema(kind) end, theme = true, validate = true,
-			read = function() return db.profile[kind] end,
+			read = function() return UF.Units:MigrateConfig(db.profile[kind]) end,
 			write = function(style) db.profile[kind] = style end,
 			changed = function() Changed(kind) end,
 		})

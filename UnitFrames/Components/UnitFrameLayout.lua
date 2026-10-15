@@ -5,7 +5,7 @@ ns.UnitFrameLayout = Layout
 -- Only structural specs and resolved, plain configuration enter this module.
 -- Native aura bounds and live fill/roster geometry must never be inputs.
 function Layout.CastbarPlacement(spec, cfg)
-	if not spec.castbar then return "off" end
+	if not spec.castbar or not cfg.castbar.enabled then return "off" end
 	local placement = cfg.castbar.placement
 	if placement == "health" and not (cfg.health and cfg.health.enabled) then return "top" end
 	return placement

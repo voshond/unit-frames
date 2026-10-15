@@ -37,6 +37,8 @@ describe("Portrait artwork aspect ratio", function()
 
 	before_each(function()
 		ns = Helpers.LoadAddon(true, true)
+		ns.Config:SetUnitValue("player", "experience.enabled", true)
+		ns.Config:SetUnitValue("player", "castbar.enabled", true)
 		Mock.InstallUI()
 		uf = ns.Units.frames.player.uf
 		portrait = uf:GetPart("portrait")

@@ -1308,7 +1308,7 @@ option power.belowRight.vertical type="select" label="Vertical position" default
 option power.belowRight.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
 option power.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option power.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
-option experience type="group" label="Experience" defaults={center={size=8},height=10}
+option experience type="group" label="Experience" defaults={center={size=8},enabled=false,height=10}
 option experience.enabled type="toggle" label="Enabled" default=true
 option experience.height type="range" label="Height" default=20 min=2 max=100 step=1
 option experience.bar type="group" label="Bar"
@@ -1540,8 +1540,9 @@ option experience.belowRight.vertical type="select" label="Vertical position" de
 option experience.belowRight.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
 option experience.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option experience.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
-option castbar type="group" label="Castbar" defaults={border={enabled=false},height=18,name={size=10},placement="bottom",time={size=10}}
-option castbar.placement type="select" label="Placement" default="bottom" values=#7b180619
+option castbar type="group" label="Castbar" defaults={border={enabled=false},enabled=false,height=18,name={size=10},placement="bottom",time={size=10}}
+option castbar.enabled type="toggle" label="Enabled" default=true
+option castbar.placement type="select" label="Placement" default="bottom" values=#f47fa62b
 option castbar.height type="range" label="Height" default=18 min=2 max=100 step=1 hidden
 option castbar.portraitLayout type="select" label="Portrait cast layout" default="bar" values=#c97f0a21 tooltip=#8fde9bad hidden
 option castbar.border type="group" label="Border" defaults={enabled=true,padding=3}
@@ -1879,6 +1880,7 @@ default castbar.border.enabled = false
 default castbar.border.inset = 3
 default castbar.border.padding = 3
 default castbar.colors = {}
+default castbar.enabled = false
 default castbar.fadeTime = 0.3
 default castbar.height = 18
 default castbar.holdTime = 0.4
@@ -2027,7 +2029,7 @@ default experience.center.shadow = true
 default experience.center.size = 8
 default experience.center.vertical = "auto"
 default experience.center.whileCasting = "keep"
-default experience.enabled = true
+default experience.enabled = false
 default experience.height = 10
 default experience.left.color = {1,1,1,1}
 default experience.left.customInitialized = false
@@ -2639,6 +2641,7 @@ resolved castbar.colors.channel = {0,1,0,1}
 resolved castbar.colors.failed = {1,0,0,1}
 resolved castbar.colors.nonInterruptible = {0.7,0.7,0.7,1}
 resolved castbar.colors.success = {0,1,0,1}
+resolved castbar.enabled = false
 resolved castbar.fadeTime = 0.3
 resolved castbar.height = 18
 resolved castbar.holdTime = 0.4
@@ -2810,7 +2813,7 @@ resolved experience.center.shadow = true
 resolved experience.center.size = 8
 resolved experience.center.vertical = "auto"
 resolved experience.center.whileCasting = "keep"
-resolved experience.enabled = true
+resolved experience.enabled = false
 resolved experience.height = 10
 resolved experience.left.color = {1,1,1,1}
 resolved experience.left.customInitialized = false
@@ -3339,6 +3342,7 @@ definition auraBar.defaults = {}
 definition auras.cancelBuffs = true
 definition auras.defaults = {}
 definition castbar.defaults.border.enabled = false
+definition castbar.defaults.enabled = false
 definition castbar.defaults.height = 18
 definition castbar.defaults.name.size = 10
 definition castbar.defaults.placement = "bottom"
@@ -3356,7 +3360,7 @@ definition raidTarget.defaults = {}
 definition readyCheck = true
 definition readyCheckIcon.defaults = {}
 definition resting = true
-definition rows = {{defaults={height=26},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:class"},left="name",right="health:value"},valueKind="health"}},{defaults={height=12,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}},{defaults={center={size=8},height=10},key="experience",label="Experience",spec={colorInherit="colors.experience",formats={"none","level","resting","xp:current","xp:value","xp:percent","xp:current:percent","xp:value:percent","xp:missing","xp:rested","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.rested",key="rested",label="Rested",mode="append"}},textDefaults={center="xp:value:percent"},valueKind="xp"}}}
+definition rows = {{defaults={height=26},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:class"},left="name",right="health:value"},valueKind="health"}},{defaults={height=12,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}},{defaults={center={size=8},enabled=false,height=10},key="experience",label="Experience",spec={colorInherit="colors.experience",formats={"none","level","resting","xp:current","xp:value","xp:percent","xp:current:percent","xp:value:percent","xp:missing","xp:rested","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.rested",key="rested",label="Rested",mode="append"}},textDefaults={center="xp:value:percent"},valueKind="xp"}}}
 definition width = 230
 ## unit.pet
 option width type="range" label="Width" default=170 min=60 max=600 step=1
@@ -3873,8 +3877,9 @@ option power.belowRight.vertical type="select" label="Vertical position" default
 option power.belowRight.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
 option power.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option power.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
-option castbar type="group" label="Castbar" defaults={border={enabled=false},height=14,name={size=9},placement="off",time={size=9}}
-option castbar.placement type="select" label="Placement" default="bottom" values=#7b180619
+option castbar type="group" label="Castbar" defaults={border={enabled=false},enabled=false,height=14,name={size=9},placement="bottom",time={size=9}}
+option castbar.enabled type="toggle" label="Enabled" default=true
+option castbar.placement type="select" label="Placement" default="bottom" values=#f47fa62b
 option castbar.height type="range" label="Height" default=18 min=2 max=100 step=1 hidden
 option castbar.portraitLayout type="select" label="Portrait cast layout" default="bar" values=#c97f0a21 tooltip=#8fde9bad hidden
 option castbar.border type="group" label="Border" defaults={enabled=true,padding=3}
@@ -4191,6 +4196,7 @@ default castbar.border.enabled = false
 default castbar.border.inset = 3
 default castbar.border.padding = 3
 default castbar.colors = {}
+default castbar.enabled = false
 default castbar.fadeTime = 0.3
 default castbar.height = 14
 default castbar.holdTime = 0.4
@@ -4202,7 +4208,7 @@ default castbar.name.enabled = true
 default castbar.name.justifyH = "LEFT"
 default castbar.name.shadow = true
 default castbar.name.size = 9
-default castbar.placement = "off"
+default castbar.placement = "bottom"
 default castbar.portraitLayout = "bar"
 default castbar.time.color = {1,1,1,1}
 default castbar.time.enabled = true
@@ -4761,6 +4767,7 @@ resolved castbar.colors.channel = {0,1,0,1}
 resolved castbar.colors.failed = {1,0,0,1}
 resolved castbar.colors.nonInterruptible = {0.7,0.7,0.7,1}
 resolved castbar.colors.success = {0,1,0,1}
+resolved castbar.enabled = false
 resolved castbar.fadeTime = 0.3
 resolved castbar.height = 14
 resolved castbar.holdTime = 0.4
@@ -4774,7 +4781,7 @@ resolved castbar.name.justifyH = "LEFT"
 resolved castbar.name.outline = ""
 resolved castbar.name.shadow = true
 resolved castbar.name.size = 9
-resolved castbar.placement = "off"
+resolved castbar.placement = "bottom"
 resolved castbar.portraitLayout = "bar"
 resolved castbar.time.color = {1,1,1,1}
 resolved castbar.time.enabled = true
@@ -5249,9 +5256,10 @@ definition auras.defaults.debuffs.size = 18
 definition auras.defaults.durationPosition = "CENTER"
 definition auras.defaults.durationSize = 9
 definition castbar.defaults.border.enabled = false
+definition castbar.defaults.enabled = false
 definition castbar.defaults.height = 14
 definition castbar.defaults.name.size = 9
-definition castbar.defaults.placement = "off"
+definition castbar.defaults.placement = "bottom"
 definition castbar.defaults.time.size = 9
 definition classification.defaults = {}
 definition defaultPosition.point = "CENTER"
@@ -5798,8 +5806,9 @@ option power.belowRight.vertical type="select" label="Vertical position" default
 option power.belowRight.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
 option power.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option power.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
-option castbar type="group" label="Castbar" defaults={border={enabled=false},height=18,name={size=10},placement="bottom",time={size=10}}
-option castbar.placement type="select" label="Placement" default="bottom" values=#7b180619
+option castbar type="group" label="Castbar" defaults={border={enabled=false},enabled=false,height=18,name={size=10},placement="bottom",time={size=10}}
+option castbar.enabled type="toggle" label="Enabled" default=true
+option castbar.placement type="select" label="Placement" default="bottom" values=#f47fa62b
 option castbar.height type="range" label="Height" default=18 min=2 max=100 step=1 hidden
 option castbar.portraitLayout type="select" label="Portrait cast layout" default="bar" values=#c97f0a21 tooltip=#8fde9bad hidden
 option castbar.border type="group" label="Border" defaults={enabled=true,padding=3}
@@ -6137,6 +6146,7 @@ default castbar.border.enabled = false
 default castbar.border.inset = 3
 default castbar.border.padding = 3
 default castbar.colors = {}
+default castbar.enabled = false
 default castbar.fadeTime = 0.3
 default castbar.height = 18
 default castbar.holdTime = 0.4
@@ -6718,6 +6728,7 @@ resolved castbar.colors.channel = {0,1,0,1}
 resolved castbar.colors.failed = {1,0,0,1}
 resolved castbar.colors.nonInterruptible = {0.7,0.7,0.7,1}
 resolved castbar.colors.success = {0,1,0,1}
+resolved castbar.enabled = false
 resolved castbar.fadeTime = 0.3
 resolved castbar.height = 18
 resolved castbar.holdTime = 0.4
@@ -7218,6 +7229,7 @@ definition auraBar.collapsible = true
 definition auraBar.defaults = {}
 definition auras.defaults = {}
 definition castbar.defaults.border.enabled = false
+definition castbar.defaults.enabled = false
 definition castbar.defaults.height = 18
 definition castbar.defaults.name.size = 10
 definition castbar.defaults.placement = "bottom"
@@ -7764,8 +7776,9 @@ option power.belowRight.vertical type="select" label="Vertical position" default
 option power.belowRight.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
 option power.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option power.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
-option castbar type="group" label="Castbar" defaults={border={enabled=false},height=14,name={size=9},placement="off",time={size=9}}
-option castbar.placement type="select" label="Placement" default="bottom" values=#7b180619
+option castbar type="group" label="Castbar" defaults={border={enabled=false},enabled=false,height=14,name={size=9},placement="bottom",time={size=9}}
+option castbar.enabled type="toggle" label="Enabled" default=true
+option castbar.placement type="select" label="Placement" default="bottom" values=#f47fa62b
 option castbar.height type="range" label="Height" default=18 min=2 max=100 step=1 hidden
 option castbar.portraitLayout type="select" label="Portrait cast layout" default="bar" values=#c97f0a21 tooltip=#8fde9bad hidden
 option castbar.border type="group" label="Border" defaults={enabled=true,padding=3}
@@ -8082,6 +8095,7 @@ default castbar.border.enabled = false
 default castbar.border.inset = 3
 default castbar.border.padding = 3
 default castbar.colors = {}
+default castbar.enabled = false
 default castbar.fadeTime = 0.3
 default castbar.height = 14
 default castbar.holdTime = 0.4
@@ -8093,7 +8107,7 @@ default castbar.name.enabled = true
 default castbar.name.justifyH = "LEFT"
 default castbar.name.shadow = true
 default castbar.name.size = 9
-default castbar.placement = "off"
+default castbar.placement = "bottom"
 default castbar.portraitLayout = "bar"
 default castbar.time.color = {1,1,1,1}
 default castbar.time.enabled = true
@@ -8652,6 +8666,7 @@ resolved castbar.colors.channel = {0,1,0,1}
 resolved castbar.colors.failed = {1,0,0,1}
 resolved castbar.colors.nonInterruptible = {0.7,0.7,0.7,1}
 resolved castbar.colors.success = {0,1,0,1}
+resolved castbar.enabled = false
 resolved castbar.fadeTime = 0.3
 resolved castbar.height = 14
 resolved castbar.holdTime = 0.4
@@ -8665,7 +8680,7 @@ resolved castbar.name.justifyH = "LEFT"
 resolved castbar.name.outline = ""
 resolved castbar.name.shadow = true
 resolved castbar.name.size = 9
-resolved castbar.placement = "off"
+resolved castbar.placement = "bottom"
 resolved castbar.portraitLayout = "bar"
 resolved castbar.time.color = {1,1,1,1}
 resolved castbar.time.enabled = true
@@ -9141,9 +9156,10 @@ definition auras.defaults.durationPosition = "CENTER"
 definition auras.defaults.durationSize = 9
 definition auras.defaults.enabled = false
 definition castbar.defaults.border.enabled = false
+definition castbar.defaults.enabled = false
 definition castbar.defaults.height = 14
 definition castbar.defaults.name.size = 9
-definition castbar.defaults.placement = "off"
+definition castbar.defaults.placement = "bottom"
 definition castbar.defaults.time.size = 9
 definition classification.defaults = {}
 definition defaultPosition.point = "CENTER"
@@ -9681,8 +9697,9 @@ option power.belowRight.vertical type="select" label="Vertical position" default
 option power.belowRight.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
 option power.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option power.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
-option castbar type="group" label="Castbar" defaults={border={enabled=false},height=18,name={size=10},placement="bottom",time={size=10}}
-option castbar.placement type="select" label="Placement" default="bottom" values=#7b180619
+option castbar type="group" label="Castbar" defaults={border={enabled=false},enabled=false,height=18,name={size=10},placement="bottom",time={size=10}}
+option castbar.enabled type="toggle" label="Enabled" default=true
+option castbar.placement type="select" label="Placement" default="bottom" values=#f47fa62b
 option castbar.height type="range" label="Height" default=18 min=2 max=100 step=1 hidden
 option castbar.portraitLayout type="select" label="Portrait cast layout" default="bar" values=#c97f0a21 tooltip=#8fde9bad hidden
 option castbar.border type="group" label="Border" defaults={enabled=true,padding=3}
@@ -9999,6 +10016,7 @@ default castbar.border.enabled = false
 default castbar.border.inset = 3
 default castbar.border.padding = 3
 default castbar.colors = {}
+default castbar.enabled = false
 default castbar.fadeTime = 0.3
 default castbar.height = 18
 default castbar.holdTime = 0.4
@@ -10567,6 +10585,7 @@ resolved castbar.colors.channel = {0,1,0,1}
 resolved castbar.colors.failed = {1,0,0,1}
 resolved castbar.colors.nonInterruptible = {0.7,0.7,0.7,1}
 resolved castbar.colors.success = {0,1,0,1}
+resolved castbar.enabled = false
 resolved castbar.fadeTime = 0.3
 resolved castbar.height = 18
 resolved castbar.holdTime = 0.4
@@ -11049,6 +11068,7 @@ definition auraBar.collapsible = true
 definition auraBar.defaults = {}
 definition auras.defaults = {}
 definition castbar.defaults.border.enabled = false
+definition castbar.defaults.enabled = false
 definition castbar.defaults.height = 18
 definition castbar.defaults.name.size = 10
 definition castbar.defaults.placement = "bottom"
@@ -11588,8 +11608,9 @@ option power.belowRight.vertical type="select" label="Vertical position" default
 option power.belowRight.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
 option power.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option power.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
-option castbar type="group" label="Castbar" defaults={border={enabled=false},height=14,name={size=9},placement="off",time={size=9}}
-option castbar.placement type="select" label="Placement" default="bottom" values=#7b180619
+option castbar type="group" label="Castbar" defaults={border={enabled=false},enabled=false,height=14,name={size=9},placement="bottom",time={size=9}}
+option castbar.enabled type="toggle" label="Enabled" default=true
+option castbar.placement type="select" label="Placement" default="bottom" values=#f47fa62b
 option castbar.height type="range" label="Height" default=18 min=2 max=100 step=1 hidden
 option castbar.portraitLayout type="select" label="Portrait cast layout" default="bar" values=#c97f0a21 tooltip=#8fde9bad hidden
 option castbar.border type="group" label="Border" defaults={enabled=true,padding=3}
@@ -11906,6 +11927,7 @@ default castbar.border.enabled = false
 default castbar.border.inset = 3
 default castbar.border.padding = 3
 default castbar.colors = {}
+default castbar.enabled = false
 default castbar.fadeTime = 0.3
 default castbar.height = 14
 default castbar.holdTime = 0.4
@@ -11917,7 +11939,7 @@ default castbar.name.enabled = true
 default castbar.name.justifyH = "LEFT"
 default castbar.name.shadow = true
 default castbar.name.size = 9
-default castbar.placement = "off"
+default castbar.placement = "bottom"
 default castbar.portraitLayout = "bar"
 default castbar.time.color = {1,1,1,1}
 default castbar.time.enabled = true
@@ -12476,6 +12498,7 @@ resolved castbar.colors.channel = {0,1,0,1}
 resolved castbar.colors.failed = {1,0,0,1}
 resolved castbar.colors.nonInterruptible = {0.7,0.7,0.7,1}
 resolved castbar.colors.success = {0,1,0,1}
+resolved castbar.enabled = false
 resolved castbar.fadeTime = 0.3
 resolved castbar.height = 14
 resolved castbar.holdTime = 0.4
@@ -12489,7 +12512,7 @@ resolved castbar.name.justifyH = "LEFT"
 resolved castbar.name.outline = ""
 resolved castbar.name.shadow = true
 resolved castbar.name.size = 9
-resolved castbar.placement = "off"
+resolved castbar.placement = "bottom"
 resolved castbar.portraitLayout = "bar"
 resolved castbar.time.color = {1,1,1,1}
 resolved castbar.time.enabled = true
@@ -12965,9 +12988,10 @@ definition auras.defaults.durationPosition = "CENTER"
 definition auras.defaults.durationSize = 9
 definition auras.defaults.enabled = false
 definition castbar.defaults.border.enabled = false
+definition castbar.defaults.enabled = false
 definition castbar.defaults.height = 14
 definition castbar.defaults.name.size = 9
-definition castbar.defaults.placement = "off"
+definition castbar.defaults.placement = "bottom"
 definition castbar.defaults.time.size = 9
 definition classification.defaults = {}
 definition defaultPosition.point = "CENTER"
@@ -15322,8 +15346,9 @@ option power.belowRight.vertical type="select" label="Vertical position" default
 option power.belowRight.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
 option power.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option power.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
-option castbar type="group" label="Castbar" defaults={border={enabled=false},height=14,name={size=9},placement="off",time={size=9}}
-option castbar.placement type="select" label="Placement" default="bottom" values=#7b180619
+option castbar type="group" label="Castbar" defaults={border={enabled=false},enabled=false,height=14,name={size=9},placement="bottom",time={size=9}}
+option castbar.enabled type="toggle" label="Enabled" default=true
+option castbar.placement type="select" label="Placement" default="bottom" values=#f47fa62b
 option castbar.height type="range" label="Height" default=18 min=2 max=100 step=1 hidden
 option castbar.portraitLayout type="select" label="Portrait cast layout" default="bar" values=#c97f0a21 tooltip=#8fde9bad hidden
 option castbar.border type="group" label="Border" defaults={enabled=true,padding=3}
@@ -15615,6 +15640,7 @@ default castbar.border.enabled = false
 default castbar.border.inset = 3
 default castbar.border.padding = 3
 default castbar.colors = {}
+default castbar.enabled = false
 default castbar.fadeTime = 0.3
 default castbar.height = 14
 default castbar.holdTime = 0.4
@@ -15626,7 +15652,7 @@ default castbar.name.enabled = true
 default castbar.name.justifyH = "LEFT"
 default castbar.name.shadow = true
 default castbar.name.size = 9
-default castbar.placement = "off"
+default castbar.placement = "bottom"
 default castbar.portraitLayout = "bar"
 default castbar.time.color = {1,1,1,1}
 default castbar.time.enabled = true
@@ -16163,6 +16189,7 @@ resolved castbar.colors.channel = {0,1,0,1}
 resolved castbar.colors.failed = {1,0,0,1}
 resolved castbar.colors.nonInterruptible = {0.7,0.7,0.7,1}
 resolved castbar.colors.success = {0,1,0,1}
+resolved castbar.enabled = false
 resolved castbar.fadeTime = 0.3
 resolved castbar.height = 14
 resolved castbar.holdTime = 0.4
@@ -16176,7 +16203,7 @@ resolved castbar.name.justifyH = "LEFT"
 resolved castbar.name.outline = ""
 resolved castbar.name.shadow = true
 resolved castbar.name.size = 9
-resolved castbar.placement = "off"
+resolved castbar.placement = "bottom"
 resolved castbar.portraitLayout = "bar"
 resolved castbar.time.color = {1,1,1,1}
 resolved castbar.time.enabled = true
@@ -16638,9 +16665,10 @@ definition auras.defaults.debuffs.sort = "unitDebuff"
 definition auras.defaults.durationPosition = "CENTER"
 definition auras.defaults.durationSize = 8
 definition castbar.defaults.border.enabled = false
+definition castbar.defaults.enabled = false
 definition castbar.defaults.height = 14
 definition castbar.defaults.name.size = 9
-definition castbar.defaults.placement = "off"
+definition castbar.defaults.placement = "bottom"
 definition castbar.defaults.time.size = 9
 definition defaultPosition.point = "CENTER"
 definition defaultPosition.x = -90
@@ -17178,8 +17206,9 @@ option power.belowRight.vertical type="select" label="Vertical position" default
 option power.belowRight.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
 option power.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option power.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
-option castbar type="group" label="Castbar" defaults={border={enabled=false},height=14,name={size=9},placement="off",time={size=9}}
-option castbar.placement type="select" label="Placement" default="bottom" values=#7b180619
+option castbar type="group" label="Castbar" defaults={border={enabled=false},enabled=false,height=14,name={size=9},placement="bottom",time={size=9}}
+option castbar.enabled type="toggle" label="Enabled" default=true
+option castbar.placement type="select" label="Placement" default="bottom" values=#f47fa62b
 option castbar.height type="range" label="Height" default=18 min=2 max=100 step=1 hidden
 option castbar.portraitLayout type="select" label="Portrait cast layout" default="bar" values=#c97f0a21 tooltip=#8fde9bad hidden
 option castbar.border type="group" label="Border" defaults={enabled=true,padding=3}
@@ -17471,6 +17500,7 @@ default castbar.border.enabled = false
 default castbar.border.inset = 3
 default castbar.border.padding = 3
 default castbar.colors = {}
+default castbar.enabled = false
 default castbar.fadeTime = 0.3
 default castbar.height = 14
 default castbar.holdTime = 0.4
@@ -17482,7 +17512,7 @@ default castbar.name.enabled = true
 default castbar.name.justifyH = "LEFT"
 default castbar.name.shadow = true
 default castbar.name.size = 9
-default castbar.placement = "off"
+default castbar.placement = "bottom"
 default castbar.portraitLayout = "bar"
 default castbar.time.color = {1,1,1,1}
 default castbar.time.enabled = true
@@ -18013,6 +18043,7 @@ resolved castbar.colors.channel = {0,1,0,1}
 resolved castbar.colors.failed = {1,0,0,1}
 resolved castbar.colors.nonInterruptible = {0.7,0.7,0.7,1}
 resolved castbar.colors.success = {0,1,0,1}
+resolved castbar.enabled = false
 resolved castbar.fadeTime = 0.3
 resolved castbar.height = 14
 resolved castbar.holdTime = 0.4
@@ -18026,7 +18057,7 @@ resolved castbar.name.justifyH = "LEFT"
 resolved castbar.name.outline = ""
 resolved castbar.name.shadow = true
 resolved castbar.name.size = 9
-resolved castbar.placement = "off"
+resolved castbar.placement = "bottom"
 resolved castbar.portraitLayout = "bar"
 resolved castbar.time.color = {1,1,1,1}
 resolved castbar.time.enabled = true
@@ -18475,9 +18506,10 @@ definition auras.defaults.durationPosition = "CENTER"
 definition auras.defaults.durationSize = 9
 definition auras.defaults.enabled = false
 definition castbar.defaults.border.enabled = false
+definition castbar.defaults.enabled = false
 definition castbar.defaults.height = 14
 definition castbar.defaults.name.size = 9
-definition castbar.defaults.placement = "off"
+definition castbar.defaults.placement = "bottom"
 definition castbar.defaults.time.size = 9
 definition defaultPosition.point = "CENTER"
 definition defaultPosition.x = 510

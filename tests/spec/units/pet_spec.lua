@@ -45,7 +45,7 @@ describe("Player pet", function()
 		for _, kind in ipairs({ "buffs", "debuffs" }) do
 			assert.equals("pet", frame.uf:GetPart("auras"):GetContainer(kind):GetUnit())
 		end
-		ns.Config:SetUnitValue("pet", "castbar.placement", "bottom")
+		ns.Config:SetUnitValue("pet", "castbar.enabled", true)
 		assert.is_true(frame:IsElementEnabled("UF_Castbar"))
 		ns.oUF.elements.UF_Castbar.enable(frame, "pet")
 		local queried
@@ -63,6 +63,7 @@ describe("Player pet", function()
 		ns.Config:SetPosition("Healer", "pet", "TOP", -90, -200)
 		ns.EditMode.layout = "Healer"
 		ns.EditMode:ApplyPosition("pet")
+		ns.Config:SetUnitValue("player", "castbar.enabled", true)
 		ns.Config:SetUnitValue("player", "width", 280)
 		ns.Config:SetUnitValue("player", "health.bar.segments.absorb.placement", "append")
 		ns.Config:SetUnitValue("player", "auras.debuffs.position", "right")

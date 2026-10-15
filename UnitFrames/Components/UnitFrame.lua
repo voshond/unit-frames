@@ -55,7 +55,6 @@ GetReadyCheck() returns the ReadyCheck presenter when the spec offers one.
 local UnitFrame = ns.Component:Extend("UnitFrame")
 
 UnitFrame.CASTBAR_PLACEMENTS = {
-	{ "off", "Off" },
 	{ "top", "Extra row at the top" },
 	{ "bottom", "Extra row at the bottom" },
 	{ "health", "Over the health bar" },
@@ -128,7 +127,7 @@ UnitFrame.PARTS = {
 	{ key = "castbar", label = "Castbar",
 		schema = function()
 			local function OverHealth(cfg)
-				return cfg.placement == "health" or cfg.placement == "portrait" or cfg.placement == "off"
+				return cfg.placement == "health" or cfg.placement == "portrait"
 			end
 			local schema = ns.Schema.Override(Castbar.BuildSchema(), "portraitLayout", {
 				hidden = function(cfg) return cfg.placement ~= "portrait" end,
@@ -137,15 +136,13 @@ UnitFrame.PARTS = {
 				{ key = "placement", type = "select", label = "Placement", values = UnitFrame.CASTBAR_PLACEMENTS,
 					default = "bottom" },
 				HeightOption(18, OverHealth),
-			}, { enabled = true })
+			})
 		end,
 		create = function(frame, _, _, config)
 			local castbar = Castbar:New(frame, config)
 			castbar:Hide()
 			return castbar
-		end,
-		-- Placement replaces the on/off toggle.
-		apply = function(castbar, cfg) castbar:SetEnabled(cfg.placement ~= "off") end },
+		end },
 	{ key = "comboPoints", label = "Combo points",
 		schema = function()
 			local schema = ns.Schema.Override(PointBar.schema, "enabled", {

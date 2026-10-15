@@ -5,6 +5,7 @@ describe("Blizzard player castbar", function()
 	local ns, element, blizzard
 	before_each(function()
 		ns = Helpers.LoadAddon(true, true)
+		ns.Config:SetUnitValue("player", "castbar.enabled", true)
 		element = ns.oUF.elements.UF_Castbar
 		blizzard = Mock.NewObject("StatusBar", nil, "PlayerCastingBarFrame")
 		blizzard:RegisterEvent("UNIT_SPELLCAST_START")

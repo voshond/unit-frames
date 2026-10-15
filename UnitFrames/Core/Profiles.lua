@@ -207,7 +207,8 @@ local function PrepareStyle(data)
 	local units = {}
 	local imported = type(data.units) == "table" and data.units or {}
 	for _, unit in ipairs(ns.Units.order) do
-		units[unit] = Schema.Sanitize(ns.Units:GetSchema(unit), imported[unit], "units." .. unit .. ".", dropped)
+		local config = ns.Units:MigrateConfig(Util.Copy(imported[unit]))
+		units[unit] = Schema.Sanitize(ns.Units:GetSchema(unit), config, "units." .. unit .. ".", dropped)
 	end
 	for unit in pairs(imported) do
 		if not ns.Units.definitions[unit] then dropped[#dropped + 1] = "units." .. tostring(unit) end

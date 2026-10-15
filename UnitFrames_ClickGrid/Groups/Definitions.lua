@@ -9,7 +9,7 @@ local member = UF.Units:Derive("pet", {
 		power = { defaults = { height = 6, enabled = false } },
 	},
 	portrait = { defaults = { enabled = false } },
-	castbar = { defaults = { placement = "off" } },
+	castbar = { defaults = { enabled = false } },
 	auras = { clickThrough = true },
 	raidTarget = { defaults = { size = 12 } },
 })
