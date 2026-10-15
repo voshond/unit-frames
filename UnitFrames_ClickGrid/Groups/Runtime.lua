@@ -86,7 +86,15 @@ function CG:EnsureHeaders(panel)
 	oUF:SetActiveStyle(previous)
 end
 
+local Refresh
+
+-- Members and targets share one style each, so a refresh resolves each
+-- style once (Schema.Shared) instead of per frame.
 function CG:Refresh()
+	UF.Schema.Shared(Refresh, self)
+end
+
+function Refresh(self)
 	UF.Perf:Count("clickgridRefresh")
 	assert(not InCombatLockdown(), "Healing panel changes must wait until combat ends")
 	self:Measure()

@@ -69,7 +69,8 @@ Resolves the effective value of every option:
   2. the group's `defaults` override
   3. the theme value at `inherit`
   4. the descriptor `default`
-Returns a fresh table; callers may keep it.
+Returns a fresh table callers may keep, except inside a sharing scope
+(Schema.Shared below), where results are shared and read-only.
 
 Group default overrides are kept as layers (lowest priority first) rather
 than merged copies. Each group's effective overrides are its `defaults`
@@ -161,8 +162,67 @@ local function Resolve(schema, config, theme, layers)
 	return out
 end
 
+--[[
+Sharing scope. Inside Schema.Shared(fn, ...), Schema.Memo hands out one
+result per build function and keys, so a refresh applying the same style
+to many frames resolves it once. Shared results must be treated as
+read-only, and keyed tables must not change while the scope is open.
+Outside a scope every call builds afresh.
+]]
+local scope
+local NONE = {}
+
+local function Sub(map, key)
+	if key == nil then key = NONE end
+	local sub = map[key]
+	if not sub then
+		sub = {}
+		map[key] = sub
+	end
+	return sub
+end
+
+-- Runs fn(...) in a sharing scope (nested calls join the open one).
+function Schema.Shared(fn, ...)
+	if scope then
+		fn(...)
+		return
+	end
+	scope = {}
+	-- A failure must not leave the scope open; it is rethrown unchanged.
+	local ok, err = pcall(fn, ...)
+	scope = nil
+	if not ok then
+		error(err, 0)
+	end
+end
+
+-- build(a, b, c, ...) once per scope for the keys a, b and c; extra
+-- arguments are passed on but are not part of the key.
+function Schema.Memo(build, a, b, c, ...)
+	if not scope then
+		return build(a, b, c, ...)
+	end
+	local byC = Sub(Sub(Sub(scope, build), a), b)
+	local key = c == nil and NONE or c
+	local value = byC[key]
+	if value == nil then
+		value = build(a, b, c, ...)
+		byC[key] = value
+	end
+	return value
+end
+
+local function ResolvePlain(schema, config, theme)
+	return Resolve(schema, config, theme, NO_LAYERS)
+end
+
+-- Fresh tables outside a sharing scope; shared read-only ones inside it.
 function Schema.Resolve(schema, config, theme, overrides)
-	return Resolve(schema, config, theme, overrides and { overrides } or NO_LAYERS)
+	if overrides then
+		return Resolve(schema, config, theme, { overrides })
+	end
+	return Schema.Memo(ResolvePlain, schema, config, theme)
 end
 
 -- Composition. Each returns a new list and never mutates its inputs; the

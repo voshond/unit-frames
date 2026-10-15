@@ -24,6 +24,23 @@ describe("ClickGrid companion", function()
 		assert.equals(UF.Units.STYLE, UF.oUF:GetActiveStyle())
 	end)
 
+	it("resolves each style once per refresh and keeps member aura config apart from slots", function()
+		CG:Refresh()
+		local a = CG.headers.party:GetAttribute("child1")
+		local b = CG.headers.group3:GetAttribute("child2")
+		assert.equals(a.Member.uf.resolved, b.Member.uf.resolved)
+		assert.equals(a.Member.uf:GetPart("auras").resolved, b.Member.uf:GetPart("auras").resolved)
+		assert.is_true(a.Member.uf.resolved ~= a.Target.uf.resolved)
+		local auras = a.Member.uf:GetPart("auras").config
+		assert.is_nil(auras.slot1, "slot settings are not merged into the shared aura config")
+		assert.is_not_nil(CG:GetGridButton(a.Member).slots.resolved.slot1)
+		local before = a.Member.uf.resolved
+		CG.Config:SetStyle("member", "width", 151)
+		assert.is_true(before ~= a.Member.uf.resolved, "a later refresh resolves afresh")
+		assert.equals(a.Member.uf.resolved, b.Member.uf.resolved)
+		assert.equals(151, b.Member.uf.resolved.width)
+	end)
+
 	it("offers independent aura rows and stops their native feeds on hidden targets", function()
 		CG.Config:SetStyle("member", "auraBar.enabled", true)
 		CG.Config:SetStyle("target", "auraBar.enabled", true)

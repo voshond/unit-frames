@@ -4,8 +4,12 @@ CG.STYLE = "UnitFramesClickGrid"
 
 -- Fixed slots share the member's aura artwork config (including its on/off
 -- state) and add their own slot groups; both resolve against the theme.
+local function BuildSlotConfig(_, _, slots, uf)
+	return UF.Util.Merge(UF.Util.Copy(uf:ChildConfig("auras")), UF.Util.Copy(slots or {}))
+end
+
 function CG:SlotConfig(uf)
-	return UF.Util.Merge(uf:ChildConfig("auras"), UF.Util.Copy(self.Config:Get().slots or {}))
+	return UF.Schema.Memo(BuildSlotConfig, uf:GetSchema(), uf.config, self.Config:Get().slots, uf)
 end
 
 -- Status indicators and fixed slots belong to the member UnitFrame, sharing

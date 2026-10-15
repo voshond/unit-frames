@@ -114,11 +114,16 @@ end
 
 -- The config of this component's `key` group for a child: the group's
 -- default overrides plus the user's values (never resolved values, which
--- would turn inherited theme values into overrides).
+-- would turn inherited theme values into overrides). Shared inside a
+-- Schema.Shared scope, so callers must not modify the result.
+local function BuildChildConfig(schema, config, key)
+	local opt = Schema.Find(schema, key)
+	local out = ns.Util.Copy(opt and opt.defaults or {})
+	return ns.Util.Merge(out, (config and config[key]) or {})
+end
+
 function Component:ChildConfig(key)
-	local opt = Schema.Find(self:GetSchema(), key)
-	local config = ns.Util.Copy(opt and opt.defaults or {})
-	return ns.Util.Merge(config, (self.config and self.config[key]) or {})
+	return Schema.Memo(BuildChildConfig, self:GetSchema(), self.config, key)
 end
 
 -- Applies the `key` group of this component's config to a child component.

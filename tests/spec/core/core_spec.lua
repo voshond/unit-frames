@@ -132,6 +132,28 @@ describe("Schema", function()
 		assert.same({ size = 2 }, inner.defaults)
 	end)
 
+	it("shares resolved results only inside a sharing scope that a failure closes", function()
+		local config = { size = 7 }
+		assert.is_true(Schema.Resolve(schema, config, nil) ~= Schema.Resolve(schema, config, nil), "fresh outside")
+		local first, second, other, layered
+		Schema.Shared(function()
+			first = Schema.Resolve(schema, config, nil)
+			Schema.Shared(function() second = Schema.Resolve(schema, config, nil) end)
+			other = Schema.Resolve(schema, { size = 7 }, nil)
+			layered = Schema.Resolve(schema, config, nil, { border = { enabled = true } })
+		end)
+		assert.equals(first, second, "nested scopes join the open one")
+		assert.is_true(first ~= other, "keyed by config identity")
+		assert.same(first, other)
+		assert.is_true(layered.border.enabled, "overrides resolve afresh")
+		assert.is_false(first.border.enabled)
+		assert.is_true(first ~= Schema.Resolve(schema, config, nil), "closed after the scope")
+		local ok, err = pcall(Schema.Shared, function() error("boom", 0) end)
+		assert.is_false(ok)
+		assert.equals("boom", err, "failures propagate unchanged")
+		assert.is_true(Schema.Resolve(schema, config, nil) ~= Schema.Resolve(schema, config, nil), "closed after a failure")
+	end)
+
 	it("reads theme paths per theme table", function()
 		local Util = Helpers.LoadAddon().Util
 		assert.equals(1, Util.GetPath({ colors = { health = 1 } }, "colors.health"))
