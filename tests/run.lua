@@ -15,6 +15,8 @@ without installing anything. Run from the repository root:
 Path filters are combined with "or"; -t and --tag narrow further. Every run
 also syntax-checks every addon Lua file. A run that selects no tests fails.
 ]]
+-- Keep runner output on stdout when the mock captures the client's print.
+local print = print
 local pathFilters, nameFilters, tags = {}, {}, {}
 local showTimes, jobs, childResult
 do
