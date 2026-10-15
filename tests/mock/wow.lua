@@ -421,6 +421,10 @@ function Methods:SetAtlas(atlas, useAtlasSize)
 end
 
 -- FontString
+function Methods:GetFont()
+	return unpack(self.__state.font or {})
+end
+
 function Methods:SetFont(path, size, flags)
 	Record(self, "SetFont", path, size, flags)
 	if type(path) ~= "string" or path == "" then
@@ -757,6 +761,9 @@ function Mock.Install()
 	_G.CreateFont = function(name)
 		return NewObject("Font", nil, name)
 	end
+	-- Blizzard_Fonts_Shared/Shared/Fonts.xml: SystemFont_Shadow_Med1 (roman).
+	_G.GameFontNormal = CreateFont("GameFontNormal")
+	GameFontNormal:SetFont([[Fonts\FRIZQT__.TTF]], 12, "")
 	_G.UIParent = NewObject("Frame", nil, "UIParent")
 	_G.UISpecialFrames = {}
 	_G.SlashCmdList = {}

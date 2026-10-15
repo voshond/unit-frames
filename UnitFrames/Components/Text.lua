@@ -23,6 +23,56 @@ custom text" replaces them with a fresh copy of the selected preset.
 ]]
 local Text = ns.Component:Extend("Text")
 
+-- Cold Forever starts can leave custom-font text blank despite SetFont
+-- succeeding. The verified repair is a built-in/configured font round trip
+-- on populated text. Wait for a visible update and one rendered frame;
+-- creation-time font seeding alone does not repair it.
+local fontWaiting, fontPending = {}, {}
+local fontDriver, nativeSetText, nativeSetFormattedText
+
+local function StopFontDriver()
+	if fontDriver and not next(fontPending) then
+		fontDriver:SetScript("OnUpdate", nil)
+		fontDriver:Hide()
+	end
+end
+
+local function ResetPendingFonts()
+	for text, rendered in pairs(fontPending) do
+		if rendered then
+			fontPending[text] = nil
+			local cfg, fs = text.resolved, text.frame
+			fs:SetFont(GameFontNormal:GetFont())
+			Media:ApplyFont(fs, cfg.font, cfg.size, cfg.outline)
+		else
+			fontPending[text] = true
+		end
+	end
+	StopFontDriver()
+end
+
+local function QueueFontReset(fs)
+	local visible = fs:IsVisible()
+	if issecretvalue(visible) or not visible then return end
+	fontPending[fontWaiting[fs]] = false
+	fontWaiting[fs] = nil
+	-- Return to native setters: no wrapper cost on subsequent data updates.
+	fs.SetText, fs.SetFormattedText = nil, nil
+	if not fontDriver then fontDriver = CreateFrame("Frame") end
+	fontDriver:SetScript("OnUpdate", ResetPendingFonts)
+	fontDriver:Show()
+end
+
+local function FirstText(fs, value)
+	nativeSetText(fs, value)
+	if issecretvalue(value) or (value ~= nil and value ~= "") then QueueFontReset(fs) end
+end
+
+local function FirstFormattedText(fs, ...)
+	nativeSetFormattedText(fs, ...)
+	QueueFontReset(fs)
+end
+
 Text.JUSTIFY = {
 	{ "LEFT", "Left" },
 	{ "CENTER", "Centre" },
@@ -187,6 +237,10 @@ end
 
 function Text:OnCreate(parent)
 	self.frame = parent:CreateFontString(nil, "OVERLAY")
+	nativeSetText = nativeSetText or self.frame.SetText
+	nativeSetFormattedText = nativeSetFormattedText or self.frame.SetFormattedText
+	fontWaiting[self.frame] = self
+	self.frame.SetText, self.frame.SetFormattedText = FirstText, FirstFormattedText
 end
 
 function Text:OnApply(cfg)
@@ -247,6 +301,9 @@ function Text:LeadsWithName()
 end
 
 function Text:OnRelease()
+	fontWaiting[self.frame], fontPending[self] = nil, nil
+	self.frame.SetText, self.frame.SetFormattedText = nil, nil
+	StopFontDriver()
 	self.template = nil
 end
 

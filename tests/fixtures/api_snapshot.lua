@@ -1614,6 +1614,7 @@ return {
 			GetEdgeSize = "BackdropTemplateMixin",
 			GetEffectiveScale = "HANDLE",
 			GetElementSize = "CustomAuraContainerFlowLayoutMixin",
+			GetFont = "FontableFrameMixin",
 			GetFontObject = "FontableFrameMixin",
 			GetFrame = "ClickBindingFramePortraitMixin",
 			GetFrameLevel = "HANDLE",
