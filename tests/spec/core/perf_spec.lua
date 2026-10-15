@@ -72,6 +72,66 @@ describe("Opt-in performance diagnostics", function()
 		end
 	end)
 
+	it("observes only the next combat and retires its events after reporting", function()
+		Mock.profilerEnabled = true
+		local metric = Enum.AddOnProfilerMetric.CountTimeOver1Ms
+		Mock.profilerMetrics.UnitFrames = { [metric] = 10 }
+		UF.Perf:Command("combat")
+		local driver = UF.Perf.driver
+		assert.is_nil(driver:GetScript("OnUpdate"))
+		UF.Perf:Count("outside")
+		assert.is_nil(UF.Perf.counters)
+		local updates = Mock.memoryUpdates
+		Mock.time = 20
+		Mock.inCombat = true
+		Mock.FireEvent("PLAYER_REGEN_DISABLED")
+		assert.equals(updates + 1, Mock.memoryUpdates)
+		UF.Perf:Count("inside")
+		local observed
+		UF.Perf.Report = function(_, snapshot, baseline)
+			observed = snapshot.addons.UnitFrames.thresholds.CountTimeOver1Ms - baseline.addons.UnitFrames.thresholds.CountTimeOver1Ms
+		end
+		Mock.profilerMetrics.UnitFrames[metric] = 14
+		Mock.time = 23.5
+		Mock.inCombat = false
+		messages = {}
+		Mock.FireEvent("PLAYER_REGEN_ENABLED")
+		assert.equals(4, observed)
+		assert.is_not_nil(messages[1][1]:find("combat 3.50 s", 1, true))
+		assert.same({ "inside", 1, "calls" }, messages[2])
+		assert.is_nil(UF.Perf.counters)
+		assert.is_nil(UF.Perf.combatArmed)
+		assert.is_nil(driver:GetScript("OnEvent"))
+		Mock.FireEvent("PLAYER_REGEN_DISABLED")
+		assert.is_nil(UF.Perf.counters)
+	end)
+
+	it("cancels or replaces armed and active combat observations", function()
+		UF.Perf:Combat()
+		UF.Perf:Cancel()
+		Mock.FireEvent("PLAYER_REGEN_DISABLED")
+		assert.is_nil(UF.Perf.counters)
+		UF.Perf:Combat()
+		Mock.inCombat = true
+		Mock.FireEvent("PLAYER_REGEN_DISABLED")
+		local counters = UF.Perf.counters
+		UF.Perf:Combat()
+		assert.equals(counters, UF.Perf.counters, "arming during combat preserves the active run")
+		UF.Perf:Cancel()
+		Mock.inCombat = false
+		Mock.FireEvent("PLAYER_REGEN_ENABLED")
+		UF.Perf:Combat()
+		UF.Perf:Watch(1)
+		assert.is_nil(UF.Perf.driver:GetScript("OnEvent"))
+		UF.Perf:Combat()
+		assert.is_nil(UF.Perf.driver:GetScript("OnUpdate"))
+		Mock.profilerEnabled = true
+		local calls = 0
+		UF.Units.Refresh = function() calls = calls + 1 end
+		UF.Perf:Measure("units")
+		assert.equals(0, calls, "active measurements cannot consume an armed combat")
+	end)
+
 	it("measures startup on the next load only after arming it, and fails as unmeasured", function()
 		Mock.profilerEnabled = true
 		local runs = 0
@@ -111,6 +171,31 @@ describe("Opt-in performance diagnostics", function()
 			if message[1] == "componentCreate" then reported = message[2] end
 		end
 		assert.is_true(reported > 0)
+	end)
+
+	it("isolates native aura creation and reports dispel registration cost", function()
+		Mock.profilerEnabled = true
+		local created
+		local new = UF.Components.Auras.New
+		UF.Components.Auras.New = function(...)
+			created = new(...)
+			return created
+		end
+		UF.Perf:Measure("auras")
+		assert.is_true(created.released)
+		assert.is_false(created.frame:GetParent():IsShown())
+		assert.is_false(created.containers.buffs:IsEnabled())
+		assert.is_nil(created.unit)
+		assert.is_nil(UF.Perf.counters)
+		local counters, phase = {}, false
+		for _, message in ipairs(messages) do
+			if message[3] == "calls" then counters[message[1]] = message[2] end
+			if tostring(message[1]):find("dispel registration:", 1, true) then phase = true end
+		end
+		assert.is_true(counters.auraButtonCreate > 0)
+		assert.is_true(counters.auraDispelRegister > 0)
+		assert.is_true(phase)
+		assert.is_nil(UF.Workbench)
 	end)
 
 	it("measures only explicit prepared operations outside combat and cleans up failures", function()

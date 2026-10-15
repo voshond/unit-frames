@@ -571,6 +571,7 @@ describe("ClickGrid status indicators", function()
 		Mock.aurasSecret = true
 		assert.has_no_error(function() slots:Apply(config) end)
 		assert.is_true(UF.AfterCombat:IsQueued(slots, "restyle"))
+		assert.equals("ClickGrid slots restyle deferred", UnitFramesLogs.errors[1].context)
 		Mock.aurasSecret = false
 		Mock.FireEvent("PLAYER_REGEN_ENABLED")
 		assert.is_false(UF.AfterCombat:IsQueued(slots, "restyle"))

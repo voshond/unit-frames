@@ -93,9 +93,10 @@ end
 -- Fresh mock client + freshly loaded UnitFrames (with the stub oUF as ns.oUF).
 -- initialize = true also runs the ADDON_LOADED setup (AceDB, media);
 -- login = true also runs the oUF factories (spawns the unit frames).
--- saved: the UnitFramesDB saved variables found at load, if any.
-function Helpers.LoadAddon(initialize, login, saved)
+-- saved/logs: the UnitFramesDB/UnitFramesLogs saved variables found at load.
+function Helpers.LoadAddon(initialize, login, saved, logs)
 	Mock.Install()
+	_G.UnitFramesLogs = logs
 	_G.UnitFramesDB = saved
 	local ns = { oUF = NewStubOUF(Mock) }
 	Helpers.LoadToc("UnitFrames/UnitFrames.toc", "UnitFrames", ns)
@@ -112,6 +113,7 @@ end
 -- Returns core ns and the Workbench.
 function Helpers.LoadWorkbench()
 	Mock.Install()
+	_G.UnitFramesLogs = nil
 	Mock.InstallUI()
 	local ns = { oUF = NewStubOUF(Mock) }
 	Helpers.LoadToc("UnitFrames/UnitFrames.toc", "UnitFrames", ns)

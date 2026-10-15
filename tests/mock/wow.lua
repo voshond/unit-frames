@@ -906,6 +906,7 @@ function Mock.Install()
 	_G.SlashCmdList = {}
 	_G.CreateColor = NewColor
 	_G.GetTime = function() return Mock.time end
+	_G.GetServerTime = function() return 1700000000 + math.floor(Mock.time) end
 	_G.GetLocale = function() return "enUS" end
 	_G.GetRealmName = function() return "TestRealm" end
 	_G.GetCurrentRegion = function() return 3 end

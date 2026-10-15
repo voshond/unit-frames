@@ -1,6 +1,36 @@
 local Helpers = require("helpers")
 
 describe("Shared aura artwork", function()
+	it("rebuilds fixed-slot candidates only when the effective spell set changes", function()
+		local UF, CG = Helpers.LoadClickGrid()
+		local slots = CG.Slots:New(UIParent, { slot1 = { enabled = true, spell = "139,774" } })
+		local calls = 0
+		local setter = slots.container.SetAuraSlotCandidateFilters
+		slots.container.SetAuraSlotCandidateFilters = function(...)
+			calls = calls + 1
+			return setter(...)
+		end
+		slots:Apply(UF.Util.Copy(slots.config))
+		slots:Apply({ font = "Morpheus", slot1 = { enabled = true, spell = "774 139 139", own = false } })
+		assert.equals(0, calls, "style, ownership and equivalent text do not rebuild candidates")
+		slots:Apply({ slot1 = { enabled = true, spell = "774" } })
+		assert.equals(1, calls)
+		assert.same({ [774] = true }, slots.container.__state.slots.slot1.candidateFilters.includeSpellIDs)
+		slots:Apply({ slot1 = { enabled = false, spell = "774" } })
+		assert.equals(2, calls)
+		assert.same({}, slots.container.__state.slots.slot1.candidateFilters.includeSpellIDs)
+		slots:Apply({ slot1 = { enabled = false, spell = "139" } })
+		assert.equals(2, calls, "disabled slots retain an empty set")
+		slots:Apply({ slot1 = { enabled = true, spell = "139" } })
+		assert.equals(3, calls)
+		slots:Apply({ slot1 = { enabled = true, spell = "invalid" } })
+		assert.equals(4, calls)
+		assert.equals(1, #slots.errors)
+		slots:Apply(slots.config)
+		assert.equals(4, calls)
+		slots:Release()
+	end)
+
 	it("styles independent fixed slots and restores native ownership after samples", function()
 		local UF, CG = Helpers.LoadClickGrid()
 		local slots = CG.Slots:New(UIParent, { durationPosition = "below", durationSize = 12,

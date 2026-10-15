@@ -21,6 +21,7 @@ function Slots:OnCreate(parent)
 	self.frame:SetAllPoints(parent)
 	self.container = CreateFrame("AuraContainer", nil, self.frame, "CustomAuraContainerTemplate")
 	self.buttons = {}
+	self.candidates = {}
 	for i = 1, 3 do
 		local key = "slot" .. i
 		self.buttons[i] = self.container:AddAuraSlot(key, "HELPFUL|PLAYER", {
@@ -51,7 +52,15 @@ function Slots:OnApply(cfg)
 		local ids, reason = Slots.ParseIDs(slot.spell)
 		if not ids then self.errors[#self.errors + 1] = key .. ": " .. reason end
 		self.container:SetAuraSlotFilterString(key, slot.own and "HELPFUL|PLAYER" or "HELPFUL")
-		self.container:SetAuraSlotCandidateFilters(key, { includeSpellIDs = slot.enabled and ids or {} })
+		-- Unlike filter strings, the native candidate setter always rebuilds
+		-- auras and event registrations. Compare the effective plain ID set,
+		-- including disabled/invalid slots, rather than the entered text.
+		local candidates = slot.enabled and ids or {}
+		if not UF.Util.Equals(self.candidates[key], candidates) then
+			self.container:SetAuraSlotCandidateFilters(key, { includeSpellIDs = candidates })
+			self.candidates[key] = candidates
+			UF.Perf:Count("auraSlotCandidates")
+		end
 	end
 	self:RestyleButtons()
 	if self.previewData then self:RenderSamples() end
@@ -69,7 +78,13 @@ local function Restyle(slots)
 end
 
 function Slots:RestyleButtons()
-	if InCombatLockdown() or not pcall(Restyle, self) then
+	if InCombatLockdown() then
+		UF.AfterCombat:Queue("restyle", self, Slots.RestyleButtons)
+		return
+	end
+	local ok, reason = pcall(Restyle, self)
+	if not ok then
+		if not UF.AfterCombat:IsQueued(self, "restyle") then UF.Logs:Error("ClickGrid slots restyle deferred", reason) end
 		UF.AfterCombat:Queue("restyle", self, Slots.RestyleButtons)
 	else
 		UF.AfterCombat:Cancel(self, "restyle")

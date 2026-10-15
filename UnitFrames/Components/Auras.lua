@@ -306,7 +306,13 @@ function Auras:RestyleButtons()
 		self:RenderSamples()
 		return
 	end
-	if InCombatLockdown() or not pcall(Restyle, self) then
+	if InCombatLockdown() then
+		ns.AfterCombat:Queue("restyle", self, Auras.RestyleButtons)
+		return
+	end
+	local ok, reason = pcall(Restyle, self)
+	if not ok then
+		if not ns.AfterCombat:IsQueued(self, "restyle") then ns.Logs:Error("Auras restyle deferred", reason) end
 		ns.AfterCombat:Queue("restyle", self, Auras.RestyleButtons)
 	else
 		ns.AfterCombat:Cancel(self, "restyle")
