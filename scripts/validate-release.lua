@@ -1,5 +1,6 @@
 -- Validate the staged installable bundle without loading client APIs.
 local root, version = assert(arg[1], "bundle directory required"), assert(arg[2], "version required")
+local channel, commit = arg[3] or "release", arg[4]
 local addons = { "UnitFrames", "UnitFrames_Workbench", "UnitFrames_Media", "UnitFrames_ClickGrid" }
 local checked = {}
 
@@ -32,6 +33,10 @@ for _, addon in ipairs(addons) do
 	local toc = Read(addon .. "/" .. addon .. ".toc")
 	assert(toc:match("## Interface:%s*(%d+)") == "16001", "unexpected client interface in " .. addon)
 	assert(toc:match("## Version:%s*([^\r\n]+)") == version, "wrong version in " .. addon)
+	assert(toc:match("## X%-Build%-Channel:%s*([^\r\n]+)") == channel, "wrong build channel in " .. addon)
+	local builtCommit = toc:match("## X%-Build%-Commit:%s*([^\r\n]+)")
+	assert(builtCommit and builtCommit:match("^[0-9a-f]+$") and #builtCommit == 40, "invalid build commit in " .. addon)
+	if commit then assert(builtCommit == commit, "wrong build commit in " .. addon) end
 	for line in toc:gmatch("[^\r\n]+") do
 		line = line:match("^%s*(.-)%s*$")
 		if line ~= "" and not line:match("^#") then Check(addon .. "/" .. line:gsub("\\", "/")) end
@@ -50,4 +55,3 @@ for _, weight in ipairs({ "Light", "Regular", "Medium", "Bold" }) do
 	Read("UnitFrames_Media/Fonts/RobotoCondensed-" .. weight .. ".ttf")
 end
 print("Release bundle references, versions, fonts and licenses verified.")
-

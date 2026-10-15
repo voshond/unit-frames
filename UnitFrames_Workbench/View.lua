@@ -18,7 +18,7 @@ function Workbench:Build()
 	local db = self:GetDB()
 	self.window = W.Window:New(UIParent, {
 		name = "UnitFramesWorkbench",
-		title = "UnitFrames Workbench",
+		title = "UnitFrames Workbench - " .. UF.version,
 		width = 1240, height = 700, minWidth = 1060, minHeight = 500,
 		db = db.window,
 		onHide = function()

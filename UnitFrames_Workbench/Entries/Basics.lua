@@ -1,5 +1,6 @@
 local _, wb = ...
 local UF = UnitFrames
+if not UF.isDevelopment then return end
 local Workbench = wb.Workbench
 local C = UF.Components
 
