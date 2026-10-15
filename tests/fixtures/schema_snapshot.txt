@@ -25,6 +25,7 @@ option colors.rage type="color" label="Rage" default={0.9,0.1,0.1,1}
 option colors.energy type="color" label="Energy" default={1,0.85,0.1,1}
 option colors.focus type="color" label="Focus" default={1,0.5,0.25,1}
 option colors.runicPower type="color" label="Runic power" default={0,0.82,1,1}
+option colors.comboPoints type="color" label="Combo points" default={1,0.96,0.41,1}
 option colors.powerCost type="color" label="Power cost" default={0.4,0.4,1,0.6}
 option colors.experience type="color" label="Experience" default={0.58,0,0.55,1}
 option colors.rested type="color" label="Rested" default={0,0.39,0.88,0.6}
@@ -44,6 +45,7 @@ default colors.cast = {1,0.7,0,1}
 default colors.castFailed = {1,0,0,1}
 default colors.castSuccess = {0,1,0,1}
 default colors.channel = {0,1,0,1}
+default colors.comboPoints = {1,0.96,0.41,1}
 default colors.disconnected = {0.45,0.45,0.45,1}
 default colors.energy = {1,0.85,0.1,1}
 default colors.experience = {0.58,0,0.55,1}
@@ -77,6 +79,7 @@ resolved colors.cast = {1,0.7,0,1}
 resolved colors.castFailed = {1,0,0,1}
 resolved colors.castSuccess = {0,1,0,1}
 resolved colors.channel = {0,1,0,1}
+resolved colors.comboPoints = {1,0.96,0.41,1}
 resolved colors.disconnected = {0.45,0.45,0.45,1}
 resolved colors.energy = {1,0.85,0.1,1}
 resolved colors.experience = {0.58,0,0.55,1}
@@ -1601,6 +1604,27 @@ option castbar.colors.success type="color" label="Succeeded" inherit="colors.cas
 option castbar.background type="color" label="Background" default={0,0,0,0} tooltip=#0297179c
 option castbar.holdTime type="range" label="Hold after finish (s)" default=0.4 min=0 max=2 step=0.1
 option castbar.fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
+option comboPoints type="group" label="Combo points" defaults={enabled=false}
+option comboPoints.enabled type="toggle" label="Enabled" default=true tooltip=#70ca7196
+option comboPoints.position type="select" label="Placement" default="power" values=#bae11b56
+option comboPoints.height type="range" label="Height" default=8 min=2 max=100 step=1
+option comboPoints.spacing type="range" label="Gap between points" default=2 min=0 max=20 step=1
+option comboPoints.texture type="statusbar" label="Texture" inherit="barTexture"
+option comboPoints.color type="color" label="Colour" inherit="colors.comboPoints"
+option comboPoints.background type="group" label="Empty points"
+option comboPoints.background.enabled type="toggle" label="Enabled" default=true
+option comboPoints.background.useBarColor type="toggle" label="Tint with point colour" default=true
+option comboPoints.background.alpha type="range" label="Opacity" default=0.25 min=0 max=1 step=0.05 hidden
+option comboPoints.background.color type="color" label="Colour" default={0,0,0,0.5} hidden
+option comboPoints.border type="group" label="Border" defaults={border="UnitFrames Pixel",enabled=false,inset=0,padding=1,size=1}
+option comboPoints.border.enabled type="toggle" label="Enabled" default=true
+option comboPoints.border.border type="border" label="Border" inherit="borderTexture"
+option comboPoints.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option comboPoints.border.color type="color" label="Border colour" inherit="borderColor"
+option comboPoints.border.background type="background" label="Background" inherit="backgroundTexture"
+option comboPoints.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option comboPoints.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option comboPoints.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 option auras type="group" label="Buffs & debuffs" defaults={}
 option auras.enabled type="toggle" label="Enabled" default=true
 option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
@@ -1880,6 +1904,19 @@ default classification.offsetX = 0
 default classification.offsetY = 0
 default classification.order = 1
 default classification.size = 18
+default comboPoints.background.alpha = 0.25
+default comboPoints.background.color = {0,0,0,0.5}
+default comboPoints.background.enabled = true
+default comboPoints.background.useBarColor = true
+default comboPoints.border.border = "UnitFrames Pixel"
+default comboPoints.border.enabled = false
+default comboPoints.border.inset = 0
+default comboPoints.border.padding = 1
+default comboPoints.border.size = 1
+default comboPoints.enabled = false
+default comboPoints.height = 8
+default comboPoints.position = "power"
+default comboPoints.spacing = 2
 default experience.bar.background.alpha = 0.25
 default experience.bar.background.color = {0,0,0,0.5}
 default experience.bar.background.enabled = true
@@ -2631,6 +2668,24 @@ resolved classification.offsetX = 0
 resolved classification.offsetY = 0
 resolved classification.order = 1
 resolved classification.size = 18
+resolved comboPoints.background.alpha = 0.25
+resolved comboPoints.background.color = {0,0,0,0.5}
+resolved comboPoints.background.enabled = true
+resolved comboPoints.background.useBarColor = true
+resolved comboPoints.border.background = "Solid"
+resolved comboPoints.border.backgroundColor = {0,0,0,0.75}
+resolved comboPoints.border.border = "UnitFrames Pixel"
+resolved comboPoints.border.color = {0.5,0.5,0.5,1}
+resolved comboPoints.border.enabled = false
+resolved comboPoints.border.inset = 0
+resolved comboPoints.border.padding = 1
+resolved comboPoints.border.size = 1
+resolved comboPoints.color = {1,0.96,0.41,1}
+resolved comboPoints.enabled = false
+resolved comboPoints.height = 8
+resolved comboPoints.position = "power"
+resolved comboPoints.spacing = 2
+resolved comboPoints.texture = "Blizzard"
 resolved experience.bar.background.alpha = 0.25
 resolved experience.bar.background.color = {0,0,0,0.5}
 resolved experience.bar.background.enabled = true
@@ -3289,6 +3344,7 @@ definition castbar.defaults.name.size = 10
 definition castbar.defaults.placement = "bottom"
 definition castbar.defaults.time.size = 10
 definition classification.defaults = {}
+definition comboPoints.defaults.enabled = false
 definition defaultPosition.point = "CENTER"
 definition defaultPosition.x = -280
 definition defaultPosition.y = -160
@@ -5806,6 +5862,27 @@ option castbar.colors.success type="color" label="Succeeded" inherit="colors.cas
 option castbar.background type="color" label="Background" default={0,0,0,0} tooltip=#0297179c
 option castbar.holdTime type="range" label="Hold after finish (s)" default=0.4 min=0 max=2 step=0.1
 option castbar.fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
+option comboPoints type="group" label="Combo points" defaults={}
+option comboPoints.enabled type="toggle" label="Enabled" default=true tooltip=#70ca7196
+option comboPoints.position type="select" label="Placement" default="power" values=#bae11b56
+option comboPoints.height type="range" label="Height" default=8 min=2 max=100 step=1
+option comboPoints.spacing type="range" label="Gap between points" default=2 min=0 max=20 step=1
+option comboPoints.texture type="statusbar" label="Texture" inherit="barTexture"
+option comboPoints.color type="color" label="Colour" inherit="colors.comboPoints"
+option comboPoints.background type="group" label="Empty points"
+option comboPoints.background.enabled type="toggle" label="Enabled" default=true
+option comboPoints.background.useBarColor type="toggle" label="Tint with point colour" default=true
+option comboPoints.background.alpha type="range" label="Opacity" default=0.25 min=0 max=1 step=0.05 hidden
+option comboPoints.background.color type="color" label="Colour" default={0,0,0,0.5} hidden
+option comboPoints.border type="group" label="Border" defaults={border="UnitFrames Pixel",enabled=false,inset=0,padding=1,size=1}
+option comboPoints.border.enabled type="toggle" label="Enabled" default=true
+option comboPoints.border.border type="border" label="Border" inherit="borderTexture"
+option comboPoints.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option comboPoints.border.color type="color" label="Border colour" inherit="borderColor"
+option comboPoints.border.background type="background" label="Background" inherit="backgroundTexture"
+option comboPoints.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option comboPoints.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option comboPoints.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 option auras type="group" label="Buffs & debuffs" defaults={}
 option auras.enabled type="toggle" label="Enabled" default=true
 option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
@@ -6085,6 +6162,19 @@ default classification.offsetX = 0
 default classification.offsetY = 0
 default classification.order = 1
 default classification.size = 18
+default comboPoints.background.alpha = 0.25
+default comboPoints.background.color = {0,0,0,0.5}
+default comboPoints.background.enabled = true
+default comboPoints.background.useBarColor = true
+default comboPoints.border.border = "UnitFrames Pixel"
+default comboPoints.border.enabled = false
+default comboPoints.border.inset = 0
+default comboPoints.border.padding = 1
+default comboPoints.border.size = 1
+default comboPoints.enabled = true
+default comboPoints.height = 8
+default comboPoints.position = "power"
+default comboPoints.spacing = 2
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -6657,6 +6747,24 @@ resolved classification.offsetX = 0
 resolved classification.offsetY = 0
 resolved classification.order = 1
 resolved classification.size = 18
+resolved comboPoints.background.alpha = 0.25
+resolved comboPoints.background.color = {0,0,0,0.5}
+resolved comboPoints.background.enabled = true
+resolved comboPoints.background.useBarColor = true
+resolved comboPoints.border.background = "Solid"
+resolved comboPoints.border.backgroundColor = {0,0,0,0.75}
+resolved comboPoints.border.border = "UnitFrames Pixel"
+resolved comboPoints.border.color = {0.5,0.5,0.5,1}
+resolved comboPoints.border.enabled = false
+resolved comboPoints.border.inset = 0
+resolved comboPoints.border.padding = 1
+resolved comboPoints.border.size = 1
+resolved comboPoints.color = {1,0.96,0.41,1}
+resolved comboPoints.enabled = true
+resolved comboPoints.height = 8
+resolved comboPoints.position = "power"
+resolved comboPoints.spacing = 2
+resolved comboPoints.texture = "Blizzard"
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -7115,6 +7223,7 @@ definition castbar.defaults.name.size = 10
 definition castbar.defaults.placement = "bottom"
 definition castbar.defaults.time.size = 10
 definition classification.defaults = {}
+definition comboPoints.defaults = {}
 definition defaultPosition.point = "CENTER"
 definition defaultPosition.x = 280
 definition defaultPosition.y = -160

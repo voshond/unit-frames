@@ -43,6 +43,9 @@ Units.definitions.player = {
 	-- Inside the unit frame the castbar uses the frame's border, not its own.
 	castbar = { defaults = { placement = "bottom", height = 18, border = { enabled = false },
 		name = { size = 10 }, time = { size = 10 } } },
+	-- Rogues and druids (Units.COMBO_POINT_CLASSES): the target's points, on
+	-- request. The target frame shows them by default.
+	comboPoints = { defaults = { enabled = false } },
 	auras = { cancelBuffs = true, defaults = {} },
 }
 
@@ -88,6 +91,8 @@ Units.definitions.target = {
 	rows = { HealthRow(26), PowerRow(12) },
 	portrait = { defaults = { enabled = true, position = "RIGHT" } },
 	castbar = ns.Util.Copy(Units.definitions.player.castbar),
+	-- Combo points are stored on the target: the player's points on this unit.
+	comboPoints = { defaults = {} },
 	auras = { defaults = {} },
 	sample = { name = "Scarlet Myrmidon", level = 42, isPlayer = false, creatureType = "Humanoid",
 		classification = "elite", reaction = "hostile", powerType = "RAGE", powerMax = 100, power = 70, cost = 15,
@@ -191,10 +196,24 @@ for _, unit in ipairs(Units.order) do
 	end
 end
 
+-- Classes whose Forever UI shows combo points.
+Units.COMBO_POINT_CLASSES = { ROGUE = true, DRUID = true }
+
+-- Whether the player's class has combo points; an opaque class could.
+function Units.PlayerHasComboPoints()
+	local _, class = UnitClass("player")
+	if issecretvalue(class) then return true end
+	return Units.COMBO_POINT_CLASSES[class] == true
+end
+
 function Units:GetSpec(def, frame)
 	local spec = { frame = frame, rows = def.rows, width = def.width, resting = def.resting, readyCheck = def.readyCheck,
 		playerFrame = def.playerFrame }
 	for _, part in ipairs(ns.Components.UnitFrame.PARTS) do spec[part.key] = def[part.key] end
+	-- The class is fixed for the session: other classes' frames leave the row out.
+	if spec.comboPoints then
+		spec.comboPoints = ns.Util.Merge(ns.Util.Copy(spec.comboPoints), { available = Units.PlayerHasComboPoints() })
+	end
 	return spec
 end
 
@@ -213,6 +232,7 @@ Units.SAMPLE = {
 	health = 15600, healthMax = 24000, heal = 2400, absorb = 3600, healAbsorb = 1200,
 	power = 8400, powerMax = 12000, cost = 1500, powerType = "MANA",
 	xp = 41000, xpMax = 98000, rested = 30000,
+	comboPoints = 3, comboPointsMax = 5,
 	class = "PALADIN",
 	spell = "Flash of Light", spellIcon = [[Interface\Icons\Spell_Holy_FlashHeal]], castProgress = 0.6, castTime = 1.5,
 	buffs = {

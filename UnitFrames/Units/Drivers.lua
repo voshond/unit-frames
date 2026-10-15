@@ -59,6 +59,16 @@ function Drivers.Classification(unit)
 	return classification
 end
 
+-- The player's combo points on the frame's unit (a player frame shows those
+-- on the target) and their maximum. Forever stores them on the target, like
+-- Blizzard's ComboFrame. The count may be secret and only goes to
+-- StatusBars; the player's maximum is plain, else the classic five.
+function Drivers.ComboPoints(unit)
+	local max = UnitPowerMax("player", Enum.PowerType.ComboPoints)
+	if issecretvalue(max) then max = 5 end
+	return GetComboPoints("player", unit == "player" and "target" or unit), max
+end
+
 -- Whole-frame state ------------------------------------------------------------
 
 Drivers.frame = {
@@ -210,6 +220,19 @@ Drivers.parts.castbar = {
 	end,
 	-- Casts are event-driven (Units/Cast.lua); polling would restart them.
 	live = false,
+}
+
+-- Target and player frames (Units.definitions).
+Drivers.parts.comboPoints = {
+	element = "UF_ComboPoints",
+	bind = function(points) return points end,
+	sample = function(points, v) points:Preview(v.comboPoints, v.comboPointsMax) end,
+	live = function(points, unit)
+		if unit ~= "player" and unit ~= "target" then return end
+		local count, max = Drivers.ComboPoints(unit)
+		points:SetMax(max)
+		points:SetValue(count)
+	end,
 }
 
 Drivers.parts.auras = {

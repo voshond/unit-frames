@@ -89,10 +89,15 @@ describe("Target, focus and their targets", function()
 		assert.same({ "CENTER", UIParent, "CENTER", -280, -290 }, focus:GetAnchor("CENTER"))
 	end)
 
+	-- Each frame keeps its own combo point row (combo_points_spec #copy).
+	local KEPT = { comboPoints = true }
+
 	local function AssertCopied(frame, source)
 		local function Compare(schema, actual, expected)
 			for _, opt in ipairs(schema) do
-				if opt.type == "group" then
+				if KEPT[opt.key] then
+					assert.same(frame.uf.resolved[opt.key], actual[opt.key], opt.key)
+				elseif opt.type == "group" then
 					Compare(opt.schema, actual[opt.key], expected[opt.key])
 				else
 					assert.same(expected[opt.key], actual[opt.key], opt.key)

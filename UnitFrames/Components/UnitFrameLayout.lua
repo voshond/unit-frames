@@ -18,6 +18,12 @@ function Layout.AuraBarCollapses(spec, cfg)
 		and cfg.auraBar.collapse == true and cfg.health ~= nil and cfg.health.enabled
 end
 
+-- Whether the combo point row takes space: the unit must offer it to a
+-- class that has combo points (spec, fixed for the frame) and enable it.
+function Layout.PointBarShown(spec, cfg)
+	return spec.comboPoints ~= nil and spec.comboPoints.available ~= false and cfg.comboPoints.enabled
+end
+
 function Layout.Compute(spec, cfg)
 	local pad = cfg.border.enabled and cfg.border.padding or 0
 	local placement = Layout.CastbarPlacement(spec, cfg)
@@ -29,15 +35,28 @@ function Layout.Compute(spec, cfg)
 	local function AuraBarAt(position, beside)
 		if auraBar and auraBar.position == position and (beside == "health") == collapse then items[#items + 1] = auraItem end
 	end
+	local points = Layout.PointBarShown(spec, cfg) and cfg.comboPoints
+	-- "power" follows the power row, enabled or not; without one, the rows.
+	local pointsPending = points and points.position
+	local function PointsAt(position)
+		if pointsPending == position then
+			items[#items + 1] = { key = "comboPoints", height = points.height }
+			pointsPending = nil
+		end
+	end
 	AuraBarAt("top")
 	if placement == "top" then items[#items + 1] = { key = "castbar", height = cfg.castbar.height } end
+	PointsAt("top")
 	for _, row in ipairs(spec.rows) do
 		if cfg[row.key].enabled then
 			if row.key == "health" then AuraBarAt("top", "health") end
 			items[#items + 1] = { key = row.key, height = cfg[row.key].height }
 			if row.key == "health" then AuraBarAt("bottom", "health") end
 		end
+		if row.key == "power" then PointsAt("power") end
 	end
+	PointsAt("power")
+	PointsAt("bottom")
 	if placement == "bottom" then items[#items + 1] = { key = "castbar", height = cfg.castbar.height } end
 	AuraBarAt("bottom")
 	local stackHeight = 0

@@ -175,6 +175,9 @@ function Units:CopyPlayerSettings(unit)
 	-- Positions live separately in Edit Mode. The target's schema excludes XP.
 	local copy = CopySettings(schema, source, overrides, defaults)
 	AdaptTexts(schema, source, copy)
+	-- The player's combo point row is opt-in and the target's on by default:
+	-- each frame keeps its own.
+	copy.comboPoints = ns.Util.Copy(ns.Config:GetUnitConfig(unit).comboPoints)
 	return ns.Config:UnitStore(unit):Replace(copy)
 end
 

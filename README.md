@@ -10,6 +10,7 @@ each change.
   separately, or copy your player style to another frame.
 - Choose fonts, colours, borders, bar sizes and portraits.
 - Show health, power, absorb shields, cast bars, buffs and debuffs.
+- Show rogue and druid combo points on the target frame, or on the player frame.
 - Add a cropped buff/debuff icon row, alongside or instead of external icons.
 - Add raid markers, PvP flags, elite and rare icons, and ready check indicators.
 - Fade frames when someone is out of range.
