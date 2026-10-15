@@ -130,6 +130,7 @@ function Preview:FeedCell(cell, index, live, unit)
 			cell.targetValues = targetValues
 			targetValues.name, targetValues.class, targetValues.reaction = "Enemy " .. index, nil, "hostile"
 			targetValues.isPlayer = false
+			targetValues.lastname = ""
 			UF.Units:ShowSample(cell.target, targetValues)
 		end
 	end
@@ -153,6 +154,7 @@ function Preview:Values(index, value)
 	end
 	value.animateAuras = self.data.source == "animated"
 	value.name = names[(index - 1) % #names + 1] .. " " .. index
+	value.lastname = "Example"
 	value.class = index % 3 == 0 and "MAGE" or index % 3 == 1 and "WARRIOR" or "PALADIN"
 	value.showCast = false
 	value.health = value.healthMax * (self.data.source == "animated" and (0.2 + 0.8 * (math.sin(self.time + index) + 1) / 2)

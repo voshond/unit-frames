@@ -79,7 +79,7 @@ Units.definitions.pet = {
 		name = { size = 9 }, time = { size = 9 } } },
 	auras = { defaults = { durationPosition = "CENTER", durationSize = 9, countSize = 8,
 		buffs = { max = 6, size = 18 }, debuffs = { max = 6, size = 18 } } },
-	sample = { name = "Wolf", level = 42, isPlayer = false, creatureType = "Beast", classification = "normal",
+	sample = { name = "Wolf", lastname = "", level = 42, isPlayer = false, creatureType = "Beast", classification = "normal",
 		reaction = "friendly", healthMax = 6000, health = 3900, heal = 600, absorb = 900, healAbsorb = 0,
 		powerType = "FOCUS", powerMax = 100, power = 70, cost = 20,
 		spell = "Bite", spellIcon = [[Interface\Icons\Ability_Druid_FerociousBite]], castTime = 1.5 },
@@ -94,7 +94,7 @@ Units.definitions.target = {
 	-- Combo points are stored on the target: the player's points on this unit.
 	comboPoints = { defaults = {} },
 	auras = { defaults = {} },
-	sample = { name = "Scarlet Myrmidon", level = 42, isPlayer = false, creatureType = "Humanoid",
+	sample = { name = "Scarlet Myrmidon", lastname = "", level = 42, isPlayer = false, creatureType = "Humanoid",
 		classification = "elite", reaction = "hostile", powerType = "RAGE", powerMax = 100, power = 70, cost = 15,
 		spell = "Mortal Strike", spellIcon = [[Interface\Icons\Ability_Warrior_SavageBlow]], castTime = 1.5 },
 }
@@ -108,7 +108,7 @@ Units.definitions.targettarget = {
 		name = { size = 9 }, time = { size = 9 } } },
 	auras = { defaults = { enabled = false, durationPosition = "CENTER", durationSize = 9, countSize = 8,
 		buffs = { max = 8, size = 16 }, debuffs = { max = 8, size = 18 } } },
-	sample = { name = "Arthas", level = 44, className = "Warrior", class = "WARRIOR", isPlayer = true,
+	sample = { name = "Arthas", lastname = "Menethil", level = 44, className = "Warrior", class = "WARRIOR", isPlayer = true,
 		powerType = "RAGE", powerMax = 100, power = 70, cost = 15 },
 }
 
@@ -119,7 +119,7 @@ Units.definitions.focus = {
 	portrait = { defaults = { enabled = false } },
 	castbar = ns.Util.Copy(Units.definitions.player.castbar),
 	auras = { defaults = {} },
-	sample = { name = "Jaina", level = 44, className = "Mage", class = "MAGE", isPlayer = true,
+	sample = { name = "Jaina", lastname = "Proudmoore", level = 44, className = "Mage", class = "MAGE", isPlayer = true,
 		spell = "Frostbolt", spellIcon = [[Interface\Icons\Spell_Frost_FrostBolt02]], castTime = 2.5 },
 }
 
@@ -170,7 +170,7 @@ Units.definitions.focustarget = Units:Derive("targettarget", {
 	defaultPosition = { point = "CENTER", x = -60, y = -290 },
 })
 Units.definitions.focustarget.sample = {
-	name = "Thrall", level = 44, className = "Shaman", class = "SHAMAN", isPlayer = true,
+	name = "Thrall", lastname = "", level = 44, className = "Shaman", class = "SHAMAN", isPlayer = true,
 }
 
 -- Builds the visual frame for `unit` (no data binding). `frame` is optional.
@@ -239,7 +239,7 @@ end
 
 -- Sample values for previews and test frames.
 Units.SAMPLE = {
-	name = "Uther", level = 42, className = "Paladin",
+	name = "Uther", lastname = "Lightbringer", level = 42, className = "Paladin",
 	health = 15600, healthMax = 24000, heal = 2400, absorb = 3600, healAbsorb = 1200,
 	power = 8400, powerMax = 12000, cost = 1500, powerType = "MANA",
 	xp = 41000, xpMax = 98000, rested = 30000,

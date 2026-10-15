@@ -66,10 +66,22 @@ local function PvPMarkup(atlas)
 end
 
 Sources.Register("name", {
-	label = "Name", group = "Identity",
+	label = "Character name", group = "Identity",
 	events = "UNIT_NAME_UPDATE",
 	live = function(unit) return (UnitName(unit)) end,
 	sample = function(v) return v.name end,
+})
+
+Sources.Register("lastname", {
+	label = "Last name", group = "Identity", optional = true,
+	events = "UNIT_NAME_UPDATE",
+	-- Forever's Camelot NameUtil treats UnitName's second return as the surname.
+	-- Pass it through unchanged: either name part may be secret.
+	live = function(unit)
+		local _, lastname = UnitName(unit)
+		return lastname
+	end,
+	sample = function(v) return v.lastname end,
 })
 
 Sources.Register("level", {
