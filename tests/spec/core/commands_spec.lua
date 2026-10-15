@@ -19,6 +19,17 @@ describe("Slash command help", function()
 		assert.equals(1, #messages)
 	end)
 
+	it("captures client chat across initialized addon loads", function()
+		local initialized = Helpers.LoadAddon(true)
+		assert.same({ {
+			"|cff4fa3ffUnitFrames|r:", "loaded. Use /uf for a list of commands.",
+		} }, Mock.messages)
+		initialized:Print("test message", 42)
+		assert.same({ "|cff4fa3ffUnitFrames|r:", "test message", 42 }, Mock.messages[2])
+		Helpers.LoadAddon()
+		assert.same({}, Mock.messages)
+	end)
+
 	it("shows the same concise help for /uf, /uf help and unknown commands", function()
 		SlashCmdList.UNITFRAMES("")
 		local help = messages

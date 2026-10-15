@@ -861,6 +861,11 @@ function Mock.NewEncodingUtil()
 end
 
 function Mock.Install()
+	-- Client chat belongs to the mock, not the test runner's stdout.
+	Mock.messages = {}
+	_G.print = function(...)
+		Mock.messages[#Mock.messages + 1] = { ... }
+	end
 	_G.C_ClassColor = nil
 	registry = {}
 	Mock.objects = registry
