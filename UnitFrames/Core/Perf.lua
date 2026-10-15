@@ -102,8 +102,39 @@ local function ReportCounters(counters)
 end
 
 function Perf:Cancel()
-	if self.driver then self.driver:SetScript("OnUpdate", nil); self.driver:Hide() end
+	if self.driver then
+		self.driver:SetScript("OnUpdate", nil)
+		self.driver:SetScript("OnEvent", nil)
+		self.driver:UnregisterAllEvents()
+		self.driver:Hide()
+	end
 	self.counters, self.baseline, self.elapsed, self.seconds = nil, nil, nil, nil
+	self.combatArmed, self.startedAt = nil, nil
+end
+
+-- Observe exactly the next combat. Native metrics are sampled only at the
+-- endpoints; counters run only between the two events, with no per-frame work.
+function Perf:Combat()
+	if InCombatLockdown() then ns:Print("arm the next combat outside combat"); return end
+	self:Cancel()
+	self.combatArmed = true
+	self.driver = self.driver or CreateFrame("Frame")
+	self.driver:RegisterEvent("PLAYER_REGEN_DISABLED")
+	self.driver:SetScript("OnEvent", function(driver, event)
+		if event == "PLAYER_REGEN_DISABLED" then
+			driver:UnregisterEvent(event)
+			self.baseline = self:Snapshot()
+			self.counters, self.startedAt = {}, GetTime()
+			driver:RegisterEvent("PLAYER_REGEN_ENABLED")
+		else
+			local counters, baseline, duration = self.counters, self.baseline, GetTime() - self.startedAt
+			self:Cancel()
+			Divider(string.format("combat %.2f s", duration))
+			self:Report(self:Snapshot(), baseline, true)
+			ReportCounters(counters)
+		end
+	end)
+	ns:Print("next combat armed; /uf perf cancel disarms it")
 end
 
 function Perf:Watch(seconds)
@@ -217,7 +248,7 @@ function Perf:Measure(operation)
 	if not run then ns:Print("measure operations: units, clickgrid, preview, create, schema"); return end
 	if InCombatLockdown() then ns:Print("active measurements must wait until combat ends"); return end
 	if not ProfilerEnabled() then ns:Print("native addon profiler unavailable/disabled"); return end
-	if self.counters then ns:Print("cancel the observation window before an active measurement"); return end
+	if self.counters or self.combatArmed then ns:Print("cancel the observation window before an active measurement"); return end
 	Run(self, "measure " .. operation, run)
 end
 
@@ -251,6 +282,7 @@ function Perf:Command(arguments)
 	elseif command == "cancel" then self:Cancel(); ns:Print("performance observation cancelled")
 	elseif command == "measure" then self:Measure(value)
 	elseif command == "startup" then self:ArmStartup()
+	elseif command == "combat" then self:Combat()
 	elseif not command then self:Report(self:Snapshot())
-	else ns:Print("/uf perf [watch <seconds> | cancel | measure <operation> | startup]") end
+	else ns:Print("/uf perf [watch <seconds> | combat | cancel | measure <operation> | startup]") end
 end

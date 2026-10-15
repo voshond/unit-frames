@@ -85,7 +85,10 @@ implementation notes.
 
 For optional performance diagnostics, `/uf perf` reports loaded addon memory
 and profiler metrics. `/uf perf watch 60` observes a bounded window;
-`/uf perf cancel` stops it. Outside combat, `/uf perf measure units` actively
+`/uf perf combat` arms a report for the next complete combat, including counter
+and profiler threshold deltas; `/uf perf cancel` stops either observation.
+Reports use session peaks and recent averages, not combat-only CPU timings.
+Outside combat, `/uf perf measure units` actively
 measures a unit refresh; `clickgrid`, `preview` and `schema` are also supported.
 Diagnostics do not load Workbench and stay off until requested.
 
