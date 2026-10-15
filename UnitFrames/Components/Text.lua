@@ -198,7 +198,12 @@ function Text:OnApply(cfg)
 	else
 		fs:SetShadowOffset(0, 0)
 	end
-	self.baseColor = CreateColor(Util.UnpackColor(cfg.color))
+	-- Reused: CreateColor copies every ColorMixin method into a new table.
+	if self.baseColor then
+		self.baseColor:SetRGBA(Util.UnpackColor(cfg.color))
+	else
+		self.baseColor = CreateColor(Util.UnpackColor(cfg.color))
+	end
 	self:ApplyColor()
 	fs:SetJustifyH(cfg.justifyH)
 	fs:SetWordWrap(false)

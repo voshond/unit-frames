@@ -665,6 +665,7 @@ local function NewColor(r, g, b, a)
 	local color = { r = r, g = g, b = b, a = a or 1 }
 	function color:GetRGB() return self.r, self.g, self.b end
 	function color:GetRGBA() return self.r, self.g, self.b, self.a end
+	function color:SetRGBA(nr, ng, nb, na) self.r, self.g, self.b, self.a = nr, ng, nb, na or 1 end
 	return color
 end
 
