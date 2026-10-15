@@ -18,3 +18,4 @@ Groups\Style.lua
 Groups\Runtime.lua
 Preview.lua
 Integration\Workbench.lua
+Integration\Profiles.lua

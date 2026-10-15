@@ -15,6 +15,7 @@ each change.
 - Add raid markers, PvP flags, elite and rare icons, and ready check indicators.
 - Fade frames when someone is out of range.
 - Move your frames in the game's Edit Mode, with snapping to help line them up.
+- Keep several profiles, and share your style with others as a text string.
 
 ## Make it yours
 
@@ -29,6 +30,9 @@ actual frames.
 To move frames, open the game's **Edit Mode**. If you want matching frames,
 start with your player and use **Copy player settings** on the others.
 You can still customise each one afterward.
+
+Under **Profiles**, you can create, copy, switch, delete or reset profiles,
+export your style as a text string, and import a string someone shared with you.
 
 See the [settings guide](USER_GUIDE.md) for individual options and examples.
 

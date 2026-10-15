@@ -26,6 +26,10 @@ do
 			and C_AddOnProfiler.GetAddOnMetric ~= nil and C_AddOnProfiler.GetOverallMetric ~= nil
 			and C_AddOnProfiler.MeasureCall ~= nil and Enum ~= nil and Enum.AddOnProfilerMetric ~= nil,
 		addonMemory = UpdateAddOnMemoryUsage ~= nil and GetAddOnMemoryUsage ~= nil,
+		encoding = C_EncodingUtil ~= nil and C_EncodingUtil.SerializeCBOR ~= nil and C_EncodingUtil.DeserializeCBOR ~= nil
+			and C_EncodingUtil.CompressString ~= nil and C_EncodingUtil.DecompressString ~= nil
+			and C_EncodingUtil.EncodeBase64 ~= nil and C_EncodingUtil.DecodeBase64 ~= nil
+			and Enum ~= nil and Enum.CompressionMethod ~= nil and Enum.CompressionLevel ~= nil,
 	}
 	probe:Hide()
 end

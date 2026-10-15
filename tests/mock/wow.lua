@@ -552,6 +552,24 @@ end
 
 -- AuraContainer (Blizzard_CustomAuraContainer): groups create two buttons up
 -- front through their initializeFrame, like the real frame batch does.
+-- Blizzard_SharedXML ScrollingEditBoxTemplate (ScrollingEditBoxMixin): a
+-- multi-line EditBox in a ScrollBox. Only the mixin methods we use.
+function Mock.DecorateScrollingEditBox(frame)
+	local scrollBox = NewObject("Frame", frame)
+	scrollBox.__state.template = "WowScrollBox"
+	local editBox = NewObject("EditBox", scrollBox)
+	editBox.__state.multiLine, editBox.__state.fontObject, editBox.__state.text = true, "GameFontHighlight", ""
+	frame.ScrollBox, scrollBox.EditBox = scrollBox, editBox
+	function frame:GetScrollBox() return scrollBox end
+	function frame:GetEditBox() return editBox end
+	function frame:SetText(text) editBox:SetText(text) end
+	function frame:GetText() return editBox:GetText() end
+	function frame:GetInputText() return editBox:GetText() end
+	function frame:ClearText() editBox:SetText("") end
+	function frame:SetFocus() editBox:SetFocus() end
+	function frame:ClearFocus() editBox:ClearFocus() end
+end
+
 function Mock.DecorateAuraContainer(container)
 	local s = container.__state
 	s.groups, s.groupOrder = {}, {}
@@ -725,6 +743,123 @@ table.create = function(arraySizeHint, nodeSizeHint)
 	return newTable(arraySizeHint, nodeSizeHint or 0)
 end
 
+--[[
+C_EncodingUtil stand-in. Round trips are faithful; the byte formats are not:
+"CBOR" is a private tagged encoding, "compression" a marker prefix, base64 is
+real (RFC 4648). Like the client, decoders return nothing for input they
+can't read, and DeserializeCBOR raises on malformed data.
+]]
+local B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+local B64_INDEX = {}
+for i = 1, 64 do B64_INDEX[B64:sub(i, i)] = i - 1 end
+
+local function EncodeBase64(source)
+	local out = {}
+	for i = 1, #source, 3 do
+		local a, b, c = source:byte(i, i + 2)
+		local n = a * 65536 + (b or 0) * 256 + (c or 0)
+		local chars = {}
+		for j = 1, 4 do
+			local index = math.floor(n / 64 ^ (4 - j)) % 64
+			chars[j] = B64:sub(index + 1, index + 1)
+		end
+		if not b then chars[3] = "=" end
+		if not c then chars[4] = "=" end
+		out[#out + 1] = table.concat(chars)
+	end
+	return table.concat(out)
+end
+
+local function DecodeBase64(source)
+	if #source % 4 ~= 0 or source:find("[^%w%+/=]") or source:find("=[^=]") then return nil end
+	local out = {}
+	for i = 1, #source, 4 do
+		local n, pad = 0, 0
+		for j = i, i + 3 do
+			local char = source:sub(j, j)
+			if char == "=" then pad = pad + 1 end
+			n = n * 64 + (B64_INDEX[char] or 0)
+		end
+		local bytes = string.char(math.floor(n / 65536) % 256, math.floor(n / 256) % 256, n % 256)
+		out[#out + 1] = bytes:sub(1, 3 - pad)
+	end
+	return table.concat(out)
+end
+
+local function Serialize(value, out, ignoreErrors)
+	local kind = type(value)
+	if kind == "nil" then out[#out + 1] = "z"
+	elseif kind == "boolean" then out[#out + 1] = value and "T" or "F"
+	elseif kind == "number" then out[#out + 1] = "n" .. string.format("%.17g", value) .. ";"
+	elseif kind == "string" then out[#out + 1] = "s" .. #value .. ":" .. value
+	elseif kind == "table" then
+		out[#out + 1] = "{"
+		for k, v in pairs(value) do
+			Serialize(k, out, ignoreErrors)
+			Serialize(v, out, ignoreErrors)
+		end
+		out[#out + 1] = "}"
+	elseif ignoreErrors then out[#out + 1] = "z"
+	else error("SerializeCBOR: unsupported value type " .. kind, 3) end
+end
+
+local function Deserialize(source, pos)
+	local tag = source:sub(pos, pos)
+	if tag == "z" then return nil, pos + 1
+	elseif tag == "T" then return true, pos + 1
+	elseif tag == "F" then return false, pos + 1
+	elseif tag == "n" then
+		local text, after = source:match("^([^;]+);()", pos + 1)
+		local number = text and tonumber(text)
+		if not number then error("DeserializeCBOR: malformed number", 0) end
+		return number, after
+	elseif tag == "s" then
+		local length, start = source:match("^(%d+):()", pos + 1)
+		if not length or start + length - 1 > #source then error("DeserializeCBOR: malformed string", 0) end
+		return source:sub(start, start + length - 1), start + length
+	elseif tag == "{" then
+		local result = {}
+		pos = pos + 1
+		while source:sub(pos, pos) ~= "}" do
+			if pos > #source then error("DeserializeCBOR: unterminated map", 0) end
+			local key, value
+			key, pos = Deserialize(source, pos)
+			value, pos = Deserialize(source, pos)
+			if key == nil then error("DeserializeCBOR: nil map key", 0) end
+			result[key] = value
+		end
+		return result, pos + 1
+	end
+	error("DeserializeCBOR: malformed data", 0)
+end
+
+local COMPRESSED = "\31mockdeflate\31"
+
+function Mock.NewEncodingUtil()
+	return {
+		SerializeCBOR = function(value, options)
+			local out = {}
+			Serialize(value, out, options and options.ignoreSerializationErrors)
+			return table.concat(out)
+		end,
+		DeserializeCBOR = function(source)
+			local value, pos = Deserialize(source, 1)
+			if pos <= #source then error("DeserializeCBOR: trailing data", 0) end
+			return value
+		end,
+		CompressString = function(source) return COMPRESSED .. source end,
+		DecompressString = function(source)
+			if source:sub(1, #COMPRESSED) ~= COMPRESSED then return end
+			return source:sub(#COMPRESSED + 1)
+		end,
+		EncodeBase64 = function(source) return EncodeBase64(source) end,
+		DecodeBase64 = function(source)
+			local decoded = DecodeBase64(source)
+			if decoded then return decoded end
+		end,
+	}
+end
+
 function Mock.Install()
 	_G.C_ClassColor = nil
 	registry = {}
@@ -755,6 +890,8 @@ function Mock.Install()
 		if frameType == "AuraContainer" then
 			assert(not InCombatLockdown(), "Native aura containers cannot be created in combat")
 			Mock.DecorateAuraContainer(obj)
+		elseif template == "ScrollingEditBoxTemplate" then
+			Mock.DecorateScrollingEditBox(obj)
 		end
 		return obj
 	end
@@ -925,7 +1062,8 @@ function Mock.Install()
 	for _, name in ipairs({ "LFGRole", "CustomAuraButtonDispelTypeTextureStyle", "StatusBarInterpolation",
 		"UnitDamageAbsorbClampMode", "UnitMaximumHealthMode", "StatusBarTimerDirection",
 		"SecondsFormatterAbbreviation", "SecondsFormatterInterval", "SecondsFormatterRounding",
-		"SecondsFormatterIntervalWhitespace", "AddOnProfilerMetric", "PowerType" }) do
+		"SecondsFormatterIntervalWhitespace", "AddOnProfilerMetric", "PowerType", "CompressionMethod",
+		"CompressionLevel" }) do
 		local values = assert(API.Snapshot().enums[name], "Enum." .. name .. " is not a client enum")
 		_G.Enum[name] = {}
 		for field, value in pairs(values) do _G.Enum[name][field] = value end
@@ -1045,6 +1183,7 @@ function Mock.Install()
 			return value == 0 and "" or tostring(value)
 		end,
 	}
+	_G.C_EncodingUtil = Mock.NewEncodingUtil()
 	_G.AbbreviateNumbers = function(value)
 		if Mock.IsSecret(value) then
 			return Mock.Secret("abbreviated")
@@ -1101,6 +1240,7 @@ function Mock.InstallUI()
 	_G.ScrollUtil = {
 		InitScrollBoxListWithScrollBar = function() end,
 		InitScrollBoxWithScrollBar = function() end,
+		RegisterScrollBoxWithScrollBar = function() end,
 	}
 	_G.ScrollBoxConstants = { UpdateImmediately = true }
 	_G.CreateScrollBoxListLinearView = function() return CatchAll("ScrollBoxListLinearView") end

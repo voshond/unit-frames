@@ -18,3 +18,4 @@ Entries\Bars.lua
 Entries\Castbar.lua
 Entries\Basics.lua
 Entries\Theme.lua
+Entries\Profiles.lua

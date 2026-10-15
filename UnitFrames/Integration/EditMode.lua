@@ -268,12 +268,19 @@ function EditMode:Register(frame, key, name, default, entryId)
 	})
 end
 
+function EditMode:ApplyPositions()
+	for key in pairs(self.frames) do
+		self:ApplyPosition(key)
+	end
+end
+
+-- Positions are stored in the profile.
+ns.Events.RegisterCallback(EditMode, "ProfileChanged", function() EditMode:ApplyPositions() end)
+
 if LEM then
 	LEM:RegisterCallback("exit", function() EditMode:HideSnapGuides() end)
 	LEM:RegisterCallback("layout", function(layout)
 		EditMode.layout = layout
-		for key in pairs(EditMode.frames) do
-			EditMode:ApplyPosition(key)
-		end
+		EditMode:ApplyPositions()
 	end)
 end
