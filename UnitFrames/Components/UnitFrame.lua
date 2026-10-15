@@ -129,8 +129,8 @@ UnitFrame.PARTS = {
 				HeightOption(18, OverHealth),
 			}, { enabled = true })
 		end,
-		create = function(frame)
-			local castbar = Castbar:New(frame, {})
+		create = function(frame, _, _, config)
+			local castbar = Castbar:New(frame, config)
 			castbar:Hide()
 			return castbar
 		end,
@@ -138,26 +138,26 @@ UnitFrame.PARTS = {
 		apply = function(castbar, cfg) castbar:SetEnabled(cfg.placement ~= "off") end },
 	{ key = "auras", label = "Buffs & debuffs",
 		schema = function() return Auras.schema end,
-		create = function(frame, partSpec)
-			return Auras:New(frame, {}, { cancelBuffs = partSpec.cancelBuffs, clickThrough = partSpec.clickThrough })
+		create = function(frame, partSpec, _, config)
+			return Auras:New(frame, config, { cancelBuffs = partSpec.cancelBuffs, clickThrough = partSpec.clickThrough })
 		end },
 	{ key = "auraBar", label = "Buff & debuff icon row",
 		schema = function(partSpec) return ns.Components.AuraBar.BuildSchema(partSpec) end,
-		create = function(frame, partSpec)
-			return ns.Components.AuraBar:New(frame, {}, { clickThrough = true, collapsible = partSpec.collapsible })
+		create = function(frame, partSpec, _, config)
+			return ns.Components.AuraBar:New(frame, config, { clickThrough = true, collapsible = partSpec.collapsible })
 		end },
 	{ key = "raidTarget", label = "Raid target icon", stack = true,
 		schema = function() return RaidTarget.schema end,
-		create = function(frame, _, native) return RaidTarget:New(frame, {}, { nativeLayout = native }) end },
+		create = function(frame, _, native, config) return RaidTarget:New(frame, config, { nativeLayout = native }) end },
 	{ key = "pvp", label = "PvP flag icon", stack = true,
 		schema = function() return PvPFlag.schema end,
-		create = function(frame, _, native) return PvPFlag:New(frame, {}, { nativeLayout = native }) end },
+		create = function(frame, _, native, config) return PvPFlag:New(frame, config, { nativeLayout = native }) end },
 	{ key = "classification", label = "Elite / rare icon", stack = true,
 		schema = function() return Classification.schema end,
-		create = function(frame, _, native) return Classification:New(frame, {}, { nativeLayout = native }) end },
+		create = function(frame, _, native, config) return Classification:New(frame, config, { nativeLayout = native }) end },
 	{ key = "readyCheckIcon", label = "Ready check icon", stack = true,
 		schema = function() return ReadyCheckIcon.schema end,
-		create = function(frame, _, native) return ReadyCheckIcon:New(frame, {}, { nativeLayout = native }) end },
+		create = function(frame, _, native, config) return ReadyCheckIcon:New(frame, config, { nativeLayout = native }) end },
 }
 
 function UnitFrame:OnCreate(parent, spec)
@@ -178,7 +178,7 @@ function UnitFrame:OnCreate(parent, spec)
 		if native and def.key == "health" then
 			rowSpec.nativeLayout = true
 		end
-		local row = self:Own(TextBar:New(self.frame, {}, rowSpec))
+		local row = self:Own(TextBar:New(self.frame, self:ChildConfig(def.key), rowSpec))
 		self.rows[#self.rows + 1] = { def = def, component = row }
 		self.rowsByKey[def.key] = row
 	end

@@ -611,7 +611,9 @@ function Mock.DecorateAuraContainer(container)
 		return group
 	end
 	function container:AddAuraGroup(key, filter, options)
-		AddFrames(self, key, filter, options, 2)
+		-- Blizzard builds a batch up front (CustomAuraContainerConstants
+		-- .FrameCreationBatchSize), whatever the group's maximum.
+		AddFrames(self, key, filter, options, 10)
 		-- Groups resize the container: Blizzard forbids untrusted layout
 		-- scripts on it and on everything depending on its geometry.
 		s.layoutAspect = true

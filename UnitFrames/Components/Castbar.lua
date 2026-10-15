@@ -85,10 +85,10 @@ function Castbar:OnCreate(parent)
 	self.icon = self.frame:CreateTexture(nil, "ARTWORK")
 	self.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
-	self.bar = self:Own(Bar:New(self.frame, {}, { colorInherit = "colors.cast" }))
+	self.bar = self:Own(Bar:New(self.frame, self:ChildConfig("bar"), { colorInherit = "colors.cast" }))
 	local textParent = self.bar:GetTextParent()
-	self.nameText = self:Own(Text:New(textParent, {}))
-	self.timeText = self:Own(Text:New(textParent, {}))
+	self.nameText = self:Own(Text:New(textParent, self:ChildConfig("name")))
+	self.timeText = self:Own(Text:New(textParent, self:ChildConfig("time")))
 
 	self.fade = self.frame:CreateAnimationGroup()
 	local alpha = self.fade:CreateAnimation("Alpha")

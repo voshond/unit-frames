@@ -43,16 +43,16 @@ end
 function TextBar:OnCreate(parent, spec)
 	if spec.nativeLayout then
 		self.frame = CreateFrame("Frame", nil, parent)
-		self.bar = self:Own(Bar:New(self.frame, {}, spec))
+		self.bar = self:Own(Bar:New(self.frame, self:ChildConfig("bar"), spec))
 		self.bar:GetFrame():SetAllPoints(self.frame)
 	else
-		self.bar = self:Own(Bar:New(parent, {}, spec))
+		self.bar = self:Own(Bar:New(parent, self:ChildConfig("bar"), spec))
 		self.frame = self.bar:GetFrame()
 	end
 	local host = self.bar:GetTextParent()
 	self.texts = {}
 	for _, slot in ipairs(TextBar.SLOTS) do
-		self.texts[slot.key] = self:Own(Text:New(host, {}, { host = host, formats = spec.formats,
+		self.texts[slot.key] = self:Own(Text:New(host, self:ChildConfig(slot.key), { host = host, formats = spec.formats,
 			context = TextContext(spec), schemaOwner = spec.schemaOwner }))
 	end
 end

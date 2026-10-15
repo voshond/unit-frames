@@ -53,7 +53,9 @@ local Start
 
 function CG:Start()
 	if self.started or not self.loaded or InCombatLockdown() then return end
-	UF.Perf:Startup("clickgrid", Start, self)
+	-- Members and targets are built from one style each: share their
+	-- resolution while creating them, as a refresh does (Schema.Shared).
+	UF.Perf:Startup("clickgrid", UF.Schema.Shared, Start, self)
 end
 
 function Start(self)

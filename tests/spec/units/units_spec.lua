@@ -340,9 +340,11 @@ describe("Player buffs and debuffs", function()
 	end
 
 	it("delegates right-click cancellation only for live player buffs", function()
+		assert.is_not_nil(ns.Units.frames.player.uf:GetPart("auras"):GetContainer("buffs"))
 		for _, unit in ipairs(ns.Units.order) do
 			local component = ns.Units.frames[unit].uf:GetPart("auras")
-			for _, kind in ipairs({ "buffs", "debuffs" }) do
+			-- Parts that were never enabled have no live buttons yet.
+			for _, kind in ipairs(component:GetContainer("buffs") and { "buffs", "debuffs" } or {}) do
 				for _, button in ipairs(component:GetContainer(kind).__state.groups[kind].frames) do
 					local expected = unit == "player" and kind == "buffs" and "RightButtonDown" or nil
 					assert.equals(expected, button.__state.cancelAuraButtons)
@@ -549,7 +551,8 @@ describe("Player buffs and debuffs", function()
 			end
 		end
 		ns.Config:SetUnitValue("player", "auras.durationPosition", "CENTER")
-		assert.equals(4, #dimensions, "all existing buttons finish border styling")
+		local styled = #Group("buffs").frames + #Group("debuffs").frames
+		assert.equals(styled, #dimensions, "all existing buttons finish border styling")
 		for _, kind in ipairs({ "buffs", "debuffs" }) do
 			local size = kind == "buffs" and 20 or 26
 			for _, button in ipairs(Group(kind).frames) do
@@ -560,7 +563,7 @@ describe("Player buffs and debuffs", function()
 			end
 		end
 		ns.Config:SetUnitValue("player", "auras.buffs.size", 32)
-		assert.same({ 4, 4 }, dimensions[5], "UVs follow the newly configured size")
+		assert.same({ 4, 4 }, dimensions[styled + 1], "UVs follow the newly configured size")
 		ns.Config:SetUnitValue("player", "auras.durationPosition", "below")
 		assert.equals(44, Group("buffs").frames[1]:GetHeight())
 		assert.is_not_nil(Group("buffs").frames[1].ufTime:GetAnchor("TOP"))
