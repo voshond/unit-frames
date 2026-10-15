@@ -90,6 +90,9 @@ and profiler threshold deltas; `/uf perf cancel` stops either observation.
 Reports use session peaks and recent averages, not combat-only CPU timings.
 Outside combat, `/uf perf measure units` actively
 measures a unit refresh; `clickgrid`, `preview` and `schema` are also supported.
+`/uf perf measure auras` isolates native aura container/button creation and
+dispel border registration. Like `measure create` (a ClickGrid preview), it
+retains engine widgets until reload; use fresh reloads for comparable runs.
 Diagnostics do not load Workbench and stay off until requested.
 
 `/uf logs` shows the last 10 addon-owned errors and 20 general diagnostic

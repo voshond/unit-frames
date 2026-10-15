@@ -173,6 +173,31 @@ describe("Opt-in performance diagnostics", function()
 		assert.is_true(reported > 0)
 	end)
 
+	it("isolates native aura creation and reports dispel registration cost", function()
+		Mock.profilerEnabled = true
+		local created
+		local new = UF.Components.Auras.New
+		UF.Components.Auras.New = function(...)
+			created = new(...)
+			return created
+		end
+		UF.Perf:Measure("auras")
+		assert.is_true(created.released)
+		assert.is_false(created.frame:GetParent():IsShown())
+		assert.is_false(created.containers.buffs:IsEnabled())
+		assert.is_nil(created.unit)
+		assert.is_nil(UF.Perf.counters)
+		local counters, phase = {}, false
+		for _, message in ipairs(messages) do
+			if message[3] == "calls" then counters[message[1]] = message[2] end
+			if tostring(message[1]):find("dispel registration:", 1, true) then phase = true end
+		end
+		assert.is_true(counters.auraButtonCreate > 0)
+		assert.is_true(counters.auraDispelRegister > 0)
+		assert.is_true(phase)
+		assert.is_nil(UF.Workbench)
+	end)
+
 	it("measures only explicit prepared operations outside combat and cleans up failures", function()
 		Mock.profilerEnabled = true
 		assert.has_no_error(function() UF.Perf:Measure("units") end)

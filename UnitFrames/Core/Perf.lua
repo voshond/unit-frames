@@ -201,6 +201,15 @@ local function ReportPhases(results)
 end
 
 local operations = {
+	-- Native aura creation, isolated from oUF/ClickGrid. No unit or fake aura
+	-- data is assigned. Each run retains engine frames until the next reload.
+	auras = function()
+		local host = CreateFrame("Frame", nil, UIParent)
+		host:Hide()
+		host:SetSize(240, 40)
+		local auras = ns.Components.Auras:New(host, { enabled = true })
+		auras:Release()
+	end,
 	units = function() for _, unit in ipairs(ns.Units.order) do ns.Units:Refresh(unit) end end,
 	clickgrid = function()
 		assert(ns.ClickGrid and ns.ClickGrid.started, "ClickGrid must already be loaded and prepared")
@@ -251,7 +260,7 @@ end
 
 function Perf:Measure(operation)
 	local run = operations[operation]
-	if not run then ns:Print("measure operations: units, clickgrid, preview, create, schema"); return end
+	if not run then ns:Print("measure operations: auras, units, clickgrid, preview, create, schema"); return end
 	if InCombatLockdown() then ns:Print("active measurements must wait until combat ends"); return end
 	if not ProfilerEnabled() then ns:Print("native addon profiler unavailable/disabled"); return end
 	if self.counters or self.combatArmed then ns:Print("cancel the observation window before an active measurement"); return end

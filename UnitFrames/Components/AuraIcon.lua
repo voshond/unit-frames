@@ -74,6 +74,7 @@ end
 -- kind: the owner's key for this button's settings ("buffs", "slot1", ...).
 -- opts: harmful (debuff art and dispel tint), clickThrough, cancelBuffs.
 function AuraIcon.Create(button, kind, preview, opts)
+	ns.Perf:Count(preview and "sampleAuraButtonCreate" or "auraButtonCreate")
 	opts = opts or {}
 	button.ufKind = kind
 	button.ufHarmful = opts.harmful == true
@@ -199,6 +200,7 @@ function AuraIcon.ApplyDispelBorder(button, cfg, size, dispelColors)
 	if backdrop and backdrop.edgeFile then
 		state.registered = true
 		button.ufIconFrame:SetBackdropBorderColor(0, 0, 0, 0)
+		if not button.ufPreview then ns.Perf:Begin("dispel registration") end
 		for _, piece in ipairs(BORDER_PIECES) do
 			local texture = button.ufBorder[piece]
 			button.ufDispelTextures[#button.ufDispelTextures + 1] = texture
@@ -208,8 +210,10 @@ function AuraIcon.ApplyDispelBorder(button, cfg, size, dispelColors)
 					showWhenHarmful = true, showWhenHelpful = false, showWithoutDispelType = true,
 					customDispelColorMap = dispelColors,
 				})
+				ns.Perf:Count("auraDispelRegister")
 			end
 		end
+		if not button.ufPreview then ns.Perf:End("dispel registration") end
 	end
 end
 
