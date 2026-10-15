@@ -77,6 +77,35 @@ In Edit Mode, Blizzard's **Snap** checkbox also controls our frames. With
 UnitFrames and highlighted Blizzard frame bounds, with red alignment guides
 while dragging. Positions stay independent after snapping (no linked anchors).
 
+## Profiles and sharing
+
+Each character gets a profile of its own, named after it. On first load a
+character moves from the shared **Default** profile to a copy of it, so
+nothing changes visibly; new characters start from a copy of **Default**.
+**Profiles > Profiles & sharing** manages your profiles in the settings column:
+switch the **Active profile**, create one from a **New profile name** (default
+style), or **Copy style from** another profile. Tick **Allow delete and reset**
+to show **Delete profile** and **Reset active profile**; the tick clears after
+each use. These change style only: the active profile keeps its Edit Mode
+positions, and switching moves frames to that profile's own positions.
+
+The preview area shares profiles as text. **Export style** puts a string in
+the box (press Ctrl+C to copy it). It holds the global theme, every unit
+frame's style and, with ClickGrid loaded, its panel and bar styles. Paste a
+string and press **Import** to replace the active profile's style, or enter a
+name first to import it as a new profile. Positions are never exported or
+imported. Damaged or foreign strings change nothing; settings this version
+doesn't know, or with invalid values, are skipped and listed.
+
+**Export ClickGrid click bindings** is a separate string. Importing it replaces
+the bindings of your current specialization; it is refused for another class.
+**Export all settings** combines the style and the click bindings in one
+string; importing it skips bindings made for another class and still imports
+the style.
+Addons and setup tools can use `UnitFrames:ExportProfile()`,
+`UnitFrames:ImportProfile(text[, newProfileName])`, `UnitFrames:SetProfile(name)`,
+`UnitFrames:GetProfileKeys()` and `UnitFrames:GetCurrentProfile()`.
+
 ## Absorb shields
 
 Under each frame's **Health > Bar > Segments > Absorb shields**, **Enabled**

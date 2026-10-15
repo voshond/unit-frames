@@ -301,6 +301,19 @@ function Schema.Find(schema, path)
 	return found
 end
 
+-- { r, g, b } or { r, g, b, a } with numbers from 0 to 1.
+local function ValidColor(color)
+	local count = 0
+	for key, channel in pairs(color) do
+		if type(key) ~= "number" or key < 1 or key > 4 or type(channel) ~= "number"
+			or channel ~= channel or channel < 0 or channel > 1 then
+			return false
+		end
+		count = count + 1
+	end
+	return count >= 3 and color[1] ~= nil and color[2] ~= nil and color[3] ~= nil
+end
+
 -- Returns a list of human-readable problems with `config` (empty when valid).
 function Schema.Validate(schema, config, prefix, errors)
 	errors = errors or {}
@@ -330,11 +343,48 @@ function Schema.Validate(schema, config, prefix, errors)
 				local expected = VALUE_TYPES[opt.type]
 				if expected and type(value) ~= expected then
 					errors[#errors + 1] = path .. ": expected " .. expected
-				elseif opt.type == "range" and ((opt.min and value < opt.min) or (opt.max and value > opt.max)) then
+				elseif opt.type == "range" and (value ~= value or (opt.min and value < opt.min) or (opt.max and value > opt.max)) then
 					errors[#errors + 1] = path .. ": out of range"
+				elseif opt.type == "color" and not ValidColor(value) then
+					errors[#errors + 1] = path .. ": expected { r, g, b[, a] }"
 				end
 			end
 		end
 	end
 	return errors
+end
+
+-- Option types that hold no saved value (UI actions, drop targets).
+local NO_VALUE = { action = true, actionslot = true }
+
+--[[
+A copy of `config` with only the options `schema` defines and valid values,
+for data from outside the running addon (imported strings, other versions).
+Returns the copy and the dropped paths. `config` is never changed.
+]]
+function Schema.Sanitize(schema, config, prefix, dropped)
+	dropped, prefix = dropped or {}, prefix or ""
+	local out, known = {}, {}
+	if type(config) ~= "table" then
+		if config ~= nil then dropped[#dropped + 1] = prefix ~= "" and prefix:sub(1, -2) or "(all)" end
+		return out, dropped
+	end
+	for _, opt in ipairs(schema) do
+		known[opt.key] = true
+		local value, path = config[opt.key], prefix .. opt.key
+		if value == nil then
+			-- unset: inherited or default
+		elseif opt.type == "group" and type(value) == "table" then
+			local group = Schema.Sanitize(opt.schema, value, path .. ".", dropped)
+			if next(group) then out[opt.key] = group end
+		elseif opt.type ~= "group" and not NO_VALUE[opt.type] and #Schema.Validate({ opt }, { [opt.key] = value }) == 0 then
+			out[opt.key] = Util.Copy(value)
+		else
+			dropped[#dropped + 1] = path
+		end
+	end
+	for key in pairs(config) do
+		if not known[key] then dropped[#dropped + 1] = prefix .. tostring(key) end
+	end
+	return out, dropped
 end

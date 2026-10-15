@@ -28,15 +28,37 @@ local function BuildDefaults()
 	}
 end
 
+-- Every character gets a profile of its own, once: one still using the
+-- shared "Default" profile (new characters and those from before) moves to a
+-- copy of it, with its style, positions and companion data. Afterwards a
+-- deliberate choice of any profile, Default included, stays.
+local function OwnProfile(db)
+	local own = db.keys.char
+	-- An opaque character name can't name a profile; stay on Default.
+	if issecretvalue(own) or db.char.ownProfile then return end
+	db.char.ownProfile = true
+	if db:GetCurrentProfile() ~= "Default" or own == "Default" then return end
+	local exists = rawget(db.profiles, own) ~= nil
+	db:SetProfile(own)
+	if not exists then db:CopyProfile("Default") end
+end
+
 function Config:Initialize()
 	self.db = LibStub("AceDB-3.0"):New("UnitFramesDB", BuildDefaults(), true)
+	OwnProfile(self.db)
 	local function OnProfile()
-		ns.Events:Fire("ProfileChanged")
-		ThemeChanged()
+		self:ProfileChanged()
 	end
 	self.db.RegisterCallback(self, "OnProfileChanged", OnProfile)
 	self.db.RegisterCallback(self, "OnProfileCopied", OnProfile)
 	self.db.RegisterCallback(self, "OnProfileReset", OnProfile)
+end
+
+-- Everything that reads the profile refreshes: positions on ProfileChanged,
+-- styles (unit frames, ClickGrid, previews) on ThemeChanged.
+function Config:ProfileChanged()
+	ns.Events:Fire("ProfileChanged")
+	ThemeChanged()
 end
 
 -- Before ADDON_LOADED (and in offline tests) the static defaults are used.
@@ -61,6 +83,46 @@ function Config:GetThemeOverride(path)
 		return nil
 	end
 	return value
+end
+
+-- Only the options that differ from the defaults, as a fresh table.
+local function Overrides(schema, values, defaults)
+	local out = {}
+	for _, opt in ipairs(schema) do
+		local value, default = values[opt.key], defaults[opt.key]
+		if opt.type == "group" and type(value) == "table" then
+			local group = Overrides(opt.schema, value, default or {})
+			if next(group) then out[opt.key] = group end
+		elseif value ~= nil and not Util.Equals(value, default) then
+			out[opt.key] = Util.Copy(value)
+		end
+	end
+	return out
+end
+
+function Config:GetThemeOverrides()
+	return Overrides(ns.Theme.schema, self:GetTheme(), self:GetThemeDefaults())
+end
+
+-- Replaces the whole theme with the defaults plus `overrides` (validated by
+-- the caller), firing one ThemeChanged.
+function Config:ReplaceTheme(overrides)
+	local theme = self:GetTheme()
+	wipe(theme)
+	Util.Merge(theme, self:GetThemeDefaults())
+	local function Apply(schema, values, prefix)
+		for _, opt in ipairs(schema) do
+			local value = values[opt.key]
+			if opt.type == "group" and type(value) == "table" then
+				Apply(opt.schema, value, prefix .. opt.key .. ".")
+			elseif value ~= nil then
+				-- Whole values: a three-channel colour must not keep a default alpha.
+				Util.SetPath(theme, prefix .. opt.key, Util.Copy(value))
+			end
+		end
+	end
+	Apply(ns.Theme.schema, overrides or {}, "")
+	ThemeChanged()
 end
 
 -- value nil resets the option to its default.
@@ -116,4 +178,15 @@ end
 
 function Config:SetPosition(layout, key, point, x, y)
 	self.db.profile.positions[layout or "default"][key] = { point = point, x = x, y = y }
+end
+
+-- Every layout's positions, copied (profile operations that keep them).
+function Config:GetPositions()
+	return Util.Copy(self.db.profile.positions)
+end
+
+function Config:SetPositions(positions)
+	local stored = self.db.profile.positions
+	wipe(stored)
+	Util.Merge(stored, positions)
 end

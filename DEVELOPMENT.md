@@ -54,7 +54,7 @@ documentation. The optional local source checkout is
 
 | Folder | Purpose |
 |---|---|
-| `UnitFrames/Core/` | Bootstrap, classes, schemas, stores, configuration, theme, media and text formats |
+| `UnitFrames/Core/` | Bootstrap, classes, schemas, stores, configuration, profiles and sharing strings, theme, media and text formats |
 | `UnitFrames/Components/` | Reusable visuals, independent of oUF bindings |
 | `UnitFrames/Widgets/` | Shared settings controls and schema-driven inspector |
 | `UnitFrames/Units/` | Unit definitions, oUF bindings, data elements and preview writers |

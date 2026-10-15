@@ -16,7 +16,8 @@ A settings store: the one write path for a table of user overrides.
   })
 
 Set/Edit/Reset/Replace return true, or false plus a reason when validation
-fails (nothing is written then). Target() is an Inspector target for the store.
+fails (nothing is written then). Check(candidate) runs the same validation
+without writing. Target() is an Inspector target for the store.
 
 Descriptors may take part in writes (Core/Schema.lua):
   onSet(group, value, resolvedGroup)   after Set writes the option: further
@@ -56,6 +57,12 @@ local function Check(store, candidate)
 	end
 	if store.opts.check then return store.opts.check(candidate) end
 	return true
+end
+
+-- Validates a whole replacement without committing it (imports check every
+-- store before writing any).
+function Store:Check(candidate)
+	return Check(self, candidate)
 end
 
 -- Validated stores commit a candidate copy; others edit the live table.

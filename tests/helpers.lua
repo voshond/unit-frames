@@ -93,8 +93,10 @@ end
 -- Fresh mock client + freshly loaded UnitFrames (with the stub oUF as ns.oUF).
 -- initialize = true also runs the ADDON_LOADED setup (AceDB, media);
 -- login = true also runs the oUF factories (spawns the unit frames).
-function Helpers.LoadAddon(initialize, login)
+-- saved: the UnitFramesDB saved variables found at load, if any.
+function Helpers.LoadAddon(initialize, login, saved)
 	Mock.Install()
+	_G.UnitFramesDB = saved
 	local ns = { oUF = NewStubOUF(Mock) }
 	Helpers.LoadToc("UnitFrames/UnitFrames.toc", "UnitFrames", ns)
 	if initialize or login then
