@@ -106,10 +106,33 @@ end
 function Auras:InitButton(button, kind, preview)
 	AuraIcon.Create(button, kind, preview, { harmful = kind == "debuffs",
 		cancelBuffs = self.spec.cancelBuffs, clickThrough = self.spec.clickThrough })
-	if self.resolved then self:StyleButton(button) end
+	if self.resolved then
+		self:StyleButton(button)
+		button.ufStyleToken = self.styleToken
+	end
+end
+
+-- Restyling every owned button dominates an apply (containers keep their
+-- buttons, ~20 each, with or without auras), and most applies change
+-- nothing about them. Buttons remember the token they were styled with; it
+-- changes with anything their style reads: resolved settings, dispel
+-- colours, and the font and border artwork those name (media can register
+-- late).
+local function StyleToken(auras, previous)
+	local art = auras:GetArtworkConfig()
+	local token = { resolved = auras.resolved, dispelColors = auras.dispelColors,
+		font = ns.Media:Fetch("font", art.font), border = ns.Components.Backdrop.Info(art.border) }
+	if previous and previous.dispelColors == token.dispelColors and previous.font == token.font
+		and previous.border == token.border
+		-- Shared settings (Schema.Shared) are compared once per refresh.
+		and ns.Schema.Memo(ns.Util.Equals, previous.resolved, token.resolved) then
+		return previous
+	end
+	return token
 end
 
 function Auras:StyleButton(button)
+	ns.Perf:Count("auraButtonStyle")
 	AuraIcon.Apply(button, self:GetArtworkConfig(), self.resolved[button.ufKind].size, self.dispelColors)
 end
 
@@ -162,6 +185,8 @@ function Auras.ApplyGroupLayout(container, kind, width, height, spacing, lineSpa
 end
 
 function Auras:OnApply(cfg)
+	local Perf = ns.Perf
+	Perf:Begin("aura groups")
 	self.dispelColors = AuraIcon.DispelColors(cfg, self.dispelColors)
 	for _, kind in ipairs(KINDS) do
 		local container, group = self.containers[kind], cfg[kind]
@@ -173,8 +198,14 @@ function Auras:OnApply(cfg)
 			or group.sort == "unitDebuff" and AuraContainerSortMethod.UnitFrameDebuff or AuraContainerSortMethod.ExpirationOnly
 		Auras.ApplyGroupSort(container, kind, sort, AuraContainerSortDirection.Normal)
 	end
+	self.styleToken = StyleToken(self, self.styleToken)
+	Perf:End("aura groups")
+	Perf:Begin("aura layout")
 	self:Layout()
+	Perf:End("aura layout")
+	Perf:Begin("aura restyle")
 	self:RestyleButtons()
+	Perf:End("aura restyle")
 end
 
 -- Only the container's anchor refers to our ordinary host. We never read
@@ -238,7 +269,11 @@ local function Restyle(auras)
 	for _, kind in ipairs(KINDS) do
 		local container = auras.containers[kind]
 		for index = 1, container:GetAuraGroupFrameCount(kind) do
-			auras:StyleButton(container:GetAuraGroupFrame(kind, index))
+			local button = container:GetAuraGroupFrame(kind, index)
+			if button.ufStyleToken ~= auras.styleToken then
+				auras:StyleButton(button)
+				button.ufStyleToken = auras.styleToken
+			end
 		end
 	end
 end

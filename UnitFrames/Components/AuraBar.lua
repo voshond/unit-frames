@@ -146,6 +146,7 @@ function AuraBar:OnCreate(parent, spec)
 end
 
 function AuraBar:OnApply(cfg)
+	ns.Perf:Begin("aura art config")
 	self.artConfig = ns.Util.Copy(cfg)
 	if cfg.durationPosition == "below" then self.artConfig.durationPosition = "BOTTOM" end
 	if self.presence then
@@ -154,6 +155,7 @@ function AuraBar:OnApply(cfg)
 			Auras.ApplyGroupCandidates(self.presence, kind, cfg[kind])
 		end
 	end
+	ns.Perf:End("aura art config")
 	Auras.OnApply(self, cfg)
 end
 
