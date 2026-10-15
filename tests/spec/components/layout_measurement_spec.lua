@@ -27,7 +27,7 @@ describe("Frame-free unit layout", function()
 		local spec = ns.Units:GetSpec(ns.Units.definitions.player)
 		local schema = ns.Components.UnitFrame.BuildSchema(spec)
 		local config = { width = 280, portrait = { rowSpan = 1, position = "RIGHT" }, power = { enabled = false },
-			castbar = { placement = "health" } }
+			experience = { enabled = true }, castbar = { enabled = true, placement = "health" } }
 		local cfg = ns.Schema.Resolve(schema, config, ns.Config:GetTheme())
 		local measured = ns.UnitFrameLayout.Compute(spec, cfg)
 		assert.equals(308, measured.width)

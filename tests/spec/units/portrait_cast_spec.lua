@@ -5,6 +5,8 @@ describe("Portrait casts", function()
 	local ns, uf, castbar
 	before_each(function()
 		ns = Helpers.LoadAddon(true, true)
+		ns.Config:SetUnitValue("player", "experience.enabled", true)
+		ns.Config:SetUnitValue("player", "castbar.enabled", true)
 		Mock.InstallUI()
 		uf = ns.Units.frames.player.uf
 		castbar = uf:GetPart("castbar")

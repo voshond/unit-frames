@@ -29,7 +29,7 @@ describe("Target, focus and their targets", function()
 	it("starts target and focus full-sized and their targets compact with optional extras", function()
 		for _, unit in ipairs({ "target", "focus" }) do
 			local frame = ns.Units.frames[unit]
-			assert.is_true(frame:IsElementEnabled("UF_Castbar"))
+			assert.is_false(frame:IsElementEnabled("UF_Castbar"))
 			assert.is_true(frame:IsElementEnabled("UF_Auras"))
 		end
 		assert.equals("RIGHT", ns.Units.frames.target.uf.resolved.portrait.position)
@@ -42,7 +42,7 @@ describe("Target, focus and their targets", function()
 			assert.is_false(frame:IsElementEnabled("UF_Auras"))
 			assert.equals("[uf:health:percent]", frame.tags[frame.uf:GetRow("health"):GetText("right"):GetFrame()])
 			ns.Config:SetUnitValue(unit, "auras.enabled", true)
-			ns.Config:SetUnitValue(unit, "castbar.placement", "bottom")
+			ns.Config:SetUnitValue(unit, "castbar.enabled", true)
 			ns.Config:SetUnitValue(unit, "portrait.enabled", true)
 			assert.is_true(frame:IsElementEnabled("UF_Auras"))
 			assert.is_true(frame:IsElementEnabled("UF_Castbar"))
@@ -117,7 +117,7 @@ describe("Target, focus and their targets", function()
 		end
 		assert.equals(230, ns.Units.frames.targettarget.uf.resolved.width)
 		assert.is_true(ns.Units.frames.targettarget:IsElementEnabled("Portrait"))
-		assert.is_true(ns.Units.frames.targettarget:IsElementEnabled("UF_Castbar"))
+		assert.is_false(ns.Units.frames.targettarget:IsElementEnabled("UF_Castbar"))
 		assert.is_true(ns.Units.frames.targettarget:IsElementEnabled("UF_Auras"))
 	end)
 
@@ -197,6 +197,7 @@ describe("Target, focus and their targets", function()
 	it("refreshes casts on target changes and ignores casts from another unit", function()
 		local update = ns.oUF.elements.UF_Castbar.update
 		for _, unit in ipairs({ "target", "focus" }) do
+			ns.Config:SetUnitValue(unit, "castbar.enabled", true)
 			local frame, called = ns.Units.frames[unit], nil
 			ns.oUF.elements.UF_Castbar.enable(frame, unit)
 			UnitCastingInfo = function(token) called = token; return Mock.Secret("Frostbolt"), nil, Mock.Secret(1) end

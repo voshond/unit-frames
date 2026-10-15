@@ -194,6 +194,7 @@ describe("Collapsing icon row", function()
 			assert.is_true(Mock.HasLayoutAspect(UF.Units.frames.player.uf:GetPart(key):GetFrame()), key)
 		end
 		-- A castbar over health covers the configured health height.
+		CG.Config:SetStyle("member", "castbar.enabled", true)
 		assert.has_no_error(function() CG.Config:SetStyle("member", "castbar.placement", "health") end)
 		assert.same({ "ALL", row:GetFrame() }, uf:GetPart("castbar"):GetFrame().__state.points[1])
 		-- The mock enforces the client's rule for anything else.

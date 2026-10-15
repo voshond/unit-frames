@@ -97,6 +97,7 @@ describe("Player frame", function()
 	local ns, frame
 	before_each(function()
 		ns = Helpers.LoadAddon(true, true)
+		ns.Config:SetUnitValue("player", "experience.enabled", true)
 		Mock.InstallUI()
 		frame = ns.Units.frames.player
 	end)
@@ -108,7 +109,7 @@ describe("Player frame", function()
 	-- The plain bar stack, without the portrait and castbar.
 	local function BarsOnly()
 		ns.Config:SetUnitValue("player", "portrait.enabled", false)
-		ns.Config:SetUnitValue("player", "castbar.placement", "off")
+		ns.Config:SetUnitValue("player", "castbar.enabled", false)
 	end
 
 	it("stacks health, power and experience inside the border", function()
@@ -206,12 +207,14 @@ describe("Player frame portrait and castbar", function()
 	local ns, frame, uf
 	before_each(function()
 		ns = Helpers.LoadAddon(true, true)
+		ns.Config:SetUnitValue("player", "experience.enabled", true)
+		ns.Config:SetUnitValue("player", "castbar.enabled", true)
 		Mock.InstallUI()
 		frame = ns.Units.frames.player
 		uf = frame.uf
 	end)
 
-	-- Default stack: health 26, power 12, experience 10, castbar row 18, spacing 1.
+	-- Enabled stack: health 26, power 12, experience 10, castbar row 18, spacing 1.
 	local STACK = 26 + 1 + 12 + 1 + 10 + 1 + 18
 
 	it("puts a square portrait spanning all rows on the left", function()
@@ -273,9 +276,9 @@ describe("Player frame portrait and castbar", function()
 		assert.same({ "TOPLEFT", frame, "TOPLEFT", 4 + (12 + 1 + 10 + 1 + 18) + 2, -4 }, castFrame:GetAnchor("TOPLEFT"))
 	end)
 
-	it("turns the castbar element off with placement off", function()
+	it("turns the castbar element off with its enable toggle", function()
 		assert.is_true(frame:IsElementEnabled("UF_Castbar"))
-		ns.Config:SetUnitValue("player", "castbar.placement", "off")
+		ns.Config:SetUnitValue("player", "castbar.enabled", false)
 		assert.is_false(frame:IsElementEnabled("UF_Castbar"))
 	end)
 

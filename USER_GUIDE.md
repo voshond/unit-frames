@@ -61,7 +61,7 @@ the player, target-of-target beside the target, focus below the player, and
 focus target beside the focus.
 Frames support targeting and right-click menus. XP is only available on the
 player frame.
-Target and focus include castbars and auras; both target chains start compact,
+Target and focus offer castbars and auras; both target chains start compact,
 with portrait, castbar, and auras off but available in its settings.
 Player pet starts compact below/right of the player, with health, power,
 shields and small aura icons. Portrait and castbar are available but off by
@@ -153,6 +153,10 @@ switches off pieces the destination frame can't show (XP, resting) and keeps
 the others in place.
 
 ## Portraits and cast bars
+
+Castbars and the player's experience bar start disabled. Use their **Enabled**
+checkboxes to turn them on. **Castbar > Placement** chooses where an enabled
+castbar appears; turning it off keeps that placement for next time.
 
 Under **Portrait > Rows to span**, choose **All rows** (the default) or
 the first 1–4 visible rows from the top. Disabled rows are skipped; a castbar

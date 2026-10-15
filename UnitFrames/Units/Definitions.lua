@@ -28,7 +28,7 @@ local POWER_ROW = {
 local EXPERIENCE_ROW = {
 	key = "experience", label = "Experience",
 	spec = ns.UnitRows.Spec("experience"),
-	defaults = { height = 10, center = { size = 8 } },
+	defaults = { enabled = false, height = 10, center = { size = 8 } },
 }
 
 Units.definitions.player = {
@@ -41,7 +41,7 @@ Units.definitions.player = {
 	rows = { HEALTH_ROW, POWER_ROW, EXPERIENCE_ROW },
 	portrait = { defaults = { enabled = true } },
 	-- Inside the unit frame the castbar uses the frame's border, not its own.
-	castbar = { defaults = { placement = "bottom", height = 18, border = { enabled = false },
+	castbar = { defaults = { enabled = false, placement = "bottom", height = 18, border = { enabled = false },
 		name = { size = 10 }, time = { size = 10 } } },
 	-- Rogues and druids (Units.COMBO_POINT_CLASSES): the target's points, on
 	-- request. The target frame shows them by default.
@@ -75,7 +75,7 @@ Units.definitions.pet = {
 	defaultPosition = { point = "CENTER", x = -90, y = -235 },
 	rows = { HealthRow(22, true), PowerRow(10, true) },
 	portrait = { defaults = { enabled = false } },
-	castbar = { defaults = { placement = "off", height = 14, border = { enabled = false },
+	castbar = { defaults = { enabled = false, placement = "bottom", height = 14, border = { enabled = false },
 		name = { size = 9 }, time = { size = 9 } } },
 	auras = { defaults = { durationPosition = "CENTER", durationSize = 9, countSize = 8,
 		buffs = { max = 6, size = 18 }, debuffs = { max = 6, size = 18 } } },
@@ -104,7 +104,7 @@ Units.definitions.targettarget = {
 	defaultPosition = { point = "CENTER", x = 510, y = -160 },
 	rows = { HealthRow(20, true), PowerRow(8, true) },
 	portrait = { defaults = { enabled = false } },
-	castbar = { defaults = { placement = "off", height = 14, border = { enabled = false },
+	castbar = { defaults = { enabled = false, placement = "bottom", height = 14, border = { enabled = false },
 		name = { size = 9 }, time = { size = 9 } } },
 	auras = { defaults = { enabled = false, durationPosition = "CENTER", durationSize = 9, countSize = 8,
 		buffs = { max = 8, size = 16 }, debuffs = { max = 8, size = 18 } } },
@@ -125,6 +125,17 @@ Units.definitions.focus = {
 
 function Units:GetDefinition(unit)
 	return self.definitions[unit]
+end
+
+-- Storage/import migration: placement used to double as the enable switch.
+-- Only the old Off value needs translating; other placements keep their value.
+function Units:MigrateConfig(config)
+	local castbar = type(config) == "table" and config.castbar
+	if type(castbar) == "table" and castbar.placement == "off" then
+		castbar.placement = nil
+		if castbar.enabled == nil then castbar.enabled = false end
+	end
+	return config
 end
 
 --[[
