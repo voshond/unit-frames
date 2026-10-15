@@ -20,12 +20,18 @@ each change.
 ## Make it yours
 
 Type **`/uf wb`** in chat to open the settings window, called the **Workbench**.
+Use **`/uf`** or **`/uf help`** for the command list. The addon prints a short
+hint when it loads; developer performance commands are under `/uf perf help`.
 
 Choose a frame under **Unit frames**, then adjust its appearance. The preview
 lets you try things like low health, shields, buffs and ready checks without
 waiting for them to happen in game. Use **Static** for a still preview or
 **Animated** to see changes over time. Appearance changes also update your
 actual frames.
+
+Use **Theme** to adjust shared appearance defaults. Development builds also
+include a Bars/Basics component gallery for testing; those demonstrations do
+not change your unit settings.
 
 To move frames, open the game's **Edit Mode**. If you want matching frames,
 start with your player and use **Copy player settings** on the others.
