@@ -1328,6 +1328,8 @@ return {
 			[":RegisterForClicks"] = "Interface/AddOns/Blizzard_ActionBar/Shared/ActionButton.lua",
 			[":RegisterUnitEvent"] = "Interface/AddOns/Blizzard_ActionBar/Shared/ActionButton.lua",
 			[":SetColorTexture"] = "Interface/AddOns/Blizzard_AdventureMap/Blizzard_AdventureMap.lua",
+			[":SetDrawBling"] = "Interface/AddOns/Blizzard_Transmog/Blizzard_Transmog.lua",
+			[":SetDrawEdge"] = "Interface/AddOns/Blizzard_CooldownViewer/CooldownViewer.lua",
 			[":SetDrawSwipe"] = "Interface/AddOns/Blizzard_Commentator/Classic/Blizzard_CommentatorSpell.lua",
 			[":SetIgnoreParentAlpha"] = "Interface/AddOns/Blizzard_GamepadActionBars/PageUnit.lua",
 			[":SetReverse"] = "Interface/AddOns/Blizzard_UIWidgets/Blizzard_UIWidgetTemplateBase.lua",

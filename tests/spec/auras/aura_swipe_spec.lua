@@ -1,8 +1,10 @@
 local Helpers = require("helpers")
 local Mock = Helpers.Mock
 
-local function AssertSwipe(button, mode)
+local function AssertSwipe(button, mode, showSwipeEdge)
 	assert.equals(mode ~= "none", button.ufCooldown.__state.drawSwipe)
+	assert.equals(mode ~= "none" and showSwipeEdge ~= false, button.ufCooldown.__state.drawEdge)
+	assert.equals(mode ~= "none", button.ufCooldown.__state.drawBling)
 	assert.equals(mode == "reverse", button.ufCooldown.__state.reverse)
 end
 
@@ -59,6 +61,24 @@ describe("Aura cooldown swipe", function()
 					AssertSwipe(debuff, "normal")
 				end)
 			end
+
+			it("toggles the edge independently and retains its choice through no-swipe mode", function()
+				for _, sample in ipairs({ false, true }) do
+					if sample then ns.Units:ShowSample(uf, ns.Units.SAMPLE) end
+					local function Button(kind)
+						if not sample then return Native(kind) end
+						return part.previewContainers[kind].ufElements[1]
+					end
+					for _, mode in ipairs({ "normal", "none", "reverse", "none", "normal" }) do
+						for _, edge in ipairs({ false, true, false }) do
+							part:Apply({ enabled = true, buffs = { swipe = mode, showSwipeEdge = edge },
+								debuffs = { swipe = mode, showSwipeEdge = not edge } })
+							AssertSwipe(Button("buffs"), mode, edge)
+							AssertSwipe(Button("debuffs"), mode, not edge)
+						end
+					end
+				end
+			end)
 
 			it("defers live swipe changes until combat ends", function()
 				local buff, debuff = Native("buffs"), Native("debuffs")

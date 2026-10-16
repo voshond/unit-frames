@@ -493,6 +493,8 @@ function Methods:SetBackdropBorderColor(r, g, b, a)
 end
 
 function Methods:SetDrawSwipe(drawSwipe) self.__state.drawSwipe = drawSwipe end
+function Methods:SetDrawEdge(drawEdge) self.__state.drawEdge = drawEdge end
+function Methods:SetDrawBling(drawBling) self.__state.drawBling = drawBling end
 function Methods:SetReverse(reverse) self.__state.reverse = reverse end
 function Methods:SetCooldown(start, duration) self.__state.cooldown = { start = start, duration = duration } end
 function Methods:Pause() self.__state.paused = true end
