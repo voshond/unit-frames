@@ -17,7 +17,7 @@ function Layout.Compute(width, height, cfg, portrait)
 		local point = right and "TOPRIGHT" or "TOPLEFT"
 		local x, y = 0.42, 0.42
 		if portrait then x, y = x * math.min(iw / ih, 1), y * math.min(ih / iw, 1) end
-		icon = { width = iw, height = ih, point = point, x = right and -rightPad or left, y = -top,
+		icon = { width = iw, height = ih, point = point, x = right and -rightPad or left, y = -top, bottom = bottom,
 			crop = { 0.5 - x, 0.5 + x, 0.5 - y, 0.5 + y } }
 		if stack then
 			points = { { "TOPLEFT", "icon", "BOTTOMLEFT", 0, -cfg.icon.gap },

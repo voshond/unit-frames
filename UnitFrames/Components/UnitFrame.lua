@@ -469,6 +469,11 @@ function UnitFrame:LayoutCastbar(layout)
 	else
 		castbar:GetFrame():SetFrameLevel(self.frame:GetFrameLevel() + 1)
 	end
+	if coverArea and coverArea ~= host then
+		castbar:SetKnownSize(host:GetWidth(), host:GetHeight())
+	else
+		castbar:SetKnownSize(nil)
+	end
 	castbar:SetOpaque(host ~= nil)
 	castbar:SetCovered(host, onCoverChanged)
 end
