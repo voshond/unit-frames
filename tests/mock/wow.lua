@@ -409,6 +409,10 @@ function Methods:SetTimerDuration(duration, interpolation, direction)
 	self.__state.timer = { duration = duration, interpolation = interpolation, direction = direction }
 end
 
+function Methods:SetTimeFromStart(start, length)
+	self.__state.start, self.__state.length = start, length
+end
+
 -- Texture
 function Methods:SetTexture(texture) self.__state.texture = texture end
 function Methods:SetTexCoord(...) self.__state.texCoords = { ... } end
@@ -900,6 +904,7 @@ function Mock.Install()
 	Mock.ranges = {}
 	Mock.spellRanges = {}
 	Mock.registeredEvents = {}
+	_G.UnitAttackSpeed = function() return Secret(2.6), Secret(1.8), Secret(2.8) end
 	Mock.aurasSecret = false
 
 	_G.LibStub = nil
@@ -1109,7 +1114,7 @@ function Mock.Install()
 		"UnitDamageAbsorbClampMode", "UnitMaximumHealthMode", "StatusBarTimerDirection",
 		"SecondsFormatterAbbreviation", "SecondsFormatterInterval", "SecondsFormatterRounding",
 		"SecondsFormatterIntervalWhitespace", "AddOnProfilerMetric", "PowerType", "CompressionMethod",
-		"CompressionLevel", "LuaCurveType" }) do
+		"CompressionLevel", "LuaCurveType", "PlayerSwingType" }) do
 		local values = assert(API.Snapshot().enums[name], "Enum." .. name .. " is not a client enum")
 		_G.Enum[name] = {}
 		for field, value in pairs(values) do _G.Enum[name][field] = value end
@@ -1198,13 +1203,7 @@ function Mock.Install()
 		end,
 	}
 	_G.C_DurationUtil = {
-		CreateDuration = function()
-			local duration = NewObject("Duration")
-			function duration.SetTimeFromStart(self, start, length)
-				self.__state.start, self.__state.length = start, length
-			end
-			return duration
-		end,
+		CreateDuration = function() return NewObject("Duration") end,
 		CreateDurationTextBinding = function() return NewObject("DurationTextBinding") end,
 	}
 	_G.C_CurveUtil = {

@@ -44,6 +44,7 @@ Components\PointBar.lua
 Components\CastbarLayout.lua
 Components\CastExtras.lua
 Components\Castbar.lua
+Components\CastbarFrame.lua
 Components\Portrait.lua
 Components\AuraIcon.lua
 Components\Auras.lua
@@ -59,6 +60,8 @@ Components\CategoryAuras.lua
 Components\UnitFrameLayout.lua
 Components\ReadyCheck.lua
 Components\UnitFrame.lua
+
+Timers\Config.lua
 
 Widgets\Skin.lua
 Widgets\Widget.lua
@@ -76,7 +79,11 @@ Widgets\Inspector.lua
 
 Units\Rows.lua
 Units\Definitions.lua
+Timers\Samples.lua
 Units\Cast.lua
+Timers\PlayerCastbar.lua
+Timers\Swing.lua
+Timers\Feed.lua
 Units\Drivers.lua
 Units\Elements.lua
 Units\TextTags.lua
@@ -84,6 +91,7 @@ Units\Style.lua
 Units\Preview.lua
 
 Integration\EditMode.lua
+Timers\Runtime.lua
 
 Core\Commands.lua
 Integration\Launcher.lua

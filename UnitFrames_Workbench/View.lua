@@ -104,10 +104,11 @@ function Workbench:Build()
 		self:OnUpdate(elapsed)
 	end)
 	self.window:GetFrame():HookScript("OnHide", function()
-		self.eventFrame:UnregisterAllEvents()
+		if self.session then self.session:ActivateEvents(self.eventFrame, false) end
 	end)
 	self.window:GetFrame():HookScript("OnShow", function()
 		self:RegisterEntryEvents()
+		self:UpdateData()
 	end)
 
 	self:ApplyStageOptions()

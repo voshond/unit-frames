@@ -279,13 +279,18 @@ function Bar:OnApply(cfg)
 	end
 
 	Bar.AnchorSpark(self.spark, fill, cfg.orientation, cfg.reverseFill)
-	self.spark:SetShown(cfg.spark)
+	self.spark:SetShown(cfg.spark and self.sparkActive ~= false)
 
 	if self.spec.nativeLayout then
 		self:SizeParts(self:GetKnownInnerSize())
 	else
 		self:SizeParts(self.bar:GetSize())
 	end
+end
+
+function Bar:SetSparkActive(active)
+	self.sparkActive = active
+	self.spark:SetShown(self.resolved.spark and active ~= false)
 end
 
 -- Native-layout bars: the row size the owner laid out, in plain numbers.

@@ -707,6 +707,1031 @@ resolved time.justifyH = "RIGHT"
 resolved time.outline = ""
 resolved time.shadow = true
 resolved time.size = 11
+## timers
+option enabled type="toggle" label="Enabled" default=false
+option width type="range" label="Width" default=280 min=80 max=800 step=1
+option gap type="range" label="Row spacing" default=2 min=0 max=20 step=1
+option castbar type="group" label="Castbar"
+option castbar.enabled type="toggle" label="Enabled" default=true
+option castbar.visibility type="select" label="Visibility" default="active" values=#c698ae5f tooltip=#7b1b1718
+option castbar.height type="range" label="Height" default=24 min=2 max=100 step=1
+option castbar.portraitLayout type="select" label="Portrait cast layout" default="bar" values=#c97f0a21 tooltip=#8fde9bad hidden
+option castbar.border type="group" label="Border" defaults={enabled=true,padding=3}
+option castbar.border.enabled type="toggle" label="Enabled" default=true
+option castbar.border.separatePadding type="toggle" label="Content padding per side" default=false tooltip=#51bafd13
+option castbar.border.padding type="range" label="Content padding" default=3 min=0 max=40 step=1 tooltip=#152e5e50 hidden
+option castbar.border.paddingLeft type="range" label="Left padding" default=3 min=0 max=40 step=1 hidden
+option castbar.border.paddingRight type="range" label="Right padding" default=3 min=0 max=40 step=1 hidden
+option castbar.border.paddingTop type="range" label="Top padding" default=3 min=0 max=40 step=1 hidden
+option castbar.border.paddingBottom type="range" label="Bottom padding" default=3 min=0 max=40 step=1 hidden
+option castbar.border.separateInset type="toggle" label="Background inset per side" default=false tooltip=#b301212e
+option castbar.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615 hidden
+option castbar.border.insetLeft type="range" label="Left background inset" default=3 min=0 max=16 step=1 hidden
+option castbar.border.insetRight type="range" label="Right background inset" default=3 min=0 max=16 step=1 hidden
+option castbar.border.insetTop type="range" label="Top background inset" default=3 min=0 max=16 step=1 hidden
+option castbar.border.insetBottom type="range" label="Bottom background inset" default=3 min=0 max=16 step=1 hidden
+option castbar.border.border type="border" label="Border" inherit="borderTexture"
+option castbar.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option castbar.border.color type="color" label="Border colour" inherit="borderColor"
+option castbar.border.background type="background" label="Background" inherit="backgroundTexture"
+option castbar.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option castbar.icon type="group" label="Icon"
+option castbar.icon.enabled type="toggle" label="Enabled" default=true
+option castbar.icon.position type="select" label="Position" default="LEFT" values=#11c04b33
+option castbar.icon.gap type="range" label="Gap" default=1 min=0 max=10 step=1
+option castbar.bar type="group" label="Bar" defaults={smooth=false,spark=true}
+option castbar.bar.enabled type="toggle" label="Enabled" default=true
+option castbar.bar.texture type="statusbar" label="Texture" inherit="barTexture"
+option castbar.bar.color type="color" label="Colour" inherit="colors.cast" tooltip=#60cf6d08
+option castbar.bar.orientation type="select" label="Orientation" default="HORIZONTAL" values=#bcee3529
+option castbar.bar.reverseFill type="toggle" label="Reverse fill" default=false
+option castbar.bar.smooth type="toggle" label="Smooth changes" default=true
+option castbar.bar.spark type="toggle" label="Spark" default=false
+option castbar.bar.background type="group" label="Background"
+option castbar.bar.background.enabled type="toggle" label="Enabled" default=true
+option castbar.bar.background.useBarColor type="toggle" label="Tint with bar colour" default=true
+option castbar.bar.background.alpha type="range" label="Opacity" default=0.25 min=0 max=1 step=0.05 hidden
+option castbar.bar.background.color type="color" label="Colour" default={0,0,0,0.5} hidden
+option castbar.bar.border type="group" label="Border" defaults={enabled=false}
+option castbar.bar.border.enabled type="toggle" label="Enabled" default=true
+option castbar.bar.border.separatePadding type="toggle" label="Content padding per side" default=false tooltip=#51bafd13
+option castbar.bar.border.padding type="range" label="Content padding" default=3 min=0 max=40 step=1 tooltip=#152e5e50 hidden
+option castbar.bar.border.paddingLeft type="range" label="Left padding" default=3 min=0 max=40 step=1 hidden
+option castbar.bar.border.paddingRight type="range" label="Right padding" default=3 min=0 max=40 step=1 hidden
+option castbar.bar.border.paddingTop type="range" label="Top padding" default=3 min=0 max=40 step=1 hidden
+option castbar.bar.border.paddingBottom type="range" label="Bottom padding" default=3 min=0 max=40 step=1 hidden
+option castbar.bar.border.separateInset type="toggle" label="Background inset per side" default=false tooltip=#b301212e
+option castbar.bar.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615 hidden
+option castbar.bar.border.insetLeft type="range" label="Left background inset" default=3 min=0 max=16 step=1 hidden
+option castbar.bar.border.insetRight type="range" label="Right background inset" default=3 min=0 max=16 step=1 hidden
+option castbar.bar.border.insetTop type="range" label="Top background inset" default=3 min=0 max=16 step=1 hidden
+option castbar.bar.border.insetBottom type="range" label="Bottom background inset" default=3 min=0 max=16 step=1 hidden
+option castbar.bar.border.border type="border" label="Border" inherit="borderTexture"
+option castbar.bar.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option castbar.bar.border.color type="color" label="Border colour" inherit="borderColor"
+option castbar.bar.border.background type="background" label="Background" inherit="backgroundTexture"
+option castbar.bar.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option castbar.name type="group" label="Spell name" defaults={justifyH="LEFT"}
+option castbar.name.enabled type="toggle" label="Enabled" default=true
+option castbar.name.font type="font" label="Font" inherit="font"
+option castbar.name.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
+option castbar.name.outline type="select" label="Outline" inherit="fontOutline" values=#a5c208b5
+option castbar.name.shadow type="toggle" label="Shadow" default=true
+option castbar.name.color type="color" label="Colour" default={1,1,1,1}
+option castbar.name.justifyH type="select" label="Alignment" default="CENTER" values=#ebc4156d
+option castbar.time type="group" label="Time" defaults={justifyH="RIGHT"}
+option castbar.time.enabled type="toggle" label="Enabled" default=true
+option castbar.time.font type="font" label="Font" inherit="font"
+option castbar.time.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
+option castbar.time.outline type="select" label="Outline" inherit="fontOutline" values=#a5c208b5
+option castbar.time.shadow type="toggle" label="Shadow" default=true
+option castbar.time.color type="color" label="Colour" default={1,1,1,1}
+option castbar.time.justifyH type="select" label="Alignment" default="CENTER" values=#ebc4156d
+option castbar.colors type="group" label="Colours"
+option castbar.colors.cast type="color" label="Cast" inherit="colors.cast"
+option castbar.colors.channel type="color" label="Channel" inherit="colors.channel"
+option castbar.colors.nonInterruptible type="color" label="Not interruptible" inherit="colors.nonInterruptible"
+option castbar.colors.failed type="color" label="Failed / interrupted" inherit="colors.castFailed"
+option castbar.colors.success type="color" label="Succeeded" inherit="colors.castSuccess"
+option castbar.background type="color" label="Background" default={0,0,0,0} tooltip=#0297179c
+option castbar.holdTime type="range" label="Hold after finish (s)" default=0.4 min=0 max=2 step=0.1
+option castbar.fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
+option castbar.latency type="group" label="Latency zone"
+option castbar.latency.enabled type="toggle" label="Enabled" default=true
+option castbar.latency.mode type="select" label="Zone" default="queue" values=#9e319b63 tooltip=#3e0a3804
+option castbar.latency.color type="color" label="Colour" default={0.9,0.1,0.1,0.6}
+option castbar.gcd type="group" label="Global cooldown"
+option castbar.gcd.enabled type="toggle" label="Enabled" default=false tooltip=#a71861f3
+option castbar.gcd.position type="select" label="Position" default="bottom" values=#197f975a tooltip=#49fbf707
+option castbar.gcd.height type="range" label="Thickness" default=2 min=1 max=10 step=1 hidden
+option castbar.gcd.color type="color" label="Colour" default={1,1,1,0.4}
+option castbar.gcd.spark type="toggle" label="Spark" default=true
+option castbar.gcd.holdTime type="range" label="Hold after finish (s)" default=0.2 min=0 max=2 step=0.1
+option castbar.gcd.fadeTime type="range" label="Fade out (s)" default=0.2 min=0 max=2 step=0.1
+option mainHand type="group" label="Main hand" defaults={enabled=false}
+option mainHand.enabled type="toggle" label="Enabled" default=true
+option mainHand.visibility type="select" label="Visibility" default="active" values=#c698ae5f tooltip=#7b1b1718
+option mainHand.height type="range" label="Height" default=10 min=2 max=100 step=1
+option mainHand.bar type="group" label="Bar" defaults={smooth=false,spark=true}
+option mainHand.bar.enabled type="toggle" label="Enabled" default=true
+option mainHand.bar.texture type="statusbar" label="Texture" inherit="barTexture"
+option mainHand.bar.color type="color" label="Colour" inherit="colors.health" tooltip=#60cf6d08
+option mainHand.bar.orientation type="select" label="Orientation" default="HORIZONTAL" values=#bcee3529
+option mainHand.bar.reverseFill type="toggle" label="Reverse fill" default=false
+option mainHand.bar.smooth type="toggle" label="Smooth changes" default=true
+option mainHand.bar.spark type="toggle" label="Spark" default=false
+option mainHand.bar.background type="group" label="Background"
+option mainHand.bar.background.enabled type="toggle" label="Enabled" default=true
+option mainHand.bar.background.useBarColor type="toggle" label="Tint with bar colour" default=true
+option mainHand.bar.background.alpha type="range" label="Opacity" default=0.25 min=0 max=1 step=0.05 hidden
+option mainHand.bar.background.color type="color" label="Colour" default={0,0,0,0.5} hidden
+option mainHand.bar.border type="group" label="Border" defaults={enabled=false}
+option mainHand.bar.border.enabled type="toggle" label="Enabled" default=true
+option mainHand.bar.border.separatePadding type="toggle" label="Content padding per side" default=false tooltip=#51bafd13
+option mainHand.bar.border.padding type="range" label="Content padding" default=3 min=0 max=40 step=1 tooltip=#152e5e50 hidden
+option mainHand.bar.border.paddingLeft type="range" label="Left padding" default=3 min=0 max=40 step=1 hidden
+option mainHand.bar.border.paddingRight type="range" label="Right padding" default=3 min=0 max=40 step=1 hidden
+option mainHand.bar.border.paddingTop type="range" label="Top padding" default=3 min=0 max=40 step=1 hidden
+option mainHand.bar.border.paddingBottom type="range" label="Bottom padding" default=3 min=0 max=40 step=1 hidden
+option mainHand.bar.border.separateInset type="toggle" label="Background inset per side" default=false tooltip=#b301212e
+option mainHand.bar.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615 hidden
+option mainHand.bar.border.insetLeft type="range" label="Left background inset" default=3 min=0 max=16 step=1 hidden
+option mainHand.bar.border.insetRight type="range" label="Right background inset" default=3 min=0 max=16 step=1 hidden
+option mainHand.bar.border.insetTop type="range" label="Top background inset" default=3 min=0 max=16 step=1 hidden
+option mainHand.bar.border.insetBottom type="range" label="Bottom background inset" default=3 min=0 max=16 step=1 hidden
+option mainHand.bar.border.border type="border" label="Border" inherit="borderTexture"
+option mainHand.bar.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option mainHand.bar.border.color type="color" label="Border colour" inherit="borderColor"
+option mainHand.bar.border.background type="background" label="Background" inherit="backgroundTexture"
+option mainHand.bar.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option mainHand.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
+option mainHand.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
+option mainHand.left type="group" label="Left text" defaults={enabled=true,format="none",justifyH="LEFT"}
+option mainHand.left.enabled type="toggle" label="Enabled" default=true
+option mainHand.left.font type="font" label="Font" inherit="font"
+option mainHand.left.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
+option mainHand.left.outline type="select" label="Outline" inherit="fontOutline" values=#a5c208b5
+option mainHand.left.shadow type="toggle" label="Shadow" default=true
+option mainHand.left.color type="color" label="Colour" default={1,1,1,1}
+option mainHand.left.justifyH type="select" label="Alignment" default="CENTER" values=#ebc4156d
+option mainHand.left.vertical type="select" label="Vertical position" default="auto" values=#6fd9ce7f tooltip=#fda1ef45
+option mainHand.left.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
+option mainHand.left.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
+option mainHand.left.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
+option mainHand.center type="group" label="Centre text" defaults={enabled=false,format="none",justifyH="CENTER"}
+option mainHand.center.enabled type="toggle" label="Enabled" default=true
+option mainHand.center.font type="font" label="Font" inherit="font"
+option mainHand.center.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
+option mainHand.center.outline type="select" label="Outline" inherit="fontOutline" values=#a5c208b5
+option mainHand.center.shadow type="toggle" label="Shadow" default=true
+option mainHand.center.color type="color" label="Colour" default={1,1,1,1}
+option mainHand.center.justifyH type="select" label="Alignment" default="CENTER" values=#ebc4156d
+option mainHand.center.vertical type="select" label="Vertical position" default="auto" values=#6fd9ce7f tooltip=#fda1ef45
+option mainHand.center.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
+option mainHand.center.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
+option mainHand.center.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
+option mainHand.right type="group" label="Right text" defaults={enabled=true,format="none",justifyH="RIGHT"}
+option mainHand.right.enabled type="toggle" label="Enabled" default=true
+option mainHand.right.font type="font" label="Font" inherit="font"
+option mainHand.right.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
+option mainHand.right.outline type="select" label="Outline" inherit="fontOutline" values=#a5c208b5
+option mainHand.right.shadow type="toggle" label="Shadow" default=true
+option mainHand.right.color type="color" label="Colour" default={1,1,1,1}
+option mainHand.right.justifyH type="select" label="Alignment" default="CENTER" values=#ebc4156d
+option mainHand.right.vertical type="select" label="Vertical position" default="auto" values=#6fd9ce7f tooltip=#fda1ef45
+option mainHand.right.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
+option mainHand.right.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
+option mainHand.right.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
+option mainHand.belowLeft type="group" label="Small text below left" defaults={enabled=false,format="none",justifyH="LEFT",size=9}
+option mainHand.belowLeft.enabled type="toggle" label="Enabled" default=true
+option mainHand.belowLeft.font type="font" label="Font" inherit="font"
+option mainHand.belowLeft.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
+option mainHand.belowLeft.outline type="select" label="Outline" inherit="fontOutline" values=#a5c208b5
+option mainHand.belowLeft.shadow type="toggle" label="Shadow" default=true
+option mainHand.belowLeft.color type="color" label="Colour" default={1,1,1,1}
+option mainHand.belowLeft.justifyH type="select" label="Alignment" default="CENTER" values=#ebc4156d
+option mainHand.belowLeft.vertical type="select" label="Vertical position" default="auto" values=#6fd9ce7f tooltip=#fda1ef45
+option mainHand.belowLeft.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
+option mainHand.belowLeft.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
+option mainHand.belowLeft.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
+option mainHand.belowRight type="group" label="Small text below right" defaults={enabled=false,format="none",justifyH="RIGHT",size=9}
+option mainHand.belowRight.enabled type="toggle" label="Enabled" default=true
+option mainHand.belowRight.font type="font" label="Font" inherit="font"
+option mainHand.belowRight.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
+option mainHand.belowRight.outline type="select" label="Outline" inherit="fontOutline" values=#a5c208b5
+option mainHand.belowRight.shadow type="toggle" label="Shadow" default=true
+option mainHand.belowRight.color type="color" label="Colour" default={1,1,1,1}
+option mainHand.belowRight.justifyH type="select" label="Alignment" default="CENTER" values=#ebc4156d
+option mainHand.belowRight.vertical type="select" label="Vertical position" default="auto" values=#6fd9ce7f tooltip=#fda1ef45
+option mainHand.belowRight.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
+option mainHand.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
+option mainHand.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
+option offHand type="group" label="Off hand" defaults={enabled=false}
+option offHand.enabled type="toggle" label="Enabled" default=true
+option offHand.visibility type="select" label="Visibility" default="active" values=#c698ae5f tooltip=#7b1b1718
+option offHand.height type="range" label="Height" default=10 min=2 max=100 step=1
+option offHand.bar type="group" label="Bar" defaults={smooth=false,spark=true}
+option offHand.bar.enabled type="toggle" label="Enabled" default=true
+option offHand.bar.texture type="statusbar" label="Texture" inherit="barTexture"
+option offHand.bar.color type="color" label="Colour" inherit="colors.health" tooltip=#60cf6d08
+option offHand.bar.orientation type="select" label="Orientation" default="HORIZONTAL" values=#bcee3529
+option offHand.bar.reverseFill type="toggle" label="Reverse fill" default=false
+option offHand.bar.smooth type="toggle" label="Smooth changes" default=true
+option offHand.bar.spark type="toggle" label="Spark" default=false
+option offHand.bar.background type="group" label="Background"
+option offHand.bar.background.enabled type="toggle" label="Enabled" default=true
+option offHand.bar.background.useBarColor type="toggle" label="Tint with bar colour" default=true
+option offHand.bar.background.alpha type="range" label="Opacity" default=0.25 min=0 max=1 step=0.05 hidden
+option offHand.bar.background.color type="color" label="Colour" default={0,0,0,0.5} hidden
+option offHand.bar.border type="group" label="Border" defaults={enabled=false}
+option offHand.bar.border.enabled type="toggle" label="Enabled" default=true
+option offHand.bar.border.separatePadding type="toggle" label="Content padding per side" default=false tooltip=#51bafd13
+option offHand.bar.border.padding type="range" label="Content padding" default=3 min=0 max=40 step=1 tooltip=#152e5e50 hidden
+option offHand.bar.border.paddingLeft type="range" label="Left padding" default=3 min=0 max=40 step=1 hidden
+option offHand.bar.border.paddingRight type="range" label="Right padding" default=3 min=0 max=40 step=1 hidden
+option offHand.bar.border.paddingTop type="range" label="Top padding" default=3 min=0 max=40 step=1 hidden
+option offHand.bar.border.paddingBottom type="range" label="Bottom padding" default=3 min=0 max=40 step=1 hidden
+option offHand.bar.border.separateInset type="toggle" label="Background inset per side" default=false tooltip=#b301212e
+option offHand.bar.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615 hidden
+option offHand.bar.border.insetLeft type="range" label="Left background inset" default=3 min=0 max=16 step=1 hidden
+option offHand.bar.border.insetRight type="range" label="Right background inset" default=3 min=0 max=16 step=1 hidden
+option offHand.bar.border.insetTop type="range" label="Top background inset" default=3 min=0 max=16 step=1 hidden
+option offHand.bar.border.insetBottom type="range" label="Bottom background inset" default=3 min=0 max=16 step=1 hidden
+option offHand.bar.border.border type="border" label="Border" inherit="borderTexture"
+option offHand.bar.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option offHand.bar.border.color type="color" label="Border colour" inherit="borderColor"
+option offHand.bar.border.background type="background" label="Background" inherit="backgroundTexture"
+option offHand.bar.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option offHand.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
+option offHand.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
+option offHand.left type="group" label="Left text" defaults={enabled=true,format="none",justifyH="LEFT"}
+option offHand.left.enabled type="toggle" label="Enabled" default=true
+option offHand.left.font type="font" label="Font" inherit="font"
+option offHand.left.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
+option offHand.left.outline type="select" label="Outline" inherit="fontOutline" values=#a5c208b5
+option offHand.left.shadow type="toggle" label="Shadow" default=true
+option offHand.left.color type="color" label="Colour" default={1,1,1,1}
+option offHand.left.justifyH type="select" label="Alignment" default="CENTER" values=#ebc4156d
+option offHand.left.vertical type="select" label="Vertical position" default="auto" values=#6fd9ce7f tooltip=#fda1ef45
+option offHand.left.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
+option offHand.left.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
+option offHand.left.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
+option offHand.center type="group" label="Centre text" defaults={enabled=false,format="none",justifyH="CENTER"}
+option offHand.center.enabled type="toggle" label="Enabled" default=true
+option offHand.center.font type="font" label="Font" inherit="font"
+option offHand.center.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
+option offHand.center.outline type="select" label="Outline" inherit="fontOutline" values=#a5c208b5
+option offHand.center.shadow type="toggle" label="Shadow" default=true
+option offHand.center.color type="color" label="Colour" default={1,1,1,1}
+option offHand.center.justifyH type="select" label="Alignment" default="CENTER" values=#ebc4156d
+option offHand.center.vertical type="select" label="Vertical position" default="auto" values=#6fd9ce7f tooltip=#fda1ef45
+option offHand.center.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
+option offHand.center.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
+option offHand.center.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
+option offHand.right type="group" label="Right text" defaults={enabled=true,format="none",justifyH="RIGHT"}
+option offHand.right.enabled type="toggle" label="Enabled" default=true
+option offHand.right.font type="font" label="Font" inherit="font"
+option offHand.right.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
+option offHand.right.outline type="select" label="Outline" inherit="fontOutline" values=#a5c208b5
+option offHand.right.shadow type="toggle" label="Shadow" default=true
+option offHand.right.color type="color" label="Colour" default={1,1,1,1}
+option offHand.right.justifyH type="select" label="Alignment" default="CENTER" values=#ebc4156d
+option offHand.right.vertical type="select" label="Vertical position" default="auto" values=#6fd9ce7f tooltip=#fda1ef45
+option offHand.right.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
+option offHand.right.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
+option offHand.right.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
+option offHand.belowLeft type="group" label="Small text below left" defaults={enabled=false,format="none",justifyH="LEFT",size=9}
+option offHand.belowLeft.enabled type="toggle" label="Enabled" default=true
+option offHand.belowLeft.font type="font" label="Font" inherit="font"
+option offHand.belowLeft.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
+option offHand.belowLeft.outline type="select" label="Outline" inherit="fontOutline" values=#a5c208b5
+option offHand.belowLeft.shadow type="toggle" label="Shadow" default=true
+option offHand.belowLeft.color type="color" label="Colour" default={1,1,1,1}
+option offHand.belowLeft.justifyH type="select" label="Alignment" default="CENTER" values=#ebc4156d
+option offHand.belowLeft.vertical type="select" label="Vertical position" default="auto" values=#6fd9ce7f tooltip=#fda1ef45
+option offHand.belowLeft.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
+option offHand.belowLeft.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
+option offHand.belowLeft.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
+option offHand.belowRight type="group" label="Small text below right" defaults={enabled=false,format="none",justifyH="RIGHT",size=9}
+option offHand.belowRight.enabled type="toggle" label="Enabled" default=true
+option offHand.belowRight.font type="font" label="Font" inherit="font"
+option offHand.belowRight.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
+option offHand.belowRight.outline type="select" label="Outline" inherit="fontOutline" values=#a5c208b5
+option offHand.belowRight.shadow type="toggle" label="Shadow" default=true
+option offHand.belowRight.color type="color" label="Colour" default={1,1,1,1}
+option offHand.belowRight.justifyH type="select" label="Alignment" default="CENTER" values=#ebc4156d
+option offHand.belowRight.vertical type="select" label="Vertical position" default="auto" values=#6fd9ce7f tooltip=#fda1ef45
+option offHand.belowRight.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
+option offHand.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
+option offHand.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
+option ranged type="group" label="Ranged" defaults={enabled=false}
+option ranged.enabled type="toggle" label="Enabled" default=true
+option ranged.visibility type="select" label="Visibility" default="active" values=#c698ae5f tooltip=#7b1b1718
+option ranged.height type="range" label="Height" default=10 min=2 max=100 step=1
+option ranged.bar type="group" label="Bar" defaults={smooth=false,spark=true}
+option ranged.bar.enabled type="toggle" label="Enabled" default=true
+option ranged.bar.texture type="statusbar" label="Texture" inherit="barTexture"
+option ranged.bar.color type="color" label="Colour" inherit="colors.health" tooltip=#60cf6d08
+option ranged.bar.orientation type="select" label="Orientation" default="HORIZONTAL" values=#bcee3529
+option ranged.bar.reverseFill type="toggle" label="Reverse fill" default=false
+option ranged.bar.smooth type="toggle" label="Smooth changes" default=true
+option ranged.bar.spark type="toggle" label="Spark" default=false
+option ranged.bar.background type="group" label="Background"
+option ranged.bar.background.enabled type="toggle" label="Enabled" default=true
+option ranged.bar.background.useBarColor type="toggle" label="Tint with bar colour" default=true
+option ranged.bar.background.alpha type="range" label="Opacity" default=0.25 min=0 max=1 step=0.05 hidden
+option ranged.bar.background.color type="color" label="Colour" default={0,0,0,0.5} hidden
+option ranged.bar.border type="group" label="Border" defaults={enabled=false}
+option ranged.bar.border.enabled type="toggle" label="Enabled" default=true
+option ranged.bar.border.separatePadding type="toggle" label="Content padding per side" default=false tooltip=#51bafd13
+option ranged.bar.border.padding type="range" label="Content padding" default=3 min=0 max=40 step=1 tooltip=#152e5e50 hidden
+option ranged.bar.border.paddingLeft type="range" label="Left padding" default=3 min=0 max=40 step=1 hidden
+option ranged.bar.border.paddingRight type="range" label="Right padding" default=3 min=0 max=40 step=1 hidden
+option ranged.bar.border.paddingTop type="range" label="Top padding" default=3 min=0 max=40 step=1 hidden
+option ranged.bar.border.paddingBottom type="range" label="Bottom padding" default=3 min=0 max=40 step=1 hidden
+option ranged.bar.border.separateInset type="toggle" label="Background inset per side" default=false tooltip=#b301212e
+option ranged.bar.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615 hidden
+option ranged.bar.border.insetLeft type="range" label="Left background inset" default=3 min=0 max=16 step=1 hidden
+option ranged.bar.border.insetRight type="range" label="Right background inset" default=3 min=0 max=16 step=1 hidden
+option ranged.bar.border.insetTop type="range" label="Top background inset" default=3 min=0 max=16 step=1 hidden
+option ranged.bar.border.insetBottom type="range" label="Bottom background inset" default=3 min=0 max=16 step=1 hidden
+option ranged.bar.border.border type="border" label="Border" inherit="borderTexture"
+option ranged.bar.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option ranged.bar.border.color type="color" label="Border colour" inherit="borderColor"
+option ranged.bar.border.background type="background" label="Background" inherit="backgroundTexture"
+option ranged.bar.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option ranged.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
+option ranged.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
+option ranged.left type="group" label="Left text" defaults={enabled=true,format="none",justifyH="LEFT"}
+option ranged.left.enabled type="toggle" label="Enabled" default=true
+option ranged.left.font type="font" label="Font" inherit="font"
+option ranged.left.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
+option ranged.left.outline type="select" label="Outline" inherit="fontOutline" values=#a5c208b5
+option ranged.left.shadow type="toggle" label="Shadow" default=true
+option ranged.left.color type="color" label="Colour" default={1,1,1,1}
+option ranged.left.justifyH type="select" label="Alignment" default="CENTER" values=#ebc4156d
+option ranged.left.vertical type="select" label="Vertical position" default="auto" values=#6fd9ce7f tooltip=#fda1ef45
+option ranged.left.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
+option ranged.left.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
+option ranged.left.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
+option ranged.center type="group" label="Centre text" defaults={enabled=false,format="none",justifyH="CENTER"}
+option ranged.center.enabled type="toggle" label="Enabled" default=true
+option ranged.center.font type="font" label="Font" inherit="font"
+option ranged.center.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
+option ranged.center.outline type="select" label="Outline" inherit="fontOutline" values=#a5c208b5
+option ranged.center.shadow type="toggle" label="Shadow" default=true
+option ranged.center.color type="color" label="Colour" default={1,1,1,1}
+option ranged.center.justifyH type="select" label="Alignment" default="CENTER" values=#ebc4156d
+option ranged.center.vertical type="select" label="Vertical position" default="auto" values=#6fd9ce7f tooltip=#fda1ef45
+option ranged.center.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
+option ranged.center.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
+option ranged.center.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
+option ranged.right type="group" label="Right text" defaults={enabled=true,format="none",justifyH="RIGHT"}
+option ranged.right.enabled type="toggle" label="Enabled" default=true
+option ranged.right.font type="font" label="Font" inherit="font"
+option ranged.right.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
+option ranged.right.outline type="select" label="Outline" inherit="fontOutline" values=#a5c208b5
+option ranged.right.shadow type="toggle" label="Shadow" default=true
+option ranged.right.color type="color" label="Colour" default={1,1,1,1}
+option ranged.right.justifyH type="select" label="Alignment" default="CENTER" values=#ebc4156d
+option ranged.right.vertical type="select" label="Vertical position" default="auto" values=#6fd9ce7f tooltip=#fda1ef45
+option ranged.right.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
+option ranged.right.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
+option ranged.right.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
+option ranged.belowLeft type="group" label="Small text below left" defaults={enabled=false,format="none",justifyH="LEFT",size=9}
+option ranged.belowLeft.enabled type="toggle" label="Enabled" default=true
+option ranged.belowLeft.font type="font" label="Font" inherit="font"
+option ranged.belowLeft.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
+option ranged.belowLeft.outline type="select" label="Outline" inherit="fontOutline" values=#a5c208b5
+option ranged.belowLeft.shadow type="toggle" label="Shadow" default=true
+option ranged.belowLeft.color type="color" label="Colour" default={1,1,1,1}
+option ranged.belowLeft.justifyH type="select" label="Alignment" default="CENTER" values=#ebc4156d
+option ranged.belowLeft.vertical type="select" label="Vertical position" default="auto" values=#6fd9ce7f tooltip=#fda1ef45
+option ranged.belowLeft.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
+option ranged.belowLeft.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
+option ranged.belowLeft.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
+option ranged.belowRight type="group" label="Small text below right" defaults={enabled=false,format="none",justifyH="RIGHT",size=9}
+option ranged.belowRight.enabled type="toggle" label="Enabled" default=true
+option ranged.belowRight.font type="font" label="Font" inherit="font"
+option ranged.belowRight.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
+option ranged.belowRight.outline type="select" label="Outline" inherit="fontOutline" values=#a5c208b5
+option ranged.belowRight.shadow type="toggle" label="Shadow" default=true
+option ranged.belowRight.color type="color" label="Colour" default={1,1,1,1}
+option ranged.belowRight.justifyH type="select" label="Alignment" default="CENTER" values=#ebc4156d
+option ranged.belowRight.vertical type="select" label="Vertical position" default="auto" values=#6fd9ce7f tooltip=#fda1ef45
+option ranged.belowRight.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
+option ranged.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
+option ranged.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
+default castbar.background = {0,0,0,0}
+default castbar.bar.background.alpha = 0.25
+default castbar.bar.background.color = {0,0,0,0.5}
+default castbar.bar.background.enabled = true
+default castbar.bar.background.useBarColor = true
+default castbar.bar.border.enabled = false
+default castbar.bar.border.inset = 3
+default castbar.bar.border.insetBottom = 3
+default castbar.bar.border.insetLeft = 3
+default castbar.bar.border.insetRight = 3
+default castbar.bar.border.insetTop = 3
+default castbar.bar.border.padding = 3
+default castbar.bar.border.paddingBottom = 3
+default castbar.bar.border.paddingLeft = 3
+default castbar.bar.border.paddingRight = 3
+default castbar.bar.border.paddingTop = 3
+default castbar.bar.border.separateInset = false
+default castbar.bar.border.separatePadding = false
+default castbar.bar.enabled = true
+default castbar.bar.orientation = "HORIZONTAL"
+default castbar.bar.reverseFill = false
+default castbar.bar.smooth = false
+default castbar.bar.spark = true
+default castbar.border.enabled = true
+default castbar.border.inset = 3
+default castbar.border.insetBottom = 3
+default castbar.border.insetLeft = 3
+default castbar.border.insetRight = 3
+default castbar.border.insetTop = 3
+default castbar.border.padding = 3
+default castbar.border.paddingBottom = 3
+default castbar.border.paddingLeft = 3
+default castbar.border.paddingRight = 3
+default castbar.border.paddingTop = 3
+default castbar.border.separateInset = false
+default castbar.border.separatePadding = false
+default castbar.colors = {}
+default castbar.enabled = true
+default castbar.fadeTime = 0.3
+default castbar.gcd.color = {1,1,1,0.4}
+default castbar.gcd.enabled = false
+default castbar.gcd.fadeTime = 0.2
+default castbar.gcd.height = 2
+default castbar.gcd.holdTime = 0.2
+default castbar.gcd.position = "bottom"
+default castbar.gcd.spark = true
+default castbar.height = 24
+default castbar.holdTime = 0.4
+default castbar.icon.enabled = true
+default castbar.icon.gap = 1
+default castbar.icon.position = "LEFT"
+default castbar.latency.color = {0.9,0.1,0.1,0.6}
+default castbar.latency.enabled = true
+default castbar.latency.mode = "queue"
+default castbar.name.color = {1,1,1,1}
+default castbar.name.enabled = true
+default castbar.name.justifyH = "LEFT"
+default castbar.name.shadow = true
+default castbar.portraitLayout = "bar"
+default castbar.time.color = {1,1,1,1}
+default castbar.time.enabled = true
+default castbar.time.justifyH = "RIGHT"
+default castbar.time.shadow = true
+default castbar.visibility = "active"
+default enabled = false
+default gap = 2
+default mainHand.bar.background.alpha = 0.25
+default mainHand.bar.background.color = {0,0,0,0.5}
+default mainHand.bar.background.enabled = true
+default mainHand.bar.background.useBarColor = true
+default mainHand.bar.border.enabled = false
+default mainHand.bar.border.inset = 3
+default mainHand.bar.border.insetBottom = 3
+default mainHand.bar.border.insetLeft = 3
+default mainHand.bar.border.insetRight = 3
+default mainHand.bar.border.insetTop = 3
+default mainHand.bar.border.padding = 3
+default mainHand.bar.border.paddingBottom = 3
+default mainHand.bar.border.paddingLeft = 3
+default mainHand.bar.border.paddingRight = 3
+default mainHand.bar.border.paddingTop = 3
+default mainHand.bar.border.separateInset = false
+default mainHand.bar.border.separatePadding = false
+default mainHand.bar.enabled = true
+default mainHand.bar.orientation = "HORIZONTAL"
+default mainHand.bar.reverseFill = false
+default mainHand.bar.smooth = false
+default mainHand.bar.spark = true
+default mainHand.belowLeft.color = {1,1,1,1}
+default mainHand.belowLeft.enabled = false
+default mainHand.belowLeft.inset = 4
+default mainHand.belowLeft.justifyH = "LEFT"
+default mainHand.belowLeft.offsetX = 0
+default mainHand.belowLeft.offsetY = 0
+default mainHand.belowLeft.shadow = true
+default mainHand.belowLeft.size = 9
+default mainHand.belowLeft.vertical = "auto"
+default mainHand.belowRight.color = {1,1,1,1}
+default mainHand.belowRight.enabled = false
+default mainHand.belowRight.inset = 4
+default mainHand.belowRight.justifyH = "RIGHT"
+default mainHand.belowRight.offsetX = 0
+default mainHand.belowRight.offsetY = 0
+default mainHand.belowRight.shadow = true
+default mainHand.belowRight.size = 9
+default mainHand.belowRight.vertical = "auto"
+default mainHand.center.color = {1,1,1,1}
+default mainHand.center.enabled = false
+default mainHand.center.inset = 4
+default mainHand.center.justifyH = "CENTER"
+default mainHand.center.offsetX = 0
+default mainHand.center.offsetY = 0
+default mainHand.center.shadow = true
+default mainHand.center.vertical = "auto"
+default mainHand.enabled = false
+default mainHand.height = 10
+default mainHand.left.color = {1,1,1,1}
+default mainHand.left.enabled = true
+default mainHand.left.inset = 4
+default mainHand.left.justifyH = "LEFT"
+default mainHand.left.offsetX = 0
+default mainHand.left.offsetY = 0
+default mainHand.left.shadow = true
+default mainHand.left.vertical = "auto"
+default mainHand.lineGap = 1
+default mainHand.right.color = {1,1,1,1}
+default mainHand.right.enabled = true
+default mainHand.right.inset = 4
+default mainHand.right.justifyH = "RIGHT"
+default mainHand.right.offsetX = 0
+default mainHand.right.offsetY = 0
+default mainHand.right.shadow = true
+default mainHand.right.vertical = "auto"
+default mainHand.textLayout = "edges"
+default mainHand.visibility = "active"
+default offHand.bar.background.alpha = 0.25
+default offHand.bar.background.color = {0,0,0,0.5}
+default offHand.bar.background.enabled = true
+default offHand.bar.background.useBarColor = true
+default offHand.bar.border.enabled = false
+default offHand.bar.border.inset = 3
+default offHand.bar.border.insetBottom = 3
+default offHand.bar.border.insetLeft = 3
+default offHand.bar.border.insetRight = 3
+default offHand.bar.border.insetTop = 3
+default offHand.bar.border.padding = 3
+default offHand.bar.border.paddingBottom = 3
+default offHand.bar.border.paddingLeft = 3
+default offHand.bar.border.paddingRight = 3
+default offHand.bar.border.paddingTop = 3
+default offHand.bar.border.separateInset = false
+default offHand.bar.border.separatePadding = false
+default offHand.bar.enabled = true
+default offHand.bar.orientation = "HORIZONTAL"
+default offHand.bar.reverseFill = false
+default offHand.bar.smooth = false
+default offHand.bar.spark = true
+default offHand.belowLeft.color = {1,1,1,1}
+default offHand.belowLeft.enabled = false
+default offHand.belowLeft.inset = 4
+default offHand.belowLeft.justifyH = "LEFT"
+default offHand.belowLeft.offsetX = 0
+default offHand.belowLeft.offsetY = 0
+default offHand.belowLeft.shadow = true
+default offHand.belowLeft.size = 9
+default offHand.belowLeft.vertical = "auto"
+default offHand.belowRight.color = {1,1,1,1}
+default offHand.belowRight.enabled = false
+default offHand.belowRight.inset = 4
+default offHand.belowRight.justifyH = "RIGHT"
+default offHand.belowRight.offsetX = 0
+default offHand.belowRight.offsetY = 0
+default offHand.belowRight.shadow = true
+default offHand.belowRight.size = 9
+default offHand.belowRight.vertical = "auto"
+default offHand.center.color = {1,1,1,1}
+default offHand.center.enabled = false
+default offHand.center.inset = 4
+default offHand.center.justifyH = "CENTER"
+default offHand.center.offsetX = 0
+default offHand.center.offsetY = 0
+default offHand.center.shadow = true
+default offHand.center.vertical = "auto"
+default offHand.enabled = false
+default offHand.height = 10
+default offHand.left.color = {1,1,1,1}
+default offHand.left.enabled = true
+default offHand.left.inset = 4
+default offHand.left.justifyH = "LEFT"
+default offHand.left.offsetX = 0
+default offHand.left.offsetY = 0
+default offHand.left.shadow = true
+default offHand.left.vertical = "auto"
+default offHand.lineGap = 1
+default offHand.right.color = {1,1,1,1}
+default offHand.right.enabled = true
+default offHand.right.inset = 4
+default offHand.right.justifyH = "RIGHT"
+default offHand.right.offsetX = 0
+default offHand.right.offsetY = 0
+default offHand.right.shadow = true
+default offHand.right.vertical = "auto"
+default offHand.textLayout = "edges"
+default offHand.visibility = "active"
+default ranged.bar.background.alpha = 0.25
+default ranged.bar.background.color = {0,0,0,0.5}
+default ranged.bar.background.enabled = true
+default ranged.bar.background.useBarColor = true
+default ranged.bar.border.enabled = false
+default ranged.bar.border.inset = 3
+default ranged.bar.border.insetBottom = 3
+default ranged.bar.border.insetLeft = 3
+default ranged.bar.border.insetRight = 3
+default ranged.bar.border.insetTop = 3
+default ranged.bar.border.padding = 3
+default ranged.bar.border.paddingBottom = 3
+default ranged.bar.border.paddingLeft = 3
+default ranged.bar.border.paddingRight = 3
+default ranged.bar.border.paddingTop = 3
+default ranged.bar.border.separateInset = false
+default ranged.bar.border.separatePadding = false
+default ranged.bar.enabled = true
+default ranged.bar.orientation = "HORIZONTAL"
+default ranged.bar.reverseFill = false
+default ranged.bar.smooth = false
+default ranged.bar.spark = true
+default ranged.belowLeft.color = {1,1,1,1}
+default ranged.belowLeft.enabled = false
+default ranged.belowLeft.inset = 4
+default ranged.belowLeft.justifyH = "LEFT"
+default ranged.belowLeft.offsetX = 0
+default ranged.belowLeft.offsetY = 0
+default ranged.belowLeft.shadow = true
+default ranged.belowLeft.size = 9
+default ranged.belowLeft.vertical = "auto"
+default ranged.belowRight.color = {1,1,1,1}
+default ranged.belowRight.enabled = false
+default ranged.belowRight.inset = 4
+default ranged.belowRight.justifyH = "RIGHT"
+default ranged.belowRight.offsetX = 0
+default ranged.belowRight.offsetY = 0
+default ranged.belowRight.shadow = true
+default ranged.belowRight.size = 9
+default ranged.belowRight.vertical = "auto"
+default ranged.center.color = {1,1,1,1}
+default ranged.center.enabled = false
+default ranged.center.inset = 4
+default ranged.center.justifyH = "CENTER"
+default ranged.center.offsetX = 0
+default ranged.center.offsetY = 0
+default ranged.center.shadow = true
+default ranged.center.vertical = "auto"
+default ranged.enabled = false
+default ranged.height = 10
+default ranged.left.color = {1,1,1,1}
+default ranged.left.enabled = true
+default ranged.left.inset = 4
+default ranged.left.justifyH = "LEFT"
+default ranged.left.offsetX = 0
+default ranged.left.offsetY = 0
+default ranged.left.shadow = true
+default ranged.left.vertical = "auto"
+default ranged.lineGap = 1
+default ranged.right.color = {1,1,1,1}
+default ranged.right.enabled = true
+default ranged.right.inset = 4
+default ranged.right.justifyH = "RIGHT"
+default ranged.right.offsetX = 0
+default ranged.right.offsetY = 0
+default ranged.right.shadow = true
+default ranged.right.vertical = "auto"
+default ranged.textLayout = "edges"
+default ranged.visibility = "active"
+default width = 280
+resolved castbar.background = {0,0,0,0}
+resolved castbar.bar.background.alpha = 0.25
+resolved castbar.bar.background.color = {0,0,0,0.5}
+resolved castbar.bar.background.enabled = true
+resolved castbar.bar.background.useBarColor = true
+resolved castbar.bar.border.background = "Solid"
+resolved castbar.bar.border.backgroundColor = {0,0,0,0.75}
+resolved castbar.bar.border.border = "Blizzard Tooltip"
+resolved castbar.bar.border.color = {0.5,0.5,0.5,1}
+resolved castbar.bar.border.enabled = false
+resolved castbar.bar.border.inset = 3
+resolved castbar.bar.border.insetBottom = 3
+resolved castbar.bar.border.insetLeft = 3
+resolved castbar.bar.border.insetRight = 3
+resolved castbar.bar.border.insetTop = 3
+resolved castbar.bar.border.padding = 3
+resolved castbar.bar.border.paddingBottom = 3
+resolved castbar.bar.border.paddingLeft = 3
+resolved castbar.bar.border.paddingRight = 3
+resolved castbar.bar.border.paddingTop = 3
+resolved castbar.bar.border.separateInset = false
+resolved castbar.bar.border.separatePadding = false
+resolved castbar.bar.border.size = 12
+resolved castbar.bar.color = {1,0.7,0,1}
+resolved castbar.bar.enabled = true
+resolved castbar.bar.orientation = "HORIZONTAL"
+resolved castbar.bar.reverseFill = false
+resolved castbar.bar.smooth = false
+resolved castbar.bar.spark = true
+resolved castbar.bar.texture = "Blizzard Raid Bar"
+resolved castbar.border.background = "Solid"
+resolved castbar.border.backgroundColor = {0,0,0,0.75}
+resolved castbar.border.border = "Blizzard Tooltip"
+resolved castbar.border.color = {0.5,0.5,0.5,1}
+resolved castbar.border.enabled = true
+resolved castbar.border.inset = 3
+resolved castbar.border.insetBottom = 3
+resolved castbar.border.insetLeft = 3
+resolved castbar.border.insetRight = 3
+resolved castbar.border.insetTop = 3
+resolved castbar.border.padding = 3
+resolved castbar.border.paddingBottom = 3
+resolved castbar.border.paddingLeft = 3
+resolved castbar.border.paddingRight = 3
+resolved castbar.border.paddingTop = 3
+resolved castbar.border.separateInset = false
+resolved castbar.border.separatePadding = false
+resolved castbar.border.size = 12
+resolved castbar.colors.cast = {1,0.7,0,1}
+resolved castbar.colors.channel = {0,1,0,1}
+resolved castbar.colors.failed = {1,0,0,1}
+resolved castbar.colors.nonInterruptible = {0.7,0.7,0.7,1}
+resolved castbar.colors.success = {0,1,0,1}
+resolved castbar.enabled = true
+resolved castbar.fadeTime = 0.3
+resolved castbar.gcd.color = {1,1,1,0.4}
+resolved castbar.gcd.enabled = false
+resolved castbar.gcd.fadeTime = 0.2
+resolved castbar.gcd.height = 2
+resolved castbar.gcd.holdTime = 0.2
+resolved castbar.gcd.position = "bottom"
+resolved castbar.gcd.spark = true
+resolved castbar.height = 24
+resolved castbar.holdTime = 0.4
+resolved castbar.icon.enabled = true
+resolved castbar.icon.gap = 1
+resolved castbar.icon.position = "LEFT"
+resolved castbar.latency.color = {0.9,0.1,0.1,0.6}
+resolved castbar.latency.enabled = true
+resolved castbar.latency.mode = "queue"
+resolved castbar.name.color = {1,1,1,1}
+resolved castbar.name.enabled = true
+resolved castbar.name.font = "Friz Quadrata TT"
+resolved castbar.name.justifyH = "LEFT"
+resolved castbar.name.outline = ""
+resolved castbar.name.shadow = true
+resolved castbar.name.size = 11
+resolved castbar.portraitLayout = "bar"
+resolved castbar.time.color = {1,1,1,1}
+resolved castbar.time.enabled = true
+resolved castbar.time.font = "Friz Quadrata TT"
+resolved castbar.time.justifyH = "RIGHT"
+resolved castbar.time.outline = ""
+resolved castbar.time.shadow = true
+resolved castbar.time.size = 11
+resolved castbar.visibility = "active"
+resolved enabled = false
+resolved gap = 2
+resolved mainHand.bar.background.alpha = 0.25
+resolved mainHand.bar.background.color = {0,0,0,0.5}
+resolved mainHand.bar.background.enabled = true
+resolved mainHand.bar.background.useBarColor = true
+resolved mainHand.bar.border.background = "Solid"
+resolved mainHand.bar.border.backgroundColor = {0,0,0,0.75}
+resolved mainHand.bar.border.border = "Blizzard Tooltip"
+resolved mainHand.bar.border.color = {0.5,0.5,0.5,1}
+resolved mainHand.bar.border.enabled = false
+resolved mainHand.bar.border.inset = 3
+resolved mainHand.bar.border.insetBottom = 3
+resolved mainHand.bar.border.insetLeft = 3
+resolved mainHand.bar.border.insetRight = 3
+resolved mainHand.bar.border.insetTop = 3
+resolved mainHand.bar.border.padding = 3
+resolved mainHand.bar.border.paddingBottom = 3
+resolved mainHand.bar.border.paddingLeft = 3
+resolved mainHand.bar.border.paddingRight = 3
+resolved mainHand.bar.border.paddingTop = 3
+resolved mainHand.bar.border.separateInset = false
+resolved mainHand.bar.border.separatePadding = false
+resolved mainHand.bar.border.size = 12
+resolved mainHand.bar.color = {0.1,0.8,0.1,1}
+resolved mainHand.bar.enabled = true
+resolved mainHand.bar.orientation = "HORIZONTAL"
+resolved mainHand.bar.reverseFill = false
+resolved mainHand.bar.smooth = false
+resolved mainHand.bar.spark = true
+resolved mainHand.bar.texture = "Blizzard Raid Bar"
+resolved mainHand.belowLeft.color = {1,1,1,1}
+resolved mainHand.belowLeft.enabled = false
+resolved mainHand.belowLeft.font = "Friz Quadrata TT"
+resolved mainHand.belowLeft.inset = 4
+resolved mainHand.belowLeft.justifyH = "LEFT"
+resolved mainHand.belowLeft.offsetX = 0
+resolved mainHand.belowLeft.offsetY = 0
+resolved mainHand.belowLeft.outline = ""
+resolved mainHand.belowLeft.shadow = true
+resolved mainHand.belowLeft.size = 9
+resolved mainHand.belowLeft.vertical = "auto"
+resolved mainHand.belowRight.color = {1,1,1,1}
+resolved mainHand.belowRight.enabled = false
+resolved mainHand.belowRight.font = "Friz Quadrata TT"
+resolved mainHand.belowRight.inset = 4
+resolved mainHand.belowRight.justifyH = "RIGHT"
+resolved mainHand.belowRight.offsetX = 0
+resolved mainHand.belowRight.offsetY = 0
+resolved mainHand.belowRight.outline = ""
+resolved mainHand.belowRight.shadow = true
+resolved mainHand.belowRight.size = 9
+resolved mainHand.belowRight.vertical = "auto"
+resolved mainHand.center.color = {1,1,1,1}
+resolved mainHand.center.enabled = false
+resolved mainHand.center.font = "Friz Quadrata TT"
+resolved mainHand.center.inset = 4
+resolved mainHand.center.justifyH = "CENTER"
+resolved mainHand.center.offsetX = 0
+resolved mainHand.center.offsetY = 0
+resolved mainHand.center.outline = ""
+resolved mainHand.center.shadow = true
+resolved mainHand.center.size = 11
+resolved mainHand.center.vertical = "auto"
+resolved mainHand.enabled = false
+resolved mainHand.height = 10
+resolved mainHand.left.color = {1,1,1,1}
+resolved mainHand.left.enabled = true
+resolved mainHand.left.font = "Friz Quadrata TT"
+resolved mainHand.left.inset = 4
+resolved mainHand.left.justifyH = "LEFT"
+resolved mainHand.left.offsetX = 0
+resolved mainHand.left.offsetY = 0
+resolved mainHand.left.outline = ""
+resolved mainHand.left.shadow = true
+resolved mainHand.left.size = 11
+resolved mainHand.left.vertical = "auto"
+resolved mainHand.lineGap = 1
+resolved mainHand.right.color = {1,1,1,1}
+resolved mainHand.right.enabled = true
+resolved mainHand.right.font = "Friz Quadrata TT"
+resolved mainHand.right.inset = 4
+resolved mainHand.right.justifyH = "RIGHT"
+resolved mainHand.right.offsetX = 0
+resolved mainHand.right.offsetY = 0
+resolved mainHand.right.outline = ""
+resolved mainHand.right.shadow = true
+resolved mainHand.right.size = 11
+resolved mainHand.right.vertical = "auto"
+resolved mainHand.textLayout = "edges"
+resolved mainHand.visibility = "active"
+resolved offHand.bar.background.alpha = 0.25
+resolved offHand.bar.background.color = {0,0,0,0.5}
+resolved offHand.bar.background.enabled = true
+resolved offHand.bar.background.useBarColor = true
+resolved offHand.bar.border.background = "Solid"
+resolved offHand.bar.border.backgroundColor = {0,0,0,0.75}
+resolved offHand.bar.border.border = "Blizzard Tooltip"
+resolved offHand.bar.border.color = {0.5,0.5,0.5,1}
+resolved offHand.bar.border.enabled = false
+resolved offHand.bar.border.inset = 3
+resolved offHand.bar.border.insetBottom = 3
+resolved offHand.bar.border.insetLeft = 3
+resolved offHand.bar.border.insetRight = 3
+resolved offHand.bar.border.insetTop = 3
+resolved offHand.bar.border.padding = 3
+resolved offHand.bar.border.paddingBottom = 3
+resolved offHand.bar.border.paddingLeft = 3
+resolved offHand.bar.border.paddingRight = 3
+resolved offHand.bar.border.paddingTop = 3
+resolved offHand.bar.border.separateInset = false
+resolved offHand.bar.border.separatePadding = false
+resolved offHand.bar.border.size = 12
+resolved offHand.bar.color = {0.1,0.8,0.1,1}
+resolved offHand.bar.enabled = true
+resolved offHand.bar.orientation = "HORIZONTAL"
+resolved offHand.bar.reverseFill = false
+resolved offHand.bar.smooth = false
+resolved offHand.bar.spark = true
+resolved offHand.bar.texture = "Blizzard Raid Bar"
+resolved offHand.belowLeft.color = {1,1,1,1}
+resolved offHand.belowLeft.enabled = false
+resolved offHand.belowLeft.font = "Friz Quadrata TT"
+resolved offHand.belowLeft.inset = 4
+resolved offHand.belowLeft.justifyH = "LEFT"
+resolved offHand.belowLeft.offsetX = 0
+resolved offHand.belowLeft.offsetY = 0
+resolved offHand.belowLeft.outline = ""
+resolved offHand.belowLeft.shadow = true
+resolved offHand.belowLeft.size = 9
+resolved offHand.belowLeft.vertical = "auto"
+resolved offHand.belowRight.color = {1,1,1,1}
+resolved offHand.belowRight.enabled = false
+resolved offHand.belowRight.font = "Friz Quadrata TT"
+resolved offHand.belowRight.inset = 4
+resolved offHand.belowRight.justifyH = "RIGHT"
+resolved offHand.belowRight.offsetX = 0
+resolved offHand.belowRight.offsetY = 0
+resolved offHand.belowRight.outline = ""
+resolved offHand.belowRight.shadow = true
+resolved offHand.belowRight.size = 9
+resolved offHand.belowRight.vertical = "auto"
+resolved offHand.center.color = {1,1,1,1}
+resolved offHand.center.enabled = false
+resolved offHand.center.font = "Friz Quadrata TT"
+resolved offHand.center.inset = 4
+resolved offHand.center.justifyH = "CENTER"
+resolved offHand.center.offsetX = 0
+resolved offHand.center.offsetY = 0
+resolved offHand.center.outline = ""
+resolved offHand.center.shadow = true
+resolved offHand.center.size = 11
+resolved offHand.center.vertical = "auto"
+resolved offHand.enabled = false
+resolved offHand.height = 10
+resolved offHand.left.color = {1,1,1,1}
+resolved offHand.left.enabled = true
+resolved offHand.left.font = "Friz Quadrata TT"
+resolved offHand.left.inset = 4
+resolved offHand.left.justifyH = "LEFT"
+resolved offHand.left.offsetX = 0
+resolved offHand.left.offsetY = 0
+resolved offHand.left.outline = ""
+resolved offHand.left.shadow = true
+resolved offHand.left.size = 11
+resolved offHand.left.vertical = "auto"
+resolved offHand.lineGap = 1
+resolved offHand.right.color = {1,1,1,1}
+resolved offHand.right.enabled = true
+resolved offHand.right.font = "Friz Quadrata TT"
+resolved offHand.right.inset = 4
+resolved offHand.right.justifyH = "RIGHT"
+resolved offHand.right.offsetX = 0
+resolved offHand.right.offsetY = 0
+resolved offHand.right.outline = ""
+resolved offHand.right.shadow = true
+resolved offHand.right.size = 11
+resolved offHand.right.vertical = "auto"
+resolved offHand.textLayout = "edges"
+resolved offHand.visibility = "active"
+resolved ranged.bar.background.alpha = 0.25
+resolved ranged.bar.background.color = {0,0,0,0.5}
+resolved ranged.bar.background.enabled = true
+resolved ranged.bar.background.useBarColor = true
+resolved ranged.bar.border.background = "Solid"
+resolved ranged.bar.border.backgroundColor = {0,0,0,0.75}
+resolved ranged.bar.border.border = "Blizzard Tooltip"
+resolved ranged.bar.border.color = {0.5,0.5,0.5,1}
+resolved ranged.bar.border.enabled = false
+resolved ranged.bar.border.inset = 3
+resolved ranged.bar.border.insetBottom = 3
+resolved ranged.bar.border.insetLeft = 3
+resolved ranged.bar.border.insetRight = 3
+resolved ranged.bar.border.insetTop = 3
+resolved ranged.bar.border.padding = 3
+resolved ranged.bar.border.paddingBottom = 3
+resolved ranged.bar.border.paddingLeft = 3
+resolved ranged.bar.border.paddingRight = 3
+resolved ranged.bar.border.paddingTop = 3
+resolved ranged.bar.border.separateInset = false
+resolved ranged.bar.border.separatePadding = false
+resolved ranged.bar.border.size = 12
+resolved ranged.bar.color = {0.1,0.8,0.1,1}
+resolved ranged.bar.enabled = true
+resolved ranged.bar.orientation = "HORIZONTAL"
+resolved ranged.bar.reverseFill = false
+resolved ranged.bar.smooth = false
+resolved ranged.bar.spark = true
+resolved ranged.bar.texture = "Blizzard Raid Bar"
+resolved ranged.belowLeft.color = {1,1,1,1}
+resolved ranged.belowLeft.enabled = false
+resolved ranged.belowLeft.font = "Friz Quadrata TT"
+resolved ranged.belowLeft.inset = 4
+resolved ranged.belowLeft.justifyH = "LEFT"
+resolved ranged.belowLeft.offsetX = 0
+resolved ranged.belowLeft.offsetY = 0
+resolved ranged.belowLeft.outline = ""
+resolved ranged.belowLeft.shadow = true
+resolved ranged.belowLeft.size = 9
+resolved ranged.belowLeft.vertical = "auto"
+resolved ranged.belowRight.color = {1,1,1,1}
+resolved ranged.belowRight.enabled = false
+resolved ranged.belowRight.font = "Friz Quadrata TT"
+resolved ranged.belowRight.inset = 4
+resolved ranged.belowRight.justifyH = "RIGHT"
+resolved ranged.belowRight.offsetX = 0
+resolved ranged.belowRight.offsetY = 0
+resolved ranged.belowRight.outline = ""
+resolved ranged.belowRight.shadow = true
+resolved ranged.belowRight.size = 9
+resolved ranged.belowRight.vertical = "auto"
+resolved ranged.center.color = {1,1,1,1}
+resolved ranged.center.enabled = false
+resolved ranged.center.font = "Friz Quadrata TT"
+resolved ranged.center.inset = 4
+resolved ranged.center.justifyH = "CENTER"
+resolved ranged.center.offsetX = 0
+resolved ranged.center.offsetY = 0
+resolved ranged.center.outline = ""
+resolved ranged.center.shadow = true
+resolved ranged.center.size = 11
+resolved ranged.center.vertical = "auto"
+resolved ranged.enabled = false
+resolved ranged.height = 10
+resolved ranged.left.color = {1,1,1,1}
+resolved ranged.left.enabled = true
+resolved ranged.left.font = "Friz Quadrata TT"
+resolved ranged.left.inset = 4
+resolved ranged.left.justifyH = "LEFT"
+resolved ranged.left.offsetX = 0
+resolved ranged.left.offsetY = 0
+resolved ranged.left.outline = ""
+resolved ranged.left.shadow = true
+resolved ranged.left.size = 11
+resolved ranged.left.vertical = "auto"
+resolved ranged.lineGap = 1
+resolved ranged.right.color = {1,1,1,1}
+resolved ranged.right.enabled = true
+resolved ranged.right.font = "Friz Quadrata TT"
+resolved ranged.right.inset = 4
+resolved ranged.right.justifyH = "RIGHT"
+resolved ranged.right.offsetX = 0
+resolved ranged.right.offsetY = 0
+resolved ranged.right.outline = ""
+resolved ranged.right.shadow = true
+resolved ranged.right.size = 11
+resolved ranged.right.vertical = "auto"
+resolved ranged.textLayout = "edges"
+resolved ranged.visibility = "active"
+resolved width = 280
 ## portrait
 option enabled type="toggle" label="Enabled" default=true
 option mode type="select" label="Style" default="3D" values=#db0171ae

@@ -31,6 +31,7 @@ end
 function Session:RefreshStyle()
 	if self.released then return end
 	self.handle:Apply(self.state.config)
+	if self.eventFrame then self:ActivateEvents(self.eventFrame, self.eventsShown) end
 	self:Update()
 	if self.onRefresh then self.onRefresh() end
 end
@@ -52,6 +53,7 @@ end
 function Session:Update()
 	if self.released then return end
 	local data = self.entry.data
+	if self.eventsShown == false and data and data.deactivate then return end
 	if data and data.update then data.update(self.handle, self:GetData(), self.scratch) end
 end
 
@@ -64,11 +66,14 @@ end
 
 function Session:ActivateEvents(eventFrame, shown)
 	eventFrame:UnregisterAllEvents()
-	self.eventFrame = eventFrame
+	self.eventFrame, self.eventsShown = eventFrame, shown
 	local data = self.entry.data
-	if self.released or not shown or not data or not data.events then return end
+	if self.released then return end
+	if data and data.deactivate then data.deactivate(self.handle) end
+	if not shown or not data or not data.events then return end
 	local values = self:GetData()
 	if not wb.Data.IsLive(values) then return end
+	if data.registerEvents then data.registerEvents(self.handle, eventFrame); return end
 	for _, event in ipairs(data.events) do eventFrame:RegisterUnitEvent(event, values.source) end
 	for _, event in ipairs(data.globalEvents or {}) do eventFrame:RegisterEvent(event) end
 end

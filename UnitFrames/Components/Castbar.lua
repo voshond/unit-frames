@@ -257,11 +257,28 @@ function Castbar:UpdateCovered()
 end
 
 function Castbar:Hide()
+	self.presentationActive = false
 	self.fade:Stop()
 	self:HideLatency()
-	self.frame:Hide()
+	self.bar:SetSparkActive(false)
+	if self.idleShown then
+		if self.timeBinding then self.timeBinding:SetEnabled(false) end
+		self.bar:SetRange(0, 1)
+		self.bar:SetValue(0)
+		self.bar:ClearColor()
+		self.nameText:SetText("")
+		self.timeText:SetText("")
+		self.icon:SetTexture(nil)
+	end
+	self.frame:SetShown(self.enabled and self.idleShown or false)
 	self.frame:SetAlpha(1)
 	self:UpdateCovered()
+end
+
+function Castbar:SetIdleShown(shown)
+	if self.idleShown == shown then return end
+	self.idleShown = shown
+	if not self.presentationActive then self:Hide() end
 end
 
 -- Opaque mode: the castbar covers another bar (e.g. health) and nothing of it
@@ -282,6 +299,8 @@ function Castbar:SetEnabled(enabled)
 	if not self.enabled then
 		self:Hide()
 		self:StopGCD()
+	elseif self.idleShown and not self.presentationActive then
+		self:Hide()
 	end
 end
 
@@ -306,6 +325,8 @@ function Castbar:ApplyCastColor(info)
 end
 
 function Castbar:ShowCast(info)
+	self.presentationActive = true
+	self.bar:SetSparkActive(true)
 	self.fade:Stop()
 	self.frame:SetAlpha(1)
 	self:ApplyCastColor(info)
