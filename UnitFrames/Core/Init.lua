@@ -19,6 +19,7 @@ do
 		smoothBars = Enum ~= nil and Enum.StatusBarInterpolation ~= nil,
 		timerBars = probe.SetTimerDuration ~= nil and Enum ~= nil and Enum.StatusBarTimerDirection ~= nil,
 		durations = C_DurationUtil ~= nil and C_DurationUtil.CreateDuration ~= nil,
+		swings = Enum ~= nil and Enum.PlayerSwingType ~= nil and UnitAttackSpeed ~= nil,
 		curves = C_CurveUtil ~= nil and C_CurveUtil.CreateColorCurve ~= nil,
 		secrets = issecretvalue ~= nil,
 		booleanAlpha = probe.SetAlphaFromBoolean ~= nil,

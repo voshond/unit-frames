@@ -171,17 +171,7 @@ the cast events through the shared state machine (Units/Cast.lua).
 ]]
 local Cast = ns.Cast
 
--- Blizzard's own player castbar listens to these; we mute it while ours is on
--- (same approach as oUF's Castbar element) and restore it afterwards.
-local BLIZZARD_CAST_EVENTS = {
-	"UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_DELAYED", "UNIT_SPELLCAST_CHANNEL_START",
-	"UNIT_SPELLCAST_CHANNEL_UPDATE", "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_EMPOWER_START",
-	"UNIT_SPELLCAST_EMPOWER_UPDATE", "UNIT_SPELLCAST_EMPOWER_STOP", "UNIT_SPELLCAST_INTERRUPTIBLE",
-	"UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_FAILED",
-}
-
 local castState = setmetatable({}, { __mode = "k" })
--- The player frame whose castbar muted Blizzard's; only it restores it.
 local blizzardCastbarMutedBy
 
 local function UpdateCastbar(self, event, unit, ...)
@@ -209,11 +199,10 @@ local function EnableCastbar(self, unit)
 			self:RegisterEvent(event, UpdateGCD, true)
 		end
 	end
-	if unit == "player" and PlayerCastingBarFrame and not blizzardCastbarMutedBy then
-		PlayerCastingBarFrame:UnregisterAllEvents()
-		PlayerCastingBarFrame:Hide()
+	if unit == "player" and not blizzardCastbarMutedBy then
 		blizzardCastbarMutedBy = self
 	end
+	if blizzardCastbarMutedBy == self then ns.PlayerCastbar:SetOwner(self, true) end
 	return true
 end
 
@@ -230,10 +219,7 @@ local function DisableCastbar(self)
 	end
 	if blizzardCastbarMutedBy == self then
 		blizzardCastbarMutedBy = nil
-		for _, event in ipairs(BLIZZARD_CAST_EVENTS) do
-			PlayerCastingBarFrame:RegisterUnitEvent(event, "player")
-		end
-		PlayerCastingBarFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+		ns.PlayerCastbar:SetOwner(self, false)
 	end
 end
 

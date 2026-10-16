@@ -12,6 +12,8 @@ each change.
 - Show health, power, absorb shields, cast bars, buffs and debuffs.
 - See your latency or spell queue window at the end of your casts, and an
   optional global cooldown strip on the player cast bar.
+- Add a standalone player castbar with optional main-hand, off-hand and
+  ranged swing timer rows, positioned independently in Edit Mode.
 - Show rogue and druid combo points on the target frame, or on the player frame.
 - Add a cropped buff/debuff icon row, alongside or instead of external icons.
 - Filter buffs and debuffs by crowd control, big or external defensives,

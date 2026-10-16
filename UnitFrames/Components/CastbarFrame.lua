@@ -19,9 +19,9 @@ local function RowSchema(schema, height)
 	})
 end
 
-function CastbarFrame.BuildSchema()
+function CastbarFrame.BuildSchema(spec)
 	local schema = {
-		{ key = "enabled", type = "toggle", label = "Enabled", default = true },
+		{ key = "enabled", type = "toggle", label = "Enabled", default = not (spec and spec.standalone) },
 		{ key = "width", type = "range", label = "Width", min = 80, max = 800, step = 1, default = 280 },
 		{ key = "gap", type = "range", label = "Row spacing", min = 0, max = 20, step = 1, default = 2 },
 		{ key = "castbar", type = "group", label = "Castbar",
