@@ -39,6 +39,11 @@ local function GroupSchema(label, filters, size, position)
 		{ key = "sort", type = "select", label = "Order", default = "expiration", values = {
 			{ "expiration", "Time left" }, { "default", "Native priority" }, { "unitDebuff", "Raid debuff priority" },
 		} },
+		{ key = "swipe", type = "select", label = "Cooldown swipe", default = "normal", values = {
+			{ "normal", "Progressing" }, { "reverse", "Decreasing" }, { "none", "None" },
+		} },
+		{ key = "showSwipeEdge", type = "toggle", label = "Show swipe edge", default = true,
+			tooltip = "Show the spinning line along the cooldown swipe. Hidden when Cooldown swipe is None." },
 		{ key = "size", type = "range", label = "Icon size", min = 10, max = 64, step = 1, default = size },
 		{ key = "position", type = "select", label = "Side", values = Auras.POSITIONS, default = position },
 		{ key = "alignment", type = "select", label = "Alignment", values = Auras.ALIGNMENTS, default = "start",
@@ -146,7 +151,8 @@ end
 
 function Auras:StyleButton(button)
 	ns.Perf:Count("auraButtonStyle")
-	AuraIcon.Apply(button, self:GetArtworkConfig(), self.resolved[button.ufKind].size, self.dispelColors)
+	local group = self.resolved[button.ufKind]
+	AuraIcon.Apply(button, self:GetArtworkConfig(), group.size, self.dispelColors, group.swipe, group.showSwipeEdge)
 end
 
 -- A group's native candidate filters (nil = none).

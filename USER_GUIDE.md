@@ -252,6 +252,12 @@ Aura settings live under **Buffs & debuffs**. Each of the **Buffs** and
 offsets and row/column length. Buffs default to the top, debuffs to the bottom.
 Right-click a buff on the live player frame to cancel it, if the game permits
 removing that buff. Sample preview icons remain non-interactive.
+**Cooldown swipe** independently selects **Progressing** (default), **Decreasing**,
+or **None** for buffs and debuffs, both here and in the icon row. **Show swipe
+edge** independently toggles the spinning line for each group. **None** hides
+the fill, spinning edge and completion flash, while keeping time-left text
+visible when enabled. Changes to existing live icons defer
+until combat ends; ClickGrid's fixed aura slots keep the default swipe.
 The parent section controls the font, separate duration/stack sizes, and
 duration placement below or inside the icon. **Icon frame** styles each
 individual icon border. Centre alignment centres the whole aura block;
