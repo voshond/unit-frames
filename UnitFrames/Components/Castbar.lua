@@ -76,7 +76,7 @@ local function TimeFormatter()
 end
 
 function Castbar:OnCreate(parent)
-	self.frame = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+	self.frame = CreateFrame("Frame", nil, parent, self.spec.nativeLayout and "BackdropTemplate,DisableUntrustedLayoutScriptsTemplate" or "BackdropTemplate")
 
 	-- Lowest layer: keeps whatever is behind the castbar from showing through.
 	self.backing = self.frame:CreateTexture(nil, "BACKGROUND", nil, -8)
