@@ -22,6 +22,16 @@ function Config:MigrateSettings(settings)
 	return migrated
 end
 
+-- "Show member targets" moved from the panel settings to the target bar
+-- style (Target bars > General). Carry an old choice over once, in the
+-- saved profile, before either store reads it.
+local function MigrateTargets(profile)
+	local panel = profile.settings.panel
+	if type(panel) ~= "table" or panel.targets == nil then return end
+	if panel.targets == true and profile.target.shown == nil then profile.target.shown = true end
+	panel.targets = nil
+end
+
 -- Fixed slots also need parseable spell IDs, beyond the schema's types.
 local function CheckSlots(candidate)
 	for _, slot in pairs(UF.Schema.Resolve(CG.SlotSchema, candidate.slots)) do
@@ -46,14 +56,20 @@ function Config:Initialize()
 	local db = self.db
 	self.settings = UF.Store:New({
 		schema = self.schema, theme = true, validate = true, check = CheckSlots, changed = Changed,
-		read = function() return self:MigrateSettings(db.profile.settings) end,
+		read = function()
+			MigrateTargets(db.profile)
+			return self:MigrateSettings(db.profile.settings)
+		end,
 		write = function(settings) db.profile.settings = settings end,
 	})
 	self.styles = {}
 	for _, kind in ipairs({ "member", "target" }) do
 		self.styles[kind] = UF.Store:New({
 			schema = function() return CG:StyleSchema(kind) end, theme = true, validate = true,
-			read = function() return UF.Units:MigrateConfig(db.profile[kind]) end,
+			read = function()
+				MigrateTargets(db.profile)
+				return UF.Units:MigrateConfig(db.profile[kind])
+			end,
 			write = function(style) db.profile[kind] = style end,
 			changed = function() Changed(kind) end,
 		})

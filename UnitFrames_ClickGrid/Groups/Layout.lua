@@ -26,8 +26,8 @@ function Layout.Compute(cfg, member, target, titles, border, raidCount, partyCou
 	local titleHeight = Layout.TitleHeight(titles)
 	local below = titles and titles.position == "below"
 	local leading, trailing = below and 0 or titleHeight, below and titleHeight or 0
-	local cellWidth = member.width + (cfg.targets and target.width + cfg.targetGap or 0)
-	local cellHeight = math.max(member.height, cfg.targets and target.height or 0)
+	local cellWidth = member.width + (target.shown and target.width + cfg.targetGap or 0)
+	local cellHeight = math.max(member.height, target.shown and target.height or 0)
 	local cols = cfg.mode == "subgroups" and math.min(8, cfg.columns) or cfg.columns
 	local result = { cellWidth = cellWidth, cellHeight = cellHeight, sections = {}, partySizes = {},
 		titlePadding = below and bottom or top }

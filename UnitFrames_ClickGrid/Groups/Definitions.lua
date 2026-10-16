@@ -53,7 +53,6 @@ CG.LayoutSchema = {
 		tooltip = "Leave room for buff and debuff icons outside each bar." },
 	{ key = "sectionGap", type = "range", label = "Section gap", min = 0, max = 80, step = 1, default = 24 },
 	{ key = "scale", type = "range", label = "Panel scale", min = 0.5, max = 1.5, step = 0.05, default = 1 },
-	{ key = "targets", type = "toggle", label = "Show member targets", default = false },
 	{ key = "targetGap", type = "range", label = "Gap to target", min = 0, max = 30, step = 1, default = 4 },
 	{ key = "tanks", type = "toggle", label = "Extra tank section (duplicates)", default = false },
 	{ key = "tankSlots", type = "range", label = "Maximum tank slots", min = 1, max = 40, step = 1, default = 5 },

@@ -193,6 +193,7 @@ function Refresh(self)
 				frame:ResumeAllElements()
 				frame:Enable()
 			end
+			if kind == "target" then frame.uf:SetFillHeight(layout.cellHeight) end
 			frame.uf:Apply(self.Config:GetStyle(kind))
 			UF.Units:Bind(frame)
 			if button.status then button.status:Apply(self.Config:Get().indicators) end
@@ -200,7 +201,7 @@ function Refresh(self)
 			frame:ClearAllPoints()
 			if kind == "target" then
 				frame:SetPoint("TOPLEFT", cell, "TOPLEFT", self.metrics.member.width + cfg.panel.targetGap, 0)
-				if cfg.panel.targets then
+				if self.metrics.target.shown then
 					UnregisterAttributeDriver(frame, "state-visibility")
 					frame:SetAttribute("statehidden", nil)
 					frame:ResumeAllElements()
@@ -217,7 +218,7 @@ function Refresh(self)
 				end
 			else frame:SetPoint("TOPLEFT", cell, "TOPLEFT", 0, 0) end
 			cell:SetSize(layout.cellWidth, layout.cellHeight)
-			if kind ~= "target" or cfg.panel.targets then
+			if kind ~= "target" or self.metrics.target.shown then
 				UF.Units:UpdateFrame(frame, "UnitFramesClickGridRefresh")
 			end
 		end
