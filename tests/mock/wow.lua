@@ -949,8 +949,25 @@ function Mock.Install()
 			if id then return { spellID = id, name = id == 2061 and "Flash Heal" or "Spell " .. id, iconID = 135000 + id } end
 		end,
 		GetOverrideSpell = function(id) return Mock.spellOverrides[id] or id end,
+		-- Mock.cooldowns[spellID] = { duration = seconds, onGCD = bool } marks
+		-- an active cooldown; timings are secret, isActive/isOnGCD never are.
+		GetSpellCooldown = function(id)
+			local cooldown = Mock.cooldowns[id]
+			return { startTime = Secret(cooldown and Mock.time or 0), duration = Secret(cooldown and cooldown.duration or 0),
+				isEnabled = true, isActive = cooldown ~= nil, isOnGCD = cooldown ~= nil and cooldown.onGCD, modRate = Secret(1) }
+		end,
+		GetSpellCooldownDuration = function(id)
+			local duration = C_DurationUtil.CreateDuration()
+			local cooldown = Mock.cooldowns[id]
+			duration:SetTimeFromStart(Mock.time, cooldown and cooldown.duration or 0)
+			return duration
+		end,
+		GetSpellQueueWindow = function() return Mock.spellQueueWindow end,
 	}
-	Mock.spellOverrides, Mock.unknownSpells = {}, {}
+	Mock.spellOverrides, Mock.unknownSpells, Mock.cooldowns, Mock.spellQueueWindow = {}, {}, {}, 400
+	-- Mock.latency = { home, world } in milliseconds.
+	Mock.latency = { 40, 80 }
+	_G.GetNetStats = function() return 0, 0, Mock.latency[1], Mock.latency[2] end
 	_G.C_SpellBook = { IsSpellKnown = function(id) return not Mock.unknownSpells[id] end }
 	-- Mock.cursorInfo holds GetCursorInfo's returns, e.g. { "spell", slot, bank, spellID }.
 	Mock.cursorInfo, Mock.spellBookOpened = nil, 0

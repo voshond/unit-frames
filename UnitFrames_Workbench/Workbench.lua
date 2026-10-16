@@ -22,6 +22,7 @@ Entries register themselves:
       tick = function(handle, data, entryState, elapsed) end,    every frame (animated/live)
       tickStatic = true,            opt-in for actions that must finish in static mode
       events = { "UNIT_SPELLCAST_START", ... },                   unit events for live sources
+      globalEvents = { "SPELL_UPDATE_COOLDOWN", ... },            unitless events for live sources
       onEvent = function(handle, data, entryState, event, ...) end,
     },
     styleTarget = function(handle) return target end,  optional, replaces the style inspector target

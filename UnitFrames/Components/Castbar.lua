@@ -1,6 +1,7 @@
 local _, ns = ...
 local Util = ns.Util
 local Bar, Text, Backdrop = ns.Components.Bar, ns.Components.Text, ns.Components.Backdrop
+local CastExtras = ns.CastExtras
 
 --[[
 Cast bar: one bordered frame holding the spell icon (left or right) and the
@@ -15,6 +16,11 @@ Data API:
   :Stop("success" | "failed" | "interrupted", text?)
   :Hide()   no cast: hide at once
   :Preview({ name, icon, channel, notInterruptible }, progress, timeText)  static, for styling
+
+spec.playerCast adds the player's extras (Components/CastExtras.lua): cast
+info may carry castTime and latency (plain seconds) for the latency zone, and
+  :StartGCD(duration, remaining?) / :FinishGCD() / :StopGCD() / :PreviewGCD(progress)
+drive the global cooldown strip.
 
 Placed over another region (SetCovered: health row, portrait), the castbar
 replaces it: the region fades out while the castbar shows and back in as
@@ -32,8 +38,8 @@ local function Color(key, label, inherit)
 	return { key = key, type = "color", label = label, inherit = inherit }
 end
 
-function Castbar.BuildSchema()
-	return {
+function Castbar.BuildSchema(spec)
+	local schema = {
 		{ key = "enabled", type = "toggle", label = "Enabled", default = true },
 		{ key = "portraitLayout", type = "select", label = "Portrait cast layout", default = "bar", values = {
 			{ "bar", "Bar only" }, { "split", "Icon / bar side by side" }, { "stack", "Icon / bar top and bottom" },
@@ -62,6 +68,12 @@ function Castbar.BuildSchema()
 		{ key = "holdTime", type = "range", label = "Hold after finish (s)", min = 0, max = 2, step = 0.1, default = 0.4 },
 		{ key = "fadeTime", type = "range", label = "Fade out (s)", min = 0, max = 2, step = 0.1, default = 0.3 },
 	}
+	if spec and spec.playerCast then
+		for _, opt in ipairs(CastExtras.BuildSchema()) do
+			schema[#schema + 1] = opt
+		end
+	end
+	return schema
 end
 
 local timeFormatter
@@ -92,12 +104,12 @@ function Castbar:OnCreate(parent)
 	local textParent = self.bar:GetTextParent()
 	self.nameText = self:Own(Text:New(textParent, self:ChildConfig("name")))
 	self.timeText = self:Own(Text:New(textParent, self:ChildConfig("time")))
+	if self.spec.playerCast then
+		self.latency = CastExtras.Latency:New(self.bar)
+		self.gcd = CastExtras.GCD:New(parent, self.bar:GetStatusBar(), self.spec.nativeLayout)
+	end
 
-	self.fade = self.frame:CreateAnimationGroup()
-	local alpha = self.fade:CreateAnimation("Alpha")
-	alpha:SetFromAlpha(1)
-	alpha:SetToAlpha(0)
-	self.fadeAlpha = alpha
+	self.fade, self.fadeAlpha = Util.CreateFadeOut(self.frame)
 	self.fade:SetScript("OnUpdate", function() self:UpdateCovered() end)
 	self.fade:SetScript("OnFinished", function() self:Hide() end)
 
@@ -134,8 +146,11 @@ function Castbar:OnApply(cfg)
 	self:ApplyChild(self.bar, "bar")
 	self:ApplyChild(self.nameText, "name")
 	self:ApplyChild(self.timeText, "time")
-	self.fadeAlpha:SetStartDelay(cfg.holdTime)
-	self.fadeAlpha:SetDuration(math.max(cfg.fadeTime, 0.01))
+	if self.latency then
+		self.latency:Apply(cfg.latency, self.bar.resolved)
+		self.gcd:Apply(cfg.gcd, self.bar.resolved)
+	end
+	Util.SetFadeTimes(self.fadeAlpha, cfg.holdTime, cfg.fadeTime)
 	self:LayoutParts()
 end
 
@@ -201,6 +216,9 @@ end
 
 function Castbar:OnRelease()
 	self.fade:Stop()
+	if self.gcd then
+		self.gcd:Release()
+	end
 	if self.timeBinding then
 		self.timeBinding:SetEnabled(false)
 	end
@@ -240,6 +258,7 @@ end
 
 function Castbar:Hide()
 	self.fade:Stop()
+	self:HideLatency()
 	self.frame:Hide()
 	self.frame:SetAlpha(1)
 	self:UpdateCovered()
@@ -262,6 +281,7 @@ function Castbar:SetEnabled(enabled)
 	self.enabled = enabled and true or false
 	if not self.enabled then
 		self:Hide()
+		self:StopGCD()
 	end
 end
 
@@ -310,6 +330,7 @@ function Castbar:Start(info)
 	end
 	self.timeBinding:SetDuration(info.duration)
 	self.timeBinding:SetEnabled(true)
+	self:ShowLatency(info)
 end
 
 function Castbar:Stop(result, text)
@@ -317,6 +338,7 @@ function Castbar:Stop(result, text)
 		self.timeBinding:SetEnabled(false)
 	end
 	self.timeText:SetText("")
+	self:HideLatency()
 	-- Setting a plain value ends the timer-driven fill (same as oUF).
 	self.bar:SetRange(0, 1)
 	self.bar:SetValue(1)
@@ -339,6 +361,54 @@ function Castbar:Preview(info, progress, timeText)
 	self.bar:SetRange(0, 1)
 	self.bar:SetValue(progress)
 	self.timeText:SetText(timeText or "")
+	self:ShowLatency(info)
+end
+
+function Castbar:ShowLatency(info)
+	if self.latency then
+		self.latency:Show(info)
+	end
+end
+
+function Castbar:HideLatency()
+	if self.latency then
+		self.latency:Hide()
+	end
+end
+
+function Castbar:HasGCD()
+	return self.gcd ~= nil
+end
+
+-- Whether the global cooldown strip is in use: player castbars with it on.
+function Castbar:WantsGCD()
+	return self.gcd ~= nil and self.enabled and self.gcd:IsEnabled()
+end
+
+-- remaining: plain seconds left, if known, so the strip also ends on its own.
+function Castbar:StartGCD(duration, remaining)
+	if self:WantsGCD() then
+		self.gcd:Start(duration, remaining)
+	end
+end
+
+-- The global cooldown ended: hold, then fade out.
+function Castbar:FinishGCD()
+	if self.gcd then
+		self.gcd:Finish()
+	end
+end
+
+function Castbar:PreviewGCD(progress)
+	if self:WantsGCD() then
+		self.gcd:Preview(progress)
+	end
+end
+
+function Castbar:StopGCD()
+	if self.gcd then
+		self.gcd:Stop()
+	end
 end
 
 function Castbar:GetBar()

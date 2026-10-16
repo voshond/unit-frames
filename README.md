@@ -10,6 +10,8 @@ each change.
   separately, or copy your player style to another frame.
 - Choose fonts, colours, borders, bar sizes and portraits.
 - Show health, power, absorb shields, cast bars, buffs and debuffs.
+- See your latency or spell queue window at the end of your casts, and an
+  optional global cooldown strip on the player cast bar.
 - Show rogue and druid combo points on the target frame, or on the player frame.
 - Add a cropped buff/debuff icon row, alongside or instead of external icons.
 - Add raid markers, PvP flags, elite and rare icons, and ready check indicators.

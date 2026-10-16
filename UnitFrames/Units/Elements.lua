@@ -192,6 +192,10 @@ local function UpdateCastbar(self, event, unit, ...)
 	Cast.Handle(self.UF_Castbar, castState[self], event, unit, ...)
 end
 
+local function UpdateGCD(self)
+	Cast.UpdateGCD(self.UF_Castbar, castState[self])
+end
+
 local function EnableCastbar(self, unit)
 	if not self.UF_Castbar then
 		return
@@ -199,6 +203,11 @@ local function EnableCastbar(self, unit)
 	castState[self] = castState[self] or {}
 	for _, event in ipairs(Cast.EVENTS) do
 		self:RegisterEvent(event, UpdateCastbar)
+	end
+	if self.UF_Castbar:HasGCD() then
+		for _, event in ipairs(Cast.GCD_EVENTS) do
+			self:RegisterEvent(event, UpdateGCD, true)
+		end
 	end
 	if unit == "player" and PlayerCastingBarFrame and not blizzardCastbarMutedBy then
 		PlayerCastingBarFrame:UnregisterAllEvents()
@@ -212,8 +221,12 @@ local function DisableCastbar(self)
 	for _, event in ipairs(Cast.EVENTS) do
 		self:UnregisterEvent(event, UpdateCastbar)
 	end
+	for _, event in ipairs(Cast.GCD_EVENTS) do
+		self:UnregisterEvent(event, UpdateGCD)
+	end
 	if self.UF_Castbar then
 		self.UF_Castbar:Hide()
+		self.UF_Castbar:StopGCD()
 	end
 	if blizzardCastbarMutedBy == self then
 		blizzardCastbarMutedBy = nil

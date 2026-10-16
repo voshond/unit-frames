@@ -41,7 +41,8 @@ Units.definitions.player = {
 	rows = { HEALTH_ROW, POWER_ROW, EXPERIENCE_ROW },
 	portrait = { defaults = { enabled = true } },
 	-- Inside the unit frame the castbar uses the frame's border, not its own.
-	castbar = { defaults = { enabled = false, placement = "bottom", height = 18, border = { enabled = false },
+	-- playerCast: latency zone and global cooldown (Components/CastExtras.lua).
+	castbar = { playerCast = true, defaults = { enabled = false, placement = "bottom", height = 18, border = { enabled = false },
 		name = { size = 10 }, time = { size = 10 } } },
 	-- Rogues and druids (Units.COMBO_POINT_CLASSES): the target's points, on
 	-- request. The target frame shows them by default.
@@ -90,7 +91,7 @@ Units.definitions.target = {
 	defaultPosition = { point = "CENTER", x = 280, y = -160 },
 	rows = { HealthRow(26), PowerRow(12) },
 	portrait = { defaults = { enabled = true, position = "RIGHT" } },
-	castbar = ns.Util.Copy(Units.definitions.player.castbar),
+	castbar = { defaults = ns.Util.Copy(Units.definitions.player.castbar.defaults) },
 	-- Combo points are stored on the target: the player's points on this unit.
 	comboPoints = { defaults = {} },
 	auras = { defaults = {} },
@@ -117,7 +118,7 @@ Units.definitions.focus = {
 	defaultPosition = { point = "CENTER", x = -280, y = -290 },
 	rows = { HealthRow(24), PowerRow(10) },
 	portrait = { defaults = { enabled = false } },
-	castbar = ns.Util.Copy(Units.definitions.player.castbar),
+	castbar = { defaults = ns.Util.Copy(Units.definitions.player.castbar.defaults) },
 	auras = { defaults = {} },
 	sample = { name = "Jaina", lastname = "Proudmoore", level = 44, className = "Mage", class = "MAGE", isPlayer = true,
 		spell = "Frostbolt", spellIcon = [[Interface\Icons\Spell_Frost_FrostBolt02]], castTime = 2.5 },
@@ -246,6 +247,7 @@ Units.SAMPLE = {
 	comboPoints = 3, comboPointsMax = 5,
 	class = "PALADIN",
 	spell = "Flash of Light", spellIcon = [[Interface\Icons\Spell_Holy_FlashHeal]], castProgress = 0.6, castTime = 1.5,
+	castLatency = 0.15, gcdProgress = 0.4,
 	buffs = {
 		{ icon = [[Interface\Icons\Spell_Holy_WordFortitude]], duration = 3600, remaining = 1800, sourceUnit = "player", isRaid = true },
 		{ icon = [[Interface\Icons\Spell_Holy_MagicalSentry]], duration = 3600, remaining = 180, sourceUnit = "party1", isRaid = true },

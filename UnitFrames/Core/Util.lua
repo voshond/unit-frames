@@ -129,3 +129,19 @@ function Util.Clamp(value, min, max)
 	end
 	return value
 end
+
+-- A hold-then-fade-out animation on `frame` (castbar results, the global
+-- cooldown strip). Returns the group and its alpha animation.
+function Util.CreateFadeOut(frame)
+	local group = frame:CreateAnimationGroup()
+	local alpha = group:CreateAnimation("Alpha")
+	alpha:SetFromAlpha(1)
+	alpha:SetToAlpha(0)
+	return group, alpha
+end
+
+-- Seconds to hold at full opacity, then to fade out.
+function Util.SetFadeTimes(alpha, holdTime, fadeTime)
+	alpha:SetStartDelay(holdTime)
+	alpha:SetDuration(math.max(fadeTime, 0.01))
+end
