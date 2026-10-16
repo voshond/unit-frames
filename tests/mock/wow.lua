@@ -641,7 +641,15 @@ function Mock.DecorateAuraContainer(container)
 		end
 		return group
 	end
+	-- Blizzard asserts AuraUtil.IsValidFilterString on every filter string.
+	local function AssertFilter(filter)
+		local known = API.Snapshot().lua.auraFilters
+		for component in filter:gmatch("[^| ]+") do
+			assert(known[component:gsub("^!", "")], "Unknown aura filter component: '" .. component .. "'")
+		end
+	end
 	function container:AddAuraGroup(key, filter, options)
+		AssertFilter(filter)
 		-- Blizzard builds a batch up front (CustomAuraContainerConstants
 		-- .FrameCreationBatchSize), whatever the group's maximum.
 		AddFrames(self, key, filter, options, 10)
@@ -650,21 +658,21 @@ function Mock.DecorateAuraContainer(container)
 		s.layoutAspect = true
 	end
 	function container:SetAuraGroupEnabled(key, enabled) s.groups[key].enabled = enabled end
-	function container:SetAuraGroupFilterString(key, filter) s.groups[key].filter = filter end
+	function container:SetAuraGroupFilterString(key, filter) AssertFilter(filter); s.groups[key].filter = filter end
 	function container:SetAuraGroupMaxFrameCount(key, max) s.groups[key].max = max end
 	function container:SetAuraGroupLayout(key, layout) s.groups[key].layout = layout end
 	function container:SetAuraGroupCandidateFilters(key, filters) s.groups[key].candidateFilters = filters end
 	function container:SetAuraGroupSortMethod(key, method, direction) s.groups[key].sort = { method, direction } end
 	function container:AddAuraSlot(key, filter, options)
 		assert(not InCombatLockdown(), "Native aura slots must be prepared outside combat")
-		assert(filter == "HELPFUL" or filter == "HELPFUL|PLAYER", "Mock fixed slots support friendly buffs only")
+		AssertFilter(filter)
 		-- A native slot initializes exactly one button, unlike a flowing group.
 		local group = AddFrames(self, key, filter, options, 1)
 		s.slots = s.slots or {}
 		s.slots[key] = group
 		return group.frames[1]
 	end
-	function container:SetAuraSlotFilterString(key, filter) s.slots[key].filter = filter end
+	function container:SetAuraSlotFilterString(key, filter) AssertFilter(filter); s.slots[key].filter = filter end
 	function container:SetAuraSlotCandidateFilters(key, filters) s.slots[key].candidateFilters = filters end
 	function container:GetAuraGroupFrameCount(key) return #s.groups[key].frames end
 	function container:GetAuraGroupFrame(key, index) return s.groups[key].frames[index] end
