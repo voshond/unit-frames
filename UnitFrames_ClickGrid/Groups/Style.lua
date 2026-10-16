@@ -26,6 +26,8 @@ function CG:StyleSchema(kind)
 	if not self.styleSchemas[kind] then
 		local schema = UF.Components.UnitFrame.BuildSchema(UF.Units:GetSpec(self.definitions[kind]))
 		if kind == "target" then
+			-- Narrow strips are useful beside a member bar.
+			schema = UF.Schema.Override(schema, "width", { min = 20 })
 			table.insert(schema, 1, { key = "shown", type = "toggle", label = "Show member targets", default = false,
 				tooltip = "Shows a target bar beside each member, as tall as the member's bar. Hidden targets stop all unit updates." })
 		end

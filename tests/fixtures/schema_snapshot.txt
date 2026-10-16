@@ -18266,7 +18266,7 @@ definition sample.spellIcon = "Interface\\Icons\\Ability_Druid_FerociousBite"
 definition width = 150
 ## clickgrid.target
 option shown type="toggle" label="Show member targets" default=false tooltip=#04184f2b
-option width type="range" label="Width" default=85 min=60 max=600 step=1
+option width type="range" label="Width" default=85 min=20 max=600 step=1
 option spacing type="range" label="Row spacing" default=1 min=0 max=20 step=1
 option border type="group" label="Frame border" defaults={enabled=true,padding=4}
 option border.enabled type="toggle" label="Enabled" default=true
