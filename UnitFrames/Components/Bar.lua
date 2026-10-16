@@ -99,7 +99,31 @@ local LAYOUT = {
 Bar.LAYOUT = LAYOUT
 
 local SPARK_TEXTURE = [[Interface\CastingBar\UI-CastingBar-Spark]]
+Bar.SPARK_TEXTURE = SPARK_TEXTURE
 local NATIVE_LAYOUT_TEMPLATE = "BackdropTemplate,DisableUntrustedLayoutScriptsTemplate"
+
+-- Puts a spark texture at the end of a StatusBar fill texture.
+-- Fill geometry can be secret. Native anchors follow its cross-axis
+-- bounds without passing GetSize/OnSizeChanged values to texture setters.
+-- Extend the glow six units beyond either edge, with a twelve-unit width.
+function Bar.AnchorSpark(spark, fill, orientation, reverseFill)
+	local edge = LAYOUT[orientation][reverseFill].spark
+	spark:ClearAllPoints()
+	if orientation == "HORIZONTAL" then
+		spark:SetTexCoord(0, 1, 0, 1)
+		spark:SetWidth(12)
+		spark:SetPoint("TOP", fill, "TOP" .. edge, 0, 6)
+		spark:SetPoint("BOTTOM", fill, "BOTTOM" .. edge, 0, -6)
+	else
+		-- Rotate the artwork within the already horizontal spark rectangle.
+		-- SetRotation rotates the rendered rectangle too, distorting its
+		-- cross-axis span when width and height have already been swapped.
+		spark:SetTexCoord(0, 1, 1, 1, 0, 0, 1, 0)
+		spark:SetHeight(12)
+		spark:SetPoint("LEFT", fill, edge .. "LEFT", -6, 0)
+		spark:SetPoint("RIGHT", fill, edge .. "RIGHT", 6, 0)
+	end
+end
 
 function Bar.BuildSchema(spec)
 	spec = spec or {}
@@ -254,24 +278,7 @@ function Bar:OnApply(cfg)
 		end
 	end
 
-	self.spark:ClearAllPoints()
-	-- Fill geometry can be secret. Native anchors follow its cross-axis
-	-- bounds without passing GetSize/OnSizeChanged values to texture setters.
-	-- Extend the glow six units beyond either edge, with a twelve-unit width.
-	if cfg.orientation == "HORIZONTAL" then
-		self.spark:SetTexCoord(0, 1, 0, 1)
-		self.spark:SetWidth(12)
-		self.spark:SetPoint("TOP", fill, "TOP" .. layout.spark, 0, 6)
-		self.spark:SetPoint("BOTTOM", fill, "BOTTOM" .. layout.spark, 0, -6)
-	else
-		-- Rotate the artwork within the already horizontal spark rectangle.
-		-- SetRotation rotates the rendered rectangle too, distorting its
-		-- cross-axis span when width and height have already been swapped.
-		self.spark:SetTexCoord(0, 1, 1, 1, 0, 0, 1, 0)
-		self.spark:SetHeight(12)
-		self.spark:SetPoint("LEFT", fill, layout.spark .. "LEFT", -6, 0)
-		self.spark:SetPoint("RIGHT", fill, layout.spark .. "RIGHT", 6, 0)
-	end
+	Bar.AnchorSpark(self.spark, fill, cfg.orientation, cfg.reverseFill)
 	self.spark:SetShown(cfg.spark)
 
 	if self.spec.nativeLayout then
