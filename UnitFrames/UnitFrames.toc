@@ -31,6 +31,8 @@ Core\TextSources.lua
 Core\TextTemplate.lua
 Core\Formats.lua
 Core\Perf.lua
+Core\PerfSuiteReport.lua
+Core\PerfSuite.lua
 Core\Profiles.lua
 
 Components\Component.lua

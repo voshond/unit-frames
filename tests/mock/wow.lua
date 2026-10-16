@@ -1153,6 +1153,19 @@ function Mock.Install()
 		end,
 	}
 	_G.C_AddOns = {
+		GetNumAddOns = function()
+			local count = 0
+			for _ in pairs(Mock.loadedAddons) do count = count + 1 end
+			return count
+		end,
+		GetAddOnInfo = function(index)
+			local names = {}
+			for name in pairs(Mock.loadedAddons) do names[#names + 1] = name end
+			table.sort(names)
+			local name = type(index) == "number" and names[index] or index
+			if not name or Mock.loadedAddons[name] == nil then return nil end
+			return name, name, "", true, "", "INSECURE"
+		end,
 		GetAddOnMetadata = function() return "test" end,
 		LoadAddOn = function() return true end,
 		IsAddOnLoaded = function(name)
@@ -1160,6 +1173,7 @@ function Mock.Install()
 			return loaded, loaded
 		end,
 	}
+	_G.GetBuildInfo = function() return "16.0.1", "test-build", "Oct 16 2026", 16001 end
 	_G.C_UIFileAsset = { IsKnownFile = function() return true end }
 	-- Atlas metadata (AtlasInfo); tests may override entries by atlas name.
 	-- Unknown atlases return nil, like the client. Class icons default square.

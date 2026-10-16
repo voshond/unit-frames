@@ -102,6 +102,7 @@ local function ReportCounters(counters)
 end
 
 function Perf:Cancel()
+	if self.suite then self:FinishSuite("cancelled"); return end
 	if self.driver then
 		self.driver:SetScript("OnUpdate", nil)
 		self.driver:SetScript("OnEvent", nil)
@@ -235,14 +236,22 @@ local operations = {
 	end,
 }
 
--- Runs fn(...) inside an active measurement and reports it under `title`.
--- Returns whether it succeeded and the error otherwise.
-local function Run(self, title, fn, ...)
+local function Capture(self, fn, ...)
 	self.counters, self.measuring = {}, true
-	-- A diagnostic operation can fail; always retire its instrumentation.
 	local ok, result = pcall(C_AddOnProfiler.MeasureCall, fn, ...)
 	local counters = self.counters
 	self.counters, self.measuring = nil, nil
+	return ok, result, counters
+end
+
+function Perf:CaptureOperation(operation)
+	return Capture(self, assert(operations[operation], "Invalid performance operation"))
+end
+
+-- Runs fn(...) inside an active measurement and reports it under `title`.
+-- Returns whether it succeeded and the error otherwise.
+local function Run(self, title, fn, ...)
+	local ok, result, counters = Capture(self, fn, ...)
 	Divider(title)
 	if not ok then
 		ns.Logs:Error(title, result)
@@ -263,7 +272,7 @@ function Perf:Measure(operation)
 	if not run then ns:Print("measure operations: auras, units, clickgrid, preview, create, schema"); return end
 	if InCombatLockdown() then ns:Print("active measurements must wait until combat ends"); return end
 	if not ProfilerEnabled() then ns:Print("native addon profiler unavailable/disabled"); return end
-	if self.counters or self.combatArmed then ns:Print("cancel the observation window before an active measurement"); return end
+	if self.counters or self.combatArmed or self.suite then ns:Print("cancel the observation window before an active measurement"); return end
 	Run(self, "measure " .. operation, run)
 end
 
@@ -281,7 +290,7 @@ function Perf:Startup(label, fn, ...)
 		global.measureStartup = nil
 		self.startupArmed = true
 	end
-	if not self.startupArmed or self.counters or InCombatLockdown() or not ProfilerEnabled() then
+	if not self.startupArmed or self.counters or self.suite or InCombatLockdown() or not ProfilerEnabled() then
 		return fn(...)
 	end
 	local ok, err = Run(self, "startup " .. label, fn, ...)
@@ -298,6 +307,7 @@ function Perf:Command(arguments)
 	elseif command == "measure" then self:Measure(value)
 	elseif command == "startup" then self:ArmStartup()
 	elseif command == "combat" then self:Combat()
+	elseif command == "suite" then self:SuiteCommand(value)
 	elseif not command then self:Report(self:Snapshot())
 	else
 		ns:Print("/uf perf - performance snapshot")
@@ -306,5 +316,7 @@ function Perf:Command(arguments)
 		ns:Print("/uf perf cancel - cancel performance observation")
 		ns:Print("/uf perf measure <operation> - actively measure an operation")
 		ns:Print("/uf perf startup - measure startup after the next /reload")
+		ns:Print("/uf perf suite baseline - run the out-of-combat baseline suite")
+		ns:Print("/uf perf suite report - show the last saved suite report")
 	end
 end

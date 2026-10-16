@@ -107,6 +107,30 @@ dispel border registration. Like `measure create` (a ClickGrid preview), it
 retains engine widgets until reload; use fresh reloads for comparable runs.
 Diagnostics do not load Workbench and stay off until requested.
 
+For an automatic out-of-combat baseline, run `/uf perf suite baseline` with
+the native addon profiler enabled. It measures schema resolution and unit
+refreshes, plus ClickGrid refreshes if that addon is already prepared. Each
+operation gets two discarded warmups and ten recorded calls, spaced across
+frames at least 0.1 seconds apart. Keep your settings, targets and preview
+state stable during the run. Combat, roster changes, settings edits and
+profiler deactivation stop the suite; `/uf perf cancel` also stops it.
+
+`/uf perf suite report` shows the latest suite result, including its completion
+status, median/slowest timings, allocation summaries and total call counts.
+The bounded structured report in `UnitFramesDB.global.perfSuiteReport` also
+contains individual samples, exclusive phase costs, deallocations, client and
+addon version/commit metadata, loaded addons, profile/settings, group size,
+Workbench state, and before/after profiler snapshots. `/reload` writes it to
+the normal `UnitFrames.lua` SavedVariables file; each suite attempt replaces
+the previous report, including cancelled or failed attempts. Development
+copies may have an unspecified commit in their TOC metadata.
+
+Compare runs with the same client, profile, unit/group and preview conditions.
+These are synchronous refresh costs; deferred rendering and real combat work
+need separate observations with `/uf perf combat`. Creation tests (`auras`
+and `create`) remain separate because their engine widgets survive release
+until reload. The suite does not create synthetic combat or load extra addons.
+
 `/uf logs` shows the last 10 addon-owned errors and 20 general diagnostic
 entries, retained across reloads in `UnitFramesLogs` with Unix timestamps.
 `/uf logs clear` clears them. Caught aura restyle failures and active measurement
