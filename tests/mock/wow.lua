@@ -612,6 +612,11 @@ function Mock.DecorateAuraContainer(container)
 					local name = self.__state.dispelName or "Magic"
 					local color = opts.customDispelColorMap and opts.customDispelColorMap[name]
 						or AuraUtil.GetAuraBorderColor(name)
+					if opts.customDispelColorCurve then
+						local ids = { None = 0, Magic = 1, Curse = 2, Disease = 3, Poison = 4,
+							Stealth = 5, Invisibility = 6, All = 7, Enrage = 9, Bleed = 11 }
+						color = opts.customDispelColorCurve:Evaluate(ids[name] or 12)
+					end
 					texture:SetVertexColor(color:GetRGBA())
 					texture:Show()
 				end
@@ -698,7 +703,9 @@ local function NewColor(r, g, b, a)
 end
 
 local function NewCurve(isColor)
-	local curve = { points = {}, isColor = isColor }
+	local curve = { points = {}, isColor = isColor, curveType = 0 }
+	function curve:SetType(curveType) self.curveType = curveType end
+	function curve:GetType() return self.curveType end
 	function curve:AddPoint(x, y)
 		self.points[#self.points + 1] = { x, y }
 		table.sort(self.points, function(a, b) return a[1] < b[1] end)
@@ -717,6 +724,9 @@ local function NewCurve(isColor)
 		for i = 2, #points do
 			local p0, p1 = points[i - 1], points[i]
 			if x <= p1[1] then
+				if self.curveType == Enum.LuaCurveType.Step then
+					return x == p1[1] and p1[2] or p0[2]
+				end
 				local t = (x - p0[1]) / (p1[1] - p0[1])
 				local a, b = p0[2], p1[2]
 				if type(a) == "table" then
@@ -1073,7 +1083,7 @@ function Mock.Install()
 		"UnitDamageAbsorbClampMode", "UnitMaximumHealthMode", "StatusBarTimerDirection",
 		"SecondsFormatterAbbreviation", "SecondsFormatterInterval", "SecondsFormatterRounding",
 		"SecondsFormatterIntervalWhitespace", "AddOnProfilerMetric", "PowerType", "CompressionMethod",
-		"CompressionLevel" }) do
+		"CompressionLevel", "LuaCurveType" }) do
 		local values = assert(API.Snapshot().enums[name], "Enum." .. name .. " is not a client enum")
 		_G.Enum[name] = {}
 		for field, value in pairs(values) do _G.Enum[name][field] = value end
