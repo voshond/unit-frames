@@ -17886,7 +17886,7 @@ option castbar.colors.success type="color" label="Succeeded" inherit="colors.cas
 option castbar.background type="color" label="Background" default={0,0,0,0} tooltip=#0297179c
 option castbar.holdTime type="range" label="Hold after finish (s)" default=0.4 min=0 max=2 step=0.1
 option castbar.fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
-option auras type="group" label="Buffs & debuffs" defaults={buffs={alignment="end",filter="HELPFUL|PLAYER",gap=1,max=4,maxDuration=120,position="top",size=14},countSize=8,debuffs={gap=1,max=3,position="bottom",size=16,sort="unitDebuff"},durationPosition="CENTER",durationSize=8}
+option auras type="group" label="Buffs & debuffs" defaults={buffs={alignment="end",filter="HELPFUL|PLAYER|RAID_IN_COMBAT",gap=1,max=4,maxDuration=120,position="top",size=14},countSize=8,debuffs={gap=1,max=3,position="bottom",size=16,sort="unitDebuff"},durationPosition="CENTER",durationSize=8}
 option auras.enabled type="toggle" label="Enabled" default=true
 option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
 option auras.showDuration type="toggle" label="Show time left" default=true
@@ -18014,7 +18014,7 @@ option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=
 option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#d4c36bb1
 option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
-option categoryAuras type="group" label="Crowd control & defensives" defaults={}
+option categoryAuras type="group" label="Crowd control & defensives" defaults={anchor="CENTER",size=18}
 option categoryAuras.enabled type="toggle" label="Enabled" default=true
 option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#6ef27e72
 option categoryAuras.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784 hidden
@@ -18104,7 +18104,7 @@ default auras.border.padding = 2
 default auras.border.size = 8
 default auras.buffs.alignment = "end"
 default auras.buffs.enabled = true
-default auras.buffs.filter = "HELPFUL|PLAYER"
+default auras.buffs.filter = "HELPFUL|PLAYER|RAID_IN_COMBAT"
 default auras.buffs.gap = 1
 default auras.buffs.growth = "forward"
 default auras.buffs.lineSize = 0
@@ -18215,7 +18215,7 @@ default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
 default castbar.time.shadow = true
 default castbar.time.size = 9
-default categoryAuras.anchor = "PORTRAIT"
+default categoryAuras.anchor = "CENTER"
 default categoryAuras.bigDefensive = true
 default categoryAuras.bigDefensiveColor = {1,0.82,0,1}
 default categoryAuras.border.background = "None"
@@ -18242,7 +18242,7 @@ default categoryAuras.order = 1
 default categoryAuras.showCount = true
 default categoryAuras.showDuration = true
 default categoryAuras.showSwipeEdge = true
-default categoryAuras.size = 22
+default categoryAuras.size = 18
 default categoryAuras.swipe = "normal"
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
@@ -18728,7 +18728,7 @@ resolved auras.border.padding = 2
 resolved auras.border.size = 8
 resolved auras.buffs.alignment = "end"
 resolved auras.buffs.enabled = true
-resolved auras.buffs.filter = "HELPFUL|PLAYER"
+resolved auras.buffs.filter = "HELPFUL|PLAYER|RAID_IN_COMBAT"
 resolved auras.buffs.gap = 1
 resolved auras.buffs.growth = "forward"
 resolved auras.buffs.lineSize = 0
@@ -18865,7 +18865,7 @@ resolved castbar.time.justifyH = "RIGHT"
 resolved castbar.time.outline = ""
 resolved castbar.time.shadow = true
 resolved castbar.time.size = 9
-resolved categoryAuras.anchor = "PORTRAIT"
+resolved categoryAuras.anchor = "CENTER"
 resolved categoryAuras.bigDefensive = true
 resolved categoryAuras.bigDefensiveColor = {1,0.82,0,1}
 resolved categoryAuras.border.background = "None"
@@ -18896,7 +18896,7 @@ resolved categoryAuras.order = 1
 resolved categoryAuras.showCount = true
 resolved categoryAuras.showDuration = true
 resolved categoryAuras.showSwipeEdge = true
-resolved categoryAuras.size = 22
+resolved categoryAuras.size = 18
 resolved categoryAuras.swipe = "normal"
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
@@ -19366,7 +19366,7 @@ definition auraBar.collapsible = true
 definition auraBar.defaults = {}
 definition auras.clickThrough = true
 definition auras.defaults.buffs.alignment = "end"
-definition auras.defaults.buffs.filter = "HELPFUL|PLAYER"
+definition auras.defaults.buffs.filter = "HELPFUL|PLAYER|RAID_IN_COMBAT"
 definition auras.defaults.buffs.gap = 1
 definition auras.defaults.buffs.max = 4
 definition auras.defaults.buffs.maxDuration = 120
@@ -19386,7 +19386,9 @@ definition castbar.defaults.height = 14
 definition castbar.defaults.name.size = 9
 definition castbar.defaults.placement = "bottom"
 definition castbar.defaults.time.size = 9
-definition categoryAuras.defaults = {}
+definition categoryAuras.defaults.anchor = "CENTER"
+definition categoryAuras.defaults.size = 18
+definition categoryAuras.noMouse = true
 definition defaultPosition.point = "CENTER"
 definition defaultPosition.x = -90
 definition defaultPosition.y = -235
@@ -20178,7 +20180,7 @@ option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=
 option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#d4c36bb1
 option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
-option categoryAuras type="group" label="Crowd control & defensives" defaults={}
+option categoryAuras type="group" label="Crowd control & defensives" defaults={enabled=false}
 option categoryAuras.enabled type="toggle" label="Enabled" default=true
 option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#6ef27e72
 option categoryAuras.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784 hidden
@@ -20393,7 +20395,7 @@ default categoryAuras.crowdControl = true
 default categoryAuras.crowdControlColor = {1,0.25,0.25,1}
 default categoryAuras.durationPosition = "CENTER"
 default categoryAuras.durationSize = 10
-default categoryAuras.enabled = true
+default categoryAuras.enabled = false
 default categoryAuras.externalDefensive = true
 default categoryAuras.externalDefensiveColor = {0.3,0.75,1,1}
 default categoryAuras.fontOutline = "OUTLINE"
@@ -21041,7 +21043,7 @@ resolved categoryAuras.crowdControl = true
 resolved categoryAuras.crowdControlColor = {1,0.25,0.25,1}
 resolved categoryAuras.durationPosition = "CENTER"
 resolved categoryAuras.durationSize = 10
-resolved categoryAuras.enabled = true
+resolved categoryAuras.enabled = false
 resolved categoryAuras.externalDefensive = true
 resolved categoryAuras.externalDefensiveColor = {0.3,0.75,1,1}
 resolved categoryAuras.font = "Friz Quadrata TT"
@@ -21533,7 +21535,8 @@ definition castbar.defaults.height = 14
 definition castbar.defaults.name.size = 9
 definition castbar.defaults.placement = "bottom"
 definition castbar.defaults.time.size = 9
-definition categoryAuras.defaults = {}
+definition categoryAuras.defaults.enabled = false
+definition categoryAuras.noMouse = true
 definition defaultPosition.point = "CENTER"
 definition defaultPosition.x = 510
 definition defaultPosition.y = -160
@@ -21657,6 +21660,7 @@ option indicators.threat type="toggle" label="Threat" default=false
 option indicators.phase type="toggle" label="Different phase" default=true
 option indicators.size type="range" label="Other status icon size" default=14 min=8 max=32 step=1
 option indicators.private type="toggle" label="Private encounter auras" default=true
+option indicators.privatePosition type="select" label="Private aura position" default="RIGHT" values=#6a8c7abd tooltip=#59d63234 hidden
 option indicators.privateSize type="range" label="Private aura size" default=18 min=10 max=40 step=1
 option slots type="group" label="Fixed friendly buff slots"
 option slots.slot1 type="group" label="Friendly buff slot 1" defaults={offsetX=0}
@@ -21712,6 +21716,7 @@ default indicators.leaderPosition = "TOP"
 default indicators.leaderSize = 14
 default indicators.phase = true
 default indicators.private = true
+default indicators.privatePosition = "RIGHT"
 default indicators.privateSize = 18
 default indicators.ready = true
 default indicators.readyGap = 2
@@ -21831,6 +21836,7 @@ resolved indicators.leaderPosition = "TOP"
 resolved indicators.leaderSize = 14
 resolved indicators.phase = true
 resolved indicators.private = true
+resolved indicators.privatePosition = "RIGHT"
 resolved indicators.privateSize = 18
 resolved indicators.ready = true
 resolved indicators.readyGap = 2

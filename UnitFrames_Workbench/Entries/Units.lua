@@ -143,9 +143,9 @@ local function RegisterUnit(unit)
 			tooltip = "The Debuffs style's filter and Maximum shown still apply." },
 		{ key = "categoryAuras", type = "select", label = "Crowd control & defensives", default = "off", values = {
 			{ "off", "None" }, { "crowdControl", "Crowd control" }, { "bigDefensive", "Big defensive" },
-			{ "externalDefensive", "External defensive" }, { "important", "Important buff" }, { "all", "All at once" },
+			{ "externalDefensive", "External defensive" }, { "important", "Important buff" }, { "all", "All (highest on top)" },
 			{ "cycle", "Cycle" },
-		}, tooltip = "Sample auras for the Crowd control & defensives icons. All at once shows the highest enabled category on top. Cycle shows each category in turn in Animated previews, then none; Static shows them all." },
+		}, tooltip = "Sample auras for the Crowd control & defensives icons. All stacks every sample; the highest enabled category covers the others. Cycle shows each category in turn in Animated previews, then none; Static shows them all." },
 	}
 	if unit == "player" then
 		schema[#schema + 1] = { key = "resting", type = "toggle", label = "Resting", default = false,

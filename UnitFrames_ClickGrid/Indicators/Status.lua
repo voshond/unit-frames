@@ -31,6 +31,9 @@ local PLACED = {
 	{ "summon", { "SummonIndicator" } },
 }
 
+-- Private aura row offsets from the cell edge it sits on.
+local PRIVATE_INSETS = { RIGHT = { -2, 0 }, LEFT = { 2, 0 }, TOP = { 0, -2 }, BOTTOM = { 0, 2 }, CENTER = { 0, 0 } }
+
 -- Spirit healer artwork used by the original resurrection indicator.
 local DEATH_ATLAS = "RaidFrame-Icon-Rez"
 local RESURRECTION_COLOR = CreateColor(0, 1, 0, 1)
@@ -184,7 +187,6 @@ function Status:OnCreate(button, spec)
 	end
 
 	local private = CreateFrame("Frame", nil, overlay)
-	private:SetPoint("CENTER", button, "CENTER", 0, 0)
 	-- Pre-create all addon anchors. Blizzard owns the actual aura art.
 	private.num, private.maxCols = 3, 3
 	for i = 1, 3 do
@@ -257,6 +259,9 @@ function Status:OnApply(cfg)
 	local private = self.PrivateAuras
 	private.size, private.spacing = cfg.privateSize, 2
 	private:SetSize(3 * (cfg.privateSize + 2), cfg.privateSize)
+	local inset = PRIVATE_INSETS[cfg.privatePosition]
+	private:ClearAllPoints()
+	private:SetPoint(cfg.privatePosition, button, cfg.privatePosition, inset[1], inset[2])
 	for i = 1, 3 do
 		private[i]:SetSize(cfg.privateSize, cfg.privateSize)
 		private[i]:ClearAllPoints()

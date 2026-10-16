@@ -12,11 +12,13 @@ local member = UF.Units:Derive("pet", {
 	castbar = { defaults = { enabled = false } },
 	auras = { clickThrough = true },
 	raidTarget = { defaults = { size = 12 } },
+	-- Mouse-transparent so hover and mouseover casts still reach the member.
+	categoryAuras = { noMouse = true, defaults = { anchor = "CENTER", size = 18 } },
 })
 -- Replaces the pet's aura defaults as a whole.
 member.auras.defaults = {
 	durationPosition = "CENTER", durationSize = 8, countSize = 8,
-	buffs = { filter = "HELPFUL|PLAYER", maxDuration = 120, max = 4, size = 14, position = "top", gap = 1, alignment = "end" },
+	buffs = { filter = "HELPFUL|PLAYER|RAID_IN_COMBAT", maxDuration = 120, max = 4, size = 14, position = "top", gap = 1, alignment = "end" },
 	debuffs = { sort = "unitDebuff", max = 3, size = 16, position = "bottom", gap = 1 },
 }
 CG.definitions = {
@@ -25,6 +27,7 @@ CG.definitions = {
 		width = 85,
 		rows = { health = { defaults = { height = 28 } }, power = { defaults = { enabled = false } } },
 		auras = { clickThrough = true },
+		categoryAuras = { noMouse = true, defaults = { enabled = false } },
 	}),
 }
 -- Group bars show status icons instead of the unit frames' PvP flag and elite
@@ -122,6 +125,11 @@ CG.IndicatorSchema = UF.Schema.Concat(
 		{ key = "phase", type = "toggle", label = "Different phase", default = true },
 		{ key = "size", type = "range", label = "Other status icon size", min = 8, max = 32, step = 1, default = 14 },
 		{ key = "private", type = "toggle", label = "Private encounter auras", default = true },
+		{ key = "privatePosition", type = "select", label = "Private aura position", default = "RIGHT",
+			values = { { "RIGHT", "Inside right" }, { "LEFT", "Inside left" }, { "TOP", "Inside top" },
+				{ "BOTTOM", "Inside bottom" }, { "CENTER", "Centre" } },
+			hidden = function(c) return not c.private end,
+			tooltip = "The centre belongs to Crowd control & defensives by default." },
 		{ key = "privateSize", type = "range", label = "Private aura size", min = 10, max = 40, step = 1, default = 18 },
 	})
 

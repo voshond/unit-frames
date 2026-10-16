@@ -285,7 +285,7 @@ positions join the frame's edge and portrait icons and keep their place even
 while nothing is shown. **Colour border by category** tints each icon frame
 with its category colour. Time-left text stays inside the icon.
 
-**Preview data > Crowd control & defensives** shows one category, all at once,
+**Preview data > Crowd control & defensives** shows one category, **All (highest on top)**,
 or **Cycle**: Animated previews show each category in turn, then none; Static
 previews show them all. **None** (the default) keeps the portrait visible.
 
