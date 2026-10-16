@@ -70,6 +70,18 @@ local function Values(unit, d, healthPct, time)
 	v.castProgress = d.castProgress / 100
 	-- Animated: one global cooldown every 1.5 seconds.
 	if time then v.gcdProgress = time % 1.5 / 1.5 end
+	-- Animated cycling: each category for two seconds, then none.
+	local categories = UF.Components.CategoryAuras.CATEGORIES
+	local cycled = time and categories[math.floor(time / 2) % (#categories + 1) + 1]
+	v.categoryAuras = {}
+	for key, aura in pairs(UF.Units.CATEGORY_SAMPLES) do
+		local cycle = d.categoryAuras == "cycle" and (not time or cycled and cycled.key == key)
+		if cycle or d.categoryAuras == "all" or d.categoryAuras == key then
+			aura = UF.Util.Copy(aura)
+			if time then aura.remaining = (aura.remaining - time - 1) % aura.duration + 1 end
+			v.categoryAuras[key] = aura
+		end
+	end
 	for _, kind in ipairs({ "buffs", "debuffs" }) do
 		local samples = v[kind]
 		v[kind] = {}
@@ -129,6 +141,11 @@ local function RegisterUnit(unit)
 			tooltip = "The Buffs style's filter and Maximum shown still apply." },
 		{ key = "debuffsCount", type = "range", label = "Sample debuffs", min = 0, max = 40, step = 1, default = 5,
 			tooltip = "The Debuffs style's filter and Maximum shown still apply." },
+		{ key = "categoryAuras", type = "select", label = "Crowd control & defensives", default = "off", values = {
+			{ "off", "None" }, { "crowdControl", "Crowd control" }, { "bigDefensive", "Big defensive" },
+			{ "externalDefensive", "External defensive" }, { "important", "Important buff" }, { "all", "All (highest on top)" },
+			{ "cycle", "Cycle" },
+		}, tooltip = "Sample auras for the Crowd control & defensives icons. All stacks every sample; the highest enabled category covers the others. Cycle shows each category in turn in Animated previews, then none; Static shows them all." },
 	}
 	if unit == "player" then
 		schema[#schema + 1] = { key = "resting", type = "toggle", label = "Resting", default = false,

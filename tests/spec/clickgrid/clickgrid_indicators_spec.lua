@@ -324,6 +324,7 @@ describe("ClickGrid status indicators", function()
 		assert.same({ "CENTER", frame, "BOTTOMRIGHT", 0, 0 }, Anchor(leader:GetParent()))
 		CG.Config:Set("indicators.readyPosition", "CENTER")
 		assert.same({ "CENTER", frame, "CENTER", 0, 0 }, Anchor(ready:GetParent()))
+		assert.same({ "CENTER", frame, "CENTER", 0, 0 }, Anchor(frame.uf:GetPart("categoryAuras"):GetFrame()))
 		assert.same({ "CENTER", frame, "BOTTOMRIGHT", 0, 0 }, Anchor(leader:GetParent()))
 	end)
 

@@ -267,6 +267,16 @@ end
 
 oUF:AddElement("UF_AuraBar", UpdateAuraBar, EnableAuraBar, DisableAuras)
 
+local function UpdateCategoryAuras(self)
+	if self.__unit then self.UF_CategoryAuras:SetUnit(self.__unit) end
+end
+
+local function EnableCategoryAuras(self)
+	return self.UF_CategoryAuras ~= nil
+end
+
+oUF:AddElement("UF_CategoryAuras", UpdateCategoryAuras, EnableCategoryAuras, DisableAuras)
+
 -- UF_Range: group checks are event-driven; spell checks also poll because
 -- SPELL_RANGE_CHECK_UPDATE only describes the player's current target, not
 -- focus/target-of-target. Never inspect a live range boolean in Lua

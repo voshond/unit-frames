@@ -171,6 +171,13 @@ function Preview:Values(index, value)
 			value.readyCheckTime, value.readyCheckAnswerAt = self.time, 0.4 + ((index - 1) % 5) * 0.5
 		end
 	end
+	-- Mixed category samples: one category or none per member; Animated
+	-- moves them along every two seconds.
+	local categories = UF.Components.CategoryAuras.CATEGORIES
+	local step = index + (self.data.source == "animated" and math.floor(self.time / 2) or 0)
+	local category = self.data.categoryAuras ~= false and categories[step % (#categories + 2) + 1]
+	value.categoryAuras = {}
+	if category then value.categoryAuras[category.key] = UF.Util.Copy(UF.Units.CATEGORY_SAMPLES[category.key]) end
 	-- A few plain examples for the artwork already in UnitFrames; unrelated
 	-- sample icons must not match a fixed slot by a made-up default ID.
 	for i, aura in ipairs(value.buffs) do

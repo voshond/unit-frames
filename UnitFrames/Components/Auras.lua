@@ -23,10 +23,20 @@ Auras.DURATION_POSITIONS = AuraIcon.DURATION_POSITIONS
 
 Auras.BUFF_FILTERS = {
 	{ "HELPFUL", "All buffs" }, { "HELPFUL|PLAYER", "Cast by me" }, { "HELPFUL|RAID", "Raid buffs" },
+	{ "HELPFUL|PLAYER|RAID_IN_COMBAT", "My heals over time" },
+	{ "HELPFUL|BIG_DEFENSIVE", "Big defensives" }, { "HELPFUL|EXTERNAL_DEFENSIVE", "External defensives" },
+	{ "HELPFUL|IMPORTANT", "Important" },
 }
 
 Auras.DEBUFF_FILTERS = {
 	{ "HARMFUL", "All debuffs" }, { "HARMFUL|PLAYER", "Cast by me" }, { "HARMFUL|RAID", "Dispellable by me" },
+	{ "HARMFUL|CROWD_CONTROL", "Crowd control" },
+}
+
+-- Plain sample flags named after native filter components.
+Auras.SAMPLE_FILTER_FLAGS = {
+	RAID = "isRaid", RAID_IN_COMBAT = "isRaidInCombat", CROWD_CONTROL = "isCrowdControl",
+	BIG_DEFENSIVE = "isBigDefensive", EXTERNAL_DEFENSIVE = "isExternalDefensive", IMPORTANT = "isImportant",
 }
 
 local function GroupSchema(label, filters, size, position)
@@ -390,9 +400,12 @@ function Auras:ShowSample(values)
 	self:RenderSamples()
 end
 
-local function MatchesSampleFilter(aura, filter, maxDuration)
-	if filter:find("PLAYER", 1, true) and aura.sourceUnit ~= "player" then return false end
-	if filter:find("RAID", 1, true) and not aura.isRaid then return false end
+function Auras.MatchesSampleFilter(aura, filter, maxDuration)
+	for component in filter:gmatch("[^|]+") do
+		if component == "PLAYER" and aura.sourceUnit ~= "player" then return false end
+		local flag = Auras.SAMPLE_FILTER_FLAGS[component]
+		if flag and not aura[flag] then return false end
+	end
 	if maxDuration > 0 and ((aura.duration or 0) == 0 or aura.duration > maxDuration) then return false end
 	return true
 end
@@ -406,7 +419,7 @@ function Auras:RenderSamples()
 		if cfg.enabled then
 			for _, aura in ipairs(self:GetSampleOrder(kind)) do
 				if #elements >= self:GetSampleLimit(kind) then break end
-				if MatchesSampleFilter(aura, cfg.filter, cfg.maxDuration) then
+				if Auras.MatchesSampleFilter(aura, cfg.filter, cfg.maxDuration) then
 					local index = #elements + 1
 					local button = container.ufButtons[index]
 					if not button then

@@ -67,14 +67,18 @@ client after adding it. For local builds and incremental updates, see the
   and this addon's binding editor does not control live actions.
 - Independent native buff/debuff rows, own-cast/dispel filters, timers,
   stacks, borders, duration limits and native sorting. The default buff row
-  favors short-duration own-cast effects, not long maintenance buffs.
+  shows your own heals over time (`HELPFUL|PLAYER|RAID_IN_COMBAT`) up to two
+  minutes long, not long maintenance buffs. A saved filter choice is kept.
+- A centre icon for crowd control, big and external defensives (crowd control
+  on top), mouse-transparent so hover and mouseover casts reach the member.
 - Three configurable fixed friendly-buff slots, each accepting comma-separated
   numeric aura spell IDs, own/any caster, position and size. Multiple IDs share
   a slot; Blizzard chooses the earliest-expiring matching effect. These are
   buff slots, not arbitrary friendly-debuff encounter rules.
 - Role, leader/assistant, ready check, dead/ghost, incoming resurrection,
   summon, phase, optional threat and native private-aura anchors, subject to
-  client support.
+  client support. Private auras sit inside the right edge by default
+  (**Private aura position**), leaving the centre to crowd control.
 - Ready check bar tints on member bars (**Member bars > Ready check**): grey
   while waiting, then green or red, holding and fading after the check with
   the ready check icon. Without a group, **Preview data > Ready check** shows

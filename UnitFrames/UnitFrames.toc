@@ -53,6 +53,7 @@ Components\RaidTarget.lua
 Components\PvPFlag.lua
 Components\Classification.lua
 Components\ReadyCheckIcon.lua
+Components\CategoryAuras.lua
 Components\UnitFrameLayout.lua
 Components\ReadyCheck.lua
 Components\UnitFrame.lua

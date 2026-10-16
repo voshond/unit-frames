@@ -817,7 +817,7 @@ option border.inset type="range" label="Background inset" default=3 min=0 max=16
 option border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 option buffs type="group" label="Buffs"
 option buffs.enabled type="toggle" label="Show buffs" default=true
-option buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
 option buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -833,7 +833,7 @@ option buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 st
 option buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
 option debuffs type="group" label="Debuffs"
 option debuffs.enabled type="toggle" label="Show debuffs" default=true
-option debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
 option debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -992,7 +992,7 @@ option border.inset type="range" label="Background inset" default=3 min=0 max=16
 option border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 option buffs type="group" label="Buffs"
 option buffs.enabled type="toggle" label="Show buffs" default=true
-option buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
 option buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -1002,7 +1002,7 @@ option buffs.size type="range" label="Icon width" default=32 min=10 max=64 step=
 option buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
 option debuffs type="group" label="Debuffs"
 option debuffs.enabled type="toggle" label="Show debuffs" default=true
-option debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
 option debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -2131,7 +2131,7 @@ option auras.border.inset type="range" label="Background inset" default=3 min=0 
 option auras.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -2147,7 +2147,7 @@ option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=
 option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
 option auras.debuffs type="group" label="Debuffs"
 option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
 option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -2205,7 +2205,7 @@ option auraBar.border.inset type="range" label="Background inset" default=3 min=
 option auraBar.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
-option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -2215,7 +2215,7 @@ option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=
 option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
 option auraBar.debuffs type="group" label="Debuffs"
 option auraBar.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
 option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -2256,6 +2256,41 @@ option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 
 option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1
 option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option categoryAuras type="group" label="Crowd control & defensives" defaults={}
+option categoryAuras.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#a4540463
+option categoryAuras.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784 hidden
+option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
+option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
+option categoryAuras.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
+option categoryAuras.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
+option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true
+option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true
+option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true
+option categoryAuras.important type="toggle" label="Important buffs" default=false
+option categoryAuras.categoryBorder type="toggle" label="Colour border by category" default=true tooltip=#679c1cc6
+option categoryAuras.crowdControlColor type="color" label="Crowd control colour" default={1,0.25,0.25,1} hidden
+option categoryAuras.bigDefensiveColor type="color" label="Big defensives colour" default={1,0.82,0,1} hidden
+option categoryAuras.externalDefensiveColor type="color" label="External defensives colour" default={0.3,0.75,1,1} hidden
+option categoryAuras.importantColor type="color" label="Important buffs colour" default={0.75,0.45,1,1} hidden
+option categoryAuras.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
+option categoryAuras.showSwipeEdge type="toggle" label="Show swipe edge" default=true
+option categoryAuras.showDuration type="toggle" label="Show time left" default=true
+option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" values=#17bf8dad tooltip=#cab5c2f4
+option categoryAuras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
+option categoryAuras.showCount type="toggle" label="Show stacks" default=true
+option categoryAuras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option categoryAuras.font type="font" label="Font" inherit="font"
+option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
+option categoryAuras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
+option categoryAuras.border.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.border.border type="border" label="Border" inherit="borderTexture"
+option categoryAuras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option categoryAuras.border.color type="color" label="Border colour" inherit="borderColor"
+option categoryAuras.border.background type="background" label="Background" inherit="backgroundTexture"
+option categoryAuras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option categoryAuras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option categoryAuras.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 default auraBar.border.background = "None"
 default auraBar.border.enabled = true
 default auraBar.border.inset = 1
@@ -2432,6 +2467,35 @@ default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
 default castbar.time.shadow = true
 default castbar.time.size = 10
+default categoryAuras.anchor = "PORTRAIT"
+default categoryAuras.bigDefensive = true
+default categoryAuras.bigDefensiveColor = {1,0.82,0,1}
+default categoryAuras.border.background = "None"
+default categoryAuras.border.enabled = true
+default categoryAuras.border.inset = 1
+default categoryAuras.border.padding = 2
+default categoryAuras.border.size = 8
+default categoryAuras.categoryBorder = true
+default categoryAuras.countSize = 10
+default categoryAuras.crowdControl = true
+default categoryAuras.crowdControlColor = {1,0.25,0.25,1}
+default categoryAuras.durationPosition = "CENTER"
+default categoryAuras.durationSize = 10
+default categoryAuras.enabled = true
+default categoryAuras.externalDefensive = true
+default categoryAuras.externalDefensiveColor = {0.3,0.75,1,1}
+default categoryAuras.fontOutline = "OUTLINE"
+default categoryAuras.gap = 2
+default categoryAuras.important = false
+default categoryAuras.importantColor = {0.75,0.45,1,1}
+default categoryAuras.offsetX = 0
+default categoryAuras.offsetY = 0
+default categoryAuras.order = 1
+default categoryAuras.showCount = true
+default categoryAuras.showDuration = true
+default categoryAuras.showSwipeEdge = true
+default categoryAuras.size = 22
+default categoryAuras.swipe = "normal"
 default classification.anchor = "TOPRIGHT"
 default classification.enabled = true
 default classification.gap = 2
@@ -3295,6 +3359,39 @@ resolved castbar.time.justifyH = "RIGHT"
 resolved castbar.time.outline = ""
 resolved castbar.time.shadow = true
 resolved castbar.time.size = 10
+resolved categoryAuras.anchor = "PORTRAIT"
+resolved categoryAuras.bigDefensive = true
+resolved categoryAuras.bigDefensiveColor = {1,0.82,0,1}
+resolved categoryAuras.border.background = "None"
+resolved categoryAuras.border.backgroundColor = {0,0,0,0.75}
+resolved categoryAuras.border.border = "Blizzard Tooltip"
+resolved categoryAuras.border.color = {0.5,0.5,0.5,1}
+resolved categoryAuras.border.enabled = true
+resolved categoryAuras.border.inset = 1
+resolved categoryAuras.border.padding = 2
+resolved categoryAuras.border.size = 8
+resolved categoryAuras.categoryBorder = true
+resolved categoryAuras.countSize = 10
+resolved categoryAuras.crowdControl = true
+resolved categoryAuras.crowdControlColor = {1,0.25,0.25,1}
+resolved categoryAuras.durationPosition = "CENTER"
+resolved categoryAuras.durationSize = 10
+resolved categoryAuras.enabled = true
+resolved categoryAuras.externalDefensive = true
+resolved categoryAuras.externalDefensiveColor = {0.3,0.75,1,1}
+resolved categoryAuras.font = "Friz Quadrata TT"
+resolved categoryAuras.fontOutline = "OUTLINE"
+resolved categoryAuras.gap = 2
+resolved categoryAuras.important = false
+resolved categoryAuras.importantColor = {0.75,0.45,1,1}
+resolved categoryAuras.offsetX = 0
+resolved categoryAuras.offsetY = 0
+resolved categoryAuras.order = 1
+resolved categoryAuras.showCount = true
+resolved categoryAuras.showDuration = true
+resolved categoryAuras.showSwipeEdge = true
+resolved categoryAuras.size = 22
+resolved categoryAuras.swipe = "normal"
 resolved classification.anchor = "TOPRIGHT"
 resolved classification.enabled = true
 resolved classification.gap = 2
@@ -4029,6 +4126,7 @@ definition castbar.defaults.name.size = 10
 definition castbar.defaults.placement = "bottom"
 definition castbar.defaults.time.size = 10
 definition castbar.playerCast = true
+definition categoryAuras.defaults = {}
 definition classification.defaults = {}
 definition comboPoints.defaults.enabled = false
 definition defaultPosition.point = "CENTER"
@@ -4712,7 +4810,7 @@ option auras.border.inset type="range" label="Background inset" default=3 min=0 
 option auras.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -4728,7 +4826,7 @@ option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=
 option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
 option auras.debuffs type="group" label="Debuffs"
 option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
 option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -4786,7 +4884,7 @@ option auraBar.border.inset type="range" label="Background inset" default=3 min=
 option auraBar.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
-option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -4796,7 +4894,7 @@ option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=
 option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
 option auraBar.debuffs type="group" label="Debuffs"
 option auraBar.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
 option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -4837,6 +4935,41 @@ option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 
 option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1
 option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option categoryAuras type="group" label="Crowd control & defensives" defaults={}
+option categoryAuras.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#a4540463
+option categoryAuras.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784 hidden
+option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
+option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
+option categoryAuras.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
+option categoryAuras.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
+option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true
+option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true
+option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true
+option categoryAuras.important type="toggle" label="Important buffs" default=false
+option categoryAuras.categoryBorder type="toggle" label="Colour border by category" default=true tooltip=#679c1cc6
+option categoryAuras.crowdControlColor type="color" label="Crowd control colour" default={1,0.25,0.25,1} hidden
+option categoryAuras.bigDefensiveColor type="color" label="Big defensives colour" default={1,0.82,0,1} hidden
+option categoryAuras.externalDefensiveColor type="color" label="External defensives colour" default={0.3,0.75,1,1} hidden
+option categoryAuras.importantColor type="color" label="Important buffs colour" default={0.75,0.45,1,1} hidden
+option categoryAuras.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
+option categoryAuras.showSwipeEdge type="toggle" label="Show swipe edge" default=true
+option categoryAuras.showDuration type="toggle" label="Show time left" default=true
+option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" values=#17bf8dad tooltip=#cab5c2f4
+option categoryAuras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
+option categoryAuras.showCount type="toggle" label="Show stacks" default=true
+option categoryAuras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option categoryAuras.font type="font" label="Font" inherit="font"
+option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
+option categoryAuras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
+option categoryAuras.border.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.border.border type="border" label="Border" inherit="borderTexture"
+option categoryAuras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option categoryAuras.border.color type="color" label="Border colour" inherit="borderColor"
+option categoryAuras.border.background type="background" label="Background" inherit="backgroundTexture"
+option categoryAuras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option categoryAuras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option categoryAuras.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 default auraBar.border.background = "None"
 default auraBar.border.enabled = true
 default auraBar.border.inset = 1
@@ -5003,6 +5136,35 @@ default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
 default castbar.time.shadow = true
 default castbar.time.size = 9
+default categoryAuras.anchor = "PORTRAIT"
+default categoryAuras.bigDefensive = true
+default categoryAuras.bigDefensiveColor = {1,0.82,0,1}
+default categoryAuras.border.background = "None"
+default categoryAuras.border.enabled = true
+default categoryAuras.border.inset = 1
+default categoryAuras.border.padding = 2
+default categoryAuras.border.size = 8
+default categoryAuras.categoryBorder = true
+default categoryAuras.countSize = 10
+default categoryAuras.crowdControl = true
+default categoryAuras.crowdControlColor = {1,0.25,0.25,1}
+default categoryAuras.durationPosition = "CENTER"
+default categoryAuras.durationSize = 10
+default categoryAuras.enabled = true
+default categoryAuras.externalDefensive = true
+default categoryAuras.externalDefensiveColor = {0.3,0.75,1,1}
+default categoryAuras.fontOutline = "OUTLINE"
+default categoryAuras.gap = 2
+default categoryAuras.important = false
+default categoryAuras.importantColor = {0.75,0.45,1,1}
+default categoryAuras.offsetX = 0
+default categoryAuras.offsetY = 0
+default categoryAuras.order = 1
+default categoryAuras.showCount = true
+default categoryAuras.showDuration = true
+default categoryAuras.showSwipeEdge = true
+default categoryAuras.size = 22
+default categoryAuras.swipe = "normal"
 default classification.anchor = "TOPRIGHT"
 default classification.enabled = true
 default classification.gap = 2
@@ -5646,6 +5808,39 @@ resolved castbar.time.justifyH = "RIGHT"
 resolved castbar.time.outline = ""
 resolved castbar.time.shadow = true
 resolved castbar.time.size = 9
+resolved categoryAuras.anchor = "PORTRAIT"
+resolved categoryAuras.bigDefensive = true
+resolved categoryAuras.bigDefensiveColor = {1,0.82,0,1}
+resolved categoryAuras.border.background = "None"
+resolved categoryAuras.border.backgroundColor = {0,0,0,0.75}
+resolved categoryAuras.border.border = "Blizzard Tooltip"
+resolved categoryAuras.border.color = {0.5,0.5,0.5,1}
+resolved categoryAuras.border.enabled = true
+resolved categoryAuras.border.inset = 1
+resolved categoryAuras.border.padding = 2
+resolved categoryAuras.border.size = 8
+resolved categoryAuras.categoryBorder = true
+resolved categoryAuras.countSize = 10
+resolved categoryAuras.crowdControl = true
+resolved categoryAuras.crowdControlColor = {1,0.25,0.25,1}
+resolved categoryAuras.durationPosition = "CENTER"
+resolved categoryAuras.durationSize = 10
+resolved categoryAuras.enabled = true
+resolved categoryAuras.externalDefensive = true
+resolved categoryAuras.externalDefensiveColor = {0.3,0.75,1,1}
+resolved categoryAuras.font = "Friz Quadrata TT"
+resolved categoryAuras.fontOutline = "OUTLINE"
+resolved categoryAuras.gap = 2
+resolved categoryAuras.important = false
+resolved categoryAuras.importantColor = {0.75,0.45,1,1}
+resolved categoryAuras.offsetX = 0
+resolved categoryAuras.offsetY = 0
+resolved categoryAuras.order = 1
+resolved categoryAuras.showCount = true
+resolved categoryAuras.showDuration = true
+resolved categoryAuras.showSwipeEdge = true
+resolved categoryAuras.size = 22
+resolved categoryAuras.swipe = "normal"
 resolved classification.anchor = "TOPRIGHT"
 resolved classification.enabled = true
 resolved classification.gap = 2
@@ -6147,6 +6342,7 @@ definition castbar.defaults.height = 14
 definition castbar.defaults.name.size = 9
 definition castbar.defaults.placement = "bottom"
 definition castbar.defaults.time.size = 9
+definition categoryAuras.defaults = {}
 definition classification.defaults = {}
 definition defaultPosition.point = "CENTER"
 definition defaultPosition.x = -90
@@ -6877,7 +7073,7 @@ option auras.border.inset type="range" label="Background inset" default=3 min=0 
 option auras.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -6893,7 +7089,7 @@ option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=
 option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
 option auras.debuffs type="group" label="Debuffs"
 option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
 option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -6951,7 +7147,7 @@ option auraBar.border.inset type="range" label="Background inset" default=3 min=
 option auraBar.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
-option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -6961,7 +7157,7 @@ option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=
 option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
 option auraBar.debuffs type="group" label="Debuffs"
 option auraBar.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
 option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -7002,6 +7198,41 @@ option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 
 option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1
 option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option categoryAuras type="group" label="Crowd control & defensives" defaults={}
+option categoryAuras.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#a4540463
+option categoryAuras.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784 hidden
+option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
+option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
+option categoryAuras.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
+option categoryAuras.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
+option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true
+option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true
+option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true
+option categoryAuras.important type="toggle" label="Important buffs" default=false
+option categoryAuras.categoryBorder type="toggle" label="Colour border by category" default=true tooltip=#679c1cc6
+option categoryAuras.crowdControlColor type="color" label="Crowd control colour" default={1,0.25,0.25,1} hidden
+option categoryAuras.bigDefensiveColor type="color" label="Big defensives colour" default={1,0.82,0,1} hidden
+option categoryAuras.externalDefensiveColor type="color" label="External defensives colour" default={0.3,0.75,1,1} hidden
+option categoryAuras.importantColor type="color" label="Important buffs colour" default={0.75,0.45,1,1} hidden
+option categoryAuras.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
+option categoryAuras.showSwipeEdge type="toggle" label="Show swipe edge" default=true
+option categoryAuras.showDuration type="toggle" label="Show time left" default=true
+option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" values=#17bf8dad tooltip=#cab5c2f4
+option categoryAuras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
+option categoryAuras.showCount type="toggle" label="Show stacks" default=true
+option categoryAuras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option categoryAuras.font type="font" label="Font" inherit="font"
+option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
+option categoryAuras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
+option categoryAuras.border.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.border.border type="border" label="Border" inherit="borderTexture"
+option categoryAuras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option categoryAuras.border.color type="color" label="Border colour" inherit="borderColor"
+option categoryAuras.border.background type="background" label="Background" inherit="backgroundTexture"
+option categoryAuras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option categoryAuras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option categoryAuras.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 default auraBar.border.background = "None"
 default auraBar.border.enabled = true
 default auraBar.border.inset = 1
@@ -7168,6 +7399,35 @@ default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
 default castbar.time.shadow = true
 default castbar.time.size = 10
+default categoryAuras.anchor = "PORTRAIT"
+default categoryAuras.bigDefensive = true
+default categoryAuras.bigDefensiveColor = {1,0.82,0,1}
+default categoryAuras.border.background = "None"
+default categoryAuras.border.enabled = true
+default categoryAuras.border.inset = 1
+default categoryAuras.border.padding = 2
+default categoryAuras.border.size = 8
+default categoryAuras.categoryBorder = true
+default categoryAuras.countSize = 10
+default categoryAuras.crowdControl = true
+default categoryAuras.crowdControlColor = {1,0.25,0.25,1}
+default categoryAuras.durationPosition = "CENTER"
+default categoryAuras.durationSize = 10
+default categoryAuras.enabled = true
+default categoryAuras.externalDefensive = true
+default categoryAuras.externalDefensiveColor = {0.3,0.75,1,1}
+default categoryAuras.fontOutline = "OUTLINE"
+default categoryAuras.gap = 2
+default categoryAuras.important = false
+default categoryAuras.importantColor = {0.75,0.45,1,1}
+default categoryAuras.offsetX = 0
+default categoryAuras.offsetY = 0
+default categoryAuras.order = 1
+default categoryAuras.showCount = true
+default categoryAuras.showDuration = true
+default categoryAuras.showSwipeEdge = true
+default categoryAuras.size = 22
+default categoryAuras.swipe = "normal"
 default classification.anchor = "TOPRIGHT"
 default classification.enabled = true
 default classification.gap = 2
@@ -7832,6 +8092,39 @@ resolved castbar.time.justifyH = "RIGHT"
 resolved castbar.time.outline = ""
 resolved castbar.time.shadow = true
 resolved castbar.time.size = 10
+resolved categoryAuras.anchor = "PORTRAIT"
+resolved categoryAuras.bigDefensive = true
+resolved categoryAuras.bigDefensiveColor = {1,0.82,0,1}
+resolved categoryAuras.border.background = "None"
+resolved categoryAuras.border.backgroundColor = {0,0,0,0.75}
+resolved categoryAuras.border.border = "Blizzard Tooltip"
+resolved categoryAuras.border.color = {0.5,0.5,0.5,1}
+resolved categoryAuras.border.enabled = true
+resolved categoryAuras.border.inset = 1
+resolved categoryAuras.border.padding = 2
+resolved categoryAuras.border.size = 8
+resolved categoryAuras.categoryBorder = true
+resolved categoryAuras.countSize = 10
+resolved categoryAuras.crowdControl = true
+resolved categoryAuras.crowdControlColor = {1,0.25,0.25,1}
+resolved categoryAuras.durationPosition = "CENTER"
+resolved categoryAuras.durationSize = 10
+resolved categoryAuras.enabled = true
+resolved categoryAuras.externalDefensive = true
+resolved categoryAuras.externalDefensiveColor = {0.3,0.75,1,1}
+resolved categoryAuras.font = "Friz Quadrata TT"
+resolved categoryAuras.fontOutline = "OUTLINE"
+resolved categoryAuras.gap = 2
+resolved categoryAuras.important = false
+resolved categoryAuras.importantColor = {0.75,0.45,1,1}
+resolved categoryAuras.offsetX = 0
+resolved categoryAuras.offsetY = 0
+resolved categoryAuras.order = 1
+resolved categoryAuras.showCount = true
+resolved categoryAuras.showDuration = true
+resolved categoryAuras.showSwipeEdge = true
+resolved categoryAuras.size = 22
+resolved categoryAuras.swipe = "normal"
 resolved classification.anchor = "TOPRIGHT"
 resolved classification.enabled = true
 resolved classification.gap = 2
@@ -8355,6 +8648,7 @@ definition castbar.defaults.height = 18
 definition castbar.defaults.name.size = 10
 definition castbar.defaults.placement = "bottom"
 definition castbar.defaults.time.size = 10
+definition categoryAuras.defaults = {}
 definition classification.defaults = {}
 definition comboPoints.defaults = {}
 definition defaultPosition.point = "CENTER"
@@ -9051,7 +9345,7 @@ option auras.border.inset type="range" label="Background inset" default=3 min=0 
 option auras.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -9067,7 +9361,7 @@ option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=
 option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
 option auras.debuffs type="group" label="Debuffs"
 option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
 option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -9125,7 +9419,7 @@ option auraBar.border.inset type="range" label="Background inset" default=3 min=
 option auraBar.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
-option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -9135,7 +9429,7 @@ option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=
 option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
 option auraBar.debuffs type="group" label="Debuffs"
 option auraBar.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
 option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -9176,6 +9470,41 @@ option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 
 option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1
 option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option categoryAuras type="group" label="Crowd control & defensives" defaults={}
+option categoryAuras.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#a4540463
+option categoryAuras.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784 hidden
+option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
+option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
+option categoryAuras.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
+option categoryAuras.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
+option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true
+option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true
+option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true
+option categoryAuras.important type="toggle" label="Important buffs" default=false
+option categoryAuras.categoryBorder type="toggle" label="Colour border by category" default=true tooltip=#679c1cc6
+option categoryAuras.crowdControlColor type="color" label="Crowd control colour" default={1,0.25,0.25,1} hidden
+option categoryAuras.bigDefensiveColor type="color" label="Big defensives colour" default={1,0.82,0,1} hidden
+option categoryAuras.externalDefensiveColor type="color" label="External defensives colour" default={0.3,0.75,1,1} hidden
+option categoryAuras.importantColor type="color" label="Important buffs colour" default={0.75,0.45,1,1} hidden
+option categoryAuras.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
+option categoryAuras.showSwipeEdge type="toggle" label="Show swipe edge" default=true
+option categoryAuras.showDuration type="toggle" label="Show time left" default=true
+option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" values=#17bf8dad tooltip=#cab5c2f4
+option categoryAuras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
+option categoryAuras.showCount type="toggle" label="Show stacks" default=true
+option categoryAuras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option categoryAuras.font type="font" label="Font" inherit="font"
+option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
+option categoryAuras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
+option categoryAuras.border.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.border.border type="border" label="Border" inherit="borderTexture"
+option categoryAuras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option categoryAuras.border.color type="color" label="Border colour" inherit="borderColor"
+option categoryAuras.border.background type="background" label="Background" inherit="backgroundTexture"
+option categoryAuras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option categoryAuras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option categoryAuras.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 default auraBar.border.background = "None"
 default auraBar.border.enabled = true
 default auraBar.border.inset = 1
@@ -9342,6 +9671,35 @@ default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
 default castbar.time.shadow = true
 default castbar.time.size = 9
+default categoryAuras.anchor = "PORTRAIT"
+default categoryAuras.bigDefensive = true
+default categoryAuras.bigDefensiveColor = {1,0.82,0,1}
+default categoryAuras.border.background = "None"
+default categoryAuras.border.enabled = true
+default categoryAuras.border.inset = 1
+default categoryAuras.border.padding = 2
+default categoryAuras.border.size = 8
+default categoryAuras.categoryBorder = true
+default categoryAuras.countSize = 10
+default categoryAuras.crowdControl = true
+default categoryAuras.crowdControlColor = {1,0.25,0.25,1}
+default categoryAuras.durationPosition = "CENTER"
+default categoryAuras.durationSize = 10
+default categoryAuras.enabled = true
+default categoryAuras.externalDefensive = true
+default categoryAuras.externalDefensiveColor = {0.3,0.75,1,1}
+default categoryAuras.fontOutline = "OUTLINE"
+default categoryAuras.gap = 2
+default categoryAuras.important = false
+default categoryAuras.importantColor = {0.75,0.45,1,1}
+default categoryAuras.offsetX = 0
+default categoryAuras.offsetY = 0
+default categoryAuras.order = 1
+default categoryAuras.showCount = true
+default categoryAuras.showDuration = true
+default categoryAuras.showSwipeEdge = true
+default categoryAuras.size = 22
+default categoryAuras.swipe = "normal"
 default classification.anchor = "TOPRIGHT"
 default classification.enabled = true
 default classification.gap = 2
@@ -9985,6 +10343,39 @@ resolved castbar.time.justifyH = "RIGHT"
 resolved castbar.time.outline = ""
 resolved castbar.time.shadow = true
 resolved castbar.time.size = 9
+resolved categoryAuras.anchor = "PORTRAIT"
+resolved categoryAuras.bigDefensive = true
+resolved categoryAuras.bigDefensiveColor = {1,0.82,0,1}
+resolved categoryAuras.border.background = "None"
+resolved categoryAuras.border.backgroundColor = {0,0,0,0.75}
+resolved categoryAuras.border.border = "Blizzard Tooltip"
+resolved categoryAuras.border.color = {0.5,0.5,0.5,1}
+resolved categoryAuras.border.enabled = true
+resolved categoryAuras.border.inset = 1
+resolved categoryAuras.border.padding = 2
+resolved categoryAuras.border.size = 8
+resolved categoryAuras.categoryBorder = true
+resolved categoryAuras.countSize = 10
+resolved categoryAuras.crowdControl = true
+resolved categoryAuras.crowdControlColor = {1,0.25,0.25,1}
+resolved categoryAuras.durationPosition = "CENTER"
+resolved categoryAuras.durationSize = 10
+resolved categoryAuras.enabled = true
+resolved categoryAuras.externalDefensive = true
+resolved categoryAuras.externalDefensiveColor = {0.3,0.75,1,1}
+resolved categoryAuras.font = "Friz Quadrata TT"
+resolved categoryAuras.fontOutline = "OUTLINE"
+resolved categoryAuras.gap = 2
+resolved categoryAuras.important = false
+resolved categoryAuras.importantColor = {0.75,0.45,1,1}
+resolved categoryAuras.offsetX = 0
+resolved categoryAuras.offsetY = 0
+resolved categoryAuras.order = 1
+resolved categoryAuras.showCount = true
+resolved categoryAuras.showDuration = true
+resolved categoryAuras.showSwipeEdge = true
+resolved categoryAuras.size = 22
+resolved categoryAuras.swipe = "normal"
 resolved classification.anchor = "TOPRIGHT"
 resolved classification.enabled = true
 resolved classification.gap = 2
@@ -10487,6 +10878,7 @@ definition castbar.defaults.height = 14
 definition castbar.defaults.name.size = 9
 definition castbar.defaults.placement = "bottom"
 definition castbar.defaults.time.size = 9
+definition categoryAuras.defaults = {}
 definition classification.defaults = {}
 definition defaultPosition.point = "CENTER"
 definition defaultPosition.x = 510
@@ -11177,7 +11569,7 @@ option auras.border.inset type="range" label="Background inset" default=3 min=0 
 option auras.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -11193,7 +11585,7 @@ option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=
 option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
 option auras.debuffs type="group" label="Debuffs"
 option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
 option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -11251,7 +11643,7 @@ option auraBar.border.inset type="range" label="Background inset" default=3 min=
 option auraBar.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
-option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -11261,7 +11653,7 @@ option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=
 option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
 option auraBar.debuffs type="group" label="Debuffs"
 option auraBar.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
 option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -11302,6 +11694,41 @@ option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 
 option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1
 option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option categoryAuras type="group" label="Crowd control & defensives" defaults={}
+option categoryAuras.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#a4540463
+option categoryAuras.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784 hidden
+option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
+option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
+option categoryAuras.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
+option categoryAuras.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
+option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true
+option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true
+option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true
+option categoryAuras.important type="toggle" label="Important buffs" default=false
+option categoryAuras.categoryBorder type="toggle" label="Colour border by category" default=true tooltip=#679c1cc6
+option categoryAuras.crowdControlColor type="color" label="Crowd control colour" default={1,0.25,0.25,1} hidden
+option categoryAuras.bigDefensiveColor type="color" label="Big defensives colour" default={1,0.82,0,1} hidden
+option categoryAuras.externalDefensiveColor type="color" label="External defensives colour" default={0.3,0.75,1,1} hidden
+option categoryAuras.importantColor type="color" label="Important buffs colour" default={0.75,0.45,1,1} hidden
+option categoryAuras.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
+option categoryAuras.showSwipeEdge type="toggle" label="Show swipe edge" default=true
+option categoryAuras.showDuration type="toggle" label="Show time left" default=true
+option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" values=#17bf8dad tooltip=#cab5c2f4
+option categoryAuras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
+option categoryAuras.showCount type="toggle" label="Show stacks" default=true
+option categoryAuras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option categoryAuras.font type="font" label="Font" inherit="font"
+option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
+option categoryAuras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
+option categoryAuras.border.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.border.border type="border" label="Border" inherit="borderTexture"
+option categoryAuras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option categoryAuras.border.color type="color" label="Border colour" inherit="borderColor"
+option categoryAuras.border.background type="background" label="Background" inherit="backgroundTexture"
+option categoryAuras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option categoryAuras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option categoryAuras.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 default auraBar.border.background = "None"
 default auraBar.border.enabled = true
 default auraBar.border.inset = 1
@@ -11468,6 +11895,35 @@ default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
 default castbar.time.shadow = true
 default castbar.time.size = 10
+default categoryAuras.anchor = "PORTRAIT"
+default categoryAuras.bigDefensive = true
+default categoryAuras.bigDefensiveColor = {1,0.82,0,1}
+default categoryAuras.border.background = "None"
+default categoryAuras.border.enabled = true
+default categoryAuras.border.inset = 1
+default categoryAuras.border.padding = 2
+default categoryAuras.border.size = 8
+default categoryAuras.categoryBorder = true
+default categoryAuras.countSize = 10
+default categoryAuras.crowdControl = true
+default categoryAuras.crowdControlColor = {1,0.25,0.25,1}
+default categoryAuras.durationPosition = "CENTER"
+default categoryAuras.durationSize = 10
+default categoryAuras.enabled = true
+default categoryAuras.externalDefensive = true
+default categoryAuras.externalDefensiveColor = {0.3,0.75,1,1}
+default categoryAuras.fontOutline = "OUTLINE"
+default categoryAuras.gap = 2
+default categoryAuras.important = false
+default categoryAuras.importantColor = {0.75,0.45,1,1}
+default categoryAuras.offsetX = 0
+default categoryAuras.offsetY = 0
+default categoryAuras.order = 1
+default categoryAuras.showCount = true
+default categoryAuras.showDuration = true
+default categoryAuras.showSwipeEdge = true
+default categoryAuras.size = 22
+default categoryAuras.swipe = "normal"
 default classification.anchor = "TOPRIGHT"
 default classification.enabled = true
 default classification.gap = 2
@@ -12109,6 +12565,39 @@ resolved castbar.time.justifyH = "RIGHT"
 resolved castbar.time.outline = ""
 resolved castbar.time.shadow = true
 resolved castbar.time.size = 10
+resolved categoryAuras.anchor = "PORTRAIT"
+resolved categoryAuras.bigDefensive = true
+resolved categoryAuras.bigDefensiveColor = {1,0.82,0,1}
+resolved categoryAuras.border.background = "None"
+resolved categoryAuras.border.backgroundColor = {0,0,0,0.75}
+resolved categoryAuras.border.border = "Blizzard Tooltip"
+resolved categoryAuras.border.color = {0.5,0.5,0.5,1}
+resolved categoryAuras.border.enabled = true
+resolved categoryAuras.border.inset = 1
+resolved categoryAuras.border.padding = 2
+resolved categoryAuras.border.size = 8
+resolved categoryAuras.categoryBorder = true
+resolved categoryAuras.countSize = 10
+resolved categoryAuras.crowdControl = true
+resolved categoryAuras.crowdControlColor = {1,0.25,0.25,1}
+resolved categoryAuras.durationPosition = "CENTER"
+resolved categoryAuras.durationSize = 10
+resolved categoryAuras.enabled = true
+resolved categoryAuras.externalDefensive = true
+resolved categoryAuras.externalDefensiveColor = {0.3,0.75,1,1}
+resolved categoryAuras.font = "Friz Quadrata TT"
+resolved categoryAuras.fontOutline = "OUTLINE"
+resolved categoryAuras.gap = 2
+resolved categoryAuras.important = false
+resolved categoryAuras.importantColor = {0.75,0.45,1,1}
+resolved categoryAuras.offsetX = 0
+resolved categoryAuras.offsetY = 0
+resolved categoryAuras.order = 1
+resolved categoryAuras.showCount = true
+resolved categoryAuras.showDuration = true
+resolved categoryAuras.showSwipeEdge = true
+resolved categoryAuras.size = 22
+resolved categoryAuras.swipe = "normal"
 resolved classification.anchor = "TOPRIGHT"
 resolved classification.enabled = true
 resolved classification.gap = 2
@@ -12604,6 +13093,7 @@ definition castbar.defaults.height = 18
 definition castbar.defaults.name.size = 10
 definition castbar.defaults.placement = "bottom"
 definition castbar.defaults.time.size = 10
+definition categoryAuras.defaults = {}
 definition classification.defaults = {}
 definition defaultPosition.point = "CENTER"
 definition defaultPosition.x = -280
@@ -13293,7 +13783,7 @@ option auras.border.inset type="range" label="Background inset" default=3 min=0 
 option auras.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -13309,7 +13799,7 @@ option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=
 option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
 option auras.debuffs type="group" label="Debuffs"
 option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
 option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -13367,7 +13857,7 @@ option auraBar.border.inset type="range" label="Background inset" default=3 min=
 option auraBar.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
-option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -13377,7 +13867,7 @@ option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=
 option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
 option auraBar.debuffs type="group" label="Debuffs"
 option auraBar.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
 option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -13418,6 +13908,41 @@ option readyCheckIcon.gap type="range" label="Gap to next icon" default=2 min=0 
 option readyCheckIcon.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1
 option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option categoryAuras type="group" label="Crowd control & defensives" defaults={}
+option categoryAuras.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#a4540463
+option categoryAuras.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784 hidden
+option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
+option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
+option categoryAuras.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
+option categoryAuras.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
+option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true
+option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true
+option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true
+option categoryAuras.important type="toggle" label="Important buffs" default=false
+option categoryAuras.categoryBorder type="toggle" label="Colour border by category" default=true tooltip=#679c1cc6
+option categoryAuras.crowdControlColor type="color" label="Crowd control colour" default={1,0.25,0.25,1} hidden
+option categoryAuras.bigDefensiveColor type="color" label="Big defensives colour" default={1,0.82,0,1} hidden
+option categoryAuras.externalDefensiveColor type="color" label="External defensives colour" default={0.3,0.75,1,1} hidden
+option categoryAuras.importantColor type="color" label="Important buffs colour" default={0.75,0.45,1,1} hidden
+option categoryAuras.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
+option categoryAuras.showSwipeEdge type="toggle" label="Show swipe edge" default=true
+option categoryAuras.showDuration type="toggle" label="Show time left" default=true
+option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" values=#17bf8dad tooltip=#cab5c2f4
+option categoryAuras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
+option categoryAuras.showCount type="toggle" label="Show stacks" default=true
+option categoryAuras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option categoryAuras.font type="font" label="Font" inherit="font"
+option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
+option categoryAuras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
+option categoryAuras.border.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.border.border type="border" label="Border" inherit="borderTexture"
+option categoryAuras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option categoryAuras.border.color type="color" label="Border colour" inherit="borderColor"
+option categoryAuras.border.background type="background" label="Background" inherit="backgroundTexture"
+option categoryAuras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option categoryAuras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option categoryAuras.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 default auraBar.border.background = "None"
 default auraBar.border.enabled = true
 default auraBar.border.inset = 1
@@ -13584,6 +14109,35 @@ default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
 default castbar.time.shadow = true
 default castbar.time.size = 9
+default categoryAuras.anchor = "PORTRAIT"
+default categoryAuras.bigDefensive = true
+default categoryAuras.bigDefensiveColor = {1,0.82,0,1}
+default categoryAuras.border.background = "None"
+default categoryAuras.border.enabled = true
+default categoryAuras.border.inset = 1
+default categoryAuras.border.padding = 2
+default categoryAuras.border.size = 8
+default categoryAuras.categoryBorder = true
+default categoryAuras.countSize = 10
+default categoryAuras.crowdControl = true
+default categoryAuras.crowdControlColor = {1,0.25,0.25,1}
+default categoryAuras.durationPosition = "CENTER"
+default categoryAuras.durationSize = 10
+default categoryAuras.enabled = true
+default categoryAuras.externalDefensive = true
+default categoryAuras.externalDefensiveColor = {0.3,0.75,1,1}
+default categoryAuras.fontOutline = "OUTLINE"
+default categoryAuras.gap = 2
+default categoryAuras.important = false
+default categoryAuras.importantColor = {0.75,0.45,1,1}
+default categoryAuras.offsetX = 0
+default categoryAuras.offsetY = 0
+default categoryAuras.order = 1
+default categoryAuras.showCount = true
+default categoryAuras.showDuration = true
+default categoryAuras.showSwipeEdge = true
+default categoryAuras.size = 22
+default categoryAuras.swipe = "normal"
 default classification.anchor = "TOPRIGHT"
 default classification.enabled = true
 default classification.gap = 2
@@ -14227,6 +14781,39 @@ resolved castbar.time.justifyH = "RIGHT"
 resolved castbar.time.outline = ""
 resolved castbar.time.shadow = true
 resolved castbar.time.size = 9
+resolved categoryAuras.anchor = "PORTRAIT"
+resolved categoryAuras.bigDefensive = true
+resolved categoryAuras.bigDefensiveColor = {1,0.82,0,1}
+resolved categoryAuras.border.background = "None"
+resolved categoryAuras.border.backgroundColor = {0,0,0,0.75}
+resolved categoryAuras.border.border = "Blizzard Tooltip"
+resolved categoryAuras.border.color = {0.5,0.5,0.5,1}
+resolved categoryAuras.border.enabled = true
+resolved categoryAuras.border.inset = 1
+resolved categoryAuras.border.padding = 2
+resolved categoryAuras.border.size = 8
+resolved categoryAuras.categoryBorder = true
+resolved categoryAuras.countSize = 10
+resolved categoryAuras.crowdControl = true
+resolved categoryAuras.crowdControlColor = {1,0.25,0.25,1}
+resolved categoryAuras.durationPosition = "CENTER"
+resolved categoryAuras.durationSize = 10
+resolved categoryAuras.enabled = true
+resolved categoryAuras.externalDefensive = true
+resolved categoryAuras.externalDefensiveColor = {0.3,0.75,1,1}
+resolved categoryAuras.font = "Friz Quadrata TT"
+resolved categoryAuras.fontOutline = "OUTLINE"
+resolved categoryAuras.gap = 2
+resolved categoryAuras.important = false
+resolved categoryAuras.importantColor = {0.75,0.45,1,1}
+resolved categoryAuras.offsetX = 0
+resolved categoryAuras.offsetY = 0
+resolved categoryAuras.order = 1
+resolved categoryAuras.showCount = true
+resolved categoryAuras.showDuration = true
+resolved categoryAuras.showSwipeEdge = true
+resolved categoryAuras.size = 22
+resolved categoryAuras.swipe = "normal"
 resolved classification.anchor = "TOPRIGHT"
 resolved classification.enabled = true
 resolved classification.gap = 2
@@ -14729,6 +15316,7 @@ definition castbar.defaults.height = 14
 definition castbar.defaults.name.size = 9
 definition castbar.defaults.placement = "bottom"
 definition castbar.defaults.time.size = 9
+definition categoryAuras.defaults = {}
 definition classification.defaults = {}
 definition defaultPosition.point = "CENTER"
 definition defaultPosition.x = -60
@@ -17298,7 +17886,7 @@ option castbar.colors.success type="color" label="Succeeded" inherit="colors.cas
 option castbar.background type="color" label="Background" default={0,0,0,0} tooltip=#0297179c
 option castbar.holdTime type="range" label="Hold after finish (s)" default=0.4 min=0 max=2 step=0.1
 option castbar.fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
-option auras type="group" label="Buffs & debuffs" defaults={buffs={alignment="end",filter="HELPFUL|PLAYER",gap=1,max=4,maxDuration=120,position="top",size=14},countSize=8,debuffs={gap=1,max=3,position="bottom",size=16,sort="unitDebuff"},durationPosition="CENTER",durationSize=8}
+option auras type="group" label="Buffs & debuffs" defaults={buffs={alignment="end",filter="HELPFUL|PLAYER|RAID_IN_COMBAT",gap=1,max=4,maxDuration=120,position="top",size=14},countSize=8,debuffs={gap=1,max=3,position="bottom",size=16,sort="unitDebuff"},durationPosition="CENTER",durationSize=8}
 option auras.enabled type="toggle" label="Enabled" default=true
 option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
 option auras.showDuration type="toggle" label="Show time left" default=true
@@ -17326,7 +17914,7 @@ option auras.border.inset type="range" label="Background inset" default=3 min=0 
 option auras.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -17342,7 +17930,7 @@ option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=
 option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
 option auras.debuffs type="group" label="Debuffs"
 option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
 option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -17400,7 +17988,7 @@ option auraBar.border.inset type="range" label="Background inset" default=3 min=
 option auraBar.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
-option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -17410,7 +17998,7 @@ option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=
 option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
 option auraBar.debuffs type="group" label="Debuffs"
 option auraBar.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
 option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -17426,6 +18014,41 @@ option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=
 option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#d4c36bb1
 option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option categoryAuras type="group" label="Crowd control & defensives" defaults={anchor="CENTER",size=18}
+option categoryAuras.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#a4540463
+option categoryAuras.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784 hidden
+option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
+option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
+option categoryAuras.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
+option categoryAuras.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
+option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true
+option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true
+option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true
+option categoryAuras.important type="toggle" label="Important buffs" default=false
+option categoryAuras.categoryBorder type="toggle" label="Colour border by category" default=true tooltip=#679c1cc6
+option categoryAuras.crowdControlColor type="color" label="Crowd control colour" default={1,0.25,0.25,1} hidden
+option categoryAuras.bigDefensiveColor type="color" label="Big defensives colour" default={1,0.82,0,1} hidden
+option categoryAuras.externalDefensiveColor type="color" label="External defensives colour" default={0.3,0.75,1,1} hidden
+option categoryAuras.importantColor type="color" label="Important buffs colour" default={0.75,0.45,1,1} hidden
+option categoryAuras.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
+option categoryAuras.showSwipeEdge type="toggle" label="Show swipe edge" default=true
+option categoryAuras.showDuration type="toggle" label="Show time left" default=true
+option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" values=#17bf8dad tooltip=#cab5c2f4
+option categoryAuras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
+option categoryAuras.showCount type="toggle" label="Show stacks" default=true
+option categoryAuras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option categoryAuras.font type="font" label="Font" inherit="font"
+option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
+option categoryAuras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
+option categoryAuras.border.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.border.border type="border" label="Border" inherit="borderTexture"
+option categoryAuras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option categoryAuras.border.color type="color" label="Border colour" inherit="borderColor"
+option categoryAuras.border.background type="background" label="Background" inherit="backgroundTexture"
+option categoryAuras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option categoryAuras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option categoryAuras.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 default auraBar.border.background = "None"
 default auraBar.border.enabled = true
 default auraBar.border.inset = 1
@@ -17481,7 +18104,7 @@ default auras.border.padding = 2
 default auras.border.size = 8
 default auras.buffs.alignment = "end"
 default auras.buffs.enabled = true
-default auras.buffs.filter = "HELPFUL|PLAYER"
+default auras.buffs.filter = "HELPFUL|PLAYER|RAID_IN_COMBAT"
 default auras.buffs.gap = 1
 default auras.buffs.growth = "forward"
 default auras.buffs.lineSize = 0
@@ -17592,6 +18215,35 @@ default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
 default castbar.time.shadow = true
 default castbar.time.size = 9
+default categoryAuras.anchor = "CENTER"
+default categoryAuras.bigDefensive = true
+default categoryAuras.bigDefensiveColor = {1,0.82,0,1}
+default categoryAuras.border.background = "None"
+default categoryAuras.border.enabled = true
+default categoryAuras.border.inset = 1
+default categoryAuras.border.padding = 2
+default categoryAuras.border.size = 8
+default categoryAuras.categoryBorder = true
+default categoryAuras.countSize = 10
+default categoryAuras.crowdControl = true
+default categoryAuras.crowdControlColor = {1,0.25,0.25,1}
+default categoryAuras.durationPosition = "CENTER"
+default categoryAuras.durationSize = 10
+default categoryAuras.enabled = true
+default categoryAuras.externalDefensive = true
+default categoryAuras.externalDefensiveColor = {0.3,0.75,1,1}
+default categoryAuras.fontOutline = "OUTLINE"
+default categoryAuras.gap = 2
+default categoryAuras.important = false
+default categoryAuras.importantColor = {0.75,0.45,1,1}
+default categoryAuras.offsetX = 0
+default categoryAuras.offsetY = 0
+default categoryAuras.order = 1
+default categoryAuras.showCount = true
+default categoryAuras.showDuration = true
+default categoryAuras.showSwipeEdge = true
+default categoryAuras.size = 18
+default categoryAuras.swipe = "normal"
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -18076,7 +18728,7 @@ resolved auras.border.padding = 2
 resolved auras.border.size = 8
 resolved auras.buffs.alignment = "end"
 resolved auras.buffs.enabled = true
-resolved auras.buffs.filter = "HELPFUL|PLAYER"
+resolved auras.buffs.filter = "HELPFUL|PLAYER|RAID_IN_COMBAT"
 resolved auras.buffs.gap = 1
 resolved auras.buffs.growth = "forward"
 resolved auras.buffs.lineSize = 0
@@ -18213,6 +18865,39 @@ resolved castbar.time.justifyH = "RIGHT"
 resolved castbar.time.outline = ""
 resolved castbar.time.shadow = true
 resolved castbar.time.size = 9
+resolved categoryAuras.anchor = "CENTER"
+resolved categoryAuras.bigDefensive = true
+resolved categoryAuras.bigDefensiveColor = {1,0.82,0,1}
+resolved categoryAuras.border.background = "None"
+resolved categoryAuras.border.backgroundColor = {0,0,0,0.75}
+resolved categoryAuras.border.border = "Blizzard Tooltip"
+resolved categoryAuras.border.color = {0.5,0.5,0.5,1}
+resolved categoryAuras.border.enabled = true
+resolved categoryAuras.border.inset = 1
+resolved categoryAuras.border.padding = 2
+resolved categoryAuras.border.size = 8
+resolved categoryAuras.categoryBorder = true
+resolved categoryAuras.countSize = 10
+resolved categoryAuras.crowdControl = true
+resolved categoryAuras.crowdControlColor = {1,0.25,0.25,1}
+resolved categoryAuras.durationPosition = "CENTER"
+resolved categoryAuras.durationSize = 10
+resolved categoryAuras.enabled = true
+resolved categoryAuras.externalDefensive = true
+resolved categoryAuras.externalDefensiveColor = {0.3,0.75,1,1}
+resolved categoryAuras.font = "Friz Quadrata TT"
+resolved categoryAuras.fontOutline = "OUTLINE"
+resolved categoryAuras.gap = 2
+resolved categoryAuras.important = false
+resolved categoryAuras.importantColor = {0.75,0.45,1,1}
+resolved categoryAuras.offsetX = 0
+resolved categoryAuras.offsetY = 0
+resolved categoryAuras.order = 1
+resolved categoryAuras.showCount = true
+resolved categoryAuras.showDuration = true
+resolved categoryAuras.showSwipeEdge = true
+resolved categoryAuras.size = 18
+resolved categoryAuras.swipe = "normal"
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -18681,7 +19366,7 @@ definition auraBar.collapsible = true
 definition auraBar.defaults = {}
 definition auras.clickThrough = true
 definition auras.defaults.buffs.alignment = "end"
-definition auras.defaults.buffs.filter = "HELPFUL|PLAYER"
+definition auras.defaults.buffs.filter = "HELPFUL|PLAYER|RAID_IN_COMBAT"
 definition auras.defaults.buffs.gap = 1
 definition auras.defaults.buffs.max = 4
 definition auras.defaults.buffs.maxDuration = 120
@@ -18701,6 +19386,9 @@ definition castbar.defaults.height = 14
 definition castbar.defaults.name.size = 9
 definition castbar.defaults.placement = "bottom"
 definition castbar.defaults.time.size = 9
+definition categoryAuras.defaults.anchor = "CENTER"
+definition categoryAuras.defaults.size = 18
+definition categoryAuras.noMouse = true
 definition defaultPosition.point = "CENTER"
 definition defaultPosition.x = -90
 definition defaultPosition.y = -235
@@ -19392,7 +20080,7 @@ option auras.border.inset type="range" label="Background inset" default=3 min=0 
 option auras.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -19408,7 +20096,7 @@ option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=
 option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
 option auras.debuffs type="group" label="Debuffs"
 option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
 option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -19466,7 +20154,7 @@ option auraBar.border.inset type="range" label="Background inset" default=3 min=
 option auraBar.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
-option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2eb
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -19476,7 +20164,7 @@ option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=
 option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
 option auraBar.debuffs type="group" label="Debuffs"
 option auraBar.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032db69
+option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
 option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -19492,6 +20180,41 @@ option raidTarget.gap type="range" label="Gap to next icon" default=2 min=0 max=
 option raidTarget.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#d4c36bb1
 option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option categoryAuras type="group" label="Crowd control & defensives" defaults={enabled=false}
+option categoryAuras.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#a4540463
+option categoryAuras.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784 hidden
+option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
+option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
+option categoryAuras.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
+option categoryAuras.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
+option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true
+option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true
+option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true
+option categoryAuras.important type="toggle" label="Important buffs" default=false
+option categoryAuras.categoryBorder type="toggle" label="Colour border by category" default=true tooltip=#679c1cc6
+option categoryAuras.crowdControlColor type="color" label="Crowd control colour" default={1,0.25,0.25,1} hidden
+option categoryAuras.bigDefensiveColor type="color" label="Big defensives colour" default={1,0.82,0,1} hidden
+option categoryAuras.externalDefensiveColor type="color" label="External defensives colour" default={0.3,0.75,1,1} hidden
+option categoryAuras.importantColor type="color" label="Important buffs colour" default={0.75,0.45,1,1} hidden
+option categoryAuras.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
+option categoryAuras.showSwipeEdge type="toggle" label="Show swipe edge" default=true
+option categoryAuras.showDuration type="toggle" label="Show time left" default=true
+option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" values=#17bf8dad tooltip=#cab5c2f4
+option categoryAuras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
+option categoryAuras.showCount type="toggle" label="Show stacks" default=true
+option categoryAuras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option categoryAuras.font type="font" label="Font" inherit="font"
+option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
+option categoryAuras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
+option categoryAuras.border.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.border.border type="border" label="Border" inherit="borderTexture"
+option categoryAuras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option categoryAuras.border.color type="color" label="Border colour" inherit="borderColor"
+option categoryAuras.border.background type="background" label="Background" inherit="backgroundTexture"
+option categoryAuras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option categoryAuras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
+option categoryAuras.border.padding type="range" label="Content padding" default=4 min=0 max=16 step=1 tooltip=#152e5e50
 default auraBar.border.background = "None"
 default auraBar.border.enabled = true
 default auraBar.border.inset = 1
@@ -19658,6 +20381,35 @@ default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
 default castbar.time.shadow = true
 default castbar.time.size = 9
+default categoryAuras.anchor = "PORTRAIT"
+default categoryAuras.bigDefensive = true
+default categoryAuras.bigDefensiveColor = {1,0.82,0,1}
+default categoryAuras.border.background = "None"
+default categoryAuras.border.enabled = true
+default categoryAuras.border.inset = 1
+default categoryAuras.border.padding = 2
+default categoryAuras.border.size = 8
+default categoryAuras.categoryBorder = true
+default categoryAuras.countSize = 10
+default categoryAuras.crowdControl = true
+default categoryAuras.crowdControlColor = {1,0.25,0.25,1}
+default categoryAuras.durationPosition = "CENTER"
+default categoryAuras.durationSize = 10
+default categoryAuras.enabled = false
+default categoryAuras.externalDefensive = true
+default categoryAuras.externalDefensiveColor = {0.3,0.75,1,1}
+default categoryAuras.fontOutline = "OUTLINE"
+default categoryAuras.gap = 2
+default categoryAuras.important = false
+default categoryAuras.importantColor = {0.75,0.45,1,1}
+default categoryAuras.offsetX = 0
+default categoryAuras.offsetY = 0
+default categoryAuras.order = 1
+default categoryAuras.showCount = true
+default categoryAuras.showDuration = true
+default categoryAuras.showSwipeEdge = true
+default categoryAuras.size = 22
+default categoryAuras.swipe = "normal"
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -20274,6 +21026,39 @@ resolved castbar.time.justifyH = "RIGHT"
 resolved castbar.time.outline = ""
 resolved castbar.time.shadow = true
 resolved castbar.time.size = 9
+resolved categoryAuras.anchor = "PORTRAIT"
+resolved categoryAuras.bigDefensive = true
+resolved categoryAuras.bigDefensiveColor = {1,0.82,0,1}
+resolved categoryAuras.border.background = "None"
+resolved categoryAuras.border.backgroundColor = {0,0,0,0.75}
+resolved categoryAuras.border.border = "Blizzard Tooltip"
+resolved categoryAuras.border.color = {0.5,0.5,0.5,1}
+resolved categoryAuras.border.enabled = true
+resolved categoryAuras.border.inset = 1
+resolved categoryAuras.border.padding = 2
+resolved categoryAuras.border.size = 8
+resolved categoryAuras.categoryBorder = true
+resolved categoryAuras.countSize = 10
+resolved categoryAuras.crowdControl = true
+resolved categoryAuras.crowdControlColor = {1,0.25,0.25,1}
+resolved categoryAuras.durationPosition = "CENTER"
+resolved categoryAuras.durationSize = 10
+resolved categoryAuras.enabled = false
+resolved categoryAuras.externalDefensive = true
+resolved categoryAuras.externalDefensiveColor = {0.3,0.75,1,1}
+resolved categoryAuras.font = "Friz Quadrata TT"
+resolved categoryAuras.fontOutline = "OUTLINE"
+resolved categoryAuras.gap = 2
+resolved categoryAuras.important = false
+resolved categoryAuras.importantColor = {0.75,0.45,1,1}
+resolved categoryAuras.offsetX = 0
+resolved categoryAuras.offsetY = 0
+resolved categoryAuras.order = 1
+resolved categoryAuras.showCount = true
+resolved categoryAuras.showDuration = true
+resolved categoryAuras.showSwipeEdge = true
+resolved categoryAuras.size = 22
+resolved categoryAuras.swipe = "normal"
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -20750,6 +21535,8 @@ definition castbar.defaults.height = 14
 definition castbar.defaults.name.size = 9
 definition castbar.defaults.placement = "bottom"
 definition castbar.defaults.time.size = 9
+definition categoryAuras.defaults.enabled = false
+definition categoryAuras.noMouse = true
 definition defaultPosition.point = "CENTER"
 definition defaultPosition.x = 510
 definition defaultPosition.y = -160
@@ -20873,6 +21660,7 @@ option indicators.threat type="toggle" label="Threat" default=false
 option indicators.phase type="toggle" label="Different phase" default=true
 option indicators.size type="range" label="Other status icon size" default=14 min=8 max=32 step=1
 option indicators.private type="toggle" label="Private encounter auras" default=true
+option indicators.privatePosition type="select" label="Private aura position" default="RIGHT" values=#6a8c7abd tooltip=#59d63234 hidden
 option indicators.privateSize type="range" label="Private aura size" default=18 min=10 max=40 step=1
 option slots type="group" label="Fixed friendly buff slots"
 option slots.slot1 type="group" label="Friendly buff slot 1" defaults={offsetX=0}
@@ -20928,6 +21716,7 @@ default indicators.leaderPosition = "TOP"
 default indicators.leaderSize = 14
 default indicators.phase = true
 default indicators.private = true
+default indicators.privatePosition = "RIGHT"
 default indicators.privateSize = 18
 default indicators.ready = true
 default indicators.readyGap = 2
@@ -21047,6 +21836,7 @@ resolved indicators.leaderPosition = "TOP"
 resolved indicators.leaderSize = 14
 resolved indicators.phase = true
 resolved indicators.private = true
+resolved indicators.privatePosition = "RIGHT"
 resolved indicators.privateSize = 18
 resolved indicators.ready = true
 resolved indicators.readyGap = 2

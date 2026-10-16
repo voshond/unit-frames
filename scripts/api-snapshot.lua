@@ -201,6 +201,12 @@ for name, relative in pairs(calls) do
 	end
 end
 
+-- Filter components aura containers accept (AuraUtil.IsValidFilterString).
+snapshot.lua.auraFilters = {}
+local auraFilters = assert(Read(sourceDir .. "/Interface/AddOns/Blizzard_FrameXMLUtil/AuraUtil.lua")
+	:match("AuraUtil%.AuraFilters%s*=%s*(%b{})"), "AuraUtil.AuraFilters not found")
+for component in auraFilters:gmatch('=%s*"([%u_]+)"') do snapshot.lua.auraFilters[component] = true end
+
 -- Serialization: sorted keys, one entry per line, for reviewable diffs.
 local function Keys(t)
 	local keys = {}

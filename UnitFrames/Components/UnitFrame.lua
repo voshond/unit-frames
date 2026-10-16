@@ -3,6 +3,7 @@ local Backdrop, TextBar = ns.Components.Backdrop, ns.Components.TextBar
 local Castbar, Portrait, Auras = ns.Components.Castbar, ns.Components.Portrait, ns.Components.Auras
 local RaidTarget, PvPFlag, Classification = ns.Components.RaidTarget, ns.Components.PvPFlag, ns.Components.Classification
 local ReadyCheckIcon, PointBar = ns.Components.ReadyCheckIcon, ns.Components.PointBar
+local CategoryAuras = ns.Components.CategoryAuras
 
 --[[
 A unit frame made of rows stacked top to bottom inside one bordered frame.
@@ -19,6 +20,8 @@ Optional extras:
   pvp       the unit's PvP flag, placed like the raid marker
   classification  elite, rare or boss marker, placed like the raid marker
   readyCheckIcon  ready check mark, driven with the ready check tints
+  categoryAuras  crowd control and defensive auras over the portrait or
+            on an edge anchor
 
 Edge icons (the raid marker, PvP flag, elite marker and companions' status
 icons) share one
@@ -41,7 +44,7 @@ spec:
               options   extra row options (schema entries), e.g. health colour mode
             }
   portrait, castbar, comboPoints, auras, auraBar, raidTarget, pvp, classification,
-  readyCheckIcon
+  readyCheckIcon, categoryAuras
             { defaults, ... } to offer that part (see UnitFrame.PARTS;
             auras also take cancelBuffs and clickThrough; auraBar takes
             collapsible: the row can lend its space to the health bar;
@@ -179,6 +182,11 @@ UnitFrame.PARTS = {
 	{ key = "readyCheckIcon", label = "Ready check icon", stack = true,
 		schema = function() return ReadyCheckIcon.schema end,
 		create = function(frame, _, native, config) return ReadyCheckIcon:New(frame, config, { nativeLayout = native }) end },
+	{ key = "categoryAuras", label = "Crowd control & defensives", stack = true,
+		schema = function() return CategoryAuras.schema end,
+		create = function(frame, partSpec, _, config)
+			return CategoryAuras:New(frame, config, { noMouse = partSpec.noMouse })
+		end },
 }
 
 function UnitFrame:OnCreate(parent, spec)
@@ -465,7 +473,8 @@ function UnitFrame:LayoutCastbar(layout)
 	if host then
 		castbar:ClearAllPoints()
 		castbar:SetAllPoints(coverArea or host)
-		castbar:GetFrame():SetFrameLevel(hostLevel + 10)
+		-- Above category auras covering the portrait.
+		castbar:GetFrame():SetFrameLevel(hostLevel + CategoryAuras.LEVELS + 6)
 	else
 		castbar:GetFrame():SetFrameLevel(self.frame:GetFrameLevel() + 1)
 	end

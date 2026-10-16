@@ -14,6 +14,10 @@ each change.
   optional global cooldown strip on the player cast bar.
 - Show rogue and druid combo points on the target frame, or on the player frame.
 - Add a cropped buff/debuff icon row, alongside or instead of external icons.
+- Filter buffs and debuffs by crowd control, big or external defensives,
+  important buffs, or your own heals over time.
+- Show crowd control and defensives over the portrait or on a frame edge, with
+  crowd control on top.
 - Add raid markers, PvP flags, elite and rare icons, and ready check indicators.
 - Fade frames when someone is out of range.
 - Move your frames in the game's Edit Mode, with snapping to help line them up.

@@ -727,7 +727,7 @@ describe("Player buffs and debuffs", function()
 		local preview = ns.Units:CreateFrame("player", CreateFrame("Frame"))
 		ns.Units:ShowSample(preview, ns.Units.SAMPLE)
 		local previewAuras = preview:GetPart("auras")
-		assert.equals(8, #previewAuras.previewContainers.buffs.ufElements)
+		assert.equals(10, #previewAuras.previewContainers.buffs.ufElements)
 		assert.equals(5, #previewAuras.previewContainers.debuffs.ufElements)
 		Mock.inCombat = true
 		previewAuras:Apply({ buffs = { size = 33 } })
