@@ -108,7 +108,7 @@ Backdrop.schema = {
 				end
 			end
 		end },
-	{ key = "padding", type = "range", label = "Content padding", min = 0, max = 40, step = 1, default = 4,
+	{ key = "padding", type = "range", label = "Content padding", min = 0, max = 40, step = 1, default = 3,
 		hidden = function(cfg) return cfg.separatePadding end,
 		tooltip = "Space between the border and the content inside it." },
 	{ key = "border", type = "border", label = "Border", inherit = "borderTexture" },
@@ -119,7 +119,7 @@ Backdrop.schema = {
 }
 for i, side in ipairs({ "Left", "Right", "Top", "Bottom" }) do
 	table.insert(Backdrop.schema, 3 + i, { key = "padding" .. side, type = "range",
-		label = side .. " padding", min = 0, max = 40, step = 1, default = 4,
+		label = side .. " padding", min = 0, max = 40, step = 1, default = 3,
 		hidden = function(cfg) return not cfg.separatePadding end })
 end
 

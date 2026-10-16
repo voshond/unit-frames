@@ -335,7 +335,7 @@ describe("Workbench", function()
 		assert.equals("Solid", ns.Config:GetTheme().barTexture)
 		assert.equals([[Interface\Buttons\WHITE8X8]], workbench.handle.parts.bar.bar.__state.texture)
 		workbench.styleTarget.set("barTexture", nil)
-		assert.equals("Blizzard", ns.Config:GetTheme().barTexture)
+		assert.equals("Blizzard Raid Bar", ns.Config:GetTheme().barTexture)
 		assert.is_not_nil(bar)
 	end)
 

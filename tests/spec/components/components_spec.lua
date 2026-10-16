@@ -31,7 +31,7 @@ describe("Bar", function()
 
 	it("resolves the texture from the theme through LibSharedMedia", function()
 		local bar = C.Bar:New(parent, {})
-		assert.equals([[Interface\TargetingFrame\UI-StatusBar]], bar.bar.__state.texture)
+		assert.equals([[Interface\RaidFrame\Raid-Bar-Hp-Fill]], bar.bar.__state.texture)
 	end)
 
 	it("chains append segments and pins inset segments to the fill end #shields", function()

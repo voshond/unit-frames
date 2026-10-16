@@ -30,7 +30,7 @@ Theme.schema = {
 	{ key = "font", type = "font", label = "Font", default = "Friz Quadrata TT" },
 	{ key = "fontSize", type = "range", label = "Font size", min = 6, max = 32, step = 1, default = 11 },
 	{ key = "fontOutline", type = "select", label = "Font outline", values = Theme.OUTLINES, default = "" },
-	{ key = "barTexture", type = "statusbar", label = "Bar texture", default = "Blizzard" },
+	{ key = "barTexture", type = "statusbar", label = "Bar texture", default = "Blizzard Raid Bar" },
 	-- Blizzard's tooltip border gives the chamfered ZPerl look.
 	{ key = "borderTexture", type = "border", label = "Border", default = "Blizzard Tooltip" },
 	{ key = "borderSize", type = "range", label = "Border size", min = 1, max = 32, step = 1, default = 12 },

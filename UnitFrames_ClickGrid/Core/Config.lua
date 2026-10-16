@@ -5,7 +5,7 @@ CG.Config = Config
 Config.schema = {
 	{ key = "panel", type = "group", label = "Panel layout", schema = CG.LayoutSchema },
 	{ key = "border", type = "group", label = "Panel border",
-		schema = UF.Components.Backdrop.schema, defaults = { padding = 12 } },
+		schema = UF.Components.Backdrop.schema },
 	{ key = "titles", type = "group", label = "Group / column titles", schema = CG.TitleSchema },
 	{ key = "indicators", type = "group", label = "Status indicators", schema = CG.IndicatorSchema },
 	{ key = "slots", type = "group", label = "Fixed friendly buff slots", schema = CG.SlotSchema },

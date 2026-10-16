@@ -36,7 +36,7 @@ describe("Target, focus and their targets", function()
 		for _, unit in ipairs({ "targettarget", "focustarget" }) do
 			local frame = ns.Units.frames[unit]
 			assert.equals(140, frame:GetWidth())
-			assert.equals(37, frame:GetHeight())
+			assert.equals(35, frame:GetHeight())
 			assert.is_false(frame:IsElementEnabled("Portrait"))
 			assert.is_false(frame:IsElementEnabled("UF_Castbar"))
 			assert.is_false(frame:IsElementEnabled("UF_Auras"))

@@ -1,6 +1,23 @@
 local Helpers = require("helpers")
 
 describe("Shared frame and panel spacing previews", function()
+	it("defaults frame and panel content padding to three in live and preview sources", function()
+		local UF, CG, wb = Helpers.LoadClickGrid(true)
+		local B = UF.Components.Backdrop
+		local defaults = UF.Schema.Resolve(B.schema, {}, UF.Config:GetTheme())
+		assert.same({ 3, 3, 3, 3 }, { B.Padding(defaults) })
+		defaults.separatePadding = true
+		assert.same({ 3, 3, 3, 3 }, { B.Padding(defaults) })
+		wb:Open("unit.player")
+		assert.equals(3, UF.Units.frames.player.uf.resolved.border.padding)
+		assert.equals(3, wb.handle.parts.uf.resolved.border.padding)
+		wb:Open("clickgrid.panel")
+		assert.equals(3, CG.Config:Resolved().border.padding)
+		assert.equals(3, CG.layout.sections.party.x)
+		assert.equals(3, wb.handle.layout.sections.party.x)
+		assert.equals(3, wb.handle.cells[1].member.resolved.border.padding)
+	end)
+
 	it("edits per-side background insets in frame and panel inspectors without moving content", function()
 		local UF, CG, wb = Helpers.LoadClickGrid(true)
 		for _, entry in ipairs({ "unit.player", "clickgrid.member", "clickgrid.panel" }) do
@@ -149,7 +166,7 @@ describe("Shared frame and panel spacing previews", function()
 		local _, CG, wb = Helpers.LoadClickGrid(true)
 		wb:Open("clickgrid.panel")
 		CG.Config:Set("border.separatePadding", true)
-		assert.equals(12, CG.Config:Resolved().border.paddingLeft)
+		assert.equals(3, CG.Config:Resolved().border.paddingLeft)
 		for side, value in pairs({ Left = 3, Right = 17, Top = 5, Bottom = 21 }) do
 			CG.Config:Set("border.padding" .. side, value)
 		end
