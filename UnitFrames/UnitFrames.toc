@@ -44,6 +44,7 @@ Components\PointBar.lua
 Components\CastbarLayout.lua
 Components\CastExtras.lua
 Components\Castbar.lua
+Components\CastbarFrame.lua
 Components\Portrait.lua
 Components\AuraIcon.lua
 Components\Auras.lua
