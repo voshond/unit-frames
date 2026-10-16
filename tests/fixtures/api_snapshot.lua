@@ -1855,6 +1855,7 @@ return {
 			SetAuraGroupSortMethod = "CustomAuraContainerSharedMixin",
 			SetAuraProcessingPolicy = "CustomAuraContainerSharedMixin",
 			SetAuraSlotCandidateFilters = "CustomAuraContainerSharedMixin",
+			SetAuraSlotEnabled = "AuraContainerAuraSlotManagerMixin",
 			SetAuraSlotFilterString = "CustomAuraContainerSharedMixin",
 			SetBackdrop = "BackdropTemplateMixin",
 			SetBackdropBorderColor = "BackdropTemplateMixin",

@@ -270,6 +270,25 @@ border by type** to use **Icon frame > Border colour** for every icon.
 their timers; Animated previews cycle them. Samples include stacks, a
 permanent buff, and all four debuff dispel types, using the saved aura style.
 
+**Which** also offers category filters: **My heals over time** (your own
+buffs flagged for raid frames in combat), **Big defensives**, **External
+defensives**, **Important** buffs, and **Crowd control** debuffs.
+
+## Crowd control & defensives
+
+**Crowd control & defensives** shows the unit's crowd control, big defensive,
+external defensive and (optionally) important buff, one icon per category in
+the same spot. Crowd control is on top, then big defensives, external
+defensives and important buffs. **Cover the portrait** fills the portrait's
+shorter side, above the portrait and below a castbar covering it; the other
+positions join the frame's edge and portrait icons and keep their place even
+while nothing is shown. **Colour border by category** tints each icon frame
+with its category colour. Time-left text stays inside the icon.
+
+**Preview data > Crowd control & defensives** shows one category, all at once,
+or **Cycle**: Animated previews show each category in turn, then none; Static
+previews show them all. **None** (the default) keeps the portrait visible.
+
 **Buff & debuff icon row** is a separate, optional row at the top or bottom
 of the frame. Enable it alongside the external icons, or disable **Buffs &
 debuffs** to use only the row. It has its own filters, limits and artwork settings.

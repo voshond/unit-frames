@@ -673,6 +673,7 @@ function Mock.DecorateAuraContainer(container)
 		return group.frames[1]
 	end
 	function container:SetAuraSlotFilterString(key, filter) AssertFilter(filter); s.slots[key].filter = filter end
+	function container:SetAuraSlotEnabled(key, enabled) s.slots[key].enabled = enabled end
 	function container:SetAuraSlotCandidateFilters(key, filters) s.slots[key].candidateFilters = filters end
 	function container:GetAuraGroupFrameCount(key) return #s.groups[key].frames end
 	function container:GetAuraGroupFrame(key, index) return s.groups[key].frames[index] end

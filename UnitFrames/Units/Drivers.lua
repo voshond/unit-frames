@@ -280,6 +280,16 @@ Drivers.parts.classification = {
 	live = function(icon, unit) icon:SetClassification(Drivers.Classification(unit)) end,
 }
 
+Drivers.parts.categoryAuras = {
+	element = "UF_CategoryAuras",
+	bind = function(icons) return icons end,
+	sample = function(icons, v) icons:ShowSample(v) end,
+	live = function(icons, unit)
+		icons:SetEnabled(icons.resolved.enabled)
+		icons:SetUnit(unit)
+	end,
+}
+
 -- The UnitFrame's ReadyCheck presenter drives whichever icon is attached
 -- (this part, or a companion's own), live and in samples.
 Drivers.parts.readyCheckIcon = { bind = false, sample = false, live = false }

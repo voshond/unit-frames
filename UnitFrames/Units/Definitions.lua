@@ -199,6 +199,7 @@ Units.COMMON = {
 	classification = { defaults = {} },
 	readyCheck = true,
 	readyCheckIcon = { defaults = {} },
+	categoryAuras = { defaults = {} },
 }
 
 for _, unit in ipairs(Units.order) do
@@ -267,6 +268,14 @@ Units.SAMPLE = {
 		{ icon = [[Interface\Icons\Spell_Nature_CorrosiveBreath]], duration = 12, remaining = 6, dispelName = "Poison", applications = 4, sourceUnit = "player", isRaid = true },
 		{ icon = [[Interface\Icons\Ability_Gouge]], duration = 15, remaining = 11, sourceUnit = "party1", isCrowdControl = true },
 	},
+}
+
+-- One sample aura per category (CategoryAuras), shown when a preview asks.
+Units.CATEGORY_SAMPLES = {
+	crowdControl = { icon = [[Interface\Icons\Ability_Gouge]], duration = 4, remaining = 3, sourceUnit = "party1" },
+	bigDefensive = { icon = [[Interface\Icons\Spell_Holy_DivineIntervention]], duration = 8, remaining = 5, sourceUnit = "player" },
+	externalDefensive = { icon = [[Interface\Icons\Spell_Holy_SealOfProtection]], duration = 10, remaining = 4, sourceUnit = "party1" },
+	important = { icon = [[Interface\Icons\Spell_Holy_DivineIntervention]], duration = 8, remaining = 5, sourceUnit = "player" },
 }
 
 -- Explicit illustrative ranks for native/raid-priority row previews. Live
