@@ -378,6 +378,20 @@ actively runs one prepared operation outside combat and reports native elapsed
 milliseconds and allocated/deallocated bytes. Cancel a watch before measuring.
 Measurements are session-local and optional APIs have capability checks.
 
+`/uf perf suite baseline` automates schema, unit and prepared ClickGrid refresh
+measurements outside combat. Each operation runs two warmups and ten recorded
+calls, at most one per frame with a minimum 0.1-second interval. Creation tests
+remain separate because released engine widgets survive until reload. Keep
+targets and preview state stable for comparable results. Combat, roster or
+configuration changes cancel the run, as does profiler deactivation.
+
+`/uf perf suite report` prints the latest attempt. Its structured data persists
+under `UnitFramesDB.global.perfSuiteReport`, including completion status, raw
+samples, timing/allocation summaries, exclusive phases, counters, environment
+and settings context, and endpoint snapshots. Each attempt replaces the previous
+report; copy the SavedVariables report after `/reload` to preserve comparisons.
+Suite summaries exclude warmups and include synchronous operation costs only.
+
 Schemas returned by components are immutable metadata. Definition-created
 frames explicitly share schema ownership, including row text contexts;
 arbitrary caller specs retain independent dynamic schemas. Derive a definition

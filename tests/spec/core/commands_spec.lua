@@ -52,10 +52,13 @@ describe("Slash command help", function()
 	it("shows performance subcommands only through perf help without measuring", function()
 		ns.Perf.Snapshot = function() error("help must not snapshot") end
 		ns.Perf.Measure = function() error("help must not measure") end
+		ns.Perf.StartSuite = function() error("help must not start a suite") end
 		SlashCmdList.UNITFRAMES("perf help")
-		assert.equals(6, #messages)
+		assert.equals(8, #messages)
 		assert.equals("/uf perf - performance snapshot", messages[1][1])
 		assert.equals("/uf perf startup - measure startup after the next /reload", messages[6][1])
+		assert.equals("/uf perf suite baseline - run the out-of-combat baseline suite", messages[7][1])
+		assert.equals("/uf perf suite report - show the last saved suite report", messages[8][1])
 		assert.is_nil(ns.Workbench)
 	end)
 end)
