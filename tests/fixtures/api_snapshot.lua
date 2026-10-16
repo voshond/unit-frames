@@ -1824,6 +1824,7 @@ return {
 			Refresh = "AccountStoreItemRackMixin",
 			RefreshButton = "ExpansionLandingPageMinimapButtonMixin",
 			RefreshEvents = "CombatAudioAlertManagerMixin",
+			RefreshVisibility = "FriendsListSocialCardRAFSummonButtonMixin",
 			Register = "ScrollBoxDragBehavior",
 			RegisterCallback = "CallbackHandleContainerMixin",
 			RegisterEvent = "Dispatcher",

@@ -15,6 +15,9 @@ local SWING_SPEC = {
 
 local function RowSchema(schema, height)
 	return ns.Schema.Insert(schema, "enabled", {
+		{ key = "visibility", type = "select", label = "Visibility", default = "active", values = {
+			{ "active", "While active" }, { "always", "Always" }, { "combat", "In combat" }, { "hidden", "Hidden" },
+		}, tooltip = "When to display this row. Hidden rows keep their layout space. Idle rows never show a spark." },
 		{ key = "height", type = "range", label = "Height", min = 2, max = 100, step = 1, default = height },
 	})
 end
@@ -36,13 +39,16 @@ end
 
 function CastbarFrame:OnCreate(parent)
 	self.frame = CreateFrame("Frame", nil, parent)
-	self.castbar = self:Own(Castbar:New(self.frame, self:ChildConfig("castbar"), { playerCast = true }))
+	self.castHost = CreateFrame("Frame", nil, self.frame)
+	self.castHost:SetAllPoints(self.frame)
+	self.castbar = self:Own(Castbar:New(self.castHost, self:ChildConfig("castbar"), { playerCast = true }))
 	self.castbar:Hide()
 	self.rows = {}
 	for _, row in ipairs(self.SWING_ROWS) do
 		self.rows[row.key] = self:Own(TextBar:New(self.frame, self:ChildConfig(row.key), SWING_SPEC))
 		self.rows[row.key]:SetRange(0, 1)
 		self.rows[row.key]:SetValue(0)
+		self.rows[row.key]:GetBar():SetSparkActive(false)
 	end
 end
 

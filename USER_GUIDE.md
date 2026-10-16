@@ -209,11 +209,17 @@ is saved separately for each layout. Edit Mode shows a frozen sample.
 The cast row supports the same spell icon, channel behaviour, latency zone,
 GCD strip, colours and finish fade as the attached player castbar. The two
 castbars have independent settings and can both be enabled. Blizzard's player
-castbar returns when neither custom player castbar is enabled.
+castbar returns when the attached player castbar is disabled and the standalone
+cast row is disabled or set to Hidden.
 
 Enable **Main hand**, **Off hand** or **Ranged** to add swing rows beneath the
 castbar. Each row has its own height, texture, colour and text style. Disabled
-rows collapse; enabled rows keep their space while idle. Swing progress
+rows collapse; enabled rows keep their layout space when hidden. Each row,
+including the castbar, has a **Visibility** setting: **While active** (the
+default), **Always**, **In combat** or **Hidden**. Always and In combat show
+an empty bar while idle; sparks only appear during an active timer. The
+Workbench's sample **In combat** toggle previews combat visibility, while
+Edit Mode shows all enabled rows for positioning. Swing progress
 starts with the next native player swing event and returns to empty when
 the timer ends. Weapon changes clear old timers. A weapon slot without a
 weapon stays empty. Restricted timing values cannot be displayed and clear

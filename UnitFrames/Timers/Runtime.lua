@@ -28,9 +28,10 @@ function Timers:Refresh()
 	self.component:Apply(config)
 	self.events:UnregisterAllEvents()
 	self.events:SetScript("OnUpdate", nil)
-	ns.PlayerCastbar:SetOwner(self, enabled and self.component:GetCastbar():IsEnabled())
+	ns.PlayerCastbar:SetOwner(self, enabled and self.feed:HasCastbar())
 	if self.editing and enabled then
 		ns.TimerSamples.Show(self.feed)
+		self.feed:RefreshVisibility(nil, true)
 		return
 	end
 	self.feed:RegisterEvents(self.events)

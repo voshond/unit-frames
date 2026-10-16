@@ -20,6 +20,8 @@ end
 
 function Swing:Clear()
 	self.ends = nil
+	self.previewActive = false
+	self.row:GetBar():SetSparkActive(false)
 	if self.binding then self.binding:SetEnabled(false) end
 	self.row:SetRange(0, 1)
 	self.row:SetValue(0)
@@ -34,6 +36,7 @@ function Swing:Start(seconds)
 	self.duration = self.duration or C_DurationUtil.CreateDuration()
 	self.duration:SetTimeFromStart(GetTime(), seconds)
 	self.ends = GetTime() + seconds
+	self.row:GetBar():SetSparkActive(true)
 	self.row:GetBar():SetTimerDuration(self.duration, Enum.StatusBarTimerDirection.ElapsedTime)
 	if not self.binding then
 		self.binding = C_DurationUtil.CreateDurationTextBinding()
@@ -50,6 +53,8 @@ end
 
 function Swing:Preview(progress, seconds)
 	self:Clear()
+	self.previewActive = true
+	self.row:GetBar():SetSparkActive(progress > 0 and progress < 1)
 	self.row:SetValue(progress)
 	self.row:GetText("right"):SetText(string.format("%.1f", seconds * (1 - progress)))
 end

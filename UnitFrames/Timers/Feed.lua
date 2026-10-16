@@ -4,6 +4,28 @@ ns.TimerFeed = Feed
 
 Feed.EVENTS = { "PLAYER_SWING", "WEAPON_SLOT_CHANGED", "PLAYER_ENTERING_WORLD", "UNIT_ATTACK_SPEED" }
 
+function Feed:HasCastbar()
+	return self.component:GetCastbar():IsEnabled() and self.component.resolved.castbar.visibility ~= "hidden"
+end
+
+function Feed:RefreshVisibility(combat, force)
+	if combat == nil then combat = InCombatLockdown() end
+	local component = self.component
+	local enabled = component:IsEnabled()
+	local mode = component.resolved.castbar.visibility
+	local castbar = component:GetCastbar()
+	castbar:SetIdleShown(enabled and castbar:IsEnabled() and (mode == "always" or mode == "combat" and combat))
+	component.castHost:SetShown(enabled and castbar:IsEnabled()
+		and (force or mode ~= "hidden" and (mode ~= "combat" or combat)))
+	for key, swing in pairs(self.swings) do
+		local row = component:GetRow(key)
+		mode = component.resolved[key].visibility
+		local active = swing.ends ~= nil or swing.previewActive
+		row:GetFrame():SetShown(enabled and row:IsEnabled()
+			and (force or mode == "always" or mode == "combat" and combat or mode == "active" and active))
+	end
+end
+
 function Feed:Init(component)
 	self.component, self.castState, self.swings = component, {}, {}
 	for _, row in ipairs(component.SWING_ROWS) do
@@ -19,7 +41,7 @@ end
 function Feed:HasSwings()
 	if not ns.Caps.swings then return false end
 	for key in pairs(self.swings) do
-		if self.component:GetRow(key):IsEnabled() then return true end
+		if self.component:GetRow(key):IsEnabled() and self.component.resolved[key].visibility ~= "hidden" then return true end
 	end
 	return false
 end
@@ -34,8 +56,16 @@ end
 function Feed:RegisterEvents(frame)
 	frame:UnregisterAllEvents()
 	if not self.component:IsEnabled() then return end
+	for _, options in ipairs({ self.component.resolved.castbar, self.component.resolved.mainHand,
+		self.component.resolved.offHand, self.component.resolved.ranged }) do
+		if options.enabled and options.visibility == "combat" then
+			frame:RegisterEvent("PLAYER_REGEN_DISABLED")
+			frame:RegisterEvent("PLAYER_REGEN_ENABLED")
+			break
+		end
+	end
 	local castbar = self.component:GetCastbar()
-	if castbar:IsEnabled() then
+	if self:HasCastbar() then
 		frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 		for _, event in ipairs(ns.Cast.EVENTS) do frame:RegisterUnitEvent(event, "player") end
 		if castbar:WantsGCD() then
@@ -60,6 +90,7 @@ end
 function Feed:Clear()
 	self:ClearCast()
 	for _, swing in pairs(self.swings) do swing:Clear() end
+	self:RefreshVisibility()
 end
 
 function Feed:RefreshWeapons(reset)
@@ -70,7 +101,8 @@ function Feed:RefreshWeapons(reset)
 	local speeds = { UnitAttackSpeed("player") }
 	for index, row in ipairs(self.component.SWING_ROWS) do
 		local speed = speeds[index]
-		if reset or not self.component:GetRow(row.key):IsEnabled() or type(speed) == "nil"
+		if reset or not self.component:GetRow(row.key):IsEnabled()
+			or self.component.resolved[row.key].visibility == "hidden" or type(speed) == "nil"
 			or not ns.Util.IsSecret(speed) and speed <= 0 then self.swings[row.key]:Clear() end
 	end
 end
@@ -79,8 +111,9 @@ function Feed:Refresh()
 	if not self.component:IsEnabled() then self:Clear(); return end
 	self:RefreshWeapons(false)
 	local castbar = self.component:GetCastbar()
-	if castbar:IsEnabled() then ns.Cast.Refresh(castbar, self.castState, "player")
+	if self:HasCastbar() then ns.Cast.Refresh(castbar, self.castState, "player")
 	else self:ClearCast() end
+	self:RefreshVisibility()
 end
 
 function Feed:Handle(event, ...)
@@ -89,7 +122,7 @@ function Feed:Handle(event, ...)
 		local seconds, swingType = ...
 		if ns.Util.IsSecret(swingType) then return end
 		local key = self.swingKeys[swingType]
-		if key then self.swings[key]:Start(seconds) end
+		if key and self.component.resolved[key].visibility ~= "hidden" then self.swings[key]:Start(seconds) end
 	elseif event == "WEAPON_SLOT_CHANGED" or event == "PLAYER_ENTERING_WORLD" then
 		self:RefreshWeapons(true)
 		if event == "PLAYER_ENTERING_WORLD" then self:Refresh() end
@@ -97,13 +130,15 @@ function Feed:Handle(event, ...)
 		if (...) == "player" then self:RefreshWeapons(false) end
 	elseif event == "SPELL_UPDATE_COOLDOWN" then
 		ns.Cast.UpdateGCD(self.component:GetCastbar(), self.castState)
-	elseif (...) == "player" and self.component:GetCastbar():IsEnabled() then
+	elseif (...) == "player" and self:HasCastbar() then
 		ns.Cast.Handle(self.component:GetCastbar(), self.castState, event, ...)
 	end
+	self:RefreshVisibility()
 end
 
 function Feed:Tick()
 	for _, swing in pairs(self.swings) do swing:Tick() end
+	self:RefreshVisibility()
 end
 
 function Feed:Release()

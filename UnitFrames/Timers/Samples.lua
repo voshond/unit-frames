@@ -5,7 +5,7 @@ ns.TimerSamples = Samples
 local SPEEDS = { 2.6, 1.8, 2.8 }
 local PROGRESS = { 0.25, 0.7, 0.45 }
 
-function Samples.Show(feed, time, progress, spell)
+function Samples.Show(feed, time, progress, spell, combat)
 	feed:Clear()
 	local sample = ns.Units.SAMPLE
 	spell = spell or { name = sample.spell, icon = sample.spellIcon, time = sample.castTime }
@@ -22,4 +22,5 @@ function Samples.Show(feed, time, progress, spell)
 			feed.swings[row.key]:Preview(time and time % SPEEDS[index] / SPEEDS[index] or PROGRESS[index], SPEEDS[index])
 		end
 	end
+	feed:RefreshVisibility(combat)
 end

@@ -713,6 +713,7 @@ option width type="range" label="Width" default=280 min=80 max=800 step=1
 option gap type="range" label="Row spacing" default=2 min=0 max=20 step=1
 option castbar type="group" label="Castbar"
 option castbar.enabled type="toggle" label="Enabled" default=true
+option castbar.visibility type="select" label="Visibility" default="active" values=#c698ae5f tooltip=#7b1b1718
 option castbar.height type="range" label="Height" default=24 min=2 max=100 step=1
 option castbar.portraitLayout type="select" label="Portrait cast layout" default="bar" values=#c97f0a21 tooltip=#8fde9bad hidden
 option castbar.border type="group" label="Border" defaults={enabled=true,padding=3}
@@ -809,6 +810,7 @@ option castbar.gcd.holdTime type="range" label="Hold after finish (s)" default=0
 option castbar.gcd.fadeTime type="range" label="Fade out (s)" default=0.2 min=0 max=2 step=0.1
 option mainHand type="group" label="Main hand" defaults={enabled=false}
 option mainHand.enabled type="toggle" label="Enabled" default=true
+option mainHand.visibility type="select" label="Visibility" default="active" values=#c698ae5f tooltip=#7b1b1718
 option mainHand.height type="range" label="Height" default=10 min=2 max=100 step=1
 option mainHand.bar type="group" label="Bar" defaults={smooth=false,spark=true}
 option mainHand.bar.enabled type="toggle" label="Enabled" default=true
@@ -906,6 +908,7 @@ option mainHand.belowRight.offsetX type="range" label="Offset X" default=0 min=-
 option mainHand.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option offHand type="group" label="Off hand" defaults={enabled=false}
 option offHand.enabled type="toggle" label="Enabled" default=true
+option offHand.visibility type="select" label="Visibility" default="active" values=#c698ae5f tooltip=#7b1b1718
 option offHand.height type="range" label="Height" default=10 min=2 max=100 step=1
 option offHand.bar type="group" label="Bar" defaults={smooth=false,spark=true}
 option offHand.bar.enabled type="toggle" label="Enabled" default=true
@@ -1003,6 +1006,7 @@ option offHand.belowRight.offsetX type="range" label="Offset X" default=0 min=-1
 option offHand.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
 option ranged type="group" label="Ranged" defaults={enabled=false}
 option ranged.enabled type="toggle" label="Enabled" default=true
+option ranged.visibility type="select" label="Visibility" default="active" values=#c698ae5f tooltip=#7b1b1718
 option ranged.height type="range" label="Height" default=10 min=2 max=100 step=1
 option ranged.bar type="group" label="Bar" defaults={smooth=false,spark=true}
 option ranged.bar.enabled type="toggle" label="Enabled" default=true
@@ -1161,6 +1165,7 @@ default castbar.time.color = {1,1,1,1}
 default castbar.time.enabled = true
 default castbar.time.justifyH = "RIGHT"
 default castbar.time.shadow = true
+default castbar.visibility = "active"
 default enabled = false
 default gap = 2
 default mainHand.bar.background.alpha = 0.25
@@ -1231,6 +1236,7 @@ default mainHand.right.offsetY = 0
 default mainHand.right.shadow = true
 default mainHand.right.vertical = "auto"
 default mainHand.textLayout = "edges"
+default mainHand.visibility = "active"
 default offHand.bar.background.alpha = 0.25
 default offHand.bar.background.color = {0,0,0,0.5}
 default offHand.bar.background.enabled = true
@@ -1299,6 +1305,7 @@ default offHand.right.offsetY = 0
 default offHand.right.shadow = true
 default offHand.right.vertical = "auto"
 default offHand.textLayout = "edges"
+default offHand.visibility = "active"
 default ranged.bar.background.alpha = 0.25
 default ranged.bar.background.color = {0,0,0,0.5}
 default ranged.bar.background.enabled = true
@@ -1367,6 +1374,7 @@ default ranged.right.offsetY = 0
 default ranged.right.shadow = true
 default ranged.right.vertical = "auto"
 default ranged.textLayout = "edges"
+default ranged.visibility = "active"
 default width = 280
 resolved castbar.background = {0,0,0,0}
 resolved castbar.bar.background.alpha = 0.25
@@ -1453,6 +1461,7 @@ resolved castbar.time.justifyH = "RIGHT"
 resolved castbar.time.outline = ""
 resolved castbar.time.shadow = true
 resolved castbar.time.size = 11
+resolved castbar.visibility = "active"
 resolved enabled = false
 resolved gap = 2
 resolved mainHand.bar.background.alpha = 0.25
@@ -1543,6 +1552,7 @@ resolved mainHand.right.shadow = true
 resolved mainHand.right.size = 11
 resolved mainHand.right.vertical = "auto"
 resolved mainHand.textLayout = "edges"
+resolved mainHand.visibility = "active"
 resolved offHand.bar.background.alpha = 0.25
 resolved offHand.bar.background.color = {0,0,0,0.5}
 resolved offHand.bar.background.enabled = true
@@ -1631,6 +1641,7 @@ resolved offHand.right.shadow = true
 resolved offHand.right.size = 11
 resolved offHand.right.vertical = "auto"
 resolved offHand.textLayout = "edges"
+resolved offHand.visibility = "active"
 resolved ranged.bar.background.alpha = 0.25
 resolved ranged.bar.background.color = {0,0,0,0.5}
 resolved ranged.bar.background.enabled = true
@@ -1719,6 +1730,7 @@ resolved ranged.right.shadow = true
 resolved ranged.right.size = 11
 resolved ranged.right.vertical = "auto"
 resolved ranged.textLayout = "edges"
+resolved ranged.visibility = "active"
 resolved width = 280
 ## portrait
 option enabled type="toggle" label="Enabled" default=true
