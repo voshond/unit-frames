@@ -45,6 +45,57 @@ describe("Category auras", function()
 		assert.is_false(Slot("crowdControl").enabled)
 	end)
 
+	it("skips unchanged artwork and slot writes while observing mutated config and inherited media", function()
+		ns.Perf.counters = {}
+		icons:Apply(ns.Util.Copy(icons.config))
+		icons:Layout(uf:GetLayoutContext())
+		assert.is_nil(ns.Perf.counters.categoryArtBuild)
+		assert.is_nil(ns.Perf.counters.categorySlotWrite)
+		assert.is_nil(ns.Perf.counters.categoryButtonStyle)
+		local config = ns.Util.Copy(icons.config)
+		config.important = true
+		icons:Apply(config)
+		assert.equals(1, ns.Perf.counters.categorySlotWrite)
+		config.important = false
+		icons:Apply(config)
+		assert.equals(2, ns.Perf.counters.categorySlotWrite)
+		ns.Config:SetThemeValue("font", "Arial Narrow")
+		assert.equals(ns.Media:Fetch("font", icons.resolved.font), icons.buttons.crowdControl.ufTime:GetFont())
+		ns.Perf.counters = nil
+	end)
+
+	it("restyles when missing media becomes available without changing the config", function()
+		ns.Config:SetUnitValue("target", "categoryAuras.font", "Late category font")
+		local font = ns.Media:Fetch("font", "Arial Narrow")
+		ns.Media.LSM:Register("font", "Late category font", font)
+		ns.Units:Refresh("target")
+		assert.equals(font, icons.buttons.crowdControl.ufTime:GetFont())
+		ns.Config:SetUnitValue("target", "categoryAuras.border.background", "Late category background")
+		ns.Perf.counters = {}
+		ns.Media.LSM:Register("background", "Late category background", [[Interface\Buttons\WHITE8X8]])
+		ns.Units:Refresh("target")
+		assert.equals(4, ns.Perf.counters.categoryButtonStyle)
+		ns.Perf.counters = nil
+	end)
+
+	it("keeps artwork private and restyles both sides of a sample to live transition", function()
+		local config = ns.Util.Copy(icons.config)
+		local before = ns.Util.Copy(config)
+		local resolved = ns.Util.Copy(icons.resolved)
+		icons:Apply(config)
+		assert.same(before, config)
+		assert.same(resolved, icons.resolved)
+		assert.is_true(icons.art.crowdControl.border ~= icons.art.bigDefensive.border)
+		icons:ShowSample({ categoryAuras = { crowdControl = ns.Units.CATEGORY_SAMPLES.crowdControl } })
+		assert.is_true(icons.previewFrame:IsShown())
+		ns.Perf.counters = {}
+		icons:SetUnit("target")
+		assert.equals(4, ns.Perf.counters.categoryButtonStyle)
+		assert.is_false(icons.previewFrame:IsShown())
+		assert.is_true(icons.container:IsShown())
+		ns.Perf.counters = nil
+	end)
+
 	it("stacks higher categories above lower ones without reading slot visibility", function()
 		for i = 1, #KEYS - 1 do
 			assert.is_true(Level(KEYS[i]) > Level(KEYS[i + 1]) + 4, KEYS[i] .. " covers " .. KEYS[i + 1])

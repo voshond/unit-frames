@@ -86,6 +86,7 @@ function Component:Apply(config)
 	Perf:Begin("resolve")
 	self.resolved = Schema.Resolve(self:GetSchema(), self.config, ns.Config:GetTheme())
 	Perf:End("resolve")
+	Perf:Count("presentationApply")
 	self:OnApply(self.resolved)
 	if self.resolved.enabled ~= nil then
 		self:SetEnabled(self.resolved.enabled)
@@ -121,13 +122,17 @@ end
 -- would turn inherited theme values into overrides). Shared inside a
 -- Schema.Shared scope, so callers must not modify the result.
 local function BuildChildConfig(schema, config, key)
+	ns.Perf:Count("childConfigBuild")
 	local opt = Schema.Find(schema, key)
 	local out = ns.Util.Copy(opt and opt.defaults or {})
 	return ns.Util.Merge(out, (config and config[key]) or {})
 end
 
 function Component:ChildConfig(key)
-	return Schema.Memo(BuildChildConfig, self:GetSchema(), self.config, key)
+	ns.Perf:Begin("child config")
+	local config = Schema.Memo(BuildChildConfig, self:GetSchema(), self.config, key)
+	ns.Perf:End("child config")
+	return config
 end
 
 -- Applies the `key` group of this component's config to a child component.

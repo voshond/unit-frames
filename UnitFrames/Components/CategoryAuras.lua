@@ -106,20 +106,35 @@ function CategoryAuras:InitButton(button, key, preview)
 end
 
 function CategoryAuras:ApplySlots()
+	ns.Perf:Begin("category slots")
+	self.appliedSlots = self.appliedSlots or {}
 	for _, category in ipairs(CategoryAuras.CATEGORIES) do
-		self.container:SetAuraSlotEnabled(category.key, self.resolved[category.key])
+		local enabled = self.resolved[category.key]
+		if self.appliedSlots[category.key] ~= enabled then
+			self.container:SetAuraSlotEnabled(category.key, enabled)
+			self.appliedSlots[category.key] = enabled
+			ns.Perf:Count("categorySlotWrite")
+		end
 	end
+	ns.Perf:End("category slots")
 end
 
 function CategoryAuras:OnApply(cfg)
-	self.art = {}
-	for _, category in ipairs(CategoryAuras.CATEGORIES) do
-		local copy = ns.Util.Copy(cfg)
-		if cfg.categoryBorder then copy.border.color = cfg[category.key .. "Color"] end
-		self.art[category.key] = copy
+	ns.Perf:Begin("category art config")
+	if not ns.Util.Equals(self.artConfig, cfg) then
+		ns.Perf:Count("categoryArtBuild")
+		self.artConfig = ns.Util.Copy(cfg)
+		self.art = {}
+		for _, category in ipairs(CategoryAuras.CATEGORIES) do
+			local copy = {}
+			for key, value in pairs(self.artConfig) do copy[key] = value end
+			copy.border = ns.Util.Copy(self.artConfig.border)
+			if cfg.categoryBorder then copy.border.color = self.artConfig[category.key .. "Color"] end
+			self.art[category.key] = copy
+		end
 	end
+	ns.Perf:End("category art config")
 	if self.container then self:ApplySlots() end
-	self.styled = nil
 end
 
 -- Icon size and base frame level here, or nil where the icons cannot show.
@@ -166,6 +181,7 @@ function CategoryAuras:Layout(context)
 end
 
 function CategoryAuras:StyleButton(button)
+	ns.Perf:Count("categoryButtonStyle")
 	local cfg = self.resolved
 	AuraIcon.Apply(button, self.art[button.ufKind], self.size, nil, cfg.swipe, cfg.showSwipeEdge)
 	button:ClearAllPoints()
@@ -180,9 +196,11 @@ local function Restyle(icons)
 end
 
 function CategoryAuras:RestyleButtons()
-	local style, styled = { self.resolved, self.size, self.level, self.anchor, self.previewData ~= nil }, self.styled
+	local cfg = self.resolved
+	local style, styled = { self.art, self.size, self.level, self.anchor, self.previewData ~= nil,
+		ns.Media:Fetch("font", cfg.font), Backdrop.Info(cfg.border) }, self.styled
 	if styled and styled[1] == style[1] and styled[2] == style[2] and styled[3] == style[3]
-		and styled[4] == style[4] and styled[5] == style[5] then return end
+		and styled[4] == style[4] and styled[5] == style[5] and styled[6] == style[6] and styled[7] == style[7] then return end
 	if self.previewData then
 		self.previewFrame:SetFrameLevel(self.level)
 		for _, button in pairs(self.samples) do self:StyleButton(button) end
