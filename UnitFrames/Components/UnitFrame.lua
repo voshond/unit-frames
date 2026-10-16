@@ -138,8 +138,8 @@ UnitFrame.PARTS = {
 				HeightOption(18, OverHealth),
 			})
 		end,
-		create = function(frame, _, _, config)
-			local castbar = Castbar:New(frame, config)
+		create = function(frame, _, native, config)
+			local castbar = Castbar:New(frame, config, { nativeLayout = native })
 			castbar:Hide()
 			return castbar
 		end },
@@ -441,16 +441,19 @@ end
 
 -- Row placements are positioned with the rows. A covering castbar ("health",
 -- "portrait") instead sits over its host, opaque, and replaces it while a
--- cast is shown. Portrait placement needs a visible portrait.
+-- cast is shown. Portrait placement needs a visible portrait. Over a health
+-- bar that lends its edge to a collapsing aura bar, the castbar follows the
+-- bar's native edge so it grows and shrinks with it.
 function UnitFrame:LayoutCastbar(layout)
 	local castbar = self.partsByKey.castbar
 	if not castbar then return end
 	local placement = layout.castbarPlacement
 	local portrait = layout.portrait and self.partsByKey.portrait
-	local host, hostLevel, onCoverChanged
+	local host, hostLevel, onCoverChanged, coverArea
 	if placement == "health" then
 		host = self.rowsByKey.health:GetFrame()
 		hostLevel = host:GetFrameLevel()
+		coverArea = layout.auraBarCollapses and self.rowsByKey.health:GetBar():GetFrame() or host
 	elseif placement == "portrait" and portrait then
 		host = portrait:GetFrame()
 		hostLevel = (portrait.model or portrait.viewport or host):GetFrameLevel()
@@ -461,10 +464,19 @@ function UnitFrame:LayoutCastbar(layout)
 	castbar:SetEnabled(placement ~= "off" and (placement ~= "portrait" or portrait ~= nil))
 	if host then
 		castbar:ClearAllPoints()
-		castbar:SetAllPoints(host)
+		castbar:SetAllPoints(coverArea or host)
 		castbar:GetFrame():SetFrameLevel(hostLevel + 10)
 	else
 		castbar:GetFrame():SetFrameLevel(self.frame:GetFrameLevel() + 1)
+	end
+	if coverArea and coverArea ~= host then
+		local maxHeight = host:GetHeight()
+		for _, item in ipairs(layout.rows) do
+			if item.key == "auraBar" then maxHeight = maxHeight + self.resolved.spacing + item.height end
+		end
+		castbar:SetKnownSize(host:GetWidth(), host:GetHeight(), maxHeight)
+	else
+		castbar:SetKnownSize(nil)
 	end
 	castbar:SetOpaque(host ~= nil)
 	castbar:SetCovered(host, onCoverChanged)

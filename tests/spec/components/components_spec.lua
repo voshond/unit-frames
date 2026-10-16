@@ -322,17 +322,17 @@ describe("Castbar", function()
 		local castbar = NewCastbar() -- 200 x 20, border padding 3
 		local barFrame = castbar:GetBar().frame
 		assert.is_not_nil(castbar.frame.__state.backdrop, "the castbar frame carries the border")
-		assert.same({ "TOPLEFT", castbar.frame, "TOPLEFT", 3, -3 }, castbar.icon:GetAnchor("TOPLEFT"))
-		assert.equals(14, castbar.icon:GetWidth(), "square icon filling the inner height")
-		assert.same({ "TOPLEFT", castbar.icon, "TOPRIGHT", 1, 0 }, barFrame:GetAnchor("TOPLEFT"))
+		assert.same({ "TOPLEFT", castbar.frame, "TOPLEFT", 3, -3 }, castbar.iconFrame:GetAnchor("TOPLEFT"))
+		assert.equals(14, castbar.iconFrame:GetWidth(), "square icon filling the inner height")
+		assert.same({ "TOPLEFT", castbar.iconFrame, "TOPRIGHT", 1, 0 }, barFrame:GetAnchor("TOPLEFT"))
 		assert.same({ "BOTTOMRIGHT", castbar.frame, "BOTTOMRIGHT", -3, 3 }, barFrame:GetAnchor("BOTTOMRIGHT"))
 
 		castbar:Apply({ icon = { position = "RIGHT" } })
-		assert.same({ "TOPRIGHT", castbar.frame, "TOPRIGHT", -3, -3 }, castbar.icon:GetAnchor("TOPRIGHT"))
-		assert.same({ "BOTTOMRIGHT", castbar.icon, "BOTTOMLEFT", -1, 0 }, barFrame:GetAnchor("BOTTOMRIGHT"))
+		assert.same({ "TOPRIGHT", castbar.frame, "TOPRIGHT", -3, -3 }, castbar.iconFrame:GetAnchor("TOPRIGHT"))
+		assert.same({ "BOTTOMRIGHT", castbar.iconFrame, "BOTTOMLEFT", -1, 0 }, barFrame:GetAnchor("BOTTOMRIGHT"))
 
 		castbar:Apply({ icon = { enabled = false } })
-		assert.is_false(castbar.icon:IsShown())
+		assert.is_false(castbar.iconFrame:IsShown())
 		assert.same({ "TOPLEFT", castbar.frame, "TOPLEFT", 3, -3 }, barFrame:GetAnchor("TOPLEFT"))
 
 		castbar:Apply({ icon = { enabled = false }, border = { enabled = false } })

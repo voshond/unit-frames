@@ -76,13 +76,16 @@ local function TimeFormatter()
 end
 
 function Castbar:OnCreate(parent)
-	self.frame = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+	self.frame = CreateFrame("Frame", nil, parent, self.spec.nativeLayout and "BackdropTemplate,DisableUntrustedLayoutScriptsTemplate" or "BackdropTemplate")
 
 	-- Lowest layer: keeps whatever is behind the castbar from showing through.
 	self.backing = self.frame:CreateTexture(nil, "BACKGROUND", nil, -8)
 	self.backing:SetAllPoints(self.frame)
 
-	self.icon = self.frame:CreateTexture(nil, "ARTWORK")
+	self.iconFrame = CreateFrame("Frame", nil, self.frame, self.spec.nativeLayout and "DisableUntrustedLayoutScriptsTemplate" or nil)
+	self.iconFrame:SetClipsChildren(true)
+	self.icon = self.iconFrame:CreateTexture(nil, "ARTWORK")
+	self.icon:SetPoint("CENTER", self.iconFrame, "CENTER")
 	self.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
 	self.bar = self:Own(Bar:New(self.frame, self:ChildConfig("bar"), { colorInherit = "colors.cast" }))
@@ -98,13 +101,35 @@ function Castbar:OnCreate(parent)
 	self.fade:SetScript("OnUpdate", function() self:UpdateCovered() end)
 	self.fade:SetScript("OnFinished", function() self:Hide() end)
 
-	self.frame:SetScript("OnSizeChanged", function()
+	if not self.spec.nativeLayout then
+		self.frame:SetScript("OnSizeChanged", function()
+			self:LayoutParts()
+		end)
+	end
+end
+
+-- A castbar following native (possibly secret) geometry is laid out from the
+-- plain size it has with the icon row shown (and the tallest it can grow to); the icon keeps that width and
+-- is clipped, not stretched, by the frame's shrinking height.
+function Castbar:SetKnownSize(width, height, maxHeight)
+	self.knownWidth, self.knownHeight, self.knownMaxHeight = width, height, maxHeight
+	if self.resolved then
+		self:ApplyBorder()
 		self:LayoutParts()
-	end)
+	end
+end
+
+function Castbar:ApplyBorder()
+	local border = self.resolved.border
+	if self.knownWidth then
+		Backdrop.ApplyToFixedSize(self.frame, border, self.knownWidth, self.knownHeight)
+		return
+	end
+	Backdrop.ApplyTo(self.frame, border)
 end
 
 function Castbar:OnApply(cfg)
-	Backdrop.ApplyTo(self.frame, cfg.border)
+	self:ApplyBorder()
 	self:UpdateBacking()
 	self:ApplyChild(self.bar, "bar")
 	self:ApplyChild(self.nameText, "name")
@@ -119,19 +144,30 @@ function Castbar:LayoutParts()
 	if not cfg then
 		return
 	end
-	local layout = ns.CastbarLayout.Compute(self.frame:GetWidth(), self.frame:GetHeight(), cfg, self.portraitPlacement)
-	local icon, bar = self.icon, self.bar
-	icon:ClearAllPoints()
+	local width, height = self.knownWidth, self.knownHeight
+	if not width then
+		width, height = self.frame:GetWidth(), self.frame:GetHeight()
+	end
+	local layout = ns.CastbarLayout.Compute(width, height, cfg, self.portraitPlacement, self.knownMaxHeight)
+	local icon, iconFrame, bar = self.icon, self.iconFrame, self.bar
+	iconFrame:ClearAllPoints()
 	bar:ClearAllPoints()
-	icon:SetShown(layout.icon ~= nil)
+	iconFrame:SetShown(layout.icon ~= nil)
 	if layout.icon then
 		local bounds = layout.icon
-		icon:SetSize(bounds.width, bounds.height)
-		icon:SetPoint(bounds.point, self.frame, bounds.point, bounds.x, bounds.y)
-		icon:SetTexCoord(unpack(bounds.crop))
+		icon:SetSize(bounds.side, bounds.side)
+		if self.knownWidth then
+			local side = bounds.point == "TOPRIGHT" and "RIGHT" or "LEFT"
+			iconFrame:SetWidth(bounds.width)
+			iconFrame:SetPoint("TOP" .. side, self.frame, "TOP" .. side, bounds.x, bounds.y)
+			iconFrame:SetPoint("BOTTOM" .. side, self.frame, "BOTTOM" .. side, bounds.x, bounds.bottom)
+		else
+			iconFrame:SetSize(bounds.width, bounds.height)
+			iconFrame:SetPoint(bounds.point, self.frame, bounds.point, bounds.x, bounds.y)
+		end
 	end
 	for _, point in ipairs(layout.bar) do
-		bar:SetPoint(point[1], point[2] == "icon" and icon or self.frame, point[3], point[4], point[5])
+		bar:SetPoint(point[1], point[2] == "icon" and iconFrame or self.frame, point[3], point[4], point[5])
 	end
 
 	local textParent = bar:GetTextParent()
