@@ -36,7 +36,7 @@ describe("Portrait casts", function()
 
 	it("splits icon and bar, changes fill direction, and returns to normal rows", function()
 		ns.Config:SetUnitValue("player", "castbar.placement", "portrait")
-		castbar.frame:SetSize(60, 40)
+		castbar:SetKnownSize(60, 40)
 		for _, orientation in ipairs({ "HORIZONTAL", "VERTICAL" }) do
 			for _, layout in ipairs({ "split", "stack", "bar" }) do
 				castbar:Apply({ portraitLayout = layout, border = { enabled = false }, bar = { orientation = orientation } })

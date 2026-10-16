@@ -458,11 +458,20 @@ function UnitFrame:LayoutCastbar(layout)
 	local placement = layout.castbarPlacement
 	local portrait = layout.portrait and self.partsByKey.portrait
 	local host, hostLevel, onCoverChanged, coverArea
+	local width, height, maxHeight
+	local rowKey = placement == "health" and "health" or "castbar"
+	for _, item in ipairs(layout.rows) do
+		if item.key == rowKey then
+			width, height = layout.width - item.left - item.right, item.height
+			break
+		end
+	end
 	if placement == "health" then
 		host = self.rowsByKey.health:GetFrame()
 		hostLevel = host:GetFrameLevel()
 		coverArea = layout.auraBarCollapses and self.rowsByKey.health:GetBar():GetFrame() or host
 	elseif placement == "portrait" and portrait then
+		width, height = layout.portrait.width, layout.portrait.height
 		host = portrait:GetFrame()
 		hostLevel = (portrait.model or portrait.viewport or host):GetFrameLevel()
 		onCoverChanged = function(alpha) portrait:SetCoverAlpha(alpha) end
@@ -479,14 +488,12 @@ function UnitFrame:LayoutCastbar(layout)
 		castbar:GetFrame():SetFrameLevel(self.frame:GetFrameLevel() + 1)
 	end
 	if coverArea and coverArea ~= host then
-		local maxHeight = host:GetHeight()
+		maxHeight = height
 		for _, item in ipairs(layout.rows) do
 			if item.key == "auraBar" then maxHeight = maxHeight + self.resolved.spacing + item.height end
 		end
-		castbar:SetKnownSize(host:GetWidth(), host:GetHeight(), maxHeight)
-	else
-		castbar:SetKnownSize(nil)
 	end
+	castbar:SetKnownSize(width, height, maxHeight)
 	castbar:SetOpaque(host ~= nil)
 	castbar:SetCovered(host, onCoverChanged)
 end

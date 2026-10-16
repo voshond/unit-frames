@@ -171,7 +171,7 @@ function Castbar:LayoutParts()
 	if layout.icon then
 		local bounds = layout.icon
 		icon:SetSize(bounds.side, bounds.side)
-		if self.knownWidth then
+		if self.knownMaxHeight then
 			local side = bounds.point == "TOPRIGHT" and "RIGHT" or "LEFT"
 			iconFrame:SetWidth(bounds.width)
 			iconFrame:SetPoint("TOP" .. side, self.frame, "TOP" .. side, bounds.x, bounds.y)
