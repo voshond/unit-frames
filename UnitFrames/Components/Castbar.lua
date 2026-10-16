@@ -82,7 +82,10 @@ function Castbar:OnCreate(parent)
 	self.backing = self.frame:CreateTexture(nil, "BACKGROUND", nil, -8)
 	self.backing:SetAllPoints(self.frame)
 
-	self.icon = self.frame:CreateTexture(nil, "ARTWORK")
+	self.iconFrame = CreateFrame("Frame", nil, self.frame, self.spec.nativeLayout and "DisableUntrustedLayoutScriptsTemplate" or nil)
+	self.iconFrame:SetClipsChildren(true)
+	self.icon = self.iconFrame:CreateTexture(nil, "ARTWORK")
+	self.icon:SetPoint("CENTER", self.iconFrame, "CENTER")
 	self.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
 	self.bar = self:Own(Bar:New(self.frame, self:ChildConfig("bar"), { colorInherit = "colors.cast" }))
@@ -107,7 +110,7 @@ end
 
 -- A castbar following native (possibly secret) geometry is laid out from the
 -- plain size it has when nothing is collapsed; the icon keeps that width and
--- stretches with the frame's height through its anchors.
+-- is clipped, not stretched, by the frame's shrinking height.
 function Castbar:SetKnownSize(width, height)
 	self.knownWidth, self.knownHeight = width, height
 	if self.resolved then
@@ -146,25 +149,26 @@ function Castbar:LayoutParts()
 		width, height = self.frame:GetWidth(), self.frame:GetHeight()
 	end
 	local layout = ns.CastbarLayout.Compute(width, height, cfg, self.portraitPlacement)
-	local icon, bar = self.icon, self.bar
-	icon:ClearAllPoints()
+	local icon, iconFrame, bar = self.icon, self.iconFrame, self.bar
+	iconFrame:ClearAllPoints()
 	bar:ClearAllPoints()
-	icon:SetShown(layout.icon ~= nil)
+	iconFrame:SetShown(layout.icon ~= nil)
 	if layout.icon then
 		local bounds = layout.icon
+		icon:SetSize(bounds.width, bounds.height)
 		if self.knownWidth then
 			local side = bounds.point == "TOPRIGHT" and "RIGHT" or "LEFT"
-			icon:SetWidth(bounds.width)
-			icon:SetPoint("TOP" .. side, self.frame, "TOP" .. side, bounds.x, bounds.y)
-			icon:SetPoint("BOTTOM" .. side, self.frame, "BOTTOM" .. side, bounds.x, bounds.bottom)
+			iconFrame:SetWidth(bounds.width)
+			iconFrame:SetPoint("TOP" .. side, self.frame, "TOP" .. side, bounds.x, bounds.y)
+			iconFrame:SetPoint("BOTTOM" .. side, self.frame, "BOTTOM" .. side, bounds.x, bounds.bottom)
 		else
-			icon:SetSize(bounds.width, bounds.height)
-			icon:SetPoint(bounds.point, self.frame, bounds.point, bounds.x, bounds.y)
+			iconFrame:SetSize(bounds.width, bounds.height)
+			iconFrame:SetPoint(bounds.point, self.frame, bounds.point, bounds.x, bounds.y)
 		end
 		icon:SetTexCoord(unpack(bounds.crop))
 	end
 	for _, point in ipairs(layout.bar) do
-		bar:SetPoint(point[1], point[2] == "icon" and icon or self.frame, point[3], point[4], point[5])
+		bar:SetPoint(point[1], point[2] == "icon" and iconFrame or self.frame, point[3], point[4], point[5])
 	end
 
 	local textParent = bar:GetTextParent()
