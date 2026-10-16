@@ -580,6 +580,7 @@ option buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2
 option buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
+option buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1
 option buffs.position type="select" label="Side" default="top" values=#eef25c33
 option buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
@@ -594,6 +595,7 @@ option debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032
 option debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
+option debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1
 option debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
 option debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
@@ -620,6 +622,7 @@ default buffs.offsetY = 0
 default buffs.position = "top"
 default buffs.size = 20
 default buffs.sort = "expiration"
+default buffs.swipe = "normal"
 default countSize = 10
 default debuffs.alignment = "start"
 default debuffs.enabled = true
@@ -634,6 +637,7 @@ default debuffs.offsetY = 0
 default debuffs.position = "bottom"
 default debuffs.size = 26
 default debuffs.sort = "expiration"
+default debuffs.swipe = "normal"
 default dispelBorder = true
 default dispelColors.Curse = {0.6,0,1,1}
 default dispelColors.Disease = {0.6,0.4,0,1}
@@ -668,6 +672,7 @@ resolved buffs.offsetY = 0
 resolved buffs.position = "top"
 resolved buffs.size = 20
 resolved buffs.sort = "expiration"
+resolved buffs.swipe = "normal"
 resolved countSize = 10
 resolved debuffs.alignment = "start"
 resolved debuffs.enabled = true
@@ -682,6 +687,7 @@ resolved debuffs.offsetY = 0
 resolved debuffs.position = "bottom"
 resolved debuffs.size = 26
 resolved debuffs.sort = "expiration"
+resolved debuffs.swipe = "normal"
 resolved dispelBorder = true
 resolved dispelColors.Curse = {0.6,0,1,1}
 resolved dispelColors.Disease = {0.6,0.4,0,1}
@@ -743,6 +749,7 @@ option buffs.filter type="select" label="Which" default="HELPFUL" values=#5675a2
 option buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option buffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
 option buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
 option debuffs type="group" label="Debuffs"
@@ -751,6 +758,7 @@ option debuffs.filter type="select" label="Which" default="HARMFUL" values=#6032
 option debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option debuffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
 option debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 default border.background = "None"
@@ -766,6 +774,7 @@ default buffs.max = 16
 default buffs.maxDuration = 0
 default buffs.size = 32
 default buffs.sort = "expiration"
+default buffs.swipe = "normal"
 default countSize = 10
 default debuffs.enabled = true
 default debuffs.entrySide = "opposite"
@@ -774,6 +783,7 @@ default debuffs.max = 16
 default debuffs.maxDuration = 0
 default debuffs.size = 32
 default debuffs.sort = "expiration"
+default debuffs.swipe = "normal"
 default dispelBorder = true
 default dispelColors.Curse = {0.6,0,1,1}
 default dispelColors.Disease = {0.6,0.4,0,1}
@@ -812,6 +822,7 @@ resolved buffs.max = 16
 resolved buffs.maxDuration = 0
 resolved buffs.size = 32
 resolved buffs.sort = "expiration"
+resolved buffs.swipe = "normal"
 resolved countSize = 10
 resolved debuffs.enabled = true
 resolved debuffs.entrySide = "opposite"
@@ -820,6 +831,7 @@ resolved debuffs.max = 16
 resolved debuffs.maxDuration = 0
 resolved debuffs.size = 32
 resolved debuffs.sort = "expiration"
+resolved debuffs.swipe = "normal"
 resolved dispelBorder = true
 resolved dispelColors.Curse = {0.6,0,1,1}
 resolved dispelColors.Disease = {0.6,0.4,0,1}
@@ -1858,6 +1870,7 @@ option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
+option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1
 option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
 option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
@@ -1872,6 +1885,7 @@ option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values
 option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
+option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1
 option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
 option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
@@ -1928,6 +1942,7 @@ option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
 option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
 option auraBar.debuffs type="group" label="Debuffs"
@@ -1936,6 +1951,7 @@ option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" valu
 option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
 option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={}
@@ -1984,6 +2000,7 @@ default auraBar.buffs.max = 16
 default auraBar.buffs.maxDuration = 0
 default auraBar.buffs.size = 32
 default auraBar.buffs.sort = "expiration"
+default auraBar.buffs.swipe = "normal"
 default auraBar.collapse = true
 default auraBar.countSize = 10
 default auraBar.debuffs.enabled = true
@@ -1993,6 +2010,7 @@ default auraBar.debuffs.max = 16
 default auraBar.debuffs.maxDuration = 0
 default auraBar.debuffs.size = 32
 default auraBar.debuffs.sort = "expiration"
+default auraBar.debuffs.swipe = "normal"
 default auraBar.dispelBorder = true
 default auraBar.dispelColors.Curse = {0.6,0,1,1}
 default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
@@ -2033,6 +2051,7 @@ default auras.buffs.offsetY = 0
 default auras.buffs.position = "top"
 default auras.buffs.size = 20
 default auras.buffs.sort = "expiration"
+default auras.buffs.swipe = "normal"
 default auras.countSize = 10
 default auras.debuffs.alignment = "start"
 default auras.debuffs.enabled = true
@@ -2047,6 +2066,7 @@ default auras.debuffs.offsetY = 0
 default auras.debuffs.position = "bottom"
 default auras.debuffs.size = 26
 default auras.debuffs.sort = "expiration"
+default auras.debuffs.swipe = "normal"
 default auras.dispelBorder = true
 default auras.dispelColors.Curse = {0.6,0,1,1}
 default auras.dispelColors.Disease = {0.6,0.4,0,1}
@@ -2795,6 +2815,7 @@ resolved auraBar.buffs.max = 16
 resolved auraBar.buffs.maxDuration = 0
 resolved auraBar.buffs.size = 32
 resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.buffs.swipe = "normal"
 resolved auraBar.collapse = true
 resolved auraBar.countSize = 10
 resolved auraBar.debuffs.enabled = true
@@ -2804,6 +2825,7 @@ resolved auraBar.debuffs.max = 16
 resolved auraBar.debuffs.maxDuration = 0
 resolved auraBar.debuffs.size = 32
 resolved auraBar.debuffs.sort = "expiration"
+resolved auraBar.debuffs.swipe = "normal"
 resolved auraBar.dispelBorder = true
 resolved auraBar.dispelColors.Curse = {0.6,0,1,1}
 resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
@@ -2852,6 +2874,7 @@ resolved auras.buffs.offsetY = 0
 resolved auras.buffs.position = "top"
 resolved auras.buffs.size = 20
 resolved auras.buffs.sort = "expiration"
+resolved auras.buffs.swipe = "normal"
 resolved auras.countSize = 10
 resolved auras.debuffs.alignment = "start"
 resolved auras.debuffs.enabled = true
@@ -2866,6 +2889,7 @@ resolved auras.debuffs.offsetY = 0
 resolved auras.debuffs.position = "bottom"
 resolved auras.debuffs.size = 26
 resolved auras.debuffs.sort = "expiration"
+resolved auras.debuffs.swipe = "normal"
 resolved auras.dispelBorder = true
 resolved auras.dispelColors.Curse = {0.6,0,1,1}
 resolved auras.dispelColors.Disease = {0.6,0.4,0,1}
@@ -4394,6 +4418,7 @@ option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
+option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1
 option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
 option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
@@ -4408,6 +4433,7 @@ option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values
 option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
+option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1
 option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
 option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
@@ -4464,6 +4490,7 @@ option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
 option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
 option auraBar.debuffs type="group" label="Debuffs"
@@ -4472,6 +4499,7 @@ option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" valu
 option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
 option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={}
@@ -4520,6 +4548,7 @@ default auraBar.buffs.max = 16
 default auraBar.buffs.maxDuration = 0
 default auraBar.buffs.size = 32
 default auraBar.buffs.sort = "expiration"
+default auraBar.buffs.swipe = "normal"
 default auraBar.collapse = true
 default auraBar.countSize = 10
 default auraBar.debuffs.enabled = true
@@ -4529,6 +4558,7 @@ default auraBar.debuffs.max = 16
 default auraBar.debuffs.maxDuration = 0
 default auraBar.debuffs.size = 32
 default auraBar.debuffs.sort = "expiration"
+default auraBar.debuffs.swipe = "normal"
 default auraBar.dispelBorder = true
 default auraBar.dispelColors.Curse = {0.6,0,1,1}
 default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
@@ -4569,6 +4599,7 @@ default auras.buffs.offsetY = 0
 default auras.buffs.position = "top"
 default auras.buffs.size = 18
 default auras.buffs.sort = "expiration"
+default auras.buffs.swipe = "normal"
 default auras.countSize = 8
 default auras.debuffs.alignment = "start"
 default auras.debuffs.enabled = true
@@ -4583,6 +4614,7 @@ default auras.debuffs.offsetY = 0
 default auras.debuffs.position = "bottom"
 default auras.debuffs.size = 18
 default auras.debuffs.sort = "expiration"
+default auras.debuffs.swipe = "normal"
 default auras.dispelBorder = true
 default auras.dispelColors.Curse = {0.6,0,1,1}
 default auras.dispelColors.Disease = {0.6,0.4,0,1}
@@ -5121,6 +5153,7 @@ resolved auraBar.buffs.max = 16
 resolved auraBar.buffs.maxDuration = 0
 resolved auraBar.buffs.size = 32
 resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.buffs.swipe = "normal"
 resolved auraBar.collapse = true
 resolved auraBar.countSize = 10
 resolved auraBar.debuffs.enabled = true
@@ -5130,6 +5163,7 @@ resolved auraBar.debuffs.max = 16
 resolved auraBar.debuffs.maxDuration = 0
 resolved auraBar.debuffs.size = 32
 resolved auraBar.debuffs.sort = "expiration"
+resolved auraBar.debuffs.swipe = "normal"
 resolved auraBar.dispelBorder = true
 resolved auraBar.dispelColors.Curse = {0.6,0,1,1}
 resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
@@ -5178,6 +5212,7 @@ resolved auras.buffs.offsetY = 0
 resolved auras.buffs.position = "top"
 resolved auras.buffs.size = 18
 resolved auras.buffs.sort = "expiration"
+resolved auras.buffs.swipe = "normal"
 resolved auras.countSize = 8
 resolved auras.debuffs.alignment = "start"
 resolved auras.debuffs.enabled = true
@@ -5192,6 +5227,7 @@ resolved auras.debuffs.offsetY = 0
 resolved auras.debuffs.position = "bottom"
 resolved auras.debuffs.size = 18
 resolved auras.debuffs.sort = "expiration"
+resolved auras.debuffs.swipe = "normal"
 resolved auras.dispelBorder = true
 resolved auras.dispelColors.Curse = {0.6,0,1,1}
 resolved auras.dispelColors.Disease = {0.6,0.4,0,1}
@@ -6535,6 +6571,7 @@ option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
+option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1
 option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
 option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
@@ -6549,6 +6586,7 @@ option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values
 option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
+option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1
 option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
 option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
@@ -6605,6 +6643,7 @@ option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
 option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
 option auraBar.debuffs type="group" label="Debuffs"
@@ -6613,6 +6652,7 @@ option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" valu
 option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
 option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={}
@@ -6661,6 +6701,7 @@ default auraBar.buffs.max = 16
 default auraBar.buffs.maxDuration = 0
 default auraBar.buffs.size = 32
 default auraBar.buffs.sort = "expiration"
+default auraBar.buffs.swipe = "normal"
 default auraBar.collapse = true
 default auraBar.countSize = 10
 default auraBar.debuffs.enabled = true
@@ -6670,6 +6711,7 @@ default auraBar.debuffs.max = 16
 default auraBar.debuffs.maxDuration = 0
 default auraBar.debuffs.size = 32
 default auraBar.debuffs.sort = "expiration"
+default auraBar.debuffs.swipe = "normal"
 default auraBar.dispelBorder = true
 default auraBar.dispelColors.Curse = {0.6,0,1,1}
 default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
@@ -6710,6 +6752,7 @@ default auras.buffs.offsetY = 0
 default auras.buffs.position = "top"
 default auras.buffs.size = 20
 default auras.buffs.sort = "expiration"
+default auras.buffs.swipe = "normal"
 default auras.countSize = 10
 default auras.debuffs.alignment = "start"
 default auras.debuffs.enabled = true
@@ -6724,6 +6767,7 @@ default auras.debuffs.offsetY = 0
 default auras.debuffs.position = "bottom"
 default auras.debuffs.size = 26
 default auras.debuffs.sort = "expiration"
+default auras.debuffs.swipe = "normal"
 default auras.dispelBorder = true
 default auras.dispelColors.Curse = {0.6,0,1,1}
 default auras.dispelColors.Disease = {0.6,0.4,0,1}
@@ -7283,6 +7327,7 @@ resolved auraBar.buffs.max = 16
 resolved auraBar.buffs.maxDuration = 0
 resolved auraBar.buffs.size = 32
 resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.buffs.swipe = "normal"
 resolved auraBar.collapse = true
 resolved auraBar.countSize = 10
 resolved auraBar.debuffs.enabled = true
@@ -7292,6 +7337,7 @@ resolved auraBar.debuffs.max = 16
 resolved auraBar.debuffs.maxDuration = 0
 resolved auraBar.debuffs.size = 32
 resolved auraBar.debuffs.sort = "expiration"
+resolved auraBar.debuffs.swipe = "normal"
 resolved auraBar.dispelBorder = true
 resolved auraBar.dispelColors.Curse = {0.6,0,1,1}
 resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
@@ -7340,6 +7386,7 @@ resolved auras.buffs.offsetY = 0
 resolved auras.buffs.position = "top"
 resolved auras.buffs.size = 20
 resolved auras.buffs.sort = "expiration"
+resolved auras.buffs.swipe = "normal"
 resolved auras.countSize = 10
 resolved auras.debuffs.alignment = "start"
 resolved auras.debuffs.enabled = true
@@ -7354,6 +7401,7 @@ resolved auras.debuffs.offsetY = 0
 resolved auras.debuffs.position = "bottom"
 resolved auras.debuffs.size = 26
 resolved auras.debuffs.sort = "expiration"
+resolved auras.debuffs.swipe = "normal"
 resolved auras.dispelBorder = true
 resolved auras.dispelColors.Curse = {0.6,0,1,1}
 resolved auras.dispelColors.Disease = {0.6,0.4,0,1}
@@ -8685,6 +8733,7 @@ option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
+option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1
 option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
 option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
@@ -8699,6 +8748,7 @@ option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values
 option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
+option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1
 option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
 option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
@@ -8755,6 +8805,7 @@ option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
 option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
 option auraBar.debuffs type="group" label="Debuffs"
@@ -8763,6 +8814,7 @@ option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" valu
 option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
 option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={}
@@ -8811,6 +8863,7 @@ default auraBar.buffs.max = 16
 default auraBar.buffs.maxDuration = 0
 default auraBar.buffs.size = 32
 default auraBar.buffs.sort = "expiration"
+default auraBar.buffs.swipe = "normal"
 default auraBar.collapse = true
 default auraBar.countSize = 10
 default auraBar.debuffs.enabled = true
@@ -8820,6 +8873,7 @@ default auraBar.debuffs.max = 16
 default auraBar.debuffs.maxDuration = 0
 default auraBar.debuffs.size = 32
 default auraBar.debuffs.sort = "expiration"
+default auraBar.debuffs.swipe = "normal"
 default auraBar.dispelBorder = true
 default auraBar.dispelColors.Curse = {0.6,0,1,1}
 default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
@@ -8860,6 +8914,7 @@ default auras.buffs.offsetY = 0
 default auras.buffs.position = "top"
 default auras.buffs.size = 16
 default auras.buffs.sort = "expiration"
+default auras.buffs.swipe = "normal"
 default auras.countSize = 8
 default auras.debuffs.alignment = "start"
 default auras.debuffs.enabled = true
@@ -8874,6 +8929,7 @@ default auras.debuffs.offsetY = 0
 default auras.debuffs.position = "bottom"
 default auras.debuffs.size = 18
 default auras.debuffs.sort = "expiration"
+default auras.debuffs.swipe = "normal"
 default auras.dispelBorder = true
 default auras.dispelColors.Curse = {0.6,0,1,1}
 default auras.dispelColors.Disease = {0.6,0.4,0,1}
@@ -9412,6 +9468,7 @@ resolved auraBar.buffs.max = 16
 resolved auraBar.buffs.maxDuration = 0
 resolved auraBar.buffs.size = 32
 resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.buffs.swipe = "normal"
 resolved auraBar.collapse = true
 resolved auraBar.countSize = 10
 resolved auraBar.debuffs.enabled = true
@@ -9421,6 +9478,7 @@ resolved auraBar.debuffs.max = 16
 resolved auraBar.debuffs.maxDuration = 0
 resolved auraBar.debuffs.size = 32
 resolved auraBar.debuffs.sort = "expiration"
+resolved auraBar.debuffs.swipe = "normal"
 resolved auraBar.dispelBorder = true
 resolved auraBar.dispelColors.Curse = {0.6,0,1,1}
 resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
@@ -9469,6 +9527,7 @@ resolved auras.buffs.offsetY = 0
 resolved auras.buffs.position = "top"
 resolved auras.buffs.size = 16
 resolved auras.buffs.sort = "expiration"
+resolved auras.buffs.swipe = "normal"
 resolved auras.countSize = 8
 resolved auras.debuffs.alignment = "start"
 resolved auras.debuffs.enabled = true
@@ -9483,6 +9542,7 @@ resolved auras.debuffs.offsetY = 0
 resolved auras.debuffs.position = "bottom"
 resolved auras.debuffs.size = 18
 resolved auras.debuffs.sort = "expiration"
+resolved auras.debuffs.swipe = "normal"
 resolved auras.dispelBorder = true
 resolved auras.dispelColors.Curse = {0.6,0,1,1}
 resolved auras.dispelColors.Disease = {0.6,0.4,0,1}
@@ -10787,6 +10847,7 @@ option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
+option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1
 option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
 option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
@@ -10801,6 +10862,7 @@ option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values
 option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
+option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1
 option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
 option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
@@ -10857,6 +10919,7 @@ option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
 option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
 option auraBar.debuffs type="group" label="Debuffs"
@@ -10865,6 +10928,7 @@ option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" valu
 option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
 option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={}
@@ -10913,6 +10977,7 @@ default auraBar.buffs.max = 16
 default auraBar.buffs.maxDuration = 0
 default auraBar.buffs.size = 32
 default auraBar.buffs.sort = "expiration"
+default auraBar.buffs.swipe = "normal"
 default auraBar.collapse = true
 default auraBar.countSize = 10
 default auraBar.debuffs.enabled = true
@@ -10922,6 +10987,7 @@ default auraBar.debuffs.max = 16
 default auraBar.debuffs.maxDuration = 0
 default auraBar.debuffs.size = 32
 default auraBar.debuffs.sort = "expiration"
+default auraBar.debuffs.swipe = "normal"
 default auraBar.dispelBorder = true
 default auraBar.dispelColors.Curse = {0.6,0,1,1}
 default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
@@ -10962,6 +11028,7 @@ default auras.buffs.offsetY = 0
 default auras.buffs.position = "top"
 default auras.buffs.size = 20
 default auras.buffs.sort = "expiration"
+default auras.buffs.swipe = "normal"
 default auras.countSize = 10
 default auras.debuffs.alignment = "start"
 default auras.debuffs.enabled = true
@@ -10976,6 +11043,7 @@ default auras.debuffs.offsetY = 0
 default auras.debuffs.position = "bottom"
 default auras.debuffs.size = 26
 default auras.debuffs.sort = "expiration"
+default auras.debuffs.swipe = "normal"
 default auras.dispelBorder = true
 default auras.dispelColors.Curse = {0.6,0,1,1}
 default auras.dispelColors.Disease = {0.6,0.4,0,1}
@@ -11512,6 +11580,7 @@ resolved auraBar.buffs.max = 16
 resolved auraBar.buffs.maxDuration = 0
 resolved auraBar.buffs.size = 32
 resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.buffs.swipe = "normal"
 resolved auraBar.collapse = true
 resolved auraBar.countSize = 10
 resolved auraBar.debuffs.enabled = true
@@ -11521,6 +11590,7 @@ resolved auraBar.debuffs.max = 16
 resolved auraBar.debuffs.maxDuration = 0
 resolved auraBar.debuffs.size = 32
 resolved auraBar.debuffs.sort = "expiration"
+resolved auraBar.debuffs.swipe = "normal"
 resolved auraBar.dispelBorder = true
 resolved auraBar.dispelColors.Curse = {0.6,0,1,1}
 resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
@@ -11569,6 +11639,7 @@ resolved auras.buffs.offsetY = 0
 resolved auras.buffs.position = "top"
 resolved auras.buffs.size = 20
 resolved auras.buffs.sort = "expiration"
+resolved auras.buffs.swipe = "normal"
 resolved auras.countSize = 10
 resolved auras.debuffs.alignment = "start"
 resolved auras.debuffs.enabled = true
@@ -11583,6 +11654,7 @@ resolved auras.debuffs.offsetY = 0
 resolved auras.debuffs.position = "bottom"
 resolved auras.debuffs.size = 26
 resolved auras.debuffs.sort = "expiration"
+resolved auras.debuffs.swipe = "normal"
 resolved auras.dispelBorder = true
 resolved auras.dispelColors.Curse = {0.6,0,1,1}
 resolved auras.dispelColors.Disease = {0.6,0.4,0,1}
@@ -12879,6 +12951,7 @@ option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
+option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1
 option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
 option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
@@ -12893,6 +12966,7 @@ option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values
 option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
+option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1
 option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
 option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
@@ -12949,6 +13023,7 @@ option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
 option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
 option auraBar.debuffs type="group" label="Debuffs"
@@ -12957,6 +13032,7 @@ option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" valu
 option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
 option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={}
@@ -13005,6 +13081,7 @@ default auraBar.buffs.max = 16
 default auraBar.buffs.maxDuration = 0
 default auraBar.buffs.size = 32
 default auraBar.buffs.sort = "expiration"
+default auraBar.buffs.swipe = "normal"
 default auraBar.collapse = true
 default auraBar.countSize = 10
 default auraBar.debuffs.enabled = true
@@ -13014,6 +13091,7 @@ default auraBar.debuffs.max = 16
 default auraBar.debuffs.maxDuration = 0
 default auraBar.debuffs.size = 32
 default auraBar.debuffs.sort = "expiration"
+default auraBar.debuffs.swipe = "normal"
 default auraBar.dispelBorder = true
 default auraBar.dispelColors.Curse = {0.6,0,1,1}
 default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
@@ -13054,6 +13132,7 @@ default auras.buffs.offsetY = 0
 default auras.buffs.position = "top"
 default auras.buffs.size = 16
 default auras.buffs.sort = "expiration"
+default auras.buffs.swipe = "normal"
 default auras.countSize = 8
 default auras.debuffs.alignment = "start"
 default auras.debuffs.enabled = true
@@ -13068,6 +13147,7 @@ default auras.debuffs.offsetY = 0
 default auras.debuffs.position = "bottom"
 default auras.debuffs.size = 18
 default auras.debuffs.sort = "expiration"
+default auras.debuffs.swipe = "normal"
 default auras.dispelBorder = true
 default auras.dispelColors.Curse = {0.6,0,1,1}
 default auras.dispelColors.Disease = {0.6,0.4,0,1}
@@ -13606,6 +13686,7 @@ resolved auraBar.buffs.max = 16
 resolved auraBar.buffs.maxDuration = 0
 resolved auraBar.buffs.size = 32
 resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.buffs.swipe = "normal"
 resolved auraBar.collapse = true
 resolved auraBar.countSize = 10
 resolved auraBar.debuffs.enabled = true
@@ -13615,6 +13696,7 @@ resolved auraBar.debuffs.max = 16
 resolved auraBar.debuffs.maxDuration = 0
 resolved auraBar.debuffs.size = 32
 resolved auraBar.debuffs.sort = "expiration"
+resolved auraBar.debuffs.swipe = "normal"
 resolved auraBar.dispelBorder = true
 resolved auraBar.dispelColors.Curse = {0.6,0,1,1}
 resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
@@ -13663,6 +13745,7 @@ resolved auras.buffs.offsetY = 0
 resolved auras.buffs.position = "top"
 resolved auras.buffs.size = 16
 resolved auras.buffs.sort = "expiration"
+resolved auras.buffs.swipe = "normal"
 resolved auras.countSize = 8
 resolved auras.debuffs.alignment = "start"
 resolved auras.debuffs.enabled = true
@@ -13677,6 +13760,7 @@ resolved auras.debuffs.offsetY = 0
 resolved auras.debuffs.position = "bottom"
 resolved auras.debuffs.size = 18
 resolved auras.debuffs.sort = "expiration"
+resolved auras.debuffs.swipe = "normal"
 resolved auras.dispelBorder = true
 resolved auras.dispelColors.Curse = {0.6,0,1,1}
 resolved auras.dispelColors.Disease = {0.6,0.4,0,1}
@@ -16888,6 +16972,7 @@ option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
+option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1
 option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
 option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
@@ -16902,6 +16987,7 @@ option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values
 option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
+option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1
 option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
 option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
@@ -16958,6 +17044,7 @@ option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
 option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
 option auraBar.debuffs type="group" label="Debuffs"
@@ -16966,6 +17053,7 @@ option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" valu
 option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
 option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={size=12}
@@ -16989,6 +17077,7 @@ default auraBar.buffs.max = 16
 default auraBar.buffs.maxDuration = 0
 default auraBar.buffs.size = 32
 default auraBar.buffs.sort = "expiration"
+default auraBar.buffs.swipe = "normal"
 default auraBar.collapse = true
 default auraBar.countSize = 10
 default auraBar.debuffs.enabled = true
@@ -16998,6 +17087,7 @@ default auraBar.debuffs.max = 16
 default auraBar.debuffs.maxDuration = 0
 default auraBar.debuffs.size = 32
 default auraBar.debuffs.sort = "expiration"
+default auraBar.debuffs.swipe = "normal"
 default auraBar.dispelBorder = true
 default auraBar.dispelColors.Curse = {0.6,0,1,1}
 default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
@@ -17038,6 +17128,7 @@ default auras.buffs.offsetY = 0
 default auras.buffs.position = "top"
 default auras.buffs.size = 14
 default auras.buffs.sort = "expiration"
+default auras.buffs.swipe = "normal"
 default auras.countSize = 8
 default auras.debuffs.alignment = "start"
 default auras.debuffs.enabled = true
@@ -17052,6 +17143,7 @@ default auras.debuffs.offsetY = 0
 default auras.debuffs.position = "bottom"
 default auras.debuffs.size = 16
 default auras.debuffs.sort = "unitDebuff"
+default auras.debuffs.swipe = "normal"
 default auras.dispelBorder = true
 default auras.dispelColors.Curse = {0.6,0,1,1}
 default auras.dispelColors.Disease = {0.6,0.4,0,1}
@@ -17568,6 +17660,7 @@ resolved auraBar.buffs.max = 16
 resolved auraBar.buffs.maxDuration = 0
 resolved auraBar.buffs.size = 32
 resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.buffs.swipe = "normal"
 resolved auraBar.collapse = true
 resolved auraBar.countSize = 10
 resolved auraBar.debuffs.enabled = true
@@ -17577,6 +17670,7 @@ resolved auraBar.debuffs.max = 16
 resolved auraBar.debuffs.maxDuration = 0
 resolved auraBar.debuffs.size = 32
 resolved auraBar.debuffs.sort = "expiration"
+resolved auraBar.debuffs.swipe = "normal"
 resolved auraBar.dispelBorder = true
 resolved auraBar.dispelColors.Curse = {0.6,0,1,1}
 resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
@@ -17625,6 +17719,7 @@ resolved auras.buffs.offsetY = 0
 resolved auras.buffs.position = "top"
 resolved auras.buffs.size = 14
 resolved auras.buffs.sort = "expiration"
+resolved auras.buffs.swipe = "normal"
 resolved auras.countSize = 8
 resolved auras.debuffs.alignment = "start"
 resolved auras.debuffs.enabled = true
@@ -17639,6 +17734,7 @@ resolved auras.debuffs.offsetY = 0
 resolved auras.debuffs.position = "bottom"
 resolved auras.debuffs.size = 16
 resolved auras.debuffs.sort = "unitDebuff"
+resolved auras.debuffs.swipe = "normal"
 resolved auras.dispelBorder = true
 resolved auras.dispelColors.Curse = {0.6,0,1,1}
 resolved auras.dispelColors.Disease = {0.6,0.4,0,1}
@@ -18930,6 +19026,7 @@ option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
+option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1
 option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
 option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
@@ -18944,6 +19041,7 @@ option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values
 option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
+option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1
 option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
 option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
@@ -19000,6 +19098,7 @@ option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auraBar.buffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
 option auraBar.buffs.entrySide type="select" label="Fill from" default="left" values=#aec2a853 tooltip=#56d695c3
 option auraBar.debuffs type="group" label="Debuffs"
@@ -19008,6 +19107,7 @@ option auraBar.debuffs.filter type="select" label="Which" default="HARMFUL" valu
 option auraBar.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
+option auraBar.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auraBar.debuffs.size type="range" label="Icon width" default=32 min=10 max=64 step=1 tooltip=#65c8996b
 option auraBar.debuffs.entrySide type="select" label="Fill from" default="opposite" values=#0f1b5267 tooltip=#190606f9
 option raidTarget type="group" label="Raid target icon" defaults={}
@@ -19031,6 +19131,7 @@ default auraBar.buffs.max = 16
 default auraBar.buffs.maxDuration = 0
 default auraBar.buffs.size = 32
 default auraBar.buffs.sort = "expiration"
+default auraBar.buffs.swipe = "normal"
 default auraBar.collapse = true
 default auraBar.countSize = 10
 default auraBar.debuffs.enabled = true
@@ -19040,6 +19141,7 @@ default auraBar.debuffs.max = 16
 default auraBar.debuffs.maxDuration = 0
 default auraBar.debuffs.size = 32
 default auraBar.debuffs.sort = "expiration"
+default auraBar.debuffs.swipe = "normal"
 default auraBar.dispelBorder = true
 default auraBar.dispelColors.Curse = {0.6,0,1,1}
 default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
@@ -19080,6 +19182,7 @@ default auras.buffs.offsetY = 0
 default auras.buffs.position = "top"
 default auras.buffs.size = 16
 default auras.buffs.sort = "expiration"
+default auras.buffs.swipe = "normal"
 default auras.countSize = 8
 default auras.debuffs.alignment = "start"
 default auras.debuffs.enabled = true
@@ -19094,6 +19197,7 @@ default auras.debuffs.offsetY = 0
 default auras.debuffs.position = "bottom"
 default auras.debuffs.size = 18
 default auras.debuffs.sort = "expiration"
+default auras.debuffs.swipe = "normal"
 default auras.dispelBorder = true
 default auras.dispelColors.Curse = {0.6,0,1,1}
 default auras.dispelColors.Disease = {0.6,0.4,0,1}
@@ -19605,6 +19709,7 @@ resolved auraBar.buffs.max = 16
 resolved auraBar.buffs.maxDuration = 0
 resolved auraBar.buffs.size = 32
 resolved auraBar.buffs.sort = "expiration"
+resolved auraBar.buffs.swipe = "normal"
 resolved auraBar.collapse = true
 resolved auraBar.countSize = 10
 resolved auraBar.debuffs.enabled = true
@@ -19614,6 +19719,7 @@ resolved auraBar.debuffs.max = 16
 resolved auraBar.debuffs.maxDuration = 0
 resolved auraBar.debuffs.size = 32
 resolved auraBar.debuffs.sort = "expiration"
+resolved auraBar.debuffs.swipe = "normal"
 resolved auraBar.dispelBorder = true
 resolved auraBar.dispelColors.Curse = {0.6,0,1,1}
 resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
@@ -19662,6 +19768,7 @@ resolved auras.buffs.offsetY = 0
 resolved auras.buffs.position = "top"
 resolved auras.buffs.size = 16
 resolved auras.buffs.sort = "expiration"
+resolved auras.buffs.swipe = "normal"
 resolved auras.countSize = 8
 resolved auras.debuffs.alignment = "start"
 resolved auras.debuffs.enabled = true
@@ -19676,6 +19783,7 @@ resolved auras.debuffs.offsetY = 0
 resolved auras.debuffs.position = "bottom"
 resolved auras.debuffs.size = 18
 resolved auras.debuffs.sort = "expiration"
+resolved auras.debuffs.swipe = "normal"
 resolved auras.dispelBorder = true
 resolved auras.dispelColors.Curse = {0.6,0,1,1}
 resolved auras.dispelColors.Disease = {0.6,0.4,0,1}

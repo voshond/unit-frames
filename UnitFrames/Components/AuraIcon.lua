@@ -130,7 +130,13 @@ function AuraIcon.TextRoom(cfg)
 	return cfg.showDuration and cfg.durationPosition == "below" and cfg.durationSize + 2 or 0
 end
 
-function AuraIcon.Apply(button, cfg, size, dispelColors)
+function AuraIcon.ApplySwipe(button, swipe)
+	button.ufCooldown:SetDrawSwipe(swipe ~= "none")
+	button.ufCooldown:SetReverse(swipe == "reverse")
+end
+
+function AuraIcon.Apply(button, cfg, size, dispelColors, swipe)
+	AuraIcon.ApplySwipe(button, swipe)
 	button:SetSize(size, size + AuraIcon.TextRoom(cfg))
 	button.ufIconFrame:SetSize(size, size)
 	Backdrop.ApplyToFixedSize(button.ufIconFrame, cfg.border, size, size, false)
