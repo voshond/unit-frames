@@ -551,7 +551,7 @@ option holdTime type="range" label="Hold after finish (s)" default=0.4 min=0 max
 option fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
 option latency type="group" label="Latency zone"
 option latency.enabled type="toggle" label="Enabled" default=true
-option latency.mode type="select" label="Zone" default="latency" values=#9e319b63 tooltip=#3e0a3804
+option latency.mode type="select" label="Zone" default="queue" values=#9e319b63 tooltip=#3e0a3804
 option latency.color type="color" label="Colour" default={0.9,0.1,0.1,0.6}
 option gcd type="group" label="Global cooldown"
 option gcd.enabled type="toggle" label="Enabled" default=false tooltip=#a71861f3
@@ -609,7 +609,7 @@ default icon.gap = 1
 default icon.position = "LEFT"
 default latency.color = {0.9,0.1,0.1,0.6}
 default latency.enabled = true
-default latency.mode = "latency"
+default latency.mode = "queue"
 default name.color = {1,1,1,1}
 default name.enabled = true
 default name.justifyH = "LEFT"
@@ -685,7 +685,7 @@ resolved icon.gap = 1
 resolved icon.position = "LEFT"
 resolved latency.color = {0.9,0.1,0.1,0.6}
 resolved latency.enabled = true
-resolved latency.mode = "latency"
+resolved latency.mode = "queue"
 resolved name.color = {1,1,1,1}
 resolved name.enabled = true
 resolved name.font = "Friz Quadrata TT"
@@ -2056,7 +2056,7 @@ option castbar.holdTime type="range" label="Hold after finish (s)" default=0.4 m
 option castbar.fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
 option castbar.latency type="group" label="Latency zone"
 option castbar.latency.enabled type="toggle" label="Enabled" default=true
-option castbar.latency.mode type="select" label="Zone" default="latency" values=#9e319b63 tooltip=#3e0a3804
+option castbar.latency.mode type="select" label="Zone" default="queue" values=#9e319b63 tooltip=#3e0a3804
 option castbar.latency.color type="color" label="Colour" default={0.9,0.1,0.1,0.6}
 option castbar.gcd type="group" label="Global cooldown"
 option castbar.gcd.enabled type="toggle" label="Enabled" default=false tooltip=#a71861f3
@@ -2409,7 +2409,7 @@ default castbar.icon.gap = 1
 default castbar.icon.position = "LEFT"
 default castbar.latency.color = {0.9,0.1,0.1,0.6}
 default castbar.latency.enabled = true
-default castbar.latency.mode = "latency"
+default castbar.latency.mode = "queue"
 default castbar.name.color = {1,1,1,1}
 default castbar.name.enabled = true
 default castbar.name.justifyH = "LEFT"
@@ -3266,7 +3266,7 @@ resolved castbar.icon.gap = 1
 resolved castbar.icon.position = "LEFT"
 resolved castbar.latency.color = {0.9,0.1,0.1,0.6}
 resolved castbar.latency.enabled = true
-resolved castbar.latency.mode = "latency"
+resolved castbar.latency.mode = "queue"
 resolved castbar.name.color = {1,1,1,1}
 resolved castbar.name.enabled = true
 resolved castbar.name.font = "Friz Quadrata TT"

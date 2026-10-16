@@ -36,7 +36,7 @@ function Extras.BuildSchema()
 	return {
 		{ key = "latency", type = "group", label = "Latency zone", schema = {
 			{ key = "enabled", type = "toggle", label = "Enabled", default = true },
-			{ key = "mode", type = "select", label = "Zone", values = Extras.LATENCY_MODES, default = "latency",
+			{ key = "mode", type = "select", label = "Zone", values = Extras.LATENCY_MODES, default = "queue",
 				tooltip = "Latency: the time between sending a cast and the server starting it, or your world latency. Spell queue window: the time at the end of a cast in which the next spell can already be queued." },
 			{ key = "color", type = "color", label = "Colour", default = { 0.9, 0.1, 0.1, 0.6 } },
 		} },
