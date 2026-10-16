@@ -6,10 +6,6 @@ local Media, Backdrop = ns.Media, ns.Components.Backdrop
 local AuraIcon = {}
 ns.AuraIcon = AuraIcon
 
-local BORDER_PIECES = {
-	"TopLeftCorner", "TopRightCorner", "BottomLeftCorner", "BottomRightCorner",
-	"TopEdge", "BottomEdge", "LeftEdge", "RightEdge",
-}
 local DISPEL_TYPES = { "Magic", "Curse", "Disease", "Poison", "None" }
 local dispelColorSchema = {}
 for _, kind in ipairs(DISPEL_TYPES) do
@@ -50,7 +46,7 @@ AuraIcon.schema = {
 	{ key = "dispelBorder", type = "toggle", label = "Colour debuff border by type", default = true,
 		tooltip = "Tint the entire icon frame using Debuff border colours. Disable to use Icon frame > Border colour for every icon. Works in combat." },
 	{ key = "dispelColors", type = "group", label = "Debuff border colours", schema = dispelColorSchema },
-	{ key = "border", type = "group", label = "Icon frame", schema = Backdrop.schema,
+	{ key = "border", type = "group", label = "Icon frame", schema = Backdrop.auraSchema,
 		defaults = { size = 8, inset = 1, padding = 2, background = "None" } },
 }
 
@@ -137,7 +133,7 @@ end
 function AuraIcon.Apply(button, cfg, size, dispelColors)
 	button:SetSize(size, size + AuraIcon.TextRoom(cfg))
 	button.ufIconFrame:SetSize(size, size)
-	Backdrop.ApplyToFixedSize(button.ufIconFrame, cfg.border, size, size)
+	Backdrop.ApplyToFixedSize(button.ufIconFrame, cfg.border, size, size, false)
 	-- Keep a drawable centre even at the smallest icon size.
 	local pad = cfg.border.enabled and math.min(cfg.border.padding, (size - 2) / 2) or 0
 	for _, region in ipairs({ button.ufIcon, button.ufCooldown }) do
@@ -180,7 +176,7 @@ function AuraIcon.ApplyDispelBorder(button, cfg, size, dispelColors)
 	-- icon backdrop recoloured, is hidden again.
 	if state.applied and state.enabled == enabled and state.info == info and state.size == size
 		and state.colors == dispelColors then
-		if state.registered then button.ufIconFrame:SetBackdropBorderColor(0, 0, 0, 0) end
+		if state.registered then Backdrop.SetBorderColor(button.ufIconFrame, 0, 0, 0, 0) end
 		return
 	end
 	state.applied, state.enabled, state.info, state.size, state.colors = true, enabled, info, size, dispelColors
@@ -193,16 +189,15 @@ function AuraIcon.ApplyDispelBorder(button, cfg, size, dispelColors)
 	button.ufDispelTextures = {}
 	button.ufBorder:SetShown(enabled)
 	if not enabled then
-		button.ufBorder:ClearBackdrop()
+		Backdrop.ApplyTo(button.ufBorder, { enabled = false })
 		return
 	end
-	local backdrop = Backdrop.ApplyToFixedSize(button.ufBorder, border, size, size)
-	if backdrop and backdrop.edgeFile then
+	local backdrop = Backdrop.ApplyToFixedSize(button.ufBorder, border, size, size, false)
+	if backdrop and (backdrop.edgeFile or backdrop.raidBorder) then
 		state.registered = true
-		button.ufIconFrame:SetBackdropBorderColor(0, 0, 0, 0)
+		Backdrop.SetBorderColor(button.ufIconFrame, 0, 0, 0, 0)
 		if not button.ufPreview then ns.Perf:Begin("dispel registration") end
-		for _, piece in ipairs(BORDER_PIECES) do
-			local texture = button.ufBorder[piece]
+		for _, texture in ipairs(Backdrop.BorderTextures(button.ufBorder)) do
 			button.ufDispelTextures[#button.ufDispelTextures + 1] = texture
 			if not button.ufPreview then
 				button:AddDispelTypeTexture(texture, {

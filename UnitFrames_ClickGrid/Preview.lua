@@ -69,7 +69,7 @@ function Preview:Apply()
 	if self.notice then self.notice:Hide() end
 	local cfg = CG.Config:Resolved()
 	self.cfg = cfg
-	CG.Layout.Backdrop(self.background, self.frame, cfg.titles)
+	CG.Layout.Backdrop(self.background, self.frame, cfg.titles, cfg.border)
 	for _, cell in ipairs(self.cells) do cell.styled = false end
 	self:ShowData(self.data or { source = "static", count = 5 })
 end
@@ -191,7 +191,7 @@ function Preview:ShowData(data)
 	if live then count = math.max(1, GetNumGroupMembers()) end
 	local raid = live and IsInRaid() or count > 5
 	local cfg = self.cfg.panel
-	local layout = CG.Layout.Compute(cfg, CG.metrics.member, CG.metrics.target, self.cfg.titles, count, count)
+	local layout = CG.Layout.Compute(cfg, CG.metrics.member, CG.metrics.target, self.cfg.titles, self.cfg.border, count, count)
 	self.layout = layout
 	local size = raid and layout.raid or count == 1 and layout.solo or layout.party
 	self.frame:SetSize(size.width, size.height)
@@ -217,9 +217,9 @@ function Preview:ShowData(data)
 				end
 				CG.Layout.TitleInPreview(columnLabel, self.frame, "group" .. column,
 					{ x = section.x + (column - 1) * (layout.cellWidth + cfg.spacingX), y = section.y,
-						grid = { width = layout.cellWidth } }, self.cfg.titles, contentHeight, cfg.padding)
+						grid = { width = layout.cellWidth } }, self.cfg.titles, contentHeight, layout.titlePadding)
 			end
-		else CG.Layout.TitleInPreview(label, self.frame, key, section, self.cfg.titles, contentHeight, cfg.padding) end
+		else CG.Layout.TitleInPreview(label, self.frame, key, section, self.cfg.titles, contentHeight, layout.titlePadding) end
 		for localIndex = 1, amount do
 			visible = visible + 1
 			local index = first + localIndex - 1

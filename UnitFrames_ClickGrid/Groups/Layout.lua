@@ -21,29 +21,31 @@ function Layout.TitleHeight(titles)
 	return titles.enabled and (titles.size + titles.gap + 2) or 0
 end
 
-function Layout.Compute(cfg, member, target, titles, raidCount, partyCount)
+function Layout.Compute(cfg, member, target, titles, border, raidCount, partyCount)
+	local left, right, top, bottom = CG.UF.Components.Backdrop.Padding(border)
 	local titleHeight = Layout.TitleHeight(titles)
 	local below = titles and titles.position == "below"
 	local leading, trailing = below and 0 or titleHeight, below and titleHeight or 0
 	local cellWidth = member.width + (cfg.targets and target.width + cfg.targetGap or 0)
 	local cellHeight = math.max(member.height, cfg.targets and target.height or 0)
 	local cols = cfg.mode == "subgroups" and math.min(8, cfg.columns) or cfg.columns
-	local result = { cellWidth = cellWidth, cellHeight = cellHeight, sections = {}, partySizes = {} }
+	local result = { cellWidth = cellWidth, cellHeight = cellHeight, sections = {}, partySizes = {},
+		titlePadding = below and bottom or top }
 	for count = 1, 5 do
 		local grid = Layout.Grid(1, count, cellWidth, cellHeight, cfg.spacingX, cfg.spacingY)
-		result.partySizes[count] = { width = grid.width + 2 * cfg.padding,
-			height = grid.height + titleHeight + 2 * cfg.padding }
+		result.partySizes[count] = { width = grid.width + left + right,
+			height = grid.height + titleHeight + top + bottom }
 	end
 	partyCount = math.max(1, math.min(5, partyCount or 5))
 	local party = Layout.Grid(1, partyCount, cellWidth, cellHeight, cfg.spacingX, cfg.spacingY)
 	result.party = result.partySizes[partyCount]
 	result.solo = result.partySizes[1]
-	local y, width = cfg.padding + leading, 0
+	local y, width = top + leading, 0
 	if cfg.tanks then
 		local tankCols = math.min(cols, cfg.tankSlots)
 		local tankRows = math.ceil(cfg.tankSlots / tankCols)
 		local grid = Layout.Grid(tankCols, tankRows, cellWidth, cellHeight, cfg.spacingX, cfg.spacingY)
-		result.sections.tanks = { x = cfg.padding, y = y, grid = grid }
+		result.sections.tanks = { x = left, y = y, grid = grid }
 		y, width = y + grid.height + cfg.sectionGap + titleHeight, grid.width
 	end
 	if cfg.mode == "flat" then
@@ -53,21 +55,21 @@ function Layout.Compute(cfg, member, target, titles, raidCount, partyCount)
 		if cfg.flow == "down" then columns = math.max(columns, math.ceil((raidCount or 40) / rows))
 		else rows = math.max(rows, math.ceil((raidCount or 40) / columns)) end
 		local grid = Layout.Grid(columns, rows, cellWidth, cellHeight, cfg.spacingX, cfg.spacingY)
-		result.sections.raid = { x = cfg.padding, y = y, grid = grid }
+		result.sections.raid = { x = left, y = y, grid = grid }
 		y, width = y + grid.height, math.max(width, grid.width)
 	else
 		local block = Layout.Grid(1, 5, cellWidth, cellHeight, cfg.spacingX, cfg.spacingY)
 		local blockRows = math.ceil(8 / cols)
 		for group = 1, 8 do
 			local column, row = (group - 1) % cols, math.floor((group - 1) / cols)
-			result.sections["group" .. group] = { x = cfg.padding + column * (block.width + cfg.spacingX),
+			result.sections["group" .. group] = { x = left + column * (block.width + cfg.spacingX),
 				y = y + row * (block.height + cfg.sectionGap + titleHeight), grid = block }
 		end
 		y = y + blockRows * block.height + (blockRows - 1) * (cfg.sectionGap + titleHeight)
 		width = math.max(width, cols * block.width + (cols - 1) * cfg.spacingX)
 	end
-	result.raid = { width = width + 2 * cfg.padding, height = y + cfg.padding + trailing }
-	result.sections.party = { x = cfg.padding, y = cfg.padding + leading, grid = party }
+	result.raid = { width = width + left + right, height = y + bottom + trailing }
+	result.sections.party = { x = left, y = top + leading, grid = party }
 	return result
 end
 
@@ -105,13 +107,14 @@ end
 
 -- Keep one enclosing backdrop, but exclude the title band from its artwork.
 -- Use configured geometry only, never native aura/header size arithmetic.
-function Layout.Backdrop(frame, parent, titles)
+function Layout.Backdrop(frame, parent, titles, border)
 	local height = Layout.TitleHeight(titles)
 	frame:ClearAllPoints()
 	frame:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, titles.position == "below" and 0 or -height)
 	frame:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", 0, titles.position == "below" and height or 0)
-	CG.UF.Components.Backdrop.ApplyTo(frame, CG.UF.Schema.Resolve(CG.UF.Components.Backdrop.schema,
-		{ enabled = true, padding = 0 }, CG.UF.Config:GetTheme()))
+	CG.UF.Components.Backdrop.ApplyTo(frame, border)
+	local Backdrop = CG.UF.Components.Backdrop
+	Backdrop.SetBorderLevel(frame, parent:GetFrameLevel() + Backdrop.LEVELS.panel)
 end
 
 function Layout.Attributes(grid, cfg)

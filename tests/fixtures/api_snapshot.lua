@@ -1830,6 +1830,7 @@ return {
 			SetBackdropColor = "BackdropTemplateMixin",
 			SetBinding = "HANDLE",
 			SetBlendMode = "NineSlicePanelMixin",
+			SetBorderColor = "ColorSwatchMixin",
 			SetCanRoundUpLastUnit = "SecondsFormatterMixin",
 			SetCancelAuraButtons = "AuraButtonSharedMixin",
 			SetChecked = "HouseExteriorCheckboxOptionMixin",

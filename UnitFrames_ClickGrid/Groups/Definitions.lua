@@ -52,7 +52,6 @@ CG.LayoutSchema = {
 	{ key = "spacingY", type = "range", label = "Vertical gap", min = 0, max = 80, step = 1, default = 36,
 		tooltip = "Leave room for buff and debuff icons outside each bar." },
 	{ key = "sectionGap", type = "range", label = "Section gap", min = 0, max = 80, step = 1, default = 24 },
-	{ key = "padding", type = "range", label = "Panel padding", min = 0, max = 40, step = 1, default = 12 },
 	{ key = "scale", type = "range", label = "Panel scale", min = 0.5, max = 1.5, step = 0.05, default = 1 },
 	{ key = "targets", type = "toggle", label = "Show member targets", default = false },
 	{ key = "targetGap", type = "range", label = "Gap to target", min = 0, max = 30, step = 1, default = 4 },

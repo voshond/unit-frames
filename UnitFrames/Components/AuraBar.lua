@@ -32,7 +32,7 @@ AuraBar.schema = ns.Schema.Insert(schema, "enabled", {
 	{ key = "sectionGap", type = "range", label = "Gap between categories", min = 0, max = 30, step = 1, default = 2 },
 	{ key = "buffWidthPercent", type = "range", label = "Buff share of width (%)", min = 0, max = 100, step = 1, default = 50,
 		tooltip = "Enabled categories keep their share even when empty. Disable a category to give the other the full width." },
-	{ key = "rowBackdrop", type = "group", label = "Row background", schema = ns.Schema.Without(Backdrop.schema, { padding = true }),
+	{ key = "rowBackdrop", type = "group", label = "Row background", schema = Backdrop.artSchema,
 		defaults = { enabled = false, border = "None", inset = 0 } },
 })
 for _, kind in ipairs(KINDS) do
@@ -317,7 +317,7 @@ end
 
 function AuraBar:Layout(width)
 	self.hostWidth = width or self.hostWidth or self.frame:GetParent():GetWidth()
-	Backdrop.ApplyToFixedSize(self.background, self.resolved.rowBackdrop, self.hostWidth, self.resolved.height)
+	Backdrop.ApplyToFixedSize(self.background, self.resolved.rowBackdrop, self.hostWidth, self.resolved.height, false)
 	self.geometry = AuraBar.Geometry(self.resolved, self.hostWidth)
 	for _, kind in ipairs(KINDS) do
 		local geometry, group = self.geometry[kind], self.resolved[kind]

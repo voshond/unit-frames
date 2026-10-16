@@ -35,13 +35,18 @@ describe("Decoration stacks", function()
 		icon:Show()
 		stack:Reflow()
 		local item, group = stack.items.extra, stack.groups.TOP
-		local writes, point = 0, host.SetPoint
+		local writes, levels, point, setLevel = 0, 0, host.SetPoint, host.SetFrameLevel
+		host.SetFrameLevel = function(self, ...)
+			levels = levels + 1
+			return setLevel(self, ...)
+		end
 		host.SetPoint = function(self, ...)
 			writes = writes + 1
 			return point(self, ...)
 		end
 		for _ = 1, 100 do stack:Reflow() end
 		assert.equals(0, writes)
+		assert.equals(0, levels, "unchanged reflows leave frame levels alone, including in combat")
 		assert.equals(item, stack.items.extra)
 		assert.equals(group, stack.groups.TOP)
 		member.x = 3

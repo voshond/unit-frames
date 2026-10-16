@@ -25,7 +25,7 @@ function Layout.PointBarShown(spec, cfg)
 end
 
 function Layout.Compute(spec, cfg)
-	local pad = cfg.border.enabled and cfg.border.padding or 0
+	local padLeft, padRight, padTop, padBottom = ns.Components.Backdrop.Padding(cfg.border)
 	local placement = Layout.CastbarPlacement(spec, cfg)
 	local items = {}
 	local auraBar = spec.auraBar and cfg.auraBar.enabled and cfg.auraBar
@@ -62,7 +62,7 @@ function Layout.Compute(spec, cfg)
 	local stackHeight = 0
 	for i, item in ipairs(items) do stackHeight = stackHeight + item.height + (i > 1 and cfg.spacing or 0) end
 
-	local left, right, portraitWidth = pad, pad, 0
+	local left, right, portraitWidth = padLeft, padRight, 0
 	local portrait, portraitRows = nil, 0
 	if spec.portrait and cfg.portrait.enabled and stackHeight > 0 then
 		portraitRows = cfg.portrait.rowSpan == 0 and #items or math.min(cfg.portrait.rowSpan, #items)
@@ -70,17 +70,17 @@ function Layout.Compute(spec, cfg)
 		for i = 1, portraitRows do height = height + items[i].height + (i > 1 and cfg.spacing or 0) end
 		local width = cfg.portrait.size > 0 and cfg.portrait.size or height
 		local side = cfg.portrait.position
-		portrait = { width = width, height = height, side = side, x = side == "LEFT" and pad or -pad, y = -pad }
+		portrait = { width = width, height = height, side = side, x = side == "LEFT" and padLeft or -padRight, y = -padTop }
 		portraitWidth = width + cfg.portrait.gap
 		if side == "LEFT" then left = left + portraitWidth else right = right + portraitWidth end
 	end
 
-	local y = pad
+	local y = padTop
 	for i, item in ipairs(items) do
 		if i > 1 then y = y + cfg.spacing end
-		item.left, item.right, item.y = i <= portraitRows and left or pad, i <= portraitRows and right or pad, -y
+		item.left, item.right, item.y = i <= portraitRows and left or padLeft, i <= portraitRows and right or padRight, -y
 		y = y + item.height
 	end
-	return { width = cfg.width + portraitWidth, height = math.max(stackHeight + 2 * pad, 1),
+	return { width = cfg.width + portraitWidth, height = math.max(stackHeight + padTop + padBottom, 1),
 		rows = items, portrait = portrait, castbarPlacement = placement, auraBarCollapses = collapse }
 end

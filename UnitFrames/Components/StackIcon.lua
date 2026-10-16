@@ -62,7 +62,6 @@ end
 -- the overlay castbar.
 function StackIcon:Layout(context)
 	self.layoutContext = context
-	self.frame:SetFrameLevel(context.root:GetFrameLevel() + 20)
 	self:SetEnabled(self.resolved.enabled)
 end
 

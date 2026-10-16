@@ -4,10 +4,23 @@ local Config = {}
 CG.Config = Config
 Config.schema = {
 	{ key = "panel", type = "group", label = "Panel layout", schema = CG.LayoutSchema },
+	{ key = "border", type = "group", label = "Panel border",
+		schema = UF.Components.Backdrop.schema, defaults = { padding = 12 } },
 	{ key = "titles", type = "group", label = "Group / column titles", schema = CG.TitleSchema },
 	{ key = "indicators", type = "group", label = "Status indicators", schema = CG.IndicatorSchema },
 	{ key = "slots", type = "group", label = "Fixed friendly buff slots", schema = CG.SlotSchema },
 }
+
+-- Old profiles kept uniform padding in Panel layout. Read/import an
+-- independent migrated copy; the next store write persists the new shape.
+function Config:MigrateSettings(settings)
+	if type(settings) ~= "table" or type(settings.panel) ~= "table" or settings.panel.padding == nil then return settings or {} end
+	local migrated = UF.Util.Copy(settings)
+	migrated.border = migrated.border or {}
+	if type(migrated.border) == "table" and migrated.border.padding == nil then migrated.border.padding = migrated.panel.padding end
+	migrated.panel.padding = nil
+	return migrated
+end
 
 -- Fixed slots also need parseable spell IDs, beyond the schema's types.
 local function CheckSlots(candidate)
@@ -33,7 +46,7 @@ function Config:Initialize()
 	local db = self.db
 	self.settings = UF.Store:New({
 		schema = self.schema, theme = true, validate = true, check = CheckSlots, changed = Changed,
-		read = function() return db.profile.settings end,
+		read = function() return self:MigrateSettings(db.profile.settings) end,
 		write = function(settings) db.profile.settings = settings end,
 	})
 	self.styles = {}
