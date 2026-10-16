@@ -251,9 +251,9 @@ describe("ClickGrid companion", function()
 		local label = CG:GetHeaderTitles(header).label
 		CG.Config:Set("titles.offsetX", 7)
 		CG.Config:Set("titles.offsetY", -3)
-		assert.same({ "BOTTOMLEFT", header, "TOPLEFT", 7, 14 }, { label:GetPoint() })
+		assert.same({ "BOTTOMLEFT", header, "TOPLEFT", 7, 5 }, { label:GetPoint() })
 		CG.Config:Set("titles.position", "below")
-		assert.same({ "TOPLEFT", header, "BOTTOMLEFT", 7, -20 }, { label:GetPoint() })
+		assert.same({ "TOPLEFT", header, "BOTTOMLEFT", 7, -11 }, { label:GetPoint() })
 		Mock.inCombat = true
 		CG.Config:Set("titles.party", "My party")
 		CG.Config:Set("titles.size", 18)

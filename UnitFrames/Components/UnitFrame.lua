@@ -250,7 +250,7 @@ function UnitFrame.BuildSchema(spec)
 		{ key = "width", type = "range", label = "Width", min = 60, max = 600, step = 1, default = spec.width or 230 },
 		{ key = "spacing", type = "range", label = "Row spacing", min = 0, max = 20, step = 1, default = 1 },
 		{ key = "border", type = "group", label = "Frame border", schema = Backdrop.schema,
-			defaults = { enabled = true, padding = 4 } },
+			defaults = { enabled = true } },
 		{ key = "range", type = "group", label = "Out-of-range opacity", schema = {
 			{ key = "enabled", type = "toggle", label = "Enabled", default = false },
 			{ key = "outsideAlpha", type = "range", label = "Out-of-range opacity", min = 0, max = 1, step = 0.05, default = 0.55,

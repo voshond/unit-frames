@@ -181,7 +181,7 @@ describe("Config", function()
 	end)
 
 	it("creates the profile with theme defaults", function()
-		assert.equals("Blizzard", ns.Config:GetTheme().barTexture)
+		assert.equals("Blizzard Raid Bar", ns.Config:GetTheme().barTexture)
 		assert.is_not_nil(UnitFramesDB)
 	end)
 
@@ -190,7 +190,7 @@ describe("Config", function()
 		ns.Config:SetThemeValue("barTexture", "Solid")
 		assert.equals("Solid", ns.Config:GetThemeOverride("barTexture"))
 		ns.Config:SetThemeValue("barTexture", nil)
-		assert.equals("Blizzard", ns.Config:GetTheme().barTexture, "nil resets to the default")
+		assert.equals("Blizzard Raid Bar", ns.Config:GetTheme().barTexture, "nil resets to the default")
 		assert.is_nil(ns.Config:GetThemeOverride("barTexture"))
 	end)
 
