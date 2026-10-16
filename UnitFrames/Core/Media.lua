@@ -22,7 +22,14 @@ function Media:Fetch(kind, key)
 end
 
 function Media:List(kind)
-	return LSM:List(kind)
+	local list = LSM:List(kind)
+	if kind ~= "border" then return list end
+	-- Native multi-piece artwork is an addon option, not an LSM edge file.
+	local borders = {} -- never mutate LSM's cached list
+	for i, key in ipairs(list) do borders[i] = key end
+	borders[#borders + 1] = "Blizzard Raid"
+	table.sort(borders)
+	return borders
 end
 
 -- Forever rejects "NONE" as a font flag; no flags is "".

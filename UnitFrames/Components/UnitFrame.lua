@@ -311,7 +311,7 @@ end
 
 function UnitFrame:ColorRestingBorder(amount)
 	local base, tint = self.resolved.border.color, self.resolved.resting.color
-	self.border:SetBackdropBorderColor(
+	Backdrop.SetBorderColor(self.border,
 		base[1] + (tint[1] - base[1]) * amount,
 		base[2] + (tint[2] - base[2]) * amount,
 		base[3] + (tint[3] - base[3]) * amount,
@@ -331,7 +331,7 @@ function UnitFrame:ApplyRestingBorder()
 		end
 	else
 		self.restingElapsed = 0
-		self.border:SetBackdropBorderColor(ns.Util.UnpackColor(cfg.border.color))
+		Backdrop.SetBorderColor(self.border, ns.Util.UnpackColor(cfg.border.color))
 	end
 end
 
@@ -412,6 +412,7 @@ function UnitFrame:Layout()
 		if part.def.stack then part.component:Layout(self.layoutContext) end
 	end
 	self.decorations:Reflow()
+	Backdrop.SetBorderLevel(self.border, self.frame:GetFrameLevel() + Backdrop.LEVELS.frame)
 end
 
 -- A collapsible icon row lends its space to the health bar: the bar's edge

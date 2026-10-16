@@ -137,10 +137,10 @@ function Portrait:LayoutArtwork()
 		return
 	end
 	local border = cfg.border
-	local pad = border.enabled and border.padding or 0
+	local left, right, top, bottom = Backdrop.Padding(border)
 	local width, height
 	if self.width then
-		width, height = Portrait.CoverSize(self.width - 2 * pad, self.height - 2 * pad,
+		width, height = Portrait.CoverSize(self.width - left - right, self.height - top - bottom,
 			cfg.mode == "class" and ClassIconAspect() or 1, 1)
 	end
 	-- No usable interior yet: hide the artwork rather than divide by zero.

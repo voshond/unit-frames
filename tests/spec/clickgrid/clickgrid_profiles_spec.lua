@@ -8,6 +8,7 @@ describe("ClickGrid profile strings #profiles", function()
 
 	it("travels with the style string and is validated before anything is written", function()
 		CG.Config:Set("panel.columns", 3)
+		CG.Config:Set("border.border", "Blizzard Raid")
 		CG.Config:SetStyle("member", "width", 151)
 		local text = UF.Profiles:Export("style")
 		assert.equals(3, UF.Profiles:Decode(text).data.clickgrid.settings.panel.columns)
@@ -15,6 +16,7 @@ describe("ClickGrid profile strings #profiles", function()
 		assert.same({}, CG.Config:Get())
 		assert.is_true(UF.Profiles:Import(text))
 		assert.equals(3, CG.Config:Resolved().panel.columns)
+		assert.equals("Blizzard Raid", CG.Config:Resolved().border.border)
 		assert.equals(151, CG.Config:GetStyle("member").width)
 
 		-- An invalid fixed slot rejects the whole import.

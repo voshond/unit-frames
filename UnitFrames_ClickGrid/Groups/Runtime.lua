@@ -108,7 +108,7 @@ function Refresh(self)
 	self:Measure()
 	local cfg = self.Config:Resolved()
 	self:EnsureHeaders(cfg.panel)
-	local layout = self.Layout.Compute(cfg.panel, self.metrics.member, self.metrics.target, cfg.titles)
+	local layout = self.Layout.Compute(cfg.panel, self.metrics.member, self.metrics.target, cfg.titles, cfg.border)
 	self.layout = layout
 	local activeHeaders = {}
 	self.panel:SetScale(cfg.panel.scale)
@@ -128,7 +128,7 @@ function Refresh(self)
 	RegisterStateDriver(self.panel, "roster", "[group:raid] raid; [@party4,exists] party5; [@party3,exists] party4; [@party2,exists] party3; [group:party] party2; solo")
 	RegisterAttributeDriver(self.panel, "state-visibility", not cfg.panel.enabled and "hide"
 		or cfg.panel.showSolo and "show" or "[group] show; hide")
-	self.Layout.Backdrop(self.background, self.panel, cfg.titles)
+	self.Layout.Backdrop(self.background, self.panel, cfg.titles, cfg.border)
 	for key, header in pairs(self.headers) do
 		local section = layout.sections[key]
 		local visible = section ~= nil
@@ -147,10 +147,10 @@ function Refresh(self)
 						titles.columns[column] = label
 					end
 					self.Layout.TitleOnHeader(label, header, "group" .. column,
-						{ grid = { width = layout.cellWidth } }, cfg.titles, cfg.panel.padding,
+						{ grid = { width = layout.cellWidth } }, cfg.titles, layout.titlePadding,
 						(column - 1) * (layout.cellWidth + cfg.panel.spacingX))
 				end
-			else self.Layout.TitleOnHeader(titles.label, header, key, section, cfg.titles, cfg.panel.padding) end
+			else self.Layout.TitleOnHeader(titles.label, header, key, section, cfg.titles, layout.titlePadding) end
 			header:ClearAllPoints()
 			header:SetPoint("TOPLEFT", self.panel, "TOPLEFT", section.x, -section.y)
 			header:SetAttribute("_ignore", true)

@@ -23,6 +23,26 @@ Workbench:Register({
 	},
 })
 
+-- Native raid border --------------------------------------------------------
+Workbench:Register({
+	id = "raidBorder",
+	category = "Basics",
+	name = "Raid border",
+	size = { 220, 100 },
+	defaultConfig = { border = { border = "Blizzard Raid", size = 16, color = { 1, 1, 1, 1 } } },
+	create = function(stage)
+		return Workbench.Composite({
+			{ key = "border", label = "Border", component = C.Backdrop:New(stage, {}) },
+		})
+	end,
+	presets = {
+		{ name = "Native size", config = { border = { border = "Blizzard Raid", size = 16, color = { 1, 1, 1, 1 } } }, size = { 220, 100 } },
+		{ name = "Unit frame", config = { border = { border = "Blizzard Raid", size = 8, color = { 1, 1, 1, 1 } } }, size = { 220, 60 } },
+		{ name = "Raid group", config = { border = { border = "Blizzard Raid", size = 16, color = { 1, 1, 1, 1 } } }, size = { 90, 200 } },
+		{ name = "Tooltip", config = { border = { border = "Blizzard Tooltip", size = 12 } }, size = { 220, 100 } },
+	},
+})
+
 -- Text ------------------------------------------------------------------------
 
 Workbench:Register({

@@ -35,6 +35,15 @@ client after adding it. For local builds and incremental updates, see the
   alignment, gap and offsets. Hiding titles removes their reserved space.
   The single enclosing backdrop excludes the outer title band, so headings
   hover outside it. No independent group backdrops are created.
+- **Panel border** under **Panel & indicators** controls the enclosing panel's
+  border and background independently of the member bars. It inherits the
+  Theme until overridden. Choose **Blizzard Raid** for the native raid artwork;
+  **Content padding** controls the space around the members. Enable **Content
+  padding per side** at the top of the section for independent left, right,
+  top and bottom values. **Background inset per side** provides independent
+  insets for the background, without moving members. Previous Panel layout padding is preserved
+  automatically in these shared controls. Borders draw above the members;
+  the background stays behind them.
 - Member targets beside the bars, with independent target styling. Existing
   UnitFrames health, shields, power, portrait, castbar, text, range, marker,
   font and border controls are reused rather than duplicated.

@@ -22,7 +22,7 @@ describe("ClickGrid Workbench", function()
 		local section = preview.layout.sections.raid
 		local _, _, _, x, y = preview.labels.column2:GetPoint()
 		assert.equals(section.x + preview.layout.cellWidth + cfg.panel.spacingX, x)
-		assert.equals(-section.y + cfg.titles.gap + cfg.panel.padding, y)
+		assert.equals(-section.y + cfg.titles.gap + cfg.border.padding, y)
 		assert.equals(-CG.Layout.TitleHeight(cfg.titles), select(5, preview.background:GetPoint()))
 		CG.Config:Set("titles.group2", "Healers")
 		assert.equals("Healers", preview.labels.column2:GetText())
@@ -145,7 +145,7 @@ describe("ClickGrid Workbench", function()
 		local preview, cfg = wb.handle, CG.Config:Resolved()
 		local section = preview.layout.sections.party
 		assert.same({ "TOPLEFT", preview.frame, "TOPLEFT", section.x + 4,
-			-section.y - preview.layout.cellHeight - cfg.titles.gap - cfg.panel.padding - 2 }, { preview.labels.party:GetPoint() })
+			-section.y - preview.layout.cellHeight - cfg.titles.gap - cfg.border.padding - 2 }, { preview.labels.party:GetPoint() })
 		assert.equals(preview.layout.solo.height, preview.frame:GetHeight())
 	end)
 
@@ -162,9 +162,9 @@ describe("ClickGrid Workbench", function()
 					local section = preview.layout.sections.party
 					assert.equals(count, section.grid.rows)
 					assert.equals(section.grid.height + CG.Layout.TitleHeight(cfg.titles)
-						+ 2 * cfg.panel.padding, preview.frame:GetHeight())
+						+ 2 * cfg.border.padding, preview.frame:GetHeight())
 					assert.same({ "TOPLEFT", preview.frame, "TOPLEFT", section.x + cfg.titles.offsetX,
-						-section.y - section.grid.height - cfg.titles.gap - cfg.panel.padding + cfg.titles.offsetY },
+						-section.y - section.grid.height - cfg.titles.gap - cfg.border.padding + cfg.titles.offsetY },
 						{ preview.labels.party:GetPoint() })
 					if preview.cells[count + 1] then assert.is_false(preview.cells[count + 1].frame:IsShown()) end
 				end

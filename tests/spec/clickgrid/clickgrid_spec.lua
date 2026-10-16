@@ -118,7 +118,7 @@ describe("ClickGrid companion", function()
 		local cfg, layout = CG.Config:Resolved(), CG.layout
 		local function Height(count)
 			return count * layout.cellHeight + (count - 1) * cfg.panel.spacingY
-				+ CG.Layout.TitleHeight(cfg.titles) + 2 * cfg.panel.padding
+				+ CG.Layout.TitleHeight(cfg.titles) + 2 * cfg.border.padding
 		end
 		assert.equals(Height(2), CG.panel:GetHeight())
 		assert.equals("[group:raid] raid; [@party4,exists] party5; [@party3,exists] party4; [@party2,exists] party3; [group:party] party2; solo",
@@ -189,7 +189,7 @@ describe("ClickGrid companion", function()
 	it("compiles row-first layout spacing with positive native column spacing", function()
 		local cfg = CG.Config:Resolved().panel
 		cfg.mode, cfg.flow, cfg.columns, cfg.rows = "flat", "across", 5, 8
-		local layout = CG.Layout.Compute(cfg, CG.metrics.member, CG.metrics.target)
+		local layout = CG.Layout.Compute(cfg, CG.metrics.member, CG.metrics.target, nil, CG.Config:Resolved().border)
 		local attr = CG.Layout.Attributes(layout.sections.raid.grid, cfg)
 		assert.equals("LEFT", attr.point)
 		assert.equals("TOP", attr.columnAnchorPoint)
@@ -201,22 +201,22 @@ describe("ClickGrid companion", function()
 
 	it("reserves title size and gap without changing grid spacing", function()
 		local cfg = CG.Config:Resolved()
-		local original = CG.Layout.Compute(cfg.panel, CG.metrics.member, CG.metrics.target, cfg.titles)
+		local original = CG.Layout.Compute(cfg.panel, CG.metrics.member, CG.metrics.target, cfg.titles, cfg.border)
 		assert.equals("Group 1", CG:GetHeaderTitles(CG.headers.group1).label:GetText())
 		CG.Config:Set("titles.size", 20)
 		CG.Config:Set("titles.gap", 9)
 		cfg = CG.Config:Resolved()
-		local larger = CG.Layout.Compute(cfg.panel, CG.metrics.member, CG.metrics.target, cfg.titles)
+		local larger = CG.Layout.Compute(cfg.panel, CG.metrics.member, CG.metrics.target, cfg.titles, cfg.border)
 		assert.equals(original.party.height + 13, larger.party.height)
 		assert.same(original.sections.party.grid, larger.sections.party.grid)
 		CG.Config:Set("titles.position", "below")
 		cfg = CG.Config:Resolved()
-		local below = CG.Layout.Compute(cfg.panel, CG.metrics.member, CG.metrics.target, cfg.titles)
+		local below = CG.Layout.Compute(cfg.panel, CG.metrics.member, CG.metrics.target, cfg.titles, cfg.border)
 		assert.equals(larger.raid.height, below.raid.height)
-		assert.equals(cfg.panel.padding, below.sections.group1.y)
+		assert.equals(cfg.border.padding, below.sections.group1.y)
 		CG.Config:Set("titles.enabled", false)
 		cfg = CG.Config:Resolved()
-		local hidden = CG.Layout.Compute(cfg.panel, CG.metrics.member, CG.metrics.target, cfg.titles)
+		local hidden = CG.Layout.Compute(cfg.panel, CG.metrics.member, CG.metrics.target, cfg.titles, cfg.border)
 		assert.equals(below.party.height - 31, hidden.party.height)
 		assert.is_false(CG:GetHeaderTitles(CG.headers.party).label:IsShown())
 		CG.Config:Set("titles.enabled", true)

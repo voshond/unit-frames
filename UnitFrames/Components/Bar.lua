@@ -301,8 +301,8 @@ function Bar:GetKnownInnerSize()
 	local width, height = self:GetKnownSize()
 	if not self.resolved then return width, height end
 	local border = self.resolved.border
-	local pad = border.enabled and border.padding or 0
-	return math.max(0, width - 2 * pad), math.max(0, height - 2 * pad)
+	local left, right, top, bottom = Backdrop.Padding(border)
+	return math.max(0, width - left - right), math.max(0, height - top - bottom)
 end
 
 -- Segments must be as long as the whole bar so their values use the same scale.

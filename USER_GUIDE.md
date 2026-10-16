@@ -19,6 +19,18 @@ when the broker display loads after UnitFrames.
 
 ## Resting and ready checks
 
+Choose **Blizzard Raid** in a border selector to use Blizzard's native raid
+border artwork. Border size 16 uses the original dimensions; try 8 for smaller
+unit frames. Border colour tints the artwork, so white shows its original colour.
+
+Frame and panel borders draw above their content, with the background behind
+it. **Background inset** pulls in only the background; **Content padding**
+reserves space inside the frame. At the top of the border section, enable
+**Content padding per side** to set left,
+right, top and bottom spacing independently. **Background inset per side**
+provides the same four controls for the background, without moving content.
+Aura spacing keeps its existing controls.
+
 The player's **Resting border** slowly pulses from the configured frame border
 colour to yellow while resting in an inn or city. It is enabled by default;
 its colour and pulse duration (default four seconds) are configurable. A visible

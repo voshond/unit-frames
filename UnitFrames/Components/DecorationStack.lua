@@ -180,7 +180,7 @@ function Stack:Reflow()
 		if item.member ~= member or item.order ~= member.order then self.orderDirty = true end
 		item.order = member.order
 		if item.member ~= member or item.appliedHost ~= member.host then
-			item.member, item.host, item.shown, item.appliedSize = member, nil, nil, nil
+			item.member, item.host, item.shown, item.appliedSize, item.level = member, nil, nil, nil, nil
 			item.appliedHost = member.host
 		end
 	end
@@ -199,6 +199,8 @@ function Stack:Reflow()
 		local shown = size ~= nil
 		if item.shown ~= shown then member.host:SetShown(shown); item.shown = shown end
 		if size then
+			local level = context.root:GetFrameLevel() + ns.Components.Backdrop.LEVELS.decorations
+			if item.level ~= level then member.host:SetFrameLevel(level); item.level = level end
 			if item.appliedSize ~= size then member.host:SetSize(size, size); item.appliedSize = size end
 			item.size = size
 			if Present(member) then
