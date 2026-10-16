@@ -109,10 +109,10 @@ function Castbar:OnCreate(parent)
 end
 
 -- A castbar following native (possibly secret) geometry is laid out from the
--- plain size it has when nothing is collapsed; the icon keeps that width and
+-- plain size it has with the icon row shown (and the tallest it can grow to); the icon keeps that width and
 -- is clipped, not stretched, by the frame's shrinking height.
-function Castbar:SetKnownSize(width, height)
-	self.knownWidth, self.knownHeight = width, height
+function Castbar:SetKnownSize(width, height, maxHeight)
+	self.knownWidth, self.knownHeight, self.knownMaxHeight = width, height, maxHeight
 	if self.resolved then
 		self:ApplyBorder()
 		self:LayoutParts()
@@ -148,14 +148,14 @@ function Castbar:LayoutParts()
 	if not width then
 		width, height = self.frame:GetWidth(), self.frame:GetHeight()
 	end
-	local layout = ns.CastbarLayout.Compute(width, height, cfg, self.portraitPlacement)
+	local layout = ns.CastbarLayout.Compute(width, height, cfg, self.portraitPlacement, self.knownMaxHeight)
 	local icon, iconFrame, bar = self.icon, self.iconFrame, self.bar
 	iconFrame:ClearAllPoints()
 	bar:ClearAllPoints()
 	iconFrame:SetShown(layout.icon ~= nil)
 	if layout.icon then
 		local bounds = layout.icon
-		icon:SetSize(bounds.width, bounds.height)
+		icon:SetSize(bounds.side, bounds.side)
 		if self.knownWidth then
 			local side = bounds.point == "TOPRIGHT" and "RIGHT" or "LEFT"
 			iconFrame:SetWidth(bounds.width)
@@ -165,7 +165,6 @@ function Castbar:LayoutParts()
 			iconFrame:SetSize(bounds.width, bounds.height)
 			iconFrame:SetPoint(bounds.point, self.frame, bounds.point, bounds.x, bounds.y)
 		end
-		icon:SetTexCoord(unpack(bounds.crop))
 	end
 	for _, point in ipairs(layout.bar) do
 		bar:SetPoint(point[1], point[2] == "icon" and iconFrame or self.frame, point[3], point[4], point[5])

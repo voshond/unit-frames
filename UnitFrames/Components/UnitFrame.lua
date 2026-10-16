@@ -470,7 +470,11 @@ function UnitFrame:LayoutCastbar(layout)
 		castbar:GetFrame():SetFrameLevel(self.frame:GetFrameLevel() + 1)
 	end
 	if coverArea and coverArea ~= host then
-		castbar:SetKnownSize(host:GetWidth(), host:GetHeight())
+		local maxHeight = host:GetHeight()
+		for _, item in ipairs(layout.rows) do
+			if item.key == "auraBar" then maxHeight = maxHeight + self.resolved.spacing + item.height end
+		end
+		castbar:SetKnownSize(host:GetWidth(), host:GetHeight(), maxHeight)
 	else
 		castbar:SetKnownSize(nil)
 	end

@@ -200,6 +200,7 @@ describe("Collapsing icon row", function()
 		local castbar = uf:GetPart("castbar")
 		assert.is_true(castbar.iconFrame:IsShown())
 		assert.equals(2, #castbar.iconFrame.__state.points)
+		assert.equals(castbar.icon:GetWidth(), castbar.icon:GetHeight(), "square cover, clipped by the icon frame")
 		-- The mock enforces the client's rule for anything else.
 		assert.has_error(function()
 			CreateFrame("Frame", nil, UIParent):SetPoint("RIGHT", name:GetFrame(), "LEFT")
