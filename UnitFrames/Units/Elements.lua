@@ -193,7 +193,7 @@ local function UpdateCastbar(self, event, unit, ...)
 end
 
 local function UpdateGCD(self)
-	Cast.UpdateGCD(self.UF_Castbar)
+	Cast.UpdateGCD(self.UF_Castbar, castState[self])
 end
 
 local function EnableCastbar(self, unit)

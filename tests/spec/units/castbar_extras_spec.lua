@@ -119,31 +119,65 @@ describe("Player castbar extras #castbar", function()
 		assert.is_nil(target.__state.events.SPELL_UPDATE_COOLDOWN)
 	end)
 
-	it("runs the global cooldown strip from its duration while the castbar is idle", function()
+	local FROSTBOLT, EXECUTE = 116, 5308
+
+	local function SendSpell(spellID)
+		Fire("UNIT_SPELLCAST_SENT", "target", "guid", spellID)
+	end
+
+	local function GlobalCooldown(spellID, onGCD)
+		Mock.cooldowns[spellID] = onGCD ~= nil and { duration = 1.5, onGCD = onGCD } or nil
+		Fire("SPELL_UPDATE_COOLDOWN")
+	end
+
+	it("runs the strip from the sent spell's global cooldown while the castbar is idle", function()
 		local strip = castbar.gcd.bar
-		ns.Cast.Handle(castbar, {}, "SPELL_UPDATE_COOLDOWN")
+		SendSpell(FROSTBOLT)
+		GlobalCooldown(FROSTBOLT, true)
 		assert.is_false(strip:IsShown(), "off by default")
 		ns.Config:SetUnitValue("player", "castbar.gcd.enabled", true)
-		Mock.cooldowns[ns.Cast.GCD_SPELL] = 1.5
-		ns.Cast.Handle(castbar, {}, "SPELL_UPDATE_COOLDOWN")
+		GlobalCooldown(FROSTBOLT, true)
 		assert.is_false(castbar:GetFrame():IsShown(), "no cast shown")
 		assert.is_true(strip:IsShown())
 		local timer = strip.__state.timer
 		assert.equals(1.5, timer.duration.__state.length)
 		assert.equals(Enum.StatusBarTimerDirection.ElapsedTime, timer.direction)
-		Mock.cooldowns[ns.Cast.GCD_SPELL] = nil
-		ns.Cast.Handle(castbar, {}, "SPELL_UPDATE_COOLDOWN")
-		assert.is_false(strip:IsShown())
+		GlobalCooldown(FROSTBOLT, nil)
+		assert.is_false(strip:IsShown(), "ended")
+	end)
+
+	-- Forever has no global cooldown spell (61304): only the sent spell tells.
+	it("shows nothing before a spell is sent or for a spell on its own cooldown", function()
+		ns.Config:SetUnitValue("player", "castbar.gcd.enabled", true)
+		Fire("SPELL_UPDATE_COOLDOWN")
+		assert.is_false(castbar.gcd.bar:IsShown())
+		SendSpell(EXECUTE)
+		GlobalCooldown(EXECUTE, false)
+		assert.is_false(castbar.gcd.bar:IsShown())
+	end)
+
+	it("accepts a secret spell ID", function()
+		ns.Config:SetUnitValue("player", "castbar.gcd.enabled", true)
+		local secret = Secret(FROSTBOLT)
+		local query = C_Spell.GetSpellCooldown
+		C_Spell.GetSpellCooldown = function(id)
+			assert.is_true(Mock.IsSecret(id))
+			return query(id.secretValue)
+		end
+		SendSpell(secret)
+		Mock.cooldowns[FROSTBOLT] = { duration = 1.5, onGCD = true }
+		Fire("SPELL_UPDATE_COOLDOWN")
+		assert.is_true(castbar.gcd.bar:IsShown())
 	end)
 
 	it("hides the strip when it, or the castbar, is turned off", function()
 		ns.Config:SetUnitValue("player", "castbar.gcd.enabled", true)
-		Mock.cooldowns[ns.Cast.GCD_SPELL] = 1.5
-		ns.Cast.UpdateGCD(castbar)
+		SendSpell(FROSTBOLT)
+		GlobalCooldown(FROSTBOLT, true)
 		ns.Config:SetUnitValue("player", "castbar.gcd.enabled", false)
 		assert.is_false(castbar.gcd.bar:IsShown())
 		ns.Config:SetUnitValue("player", "castbar.gcd.enabled", true)
-		ns.Cast.UpdateGCD(castbar)
+		GlobalCooldown(FROSTBOLT, true)
 		ns.Config:SetUnitValue("player", "castbar.enabled", false)
 		assert.is_false(castbar.gcd.bar:IsShown())
 	end)
@@ -162,9 +196,8 @@ describe("Player castbar extras #castbar", function()
 		assert.equals("TOPLEFT,TOPRIGHT", Points())
 		ns.Config:SetUnitValue("player", "castbar.gcd.position", "full")
 		assert.equals(anchor, strip.__state.points[1][2])
-		ns.Cast.UpdateGCD(castbar)
-		Mock.cooldowns[ns.Cast.GCD_SPELL] = 1.5
-		ns.Cast.UpdateGCD(castbar)
+		SendSpell(FROSTBOLT)
+		GlobalCooldown(FROSTBOLT, true)
 		assert.is_true(strip:GetFrameLevel() > anchor:GetFrameLevel(), "above the fill")
 	end)
 
@@ -211,10 +244,11 @@ describe("Workbench castbar extras #castbar", function()
 
 	it("follows the live global cooldown", function()
 		wb.dataTarget.set("source", "player")
-		Mock.cooldowns[UnitFrames.Cast.GCD_SPELL] = 1.5
+		Mock.FireEvent("UNIT_SPELLCAST_SENT", "player", "target", "guid", 116)
+		Mock.cooldowns[116] = { duration = 1.5, onGCD = true }
 		Mock.FireEvent("SPELL_UPDATE_COOLDOWN")
 		assert.is_true(castbar.gcd.bar:IsShown())
-		Mock.cooldowns[UnitFrames.Cast.GCD_SPELL] = nil
+		Mock.cooldowns[116] = nil
 		Mock.FireEvent("SPELL_UPDATE_COOLDOWN")
 		assert.is_false(castbar.gcd.bar:IsShown())
 	end)

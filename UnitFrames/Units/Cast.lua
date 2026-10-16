@@ -25,7 +25,6 @@ Cast.EVENTS = {
 
 -- Unitless: the player's global cooldown (Cast.UpdateGCD).
 Cast.GCD_EVENTS = { "SPELL_UPDATE_COOLDOWN" }
-Cast.GCD_SPELL = 61304
 
 local CastTime = ns.CastExtras.CastTime
 
@@ -66,15 +65,20 @@ local function TakeLatency(state)
 	state.sentAt = nil
 end
 
--- The player's global cooldown on castbars that show it.
-function Cast.UpdateGCD(castbar)
+-- The player's global cooldown on castbars that show it. Forever has no
+-- global cooldown spell (61304 is unknown): like Blizzard's cooldown code, ask
+-- whether the last sent spell is on the global cooldown. isOnGCD is never
+-- secret and holds while handling SPELL_UPDATE_COOLDOWN; the spell ID may be
+-- secret, which these functions accept. A spell with its own, longer cooldown
+-- doesn't report the global one.
+function Cast.UpdateGCD(castbar, state)
 	if not castbar:WantsGCD() then
 		return
 	end
-	local cooldown = C_Spell.GetSpellCooldown(Cast.GCD_SPELL)
-	-- isActive is never secret.
-	if cooldown and cooldown.isActive then
-		castbar:StartGCD(C_Spell.GetSpellCooldownDuration(Cast.GCD_SPELL))
+	local spell = state.gcdSpell
+	local cooldown = spell and C_Spell.GetSpellCooldown(spell)
+	if cooldown and cooldown.isOnGCD then
+		castbar:StartGCD(C_Spell.GetSpellCooldownDuration(spell))
 	else
 		castbar:StopGCD()
 	end
@@ -87,18 +91,17 @@ function Cast.Refresh(castbar, state, unit)
 		state.casting = false
 		castbar:Hide()
 	end
-	Cast.UpdateGCD(castbar)
 end
 
--- Event payloads after the unit: castGUID, spellID, then
+-- Event payloads after the unit: SENT: target, castGUID, spellID; others castGUID, spellID, then
 --   STOP: castID | CHANNEL_STOP: interruptedBy, castID
 --   FAILED: castID | INTERRUPTED: interruptedBy, castID      (same as oUF's Castbar)
 -- Events outside Cast.EVENTS and Cast.GCD_EVENTS refresh.
 function Cast.Handle(castbar, state, event, unit, _, _, arg3, arg4)
 	if event == "UNIT_SPELLCAST_SENT" then
-		state.sentAt = GetTime()
+		state.sentAt, state.gcdSpell = GetTime(), arg3
 	elseif event == "SPELL_UPDATE_COOLDOWN" then
-		Cast.UpdateGCD(castbar)
+		Cast.UpdateGCD(castbar, state)
 	elseif event == "UNIT_SPELLCAST_START" then
 		TakeLatency(state)
 		StartCast(castbar, state, unit)
