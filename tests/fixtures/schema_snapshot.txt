@@ -18265,7 +18265,8 @@ definition sample.spell = "Bite"
 definition sample.spellIcon = "Interface\\Icons\\Ability_Druid_FerociousBite"
 definition width = 150
 ## clickgrid.target
-option width type="range" label="Width" default=85 min=60 max=600 step=1
+option shown type="toggle" label="Show member targets" default=false tooltip=#04184f2b
+option width type="range" label="Width" default=85 min=20 max=600 step=1
 option spacing type="range" label="Row spacing" default=1 min=0 max=20 step=1
 option border type="group" label="Frame border" defaults={enabled=true,padding=4}
 option border.enabled type="toggle" label="Enabled" default=true
@@ -19585,6 +19586,7 @@ default range.enabled = false
 default range.mode = "group"
 default range.outsideAlpha = 0.55
 default range.spell = ""
+default shown = false
 default spacing = 1
 default width = 85
 resolved auraBar.border.background = "None"
@@ -20238,6 +20240,7 @@ resolved range.enabled = false
 resolved range.mode = "group"
 resolved range.outsideAlpha = 0.55
 resolved range.spell = ""
+resolved shown = false
 resolved spacing = 1
 resolved width = 85
 definition auraBar.collapsible = true
@@ -20288,7 +20291,6 @@ option panel.spacingX type="range" label="Horizontal gap" default=8 min=0 max=50
 option panel.spacingY type="range" label="Vertical gap" default=36 min=0 max=80 step=1 tooltip=#78372525
 option panel.sectionGap type="range" label="Section gap" default=24 min=0 max=80 step=1
 option panel.scale type="range" label="Panel scale" default=1 min=0.5 max=1.5 step=0.05
-option panel.targets type="toggle" label="Show member targets" default=false
 option panel.targetGap type="range" label="Gap to target" default=4 min=0 max=30 step=1
 option panel.tanks type="toggle" label="Extra tank section (duplicates)" default=false
 option panel.tankSlots type="range" label="Maximum tank slots" default=5 min=1 max=40 step=1
@@ -20481,7 +20483,6 @@ default panel.spacingY = 36
 default panel.tankSlots = 5
 default panel.tanks = false
 default panel.targetGap = 4
-default panel.targets = false
 default slots.slot1.anchor = "TOPLEFT"
 default slots.slot1.enabled = false
 default slots.slot1.offsetX = 0
@@ -20601,7 +20602,6 @@ resolved panel.spacingY = 36
 resolved panel.tankSlots = 5
 resolved panel.tanks = false
 resolved panel.targetGap = 4
-resolved panel.targets = false
 resolved slots.slot1.anchor = "TOPLEFT"
 resolved slots.slot1.enabled = false
 resolved slots.slot1.offsetX = 0

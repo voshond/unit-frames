@@ -24,7 +24,14 @@ end
 function CG:StyleSchema(kind)
 	self.styleSchemas = self.styleSchemas or {}
 	if not self.styleSchemas[kind] then
-		self.styleSchemas[kind] = UF.Components.UnitFrame.BuildSchema(UF.Units:GetSpec(self.definitions[kind]))
+		local schema = UF.Components.UnitFrame.BuildSchema(UF.Units:GetSpec(self.definitions[kind]))
+		if kind == "target" then
+			-- Narrow strips are useful beside a member bar.
+			schema = UF.Schema.Override(schema, "width", { min = 20 })
+			table.insert(schema, 1, { key = "shown", type = "toggle", label = "Show member targets", default = false,
+				tooltip = "Shows a target bar beside each member, as tall as the member's bar. Hidden targets stop all unit updates." })
+		end
+		self.styleSchemas[kind] = schema
 	end
 	return self.styleSchemas[kind]
 end
@@ -35,6 +42,11 @@ function CG:Measure()
 		local layout = UF.UnitFrameLayout.Compute(UF.Units:GetSpec(self.definitions[kind]), self.Config.styles[kind]:Resolved())
 		self.metrics[kind] = { width = layout.width, height = layout.height }
 	end
+	self.metrics.target.shown = self:TargetsShown()
+end
+
+function CG:TargetsShown()
+	return self.Config.styles.target:Resolved().shown
 end
 
 -- ClickGrid's own state per unit button, kept off the secure buttons:

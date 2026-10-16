@@ -44,7 +44,9 @@ client after adding it. For local builds and incremental updates, see the
   insets for the background, without moving members. Previous Panel layout padding is preserved
   automatically in these shared controls. Borders draw above the members;
   the background stays behind them.
-- Member targets beside the bars, with independent target styling. Existing
+- Member targets beside the bars, as tall as the member's bar, with independent
+  target styling. Switch them on under **Target bars > General** (an earlier
+  *Show member targets* panel choice is carried over). Existing
   UnitFrames health, shields, power, portrait, castbar, text, range, marker,
   font and border controls are reused rather than duplicated.
   Hidden targets keep their prepared secure buttons but stop unit watches,

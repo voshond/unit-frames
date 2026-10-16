@@ -93,10 +93,11 @@ function Preview:StyleCell(cell)
 	local cfg = self.cfg.panel
 	cell.member:Apply(CG.Config:GetStyle("member"))
 	cell.member:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", 0, 0)
+	cell.target:SetFillHeight(self.layout.cellHeight)
 	cell.target:Apply(CG.Config:GetStyle("target"))
 	cell.target:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", CG.metrics.member.width + cfg.targetGap, 0)
-	cell.target:GetFrame():SetShown(cfg.targets)
-	if not cfg.targets then EnableAuras(cell.target, false) end
+	cell.target:GetFrame():SetShown(CG.metrics.target.shown)
+	if not CG.metrics.target.shown then EnableAuras(cell.target, false) end
 	cell.slots:Apply(CG:SlotConfig(cell.member))
 	cell.status:Apply(CG.Config:Get().indicators)
 	cell.styled = true
@@ -109,7 +110,7 @@ function Preview:FeedCell(cell, index, live, unit)
 		cell.slots:SetEnabled(present and cell.slots.resolved.enabled)
 		if present then cell.slots:SetUnit(unit) end
 		cell.status:HideIndicators()
-		if self.cfg.panel.targets then self:ShowLive(cell.target, unit and unit .. "target", cell) end
+		if CG.metrics.target.shown then self:ShowLive(cell.target, unit and unit .. "target", cell) end
 	else
 		if cell.sampleIndex ~= index then
 			cell.memberValues, cell.targetValues = nil, nil
@@ -123,7 +124,7 @@ function Preview:FeedCell(cell, index, live, unit)
 		cell.slots:SetEnabled(cell.slots.resolved.enabled)
 		cell.slots:ShowSample(values)
 		cell.status:ShowSample(index, self.data.readyCheck == "check")
-		if self.cfg.panel.targets then
+		if CG.metrics.target.shown then
 			cell.target:GetFrame():Show()
 			EnableAuras(cell.target, true)
 			local targetValues = self:Values(index, cell.targetValues)

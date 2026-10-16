@@ -369,8 +369,14 @@ function UnitFrame:SetRangeState(inRange, checkedRange)
 	self:ApplyRangeOpacity()
 end
 
+-- A companion layout can ask for a taller frame; the health row absorbs
+-- the difference at the next Apply/Layout. nil restores the natural height.
+function UnitFrame:SetFillHeight(height)
+	self.fillHeight = height
+end
+
 function UnitFrame:Layout()
-	local layout = ns.UnitFrameLayout.Compute(self.spec, self.resolved)
+	local layout = ns.UnitFrameLayout.Compute(self.spec, self.resolved, self.fillHeight)
 	self.layout = layout
 	for _, row in ipairs(self.rows) do row.component:ClearAllPoints() end
 	local portrait = self.partsByKey.portrait

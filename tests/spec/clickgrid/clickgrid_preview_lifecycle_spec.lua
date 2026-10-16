@@ -4,7 +4,7 @@ local Mock = Helpers.Mock
 describe("ClickGrid preview lifecycle", function()
 	it("reuses independent sample feeds and clears optional fields on source changes", function()
 		local UF, CG, wb = Helpers.LoadClickGrid(true)
-		CG.Config:Set("panel.targets", true)
+		CG.Config:SetStyle("target", "shown", true)
 		wb:Open("clickgrid.panel")
 		wb.dataTarget.set("readyCheck", "check")
 		wb.dataTarget.set("source", "animated")

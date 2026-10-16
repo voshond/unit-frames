@@ -24,7 +24,8 @@ function Layout.PointBarShown(spec, cfg)
 	return spec.comboPoints ~= nil and spec.comboPoints.available ~= false and cfg.comboPoints.enabled
 end
 
-function Layout.Compute(spec, cfg)
+-- `fillHeight` stretches the health row so the frame is at least that tall.
+function Layout.Compute(spec, cfg, fillHeight)
 	local padLeft, padRight, padTop, padBottom = ns.Components.Backdrop.Padding(cfg.border)
 	local placement = Layout.CastbarPlacement(spec, cfg)
 	local items = {}
@@ -61,6 +62,15 @@ function Layout.Compute(spec, cfg)
 	AuraBarAt("bottom")
 	local stackHeight = 0
 	for i, item in ipairs(items) do stackHeight = stackHeight + item.height + (i > 1 and cfg.spacing or 0) end
+	local extra = fillHeight and fillHeight - (stackHeight + padTop + padBottom) or 0
+	if extra > 0 then
+		for _, item in ipairs(items) do
+			if item.key == "health" then
+				item.height, stackHeight = item.height + extra, stackHeight + extra
+				break
+			end
+		end
+	end
 
 	local left, right, portraitWidth = padLeft, padRight, 0
 	local portrait, portraitRows = nil, 0
