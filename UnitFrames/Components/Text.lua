@@ -332,9 +332,14 @@ function Text:Layout()
 		elseif vertical == "bottom" then
 			edge, y = "BOTTOM", y + 1
 		end
+		local left, right = cfg.inset + cfg.offsetX + (self.leadingSpace or 0), -cfg.inset + cfg.offsetX
+		local layout = self.textLayout
+		if layout and layout.edge == edge and layout.left == left and layout.right == right and layout.y == y then return end
 		fs:ClearAllPoints()
-		fs:SetPoint(edge .. "LEFT", host, edge .. "LEFT", cfg.inset + cfg.offsetX + (self.leadingSpace or 0), y)
-		fs:SetPoint(edge .. "RIGHT", host, edge .. "RIGHT", -cfg.inset + cfg.offsetX, y)
+		fs:SetPoint(edge .. "LEFT", host, edge .. "LEFT", left, y)
+		fs:SetPoint(edge .. "RIGHT", host, edge .. "RIGHT", right, y)
+		self.textLayout = { edge = edge, left = left, right = right, y = y }
+		ns.Perf:Count("textLayoutWrite")
 	end
 end
 

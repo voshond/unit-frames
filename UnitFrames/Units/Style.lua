@@ -21,6 +21,7 @@ oUF:RegisterInitCallback(function(frame) ready[frame] = true end)
 -- What oUF read when it last enabled each element, per frame (driver
 -- signatures). Compared entry by entry: signatures may contain nils.
 local signatures = setmetatable({}, { __mode = "k" })
+local presetTags = setmetatable({}, { __mode = "k" })
 
 local function SameSignature(a, b)
 	if a == b then return true end
@@ -71,11 +72,17 @@ local function TagRow(frame, row, rowEnabled)
 		if rowEnabled and text:IsEnabled() and not template.empty then
 			if preset then
 				TextTags.Unbind(fs)
-				frame:Tag(fs, Formats.Tag(preset))
+				if presetTags[fs] ~= preset then
+					frame:Tag(fs, Formats.Tag(preset))
+					presetTags[fs] = preset
+					ns.Perf:Count("presetTagBind")
+				end
 			else
+				presetTags[fs] = nil
 				TextTags.Bind(frame, fs, template)
 			end
 		else
+			presetTags[fs] = nil
 			TextTags.Unbind(fs)
 			frame:Untag(fs)
 			fs:SetText("")

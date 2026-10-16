@@ -170,6 +170,7 @@ end
 function Stack:Reflow()
 	if self.released then return end
 	ns.Perf:Count("decorationReflow")
+	ns.Perf:Begin("decoration reflow")
 	local context, groups = self.context, self.groups
 	for key, member in pairs(self.members) do
 		local item = self.items[key]
@@ -229,6 +230,7 @@ function Stack:Reflow()
 		if self.nameSpace ~= nameSpace or self.appliedName ~= name then name:SetLeadingSpace(nameSpace) end
 	end
 	self.nameSpace, self.appliedName = nameSpace, name
+	ns.Perf:End("decoration reflow")
 end
 
 function Stack:Release()

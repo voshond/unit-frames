@@ -384,16 +384,29 @@ function UnitFrame:SetFillHeight(height)
 end
 
 function UnitFrame:Layout()
+	ns.Perf:Count("unitLayout")
+	ns.Perf:Begin("unit layout")
 	local layout = ns.UnitFrameLayout.Compute(self.spec, self.resolved, self.fillHeight)
+	local previous = self.layout
 	self.layout = layout
-	for _, row in ipairs(self.rows) do row.component:ClearAllPoints() end
+	local placements = self.rowPlacements or {}
+	self.rowPlacements = placements
+	for _, row in ipairs(self.rows) do
+		local key = row.def.key
+		if not self.resolved[key].enabled and placements[key] then
+			row.component:ClearAllPoints()
+			placements[key] = nil
+		end
+	end
 	local portrait = self.partsByKey.portrait
 	if portrait then
-		portrait:ClearAllPoints()
 		local bounds = layout.portrait
-		if bounds then
-			portrait:SetSize(bounds.width, bounds.height)
-			portrait:SetPoint("TOP" .. bounds.side, self.frame, "TOP" .. bounds.side, bounds.x, bounds.y)
+		if not previous or not ns.Util.Equals(previous.portrait, bounds) then
+			portrait:ClearAllPoints()
+			if bounds then
+				portrait:SetSize(bounds.width, bounds.height)
+				portrait:SetPoint("TOP" .. bounds.side, self.frame, "TOP" .. bounds.side, bounds.x, bounds.y)
+			end
 		end
 	end
 
@@ -401,10 +414,14 @@ function UnitFrame:Layout()
 	if auraBar then auraBar:SetCollapse(layout.auraBarCollapses and self.resolved.spacing or nil) end
 	for _, item in ipairs(layout.rows) do
 		local component = self.partsByKey[item.key] or self.rowsByKey[item.key]
-		component:ClearAllPoints()
-		component:SetPoint("TOPLEFT", self.frame, "TOPLEFT", item.left, item.y)
-		component:SetPoint("TOPRIGHT", self.frame, "TOPRIGHT", -item.right, item.y)
-		component:GetFrame():SetHeight(item.height)
+		if not self.rowsByKey[item.key] or not ns.Util.Equals(placements[item.key], item) then
+			component:ClearAllPoints()
+			component:SetPoint("TOPLEFT", self.frame, "TOPLEFT", item.left, item.y)
+			component:SetPoint("TOPRIGHT", self.frame, "TOPRIGHT", -item.right, item.y)
+			component:GetFrame():SetHeight(item.height)
+			placements[item.key] = item
+			ns.Perf:Count("rowLayoutWrite")
+		end
 		if item.key == "auraBar" or item.key == "comboPoints" then
 			component:Layout(layout.width - item.left - item.right)
 		end
@@ -427,6 +444,7 @@ function UnitFrame:Layout()
 	end
 	self.decorations:Reflow()
 	Backdrop.SetBorderLevel(self.border, self.frame:GetFrameLevel() + Backdrop.LEVELS.frame)
+	ns.Perf:End("unit layout")
 end
 
 -- A collapsible icon row lends its space to the health bar: the bar's edge

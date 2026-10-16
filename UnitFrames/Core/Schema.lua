@@ -214,6 +214,7 @@ function Schema.Memo(build, a, b, c, ...)
 end
 
 local function ResolvePlain(schema, config, theme)
+	ns.Perf:Count("resolveBuild")
 	return Resolve(schema, config, theme, NO_LAYERS)
 end
 
