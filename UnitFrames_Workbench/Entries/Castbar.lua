@@ -26,10 +26,9 @@ local function StartFake(castbar, d, es, spell)
 		castTime = spell.time,
 		latency = SAMPLE_LATENCY,
 	})
-	castbar:StartGCD(FakeDuration(GCD_TIME))
+	castbar:StartGCD(FakeDuration(GCD_TIME), GCD_TIME)
 	es.casting = true
 	es.castEnds = GetTime() + spell.time
-	es.gcdEnds = GetTime() + GCD_TIME
 end
 
 -- Frozen cast for styling: shows `progress` of the selected spell.
@@ -112,10 +111,6 @@ Workbench:Register({
 			end
 			local castbar = handle.parts.castbar
 			local now = GetTime()
-			if es.gcdEnds and now >= es.gcdEnds then
-				es.gcdEnds = nil
-				castbar:StopGCD()
-			end
 			if es.casting and now >= es.castEnds then
 				es.casting = false
 				castbar:Stop("success")

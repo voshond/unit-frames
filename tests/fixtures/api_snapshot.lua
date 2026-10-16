@@ -1627,6 +1627,7 @@ return {
 			EnableMouse = "HANDLE",
 			EnumerateActive = "ManagedLayoutFrameMixin",
 			Factory = "ScrollBoxFactoryInitializerMixin",
+			FadeOut = "ClickToZoomDataProvider_LabelMixin",
 			Find = "DataProviderMixin",
 			Finish = "CharacterUpgradeFlow",
 			Flash = "EventTraceScrollBoxButtonMixin",

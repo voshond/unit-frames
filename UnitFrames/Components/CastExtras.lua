@@ -14,7 +14,8 @@ length the zone stays hidden.
 GCD strip: a StatusBar the engine drives from the GCD's duration object, with
 a spark at its fill end. It sits next to the castbar, not inside it, so it
 runs for instant casts while the castbar is hidden without touching what
-the castbar covers.
+the castbar covers. When the global cooldown ends it holds, then fades out
+like a finished cast; with plain remaining seconds it times that itself.
 ]]
 local Extras = {}
 ns.CastExtras = Extras
@@ -49,6 +50,8 @@ function Extras.BuildSchema()
 				hidden = function(cfg) return cfg.position == "full" end },
 			{ key = "color", type = "color", label = "Colour", default = { 1, 1, 1, 0.4 } },
 			{ key = "spark", type = "toggle", label = "Spark", default = true },
+			{ key = "holdTime", type = "range", label = "Hold after finish (s)", min = 0, max = 2, step = 0.1, default = 0.2 },
+			{ key = "fadeTime", type = "range", label = "Fade out (s)", min = 0, max = 2, step = 0.1, default = 0.2 },
 		} },
 	}
 end
@@ -130,6 +133,8 @@ function GCD:Init(parent, anchor, nativeLayout)
 	self.spark = self.bar:CreateTexture(nil, "OVERLAY")
 	self.spark:SetTexture(Bar.SPARK_TEXTURE)
 	self.spark:SetBlendMode("ADD")
+	self.fade, self.fadeAlpha = Util.CreateFadeOut(self.bar)
+	self.fade:SetScript("OnFinished", function() self:Stop() end)
 	self.bar:Hide()
 end
 
@@ -158,6 +163,7 @@ function GCD:Apply(cfg, barCfg)
 			bar:SetWidth(cfg.height)
 		end
 	end
+	Util.SetFadeTimes(self.fadeAlpha, cfg.holdTime, cfg.fadeTime)
 	Bar.AnchorSpark(self.spark, bar:GetStatusBarTexture(), orientation, barCfg.reverseFill)
 	self.spark:SetShown(cfg.spark)
 	if not cfg.enabled then
@@ -172,13 +178,31 @@ end
 -- Above the castbar's fill, below its texts; the castbar's level is set by
 -- its host after creation.
 function GCD:Present()
+	self.fade:Stop()
+	self.bar:SetAlpha(1)
 	self.bar:SetFrameLevel(self.anchor:GetFrameLevel() + 2)
 	self.bar:Show()
 end
 
-function GCD:Start(duration)
+-- Holds for `delay` plus the hold time, then fades out.
+function GCD:FadeOut(delay)
+	self.fade:Stop()
+	self.fadeAlpha:SetStartDelay(delay + self.cfg.holdTime)
+	self.fade:Play()
+end
+
+function GCD:Start(duration, remaining)
 	self.bar:SetTimerDuration(duration, Enum.StatusBarInterpolation.Immediate, Enum.StatusBarTimerDirection.ElapsedTime)
 	self:Present()
+	if remaining then
+		self:FadeOut(math.max(remaining, 0))
+	end
+end
+
+function GCD:Finish()
+	if self.bar:IsShown() then
+		self:FadeOut(0)
+	end
 end
 
 function GCD:Preview(progress)
@@ -188,7 +212,9 @@ function GCD:Preview(progress)
 end
 
 function GCD:Stop()
+	self.fade:Stop()
 	self.bar:Hide()
+	self.bar:SetAlpha(1)
 end
 
 function GCD:Release()

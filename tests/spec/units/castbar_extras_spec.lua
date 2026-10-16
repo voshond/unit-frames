@@ -1,6 +1,14 @@
 local Helpers = require("helpers")
 local Mock = Helpers.Mock
 
+-- The start delay of the last time an alpha animation was set to play.
+local function StartDelay(alpha)
+	for i = #alpha.__calls, 1, -1 do
+		local call = alpha.__calls[i]
+		if call[1] == "SetStartDelay" then return call[2] end
+	end
+end
+
 local function Near(expected, actual, message)
 	assert.is_true(math.abs(expected - actual) < 1e-9, (message or "") .. " expected " .. expected .. ", got " .. actual)
 end
@@ -143,7 +151,31 @@ describe("Player castbar extras #castbar", function()
 		assert.equals(1.5, timer.duration.__state.length)
 		assert.equals(Enum.StatusBarTimerDirection.ElapsedTime, timer.direction)
 		GlobalCooldown(FROSTBOLT, nil)
-		assert.is_false(strip:IsShown(), "ended")
+		assert.is_true(strip:IsShown(), "lingers after the end")
+		assert.is_true(castbar.gcd.fade:IsPlaying())
+		assert.equals(0.2, StartDelay(castbar.gcd.fadeAlpha), "the hold time")
+		castbar.gcd.fade:RunScript("OnFinished")
+		assert.is_false(strip:IsShown(), "faded out")
+		assert.equals(1, strip:GetAlpha())
+	end)
+
+	it("times its own end from plain cooldown timings", function()
+		ns.Config:SetUnitValue("player", "castbar.gcd.enabled", true)
+		ns.Config:SetUnitValue("player", "castbar.gcd.holdTime", 0.5)
+		local query = C_Spell.GetSpellCooldown
+		C_Spell.GetSpellCooldown = function(id)
+			local cooldown = query(id)
+			cooldown.startTime, cooldown.duration = Mock.time - 0.5, 1.5
+			return cooldown
+		end
+		SendSpell(FROSTBOLT)
+		GlobalCooldown(FROSTBOLT, true)
+		assert.is_true(castbar.gcd.fade:IsPlaying(), "no end event needed")
+		Near(1.5, StartDelay(castbar.gcd.fadeAlpha), "the remaining second and the hold")
+		GlobalCooldown(FROSTBOLT, true)
+		assert.is_true(castbar.gcd.bar:IsShown())
+		castbar.gcd.fade:RunScript("OnFinished")
+		assert.is_false(castbar.gcd.bar:IsShown())
 	end)
 
 	-- Forever has no global cooldown spell (61304): only the sent spell tells.
@@ -174,8 +206,10 @@ describe("Player castbar extras #castbar", function()
 		ns.Config:SetUnitValue("player", "castbar.gcd.enabled", true)
 		SendSpell(FROSTBOLT)
 		GlobalCooldown(FROSTBOLT, true)
+		GlobalCooldown(FROSTBOLT, nil)
 		ns.Config:SetUnitValue("player", "castbar.gcd.enabled", false)
-		assert.is_false(castbar.gcd.bar:IsShown())
+		assert.is_false(castbar.gcd.bar:IsShown(), "at once, not after the hold")
+		assert.is_false(castbar.gcd.fade:IsPlaying())
 		ns.Config:SetUnitValue("player", "castbar.gcd.enabled", true)
 		GlobalCooldown(FROSTBOLT, true)
 		ns.Config:SetUnitValue("player", "castbar.enabled", false)
@@ -237,8 +271,9 @@ describe("Workbench castbar extras #castbar", function()
 	it("ends a test cast's global cooldown", function()
 		wb:RunAction("start")
 		assert.is_true(castbar.gcd.bar:IsShown())
-		Mock.time = Mock.time + 2
-		wb:OnUpdate(2)
+		assert.is_true(castbar.gcd.fade:IsPlaying())
+		Near(1.7, StartDelay(castbar.gcd.fadeAlpha))
+		castbar.gcd.fade:RunScript("OnFinished")
 		assert.is_false(castbar.gcd.bar:IsShown())
 	end)
 
@@ -250,6 +285,6 @@ describe("Workbench castbar extras #castbar", function()
 		assert.is_true(castbar.gcd.bar:IsShown())
 		Mock.cooldowns[116] = nil
 		Mock.FireEvent("SPELL_UPDATE_COOLDOWN")
-		assert.is_false(castbar.gcd.bar:IsShown())
+		assert.is_true(castbar.gcd.fade:IsPlaying())
 	end)
 end)

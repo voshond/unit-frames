@@ -19,7 +19,7 @@ Data API:
 
 spec.playerCast adds the player's extras (Components/CastExtras.lua): cast
 info may carry castTime and latency (plain seconds) for the latency zone, and
-  :StartGCD(duration) / :StopGCD() / :PreviewGCD(progress)
+  :StartGCD(duration, remaining?) / :FinishGCD() / :StopGCD() / :PreviewGCD(progress)
 drive the global cooldown strip.
 
 Placed over another region (SetCovered: health row, portrait), the castbar
@@ -109,11 +109,7 @@ function Castbar:OnCreate(parent)
 		self.gcd = CastExtras.GCD:New(parent, self.bar:GetStatusBar(), self.spec.nativeLayout)
 	end
 
-	self.fade = self.frame:CreateAnimationGroup()
-	local alpha = self.fade:CreateAnimation("Alpha")
-	alpha:SetFromAlpha(1)
-	alpha:SetToAlpha(0)
-	self.fadeAlpha = alpha
+	self.fade, self.fadeAlpha = Util.CreateFadeOut(self.frame)
 	self.fade:SetScript("OnUpdate", function() self:UpdateCovered() end)
 	self.fade:SetScript("OnFinished", function() self:Hide() end)
 
@@ -154,8 +150,7 @@ function Castbar:OnApply(cfg)
 		self.latency:Apply(cfg.latency, self.bar.resolved)
 		self.gcd:Apply(cfg.gcd, self.bar.resolved)
 	end
-	self.fadeAlpha:SetStartDelay(cfg.holdTime)
-	self.fadeAlpha:SetDuration(math.max(cfg.fadeTime, 0.01))
+	Util.SetFadeTimes(self.fadeAlpha, cfg.holdTime, cfg.fadeTime)
 	self:LayoutParts()
 end
 
@@ -390,9 +385,17 @@ function Castbar:WantsGCD()
 	return self.gcd ~= nil and self.enabled and self.gcd:IsEnabled()
 end
 
-function Castbar:StartGCD(duration)
+-- remaining: plain seconds left, if known, so the strip also ends on its own.
+function Castbar:StartGCD(duration, remaining)
 	if self:WantsGCD() then
-		self.gcd:Start(duration)
+		self.gcd:Start(duration, remaining)
+	end
+end
+
+-- The global cooldown ended: hold, then fade out.
+function Castbar:FinishGCD()
+	if self.gcd then
+		self.gcd:Finish()
 	end
 end
 

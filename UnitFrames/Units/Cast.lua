@@ -26,6 +26,7 @@ Cast.EVENTS = {
 -- Unitless: the player's global cooldown (Cast.UpdateGCD).
 Cast.GCD_EVENTS = { "SPELL_UPDATE_COOLDOWN" }
 
+local Util = ns.Util
 local CastTime = ns.CastExtras.CastTime
 
 local function StartCast(castbar, state, unit)
@@ -65,6 +66,15 @@ local function TakeLatency(state)
 	state.sentAt = nil
 end
 
+-- Plain seconds left on a cooldown, nil when its timings are secret.
+function Cast.Remaining(cooldown)
+	local start, duration = cooldown.startTime, cooldown.duration
+	if Util.IsSecret(start) or Util.IsSecret(duration) then
+		return nil
+	end
+	return start + duration - GetTime()
+end
+
 -- The player's global cooldown on castbars that show it. Forever has no
 -- global cooldown spell (61304 is unknown): like Blizzard's cooldown code, ask
 -- whether the last sent spell is on the global cooldown. isOnGCD is never
@@ -78,9 +88,9 @@ function Cast.UpdateGCD(castbar, state)
 	local spell = state.gcdSpell
 	local cooldown = spell and C_Spell.GetSpellCooldown(spell)
 	if cooldown and cooldown.isOnGCD then
-		castbar:StartGCD(C_Spell.GetSpellCooldownDuration(spell))
+		castbar:StartGCD(C_Spell.GetSpellCooldownDuration(spell), Cast.Remaining(cooldown))
 	else
-		castbar:StopGCD()
+		castbar:FinishGCD()
 	end
 end
 

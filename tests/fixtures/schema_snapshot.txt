@@ -559,6 +559,8 @@ option gcd.position type="select" label="Position" default="bottom" values=#197f
 option gcd.height type="range" label="Thickness" default=2 min=1 max=10 step=1 hidden
 option gcd.color type="color" label="Colour" default={1,1,1,0.4}
 option gcd.spark type="toggle" label="Spark" default=true
+option gcd.holdTime type="range" label="Hold after finish (s)" default=0.2 min=0 max=2 step=0.1
+option gcd.fadeTime type="range" label="Fade out (s)" default=0.2 min=0 max=2 step=0.1
 default background = {0,0,0,0}
 default bar.background.alpha = 0.25
 default bar.background.color = {0,0,0,0.5}
@@ -600,7 +602,9 @@ default enabled = true
 default fadeTime = 0.3
 default gcd.color = {1,1,1,0.4}
 default gcd.enabled = false
+default gcd.fadeTime = 0.2
 default gcd.height = 2
+default gcd.holdTime = 0.2
 default gcd.position = "bottom"
 default gcd.spark = true
 default holdTime = 0.4
@@ -676,7 +680,9 @@ resolved enabled = true
 resolved fadeTime = 0.3
 resolved gcd.color = {1,1,1,0.4}
 resolved gcd.enabled = false
+resolved gcd.fadeTime = 0.2
 resolved gcd.height = 2
+resolved gcd.holdTime = 0.2
 resolved gcd.position = "bottom"
 resolved gcd.spark = true
 resolved holdTime = 0.4
@@ -2064,6 +2070,8 @@ option castbar.gcd.position type="select" label="Position" default="bottom" valu
 option castbar.gcd.height type="range" label="Thickness" default=2 min=1 max=10 step=1 hidden
 option castbar.gcd.color type="color" label="Colour" default={1,1,1,0.4}
 option castbar.gcd.spark type="toggle" label="Spark" default=true
+option castbar.gcd.holdTime type="range" label="Hold after finish (s)" default=0.2 min=0 max=2 step=0.1
+option castbar.gcd.fadeTime type="range" label="Fade out (s)" default=0.2 min=0 max=2 step=0.1
 option comboPoints type="group" label="Combo points" defaults={enabled=false}
 option comboPoints.enabled type="toggle" label="Enabled" default=true tooltip=#70ca7196
 option comboPoints.position type="select" label="Placement" default="power" values=#bae11b56
@@ -2399,7 +2407,9 @@ default castbar.enabled = false
 default castbar.fadeTime = 0.3
 default castbar.gcd.color = {1,1,1,0.4}
 default castbar.gcd.enabled = false
+default castbar.gcd.fadeTime = 0.2
 default castbar.gcd.height = 2
+default castbar.gcd.holdTime = 0.2
 default castbar.gcd.position = "bottom"
 default castbar.gcd.spark = true
 default castbar.height = 18
@@ -3256,7 +3266,9 @@ resolved castbar.enabled = false
 resolved castbar.fadeTime = 0.3
 resolved castbar.gcd.color = {1,1,1,0.4}
 resolved castbar.gcd.enabled = false
+resolved castbar.gcd.fadeTime = 0.2
 resolved castbar.gcd.height = 2
+resolved castbar.gcd.holdTime = 0.2
 resolved castbar.gcd.position = "bottom"
 resolved castbar.gcd.spark = true
 resolved castbar.height = 18
