@@ -466,6 +466,241 @@ resolved time.justifyH = "RIGHT"
 resolved time.outline = ""
 resolved time.shadow = true
 resolved time.size = 11
+## castbar.player
+option enabled type="toggle" label="Enabled" default=true
+option portraitLayout type="select" label="Portrait cast layout" default="bar" values=#c97f0a21 tooltip=#8fde9bad hidden
+option border type="group" label="Border" defaults={enabled=true,padding=3}
+option border.enabled type="toggle" label="Enabled" default=true
+option border.separatePadding type="toggle" label="Content padding per side" default=false tooltip=#51bafd13
+option border.padding type="range" label="Content padding" default=4 min=0 max=40 step=1 tooltip=#152e5e50 hidden
+option border.paddingLeft type="range" label="Left padding" default=4 min=0 max=40 step=1 hidden
+option border.paddingRight type="range" label="Right padding" default=4 min=0 max=40 step=1 hidden
+option border.paddingTop type="range" label="Top padding" default=4 min=0 max=40 step=1 hidden
+option border.paddingBottom type="range" label="Bottom padding" default=4 min=0 max=40 step=1 hidden
+option border.separateInset type="toggle" label="Background inset per side" default=false tooltip=#b301212e
+option border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615 hidden
+option border.insetLeft type="range" label="Left background inset" default=3 min=0 max=16 step=1 hidden
+option border.insetRight type="range" label="Right background inset" default=3 min=0 max=16 step=1 hidden
+option border.insetTop type="range" label="Top background inset" default=3 min=0 max=16 step=1 hidden
+option border.insetBottom type="range" label="Bottom background inset" default=3 min=0 max=16 step=1 hidden
+option border.border type="border" label="Border" inherit="borderTexture"
+option border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option border.color type="color" label="Border colour" inherit="borderColor"
+option border.background type="background" label="Background" inherit="backgroundTexture"
+option border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option icon type="group" label="Icon"
+option icon.enabled type="toggle" label="Enabled" default=true
+option icon.position type="select" label="Position" default="LEFT" values=#11c04b33
+option icon.gap type="range" label="Gap" default=1 min=0 max=10 step=1
+option bar type="group" label="Bar" defaults={smooth=false,spark=true}
+option bar.enabled type="toggle" label="Enabled" default=true
+option bar.texture type="statusbar" label="Texture" inherit="barTexture"
+option bar.color type="color" label="Colour" inherit="colors.cast" tooltip=#60cf6d08
+option bar.orientation type="select" label="Orientation" default="HORIZONTAL" values=#bcee3529
+option bar.reverseFill type="toggle" label="Reverse fill" default=false
+option bar.smooth type="toggle" label="Smooth changes" default=true
+option bar.spark type="toggle" label="Spark" default=false
+option bar.background type="group" label="Background"
+option bar.background.enabled type="toggle" label="Enabled" default=true
+option bar.background.useBarColor type="toggle" label="Tint with bar colour" default=true
+option bar.background.alpha type="range" label="Opacity" default=0.25 min=0 max=1 step=0.05 hidden
+option bar.background.color type="color" label="Colour" default={0,0,0,0.5} hidden
+option bar.border type="group" label="Border" defaults={enabled=false}
+option bar.border.enabled type="toggle" label="Enabled" default=true
+option bar.border.separatePadding type="toggle" label="Content padding per side" default=false tooltip=#51bafd13
+option bar.border.padding type="range" label="Content padding" default=4 min=0 max=40 step=1 tooltip=#152e5e50 hidden
+option bar.border.paddingLeft type="range" label="Left padding" default=4 min=0 max=40 step=1 hidden
+option bar.border.paddingRight type="range" label="Right padding" default=4 min=0 max=40 step=1 hidden
+option bar.border.paddingTop type="range" label="Top padding" default=4 min=0 max=40 step=1 hidden
+option bar.border.paddingBottom type="range" label="Bottom padding" default=4 min=0 max=40 step=1 hidden
+option bar.border.separateInset type="toggle" label="Background inset per side" default=false tooltip=#b301212e
+option bar.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615 hidden
+option bar.border.insetLeft type="range" label="Left background inset" default=3 min=0 max=16 step=1 hidden
+option bar.border.insetRight type="range" label="Right background inset" default=3 min=0 max=16 step=1 hidden
+option bar.border.insetTop type="range" label="Top background inset" default=3 min=0 max=16 step=1 hidden
+option bar.border.insetBottom type="range" label="Bottom background inset" default=3 min=0 max=16 step=1 hidden
+option bar.border.border type="border" label="Border" inherit="borderTexture"
+option bar.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option bar.border.color type="color" label="Border colour" inherit="borderColor"
+option bar.border.background type="background" label="Background" inherit="backgroundTexture"
+option bar.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
+option name type="group" label="Spell name" defaults={justifyH="LEFT"}
+option name.enabled type="toggle" label="Enabled" default=true
+option name.font type="font" label="Font" inherit="font"
+option name.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
+option name.outline type="select" label="Outline" inherit="fontOutline" values=#a5c208b5
+option name.shadow type="toggle" label="Shadow" default=true
+option name.color type="color" label="Colour" default={1,1,1,1}
+option name.justifyH type="select" label="Alignment" default="CENTER" values=#ebc4156d
+option time type="group" label="Time" defaults={justifyH="RIGHT"}
+option time.enabled type="toggle" label="Enabled" default=true
+option time.font type="font" label="Font" inherit="font"
+option time.size type="range" label="Size" inherit="fontSize" min=6 max=40 step=1
+option time.outline type="select" label="Outline" inherit="fontOutline" values=#a5c208b5
+option time.shadow type="toggle" label="Shadow" default=true
+option time.color type="color" label="Colour" default={1,1,1,1}
+option time.justifyH type="select" label="Alignment" default="CENTER" values=#ebc4156d
+option colors type="group" label="Colours"
+option colors.cast type="color" label="Cast" inherit="colors.cast"
+option colors.channel type="color" label="Channel" inherit="colors.channel"
+option colors.nonInterruptible type="color" label="Not interruptible" inherit="colors.nonInterruptible"
+option colors.failed type="color" label="Failed / interrupted" inherit="colors.castFailed"
+option colors.success type="color" label="Succeeded" inherit="colors.castSuccess"
+option background type="color" label="Background" default={0,0,0,0} tooltip=#0297179c
+option holdTime type="range" label="Hold after finish (s)" default=0.4 min=0 max=2 step=0.1
+option fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
+option latency type="group" label="Latency zone"
+option latency.enabled type="toggle" label="Enabled" default=true
+option latency.mode type="select" label="Zone" default="latency" values=#9e319b63 tooltip=#3e0a3804
+option latency.color type="color" label="Colour" default={0.9,0.1,0.1,0.6}
+option gcd type="group" label="Global cooldown"
+option gcd.enabled type="toggle" label="Enabled" default=false tooltip=#a71861f3
+option gcd.position type="select" label="Position" default="bottom" values=#197f975a tooltip=#49fbf707
+option gcd.height type="range" label="Thickness" default=2 min=1 max=10 step=1 hidden
+option gcd.color type="color" label="Colour" default={1,1,1,0.4}
+option gcd.spark type="toggle" label="Spark" default=true
+default background = {0,0,0,0}
+default bar.background.alpha = 0.25
+default bar.background.color = {0,0,0,0.5}
+default bar.background.enabled = true
+default bar.background.useBarColor = true
+default bar.border.enabled = false
+default bar.border.inset = 3
+default bar.border.insetBottom = 3
+default bar.border.insetLeft = 3
+default bar.border.insetRight = 3
+default bar.border.insetTop = 3
+default bar.border.padding = 4
+default bar.border.paddingBottom = 4
+default bar.border.paddingLeft = 4
+default bar.border.paddingRight = 4
+default bar.border.paddingTop = 4
+default bar.border.separateInset = false
+default bar.border.separatePadding = false
+default bar.enabled = true
+default bar.orientation = "HORIZONTAL"
+default bar.reverseFill = false
+default bar.smooth = false
+default bar.spark = true
+default border.enabled = true
+default border.inset = 3
+default border.insetBottom = 3
+default border.insetLeft = 3
+default border.insetRight = 3
+default border.insetTop = 3
+default border.padding = 3
+default border.paddingBottom = 4
+default border.paddingLeft = 4
+default border.paddingRight = 4
+default border.paddingTop = 4
+default border.separateInset = false
+default border.separatePadding = false
+default colors = {}
+default enabled = true
+default fadeTime = 0.3
+default gcd.color = {1,1,1,0.4}
+default gcd.enabled = false
+default gcd.height = 2
+default gcd.position = "bottom"
+default gcd.spark = true
+default holdTime = 0.4
+default icon.enabled = true
+default icon.gap = 1
+default icon.position = "LEFT"
+default latency.color = {0.9,0.1,0.1,0.6}
+default latency.enabled = true
+default latency.mode = "latency"
+default name.color = {1,1,1,1}
+default name.enabled = true
+default name.justifyH = "LEFT"
+default name.shadow = true
+default portraitLayout = "bar"
+default time.color = {1,1,1,1}
+default time.enabled = true
+default time.justifyH = "RIGHT"
+default time.shadow = true
+resolved background = {0,0,0,0}
+resolved bar.background.alpha = 0.25
+resolved bar.background.color = {0,0,0,0.5}
+resolved bar.background.enabled = true
+resolved bar.background.useBarColor = true
+resolved bar.border.background = "Solid"
+resolved bar.border.backgroundColor = {0,0,0,0.75}
+resolved bar.border.border = "Blizzard Tooltip"
+resolved bar.border.color = {0.5,0.5,0.5,1}
+resolved bar.border.enabled = false
+resolved bar.border.inset = 3
+resolved bar.border.insetBottom = 3
+resolved bar.border.insetLeft = 3
+resolved bar.border.insetRight = 3
+resolved bar.border.insetTop = 3
+resolved bar.border.padding = 4
+resolved bar.border.paddingBottom = 4
+resolved bar.border.paddingLeft = 4
+resolved bar.border.paddingRight = 4
+resolved bar.border.paddingTop = 4
+resolved bar.border.separateInset = false
+resolved bar.border.separatePadding = false
+resolved bar.border.size = 12
+resolved bar.color = {1,0.7,0,1}
+resolved bar.enabled = true
+resolved bar.orientation = "HORIZONTAL"
+resolved bar.reverseFill = false
+resolved bar.smooth = false
+resolved bar.spark = true
+resolved bar.texture = "Blizzard"
+resolved border.background = "Solid"
+resolved border.backgroundColor = {0,0,0,0.75}
+resolved border.border = "Blizzard Tooltip"
+resolved border.color = {0.5,0.5,0.5,1}
+resolved border.enabled = true
+resolved border.inset = 3
+resolved border.insetBottom = 3
+resolved border.insetLeft = 3
+resolved border.insetRight = 3
+resolved border.insetTop = 3
+resolved border.padding = 3
+resolved border.paddingBottom = 4
+resolved border.paddingLeft = 4
+resolved border.paddingRight = 4
+resolved border.paddingTop = 4
+resolved border.separateInset = false
+resolved border.separatePadding = false
+resolved border.size = 12
+resolved colors.cast = {1,0.7,0,1}
+resolved colors.channel = {0,1,0,1}
+resolved colors.failed = {1,0,0,1}
+resolved colors.nonInterruptible = {0.7,0.7,0.7,1}
+resolved colors.success = {0,1,0,1}
+resolved enabled = true
+resolved fadeTime = 0.3
+resolved gcd.color = {1,1,1,0.4}
+resolved gcd.enabled = false
+resolved gcd.height = 2
+resolved gcd.position = "bottom"
+resolved gcd.spark = true
+resolved holdTime = 0.4
+resolved icon.enabled = true
+resolved icon.gap = 1
+resolved icon.position = "LEFT"
+resolved latency.color = {0.9,0.1,0.1,0.6}
+resolved latency.enabled = true
+resolved latency.mode = "latency"
+resolved name.color = {1,1,1,1}
+resolved name.enabled = true
+resolved name.font = "Friz Quadrata TT"
+resolved name.justifyH = "LEFT"
+resolved name.outline = ""
+resolved name.shadow = true
+resolved name.size = 11
+resolved portraitLayout = "bar"
+resolved time.color = {1,1,1,1}
+resolved time.enabled = true
+resolved time.font = "Friz Quadrata TT"
+resolved time.justifyH = "RIGHT"
+resolved time.outline = ""
+resolved time.shadow = true
+resolved time.size = 11
 ## portrait
 option enabled type="toggle" label="Enabled" default=true
 option mode type="select" label="Style" default="3D" values=#db0171ae
@@ -1819,6 +2054,16 @@ option castbar.colors.success type="color" label="Succeeded" inherit="colors.cas
 option castbar.background type="color" label="Background" default={0,0,0,0} tooltip=#0297179c
 option castbar.holdTime type="range" label="Hold after finish (s)" default=0.4 min=0 max=2 step=0.1
 option castbar.fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
+option castbar.latency type="group" label="Latency zone"
+option castbar.latency.enabled type="toggle" label="Enabled" default=true
+option castbar.latency.mode type="select" label="Zone" default="latency" values=#9e319b63 tooltip=#3e0a3804
+option castbar.latency.color type="color" label="Colour" default={0.9,0.1,0.1,0.6}
+option castbar.gcd type="group" label="Global cooldown"
+option castbar.gcd.enabled type="toggle" label="Enabled" default=false tooltip=#a71861f3
+option castbar.gcd.position type="select" label="Position" default="bottom" values=#197f975a tooltip=#49fbf707
+option castbar.gcd.height type="range" label="Thickness" default=2 min=1 max=10 step=1 hidden
+option castbar.gcd.color type="color" label="Colour" default={1,1,1,0.4}
+option castbar.gcd.spark type="toggle" label="Spark" default=true
 option comboPoints type="group" label="Combo points" defaults={enabled=false}
 option comboPoints.enabled type="toggle" label="Enabled" default=true tooltip=#70ca7196
 option comboPoints.position type="select" label="Placement" default="power" values=#bae11b56
@@ -2152,11 +2397,19 @@ default castbar.border.separatePadding = false
 default castbar.colors = {}
 default castbar.enabled = false
 default castbar.fadeTime = 0.3
+default castbar.gcd.color = {1,1,1,0.4}
+default castbar.gcd.enabled = false
+default castbar.gcd.height = 2
+default castbar.gcd.position = "bottom"
+default castbar.gcd.spark = true
 default castbar.height = 18
 default castbar.holdTime = 0.4
 default castbar.icon.enabled = true
 default castbar.icon.gap = 1
 default castbar.icon.position = "LEFT"
+default castbar.latency.color = {0.9,0.1,0.1,0.6}
+default castbar.latency.enabled = true
+default castbar.latency.mode = "latency"
 default castbar.name.color = {1,1,1,1}
 default castbar.name.enabled = true
 default castbar.name.justifyH = "LEFT"
@@ -3001,11 +3254,19 @@ resolved castbar.colors.nonInterruptible = {0.7,0.7,0.7,1}
 resolved castbar.colors.success = {0,1,0,1}
 resolved castbar.enabled = false
 resolved castbar.fadeTime = 0.3
+resolved castbar.gcd.color = {1,1,1,0.4}
+resolved castbar.gcd.enabled = false
+resolved castbar.gcd.height = 2
+resolved castbar.gcd.position = "bottom"
+resolved castbar.gcd.spark = true
 resolved castbar.height = 18
 resolved castbar.holdTime = 0.4
 resolved castbar.icon.enabled = true
 resolved castbar.icon.gap = 1
 resolved castbar.icon.position = "LEFT"
+resolved castbar.latency.color = {0.9,0.1,0.1,0.6}
+resolved castbar.latency.enabled = true
+resolved castbar.latency.mode = "latency"
 resolved castbar.name.color = {1,1,1,1}
 resolved castbar.name.enabled = true
 resolved castbar.name.font = "Friz Quadrata TT"
@@ -3755,6 +4016,7 @@ definition castbar.defaults.height = 18
 definition castbar.defaults.name.size = 10
 definition castbar.defaults.placement = "bottom"
 definition castbar.defaults.time.size = 10
+definition castbar.playerCast = true
 definition classification.defaults = {}
 definition comboPoints.defaults.enabled = false
 definition defaultPosition.point = "CENTER"

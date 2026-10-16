@@ -68,6 +68,8 @@ local function Values(unit, d, healthPct, time)
 	v.readyCheckTime = time
 	v.animateAuras = time ~= nil
 	v.castProgress = d.castProgress / 100
+	-- Animated: one global cooldown every 1.5 seconds.
+	if time then v.gcdProgress = time % 1.5 / 1.5 end
 	for _, kind in ipairs({ "buffs", "debuffs" }) do
 		local samples = v[kind]
 		v[kind] = {}

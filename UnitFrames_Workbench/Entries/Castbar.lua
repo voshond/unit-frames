@@ -14,6 +14,8 @@ local function FakeDuration(seconds)
 	return duration
 end
 
+local SAMPLE_LATENCY, GCD_TIME = 0.15, 1.5
+
 local function StartFake(castbar, d, es, spell)
 	castbar:Start({
 		name = spell.name,
@@ -21,17 +23,24 @@ local function StartFake(castbar, d, es, spell)
 		channel = spell.channel,
 		notInterruptible = d.notInterruptible,
 		duration = FakeDuration(spell.time),
+		castTime = spell.time,
+		latency = SAMPLE_LATENCY,
 	})
+	castbar:StartGCD(FakeDuration(GCD_TIME))
 	es.casting = true
 	es.castEnds = GetTime() + spell.time
+	es.gcdEnds = GetTime() + GCD_TIME
 end
 
 -- Frozen cast for styling: shows `progress` of the selected spell.
 local function Preview(castbar, d)
 	local spell = Spell(d)
 	local fraction = d.progress / 100
-	castbar:Preview({ name = spell.name, icon = spell.icon, channel = spell.channel, notInterruptible = d.notInterruptible },
+	castbar:Preview({ name = spell.name, icon = spell.icon, channel = spell.channel, notInterruptible = d.notInterruptible,
+		castTime = spell.time, latency = SAMPLE_LATENCY },
 		spell.channel and 1 - fraction or fraction, string.format("%.1f", spell.time * (1 - fraction)))
+	local gcd = spell.time * fraction / GCD_TIME
+	if gcd < 1 then castbar:PreviewGCD(gcd) else castbar:StopGCD() end
 end
 
 local function NotStatic(d)
@@ -45,7 +54,7 @@ Workbench:Register({
 	size = { 240, 22 },
 	create = function(stage)
 		return Workbench.Composite({
-			{ key = "castbar", label = "Castbar", component = C.Castbar:New(stage, {}) },
+			{ key = "castbar", label = "Castbar", component = C.Castbar:New(stage, {}, { playerCast = true }) },
 		})
 	end,
 	presets = {
@@ -103,6 +112,10 @@ Workbench:Register({
 			end
 			local castbar = handle.parts.castbar
 			local now = GetTime()
+			if es.gcdEnds and now >= es.gcdEnds then
+				es.gcdEnds = nil
+				castbar:StopGCD()
+			end
 			if es.casting and now >= es.castEnds then
 				es.casting = false
 				castbar:Stop("success")
@@ -129,6 +142,7 @@ Workbench:Register({
 		-- Live casts use the same state machine as the unit frames, so names,
 		-- icons, timings and the interruptible flag may all be secret.
 		events = UF.Cast.EVENTS,
+		globalEvents = UF.Cast.GCD_EVENTS,
 		onEvent = function(handle, _, es, event, unit, ...)
 			es.live = es.live or {}
 			UF.Cast.Handle(handle.parts.castbar, es.live, event, unit, ...)

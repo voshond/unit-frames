@@ -125,11 +125,11 @@ UnitFrame.PARTS = {
 			return Portrait:New(frame, config, { lazyBackends = partSpec.lazyBackends })
 		end },
 	{ key = "castbar", label = "Castbar",
-		schema = function()
+		schema = function(partSpec)
 			local function OverHealth(cfg)
 				return cfg.placement == "health" or cfg.placement == "portrait"
 			end
-			local schema = ns.Schema.Override(Castbar.BuildSchema(), "portraitLayout", {
+			local schema = ns.Schema.Override(Castbar.BuildSchema(partSpec), "portraitLayout", {
 				hidden = function(cfg) return cfg.placement ~= "portrait" end,
 			})
 			return GroupSchema(schema, {
@@ -138,8 +138,8 @@ UnitFrame.PARTS = {
 				HeightOption(18, OverHealth),
 			})
 		end,
-		create = function(frame, _, native, config)
-			local castbar = Castbar:New(frame, config, { nativeLayout = native })
+		create = function(frame, partSpec, native, config)
+			local castbar = Castbar:New(frame, config, { nativeLayout = native, playerCast = partSpec.playerCast })
 			castbar:Hide()
 			return castbar
 		end },

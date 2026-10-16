@@ -70,6 +70,7 @@ function Session:ActivateEvents(eventFrame, shown)
 	local values = self:GetData()
 	if not wb.Data.IsLive(values) then return end
 	for _, event in ipairs(data.events) do eventFrame:RegisterUnitEvent(event, values.source) end
+	for _, event in ipairs(data.globalEvents or {}) do eventFrame:RegisterEvent(event) end
 end
 
 function Session:OnEvent(event, ...)

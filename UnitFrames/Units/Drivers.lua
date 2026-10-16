@@ -215,8 +215,10 @@ Drivers.parts.castbar = {
 			castbar:Hide()
 		else
 			local progress = v.castProgress
-			castbar:Preview({ name = v.spell, icon = v.spellIcon }, progress, string.format("%.1f", v.castTime * (1 - progress)))
+			castbar:Preview({ name = v.spell, icon = v.spellIcon, castTime = v.castTime, latency = v.castLatency },
+				progress, string.format("%.1f", v.castTime * (1 - progress)))
 		end
+		if v.gcdProgress then castbar:PreviewGCD(v.gcdProgress) else castbar:StopGCD() end
 	end,
 	-- Casts are event-driven (Units/Cast.lua); polling would restart them.
 	live = false,
