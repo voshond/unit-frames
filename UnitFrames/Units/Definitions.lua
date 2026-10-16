@@ -251,19 +251,21 @@ Units.SAMPLE = {
 	buffs = {
 		{ icon = [[Interface\Icons\Spell_Holy_WordFortitude]], duration = 3600, remaining = 1800, sourceUnit = "player", isRaid = true },
 		{ icon = [[Interface\Icons\Spell_Holy_MagicalSentry]], duration = 3600, remaining = 180, sourceUnit = "party1", isRaid = true },
-		{ icon = [[Interface\Icons\Spell_Holy_Renew]], duration = 15, remaining = 8, sourceUnit = "player" },
-		{ icon = [[Interface\Icons\Spell_Nature_Rejuvenation]], duration = 12, remaining = 5, sourceUnit = "party1" },
+		{ icon = [[Interface\Icons\Spell_Holy_Renew]], duration = 15, remaining = 8, sourceUnit = "player", isRaidInCombat = true },
+		{ icon = [[Interface\Icons\Spell_Nature_Rejuvenation]], duration = 12, remaining = 5, sourceUnit = "party1", isRaidInCombat = true },
 		{ icon = [[Interface\Icons\Spell_Nature_ResistNature]], duration = 20, remaining = 14, sourceUnit = "party1" },
 		{ icon = [[Interface\Icons\Spell_Holy_PowerWordShield]], duration = 30, remaining = 21, sourceUnit = "player" },
-		{ icon = [[Interface\Icons\Spell_Nature_LifeBloom]], duration = 15, remaining = 9, applications = 3, sourceUnit = "player" },
+		{ icon = [[Interface\Icons\Spell_Nature_LifeBloom]], duration = 15, remaining = 9, applications = 3, sourceUnit = "player", isRaidInCombat = true },
 		{ icon = [[Interface\Icons\Spell_Nature_Regeneration]], duration = 0, sourceUnit = "player", isRaid = true },
+		{ icon = [[Interface\Icons\Spell_Holy_DivineIntervention]], duration = 8, remaining = 5, sourceUnit = "player", isBigDefensive = true, isImportant = true },
+		{ icon = [[Interface\Icons\Spell_Holy_SealOfProtection]], duration = 10, remaining = 4, sourceUnit = "party1", isExternalDefensive = true },
 	},
 	debuffs = {
 		{ icon = [[Interface\Icons\Spell_Frost_FrostBolt02]], duration = 15, remaining = 7, dispelName = "Magic", sourceUnit = "player", isRaid = true },
 		{ icon = [[Interface\Icons\Spell_Shadow_CurseOfTongues]], duration = 24, remaining = 18, dispelName = "Curse", sourceUnit = "party1", isRaid = true },
 		{ icon = [[Interface\Icons\Spell_Shadow_AbominationExplosion]], duration = 20, remaining = 13, dispelName = "Disease", applications = 2, sourceUnit = "party1", isRaid = true },
 		{ icon = [[Interface\Icons\Spell_Nature_CorrosiveBreath]], duration = 12, remaining = 6, dispelName = "Poison", applications = 4, sourceUnit = "player", isRaid = true },
-		{ icon = [[Interface\Icons\Ability_Gouge]], duration = 15, remaining = 11, sourceUnit = "party1" },
+		{ icon = [[Interface\Icons\Ability_Gouge]], duration = 15, remaining = 11, sourceUnit = "party1", isCrowdControl = true },
 	},
 }
 
