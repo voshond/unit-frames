@@ -50,8 +50,7 @@ AuraIcon.schema = {
 		defaults = { size = 8, inset = 1, padding = 2, background = "None" } },
 }
 
--- Returns `previous` when every colour is unchanged, so registered dispel
--- textures can keep their engine-side copy of the map.
+local dispelCurves = setmetatable({}, { __mode = "k" })
 function AuraIcon.DispelColors(cfg, previous)
 	if previous then
 		local same = true
@@ -65,6 +64,22 @@ function AuraIcon.DispelColors(cfg, previous)
 	local colors = {}
 	for _, kind in ipairs(DISPEL_TYPES) do colors[kind] = CreateColor(ns.Util.UnpackColor(cfg.dispelColors[kind])) end
 	return colors
+end
+
+function AuraIcon.DispelCurve(colors)
+	if dispelCurves[colors] then return dispelCurves[colors] end
+	local curve = C_CurveUtil.CreateColorCurve()
+	curve:SetType(Enum.LuaCurveType.Step)
+	curve:AddPoint(0, colors.None)
+	curve:AddPoint(1, colors.Magic)
+	curve:AddPoint(2, colors.Curse)
+	curve:AddPoint(3, colors.Disease)
+	curve:AddPoint(4, colors.Poison)
+	curve:AddPoint(5, AuraUtil.GetAuraBorderColor("None"))
+	curve:AddPoint(11, AuraUtil.GetAuraBorderColor("Bleed"))
+	curve:AddPoint(12, AuraUtil.GetAuraBorderColor("None"))
+	dispelCurves[colors] = curve
+	return curve
 end
 
 -- kind: the owner's key for this button's settings ("buffs", "slot1", ...).
@@ -212,7 +227,7 @@ function AuraIcon.ApplyDispelBorder(button, cfg, size, dispelColors)
 				button:AddDispelTypeTexture(texture, {
 					style = Enum.CustomAuraButtonDispelTypeTextureStyle.PreserveAsset,
 					showWhenHarmful = true, showWhenHelpful = false, showWithoutDispelType = true,
-					customDispelColorMap = dispelColors,
+					customDispelColorCurve = AuraIcon.DispelCurve(dispelColors),
 				})
 				ns.Perf:Count("auraDispelRegister")
 			end
@@ -235,7 +250,7 @@ function AuraIcon.DrawSample(button, aura, dispelColors)
 		button.ufCooldown:Hide()
 	end
 	if button.ufHarmful then
-		local color = dispelColors[aura.dispelName or "None"] or dispelColors.None
+		local color = dispelColors[aura.dispelName or "None"] or AuraUtil.GetAuraBorderColor(aura.dispelName)
 		for _, texture in ipairs(button.ufDispelTextures) do texture:SetVertexColor(color:GetRGBA()) end
 	end
 end
