@@ -281,8 +281,8 @@ external defensive and (optionally) important buff, one icon per category in
 the same spot. Crowd control is on top, then big defensives, external
 defensives and important buffs. **Cover the portrait** fills the portrait's
 shorter side, above the portrait and below a castbar covering it; the other
-positions join the frame's edge and portrait icons and keep their place even
-while nothing is shown. **Colour border by category** tints each icon frame
+positions sit on that anchor without moving the other icons there, and cover
+them while an aura shows. **Colour border by category** tints each icon frame
 with its category colour. Time-left text stays inside the icon.
 
 **Preview data > Crowd control & defensives** shows one category, **All (highest on top)**,

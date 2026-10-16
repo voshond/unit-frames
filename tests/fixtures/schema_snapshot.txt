@@ -2258,7 +2258,7 @@ option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 m
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option categoryAuras type="group" label="Crowd control & defensives" defaults={}
 option categoryAuras.enabled type="toggle" label="Enabled" default=true
-option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#6ef27e72
+option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#a4540463
 option categoryAuras.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784 hidden
 option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
 option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
@@ -4937,7 +4937,7 @@ option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 m
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option categoryAuras type="group" label="Crowd control & defensives" defaults={}
 option categoryAuras.enabled type="toggle" label="Enabled" default=true
-option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#6ef27e72
+option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#a4540463
 option categoryAuras.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784 hidden
 option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
 option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
@@ -7200,7 +7200,7 @@ option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 m
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option categoryAuras type="group" label="Crowd control & defensives" defaults={}
 option categoryAuras.enabled type="toggle" label="Enabled" default=true
-option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#6ef27e72
+option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#a4540463
 option categoryAuras.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784 hidden
 option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
 option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
@@ -9472,7 +9472,7 @@ option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 m
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option categoryAuras type="group" label="Crowd control & defensives" defaults={}
 option categoryAuras.enabled type="toggle" label="Enabled" default=true
-option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#6ef27e72
+option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#a4540463
 option categoryAuras.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784 hidden
 option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
 option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
@@ -11696,7 +11696,7 @@ option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 m
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option categoryAuras type="group" label="Crowd control & defensives" defaults={}
 option categoryAuras.enabled type="toggle" label="Enabled" default=true
-option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#6ef27e72
+option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#a4540463
 option categoryAuras.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784 hidden
 option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
 option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
@@ -13910,7 +13910,7 @@ option readyCheckIcon.offsetX type="range" label="Horizontal offset" default=0 m
 option readyCheckIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option categoryAuras type="group" label="Crowd control & defensives" defaults={}
 option categoryAuras.enabled type="toggle" label="Enabled" default=true
-option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#6ef27e72
+option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#a4540463
 option categoryAuras.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784 hidden
 option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
 option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
@@ -18016,7 +18016,7 @@ option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-
 option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option categoryAuras type="group" label="Crowd control & defensives" defaults={anchor="CENTER",size=18}
 option categoryAuras.enabled type="toggle" label="Enabled" default=true
-option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#6ef27e72
+option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#a4540463
 option categoryAuras.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784 hidden
 option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
 option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
@@ -20182,7 +20182,7 @@ option raidTarget.offsetX type="range" label="Horizontal offset" default=0 min=-
 option raidTarget.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option categoryAuras type="group" label="Crowd control & defensives" defaults={enabled=false}
 option categoryAuras.enabled type="toggle" label="Enabled" default=true
-option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#6ef27e72
+option categoryAuras.anchor type="select" label="Position" default="PORTRAIT" values=#3f0c6695 tooltip=#a4540463
 option categoryAuras.order type="range" label="Order" default=1 min=1 max=10 step=1 tooltip=#07604784 hidden
 option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
 option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden

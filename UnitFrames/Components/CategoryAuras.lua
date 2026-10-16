@@ -6,7 +6,8 @@ The unit's crowd control and big/external defensive auras: one native aura
 slot per category, all at the same place. Whether a slot shows an aura is
 secret, so priority comes from frame levels alone: a higher category's
 opaque icon covers the ones below it. The icons cover the portrait or join
-the frame's DecorationStack, where they always keep their place.
+the frame's DecorationStack without taking a place in its groups: they sit
+alone on their anchor and overlap neighbouring icons while shown.
 ]]
 local CategoryAuras = ns.Component:Extend("CategoryAuras")
 CategoryAuras.stackKey = "categoryAuras"
@@ -56,7 +57,7 @@ CategoryAuras.schema = ns.Schema.Concat(
 		defaults = { anchor = "PORTRAIT", size = 22 },
 		fields = {
 			anchor = { label = "Position", values = ANCHORS,
-				tooltip = "Cover the portrait fills its shorter side, above the portrait and below a castbar covering it. Other positions join the frame's icons and keep their place while nothing is shown." },
+				tooltip = "Cover the portrait fills its shorter side, above the portrait and below a castbar covering it. Other positions sit on the anchor without moving other icons there, and cover them while shown." },
 			size = { hidden = Covering }, order = { hidden = Covering }, gap = { hidden = Covering },
 			offsetX = { hidden = Covering }, offsetY = { hidden = Covering },
 		},
@@ -135,21 +136,12 @@ function CategoryAuras:Geometry()
 	return cfg.size, self.root:GetFrameLevel() + Backdrop.LEVELS.decorations, self.frame
 end
 
-function CategoryAuras:SamplePresent()
-	for key, button in pairs(self.samples or {}) do
-		if self.resolved[key] and button:IsShown() then return true end
-	end
-	return false
-end
-
 function CategoryAuras:JoinStack()
 	local stack = self.layoutContext and self.layoutContext.decorations
 	if not stack then return end
 	local cfg = ns.IconPlacement.Read(self.resolved)
 	cfg.enabled = self.enabled and not Covering(self.resolved)
-	stack:Set(self.stackKey, ns.IconPlacement.Member(cfg, self.frame, nil, function()
-		if self.previewData then return self:SamplePresent() end
-	end))
+	stack:Set(self.stackKey, ns.IconPlacement.Member(cfg, self.frame, nil, function() return false end))
 	stack:Reflow()
 end
 
