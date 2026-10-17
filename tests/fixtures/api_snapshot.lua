@@ -593,6 +593,18 @@ return {
 			SetFromAlpha = { addsAspects = { "Alpha" }, secretArguments = "AllowedWhenUntainted" },
 			SetToAlpha = { addsAspects = { "Alpha" }, secretArguments = "AllowedWhenUntainted" },
 		},
+		SimpleAnimFlipBookAPI = {
+			GetFlipBookColumns = {  },
+			GetFlipBookFrameHeight = {  },
+			GetFlipBookFrameWidth = {  },
+			GetFlipBookFrames = {  },
+			GetFlipBookRows = {  },
+			SetFlipBookColumns = { secretArguments = "AllowedWhenUntainted" },
+			SetFlipBookFrameHeight = { secretArguments = "AllowedWhenUntainted" },
+			SetFlipBookFrameWidth = { secretArguments = "AllowedWhenUntainted" },
+			SetFlipBookFrames = { secretArguments = "AllowedWhenUntainted" },
+			SetFlipBookRows = { secretArguments = "AllowedWhenUntainted" },
+		},
 		SimpleAnimGroupAPI = {
 			CreateAnimation = { secretArguments = "NotAllowed" },
 			Finish = {  },
