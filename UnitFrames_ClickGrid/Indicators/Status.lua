@@ -34,6 +34,10 @@ local PLACED = {
 -- Private aura row offsets from the cell edge it sits on.
 local PRIVATE_INSETS = { RIGHT = { -2, 0 }, LEFT = { 2, 0 }, TOP = { 0, -2 }, BOTTOM = { 0, 2 }, CENTER = { 0, 0 } }
 
+-- Blizzard's compact raid frame aggro highlight, made to cover a whole frame.
+-- (UI-RaidFrame-Threat is an 8px status dot and turns into a diamond when stretched.)
+local THREAT_ATLAS = "RaidFrame-AgroFrame"
+
 -- Spirit healer artwork used by the original resurrection indicator.
 local DEATH_ATLAS = "RaidFrame-Icon-Rez"
 local RESURRECTION_COLOR = CreateColor(0, 1, 0, 1)
@@ -84,6 +88,24 @@ end
 
 UF.oUF:AddElement("UFCG_DeathIndicator", UpdateDeath, EnableDeath, DisableDeath)
 
+-- The threat holder carries both presentations; the curve colours whichever is shown.
+local function ColorThreat(threat, r, g, b, a)
+	threat.Highlight:SetVertexColor(r, g, b, a)
+	UF.Glow.SetColor(threat.Glow, r, g, b, a)
+end
+
+--[[
+UFCG_DispelGlow: a glow around the cell while the member has a dispellable
+debuff. Auras are secret, so a hidden native aura slot is the gate: the
+engine shows its button only while a matching debuff exists, and tints the
+glow pieces registered on it by dispel type (native colours). The glow is
+owned by that button but anchored to the whole cell; no aura data is read.
+]]
+local function UpdateDispel(frame)
+	if frame.__unit then frame.UFCG_DispelGlow:SetDispelUnit(frame.__unit) end
+end
+UF.oUF:AddElement("UFCG_DispelGlow", UpdateDispel, function(frame) return frame.UFCG_DispelGlow ~= nil end, function() end)
+
 local threatCurve
 local function Threat(frame)
 	if not frame.__unit then return end
@@ -96,7 +118,7 @@ local function Threat(frame)
 		threatCurve:AddPoint(2, CreateColor(1, 0.3, 0, 0.8))
 		threatCurve:AddPoint(3, CreateColor(1, 0, 0, 1))
 	end
-	frame.ThreatIndicator:SetVertexColor(threatCurve:Evaluate(status):GetRGBA())
+	ColorThreat(frame.ThreatIndicator, threatCurve:Evaluate(status):GetRGBA())
 	frame.ThreatIndicator:Show()
 end
 
@@ -172,12 +194,31 @@ function Status:OnCreate(button, spec)
 		self[def[1]]:Hide()
 	end
 
-	local threat = overlay:CreateTexture(nil, "OVERLAY")
-	threat:SetTexture([[Interface\RAIDFRAME\UI-RaidFrame-Threat]])
-	threat.Override = Threat
+	local threat = Host(overlay)
 	threat:SetAllPoints(button)
+	threat.Highlight = threat:CreateTexture(nil, "OVERLAY")
+	threat.Highlight:SetAtlas(THREAT_ATLAS)
+	threat.Highlight:SetAllPoints()
+	threat.Glow = UF.Glow.Create(threat)
+	threat.Override = Threat
 	threat:Hide()
 	self.ThreatIndicator = threat
+	-- Mouseover wash above the bars. Hooks cannot be removed: they check state.
+	self.hover = overlay:CreateTexture(nil, "ARTWORK")
+	self.hover:SetAllPoints(button)
+	self.hover:Hide()
+	self.hovered = false
+	if self.live then
+		button:HookScript("OnEnter", function() self:SetHovered(true) end)
+		button:HookScript("OnLeave", function() self:SetHovered(false) end)
+		-- Native slots are prepared outside combat, like the fixed buff slots.
+		self.dispelContainer = CreateFrame("AuraContainer", nil, overlay, "CustomAuraContainerTemplate")
+		self.dispelContainer:SetPoint("CENTER", overlay, "CENTER")
+		self.dispelContainer:SetEnabled(false)
+		self.dispelContainer:AddAuraSlot("dispel", "HARMFUL|RAID", {
+			initializeFrame = function(slot) self:InitDispelSlot(slot) end,
+		})
+	end
 	self.incomingResurrection = false
 	self.ResurrectIndicator.Override = function(frame)
 		if self.released then return end
@@ -196,6 +237,60 @@ function Status:OnCreate(button, spec)
 		private[i] = anchor
 	end
 	self.PrivateAuras = private
+end
+
+function Status:SetHovered(hovered)
+	self.hovered = hovered
+	self.hover:SetShown(hovered and not self.released and self.resolved ~= nil and self.resolved.hover)
+end
+
+-- Everything the locked slot button needs is set up once, here.
+function Status:InitDispelSlot(slot)
+	slot:EnableMouse(false)
+	slot:SetMouseClickEnabled(false)
+	slot:SetMouseMotionEnabled(false)
+	slot:SetSize(1, 1)
+	slot:SetPoint("CENTER", self.frame, "CENTER")
+	local glow = UF.Glow.Create(slot)
+	glow:ClearAllPoints()
+	glow:SetAllPoints(self.button)
+	glow:Show()
+	for _, texture in ipairs(glow.textures) do
+		slot:AddDispelTypeTexture(texture, {
+			style = Enum.CustomAuraButtonDispelTypeTextureStyle.PreserveAsset,
+			showWhenHarmful = true, showWhenHelpful = false, showWithoutDispelType = false,
+		})
+	end
+	self.dispelGlow = glow
+end
+
+function Status:SetDispelUnit(unit)
+	if self.dispelContainer:GetUnit() ~= unit then self.dispelContainer:SetUnit(unit) end
+end
+
+local function DispelBounds()
+	local metrics = CG.metrics and CG.metrics.member
+	return metrics and metrics.width, metrics and metrics.height
+end
+
+-- The live glow descends from a native aura button, which denies addon access
+-- while aura data is secret: restyle it at the next combat end then.
+local function RestyleDispel(status)
+	UF.Glow.Apply(status.dispelGlow, status.resolved.dispelGlow, DispelBounds())
+end
+
+function Status:RestyleDispel()
+	if InCombatLockdown() then
+		UF.AfterCombat:Queue("dispelRestyle", self, Status.RestyleDispel)
+		return
+	end
+	local ok, reason = pcall(RestyleDispel, self)
+	if not ok then
+		if not UF.AfterCombat:IsQueued(self, "dispelRestyle") then UF.Logs:Error("ClickGrid dispel glow restyle deferred", reason) end
+		UF.AfterCombat:Queue("dispelRestyle", self, Status.RestyleDispel)
+	else
+		UF.AfterCombat:Cancel(self, "dispelRestyle")
+	end
 end
 
 -- Ordinary unassigned roles (including solo) take no space; opaque roles
@@ -254,8 +349,28 @@ function Status:OnApply(cfg)
 		Bind(def[1], cfg[def[2]] and widget or nil)
 		if not cfg[def[2]] then widget:Hide() end
 	end
-	Bind("ThreatIndicator", cfg.threat and UF.Caps.curves and self.ThreatIndicator or nil)
-	if not cfg.threat then self.ThreatIndicator:Hide() end
+	local threat, glow = self.ThreatIndicator, cfg.threatStyle == "glow"
+	threat.Highlight:SetShown(not glow)
+	threat.Glow:SetShown(glow)
+	if glow then
+		local metrics = CG.metrics and CG.metrics.member
+		UF.Glow.Apply(threat.Glow, cfg.threatGlow, metrics and metrics.width, metrics and metrics.height)
+	end
+	Bind("ThreatIndicator", cfg.threat and UF.Caps.curves and threat or nil)
+	if not cfg.threat then threat:Hide() end
+	if self.dispelContainer then
+		self.dispelContainer:SetAuraSlotFilterString("dispel", cfg.dispelFilter)
+		self.dispelContainer:SetEnabled(cfg.dispel)
+		self.dispelContainer:SetShown(cfg.dispel)
+		self:RestyleDispel()
+	end
+	Bind("UFCG_DispelGlow", cfg.dispel and self.dispelContainer and self or nil)
+	self.hover:SetColorTexture(UF.Util.UnpackColor(cfg.hoverColor))
+	self:SetHovered(self.hovered)
+	if self.dispelSample then
+		UF.Glow.Apply(self.dispelSample, cfg.dispelGlow, DispelBounds())
+		if not cfg.dispel then self.dispelSample:Hide() end
+	end
 	local private = self.PrivateAuras
 	private.size, private.spacing = cfg.privateSize, 2
 	private:SetSize(3 * (cfg.privateSize + 2), cfg.privateSize)
@@ -278,6 +393,12 @@ end
 
 function Status:OnRelease()
 	self:SetResurrection(false)
+	self.hover:Hide()
+	-- AuraContainer:SetUnit(nil) asserts: disable instead.
+	if self.dispelContainer then
+		self.dispelContainer:SetEnabled(false)
+		UF.AfterCombat:Cancel(self, "dispelRestyle")
+	end
 	local readyCheck = self.unitFrame:GetReadyCheck()
 	if readyCheck then readyCheck:Detach(self.readyCheckIcon) end
 	local stack = self.unitFrame:GetDecorations()
@@ -293,13 +414,23 @@ function Status:HideIndicators()
 	end
 	for _, def in ipairs(FIXED) do self[def[1]]:Hide() end
 	self.ThreatIndicator:Hide()
+	if self.dispelSample then self.dispelSample:Hide() end
 	self.PrivateAuras:Hide()
 	self.unitFrame:GetDecorations():Reflow()
 end
 
+-- The first sample debuff the dispel filter would show, if any.
+local function SampleDispel(cfg, debuffs)
+	for _, aura in ipairs(debuffs or {}) do
+		local typed = aura.dispelName ~= nil and aura.dispelName ~= "None"
+		if typed and (cfg.dispelFilter ~= "HARMFUL|RAID" or aura.isRaid) then return aura end
+	end
+end
+
 -- Plain sample art for preview member `index`. `ready` is the member's
 -- simulated check flag; false/nil uses the static placement sample.
-function Status:ShowSample(index, ready)
+-- `values` are the member's sample values (debuffs light the dispel glow).
+function Status:ShowSample(index, ready, values)
 	local cfg = self.resolved
 	self.GroupRoleIndicator:SetAtlas(index == 1 and "UI-LFG-RoleIcon-Tank-Micro-Raid"
 		or index == 2 and "UI-LFG-RoleIcon-Healer-Micro-Raid" or "UI-LFG-RoleIcon-DPS-Micro-Raid")
@@ -320,7 +451,18 @@ function Status:ShowSample(index, ready)
 	self.SummonIndicator:SetAtlas("RaidFrame-Icon-SummonPending")
 	self.SummonIndicator:SetShown(cfg.summon and index == 4)
 	self.PhaseIndicator:Hide()
-	self.ThreatIndicator:SetVertexColor(1, 0, 0, 1)
+	ColorThreat(self.ThreatIndicator, 1, 0, 0, 1)
 	self.ThreatIndicator:SetShown(cfg.threat and index == 1)
+	local dispel = cfg.dispel and SampleDispel(cfg, values and values.debuffs)
+	if dispel then
+		if not self.dispelSample then
+			self.dispelSample = UF.Glow.Create(self.frame)
+			self.dispelSample:ClearAllPoints()
+			self.dispelSample:SetAllPoints(self.button)
+			UF.Glow.Apply(self.dispelSample, cfg.dispelGlow, DispelBounds())
+		end
+		UF.Glow.SetColor(self.dispelSample, AuraUtil.GetAuraBorderColor(dispel.dispelName):GetRGBA())
+	end
+	if self.dispelSample then self.dispelSample:SetShown(dispel and true or false) end
 	self.unitFrame:GetDecorations():Reflow()
 end

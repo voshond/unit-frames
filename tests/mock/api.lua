@@ -51,6 +51,7 @@ API.TYPES = {
 	AnimationGroup = { FSO, OBJECT, "SimpleAnimGroupAPI" },
 	Animation = ANIMATION,
 	Alpha = Chain(ANIMATION, "SimpleAnimAlphaAPI"),
+	FlipBook = Chain(ANIMATION, "SimpleAnimFlipBookAPI"),
 	Duration = { "LuaDurationObjectAPI" },
 	SecondsFormatter = { "SecondsFormatterAPI" },
 	DurationTextBinding = { "DurationTextBindingObjectAPI" },

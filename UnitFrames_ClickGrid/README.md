@@ -78,7 +78,13 @@ client after adding it. For local builds and incremental updates, see the
   buff slots, not arbitrary friendly-debuff encounter rules.
 - Role, leader/assistant, ready check, dead/ghost, incoming resurrection,
   summon, phase, optional threat and native private-aura anchors, subject to
-  client support. Private auras sit inside the right edge by default
+  client support. Threat outlines the cell with Blizzard's raid aggro highlight by default; **Threat style >
+  Soft glow** draws Blizzard's glow border around the cell instead.
+  **Dispellable debuff glow** lights the whole cell in the debuff type's
+  colour while the member has a debuff you (or anyone in the group) can
+  dispel, gated by a hidden native aura slot so it works in combat.
+  **Mouseover highlight** (on by default, colour configurable) lightens the
+  cell under the mouse, so you can see which member you are about to cast on. Private auras sit inside the right edge by default
   (**Private aura position**), leaving the centre to crowd control.
 - Ready check bar tints on member bars (**Member bars > Ready check**): grey
   while waiting, then green or red, holding and fading after the check with

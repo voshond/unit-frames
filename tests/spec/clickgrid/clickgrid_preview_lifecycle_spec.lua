@@ -31,6 +31,48 @@ describe("ClickGrid preview lifecycle", function()
 		assert.is_nil(first.memberValues)
 		assert.is_nil(first.targetValues)
 	end)
+	it("shows varied debuffs whose glows light typed dispels and leave others unlit #glow", function()
+		local UF, CG, wb = Helpers.LoadClickGrid(true)
+		CG.Config:SetStyle("member", "auras.debuffs.enabled", true)
+		CG.Config:SetStyle("member", "auras.dispelGlow.enabled", true)
+		wb:Open("clickgrid.panel")
+		local cells = wb.handle.cells
+		local function Types(index)
+			local types = {}
+			for i, aura in ipairs(cells[index].memberValues.debuffs) do types[i] = aura.dispelName or "none" end
+			return table.concat(types, ",")
+		end
+		assert.equals("Magic", Types(1))
+		assert.equals("Curse,none", Types(2))
+		assert.equals("Poison,Disease", Types(3))
+		assert.equals("", Types(4))
+		assert.is_true(cells[1].memberValues.debuffs ~= UF.Units.SAMPLE.debuffs)
+		local samples = cells[2].member:GetPart("auras").previewContainers.debuffs.ufElements
+		local lit = {}
+		for i = 1, 2 do lit[i] = UF.AuraIcon.GetGlow(samples[i]).textures[1]:IsShown() end
+		assert.same({ true, false }, lit)
+		wb.handle:Release()
+	end)
+
+	it("lights sample cells with a dispellable debuff in its native type colour #glow", function()
+		local UF, CG, wb = Helpers.LoadClickGrid(true)
+		wb:Open("clickgrid.panel")
+		CG.Config:Set("indicators.dispel", true)
+		local cells = wb.handle.cells
+		local function Glow(index) return cells[index].status.dispelSample end
+		assert.is_nil(cells[1].status.dispelContainer, "previews own no native slot")
+		assert.is_true(Glow(1):IsShown())
+		assert.same({ AuraUtil.GetAuraBorderColor("Magic"):GetRGBA() }, Glow(1).textures[1].__state.vertexColor)
+		assert.same({ AuraUtil.GetAuraBorderColor("Curse"):GetRGBA() }, Glow(2).textures[1].__state.vertexColor)
+		assert.equals(cells[1].member:GetFrame(), select(2, Glow(1):GetPoint(1)))
+		assert.is_true(Glow(4) == nil or not Glow(4):IsShown())
+		CG.Config:Set("indicators.dispelGlow.opacity", 0.5)
+		assert.equals(0.5, Glow(1):GetAlpha())
+		CG.Config:Set("indicators.dispel", false)
+		assert.is_false(Glow(1):IsShown())
+		wb.handle:Release()
+	end)
+
 	it("restyles and feeds an active preview once per saved edit, theme and profile change", function()
 		local UF, CG, wb = Helpers.LoadClickGrid(true)
 		wb:Open("clickgrid.panel")

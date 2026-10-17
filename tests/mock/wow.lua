@@ -416,6 +416,11 @@ end
 -- Texture
 function Methods:SetTexture(texture) self.__state.texture = texture end
 function Methods:SetTexCoord(...) self.__state.texCoords = { ... } end
+function Methods:SetBlendMode(mode) self.__state.blendMode = mode end
+function Methods:SetDesaturated(desaturated)
+	Record(self, "SetDesaturated", desaturated)
+	self.__state.desaturated = desaturated
+end
 function Methods:GetTexture() return self.__state.texture end
 function Methods:SetVertexColor(r, g, b, a) self.__state.vertexColor = { r, g, b, a } end
 function Methods:SetColorTexture(r, g, b, a) self.__state.colorTexture = { r, g, b, a } end
@@ -622,7 +627,8 @@ function Mock.DecorateAuraContainer(container)
 						color = opts.customDispelColorCurve:Evaluate(ids[name] or 12)
 					end
 					texture:SetVertexColor(color:GetRGBA())
-					texture:Show()
+					-- Auras without a dispel type light only opted-in textures.
+					texture:SetShown(name ~= "None" or opts.showWithoutDispelType == true)
 				end
 			end
 			function button:AddDispelTypeTexture(texture, opts)

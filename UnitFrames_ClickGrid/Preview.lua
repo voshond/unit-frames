@@ -123,7 +123,7 @@ function Preview:FeedCell(cell, index, live, unit)
 		UF.Units:ShowSample(cell.member, values)
 		cell.slots:SetEnabled(cell.slots.resolved.enabled)
 		cell.slots:ShowSample(values)
-		cell.status:ShowSample(index, self.data.readyCheck == "check")
+		cell.status:ShowSample(index, self.data.readyCheck == "check", values)
 		if CG.metrics.target.shown then
 			cell.target:GetFrame():Show()
 			EnableAuras(cell.target, true)
@@ -147,11 +147,18 @@ end
 local names = { "Tank", "Healer", "Mage", "Priest", "Druid", "Paladin", "Hunter", "Warlock" }
 local READY_SAMPLES = { "ready", "ready", "notready", "waiting" }
 local sampleBuffIDs = { [1] = 21562, [2] = 1459, [3] = 139, [4] = 774, [6] = 17, [7] = 33763 }
+-- Varied debuffs per member (positions in Units.SAMPLE.debuffs): typed
+-- dispels next to an untyped crowd control, so debuff glows show both.
+local SAMPLE_DEBUFFS = { { 1 }, { 2, 5 }, { 4, 3 }, {} }
 function Preview:Values(index, value)
 	if not value then
 		value = UF.Util.Copy(UF.Units.SAMPLE)
 		-- Empty members still own their lists, like members with sample auras.
-		if index % 4 == 0 then value.buffs, value.debuffs = {}, {} end
+		if index % 4 == 0 then value.buffs = {} end
+		value.debuffs = {}
+		for i, position in ipairs(SAMPLE_DEBUFFS[(index - 1) % #SAMPLE_DEBUFFS + 1]) do
+			value.debuffs[i] = UF.Util.Copy(UF.Units.SAMPLE.debuffs[position])
+		end
 	end
 	value.animateAuras = self.data.source == "animated"
 	value.name = names[(index - 1) % #names + 1] .. " " .. index

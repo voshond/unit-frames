@@ -200,6 +200,121 @@ describe("ClickGrid status indicators", function()
 		UnitThreatSituation = previous
 	end)
 
+	it("switches threat between the cell highlight and a native soft glow #glow", function()
+		local member = CG.headers.party:GetAttribute("child1").Member
+		local status = CG:GetGridButton(member).status
+		local threat = status.ThreatIndicator
+		CG.Config:Set("indicators.threat", true)
+		assert.equals(threat, member.ThreatIndicator)
+		assert.is_true(threat.Highlight:IsShown())
+		-- The whole-frame aggro art, not the 8px threat dot stretched into a diamond.
+		assert.equals("RaidFrame-AgroFrame", threat.Highlight.__state.atlas)
+		assert.is_nil(threat.Highlight:GetTexture())
+		assert.is_false(threat.Glow:IsShown())
+
+		CG.Config:Set("indicators.threatStyle", "glow")
+		CG.Config:Set("indicators.threatGlow.opacity", 0.6)
+		assert.equals(threat, member.ThreatIndicator)
+		assert.is_false(threat.Highlight:IsShown())
+		assert.is_true(threat.Glow:IsShown())
+		assert.equals(0.6, threat.Glow:GetAlpha())
+		assert.equals(8, #threat.Glow.textures)
+		assert.equals(16, threat.Glow.TopLeft:GetWidth())
+
+		member.__unit = "raid1"
+		local previous = UnitThreatSituation
+		UnitThreatSituation = function() return Mock.Secret(3) end
+		assert.has_no_error(function() threat.Override(member) end)
+		UnitThreatSituation = previous
+		assert.is_true(threat:IsShown())
+		assert.same(threat.Highlight.__state.vertexColor, threat.Glow.textures[1].__state.vertexColor)
+
+		status:ShowSample(1)
+		for _, texture in ipairs(threat.Glow.textures) do assert.same({ 1, 0, 0, 1 }, texture.__state.vertexColor) end
+		assert.is_true(threat:IsShown())
+		status:ShowSample(2)
+		assert.is_false(threat:IsShown())
+
+		CG.Config:Set("indicators.threat", false)
+		assert.is_nil(member.ThreatIndicator)
+		assert.is_false(threat:IsShown())
+	end)
+
+	it("highlights the hovered cell above its bars", function()
+		local member = CG.headers.party:GetAttribute("child1").Member
+		local status = CG:GetGridButton(member).status
+		local hover = status.hover
+		-- Unitless: the tooltip hook that runs first returns early.
+		member.__unit = nil
+		assert.is_false(hover:IsShown())
+		member:RunScript("OnEnter")
+		assert.is_true(hover:IsShown())
+		assert.same({ 1, 1, 1, 0.12 }, hover.__state.colorTexture)
+		assert.equals(status.frame, hover:GetParent())
+		assert.is_true(status.frame:GetFrameLevel() > member:GetFrameLevel())
+
+		CG.Config:Set("indicators.hoverColor", { 0.2, 0.6, 1, 0.3 })
+		assert.is_true(hover:IsShown(), "restyles keep the hovered state")
+		assert.same({ 0.2, 0.6, 1, 0.3 }, hover.__state.colorTexture)
+		CG.Config:Set("indicators.hover", false)
+		assert.is_false(hover:IsShown())
+		CG.Config:Set("indicators.hover", true)
+		assert.is_true(hover:IsShown())
+		Mock.inCombat = true
+		member:RunScript("OnLeave")
+		assert.is_false(hover:IsShown())
+		Mock.inCombat = false
+	end)
+
+	it("glows the whole cell through a hidden native dispel slot, in native type colours #glow", function()
+		local member = CG.headers.party:GetAttribute("child1").Member
+		local status = CG:GetGridButton(member).status
+		local container = status.dispelContainer
+		local slot = container.__state.slots.dispel.frames[1]
+		local glow = status.dispelGlow
+		assert.is_false(container:IsEnabled())
+		assert.is_nil(member.UFCG_DispelGlow)
+
+		CG.Config:Set("indicators.dispel", true)
+		assert.is_true(container:IsEnabled())
+		assert.equals("HARMFUL|RAID", container.__state.slots.dispel.filter)
+		assert.equals(status, member.UFCG_DispelGlow)
+		member.__unit = "raid3"
+		UF.oUF.elements.UFCG_DispelGlow.update(member)
+		assert.equals("raid3", container:GetUnit())
+
+		-- Owned by the engine-shown slot button, anchored around the whole cell.
+		assert.equals(slot, glow:GetParent())
+		assert.equals(member, select(2, glow:GetPoint(1)))
+		assert.equals(8, #glow.textures)
+		for _, texture in ipairs(glow.textures) do
+			local options = slot.__state.dispelTextures[texture]
+			assert.equals(Enum.CustomAuraButtonDispelTypeTextureStyle.PreserveAsset, options.style)
+			assert.is_false(options.showWithoutDispelType)
+			assert.is_nil(options.customDispelColorCurve, "native colours, not the custom palette")
+			assert.is_nil(options.customDispelColorMap)
+		end
+		slot:MockUpdateDispelTextures("Curse")
+		assert.same({ AuraUtil.GetAuraBorderColor("Curse"):GetRGBA() }, glow.textures[1].__state.vertexColor)
+		assert.is_true(glow.textures[1]:IsShown())
+
+		CG.Config:Set("indicators.dispelFilter", "HARMFUL|RAID_PLAYER_DISPELLABLE")
+		assert.equals("HARMFUL|RAID_PLAYER_DISPELLABLE", container.__state.slots.dispel.filter)
+
+		-- Restyles wait for combat to end, as the slot button is locked while auras are secret.
+		Mock.inCombat = true
+		CG.Config:Set("indicators.dispelGlow.opacity", 0.4)
+		assert.equals(1, glow:GetAlpha())
+		Mock.inCombat = false
+		Mock.FireEvent("PLAYER_REGEN_ENABLED")
+		assert.equals(0.4, glow:GetAlpha())
+
+		CG.Config:Set("indicators.dispel", false)
+		assert.is_false(container:IsEnabled())
+		assert.is_nil(member.UFCG_DispelGlow)
+		assert.equals("raid3", container:GetUnit(), "disabled, never cleared with a nil unit")
+	end)
+
 	it("clears name padding for an unassigned role and restores it on native role updates", function()
 		local frame = CG.headers.party:GetAttribute("child1").Member
 		local role, name = frame.GroupRoleIndicator, frame.uf:GetRow("health"):GetText("left")

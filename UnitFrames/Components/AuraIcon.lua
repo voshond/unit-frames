@@ -1,5 +1,5 @@
 local _, ns = ...
-local Media, Backdrop = ns.Media, ns.Components.Backdrop
+local Media, Backdrop, Glow = ns.Media, ns.Components.Backdrop, ns.Glow
 
 -- Shared fixed-size aura artwork. Owners supply style/size and retain native
 -- selection, container layout, combat deferral and lifetime responsibilities.
@@ -35,6 +35,15 @@ AuraIcon.DURATION_POSITIONS = {
 	{ "TOP", "Inside: top" }, { "BOTTOM", "Inside: bottom" },
 }
 
+AuraIcon.GLOW_STYLES = { { "halo", "Soft halo" }, { "proc", "Proc flash" } }
+
+-- The proc flash follows the icon size; only the halo has geometry.
+local function IsProc(cfg) return cfg.style == "proc" end
+local glowSchema = Glow.schema
+for _, key in ipairs({ "size", "offset" }) do
+	glowSchema = ns.Schema.Override(glowSchema, key, { hidden = IsProc })
+end
+
 AuraIcon.schema = {
 	{ key = "showDuration", type = "toggle", label = "Show time left", default = true },
 	{ key = "durationPosition", type = "select", label = "Time position", values = AuraIcon.DURATION_POSITIONS, default = "below" },
@@ -46,6 +55,13 @@ AuraIcon.schema = {
 	{ key = "dispelBorder", type = "toggle", label = "Colour debuff border by type", default = true,
 		tooltip = "Tint the entire icon frame using Debuff border colours. Disable to use Icon frame > Border colour for every icon. Works in combat." },
 	{ key = "dispelColors", type = "group", label = "Debuff border colours", schema = dispelColorSchema },
+	{ key = "dispelGlow", type = "group", label = "Debuff glow", defaults = { size = 10, offset = 6 },
+		schema = ns.Schema.Concat({
+			{ key = "enabled", type = "toggle", label = "Glow by debuff type", default = false,
+				tooltip = "A soft glow around debuffs that have a dispel type, in its Debuff border colour. Debuffs without a type stay unlit. Works in combat." },
+			{ key = "style", type = "select", label = "Glow style", values = AuraIcon.GLOW_STYLES, default = "halo",
+				tooltip = "Soft halo: Blizzard's glow border around the icon. Proc flash: Blizzard's animated action button proc glow, tinted by debuff type." },
+		}, glowSchema) },
 	{ key = "border", type = "group", label = "Icon frame", schema = Backdrop.auraSchema,
 		defaults = { size = 8, inset = 1, padding = 2, background = "None" } },
 }
@@ -178,6 +194,7 @@ function AuraIcon.Apply(button, cfg, size, dispelColors, swipe, showSwipeEdge)
 	button.ufCountHolder:SetShown(cfg.showCount)
 	button.ufTime:SetShown(cfg.showDuration)
 	AuraIcon.ApplyDispelBorder(button, cfg, size, dispelColors)
+	AuraIcon.ApplyDispelGlow(button, cfg, size, dispelColors)
 end
 
 -- Per button: the reused border settings (the icon border without a
@@ -236,6 +253,65 @@ function AuraIcon.ApplyDispelBorder(button, cfg, size, dispelColors)
 	end
 end
 
+-- The engine owns the glow pieces' colour and shown state, like the
+-- border's; only types with a dispel colour light up. Geometry and opacity
+-- changes keep the registration; colours, style and toggles renew it.
+-- Holders are created on first use, below the cover, so the border and texts
+-- stay on top of the glow.
+local dispelGlows = setmetatable({}, { __mode = "k" })
+local glowHolders = setmetatable({}, { __mode = "k" })
+
+-- A button's glow holder for `style` ("halo" or "proc"), if created.
+function AuraIcon.GetGlowHolder(button, style)
+	local holders = glowHolders[button]
+	return holders and holders[style]
+end
+
+local function GlowHolder(button, style)
+	local holders = glowHolders[button] or {}
+	glowHolders[button] = holders
+	if not holders[style] then
+		holders[style] = style == "proc" and Glow.CreateProc(button.ufIconFrame) or Glow.Create(button.ufIconFrame)
+	end
+	return holders[style]
+end
+
+-- The shown glow holder of a button, if any.
+function AuraIcon.GetGlow(button)
+	local state = dispelGlows[button]
+	return state and state.active
+end
+
+function AuraIcon.ApplyDispelGlow(button, cfg, size, dispelColors)
+	local glow = cfg.dispelGlow
+	local enabled = glow and glow.enabled and button.ufHarmful or false
+	local style = enabled and (glow.style == "proc" and "proc" or "halo") or nil
+	local active = style and GlowHolder(button, style) or nil
+	for _, holder in pairs(glowHolders[button] or {}) do holder:SetShown(holder == active) end
+	if style == "proc" then
+		Glow.ApplyProc(active, glow, size)
+	elseif active then
+		Glow.Apply(active, glow, size, size)
+	end
+	local state = dispelGlows[button]
+	if not (state or active) then return end
+	if state and state.active == active and state.colors == dispelColors then return end
+	dispelGlows[button] = { active = active, colors = dispelColors }
+	if button.ufPreview then return end
+	if state and state.active then
+		for _, texture in ipairs(state.active.textures) do button:RemoveDispelTypeTexture(texture) end
+	end
+	if not active then return end
+	for _, texture in ipairs(active.textures) do
+		button:AddDispelTypeTexture(texture, {
+			style = Enum.CustomAuraButtonDispelTypeTextureStyle.PreserveAsset,
+			showWhenHarmful = true, showWhenHelpful = false, showWithoutDispelType = false,
+			customDispelColorCurve = AuraIcon.DispelCurve(dispelColors),
+		})
+		ns.Perf:Count("auraDispelRegister")
+	end
+end
+
 function AuraIcon.DrawSample(button, aura, dispelColors)
 	button.ufIcon:SetTexture(aura.icon)
 	button.ufCount:SetText((aura.applications or 1) > 1 and aura.applications or "")
@@ -252,5 +328,11 @@ function AuraIcon.DrawSample(button, aura, dispelColors)
 	if button.ufHarmful then
 		local color = dispelColors[aura.dispelName or "None"] or AuraUtil.GetAuraBorderColor(aura.dispelName)
 		for _, texture in ipairs(button.ufDispelTextures) do texture:SetVertexColor(color:GetRGBA()) end
+		local glow = AuraIcon.GetGlow(button)
+		local typed = aura.dispelName ~= nil and aura.dispelName ~= "None"
+		for _, texture in ipairs(glow and glow.textures or {}) do
+			texture:SetVertexColor(color:GetRGBA())
+			texture:SetShown(typed)
+		end
 	end
 end

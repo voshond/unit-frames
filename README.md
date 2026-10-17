@@ -16,6 +16,9 @@ each change.
   ranged swing timer rows, positioned independently in Edit Mode.
 - Show rogue and druid combo points on the target frame, or on the player frame.
 - Add a cropped buff/debuff icon row, alongside or instead of external icons.
+- Make dispellable debuffs stand out with an optional glow in their debuff
+  type colour (**Debuff glow**): a soft halo, or the animated proc flash from
+  Blizzard's action buttons.
 - Filter buffs and debuffs by crowd control, big or external defensives,
   important buffs, or your own heals over time.
 - Show crowd control and defensives over the portrait or on a frame edge, with
