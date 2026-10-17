@@ -22999,6 +22999,8 @@ option indicators.dispelGlow type="group" label="Dispellable glow" hidden
 option indicators.dispelGlow.size type="range" label="Glow size" default=16 min=4 max=32 step=1 tooltip=#3ba53433
 option indicators.dispelGlow.offset type="range" label="Glow spread" default=8 min=0 max=32 step=1 tooltip=#e37f216e
 option indicators.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option indicators.hover type="toggle" label="Mouseover highlight" default=true tooltip=#a498db58
+option indicators.hoverColor type="color" label="Mouseover colour" default={1,1,1,0.12} hidden
 option indicators.phase type="toggle" label="Different phase" default=true
 option indicators.size type="range" label="Other status icon size" default=14 min=8 max=32 step=1
 option indicators.private type="toggle" label="Private encounter auras" default=true
@@ -23054,6 +23056,8 @@ default indicators.dispelFilter = "HARMFUL|RAID"
 default indicators.dispelGlow.offset = 8
 default indicators.dispelGlow.opacity = 1
 default indicators.dispelGlow.size = 16
+default indicators.hover = true
+default indicators.hoverColor = {1,1,1,0.12}
 default indicators.leader = true
 default indicators.leaderGap = 2
 default indicators.leaderOffsetX = 0
@@ -23183,6 +23187,8 @@ resolved indicators.dispelFilter = "HARMFUL|RAID"
 resolved indicators.dispelGlow.offset = 8
 resolved indicators.dispelGlow.opacity = 1
 resolved indicators.dispelGlow.size = 16
+resolved indicators.hover = true
+resolved indicators.hoverColor = {1,1,1,0.12}
 resolved indicators.leader = true
 resolved indicators.leaderGap = 2
 resolved indicators.leaderOffsetX = 0

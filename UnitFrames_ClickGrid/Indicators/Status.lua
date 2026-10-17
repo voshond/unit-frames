@@ -203,7 +203,14 @@ function Status:OnCreate(button, spec)
 	threat.Override = Threat
 	threat:Hide()
 	self.ThreatIndicator = threat
+	-- Mouseover wash above the bars. Hooks cannot be removed: they check state.
+	self.hover = overlay:CreateTexture(nil, "ARTWORK")
+	self.hover:SetAllPoints(button)
+	self.hover:Hide()
+	self.hovered = false
 	if self.live then
+		button:HookScript("OnEnter", function() self:SetHovered(true) end)
+		button:HookScript("OnLeave", function() self:SetHovered(false) end)
 		-- Native slots are prepared outside combat, like the fixed buff slots.
 		self.dispelContainer = CreateFrame("AuraContainer", nil, overlay, "CustomAuraContainerTemplate")
 		self.dispelContainer:SetPoint("CENTER", overlay, "CENTER")
@@ -230,6 +237,11 @@ function Status:OnCreate(button, spec)
 		private[i] = anchor
 	end
 	self.PrivateAuras = private
+end
+
+function Status:SetHovered(hovered)
+	self.hovered = hovered
+	self.hover:SetShown(hovered and not self.released and self.resolved ~= nil and self.resolved.hover)
 end
 
 -- Everything the locked slot button needs is set up once, here.
@@ -353,6 +365,8 @@ function Status:OnApply(cfg)
 		self:RestyleDispel()
 	end
 	Bind("UFCG_DispelGlow", cfg.dispel and self.dispelContainer and self or nil)
+	self.hover:SetColorTexture(UF.Util.UnpackColor(cfg.hoverColor))
+	self:SetHovered(self.hovered)
 	if self.dispelSample then
 		UF.Glow.Apply(self.dispelSample, cfg.dispelGlow, DispelBounds())
 		if not cfg.dispel then self.dispelSample:Hide() end
@@ -379,6 +393,7 @@ end
 
 function Status:OnRelease()
 	self:SetResurrection(false)
+	self.hover:Hide()
 	-- AuraContainer:SetUnit(nil) asserts: disable instead.
 	if self.dispelContainer then
 		self.dispelContainer:SetEnabled(false)

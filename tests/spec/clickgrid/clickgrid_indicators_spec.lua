@@ -240,6 +240,32 @@ describe("ClickGrid status indicators", function()
 		assert.is_false(threat:IsShown())
 	end)
 
+	it("highlights the hovered cell above its bars", function()
+		local member = CG.headers.party:GetAttribute("child1").Member
+		local status = CG:GetGridButton(member).status
+		local hover = status.hover
+		-- Unitless: the tooltip hook that runs first returns early.
+		member.__unit = nil
+		assert.is_false(hover:IsShown())
+		member:RunScript("OnEnter")
+		assert.is_true(hover:IsShown())
+		assert.same({ 1, 1, 1, 0.12 }, hover.__state.colorTexture)
+		assert.equals(status.frame, hover:GetParent())
+		assert.is_true(status.frame:GetFrameLevel() > member:GetFrameLevel())
+
+		CG.Config:Set("indicators.hoverColor", { 0.2, 0.6, 1, 0.3 })
+		assert.is_true(hover:IsShown(), "restyles keep the hovered state")
+		assert.same({ 0.2, 0.6, 1, 0.3 }, hover.__state.colorTexture)
+		CG.Config:Set("indicators.hover", false)
+		assert.is_false(hover:IsShown())
+		CG.Config:Set("indicators.hover", true)
+		assert.is_true(hover:IsShown())
+		Mock.inCombat = true
+		member:RunScript("OnLeave")
+		assert.is_false(hover:IsShown())
+		Mock.inCombat = false
+	end)
+
 	it("glows the whole cell through a hidden native dispel slot, in native type colours #glow", function()
 		local member = CG.headers.party:GetAttribute("child1").Member
 		local status = CG:GetGridButton(member).status
