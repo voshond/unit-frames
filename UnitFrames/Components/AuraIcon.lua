@@ -1,5 +1,5 @@
 local _, ns = ...
-local Media, Backdrop = ns.Media, ns.Components.Backdrop
+local Media, Backdrop, Glow = ns.Media, ns.Components.Backdrop, ns.Glow
 
 -- Shared fixed-size aura artwork. Owners supply style/size and retain native
 -- selection, container layout, combat deferral and lifetime responsibilities.
@@ -46,6 +46,11 @@ AuraIcon.schema = {
 	{ key = "dispelBorder", type = "toggle", label = "Colour debuff border by type", default = true,
 		tooltip = "Tint the entire icon frame using Debuff border colours. Disable to use Icon frame > Border colour for every icon. Works in combat." },
 	{ key = "dispelColors", type = "group", label = "Debuff border colours", schema = dispelColorSchema },
+	{ key = "dispelGlow", type = "group", label = "Debuff glow", defaults = { size = 10, offset = 6 },
+		schema = ns.Schema.Concat({
+			{ key = "enabled", type = "toggle", label = "Glow by debuff type", default = false,
+				tooltip = "A soft glow around debuffs that have a dispel type, in its Debuff border colour. Debuffs without a type stay unlit. Works in combat." },
+		}, Glow.schema) },
 	{ key = "border", type = "group", label = "Icon frame", schema = Backdrop.auraSchema,
 		defaults = { size = 8, inset = 1, padding = 2, background = "None" } },
 }
@@ -126,6 +131,8 @@ function AuraIcon.Create(button, kind, preview, opts)
 	button.ufBorder = CreateFrame("Frame", nil, cover, "BackdropTemplate")
 	button.ufBorder:SetAllPoints(iconFrame)
 	button.ufDispelTextures = {}
+	-- Below the cover: the border and texts stay on top of the glow's inner half.
+	button.ufGlow = Glow.Create(iconFrame)
 	if preview then
 		button:EnableMouse(false)
 	else
@@ -178,6 +185,7 @@ function AuraIcon.Apply(button, cfg, size, dispelColors, swipe, showSwipeEdge)
 	button.ufCountHolder:SetShown(cfg.showCount)
 	button.ufTime:SetShown(cfg.showDuration)
 	AuraIcon.ApplyDispelBorder(button, cfg, size, dispelColors)
+	AuraIcon.ApplyDispelGlow(button, cfg, size, dispelColors)
 end
 
 -- Per button: the reused border settings (the icon border without a
@@ -236,6 +244,32 @@ function AuraIcon.ApplyDispelBorder(button, cfg, size, dispelColors)
 	end
 end
 
+-- The engine owns the glow pieces' colour and shown state, like the
+-- border's; only types with a dispel colour light up. Geometry, blend and
+-- opacity changes keep the registration, colours and toggles renew it.
+local dispelGlows = setmetatable({}, { __mode = "k" })
+function AuraIcon.ApplyDispelGlow(button, cfg, size, dispelColors)
+	local glow = cfg.dispelGlow
+	local enabled = glow and glow.enabled and button.ufHarmful or false
+	button.ufGlow:SetShown(enabled)
+	if enabled then Glow.Apply(button.ufGlow, glow, size, size) end
+	local state = dispelGlows[button]
+	if state and state.enabled == enabled and state.colors == dispelColors then return end
+	dispelGlows[button] = { enabled = enabled, colors = dispelColors }
+	if button.ufPreview then return end
+	for _, texture in ipairs(button.ufGlow.textures) do
+		if state and state.enabled then button:RemoveDispelTypeTexture(texture) end
+		if enabled then
+			button:AddDispelTypeTexture(texture, {
+				style = Enum.CustomAuraButtonDispelTypeTextureStyle.PreserveAsset,
+				showWhenHarmful = true, showWhenHelpful = false, showWithoutDispelType = false,
+				customDispelColorCurve = AuraIcon.DispelCurve(dispelColors),
+			})
+			ns.Perf:Count("auraDispelRegister")
+		end
+	end
+end
+
 function AuraIcon.DrawSample(button, aura, dispelColors)
 	button.ufIcon:SetTexture(aura.icon)
 	button.ufCount:SetText((aura.applications or 1) > 1 and aura.applications or "")
@@ -252,5 +286,10 @@ function AuraIcon.DrawSample(button, aura, dispelColors)
 	if button.ufHarmful then
 		local color = dispelColors[aura.dispelName or "None"] or AuraUtil.GetAuraBorderColor(aura.dispelName)
 		for _, texture in ipairs(button.ufDispelTextures) do texture:SetVertexColor(color:GetRGBA()) end
+		local typed = aura.dispelName ~= nil and aura.dispelName ~= "None"
+		for _, texture in ipairs(button.ufGlow.textures) do
+			texture:SetVertexColor(color:GetRGBA())
+			texture:SetShown(typed)
+		end
 	end
 end

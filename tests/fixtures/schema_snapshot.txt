@@ -1831,6 +1831,12 @@ option dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
 option dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
 option dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
 option dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option dispelGlow type="group" label="Debuff glow" defaults={offset=6,size=10}
+option dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
+option dispelGlow.size type="range" label="Glow size" default=16 min=4 max=32 step=1 tooltip=#3ba53433
+option dispelGlow.offset type="range" label="Glow spread" default=8 min=0 max=32 step=1 tooltip=#e37f216e
+option dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option dispelGlow.additive type="toggle" label="Additive glow" default=true tooltip=#efc395a3
 option border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
 option border.enabled type="toggle" label="Enabled" default=true
 option border.border type="border" label="Border" inherit="borderTexture"
@@ -1914,6 +1920,11 @@ default dispelColors.Disease = {0.6,0.4,0,1}
 default dispelColors.Magic = {0.2,0.6,1,1}
 default dispelColors.None = {0.8,0,0,1}
 default dispelColors.Poison = {0,0.6,0,1}
+default dispelGlow.additive = true
+default dispelGlow.enabled = false
+default dispelGlow.offset = 6
+default dispelGlow.opacity = 1
+default dispelGlow.size = 10
 default durationPosition = "below"
 default durationSize = 10
 default enabled = true
@@ -1966,6 +1977,11 @@ resolved dispelColors.Disease = {0.6,0.4,0,1}
 resolved dispelColors.Magic = {0.2,0.6,1,1}
 resolved dispelColors.None = {0.8,0,0,1}
 resolved dispelColors.Poison = {0,0.6,0,1}
+resolved dispelGlow.additive = true
+resolved dispelGlow.enabled = false
+resolved dispelGlow.offset = 6
+resolved dispelGlow.opacity = 1
+resolved dispelGlow.size = 10
 resolved durationPosition = "below"
 resolved durationSize = 10
 resolved enabled = true
@@ -2006,6 +2022,12 @@ option dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
 option dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
 option dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
 option dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option dispelGlow type="group" label="Debuff glow" defaults={offset=6,size=10}
+option dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
+option dispelGlow.size type="range" label="Glow size" default=16 min=4 max=32 step=1 tooltip=#3ba53433
+option dispelGlow.offset type="range" label="Glow spread" default=8 min=0 max=32 step=1 tooltip=#e37f216e
+option dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option dispelGlow.additive type="toggle" label="Additive glow" default=true tooltip=#efc395a3
 option border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
 option border.enabled type="toggle" label="Enabled" default=true
 option border.border type="border" label="Border" inherit="borderTexture"
@@ -2066,6 +2088,11 @@ default dispelColors.Disease = {0.6,0.4,0,1}
 default dispelColors.Magic = {0.2,0.6,1,1}
 default dispelColors.None = {0.8,0,0,1}
 default dispelColors.Poison = {0,0.6,0,1}
+default dispelGlow.additive = true
+default dispelGlow.enabled = false
+default dispelGlow.offset = 6
+default dispelGlow.opacity = 1
+default dispelGlow.size = 10
 default durationPosition = "BOTTOM"
 default durationSize = 10
 default enabled = false
@@ -2116,6 +2143,11 @@ resolved dispelColors.Disease = {0.6,0.4,0,1}
 resolved dispelColors.Magic = {0.2,0.6,1,1}
 resolved dispelColors.None = {0.8,0,0,1}
 resolved dispelColors.Poison = {0,0.6,0,1}
+resolved dispelGlow.additive = true
+resolved dispelGlow.enabled = false
+resolved dispelGlow.offset = 6
+resolved dispelGlow.opacity = 1
+resolved dispelGlow.size = 10
 resolved durationPosition = "BOTTOM"
 resolved durationSize = 10
 resolved enabled = false
@@ -2152,6 +2184,12 @@ option dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
 option dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
 option dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
 option dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option dispelGlow type="group" label="Debuff glow" defaults={offset=6,size=10}
+option dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
+option dispelGlow.size type="range" label="Glow size" default=16 min=4 max=32 step=1 tooltip=#3ba53433
+option dispelGlow.offset type="range" label="Glow spread" default=8 min=0 max=32 step=1 tooltip=#e37f216e
+option dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option dispelGlow.additive type="toggle" label="Additive glow" default=true tooltip=#efc395a3
 option border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
 option border.enabled type="toggle" label="Enabled" default=true
 option border.border type="border" label="Border" inherit="borderTexture"
@@ -2173,6 +2211,11 @@ default dispelColors.Disease = {0.6,0.4,0,1}
 default dispelColors.Magic = {0.2,0.6,1,1}
 default dispelColors.None = {0.8,0,0,1}
 default dispelColors.Poison = {0,0.6,0,1}
+default dispelGlow.additive = true
+default dispelGlow.enabled = false
+default dispelGlow.offset = 6
+default dispelGlow.opacity = 1
+default dispelGlow.size = 10
 default durationPosition = "below"
 default durationSize = 10
 default fontOutline = "OUTLINE"
@@ -2193,6 +2236,11 @@ resolved dispelColors.Disease = {0.6,0.4,0,1}
 resolved dispelColors.Magic = {0.2,0.6,1,1}
 resolved dispelColors.None = {0.8,0,0,1}
 resolved dispelColors.Poison = {0,0.6,0,1}
+resolved dispelGlow.additive = true
+resolved dispelGlow.enabled = false
+resolved dispelGlow.offset = 6
+resolved dispelGlow.opacity = 1
+resolved dispelGlow.size = 10
 resolved durationPosition = "below"
 resolved durationSize = 10
 resolved font = "Friz Quadrata TT"
@@ -3145,6 +3193,12 @@ option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
 option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
 option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
 option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auras.dispelGlow type="group" label="Debuff glow" defaults={offset=6,size=10}
+option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
+option auras.dispelGlow.size type="range" label="Glow size" default=16 min=4 max=32 step=1 tooltip=#3ba53433
+option auras.dispelGlow.offset type="range" label="Glow spread" default=8 min=0 max=32 step=1 tooltip=#e37f216e
+option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option auras.dispelGlow.additive type="toggle" label="Additive glow" default=true tooltip=#efc395a3
 option auras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
 option auras.border.enabled type="toggle" label="Enabled" default=true
 option auras.border.border type="border" label="Border" inherit="borderTexture"
@@ -3219,6 +3273,12 @@ option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
 option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
 option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
 option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auraBar.dispelGlow type="group" label="Debuff glow" defaults={offset=6,size=10}
+option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
+option auraBar.dispelGlow.size type="range" label="Glow size" default=16 min=4 max=32 step=1 tooltip=#3ba53433
+option auraBar.dispelGlow.offset type="range" label="Glow spread" default=8 min=0 max=32 step=1 tooltip=#e37f216e
+option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option auraBar.dispelGlow.additive type="toggle" label="Additive glow" default=true tooltip=#efc395a3
 option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
 option auraBar.border.enabled type="toggle" label="Enabled" default=true
 option auraBar.border.border type="border" label="Border" inherit="borderTexture"
@@ -3348,6 +3408,11 @@ default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
 default auraBar.dispelColors.Magic = {0.2,0.6,1,1}
 default auraBar.dispelColors.None = {0.8,0,0,1}
 default auraBar.dispelColors.Poison = {0,0.6,0,1}
+default auraBar.dispelGlow.additive = true
+default auraBar.dispelGlow.enabled = false
+default auraBar.dispelGlow.offset = 6
+default auraBar.dispelGlow.opacity = 1
+default auraBar.dispelGlow.size = 10
 default auraBar.durationPosition = "BOTTOM"
 default auraBar.durationSize = 10
 default auraBar.enabled = false
@@ -3406,6 +3471,11 @@ default auras.dispelColors.Disease = {0.6,0.4,0,1}
 default auras.dispelColors.Magic = {0.2,0.6,1,1}
 default auras.dispelColors.None = {0.8,0,0,1}
 default auras.dispelColors.Poison = {0,0.6,0,1}
+default auras.dispelGlow.additive = true
+default auras.dispelGlow.enabled = false
+default auras.dispelGlow.offset = 6
+default auras.dispelGlow.opacity = 1
+default auras.dispelGlow.size = 10
 default auras.durationPosition = "below"
 default auras.durationSize = 10
 default auras.enabled = true
@@ -4206,6 +4276,11 @@ resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
 resolved auraBar.dispelColors.Magic = {0.2,0.6,1,1}
 resolved auraBar.dispelColors.None = {0.8,0,0,1}
 resolved auraBar.dispelColors.Poison = {0,0.6,0,1}
+resolved auraBar.dispelGlow.additive = true
+resolved auraBar.dispelGlow.enabled = false
+resolved auraBar.dispelGlow.offset = 6
+resolved auraBar.dispelGlow.opacity = 1
+resolved auraBar.dispelGlow.size = 10
 resolved auraBar.durationPosition = "BOTTOM"
 resolved auraBar.durationSize = 10
 resolved auraBar.enabled = false
@@ -4272,6 +4347,11 @@ resolved auras.dispelColors.Disease = {0.6,0.4,0,1}
 resolved auras.dispelColors.Magic = {0.2,0.6,1,1}
 resolved auras.dispelColors.None = {0.8,0,0,1}
 resolved auras.dispelColors.Poison = {0,0.6,0,1}
+resolved auras.dispelGlow.additive = true
+resolved auras.dispelGlow.enabled = false
+resolved auras.dispelGlow.offset = 6
+resolved auras.dispelGlow.opacity = 1
+resolved auras.dispelGlow.size = 10
 resolved auras.durationPosition = "below"
 resolved auras.durationSize = 10
 resolved auras.enabled = true
@@ -5824,6 +5904,12 @@ option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
 option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
 option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
 option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auras.dispelGlow type="group" label="Debuff glow" defaults={offset=6,size=10}
+option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
+option auras.dispelGlow.size type="range" label="Glow size" default=16 min=4 max=32 step=1 tooltip=#3ba53433
+option auras.dispelGlow.offset type="range" label="Glow spread" default=8 min=0 max=32 step=1 tooltip=#e37f216e
+option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option auras.dispelGlow.additive type="toggle" label="Additive glow" default=true tooltip=#efc395a3
 option auras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
 option auras.border.enabled type="toggle" label="Enabled" default=true
 option auras.border.border type="border" label="Border" inherit="borderTexture"
@@ -5898,6 +5984,12 @@ option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
 option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
 option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
 option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auraBar.dispelGlow type="group" label="Debuff glow" defaults={offset=6,size=10}
+option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
+option auraBar.dispelGlow.size type="range" label="Glow size" default=16 min=4 max=32 step=1 tooltip=#3ba53433
+option auraBar.dispelGlow.offset type="range" label="Glow spread" default=8 min=0 max=32 step=1 tooltip=#e37f216e
+option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option auraBar.dispelGlow.additive type="toggle" label="Additive glow" default=true tooltip=#efc395a3
 option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
 option auraBar.border.enabled type="toggle" label="Enabled" default=true
 option auraBar.border.border type="border" label="Border" inherit="borderTexture"
@@ -6027,6 +6119,11 @@ default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
 default auraBar.dispelColors.Magic = {0.2,0.6,1,1}
 default auraBar.dispelColors.None = {0.8,0,0,1}
 default auraBar.dispelColors.Poison = {0,0.6,0,1}
+default auraBar.dispelGlow.additive = true
+default auraBar.dispelGlow.enabled = false
+default auraBar.dispelGlow.offset = 6
+default auraBar.dispelGlow.opacity = 1
+default auraBar.dispelGlow.size = 10
 default auraBar.durationPosition = "BOTTOM"
 default auraBar.durationSize = 10
 default auraBar.enabled = false
@@ -6085,6 +6182,11 @@ default auras.dispelColors.Disease = {0.6,0.4,0,1}
 default auras.dispelColors.Magic = {0.2,0.6,1,1}
 default auras.dispelColors.None = {0.8,0,0,1}
 default auras.dispelColors.Poison = {0,0.6,0,1}
+default auras.dispelGlow.additive = true
+default auras.dispelGlow.enabled = false
+default auras.dispelGlow.offset = 6
+default auras.dispelGlow.opacity = 1
+default auras.dispelGlow.size = 10
 default auras.durationPosition = "CENTER"
 default auras.durationSize = 9
 default auras.enabled = true
@@ -6665,6 +6767,11 @@ resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
 resolved auraBar.dispelColors.Magic = {0.2,0.6,1,1}
 resolved auraBar.dispelColors.None = {0.8,0,0,1}
 resolved auraBar.dispelColors.Poison = {0,0.6,0,1}
+resolved auraBar.dispelGlow.additive = true
+resolved auraBar.dispelGlow.enabled = false
+resolved auraBar.dispelGlow.offset = 6
+resolved auraBar.dispelGlow.opacity = 1
+resolved auraBar.dispelGlow.size = 10
 resolved auraBar.durationPosition = "BOTTOM"
 resolved auraBar.durationSize = 10
 resolved auraBar.enabled = false
@@ -6731,6 +6838,11 @@ resolved auras.dispelColors.Disease = {0.6,0.4,0,1}
 resolved auras.dispelColors.Magic = {0.2,0.6,1,1}
 resolved auras.dispelColors.None = {0.8,0,0,1}
 resolved auras.dispelColors.Poison = {0,0.6,0,1}
+resolved auras.dispelGlow.additive = true
+resolved auras.dispelGlow.enabled = false
+resolved auras.dispelGlow.offset = 6
+resolved auras.dispelGlow.opacity = 1
+resolved auras.dispelGlow.size = 10
 resolved auras.durationPosition = "CENTER"
 resolved auras.durationSize = 9
 resolved auras.enabled = true
@@ -8087,6 +8199,12 @@ option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
 option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
 option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
 option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auras.dispelGlow type="group" label="Debuff glow" defaults={offset=6,size=10}
+option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
+option auras.dispelGlow.size type="range" label="Glow size" default=16 min=4 max=32 step=1 tooltip=#3ba53433
+option auras.dispelGlow.offset type="range" label="Glow spread" default=8 min=0 max=32 step=1 tooltip=#e37f216e
+option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option auras.dispelGlow.additive type="toggle" label="Additive glow" default=true tooltip=#efc395a3
 option auras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
 option auras.border.enabled type="toggle" label="Enabled" default=true
 option auras.border.border type="border" label="Border" inherit="borderTexture"
@@ -8161,6 +8279,12 @@ option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
 option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
 option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
 option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auraBar.dispelGlow type="group" label="Debuff glow" defaults={offset=6,size=10}
+option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
+option auraBar.dispelGlow.size type="range" label="Glow size" default=16 min=4 max=32 step=1 tooltip=#3ba53433
+option auraBar.dispelGlow.offset type="range" label="Glow spread" default=8 min=0 max=32 step=1 tooltip=#e37f216e
+option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option auraBar.dispelGlow.additive type="toggle" label="Additive glow" default=true tooltip=#efc395a3
 option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
 option auraBar.border.enabled type="toggle" label="Enabled" default=true
 option auraBar.border.border type="border" label="Border" inherit="borderTexture"
@@ -8290,6 +8414,11 @@ default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
 default auraBar.dispelColors.Magic = {0.2,0.6,1,1}
 default auraBar.dispelColors.None = {0.8,0,0,1}
 default auraBar.dispelColors.Poison = {0,0.6,0,1}
+default auraBar.dispelGlow.additive = true
+default auraBar.dispelGlow.enabled = false
+default auraBar.dispelGlow.offset = 6
+default auraBar.dispelGlow.opacity = 1
+default auraBar.dispelGlow.size = 10
 default auraBar.durationPosition = "BOTTOM"
 default auraBar.durationSize = 10
 default auraBar.enabled = false
@@ -8348,6 +8477,11 @@ default auras.dispelColors.Disease = {0.6,0.4,0,1}
 default auras.dispelColors.Magic = {0.2,0.6,1,1}
 default auras.dispelColors.None = {0.8,0,0,1}
 default auras.dispelColors.Poison = {0,0.6,0,1}
+default auras.dispelGlow.additive = true
+default auras.dispelGlow.enabled = false
+default auras.dispelGlow.offset = 6
+default auras.dispelGlow.opacity = 1
+default auras.dispelGlow.size = 10
 default auras.durationPosition = "below"
 default auras.durationSize = 10
 default auras.enabled = true
@@ -8949,6 +9083,11 @@ resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
 resolved auraBar.dispelColors.Magic = {0.2,0.6,1,1}
 resolved auraBar.dispelColors.None = {0.8,0,0,1}
 resolved auraBar.dispelColors.Poison = {0,0.6,0,1}
+resolved auraBar.dispelGlow.additive = true
+resolved auraBar.dispelGlow.enabled = false
+resolved auraBar.dispelGlow.offset = 6
+resolved auraBar.dispelGlow.opacity = 1
+resolved auraBar.dispelGlow.size = 10
 resolved auraBar.durationPosition = "BOTTOM"
 resolved auraBar.durationSize = 10
 resolved auraBar.enabled = false
@@ -9015,6 +9154,11 @@ resolved auras.dispelColors.Disease = {0.6,0.4,0,1}
 resolved auras.dispelColors.Magic = {0.2,0.6,1,1}
 resolved auras.dispelColors.None = {0.8,0,0,1}
 resolved auras.dispelColors.Poison = {0,0.6,0,1}
+resolved auras.dispelGlow.additive = true
+resolved auras.dispelGlow.enabled = false
+resolved auras.dispelGlow.offset = 6
+resolved auras.dispelGlow.opacity = 1
+resolved auras.dispelGlow.size = 10
 resolved auras.durationPosition = "below"
 resolved auras.durationSize = 10
 resolved auras.enabled = true
@@ -10359,6 +10503,12 @@ option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
 option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
 option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
 option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auras.dispelGlow type="group" label="Debuff glow" defaults={offset=6,size=10}
+option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
+option auras.dispelGlow.size type="range" label="Glow size" default=16 min=4 max=32 step=1 tooltip=#3ba53433
+option auras.dispelGlow.offset type="range" label="Glow spread" default=8 min=0 max=32 step=1 tooltip=#e37f216e
+option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option auras.dispelGlow.additive type="toggle" label="Additive glow" default=true tooltip=#efc395a3
 option auras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
 option auras.border.enabled type="toggle" label="Enabled" default=true
 option auras.border.border type="border" label="Border" inherit="borderTexture"
@@ -10433,6 +10583,12 @@ option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
 option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
 option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
 option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auraBar.dispelGlow type="group" label="Debuff glow" defaults={offset=6,size=10}
+option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
+option auraBar.dispelGlow.size type="range" label="Glow size" default=16 min=4 max=32 step=1 tooltip=#3ba53433
+option auraBar.dispelGlow.offset type="range" label="Glow spread" default=8 min=0 max=32 step=1 tooltip=#e37f216e
+option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option auraBar.dispelGlow.additive type="toggle" label="Additive glow" default=true tooltip=#efc395a3
 option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
 option auraBar.border.enabled type="toggle" label="Enabled" default=true
 option auraBar.border.border type="border" label="Border" inherit="borderTexture"
@@ -10562,6 +10718,11 @@ default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
 default auraBar.dispelColors.Magic = {0.2,0.6,1,1}
 default auraBar.dispelColors.None = {0.8,0,0,1}
 default auraBar.dispelColors.Poison = {0,0.6,0,1}
+default auraBar.dispelGlow.additive = true
+default auraBar.dispelGlow.enabled = false
+default auraBar.dispelGlow.offset = 6
+default auraBar.dispelGlow.opacity = 1
+default auraBar.dispelGlow.size = 10
 default auraBar.durationPosition = "BOTTOM"
 default auraBar.durationSize = 10
 default auraBar.enabled = false
@@ -10620,6 +10781,11 @@ default auras.dispelColors.Disease = {0.6,0.4,0,1}
 default auras.dispelColors.Magic = {0.2,0.6,1,1}
 default auras.dispelColors.None = {0.8,0,0,1}
 default auras.dispelColors.Poison = {0,0.6,0,1}
+default auras.dispelGlow.additive = true
+default auras.dispelGlow.enabled = false
+default auras.dispelGlow.offset = 6
+default auras.dispelGlow.opacity = 1
+default auras.dispelGlow.size = 10
 default auras.durationPosition = "CENTER"
 default auras.durationSize = 9
 default auras.enabled = false
@@ -11200,6 +11366,11 @@ resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
 resolved auraBar.dispelColors.Magic = {0.2,0.6,1,1}
 resolved auraBar.dispelColors.None = {0.8,0,0,1}
 resolved auraBar.dispelColors.Poison = {0,0.6,0,1}
+resolved auraBar.dispelGlow.additive = true
+resolved auraBar.dispelGlow.enabled = false
+resolved auraBar.dispelGlow.offset = 6
+resolved auraBar.dispelGlow.opacity = 1
+resolved auraBar.dispelGlow.size = 10
 resolved auraBar.durationPosition = "BOTTOM"
 resolved auraBar.durationSize = 10
 resolved auraBar.enabled = false
@@ -11266,6 +11437,11 @@ resolved auras.dispelColors.Disease = {0.6,0.4,0,1}
 resolved auras.dispelColors.Magic = {0.2,0.6,1,1}
 resolved auras.dispelColors.None = {0.8,0,0,1}
 resolved auras.dispelColors.Poison = {0,0.6,0,1}
+resolved auras.dispelGlow.additive = true
+resolved auras.dispelGlow.enabled = false
+resolved auras.dispelGlow.offset = 6
+resolved auras.dispelGlow.opacity = 1
+resolved auras.dispelGlow.size = 10
 resolved auras.durationPosition = "CENTER"
 resolved auras.durationSize = 9
 resolved auras.enabled = false
@@ -12583,6 +12759,12 @@ option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
 option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
 option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
 option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auras.dispelGlow type="group" label="Debuff glow" defaults={offset=6,size=10}
+option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
+option auras.dispelGlow.size type="range" label="Glow size" default=16 min=4 max=32 step=1 tooltip=#3ba53433
+option auras.dispelGlow.offset type="range" label="Glow spread" default=8 min=0 max=32 step=1 tooltip=#e37f216e
+option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option auras.dispelGlow.additive type="toggle" label="Additive glow" default=true tooltip=#efc395a3
 option auras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
 option auras.border.enabled type="toggle" label="Enabled" default=true
 option auras.border.border type="border" label="Border" inherit="borderTexture"
@@ -12657,6 +12839,12 @@ option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
 option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
 option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
 option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auraBar.dispelGlow type="group" label="Debuff glow" defaults={offset=6,size=10}
+option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
+option auraBar.dispelGlow.size type="range" label="Glow size" default=16 min=4 max=32 step=1 tooltip=#3ba53433
+option auraBar.dispelGlow.offset type="range" label="Glow spread" default=8 min=0 max=32 step=1 tooltip=#e37f216e
+option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option auraBar.dispelGlow.additive type="toggle" label="Additive glow" default=true tooltip=#efc395a3
 option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
 option auraBar.border.enabled type="toggle" label="Enabled" default=true
 option auraBar.border.border type="border" label="Border" inherit="borderTexture"
@@ -12786,6 +12974,11 @@ default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
 default auraBar.dispelColors.Magic = {0.2,0.6,1,1}
 default auraBar.dispelColors.None = {0.8,0,0,1}
 default auraBar.dispelColors.Poison = {0,0.6,0,1}
+default auraBar.dispelGlow.additive = true
+default auraBar.dispelGlow.enabled = false
+default auraBar.dispelGlow.offset = 6
+default auraBar.dispelGlow.opacity = 1
+default auraBar.dispelGlow.size = 10
 default auraBar.durationPosition = "BOTTOM"
 default auraBar.durationSize = 10
 default auraBar.enabled = false
@@ -12844,6 +13037,11 @@ default auras.dispelColors.Disease = {0.6,0.4,0,1}
 default auras.dispelColors.Magic = {0.2,0.6,1,1}
 default auras.dispelColors.None = {0.8,0,0,1}
 default auras.dispelColors.Poison = {0,0.6,0,1}
+default auras.dispelGlow.additive = true
+default auras.dispelGlow.enabled = false
+default auras.dispelGlow.offset = 6
+default auras.dispelGlow.opacity = 1
+default auras.dispelGlow.size = 10
 default auras.durationPosition = "below"
 default auras.durationSize = 10
 default auras.enabled = true
@@ -13422,6 +13620,11 @@ resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
 resolved auraBar.dispelColors.Magic = {0.2,0.6,1,1}
 resolved auraBar.dispelColors.None = {0.8,0,0,1}
 resolved auraBar.dispelColors.Poison = {0,0.6,0,1}
+resolved auraBar.dispelGlow.additive = true
+resolved auraBar.dispelGlow.enabled = false
+resolved auraBar.dispelGlow.offset = 6
+resolved auraBar.dispelGlow.opacity = 1
+resolved auraBar.dispelGlow.size = 10
 resolved auraBar.durationPosition = "BOTTOM"
 resolved auraBar.durationSize = 10
 resolved auraBar.enabled = false
@@ -13488,6 +13691,11 @@ resolved auras.dispelColors.Disease = {0.6,0.4,0,1}
 resolved auras.dispelColors.Magic = {0.2,0.6,1,1}
 resolved auras.dispelColors.None = {0.8,0,0,1}
 resolved auras.dispelColors.Poison = {0,0.6,0,1}
+resolved auras.dispelGlow.additive = true
+resolved auras.dispelGlow.enabled = false
+resolved auras.dispelGlow.offset = 6
+resolved auras.dispelGlow.opacity = 1
+resolved auras.dispelGlow.size = 10
 resolved auras.durationPosition = "below"
 resolved auras.durationSize = 10
 resolved auras.enabled = true
@@ -14797,6 +15005,12 @@ option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
 option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
 option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
 option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auras.dispelGlow type="group" label="Debuff glow" defaults={offset=6,size=10}
+option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
+option auras.dispelGlow.size type="range" label="Glow size" default=16 min=4 max=32 step=1 tooltip=#3ba53433
+option auras.dispelGlow.offset type="range" label="Glow spread" default=8 min=0 max=32 step=1 tooltip=#e37f216e
+option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option auras.dispelGlow.additive type="toggle" label="Additive glow" default=true tooltip=#efc395a3
 option auras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
 option auras.border.enabled type="toggle" label="Enabled" default=true
 option auras.border.border type="border" label="Border" inherit="borderTexture"
@@ -14871,6 +15085,12 @@ option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
 option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
 option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
 option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auraBar.dispelGlow type="group" label="Debuff glow" defaults={offset=6,size=10}
+option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
+option auraBar.dispelGlow.size type="range" label="Glow size" default=16 min=4 max=32 step=1 tooltip=#3ba53433
+option auraBar.dispelGlow.offset type="range" label="Glow spread" default=8 min=0 max=32 step=1 tooltip=#e37f216e
+option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option auraBar.dispelGlow.additive type="toggle" label="Additive glow" default=true tooltip=#efc395a3
 option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
 option auraBar.border.enabled type="toggle" label="Enabled" default=true
 option auraBar.border.border type="border" label="Border" inherit="borderTexture"
@@ -15000,6 +15220,11 @@ default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
 default auraBar.dispelColors.Magic = {0.2,0.6,1,1}
 default auraBar.dispelColors.None = {0.8,0,0,1}
 default auraBar.dispelColors.Poison = {0,0.6,0,1}
+default auraBar.dispelGlow.additive = true
+default auraBar.dispelGlow.enabled = false
+default auraBar.dispelGlow.offset = 6
+default auraBar.dispelGlow.opacity = 1
+default auraBar.dispelGlow.size = 10
 default auraBar.durationPosition = "BOTTOM"
 default auraBar.durationSize = 10
 default auraBar.enabled = false
@@ -15058,6 +15283,11 @@ default auras.dispelColors.Disease = {0.6,0.4,0,1}
 default auras.dispelColors.Magic = {0.2,0.6,1,1}
 default auras.dispelColors.None = {0.8,0,0,1}
 default auras.dispelColors.Poison = {0,0.6,0,1}
+default auras.dispelGlow.additive = true
+default auras.dispelGlow.enabled = false
+default auras.dispelGlow.offset = 6
+default auras.dispelGlow.opacity = 1
+default auras.dispelGlow.size = 10
 default auras.durationPosition = "CENTER"
 default auras.durationSize = 9
 default auras.enabled = false
@@ -15638,6 +15868,11 @@ resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
 resolved auraBar.dispelColors.Magic = {0.2,0.6,1,1}
 resolved auraBar.dispelColors.None = {0.8,0,0,1}
 resolved auraBar.dispelColors.Poison = {0,0.6,0,1}
+resolved auraBar.dispelGlow.additive = true
+resolved auraBar.dispelGlow.enabled = false
+resolved auraBar.dispelGlow.offset = 6
+resolved auraBar.dispelGlow.opacity = 1
+resolved auraBar.dispelGlow.size = 10
 resolved auraBar.durationPosition = "BOTTOM"
 resolved auraBar.durationSize = 10
 resolved auraBar.enabled = false
@@ -15704,6 +15939,11 @@ resolved auras.dispelColors.Disease = {0.6,0.4,0,1}
 resolved auras.dispelColors.Magic = {0.2,0.6,1,1}
 resolved auras.dispelColors.None = {0.8,0,0,1}
 resolved auras.dispelColors.Poison = {0,0.6,0,1}
+resolved auras.dispelGlow.additive = true
+resolved auras.dispelGlow.enabled = false
+resolved auras.dispelGlow.offset = 6
+resolved auras.dispelGlow.opacity = 1
+resolved auras.dispelGlow.size = 10
 resolved auras.durationPosition = "CENTER"
 resolved auras.durationSize = 9
 resolved auras.enabled = false
@@ -18928,6 +19168,12 @@ option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
 option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
 option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
 option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auras.dispelGlow type="group" label="Debuff glow" defaults={offset=6,size=10}
+option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
+option auras.dispelGlow.size type="range" label="Glow size" default=16 min=4 max=32 step=1 tooltip=#3ba53433
+option auras.dispelGlow.offset type="range" label="Glow spread" default=8 min=0 max=32 step=1 tooltip=#e37f216e
+option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option auras.dispelGlow.additive type="toggle" label="Additive glow" default=true tooltip=#efc395a3
 option auras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
 option auras.border.enabled type="toggle" label="Enabled" default=true
 option auras.border.border type="border" label="Border" inherit="borderTexture"
@@ -19002,6 +19248,12 @@ option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
 option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
 option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
 option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auraBar.dispelGlow type="group" label="Debuff glow" defaults={offset=6,size=10}
+option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
+option auraBar.dispelGlow.size type="range" label="Glow size" default=16 min=4 max=32 step=1 tooltip=#3ba53433
+option auraBar.dispelGlow.offset type="range" label="Glow spread" default=8 min=0 max=32 step=1 tooltip=#e37f216e
+option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option auraBar.dispelGlow.additive type="toggle" label="Additive glow" default=true tooltip=#efc395a3
 option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
 option auraBar.border.enabled type="toggle" label="Enabled" default=true
 option auraBar.border.border type="border" label="Border" inherit="borderTexture"
@@ -19106,6 +19358,11 @@ default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
 default auraBar.dispelColors.Magic = {0.2,0.6,1,1}
 default auraBar.dispelColors.None = {0.8,0,0,1}
 default auraBar.dispelColors.Poison = {0,0.6,0,1}
+default auraBar.dispelGlow.additive = true
+default auraBar.dispelGlow.enabled = false
+default auraBar.dispelGlow.offset = 6
+default auraBar.dispelGlow.opacity = 1
+default auraBar.dispelGlow.size = 10
 default auraBar.durationPosition = "BOTTOM"
 default auraBar.durationSize = 10
 default auraBar.enabled = false
@@ -19164,6 +19421,11 @@ default auras.dispelColors.Disease = {0.6,0.4,0,1}
 default auras.dispelColors.Magic = {0.2,0.6,1,1}
 default auras.dispelColors.None = {0.8,0,0,1}
 default auras.dispelColors.Poison = {0,0.6,0,1}
+default auras.dispelGlow.additive = true
+default auras.dispelGlow.enabled = false
+default auras.dispelGlow.offset = 6
+default auras.dispelGlow.opacity = 1
+default auras.dispelGlow.size = 10
 default auras.durationPosition = "CENTER"
 default auras.durationSize = 8
 default auras.enabled = true
@@ -19722,6 +19984,11 @@ resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
 resolved auraBar.dispelColors.Magic = {0.2,0.6,1,1}
 resolved auraBar.dispelColors.None = {0.8,0,0,1}
 resolved auraBar.dispelColors.Poison = {0,0.6,0,1}
+resolved auraBar.dispelGlow.additive = true
+resolved auraBar.dispelGlow.enabled = false
+resolved auraBar.dispelGlow.offset = 6
+resolved auraBar.dispelGlow.opacity = 1
+resolved auraBar.dispelGlow.size = 10
 resolved auraBar.durationPosition = "BOTTOM"
 resolved auraBar.durationSize = 10
 resolved auraBar.enabled = false
@@ -19788,6 +20055,11 @@ resolved auras.dispelColors.Disease = {0.6,0.4,0,1}
 resolved auras.dispelColors.Magic = {0.2,0.6,1,1}
 resolved auras.dispelColors.None = {0.8,0,0,1}
 resolved auras.dispelColors.Poison = {0,0.6,0,1}
+resolved auras.dispelGlow.additive = true
+resolved auras.dispelGlow.enabled = false
+resolved auras.dispelGlow.offset = 6
+resolved auras.dispelGlow.opacity = 1
+resolved auras.dispelGlow.size = 10
 resolved auras.durationPosition = "CENTER"
 resolved auras.durationSize = 8
 resolved auras.enabled = true
@@ -21096,6 +21368,12 @@ option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
 option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
 option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
 option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auras.dispelGlow type="group" label="Debuff glow" defaults={offset=6,size=10}
+option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
+option auras.dispelGlow.size type="range" label="Glow size" default=16 min=4 max=32 step=1 tooltip=#3ba53433
+option auras.dispelGlow.offset type="range" label="Glow spread" default=8 min=0 max=32 step=1 tooltip=#e37f216e
+option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option auras.dispelGlow.additive type="toggle" label="Additive glow" default=true tooltip=#efc395a3
 option auras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
 option auras.border.enabled type="toggle" label="Enabled" default=true
 option auras.border.border type="border" label="Border" inherit="borderTexture"
@@ -21170,6 +21448,12 @@ option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
 option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
 option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
 option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auraBar.dispelGlow type="group" label="Debuff glow" defaults={offset=6,size=10}
+option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
+option auraBar.dispelGlow.size type="range" label="Glow size" default=16 min=4 max=32 step=1 tooltip=#3ba53433
+option auraBar.dispelGlow.offset type="range" label="Glow spread" default=8 min=0 max=32 step=1 tooltip=#e37f216e
+option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option auraBar.dispelGlow.additive type="toggle" label="Additive glow" default=true tooltip=#efc395a3
 option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
 option auraBar.border.enabled type="toggle" label="Enabled" default=true
 option auraBar.border.border type="border" label="Border" inherit="borderTexture"
@@ -21274,6 +21558,11 @@ default auraBar.dispelColors.Disease = {0.6,0.4,0,1}
 default auraBar.dispelColors.Magic = {0.2,0.6,1,1}
 default auraBar.dispelColors.None = {0.8,0,0,1}
 default auraBar.dispelColors.Poison = {0,0.6,0,1}
+default auraBar.dispelGlow.additive = true
+default auraBar.dispelGlow.enabled = false
+default auraBar.dispelGlow.offset = 6
+default auraBar.dispelGlow.opacity = 1
+default auraBar.dispelGlow.size = 10
 default auraBar.durationPosition = "BOTTOM"
 default auraBar.durationSize = 10
 default auraBar.enabled = false
@@ -21332,6 +21621,11 @@ default auras.dispelColors.Disease = {0.6,0.4,0,1}
 default auras.dispelColors.Magic = {0.2,0.6,1,1}
 default auras.dispelColors.None = {0.8,0,0,1}
 default auras.dispelColors.Poison = {0,0.6,0,1}
+default auras.dispelGlow.additive = true
+default auras.dispelGlow.enabled = false
+default auras.dispelGlow.offset = 6
+default auras.dispelGlow.opacity = 1
+default auras.dispelGlow.size = 10
 default auras.durationPosition = "CENTER"
 default auras.durationSize = 9
 default auras.enabled = false
@@ -21885,6 +22179,11 @@ resolved auraBar.dispelColors.Disease = {0.6,0.4,0,1}
 resolved auraBar.dispelColors.Magic = {0.2,0.6,1,1}
 resolved auraBar.dispelColors.None = {0.8,0,0,1}
 resolved auraBar.dispelColors.Poison = {0,0.6,0,1}
+resolved auraBar.dispelGlow.additive = true
+resolved auraBar.dispelGlow.enabled = false
+resolved auraBar.dispelGlow.offset = 6
+resolved auraBar.dispelGlow.opacity = 1
+resolved auraBar.dispelGlow.size = 10
 resolved auraBar.durationPosition = "BOTTOM"
 resolved auraBar.durationSize = 10
 resolved auraBar.enabled = false
@@ -21951,6 +22250,11 @@ resolved auras.dispelColors.Disease = {0.6,0.4,0,1}
 resolved auras.dispelColors.Magic = {0.2,0.6,1,1}
 resolved auras.dispelColors.None = {0.8,0,0,1}
 resolved auras.dispelColors.Poison = {0,0.6,0,1}
+resolved auras.dispelGlow.additive = true
+resolved auras.dispelGlow.enabled = false
+resolved auras.dispelGlow.offset = 6
+resolved auras.dispelGlow.opacity = 1
+resolved auras.dispelGlow.size = 10
 resolved auras.durationPosition = "CENTER"
 resolved auras.durationSize = 9
 resolved auras.enabled = false
@@ -22967,6 +23271,12 @@ option dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
 option dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
 option dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
 option dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option dispelGlow type="group" label="Debuff glow" defaults={offset=6,size=10}
+option dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
+option dispelGlow.size type="range" label="Glow size" default=16 min=4 max=32 step=1 tooltip=#3ba53433
+option dispelGlow.offset type="range" label="Glow spread" default=8 min=0 max=32 step=1 tooltip=#e37f216e
+option dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option dispelGlow.additive type="toggle" label="Additive glow" default=true tooltip=#efc395a3
 option border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
 option border.enabled type="toggle" label="Enabled" default=true
 option border.border type="border" label="Border" inherit="borderTexture"
@@ -23012,6 +23322,11 @@ default dispelColors.Disease = {0.6,0.4,0,1}
 default dispelColors.Magic = {0.2,0.6,1,1}
 default dispelColors.None = {0.8,0,0,1}
 default dispelColors.Poison = {0,0.6,0,1}
+default dispelGlow.additive = true
+default dispelGlow.enabled = false
+default dispelGlow.offset = 6
+default dispelGlow.opacity = 1
+default dispelGlow.size = 10
 default durationPosition = "below"
 default durationSize = 10
 default enabled = true
@@ -23054,6 +23369,11 @@ resolved dispelColors.Disease = {0.6,0.4,0,1}
 resolved dispelColors.Magic = {0.2,0.6,1,1}
 resolved dispelColors.None = {0.8,0,0,1}
 resolved dispelColors.Poison = {0,0.6,0,1}
+resolved dispelGlow.additive = true
+resolved dispelGlow.enabled = false
+resolved dispelGlow.offset = 6
+resolved dispelGlow.opacity = 1
+resolved dispelGlow.size = 10
 resolved durationPosition = "below"
 resolved durationSize = 10
 resolved enabled = true

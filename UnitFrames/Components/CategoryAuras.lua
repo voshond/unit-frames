@@ -44,7 +44,7 @@ for _, category in ipairs(CategoryAuras.CATEGORIES) do
 		default = category.color, hidden = function(cfg) return not cfg.categoryBorder or not cfg[category.key] end }
 end
 
-local art = ns.Schema.Without(ns.Util.Copy(AuraIcon.schema), { dispelBorder = true, dispelColors = true })
+local art = ns.Schema.Without(ns.Util.Copy(AuraIcon.schema), { dispelBorder = true, dispelColors = true, dispelGlow = true })
 local insidePositions = {}
 for _, position in ipairs(AuraIcon.DURATION_POSITIONS) do
 	if position[1] ~= "below" then insidePositions[#insidePositions + 1] = ns.Util.Copy(position) end
