@@ -6,6 +6,51 @@ describe("ClickGrid profile strings #profiles", function()
 		UF, CG = Helpers.LoadClickGrid()
 	end)
 
+	it("switches castbar profiles without reading secret native dimensions", function()
+		local original = UF.Profiles:GetCurrent()
+		CG.Config:SetStyle("member", "castbar.enabled", true)
+		CG.Config:SetStyle("member", "castbar.placement", "health")
+		local castbar = CG.headers.party:GetAttribute("child1").Member.uf:GetPart("castbar")
+		local width, height = castbar.knownWidth, castbar.knownHeight
+		Helpers.Mock.SetEngineSize(castbar:GetFrame(), Helpers.Mock.Secret(150), Helpers.Mock.Secret(40))
+		assert.is_true(UF.Profiles:Create("Disabled castbar"))
+		for _ = 1, 2 do
+			CG:RequestRefresh()
+			assert.is_false(castbar:IsEnabled())
+			assert.is_true(UF.Profiles:Switch(original))
+			assert.is_true(castbar:IsEnabled())
+			assert.equals(width, castbar.knownWidth)
+			assert.equals(height, castbar.knownHeight)
+			assert.is_true(UF.Profiles:Switch("Disabled castbar"))
+		end
+	end)
+
+	it("prepares new raid and tank headers when switching profiles with the panel hidden", function()
+		local original = UF.Profiles:GetCurrent()
+		assert.is_true(UF.Profiles:Create("Flat with tanks"))
+		Helpers.Mock.inCombat = true
+		CG.Config:Set("panel.mode", "flat")
+		CG.Config:Set("panel.tanks", true)
+		assert.is_true(UF.Profiles:Switch(original))
+		Helpers.Mock.inCombat = false
+		Helpers.Mock.FireEvent("PLAYER_REGEN_ENABLED")
+		assert.is_nil(CG.headers.raid)
+		assert.is_nil(CG.headers.tanks)
+		CG.panel:Hide()
+		assert.is_true(UF.Profiles:Switch("Flat with tanks"))
+		for _, key in ipairs({ "raid", "tanks" }) do
+			local header = CG.headers[key]
+			assert.equals(CG.panel, header:GetParent())
+			assert.is_not_nil(header:GetAttribute("child40"))
+			assert.equals(1, header:GetAttribute("startingIndex"))
+		end
+		assert.equals(UF.Units.STYLE, UF.oUF:GetActiveStyle())
+		assert.is_true(UF.Profiles:Switch(original))
+		CG.panel:Hide()
+		assert.is_true(UF.Profiles:Switch("Flat with tanks"))
+		assert.equals(250, #CG.frames)
+	end)
+
 	it("travels with the style string and is validated before anything is written", function()
 		CG.Config:Set("panel.columns", 3)
 		CG.Config:Set("border.border", "Blizzard Raid")

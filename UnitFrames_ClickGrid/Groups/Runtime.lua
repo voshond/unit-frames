@@ -28,7 +28,6 @@ function CG:CreateHeader(key, capacity, filter, role)
 			self:SetHeight(header:GetAttribute("cell-height"))
 		]],
 	})
-	header:SetParent(self.panel)
 	header:SetAttribute("member-width", self.metrics.member.width)
 	header:SetAttribute("cell-height", self.metrics.member.height)
 	-- The native header's negative starting index requests capacity dummy
@@ -40,6 +39,7 @@ function CG:CreateHeader(key, capacity, filter, role)
 		cell:SetSize(self.metrics.member.width, self.metrics.member.height)
 	end
 	header:Hide()
+	header:SetParent(self.panel)
 	header:SetAttribute("startingIndex", 1)
 	header:SetAttribute("showSolo", false)
 	self.headers[key] = header
