@@ -127,6 +127,7 @@ return function(Mock)
 		for key, value in pairs(attributes) do header:SetAttribute(key, value) end
 		function header:Show()
 			self.__state.shown = true
+			if not self:IsVisible() then return end
 			if self:GetAttribute("startingIndex") < 0 and not self:GetAttribute("child1") then
 				local capacity = self:GetAttribute("unitsPerColumn") * self:GetAttribute("maxColumns")
 				for i = 1, capacity do
