@@ -270,7 +270,7 @@ function UnitFrame.BuildSchema(spec)
 	if spec.resting then
 		schema[#schema + 1] = { key = "resting", type = "group", label = "Resting border", schema = {
 			{ key = "enabled", type = "toggle", label = "Enabled", default = true },
-			{ key = "color", type = "color", label = "Resting colour", default = { 1, 0.88, 0.25, 1 } },
+			{ key = "color", type = "color", label = "Resting colour", default = { 1, 0.753, 0.157, 1 } },
 			{ key = "period", type = "range", label = "Pulse duration (seconds)", min = 2, max = 10, step = 0.5, default = 4,
 				tooltip = "Time for one slow fade to the resting colour and back. Requires a visible frame border." },
 		} }
@@ -325,10 +325,10 @@ end
 function UnitFrame:ColorRestingBorder(amount)
 	local base, tint = self.resolved.border.color, self.resolved.resting.color
 	Backdrop.SetBorderColor(self.border,
-		base[1] + (tint[1] - base[1]) * amount,
-		base[2] + (tint[2] - base[2]) * amount,
-		base[3] + (tint[3] - base[3]) * amount,
-		(base[4] or 1) + ((tint[4] or 1) - (base[4] or 1)) * amount)
+		base[1] * (1 - amount) + tint[1] * amount,
+		base[2] * (1 - amount) + tint[2] * amount,
+		base[3] * (1 - amount) + tint[3] * amount,
+		(base[4] or 1) * (1 - amount) + (tint[4] or 1) * amount)
 end
 
 function UnitFrame:ApplyRestingBorder()

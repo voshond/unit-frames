@@ -2276,7 +2276,7 @@ option range.mode type="select" label="Range check" default="group" values=#b1e9
 option range.spell type="text" label="Spell ID or name" default="" tooltip=#a735d466 hidden
 option resting type="group" label="Resting border"
 option resting.enabled type="toggle" label="Enabled" default=true
-option resting.color type="color" label="Resting colour" default={1,0.88,0.25,1}
+option resting.color type="color" label="Resting colour" default={1,0.753,0.157,1}
 option resting.period type="range" label="Pulse duration (seconds)" default=4 min=2 max=10 step=0.5 tooltip=#5fabb16e
 option readyCheck type="group" label="Ready check"
 option readyCheck.enabled type="toggle" label="Tint bars" default=true tooltip=#f63d91dc
@@ -4244,7 +4244,7 @@ default readyCheckIcon.offsetX = 0
 default readyCheckIcon.offsetY = 0
 default readyCheckIcon.order = 1
 default readyCheckIcon.size = 22
-default resting.color = {1,0.88,0.25,1}
+default resting.color = {1,0.753,0.157,1}
 default resting.enabled = true
 default resting.period = 4
 default restingIcon.anchor = "TOPLEFT"
@@ -5230,7 +5230,7 @@ resolved readyCheckIcon.offsetX = 0
 resolved readyCheckIcon.offsetY = 0
 resolved readyCheckIcon.order = 1
 resolved readyCheckIcon.size = 22
-resolved resting.color = {1,0.88,0.25,1}
+resolved resting.color = {1,0.753,0.157,1}
 resolved resting.enabled = true
 resolved resting.period = 4
 resolved restingIcon.anchor = "TOPLEFT"
