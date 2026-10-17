@@ -280,6 +280,14 @@ Drivers.parts.classification = {
 	live = function(icon, unit) icon:SetClassification(Drivers.Classification(unit)) end,
 }
 
+-- Resting is plain player state (IsResting); oUF enables it for the player only.
+Drivers.parts.restingIcon = {
+	element = "RestingIndicator",
+	bind = function(icon) return icon:GetWidget() end,
+	sample = function(icon, v) icon:SetResting(v.resting) end,
+	live = function(icon, unit) icon:SetResting(unit == "player" and IsResting()) end,
+}
+
 Drivers.parts.categoryAuras = {
 	element = "UF_CategoryAuras",
 	bind = function(icons) return icons end,

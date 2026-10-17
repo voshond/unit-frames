@@ -48,6 +48,7 @@ Units.definitions.player = {
 	-- request. The target frame shows them by default.
 	comboPoints = { defaults = { enabled = false } },
 	auras = { cancelBuffs = true, defaults = {} },
+	restingIcon = { defaults = {} },
 }
 
 -- Each definition owns its defaults; changing a compact row must not change

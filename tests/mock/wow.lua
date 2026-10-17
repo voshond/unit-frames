@@ -424,9 +424,11 @@ end
 function Methods:GetTexture() return self.__state.texture end
 function Methods:SetVertexColor(r, g, b, a) self.__state.vertexColor = { r, g, b, a } end
 function Methods:SetColorTexture(r, g, b, a) self.__state.colorTexture = { r, g, b, a } end
+-- Like the client, the texture then reports the atlas's file.
 function Methods:SetAtlas(atlas, useAtlasSize)
 	Record(self, "SetAtlas", atlas, useAtlasSize)
 	self.__state.atlas = atlas
+	self.__state.texture = "atlas:" .. tostring(atlas)
 end
 
 -- FontString

@@ -20,7 +20,7 @@ return function(Mock)
 	local BUILTIN = { Health = true, Power = true, Portrait = true, RaidTargetIndicator = true,
 		GroupRoleIndicator = true, LeaderIndicator = true, AssistantIndicator = true, ReadyCheckIndicator = true,
 		ResurrectIndicator = true, SummonIndicator = true, PhaseIndicator = true, ThreatIndicator = true, PrivateAuras = true,
-		PvPIndicator = true }
+		PvPIndicator = true, RestingIndicator = true }
 
 	function oUF:RegisterStyle(name, func)
 		self.styles[name] = func

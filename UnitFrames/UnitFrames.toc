@@ -56,6 +56,7 @@ Components\StackIcon.lua
 Components\RaidTarget.lua
 Components\PvPFlag.lua
 Components\Classification.lua
+Components\RestingIcon.lua
 Components\ReadyCheckIcon.lua
 Components\CategoryAuras.lua
 Components\UnitFrameLayout.lua

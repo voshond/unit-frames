@@ -8,8 +8,8 @@ see the [developer guide](DEVELOPMENT.md).
 
 In game: `/uf wb` opens the Workbench.
 
-Unit-frame settings group raid markers, PvP flags and classification markers
-under **Icons**, and range, resting and ready checks under **State effects**.
+Unit-frame settings group raid markers, PvP flags, classification markers and
+the player's resting icon under **Icons**, and range, resting and ready checks under **State effects**.
 The inspector remembers scrolling separately for each settings page.
 
 With Titan Panel or another LibDataBroker display installed, enable its
@@ -262,6 +262,12 @@ for elites and bosses, a silver dragon for rare elites and a star for rares,
 matching Blizzard's nameplates. Other units show nothing and leave no gap.
 It is placed like the raid marker and updates when the unit's classification
 changes. Preview it with **Preview data > NPC** and **Classification**.
+
+The player frame's **Resting icon** section adds the default player frame's
+animated zZz while you are resting in an inn or city, enabled by default at
+the top-left border corner after the PvP flag. It is placed like the raid
+marker and leaves no gap while you are not resting. Preview it with
+**Preview data > Resting**.
 
 ## Range fading
 

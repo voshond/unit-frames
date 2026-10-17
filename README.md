@@ -23,7 +23,8 @@ each change.
   important buffs, or your own heals over time.
 - Show crowd control and defensives over the portrait or on a frame edge, with
   crowd control on top.
-- Add raid markers, PvP flags, elite and rare icons, and ready check indicators.
+- Add raid markers, PvP flags, elite and rare icons, the resting zZz, and ready
+  check indicators.
 - Fade frames when someone is out of range.
 - Move your frames in the game's Edit Mode, with snapping to help line them up.
 - Keep several profiles, and share your style with others as a text string.
