@@ -18,8 +18,8 @@ local member = UF.Units:Derive("pet", {
 -- Replaces the pet's aura defaults as a whole.
 member.auras.defaults = {
 	durationPosition = "CENTER", durationSize = 8, countSize = 8,
-	buffs = { filter = "HELPFUL|PLAYER|RAID_IN_COMBAT", maxDuration = 120, max = 4, size = 14, position = "top", gap = 1, alignment = "end" },
-	debuffs = { sort = "unitDebuff", max = 3, size = 16, position = "bottom", gap = 1 },
+	buffs = { enabled = false, filter = "HELPFUL|PLAYER|RAID_IN_COMBAT", maxDuration = 120, max = 4, size = 14, position = "top", gap = 1, alignment = "end" },
+	debuffs = { enabled = false, sort = "unitDebuff", max = 3, size = 16, position = "bottom", gap = 1 },
 }
 CG.definitions = {
 	member = member,
@@ -51,8 +51,8 @@ CG.LayoutSchema = {
 		tooltip = "Preferred flat-grid rows. Down-then-across keeps this wrap height; extra columns accommodate larger raids. Saved rows and columns never change each other." },
 	{ key = "flow", type = "select", label = "Fill grid", default = "down",
 		values = { { "down", "Down, then across" }, { "across", "Across, then down" } } },
-	{ key = "spacingX", type = "range", label = "Horizontal gap", min = 0, max = 50, step = 1, default = 8 },
-	{ key = "spacingY", type = "range", label = "Vertical gap", min = 0, max = 80, step = 1, default = 36,
+	{ key = "spacingX", type = "range", label = "Horizontal gap", min = 0, max = 50, step = 1, default = 2 },
+	{ key = "spacingY", type = "range", label = "Vertical gap", min = 0, max = 80, step = 1, default = 2,
 		tooltip = "Leave room for buff and debuff icons outside each bar." },
 	{ key = "sectionGap", type = "range", label = "Section gap", min = 0, max = 80, step = 1, default = 24 },
 	{ key = "scale", type = "range", label = "Panel scale", min = 0.5, max = 1.5, step = 0.05, default = 1 },

@@ -18911,7 +18911,7 @@ option castbar.colors.success type="color" label="Succeeded" inherit="colors.cas
 option castbar.background type="color" label="Background" default={0,0,0,0} tooltip=#0297179c
 option castbar.holdTime type="range" label="Hold after finish (s)" default=0.4 min=0 max=2 step=0.1
 option castbar.fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
-option auras type="group" label="Buffs & debuffs" defaults={buffs={alignment="end",filter="HELPFUL|PLAYER|RAID_IN_COMBAT",gap=1,max=4,maxDuration=120,position="top",size=14},countSize=8,debuffs={gap=1,max=3,position="bottom",size=16,sort="unitDebuff"},durationPosition="CENTER",durationSize=8}
+option auras type="group" label="Buffs & debuffs" defaults={buffs={alignment="end",enabled=false,filter="HELPFUL|PLAYER|RAID_IN_COMBAT",gap=1,max=4,maxDuration=120,position="top",size=14},countSize=8,debuffs={enabled=false,gap=1,max=3,position="bottom",size=16,sort="unitDebuff"},durationPosition="CENTER",durationSize=8}
 option auras.enabled type="toggle" label="Enabled" default=true
 option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
 option auras.showDuration type="toggle" label="Show time left" default=true
@@ -19128,7 +19128,7 @@ default auras.border.inset = 1
 default auras.border.padding = 2
 default auras.border.size = 8
 default auras.buffs.alignment = "end"
-default auras.buffs.enabled = true
+default auras.buffs.enabled = false
 default auras.buffs.filter = "HELPFUL|PLAYER|RAID_IN_COMBAT"
 default auras.buffs.gap = 1
 default auras.buffs.growth = "forward"
@@ -19144,7 +19144,7 @@ default auras.buffs.sort = "expiration"
 default auras.buffs.swipe = "normal"
 default auras.countSize = 8
 default auras.debuffs.alignment = "start"
-default auras.debuffs.enabled = true
+default auras.debuffs.enabled = false
 default auras.debuffs.filter = "HARMFUL"
 default auras.debuffs.gap = 1
 default auras.debuffs.growth = "forward"
@@ -19752,7 +19752,7 @@ resolved auras.border.inset = 1
 resolved auras.border.padding = 2
 resolved auras.border.size = 8
 resolved auras.buffs.alignment = "end"
-resolved auras.buffs.enabled = true
+resolved auras.buffs.enabled = false
 resolved auras.buffs.filter = "HELPFUL|PLAYER|RAID_IN_COMBAT"
 resolved auras.buffs.gap = 1
 resolved auras.buffs.growth = "forward"
@@ -19768,7 +19768,7 @@ resolved auras.buffs.sort = "expiration"
 resolved auras.buffs.swipe = "normal"
 resolved auras.countSize = 8
 resolved auras.debuffs.alignment = "start"
-resolved auras.debuffs.enabled = true
+resolved auras.debuffs.enabled = false
 resolved auras.debuffs.filter = "HARMFUL"
 resolved auras.debuffs.gap = 1
 resolved auras.debuffs.growth = "forward"
@@ -20391,6 +20391,7 @@ definition auraBar.collapsible = true
 definition auraBar.defaults = {}
 definition auras.clickThrough = true
 definition auras.defaults.buffs.alignment = "end"
+definition auras.defaults.buffs.enabled = false
 definition auras.defaults.buffs.filter = "HELPFUL|PLAYER|RAID_IN_COMBAT"
 definition auras.defaults.buffs.gap = 1
 definition auras.defaults.buffs.max = 4
@@ -20398,6 +20399,7 @@ definition auras.defaults.buffs.maxDuration = 120
 definition auras.defaults.buffs.position = "top"
 definition auras.defaults.buffs.size = 14
 definition auras.defaults.countSize = 8
+definition auras.defaults.debuffs.enabled = false
 definition auras.defaults.debuffs.gap = 1
 definition auras.defaults.debuffs.max = 3
 definition auras.defaults.debuffs.position = "bottom"
@@ -22589,8 +22591,8 @@ option panel.mode type="select" label="Raid layout" default="subgroups" values=#
 option panel.columns type="range" label="Columns / subgroup columns" default=4 min=1 max=10 step=1 tooltip=#d6a9662d
 option panel.rows type="range" label="Rows (flat raid)" default=10 min=1 max=40 step=1 tooltip=#2628845a hidden
 option panel.flow type="select" label="Fill grid" default="down" values=#240d3580
-option panel.spacingX type="range" label="Horizontal gap" default=8 min=0 max=50 step=1
-option panel.spacingY type="range" label="Vertical gap" default=36 min=0 max=80 step=1 tooltip=#78372525
+option panel.spacingX type="range" label="Horizontal gap" default=2 min=0 max=50 step=1
+option panel.spacingY type="range" label="Vertical gap" default=2 min=0 max=80 step=1 tooltip=#78372525
 option panel.sectionGap type="range" label="Section gap" default=24 min=0 max=80 step=1
 option panel.scale type="range" label="Panel scale" default=1 min=0.5 max=1.5 step=0.05
 option panel.targetGap type="range" label="Gap to target" default=4 min=0 max=30 step=1
@@ -22782,8 +22784,8 @@ default panel.rows = 10
 default panel.scale = 1
 default panel.sectionGap = 24
 default panel.showSolo = false
-default panel.spacingX = 8
-default panel.spacingY = 36
+default panel.spacingX = 2
+default panel.spacingY = 2
 default panel.tankSlots = 5
 default panel.tanks = false
 default panel.targetGap = 4
@@ -22902,8 +22904,8 @@ resolved panel.rows = 10
 resolved panel.scale = 1
 resolved panel.sectionGap = 24
 resolved panel.showSolo = false
-resolved panel.spacingX = 8
-resolved panel.spacingY = 36
+resolved panel.spacingX = 2
+resolved panel.spacingY = 2
 resolved panel.tankSlots = 5
 resolved panel.tanks = false
 resolved panel.targetGap = 4
