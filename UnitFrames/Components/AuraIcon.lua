@@ -37,10 +37,10 @@ AuraIcon.DURATION_POSITIONS = {
 
 AuraIcon.GLOW_STYLES = { { "halo", "Soft halo" }, { "proc", "Proc flash" } }
 
--- The proc flash follows the icon size; only the halo has geometry and blend.
+-- The proc flash follows the icon size; only the halo has geometry.
 local function IsProc(cfg) return cfg.style == "proc" end
 local glowSchema = Glow.schema
-for _, key in ipairs({ "size", "offset", "additive" }) do
+for _, key in ipairs({ "size", "offset" }) do
 	glowSchema = ns.Schema.Override(glowSchema, key, { hidden = IsProc })
 end
 
@@ -254,8 +254,8 @@ function AuraIcon.ApplyDispelBorder(button, cfg, size, dispelColors)
 end
 
 -- The engine owns the glow pieces' colour and shown state, like the
--- border's; only types with a dispel colour light up. Geometry, blend and
--- opacity changes keep the registration; colours, style and toggles renew it.
+-- border's; only types with a dispel colour light up. Geometry and opacity
+-- changes keep the registration; colours, style and toggles renew it.
 -- Holders are created on first use, below the cover, so the border and texts
 -- stay on top of the glow.
 local dispelGlows = setmetatable({}, { __mode = "k" })

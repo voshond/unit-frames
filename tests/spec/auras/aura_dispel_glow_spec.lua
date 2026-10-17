@@ -90,10 +90,8 @@ describe("Native debuff glow #glow", function()
 		local adds = AddCalls(button)
 		ns.Config:SetUnitValue("player", "auras.dispelGlow.size", 20)
 		ns.Config:SetUnitValue("player", "auras.dispelGlow.opacity", 0.5)
-		ns.Config:SetUnitValue("player", "auras.dispelGlow.additive", false)
 		assert.equals(0, adds())
 		assert.equals(0.5, Halo(button):GetAlpha())
-		assert.equals("BLEND", Halo(button).textures[1].__state.blendMode)
 
 		ns.Config:SetUnitValue("player", "auras.dispelColors.Magic", { 1, 0, 1, 1 })
 		assert.equals(8, #Registered(button))
@@ -187,7 +185,8 @@ describe("Native debuff glow #glow", function()
 
 	it("hides halo-only geometry settings for the proc style", function()
 		local schema = ns.Schema.Find(ns.AuraIcon.schema, "dispelGlow").schema
-		for _, key in ipairs({ "size", "offset", "additive" }) do
+		assert.is_nil(ns.Schema.Find(schema, "additive"), "the black-backed art only works additively")
+		for _, key in ipairs({ "size", "offset" }) do
 			local option = ns.Schema.Find(schema, key)
 			assert.is_true(option.hidden({ style = "proc" }), key)
 			assert.is_false(option.hidden({ style = "halo" }), key)

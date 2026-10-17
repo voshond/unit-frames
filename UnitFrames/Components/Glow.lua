@@ -2,7 +2,8 @@ local _, ns = ...
 
 -- A soft halo around a frame from Blizzard's own glow border artwork: the
 -- additive eight-piece box Blizzard_HelpPlate tints and draws around
--- highlighted areas. Pieces anchor to the holder, so no dimensions are read;
+-- highlighted areas. The art has a black, not transparent, background, so it
+-- is always drawn additively. Pieces anchor to the holder, so no dimensions are read;
 -- owners pass known configured sizes to keep the corners from overlapping.
 local Glow = {}
 ns.Glow = Glow
@@ -37,8 +38,6 @@ Glow.schema = {
 	{ key = "offset", type = "range", label = "Glow spread", min = 0, max = 32, step = 1, default = 8,
 		tooltip = "How far the glow reaches outside the frame. The rest of its size lies inside." },
 	{ key = "opacity", type = "range", label = "Glow opacity", min = 0.1, max = 1, step = 0.05, default = 1 },
-	{ key = "additive", type = "toggle", label = "Additive glow", default = true,
-		tooltip = "Brighten what lies beneath, like Blizzard's highlights. Disable for a flatter glow that stays visible on bright bars." },
 }
 
 -- A hidden holder; toggle it rather than its pieces.
@@ -50,6 +49,7 @@ function Glow.Create(parent)
 		local texture = holder:CreateTexture(nil, "OVERLAY")
 		texture:SetTexture(piece[2])
 		texture:SetTexCoord(piece[3], piece[4], piece[5], piece[6])
+		texture:SetBlendMode("ADD")
 		holder[piece[1]] = texture
 		holder.textures[#holder.textures + 1] = texture
 	end
@@ -75,8 +75,6 @@ function Glow.Apply(holder, cfg, width, height)
 	holder.TopRight:SetPoint("TOPRIGHT", holder, "TOPRIGHT", offset, offset)
 	holder.BottomLeft:SetPoint("BOTTOMLEFT", holder, "BOTTOMLEFT", -offset, -offset)
 	holder.BottomRight:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", offset, -offset)
-	local blend = cfg.additive and "ADD" or "BLEND"
-	for _, texture in ipairs(holder.textures) do texture:SetBlendMode(blend) end
 	holder:SetAlpha(cfg.opacity)
 end
 
