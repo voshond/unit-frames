@@ -31,6 +31,29 @@ describe("ClickGrid preview lifecycle", function()
 		assert.is_nil(first.memberValues)
 		assert.is_nil(first.targetValues)
 	end)
+	it("shows varied debuffs whose glows light typed dispels and leave others unlit #glow", function()
+		local UF, CG, wb = Helpers.LoadClickGrid(true)
+		CG.Config:SetStyle("member", "auras.debuffs.enabled", true)
+		CG.Config:SetStyle("member", "auras.dispelGlow.enabled", true)
+		wb:Open("clickgrid.panel")
+		local cells = wb.handle.cells
+		local function Types(index)
+			local types = {}
+			for i, aura in ipairs(cells[index].memberValues.debuffs) do types[i] = aura.dispelName or "none" end
+			return table.concat(types, ",")
+		end
+		assert.equals("Magic", Types(1))
+		assert.equals("Curse,none", Types(2))
+		assert.equals("Poison,Disease", Types(3))
+		assert.equals("", Types(4))
+		assert.is_true(cells[1].memberValues.debuffs ~= UF.Units.SAMPLE.debuffs)
+		local samples = cells[2].member:GetPart("auras").previewContainers.debuffs.ufElements
+		local lit = {}
+		for i = 1, 2 do lit[i] = UF.AuraIcon.GetGlow(samples[i]).textures[1]:IsShown() end
+		assert.same({ true, false }, lit)
+		wb.handle:Release()
+	end)
+
 	it("restyles and feeds an active preview once per saved edit, theme and profile change", function()
 		local UF, CG, wb = Helpers.LoadClickGrid(true)
 		wb:Open("clickgrid.panel")
