@@ -6,6 +6,25 @@ describe("ClickGrid profile strings #profiles", function()
 		UF, CG = Helpers.LoadClickGrid()
 	end)
 
+	it("switches castbar profiles without reading secret native dimensions", function()
+		local original = UF.Profiles:GetCurrent()
+		CG.Config:SetStyle("member", "castbar.enabled", true)
+		CG.Config:SetStyle("member", "castbar.placement", "health")
+		local castbar = CG.headers.party:GetAttribute("child1").Member.uf:GetPart("castbar")
+		local width, height = castbar.knownWidth, castbar.knownHeight
+		Helpers.Mock.SetEngineSize(castbar:GetFrame(), Helpers.Mock.Secret(150), Helpers.Mock.Secret(40))
+		assert.is_true(UF.Profiles:Create("Disabled castbar"))
+		for _ = 1, 2 do
+			CG:RequestRefresh()
+			assert.is_false(castbar:IsEnabled())
+			assert.is_true(UF.Profiles:Switch(original))
+			assert.is_true(castbar:IsEnabled())
+			assert.equals(width, castbar.knownWidth)
+			assert.equals(height, castbar.knownHeight)
+			assert.is_true(UF.Profiles:Switch("Disabled castbar"))
+		end
+	end)
+
 	it("prepares new raid and tank headers when switching profiles with the panel hidden", function()
 		local original = UF.Profiles:GetCurrent()
 		assert.is_true(UF.Profiles:Create("Flat with tanks"))

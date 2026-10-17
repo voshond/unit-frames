@@ -137,6 +137,7 @@ function Castbar:ApplyBorder()
 		Backdrop.ApplyToFixedSize(self.frame, border, self.knownWidth, self.knownHeight)
 		return
 	end
+	if self.spec.nativeLayout then return end
 	Backdrop.ApplyTo(self.frame, border)
 end
 
@@ -161,6 +162,7 @@ function Castbar:LayoutParts()
 	end
 	local width, height = self.knownWidth, self.knownHeight
 	if not width then
+		if self.spec.nativeLayout then return end
 		width, height = self.frame:GetWidth(), self.frame:GetHeight()
 	end
 	local layout = ns.CastbarLayout.Compute(width, height, cfg, self.portraitPlacement, self.knownMaxHeight)
