@@ -34,6 +34,7 @@ describe("ClickGrid status indicators", function()
 
 	it("retires unused layouts and fully refreshes them before reactivation", function()
 		local frame = CG.headers.group1:GetAttribute("child1").Member
+		CG.Config:SetStyle("member", "auras.buffs.enabled", true)
 		CG.Config:Set("panel.mode", "flat")
 		assert.is_true(CG:GetGridButton(frame).inactive)
 		assert.is_false(frame:IsEnabled())
@@ -86,6 +87,12 @@ describe("ClickGrid status indicators", function()
 		assert.equals(Enum.UnitDamageAbsorbClampMode.MaximumHealth, member.Health.damageAbsorbClampMode)
 		assert.equals(120, member.uf:GetPart("auras").resolved.buffs.maxDuration)
 		assert.equals("unitDebuff", member.uf:GetPart("auras").resolved.debuffs.sort)
+		assert.is_false(member.uf:GetPart("auras").resolved.buffs.enabled)
+		assert.is_false(member.uf:GetPart("auras").resolved.debuffs.enabled)
+		assert.is_true(member.uf:GetPart("auras").resolved.enabled, "fixed slots keep their shared aura switch")
+		assert.equals(2, CG.Config:Resolved().panel.spacingX)
+		assert.equals(2, CG.Config:Resolved().panel.spacingY)
+		CG.Config:SetStyle("member", "auras.buffs.enabled", true)
 		assert.is_true(member.uf:GetRow("health"):GetText("left").deferInCombat)
 		local auraButton = member.uf:GetPart("auras").containers.buffs.__state.groups.buffs.frames[1]
 		local clickThrough = false

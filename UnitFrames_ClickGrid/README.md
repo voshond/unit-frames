@@ -66,7 +66,8 @@ client after adding it. For local builds and incremental updates, see the
   combat. With Clique loaded, Clique owns clicks
   and this addon's binding editor does not control live actions.
 - Independent native buff/debuff rows, own-cast/dispel filters, timers,
-  stacks, borders, duration limits and native sorting. The default buff row
+  stacks, borders, duration limits and native sorting. Both rows are off by
+  default, keeping the panel compact (2-pixel gaps); when enabled, the buff row
   shows your own heals over time (`HELPFUL|PLAYER|RAID_IN_COMBAT`) up to two
   minutes long, not long maintenance buffs. A saved filter choice is kept.
 - A centre icon for crowd control, big and external defensives (crowd control

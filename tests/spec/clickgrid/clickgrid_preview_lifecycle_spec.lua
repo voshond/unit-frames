@@ -64,6 +64,7 @@ describe("ClickGrid preview lifecycle", function()
 
 	it("updates samples without a full style application and disables absent live subscriptions", function()
 		local _, CG, wb = Helpers.LoadClickGrid(true)
+		CG.Config:SetStyle("member", "auras.buffs.enabled", true)
 		wb:Open("clickgrid.panel")
 		local cell = wb.handle.cells[2]
 		local applies, apply = 0, cell.member.Apply
