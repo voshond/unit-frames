@@ -84,6 +84,12 @@ end
 
 UF.oUF:AddElement("UFCG_DeathIndicator", UpdateDeath, EnableDeath, DisableDeath)
 
+-- The threat holder carries both presentations; the curve colours whichever is shown.
+local function ColorThreat(threat, r, g, b, a)
+	threat.Highlight:SetVertexColor(r, g, b, a)
+	UF.Glow.SetColor(threat.Glow, r, g, b, a)
+end
+
 local threatCurve
 local function Threat(frame)
 	if not frame.__unit then return end
@@ -96,7 +102,7 @@ local function Threat(frame)
 		threatCurve:AddPoint(2, CreateColor(1, 0.3, 0, 0.8))
 		threatCurve:AddPoint(3, CreateColor(1, 0, 0, 1))
 	end
-	frame.ThreatIndicator:SetVertexColor(threatCurve:Evaluate(status):GetRGBA())
+	ColorThreat(frame.ThreatIndicator, threatCurve:Evaluate(status):GetRGBA())
 	frame.ThreatIndicator:Show()
 end
 
@@ -172,10 +178,13 @@ function Status:OnCreate(button, spec)
 		self[def[1]]:Hide()
 	end
 
-	local threat = overlay:CreateTexture(nil, "OVERLAY")
-	threat:SetTexture([[Interface\RAIDFRAME\UI-RaidFrame-Threat]])
-	threat.Override = Threat
+	local threat = Host(overlay)
 	threat:SetAllPoints(button)
+	threat.Highlight = threat:CreateTexture(nil, "OVERLAY")
+	threat.Highlight:SetTexture([[Interface\RAIDFRAME\UI-RaidFrame-Threat]])
+	threat.Highlight:SetAllPoints()
+	threat.Glow = UF.Glow.Create(threat)
+	threat.Override = Threat
 	threat:Hide()
 	self.ThreatIndicator = threat
 	self.incomingResurrection = false
@@ -254,8 +263,15 @@ function Status:OnApply(cfg)
 		Bind(def[1], cfg[def[2]] and widget or nil)
 		if not cfg[def[2]] then widget:Hide() end
 	end
-	Bind("ThreatIndicator", cfg.threat and UF.Caps.curves and self.ThreatIndicator or nil)
-	if not cfg.threat then self.ThreatIndicator:Hide() end
+	local threat, glow = self.ThreatIndicator, cfg.threatStyle == "glow"
+	threat.Highlight:SetShown(not glow)
+	threat.Glow:SetShown(glow)
+	if glow then
+		local metrics = CG.metrics and CG.metrics.member
+		UF.Glow.Apply(threat.Glow, cfg.threatGlow, metrics and metrics.width, metrics and metrics.height)
+	end
+	Bind("ThreatIndicator", cfg.threat and UF.Caps.curves and threat or nil)
+	if not cfg.threat then threat:Hide() end
 	local private = self.PrivateAuras
 	private.size, private.spacing = cfg.privateSize, 2
 	private:SetSize(3 * (cfg.privateSize + 2), cfg.privateSize)
@@ -320,7 +336,7 @@ function Status:ShowSample(index, ready)
 	self.SummonIndicator:SetAtlas("RaidFrame-Icon-SummonPending")
 	self.SummonIndicator:SetShown(cfg.summon and index == 4)
 	self.PhaseIndicator:Hide()
-	self.ThreatIndicator:SetVertexColor(1, 0, 0, 1)
+	ColorThreat(self.ThreatIndicator, 1, 0, 0, 1)
 	self.ThreatIndicator:SetShown(cfg.threat and index == 1)
 	self.unitFrame:GetDecorations():Reflow()
 end

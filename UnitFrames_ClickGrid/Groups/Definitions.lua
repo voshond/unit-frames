@@ -122,6 +122,12 @@ CG.IndicatorSchema = UF.Schema.Concat(
 	Placed("summon", "Summon", "Summon icon", "TOP", 7, "Shows pending, accepted or declined summons."),
 	{
 		{ key = "threat", type = "toggle", label = "Threat", default = false },
+		{ key = "threatStyle", type = "select", label = "Threat style", default = "highlight",
+			values = { { "highlight", "Cell highlight" }, { "glow", "Soft glow" } },
+			hidden = function(c) return not c.threat end,
+			tooltip = "Cell highlight tints the whole cell with Blizzard's threat artwork. Soft glow draws Blizzard's glow border around the cell instead." },
+		{ key = "threatGlow", type = "group", label = "Threat glow", schema = UF.Glow.schema,
+			hidden = function(c) return not (c.threat and c.threatStyle == "glow") end },
 		{ key = "phase", type = "toggle", label = "Different phase", default = true },
 		{ key = "size", type = "range", label = "Other status icon size", min = 8, max = 32, step = 1, default = 14 },
 		{ key = "private", type = "toggle", label = "Private encounter auras", default = true },

@@ -200,6 +200,43 @@ describe("ClickGrid status indicators", function()
 		UnitThreatSituation = previous
 	end)
 
+	it("switches threat between the cell highlight and a native soft glow #glow", function()
+		local member = CG.headers.party:GetAttribute("child1").Member
+		local status = CG:GetGridButton(member).status
+		local threat = status.ThreatIndicator
+		CG.Config:Set("indicators.threat", true)
+		assert.equals(threat, member.ThreatIndicator)
+		assert.is_true(threat.Highlight:IsShown())
+		assert.is_false(threat.Glow:IsShown())
+
+		CG.Config:Set("indicators.threatStyle", "glow")
+		CG.Config:Set("indicators.threatGlow.opacity", 0.6)
+		assert.equals(threat, member.ThreatIndicator)
+		assert.is_false(threat.Highlight:IsShown())
+		assert.is_true(threat.Glow:IsShown())
+		assert.equals(0.6, threat.Glow:GetAlpha())
+		assert.equals(8, #threat.Glow.textures)
+		assert.equals(16, threat.Glow.TopLeft:GetWidth())
+
+		member.__unit = "raid1"
+		local previous = UnitThreatSituation
+		UnitThreatSituation = function() return Mock.Secret(3) end
+		assert.has_no_error(function() threat.Override(member) end)
+		UnitThreatSituation = previous
+		assert.is_true(threat:IsShown())
+		assert.same(threat.Highlight.__state.vertexColor, threat.Glow.textures[1].__state.vertexColor)
+
+		status:ShowSample(1)
+		for _, texture in ipairs(threat.Glow.textures) do assert.same({ 1, 0, 0, 1 }, texture.__state.vertexColor) end
+		assert.is_true(threat:IsShown())
+		status:ShowSample(2)
+		assert.is_false(threat:IsShown())
+
+		CG.Config:Set("indicators.threat", false)
+		assert.is_nil(member.ThreatIndicator)
+		assert.is_false(threat:IsShown())
+	end)
+
 	it("clears name padding for an unassigned role and restores it on native role updates", function()
 		local frame = CG.headers.party:GetAttribute("child1").Member
 		local role, name = frame.GroupRoleIndicator, frame.uf:GetRow("health"):GetText("left")

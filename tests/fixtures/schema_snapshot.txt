@@ -22988,6 +22988,12 @@ option indicators.summonGap type="range" label="Summon icon gap" default=2 min=0
 option indicators.summonOffsetX type="range" label="Summon icon horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
 option indicators.summonOffsetY type="range" label="Summon icon vertical offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
 option indicators.threat type="toggle" label="Threat" default=false
+option indicators.threatStyle type="select" label="Threat style" default="highlight" values=#9f5fac9f tooltip=#f8aeba30 hidden
+option indicators.threatGlow type="group" label="Threat glow" hidden
+option indicators.threatGlow.size type="range" label="Glow size" default=16 min=4 max=32 step=1 tooltip=#3ba53433
+option indicators.threatGlow.offset type="range" label="Glow spread" default=8 min=0 max=32 step=1 tooltip=#e37f216e
+option indicators.threatGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option indicators.threatGlow.additive type="toggle" label="Additive glow" default=true tooltip=#efc395a3
 option indicators.phase type="toggle" label="Different phase" default=true
 option indicators.size type="range" label="Other status icon size" default=14 min=8 max=32 step=1
 option indicators.private type="toggle" label="Private encounter auras" default=true
@@ -23080,6 +23086,11 @@ default indicators.summonOrder = 7
 default indicators.summonPosition = "TOP"
 default indicators.summonSize = 14
 default indicators.threat = false
+default indicators.threatGlow.additive = true
+default indicators.threatGlow.offset = 8
+default indicators.threatGlow.opacity = 1
+default indicators.threatGlow.size = 16
+default indicators.threatStyle = "highlight"
 default panel.columns = 4
 default panel.enabled = true
 default panel.flow = "down"
@@ -23200,6 +23211,11 @@ resolved indicators.summonOrder = 7
 resolved indicators.summonPosition = "TOP"
 resolved indicators.summonSize = 14
 resolved indicators.threat = false
+resolved indicators.threatGlow.additive = true
+resolved indicators.threatGlow.offset = 8
+resolved indicators.threatGlow.opacity = 1
+resolved indicators.threatGlow.size = 16
+resolved indicators.threatStyle = "highlight"
 resolved panel.columns = 4
 resolved panel.enabled = true
 resolved panel.flow = "down"
