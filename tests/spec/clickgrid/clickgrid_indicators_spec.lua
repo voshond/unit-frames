@@ -240,6 +240,55 @@ describe("ClickGrid status indicators", function()
 		assert.is_false(threat:IsShown())
 	end)
 
+	it("glows the whole cell through a hidden native dispel slot, in native type colours #glow", function()
+		local member = CG.headers.party:GetAttribute("child1").Member
+		local status = CG:GetGridButton(member).status
+		local container = status.dispelContainer
+		local slot = container.__state.slots.dispel.frames[1]
+		local glow = status.dispelGlow
+		assert.is_false(container:IsEnabled())
+		assert.is_nil(member.UFCG_DispelGlow)
+
+		CG.Config:Set("indicators.dispel", true)
+		assert.is_true(container:IsEnabled())
+		assert.equals("HARMFUL|RAID", container.__state.slots.dispel.filter)
+		assert.equals(status, member.UFCG_DispelGlow)
+		member.__unit = "raid3"
+		UF.oUF.elements.UFCG_DispelGlow.update(member)
+		assert.equals("raid3", container:GetUnit())
+
+		-- Owned by the engine-shown slot button, anchored around the whole cell.
+		assert.equals(slot, glow:GetParent())
+		assert.equals(member, select(2, glow:GetPoint(1)))
+		assert.equals(8, #glow.textures)
+		for _, texture in ipairs(glow.textures) do
+			local options = slot.__state.dispelTextures[texture]
+			assert.equals(Enum.CustomAuraButtonDispelTypeTextureStyle.PreserveAsset, options.style)
+			assert.is_false(options.showWithoutDispelType)
+			assert.is_nil(options.customDispelColorCurve, "native colours, not the custom palette")
+			assert.is_nil(options.customDispelColorMap)
+		end
+		slot:MockUpdateDispelTextures("Curse")
+		assert.same({ AuraUtil.GetAuraBorderColor("Curse"):GetRGBA() }, glow.textures[1].__state.vertexColor)
+		assert.is_true(glow.textures[1]:IsShown())
+
+		CG.Config:Set("indicators.dispelFilter", "HARMFUL|RAID_PLAYER_DISPELLABLE")
+		assert.equals("HARMFUL|RAID_PLAYER_DISPELLABLE", container.__state.slots.dispel.filter)
+
+		-- Restyles wait for combat to end, as the slot button is locked while auras are secret.
+		Mock.inCombat = true
+		CG.Config:Set("indicators.dispelGlow.opacity", 0.4)
+		assert.equals(1, glow:GetAlpha())
+		Mock.inCombat = false
+		Mock.FireEvent("PLAYER_REGEN_ENABLED")
+		assert.equals(0.4, glow:GetAlpha())
+
+		CG.Config:Set("indicators.dispel", false)
+		assert.is_false(container:IsEnabled())
+		assert.is_nil(member.UFCG_DispelGlow)
+		assert.equals("raid3", container:GetUnit(), "disabled, never cleared with a nil unit")
+	end)
+
 	it("clears name padding for an unassigned role and restores it on native role updates", function()
 		local frame = CG.headers.party:GetAttribute("child1").Member
 		local role, name = frame.GroupRoleIndicator, frame.uf:GetRow("health"):GetText("left")

@@ -79,7 +79,10 @@ client after adding it. For local builds and incremental updates, see the
 - Role, leader/assistant, ready check, dead/ghost, incoming resurrection,
   summon, phase, optional threat and native private-aura anchors, subject to
   client support. Threat outlines the cell with Blizzard's raid aggro highlight by default; **Threat style >
-  Soft glow** draws Blizzard's glow border around the cell instead. Private auras sit inside the right edge by default
+  Soft glow** draws Blizzard's glow border around the cell instead.
+  **Dispellable debuff glow** lights the whole cell in the debuff type's
+  colour while the member has a debuff you (or anyone in the group) can
+  dispel, gated by a hidden native aura slot so it works in combat. Private auras sit inside the right edge by default
   (**Private aura position**), leaving the centre to crowd control.
 - Ready check bar tints on member bars (**Member bars > Ready check**): grey
   while waiting, then green or red, holding and fading after the check with

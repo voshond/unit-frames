@@ -123,7 +123,7 @@ function Preview:FeedCell(cell, index, live, unit)
 		UF.Units:ShowSample(cell.member, values)
 		cell.slots:SetEnabled(cell.slots.resolved.enabled)
 		cell.slots:ShowSample(values)
-		cell.status:ShowSample(index, self.data.readyCheck == "check")
+		cell.status:ShowSample(index, self.data.readyCheck == "check", values)
 		if CG.metrics.target.shown then
 			cell.target:GetFrame():Show()
 			EnableAuras(cell.target, true)
