@@ -3273,6 +3273,14 @@ option classification.gap type="range" label="Gap to next icon" default=2 min=0 
 option classification.size type="range" label="Size" default=18 min=8 max=64 step=1 tooltip=#d4c36bb1
 option classification.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
 option classification.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
+option restingIcon type="group" label="Resting icon" defaults={}
+option restingIcon.enabled type="toggle" label="Enabled" default=true
+option restingIcon.anchor type="select" label="Anchor" default="TOPLEFT" values=#264ec2f3 tooltip=#62138585
+option restingIcon.order type="range" label="Order" default=3 min=1 max=10 step=1 tooltip=#07604784
+option restingIcon.gap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1
+option restingIcon.size type="range" label="Size" default=20 min=8 max=64 step=1 tooltip=#d4c36bb1
+option restingIcon.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba
+option restingIcon.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e
 option readyCheckIcon type="group" label="Ready check icon" defaults={}
 option readyCheckIcon.enabled type="toggle" label="Enabled" default=true
 option readyCheckIcon.anchor type="select" label="Anchor" default="CENTER" values=#264ec2f3 tooltip=#62138585
@@ -4169,6 +4177,13 @@ default readyCheckIcon.size = 22
 default resting.color = {1,0.88,0.25,1}
 default resting.enabled = true
 default resting.period = 4
+default restingIcon.anchor = "TOPLEFT"
+default restingIcon.enabled = true
+default restingIcon.gap = 2
+default restingIcon.offsetX = 0
+default restingIcon.offsetY = 0
+default restingIcon.order = 3
+default restingIcon.size = 20
 default spacing = 1
 default width = 230
 resolved auraBar.border.background = "None"
@@ -5138,6 +5153,13 @@ resolved readyCheckIcon.size = 22
 resolved resting.color = {1,0.88,0.25,1}
 resolved resting.enabled = true
 resolved resting.period = 4
+resolved restingIcon.anchor = "TOPLEFT"
+resolved restingIcon.enabled = true
+resolved restingIcon.gap = 2
+resolved restingIcon.offsetX = 0
+resolved restingIcon.offsetY = 0
+resolved restingIcon.order = 3
+resolved restingIcon.size = 20
 resolved spacing = 1
 resolved width = 230
 definition auraBar.collapsible = true
@@ -5165,6 +5187,7 @@ definition raidTarget.defaults = {}
 definition readyCheck = true
 definition readyCheckIcon.defaults = {}
 definition resting = true
+definition restingIcon.defaults = {}
 definition rows = {{defaults={height=26},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:class"},left="name",right="health:value"},valueKind="health"}},{defaults={height=12,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}},{defaults={center={size=8},enabled=false,height=10},key="experience",label="Experience",spec={colorInherit="colors.experience",formats={"none","level","resting","xp:current","xp:value","xp:percent","xp:current:percent","xp:value:percent","xp:missing","xp:rested","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.rested",key="rested",label="Rested",mode="append"}},textDefaults={center="xp:value:percent"},valueKind="xp"}}}
 definition width = 230
 ## unit.pet

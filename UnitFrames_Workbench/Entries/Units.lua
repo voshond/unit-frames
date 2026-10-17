@@ -102,6 +102,7 @@ local function RegisterUnit(unit)
 		{ id = "@icons", label = "Icons", paths = { "raidTarget", "pvp", "classification" } },
 		{ id = "@effects", label = "State effects", paths = { "range" } },
 	}
+	if def.restingIcon then table.insert(settingsPages[1].paths, "restingIcon") end
 	local effects = settingsPages[2].paths
 	if def.resting then effects[#effects + 1] = "resting" end
 	effects[#effects + 1] = "readyCheck"
@@ -149,7 +150,7 @@ local function RegisterUnit(unit)
 	}
 	if unit == "player" then
 		schema[#schema + 1] = { key = "resting", type = "toggle", label = "Resting", default = false,
-			tooltip = "Preview the resting border and Resting (zZz) text. Static holds the resting colour; Animated pulses it." }
+			tooltip = "Preview the resting border, resting icon and Resting (zZz) text. Static holds the resting colour; Animated pulses it." }
 		schema[#schema + 1] = Range("xp", "XP %", 42)
 	else
 		schema[#schema + 1] = { key = "npc", type = "toggle", label = "NPC", default = sample.isPlayer == false }
