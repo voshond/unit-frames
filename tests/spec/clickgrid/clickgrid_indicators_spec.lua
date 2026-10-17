@@ -207,6 +207,9 @@ describe("ClickGrid status indicators", function()
 		CG.Config:Set("indicators.threat", true)
 		assert.equals(threat, member.ThreatIndicator)
 		assert.is_true(threat.Highlight:IsShown())
+		-- The whole-frame aggro art, not the 8px threat dot stretched into a diamond.
+		assert.equals("RaidFrame-AgroFrame", threat.Highlight.__state.atlas)
+		assert.is_nil(threat.Highlight:GetTexture())
 		assert.is_false(threat.Glow:IsShown())
 
 		CG.Config:Set("indicators.threatStyle", "glow")

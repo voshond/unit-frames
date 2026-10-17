@@ -23045,7 +23045,7 @@ option indicators.summonGap type="range" label="Summon icon gap" default=2 min=0
 option indicators.summonOffsetX type="range" label="Summon icon horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
 option indicators.summonOffsetY type="range" label="Summon icon vertical offset" default=0 min=-100 max=100 step=1 tooltip=#eb5f914e hidden
 option indicators.threat type="toggle" label="Threat" default=false
-option indicators.threatStyle type="select" label="Threat style" default="highlight" values=#9f5fac9f tooltip=#f8aeba30 hidden
+option indicators.threatStyle type="select" label="Threat style" default="highlight" values=#9f5fac9f tooltip=#d7178133 hidden
 option indicators.threatGlow type="group" label="Threat glow" hidden
 option indicators.threatGlow.size type="range" label="Glow size" default=16 min=4 max=32 step=1 tooltip=#3ba53433
 option indicators.threatGlow.offset type="range" label="Glow spread" default=8 min=0 max=32 step=1 tooltip=#e37f216e

@@ -34,6 +34,10 @@ local PLACED = {
 -- Private aura row offsets from the cell edge it sits on.
 local PRIVATE_INSETS = { RIGHT = { -2, 0 }, LEFT = { 2, 0 }, TOP = { 0, -2 }, BOTTOM = { 0, 2 }, CENTER = { 0, 0 } }
 
+-- Blizzard's compact raid frame aggro highlight, made to cover a whole frame.
+-- (UI-RaidFrame-Threat is an 8px status dot and turns into a diamond when stretched.)
+local THREAT_ATLAS = "RaidFrame-AgroFrame"
+
 -- Spirit healer artwork used by the original resurrection indicator.
 local DEATH_ATLAS = "RaidFrame-Icon-Rez"
 local RESURRECTION_COLOR = CreateColor(0, 1, 0, 1)
@@ -181,7 +185,7 @@ function Status:OnCreate(button, spec)
 	local threat = Host(overlay)
 	threat:SetAllPoints(button)
 	threat.Highlight = threat:CreateTexture(nil, "OVERLAY")
-	threat.Highlight:SetTexture([[Interface\RAIDFRAME\UI-RaidFrame-Threat]])
+	threat.Highlight:SetAtlas(THREAT_ATLAS)
 	threat.Highlight:SetAllPoints()
 	threat.Glow = UF.Glow.Create(threat)
 	threat.Override = Threat

@@ -78,7 +78,7 @@ client after adding it. For local builds and incremental updates, see the
   buff slots, not arbitrary friendly-debuff encounter rules.
 - Role, leader/assistant, ready check, dead/ghost, incoming resurrection,
   summon, phase, optional threat and native private-aura anchors, subject to
-  client support. Threat tints the whole cell by default; **Threat style >
+  client support. Threat outlines the cell with Blizzard's raid aggro highlight by default; **Threat style >
   Soft glow** draws Blizzard's glow border around the cell instead. Private auras sit inside the right edge by default
   (**Private aura position**), leaving the centre to crowd control.
 - Ready check bar tints on member bars (**Member bars > Ready check**): grey

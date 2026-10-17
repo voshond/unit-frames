@@ -125,7 +125,7 @@ CG.IndicatorSchema = UF.Schema.Concat(
 		{ key = "threatStyle", type = "select", label = "Threat style", default = "highlight",
 			values = { { "highlight", "Cell highlight" }, { "glow", "Soft glow" } },
 			hidden = function(c) return not c.threat end,
-			tooltip = "Cell highlight tints the whole cell with Blizzard's threat artwork. Soft glow draws Blizzard's glow border around the cell instead." },
+			tooltip = "Cell highlight outlines the cell with Blizzard's raid frame aggro highlight. Soft glow draws Blizzard's glow border around the cell instead." },
 		{ key = "threatGlow", type = "group", label = "Threat glow", schema = UF.Glow.schema,
 			hidden = function(c) return not (c.threat and c.threatStyle == "glow") end },
 		{ key = "phase", type = "toggle", label = "Different phase", default = true },
