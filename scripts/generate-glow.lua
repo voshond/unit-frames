@@ -3,18 +3,16 @@ local output = arg[1] or "UnitFrames/Media/Glow.tga"
 if output == "--help" then print(usage); return end
 
 local SIZE, MARGIN = 64, 31
+local PEAK, FALLOFF = 0.8, 3
 
-local function Falloff(distance)
-	if distance <= 0 or distance >= MARGIN then return 0 end
-	local t = distance / MARGIN
-	return math.sin(math.pi * t) ^ 2
-end
-
+-- Clear inside the frame; outside, brightest at its edge and fading out.
 local function Alpha(x, y)
 	local cx = math.max(0, MARGIN - x, x - (SIZE - MARGIN))
 	local cy = math.max(0, MARGIN - y, y - (SIZE - MARGIN))
-	local outside = math.sqrt(cx * cx + cy * cy)
-	return math.floor(Falloff(MARGIN - outside) * 255 + 0.5)
+	if cx == 0 and cy == 0 then return 0 end
+	local t = math.sqrt(cx * cx + cy * cy) / MARGIN
+	if t >= 1 then return 0 end
+	return math.floor(PEAK * (1 - t) ^ FALLOFF * 255 + 0.5)
 end
 
 local function UInt16(value)

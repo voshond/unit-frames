@@ -6,7 +6,7 @@ describe("Generated glow artwork #glow", function()
 		return bytes
 	end
 
-	it("matches the generator: a 64x64 32-bit top-left TGA with a clear centre", function()
+	it("matches the generator: a 64x64 32-bit top-left TGA, clear inside and brightest at the inner edge", function()
 		local output = os.tmpname()
 		local chunk = assert(loadfile("scripts/generate-glow.lua"))
 		setfenv(chunk, setmetatable({ arg = { output }, print = function() end }, { __index = _G }))
@@ -22,6 +22,8 @@ describe("Generated glow artwork #glow", function()
 		local function Alpha(x, y) return committed:byte(18 + (y * 64 + x) * 4 + 4) end
 		assert.equals(0, Alpha(32, 32))
 		assert.equals(0, Alpha(0, 0))
-		assert.is_true(Alpha(16, 32) > 200)
+		assert.is_true(Alpha(30, 32) > 150)
+		assert.is_true(Alpha(30, 32) > Alpha(20, 32) and Alpha(20, 32) > Alpha(10, 32))
+		assert.is_true(Alpha(1, 32) < 5)
 	end)
 end)

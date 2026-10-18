@@ -39,10 +39,7 @@ AuraIcon.GLOW_STYLES = { { "halo", "Soft halo" }, { "proc", "Proc flash" } }
 
 -- The proc flash follows the icon size; only the halo has geometry.
 local function IsProc(cfg) return cfg.style == "proc" end
-local glowSchema = Glow.schema
-for _, key in ipairs({ "size", "offset" }) do
-	glowSchema = ns.Schema.Override(glowSchema, key, { hidden = IsProc })
-end
+local glowSchema = ns.Schema.Override(Glow.schema, "size", { hidden = IsProc })
 
 AuraIcon.schema = {
 	{ key = "showDuration", type = "toggle", label = "Show time left", default = true },
@@ -55,12 +52,12 @@ AuraIcon.schema = {
 	{ key = "dispelBorder", type = "toggle", label = "Colour debuff border by type", default = true,
 		tooltip = "Tint the entire icon frame using Debuff border colours. Disable to use Icon frame > Border colour for every icon. Works in combat." },
 	{ key = "dispelColors", type = "group", label = "Debuff border colours", schema = dispelColorSchema },
-	{ key = "dispelGlow", type = "group", label = "Debuff glow", defaults = { size = 10, offset = 6 },
+	{ key = "dispelGlow", type = "group", label = "Debuff glow", defaults = { size = 8 },
 		schema = ns.Schema.Concat({
 			{ key = "enabled", type = "toggle", label = "Glow by debuff type", default = false,
 				tooltip = "A soft glow around debuffs that have a dispel type, in its Debuff border colour. Debuffs without a type stay unlit. Works in combat." },
 			{ key = "style", type = "select", label = "Glow style", values = AuraIcon.GLOW_STYLES, default = "halo",
-				tooltip = "Soft halo: Blizzard's glow border around the icon. Proc flash: Blizzard's animated action button proc glow, tinted by debuff type." },
+				tooltip = "Soft halo: a soft glow just outside the icon. Proc flash: Blizzard's animated action button proc glow, tinted by debuff type." },
 		}, glowSchema) },
 	{ key = "border", type = "group", label = "Icon frame", schema = Backdrop.auraSchema,
 		defaults = { size = 8, inset = 1, padding = 2, background = "None" } },
@@ -293,7 +290,7 @@ function AuraIcon.ApplyDispelGlow(button, cfg, size, dispelColors)
 	if style == "proc" then
 		Glow.ApplyProc(active, glow, size)
 	elseif active then
-		Glow.Apply(active, glow, size, size)
+		Glow.Apply(active, glow)
 	end
 	local state = dispelGlows[button]
 	if not (state or active) then return end

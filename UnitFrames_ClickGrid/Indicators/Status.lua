@@ -280,15 +280,10 @@ function Status:SetDispelUnit(unit)
 	if self.dispelContainer:GetUnit() ~= unit then self.dispelContainer:SetUnit(unit) end
 end
 
-local function DispelBounds()
-	local metrics = CG.metrics and CG.metrics.member
-	return metrics and metrics.width, metrics and metrics.height
-end
-
 -- The live glow descends from a native aura button, which denies addon access
 -- while aura data is secret: restyle it at the next combat end then.
 local function RestyleDispel(status)
-	UF.Glow.Apply(status.dispelGlow, status.resolved.dispelGlow, DispelBounds())
+	UF.Glow.Apply(status.dispelGlow, status.resolved.dispelGlow)
 end
 
 function Status:RestyleDispel()
@@ -359,8 +354,7 @@ local function Apply(self, cfg)
 	threat.Highlight:SetShown(not glow)
 	threat.Glow:SetShown(glow)
 	if glow then
-		local metrics = CG.metrics and CG.metrics.member
-		UF.Glow.Apply(threat.Glow, cfg.threatGlow, metrics and metrics.width, metrics and metrics.height)
+		UF.Glow.Apply(threat.Glow, cfg.threatGlow)
 	end
 	Bind("ThreatIndicator", cfg.threat and UF.Caps.curves and threat or nil)
 	if not cfg.threat then threat:Hide() end
@@ -374,7 +368,7 @@ local function Apply(self, cfg)
 	self.hover:SetColorTexture(UF.Util.UnpackColor(cfg.hoverColor))
 	self:SetHovered(self.hovered)
 	if self.dispelSample then
-		UF.Glow.Apply(self.dispelSample, cfg.dispelGlow, DispelBounds())
+		UF.Glow.Apply(self.dispelSample, cfg.dispelGlow)
 		if not cfg.dispel then self.dispelSample:Hide() end
 	end
 	local private = self.PrivateAuras
@@ -469,7 +463,7 @@ function Status:ShowSample(index, ready, values)
 			self.dispelSample = UF.Glow.Create(self.frame)
 			self.dispelSample:ClearAllPoints()
 			self.dispelSample:SetAllPoints(self.button)
-			UF.Glow.Apply(self.dispelSample, cfg.dispelGlow, DispelBounds())
+			UF.Glow.Apply(self.dispelSample, cfg.dispelGlow)
 		end
 		UF.Glow.SetColor(self.dispelSample, AuraUtil.GetAuraBorderColor(dispel.dispelName):GetRGBA())
 	end

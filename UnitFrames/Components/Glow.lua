@@ -1,10 +1,10 @@
 local _, ns = ...
 
--- A soft halo around a frame: one nine-sliced texture of our own artwork
--- (scripts/generate-glow.lua), drawn additively. Scaling the texture sets the
--- drawn slice (corner and edge) width; its anchor offsets are in the scaled
--- texture's units. No dimensions are read; owners pass known configured
--- sizes to keep the corners from overlapping.
+-- A soft halo just outside a frame: one nine-sliced texture of our own
+-- artwork (scripts/generate-glow.lua), drawn additively, brightest at the
+-- frame's edge. Scaling the texture sets the drawn slice width, the glow's
+-- reach; its anchor offsets are in the scaled texture's units. No dimensions
+-- are read.
 local Glow = {}
 ns.Glow = Glow
 
@@ -13,10 +13,8 @@ local TEXTURE = "Interface\\AddOns\\" .. ns.name .. "\\Media\\Glow"
 local MARGIN = 31
 
 Glow.schema = {
-	{ key = "size", type = "range", label = "Glow size", min = 4, max = 32, step = 1, default = 16,
-		tooltip = "Width of the glow's corners and edges." },
-	{ key = "offset", type = "range", label = "Glow spread", min = 0, max = 32, step = 1, default = 8,
-		tooltip = "How far the glow reaches outside the frame. The rest of its size lies inside." },
+	{ key = "size", type = "range", label = "Glow size", min = 4, max = 32, step = 1, default = 12,
+		tooltip = "How far the glow reaches outside the frame. It never covers the frame itself." },
 	{ key = "opacity", type = "range", label = "Glow opacity", min = 0.1, max = 1, step = 0.05, default = 1 },
 }
 
@@ -34,24 +32,20 @@ function Glow.Create(parent)
 	return holder
 end
 
--- width/height: the holder's known configured size, when the owner has one.
 local applied = setmetatable({}, { __mode = "k" })
 
-function Glow.Apply(holder, cfg, width, height)
-	local offset = math.min(cfg.offset, cfg.size)
-	local size = cfg.size
-	if width and height then size = math.min(size, offset + math.floor(math.min(width, height) / 2)) end
+-- The slices' inner edge meets the holder's edge: in the scaled texture's
+-- units the anchor offset is the margin itself.
+function Glow.Apply(holder, cfg)
 	local previous = applied[holder]
-	if previous and previous.size == size and previous.offset == offset and previous.opacity == cfg.opacity then return end
-	local scale = size / MARGIN
-	local spread = offset / scale
+	if previous and previous.size == cfg.size and previous.opacity == cfg.opacity then return end
 	local halo = holder.Halo
-	halo:SetScale(scale)
+	halo:SetScale(cfg.size / MARGIN)
 	halo:ClearAllPoints()
-	halo:SetPoint("TOPLEFT", holder, "TOPLEFT", -spread, spread)
-	halo:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", spread, -spread)
+	halo:SetPoint("TOPLEFT", holder, "TOPLEFT", -MARGIN, MARGIN)
+	halo:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", MARGIN, -MARGIN)
 	holder:SetAlpha(cfg.opacity)
-	applied[holder] = { size = size, offset = offset, opacity = cfg.opacity }
+	applied[holder] = { size = cfg.size, opacity = cfg.opacity }
 	ns.Perf:Count("glowLayoutWrite")
 end
 

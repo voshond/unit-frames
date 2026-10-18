@@ -91,24 +91,22 @@ describe("Presentation work transactions", function()
 		second:Release()
 	end)
 
-	it("skips unchanged glow geometry but observes mutated settings and known bounds", function()
+	it("skips unchanged glow geometry but observes mutated settings", function()
 		local glow = UF.Glow.Create(UIParent)
 		local function Size() return math.floor(glow.Halo:GetScale() * glow.Halo:GetTextureSliceMargins() + 0.5) end
-		local cfg = { size = 16, offset = 8, opacity = 1 }
-		UF.Glow.Apply(glow, cfg, 30, 30)
+		local cfg = { size = 16, opacity = 1 }
+		UF.Glow.Apply(glow, cfg)
 		local point, writes = glow.Halo.SetPoint, 0
 		glow.Halo.SetPoint = function(self, ...) writes = writes + 1; return point(self, ...) end
 		UF.Glow.SetColor(glow, 0, 1, 0, 1)
-		UF.Glow.Apply(glow, cfg, 30, 30)
+		UF.Glow.Apply(glow, cfg)
 		assert.equals(0, writes)
 		cfg.opacity = 0.5
-		UF.Glow.Apply(glow, cfg, 30, 30)
+		UF.Glow.Apply(glow, cfg)
 		assert.equals(0.5, glow:GetAlpha())
 		assert.equals(2, writes)
-		UF.Glow.Apply(glow, cfg, 6, 6)
-		assert.equals(11, Size())
-		cfg.offset = 4
-		UF.Glow.Apply(glow, cfg, 6, 6)
+		cfg.size = 7
+		UF.Glow.Apply(glow, cfg)
 		assert.equals(7, Size())
 	end)
 

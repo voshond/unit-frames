@@ -220,7 +220,7 @@ describe("ClickGrid status indicators", function()
 		assert.equals(0.6, threat.Glow:GetAlpha())
 		assert.equals(1, #threat.Glow.textures)
 		local halo = threat.Glow.Halo
-		assert.equals(16, math.floor(halo:GetScale() * halo:GetTextureSliceMargins() + 0.5))
+		assert.equals(12, math.floor(halo:GetScale() * halo:GetTextureSliceMargins() + 0.5))
 
 		member.__unit = "raid1"
 		local previous = UnitThreatSituation
