@@ -182,6 +182,10 @@ function Bar:OnCreate(parent, spec)
 	self.tintFill = self.clip:CreateTexture(nil, "BACKGROUND")
 	self.tintFill:SetDesaturated(true)
 	self.tintFill:Hide()
+	-- Covers a dead unit's fill in one uniform colour (ApplyGhost anchors it).
+	self.ghostFill = self.clip:CreateTexture(nil, "BACKGROUND", nil, 1)
+	self.ghostFill:SetDesaturated(true)
+	self.ghostFill:Hide()
 
 	self.segments = {}
 	self.segmentsByKey = {}
@@ -243,7 +247,9 @@ function Bar:OnApply(cfg)
 	self.tintFill:SetTexture(texture)
 	self.tintFill:ClearAllPoints()
 	self.tintFill:SetAllPoints(self.bar:GetStatusBarTexture())
+	self.ghostFill:SetTexture(texture)
 	self:ApplyTint()
+	self:ApplyGhost()
 
 	if cfg.smooth and ns.Caps.smoothBars then
 		self.interpolation = Enum.StatusBarInterpolation.ExponentialEaseOut
@@ -466,6 +472,39 @@ function Bar:SegmentColor(color)
 	end
 	local t = tint[4]
 	return r + (tint[1] - r) * t, g + (tint[2] - g) * t, b + (tint[3] - b) * t, a
+end
+
+-- Opaque greyscale paint over the fill of a dead unit's bar, so the data
+-- colour no longer shows through, blended from white towards the plain colour
+-- at `amount` (0..1, default 1). `wholeBar` paints the bar's whole length
+-- instead (health: a StatusBar still draws a sliver at its minimum). nil
+-- shows the fill again. It survives re-styling until removed.
+function Bar:SetGhost(r, g, b, amount, wholeBar)
+	if r == nil then
+		self.ghost = nil
+	else
+		self.ghostStorage = self.ghostStorage or {}
+		self.ghost = self.ghostStorage
+		self.ghost[1], self.ghost[2], self.ghost[3], self.ghost[4] = r, g, b, math.min(amount or 1, 1)
+		self.ghost.wholeBar = wholeBar == true
+	end
+	self:ApplyGhost()
+end
+
+function Bar:ApplyGhost()
+	local ghost = self.ghost
+	self.ghostFill:SetShown(ghost ~= nil)
+	if not ghost then return end
+	self.ghostFill:ClearAllPoints()
+	self.ghostFill:SetAllPoints(ghost.wholeBar and self.bar or self.bar:GetStatusBarTexture())
+	local t = ghost[4]
+	self.ghostFill:SetVertexColor(1 + (ghost[1] - 1) * t, 1 + (ghost[2] - 1) * t, 1 + (ghost[3] - 1) * t, 1)
+end
+
+function Bar:GetGhost()
+	if self.ghost then
+		return unpack(self.ghost, 1, 4)
+	end
 end
 
 function Bar:GetTint()

@@ -2285,6 +2285,14 @@ option readyCheck.readyColor type="color" label="Ready colour" default={0.15,0.8
 option readyCheck.notReadyColor type="color" label="Not ready colour" default={0.85,0.12,0.12,1}
 option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#01273847
 option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
+option dead type="group" label="Dead & ghost"
+option dead.enabled type="toggle" label="Enabled" default=true tooltip=#7d266208
+option dead.color type="color" label="Ghost colour" default={0.6,0.72,0.82,1} hidden
+option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#6ec08a5c hidden
+option dead.bars type="toggle" label="Bars" default=true hidden
+option dead.portrait type="toggle" label="Portrait" default=true hidden
+option dead.border type="toggle" label="Border" default=true hidden
+option dead.texts type="toggle" label="Texts" default=true hidden
 option portrait type="group" label="Portrait" defaults={enabled=true}
 option portrait.enabled type="toggle" label="Enabled" default=true
 option portrait.position type="select" label="Side" default="LEFT" values=#11c04b33
@@ -3635,6 +3643,13 @@ default comboPoints.enabled = false
 default comboPoints.height = 8
 default comboPoints.position = "power"
 default comboPoints.spacing = 2
+default dead.bars = true
+default dead.border = true
+default dead.color = {0.6,0.72,0.82,1}
+default dead.enabled = true
+default dead.portrait = true
+default dead.strength = 0.85
+default dead.texts = true
 default experience.bar.background.alpha = 0.25
 default experience.bar.background.color = {0,0,0,0.5}
 default experience.bar.background.enabled = true
@@ -4558,6 +4573,13 @@ resolved comboPoints.height = 8
 resolved comboPoints.position = "power"
 resolved comboPoints.spacing = 2
 resolved comboPoints.texture = "Blizzard Raid Bar"
+resolved dead.bars = true
+resolved dead.border = true
+resolved dead.color = {0.6,0.72,0.82,1}
+resolved dead.enabled = true
+resolved dead.portrait = true
+resolved dead.strength = 0.85
+resolved dead.texts = true
 resolved experience.bar.background.alpha = 0.25
 resolved experience.bar.background.color = {0,0,0,0.5}
 resolved experience.bar.background.enabled = true
@@ -5320,6 +5342,14 @@ option readyCheck.readyColor type="color" label="Ready colour" default={0.15,0.8
 option readyCheck.notReadyColor type="color" label="Not ready colour" default={0.85,0.12,0.12,1}
 option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#01273847
 option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
+option dead type="group" label="Dead & ghost"
+option dead.enabled type="toggle" label="Enabled" default=true tooltip=#7d266208
+option dead.color type="color" label="Ghost colour" default={0.6,0.72,0.82,1} hidden
+option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#6ec08a5c hidden
+option dead.bars type="toggle" label="Bars" default=true hidden
+option dead.portrait type="toggle" label="Portrait" default=true hidden
+option dead.border type="toggle" label="Border" default=true hidden
+option dead.texts type="toggle" label="Texts" default=true hidden
 option portrait type="group" label="Portrait" defaults={enabled=false}
 option portrait.enabled type="toggle" label="Enabled" default=true
 option portrait.position type="select" label="Side" default="LEFT" values=#11c04b33
@@ -6344,6 +6374,13 @@ default classification.offsetX = 0
 default classification.offsetY = 0
 default classification.order = 1
 default classification.size = 18
+default dead.bars = true
+default dead.border = true
+default dead.color = {0.6,0.72,0.82,1}
+default dead.enabled = true
+default dead.portrait = true
+default dead.strength = 0.85
+default dead.texts = true
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -7035,6 +7072,13 @@ resolved classification.offsetX = 0
 resolved classification.offsetY = 0
 resolved classification.order = 1
 resolved classification.size = 18
+resolved dead.bars = true
+resolved dead.border = true
+resolved dead.color = {0.6,0.72,0.82,1}
+resolved dead.enabled = true
+resolved dead.portrait = true
+resolved dead.strength = 0.85
+resolved dead.texts = true
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -7600,6 +7644,14 @@ option readyCheck.readyColor type="color" label="Ready colour" default={0.15,0.8
 option readyCheck.notReadyColor type="color" label="Not ready colour" default={0.85,0.12,0.12,1}
 option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#01273847
 option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
+option dead type="group" label="Dead & ghost"
+option dead.enabled type="toggle" label="Enabled" default=true tooltip=#7d266208
+option dead.color type="color" label="Ghost colour" default={0.6,0.72,0.82,1} hidden
+option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#6ec08a5c hidden
+option dead.bars type="toggle" label="Bars" default=true hidden
+option dead.portrait type="toggle" label="Portrait" default=true hidden
+option dead.border type="toggle" label="Border" default=true hidden
+option dead.texts type="toggle" label="Texts" default=true hidden
 option portrait type="group" label="Portrait" defaults={enabled=true,position="RIGHT"}
 option portrait.enabled type="toggle" label="Enabled" default=true
 option portrait.position type="select" label="Side" default="LEFT" values=#11c04b33
@@ -8678,6 +8730,13 @@ default comboPoints.enabled = true
 default comboPoints.height = 8
 default comboPoints.position = "power"
 default comboPoints.spacing = 2
+default dead.bars = true
+default dead.border = true
+default dead.color = {0.6,0.72,0.82,1}
+default dead.enabled = true
+default dead.portrait = true
+default dead.strength = 0.85
+default dead.texts = true
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -9395,6 +9454,13 @@ resolved comboPoints.height = 8
 resolved comboPoints.position = "power"
 resolved comboPoints.spacing = 2
 resolved comboPoints.texture = "Blizzard Raid Bar"
+resolved dead.bars = true
+resolved dead.border = true
+resolved dead.color = {0.6,0.72,0.82,1}
+resolved dead.enabled = true
+resolved dead.portrait = true
+resolved dead.strength = 0.85
+resolved dead.texts = true
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -9951,6 +10017,14 @@ option readyCheck.readyColor type="color" label="Ready colour" default={0.15,0.8
 option readyCheck.notReadyColor type="color" label="Not ready colour" default={0.85,0.12,0.12,1}
 option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#01273847
 option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
+option dead type="group" label="Dead & ghost"
+option dead.enabled type="toggle" label="Enabled" default=true tooltip=#7d266208
+option dead.color type="color" label="Ghost colour" default={0.6,0.72,0.82,1} hidden
+option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#6ec08a5c hidden
+option dead.bars type="toggle" label="Bars" default=true hidden
+option dead.portrait type="toggle" label="Portrait" default=true hidden
+option dead.border type="toggle" label="Border" default=true hidden
+option dead.texts type="toggle" label="Texts" default=true hidden
 option portrait type="group" label="Portrait" defaults={enabled=false}
 option portrait.enabled type="toggle" label="Enabled" default=true
 option portrait.position type="select" label="Side" default="LEFT" values=#11c04b33
@@ -10975,6 +11049,13 @@ default classification.offsetX = 0
 default classification.offsetY = 0
 default classification.order = 1
 default classification.size = 18
+default dead.bars = true
+default dead.border = true
+default dead.color = {0.6,0.72,0.82,1}
+default dead.enabled = true
+default dead.portrait = true
+default dead.strength = 0.85
+default dead.texts = true
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -11666,6 +11747,13 @@ resolved classification.offsetX = 0
 resolved classification.offsetY = 0
 resolved classification.order = 1
 resolved classification.size = 18
+resolved dead.bars = true
+resolved dead.border = true
+resolved dead.color = {0.6,0.72,0.82,1}
+resolved dead.enabled = true
+resolved dead.portrait = true
+resolved dead.strength = 0.85
+resolved dead.texts = true
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -12223,6 +12311,14 @@ option readyCheck.readyColor type="color" label="Ready colour" default={0.15,0.8
 option readyCheck.notReadyColor type="color" label="Not ready colour" default={0.85,0.12,0.12,1}
 option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#01273847
 option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
+option dead type="group" label="Dead & ghost"
+option dead.enabled type="toggle" label="Enabled" default=true tooltip=#7d266208
+option dead.color type="color" label="Ghost colour" default={0.6,0.72,0.82,1} hidden
+option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#6ec08a5c hidden
+option dead.bars type="toggle" label="Bars" default=true hidden
+option dead.portrait type="toggle" label="Portrait" default=true hidden
+option dead.border type="toggle" label="Border" default=true hidden
+option dead.texts type="toggle" label="Texts" default=true hidden
 option portrait type="group" label="Portrait" defaults={enabled=false}
 option portrait.enabled type="toggle" label="Enabled" default=true
 option portrait.position type="select" label="Side" default="LEFT" values=#11c04b33
@@ -13247,6 +13343,13 @@ default classification.offsetX = 0
 default classification.offsetY = 0
 default classification.order = 1
 default classification.size = 18
+default dead.bars = true
+default dead.border = true
+default dead.color = {0.6,0.72,0.82,1}
+default dead.enabled = true
+default dead.portrait = true
+default dead.strength = 0.85
+default dead.texts = true
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -13936,6 +14039,13 @@ resolved classification.offsetX = 0
 resolved classification.offsetY = 0
 resolved classification.order = 1
 resolved classification.size = 18
+resolved dead.bars = true
+resolved dead.border = true
+resolved dead.color = {0.6,0.72,0.82,1}
+resolved dead.enabled = true
+resolved dead.portrait = true
+resolved dead.strength = 0.85
+resolved dead.texts = true
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -14485,6 +14595,14 @@ option readyCheck.readyColor type="color" label="Ready colour" default={0.15,0.8
 option readyCheck.notReadyColor type="color" label="Not ready colour" default={0.85,0.12,0.12,1}
 option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#01273847
 option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
+option dead type="group" label="Dead & ghost"
+option dead.enabled type="toggle" label="Enabled" default=true tooltip=#7d266208
+option dead.color type="color" label="Ghost colour" default={0.6,0.72,0.82,1} hidden
+option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#6ec08a5c hidden
+option dead.bars type="toggle" label="Bars" default=true hidden
+option dead.portrait type="toggle" label="Portrait" default=true hidden
+option dead.border type="toggle" label="Border" default=true hidden
+option dead.texts type="toggle" label="Texts" default=true hidden
 option portrait type="group" label="Portrait" defaults={enabled=false}
 option portrait.enabled type="toggle" label="Enabled" default=true
 option portrait.position type="select" label="Side" default="LEFT" values=#11c04b33
@@ -15509,6 +15627,13 @@ default classification.offsetX = 0
 default classification.offsetY = 0
 default classification.order = 1
 default classification.size = 18
+default dead.bars = true
+default dead.border = true
+default dead.color = {0.6,0.72,0.82,1}
+default dead.enabled = true
+default dead.portrait = true
+default dead.strength = 0.85
+default dead.texts = true
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -16200,6 +16325,13 @@ resolved classification.offsetX = 0
 resolved classification.offsetY = 0
 resolved classification.order = 1
 resolved classification.size = 18
+resolved dead.bars = true
+resolved dead.border = true
+resolved dead.color = {0.6,0.72,0.82,1}
+resolved dead.enabled = true
+resolved dead.portrait = true
+resolved dead.strength = 0.85
+resolved dead.texts = true
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -18680,6 +18812,14 @@ option readyCheck.readyColor type="color" label="Ready colour" default={0.15,0.8
 option readyCheck.notReadyColor type="color" label="Not ready colour" default={0.85,0.12,0.12,1}
 option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#01273847
 option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
+option dead type="group" label="Dead & ghost"
+option dead.enabled type="toggle" label="Enabled" default=true tooltip=#7d266208
+option dead.color type="color" label="Ghost colour" default={0.6,0.72,0.82,1} hidden
+option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#6ec08a5c hidden
+option dead.bars type="toggle" label="Bars" default=true hidden
+option dead.portrait type="toggle" label="Portrait" default=true hidden
+option dead.border type="toggle" label="Border" default=true hidden
+option dead.texts type="toggle" label="Texts" default=true hidden
 option portrait type="group" label="Portrait" defaults={enabled=false}
 option portrait.enabled type="toggle" label="Enabled" default=true
 option portrait.position type="select" label="Side" default="LEFT" values=#11c04b33
@@ -19672,6 +19812,13 @@ default categoryAuras.showDuration = true
 default categoryAuras.showSwipeEdge = true
 default categoryAuras.size = 18
 default categoryAuras.swipe = "normal"
+default dead.bars = true
+default dead.border = true
+default dead.color = {0.6,0.72,0.82,1}
+default dead.enabled = true
+default dead.portrait = true
+default dead.strength = 0.85
+default dead.texts = true
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -20341,6 +20488,13 @@ resolved categoryAuras.showDuration = true
 resolved categoryAuras.showSwipeEdge = true
 resolved categoryAuras.size = 18
 resolved categoryAuras.swipe = "normal"
+resolved dead.bars = true
+resolved dead.border = true
+resolved dead.color = {0.6,0.72,0.82,1}
+resolved dead.enabled = true
+resolved dead.portrait = true
+resolved dead.strength = 0.85
+resolved dead.texts = true
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -20896,6 +21050,14 @@ option range.enabled type="toggle" label="Enabled" default=false
 option range.outsideAlpha type="range" label="Out-of-range opacity" default=0.55 min=0 max=1 step=0.05 tooltip=#31bd172e
 option range.mode type="select" label="Range check" default="group" values=#b1e9e395 tooltip=#2c964cf0
 option range.spell type="text" label="Spell ID or name" default="" tooltip=#a735d466 hidden
+option dead type="group" label="Dead & ghost"
+option dead.enabled type="toggle" label="Enabled" default=true tooltip=#7d266208
+option dead.color type="color" label="Ghost colour" default={0.6,0.72,0.82,1} hidden
+option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#6ec08a5c hidden
+option dead.bars type="toggle" label="Bars" default=true hidden
+option dead.portrait type="toggle" label="Portrait" default=true hidden
+option dead.border type="toggle" label="Border" default=true hidden
+option dead.texts type="toggle" label="Texts" default=true hidden
 option portrait type="group" label="Portrait" defaults={enabled=false}
 option portrait.enabled type="toggle" label="Enabled" default=true
 option portrait.position type="select" label="Side" default="LEFT" values=#11c04b33
@@ -21888,6 +22050,13 @@ default categoryAuras.showDuration = true
 default categoryAuras.showSwipeEdge = true
 default categoryAuras.size = 22
 default categoryAuras.swipe = "normal"
+default dead.bars = true
+default dead.border = true
+default dead.color = {0.6,0.72,0.82,1}
+default dead.enabled = true
+default dead.portrait = true
+default dead.strength = 0.85
+default dead.texts = true
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -22552,6 +22721,13 @@ resolved categoryAuras.showDuration = true
 resolved categoryAuras.showSwipeEdge = true
 resolved categoryAuras.size = 22
 resolved categoryAuras.swipe = "normal"
+resolved dead.bars = true
+resolved dead.border = true
+resolved dead.color = {0.6,0.72,0.82,1}
+resolved dead.enabled = true
+resolved dead.portrait = true
+resolved dead.strength = 0.85
+resolved dead.texts = true
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true

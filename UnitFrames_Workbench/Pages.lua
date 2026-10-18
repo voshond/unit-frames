@@ -9,7 +9,7 @@ local FEATURES = {
 	{ "states", "Indicators & states" }, { "comboPoints", "Combo points" }, { "experience", "Experience" },
 }
 local AURAS = { auras = "External icons", auraBar = "Embedded row", categoryAuras = "Priority icons", slots = "Tracked friendly buffs", privateAuras = "Private auras" }
-local STATES = { range = true, resting = true, restingIcon = true, readyCheck = true, readyCheckIcon = true,
+local STATES = { range = true, dead = true, resting = true, restingIcon = true, readyCheck = true, readyCheckIcon = true,
 	raidTarget = true, pvp = true, classification = true, indicators = true }
 local LABELS = { spark = "Fill-edge highlight", range = "Fade out-of-range frames", segments = "Shields and healing overlays",
 	castbar = "Cast bar", copyPlayerSettings = "Copy player style" }
@@ -64,7 +64,7 @@ local function Location(entry, path)
 	end
 	if STATES[root] then
 		local section = root == "readyCheckIcon" and "readyCheck" or root == "restingIcon" and "resting" or root
-		local names = { readyCheck = "Ready check tints & icon", resting = "Resting border & icon", raidTarget = "Raid marker", pvp = "PvP flag", classification = "Elite & rare" }
+		local names = { dead = "Dead & ghost", readyCheck = "Ready check tints & icon", resting = "Resting border & icon", raidTarget = "Raid marker", pvp = "PvP flag", classification = "Elite & rare" }
 		return "states", "Indicators & states", section, names[section] or LABELS[section] or section
 	end
 	for _, feature in ipairs(FEATURES) do

@@ -56,6 +56,7 @@ spec:
 Access: GetRow(key) and GetPart(key) return a row's TextBar or a present
 part's component; Rows() and Parts() iterate them with their resolved config.
 GetReadyCheck() returns the ReadyCheck presenter when the spec offers one.
+SetDead(dead) shows the dead/ghost look (bars, portrait, border, texts).
 ]]
 local UnitFrame = ns.Component:Extend("UnitFrame")
 
@@ -228,10 +229,8 @@ function UnitFrame:OnCreate(parent, spec)
 	end
 	if spec.readyCheck then
 		self.readyCheck = ns.ReadyCheck:New(self.frame, function(color, amount)
-			for _, row in ipairs(self.rows) do
-				if color then row.component:SetTint(color[1], color[2], color[3], amount)
-				else row.component:SetTint(nil) end
-			end
+			self.readyTint, self.readyTintAmount = color, amount
+			self:ApplyRowTints()
 		end)
 		self.readyCheck:Attach(self.partsByKey.readyCheckIcon)
 	end
@@ -249,6 +248,20 @@ function UnitFrame.RowSpec(spec, def)
 	end
 	return rowSpec
 end
+
+local function DeadOff(cfg) return not cfg.enabled end
+
+UnitFrame.DEAD_SCHEMA = {
+	{ key = "enabled", type = "toggle", label = "Enabled", default = true,
+		tooltip = "While the unit is dead or a ghost, turn this frame greyscale and tint it with the ghost colour. The health bar shows the ghost colour across its whole length instead of an empty or 1 health fill." },
+	{ key = "color", type = "color", label = "Ghost colour", default = { 0.6, 0.72, 0.82, 1 }, hidden = DeadOff },
+	{ key = "strength", type = "range", label = "Strength", min = 0, max = 1, step = 0.05, default = 0.85, hidden = DeadOff,
+		tooltip = "How far bars, portrait artwork, border and texts blend towards the ghost colour. 3D portraits only turn greyscale." },
+	{ key = "bars", type = "toggle", label = "Bars", default = true, hidden = DeadOff },
+	{ key = "portrait", type = "toggle", label = "Portrait", default = true, hidden = DeadOff },
+	{ key = "border", type = "toggle", label = "Border", default = true, hidden = DeadOff },
+	{ key = "texts", type = "toggle", label = "Texts", default = true, hidden = DeadOff },
+}
 
 function UnitFrame.BuildSchema(spec)
 	local schema = {
@@ -279,6 +292,7 @@ function UnitFrame.BuildSchema(spec)
 	if spec.readyCheck then
 		schema[#schema + 1] = { key = "readyCheck", type = "group", label = "Ready check", schema = ns.ReadyCheck.schema }
 	end
+	schema[#schema + 1] = { key = "dead", type = "group", label = "Dead & ghost", schema = UnitFrame.DEAD_SCHEMA }
 	local function AddParts(beforeRows)
 		for _, part in ipairs(UnitFrame.PARTS) do
 			local partSpec = spec[part.key]
@@ -312,8 +326,71 @@ function UnitFrame:OnApply(cfg)
 	end
 	self:Layout()
 	self:ApplyRangeOpacity()
-	self:ApplyRestingBorder()
+	self:ApplyDead()
 	if self.readyCheck then self.readyCheck:Apply(cfg.readyCheck) end
+end
+
+-- The dead look's colour and strength for `target` ("bars", "portrait",
+-- "border", "texts"), or nil while it does not apply.
+function UnitFrame:DeadTint(target)
+	local cfg = self.resolved.dead
+	if not (self.dead and cfg.enabled and cfg[target]) then return nil end
+	return cfg.color, cfg.strength
+end
+
+-- Dead plain state only; an opaque state counts as alive.
+function UnitFrame:SetDead(dead)
+	dead = dead == true
+	if self.dead == dead then return end
+	self.dead = dead
+	self:ApplyDead()
+end
+
+function UnitFrame:IsDead()
+	return self.dead == true
+end
+
+function UnitFrame:ApplyDead()
+	self:ApplyRowTints()
+	local barColor, barStrength = self:DeadTint("bars")
+	for _, row in ipairs(self.rows) do
+		local bar = row.component:GetBar()
+		if barColor then bar:SetGhost(barColor[1], barColor[2], barColor[3], barStrength, row.def.key == "health")
+		else bar:SetGhost(nil) end
+	end
+	local portrait = self.partsByKey.portrait
+	if portrait then
+		local color, strength = self:DeadTint("portrait")
+		if color then portrait:SetGhost(color[1], color[2], color[3], strength) else portrait:SetGhost(nil) end
+	end
+	local textColor, textStrength = self:DeadTint("texts")
+	for _, row in ipairs(self.rows) do
+		for _, text in pairs(row.component.texts) do
+			if textColor then text:SetTint(textColor[1], textColor[2], textColor[3], textStrength)
+			else text:SetTint(nil) end
+		end
+	end
+	self:ApplyRestingBorder()
+end
+
+-- Bars blend the dead tint and a ready check tint; the check draws over it.
+function UnitFrame:ApplyRowTints()
+	local dead, strength = self:DeadTint("bars")
+	local ready, amount = self.readyTint, self.readyTintAmount or 0
+	local r, g, b, t
+	if ready and dead then
+		r = dead[1] + (ready[1] - dead[1]) * amount
+		g = dead[2] + (ready[2] - dead[2]) * amount
+		b = dead[3] + (ready[3] - dead[3]) * amount
+		t = strength + (1 - strength) * amount
+	elseif ready then
+		r, g, b, t = ready[1], ready[2], ready[3], amount
+	elseif dead then
+		r, g, b, t = dead[1], dead[2], dead[3], strength
+	end
+	for _, row in ipairs(self.rows) do
+		row.component:SetTint(r, g, b, t)
+	end
 end
 
 -- Resting is a plain player state (IsResting), never opaque unit data.
@@ -323,13 +400,22 @@ local function PulseRestingBorder(_, elapsed, component)
 	component:ColorRestingBorder(0.5 - 0.5 * math.cos(component.restingElapsed * 2 * math.pi / component.resolved.resting.period))
 end
 
+-- The configured border colour, blended towards the dead tint.
+function UnitFrame:BorderColor()
+	local r, g, b, a = ns.Util.UnpackColor(self.resolved.border.color)
+	local dead, t = self:DeadTint("border")
+	if not dead then return r, g, b, a end
+	return r + (dead[1] - r) * t, g + (dead[2] - g) * t, b + (dead[3] - b) * t, a
+end
+
 function UnitFrame:ColorRestingBorder(amount)
-	local base, tint = self.resolved.border.color, self.resolved.resting.color
+	local tint = self.resolved.resting.color
+	local r, g, b, a = self:BorderColor()
 	Backdrop.SetBorderColor(self.border,
-		base[1] * (1 - amount) + tint[1] * amount,
-		base[2] * (1 - amount) + tint[2] * amount,
-		base[3] * (1 - amount) + tint[3] * amount,
-		(base[4] or 1) * (1 - amount) + (tint[4] or 1) * amount)
+		r * (1 - amount) + tint[1] * amount,
+		g * (1 - amount) + tint[2] * amount,
+		b * (1 - amount) + tint[3] * amount,
+		a * (1 - amount) + (tint[4] or 1) * amount)
 end
 
 function UnitFrame:ApplyRestingBorder()
@@ -345,7 +431,7 @@ function UnitFrame:ApplyRestingBorder()
 		end
 	else
 		self.restingElapsed = 0
-		Backdrop.SetBorderColor(self.border, ns.Util.UnpackColor(cfg.border.color))
+		Backdrop.SetBorderColor(self.border, self:BorderColor())
 	end
 end
 

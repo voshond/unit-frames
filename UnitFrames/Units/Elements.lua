@@ -103,6 +103,42 @@ end
 
 oUF:AddElement("UF_Resting", UpdateResting, EnableResting, DisableResting)
 
+--[[
+UF_Dead: the dead/ghost look (frame.UF_Dead = UnitFrame), read by
+Drivers.DeadState. Releasing changes health before the ghost state, so the
+player's death events and unit flags redraw it too.
+]]
+local DEAD_UNIT_EVENTS = { "UNIT_HEALTH", "UNIT_FLAGS", "UNIT_CONNECTION" }
+local DEAD_PLAYER_EVENTS = { "PLAYER_DEAD", "PLAYER_ALIVE", "PLAYER_UNGHOST" }
+
+local function UpdateDead(self, _, unit)
+	if unit and unit ~= self.__unit then return end
+	self.UF_Dead:SetDead(Drivers.DeadState(self.__unit))
+end
+
+local function EnableDead(self)
+	if not self.UF_Dead then return end
+	for _, event in ipairs(DEAD_UNIT_EVENTS) do
+		self:RegisterEvent(event, UpdateDead)
+	end
+	for _, event in ipairs(DEAD_PLAYER_EVENTS) do
+		self:RegisterEvent(event, UpdateDead, true)
+	end
+	return true
+end
+
+local function DisableDead(self)
+	for _, event in ipairs(DEAD_UNIT_EVENTS) do
+		self:UnregisterEvent(event, UpdateDead)
+	end
+	for _, event in ipairs(DEAD_PLAYER_EVENTS) do
+		self:UnregisterEvent(event, UpdateDead)
+	end
+	if self.UF_Dead then self.UF_Dead:SetDead(false) end
+end
+
+oUF:AddElement("UF_Dead", UpdateDead, EnableDead, DisableDead)
+
 -- UF_Classification: the elite/rare/boss icon (frame.UF_Classification =
 -- Classification component), read by Drivers.Classification.
 local function UpdateClassification(self, _, unit)

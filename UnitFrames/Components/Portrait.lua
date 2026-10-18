@@ -72,8 +72,8 @@ function Portrait:Prepare(mode)
 		if self.model then return end
 		self.model = CreateFrame("PlayerModel", nil, self.frame)
 		-- oUF can replace the model on unit/visibility changes; restore its material
-		-- opacity after that update as well as when our host opacity changes.
-		self.model.PostUpdate = function() self:SyncAlpha() end
+		-- opacity and desaturation after that update as well as when our host opacity changes.
+		self.model.PostUpdate = function() self:SyncAlpha(); self:ApplyGhost() end
 	else
 		if self.texture then return end
 		-- 2D/class artwork clips to this viewport, not the root, so borders,
@@ -98,7 +98,7 @@ function Portrait:OnApply(cfg)
 	local is3D = cfg.mode == "3D"
 	if self.model then self.model:SetShown(is3D) end
 	if self.texture then self.texture:SetShown(not is3D) end
-	if not self.texture then self:SyncAlpha(); return end
+	if not self.texture then self:SyncAlpha(); self:ApplyGhost(); return end
 	-- oUF's Portrait element shows the class icon on textures with showClass.
 	self.texture.showClass = cfg.mode == "class"
 	-- Leaving 2D drops its crop once; the next artwork (atlas) brings its own
@@ -128,6 +128,33 @@ function Portrait:PresentArtwork()
 		self.texture:SetTexCoord(unpack(PORTRAIT_CROP))
 	end
 	self:LayoutArtwork()
+	self:ApplyGhost()
+end
+
+-- A dead unit's artwork: greyscale, 2D/class artwork also blended towards the
+-- plain colour at `amount`; nil restores it. Models only desaturate.
+function Portrait:SetGhost(r, g, b, amount)
+	if r == nil then
+		self.ghost = nil
+	else
+		self.ghostStorage = self.ghostStorage or {}
+		self.ghost = self.ghostStorage
+		self.ghost[1], self.ghost[2], self.ghost[3], self.ghost[4] = r, g, b, math.min(amount or 1, 1)
+	end
+	self:ApplyGhost()
+end
+
+function Portrait:ApplyGhost()
+	local ghost = self.ghost
+	if self.model then self.model:SetDesaturation(ghost and ghost[4] or 0) end
+	if not self.texture then return end
+	self.texture:SetDesaturated(ghost ~= nil)
+	if ghost then
+		local t = ghost[4]
+		self.texture:SetVertexColor(1 + (ghost[1] - 1) * t, 1 + (ghost[2] - 1) * t, 1 + (ghost[3] - 1) * t, 1)
+	else
+		self.texture:SetVertexColor(1, 1, 1, 1)
+	end
 end
 
 function Portrait:LayoutArtwork()

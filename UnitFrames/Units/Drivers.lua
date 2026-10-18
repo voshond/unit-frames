@@ -69,6 +69,15 @@ function Drivers.ComboPoints(unit)
 	return GetComboPoints("player", unit == "player" and "target" or unit), max
 end
 
+-- Whether the unit is dead or a ghost. The result is plain; an opaque one
+-- counts as alive, like ClickGrid's death indicator.
+function Drivers.DeadState(unit)
+	if not unit or not UnitExists(unit) then return false end
+	local dead = UnitIsDeadOrGhost(unit)
+	if issecretvalue(dead) then return false end
+	return dead == true
+end
+
 -- Whole-frame state ------------------------------------------------------------
 
 Drivers.frame = {
@@ -91,6 +100,10 @@ Drivers.frame = {
 		-- A check is event-driven: it starts, collects answers and fades after
 		-- it finishes. Only oUF frames follow one.
 		live = false },
+	{ key = "dead", element = "UF_Dead",
+		bind = function(uf) return uf.resolved.dead.enabled and uf or nil end,
+		sample = function(uf, v) uf:SetDead(v.status == "dead") end,
+		live = function(uf, unit) uf:SetDead(Drivers.DeadState(unit)) end },
 	-- The spell check is read when the element is enabled (events or polling).
 	{ key = "range", element = "UF_Range",
 		bind = function(uf)

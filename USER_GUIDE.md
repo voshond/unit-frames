@@ -84,6 +84,18 @@ the same way (**Indicators & states > Ready check tints & icon — Member style*
 which holds and fades with the tints; its **Preview only > Ready check**
 shows a sample check with mixed answers.
 
+While a unit is dead or a ghost, its frame takes on a ghostly look, enabled by
+default under **Indicators & states > Dead & ghost**. Bars, 2D and class
+portraits, the border and texts turn greyscale and blend towards the blue-grey
+**Ghost colour** at the configured **Strength**; 3D portraits only turn
+greyscale. Bar fills are painted in one uniform ghost colour, so class and
+power colours no longer show through; the health bar shows it across its
+whole length instead of an empty or 1 health fill. Each of the four targets has its own
+toggle. A ready check tint draws over the look and fades back to it, and
+ClickGrid's green resurrection text still shows on top. **Preview only >
+Offline / dead > Dead** previews it; the ClickGrid preview shows members 3 and 5
+dead.
+
 ## ClickGrid
 
 **UnitFrames ClickGrid** is an optional companion for party/raid healing.
