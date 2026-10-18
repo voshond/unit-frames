@@ -386,6 +386,42 @@ describe("ClickGrid companion", function()
 		CG.Refresh = refresh
 	end)
 
+	it("writes only set bindings and existing removals on a frame's first apply #bindings", function()
+		local frame = CreateFrame("Button", nil, UIParent, "SecureUnitButtonTemplate")
+		frame:SetAttribute("*type1", "target")
+		frame:SetAttribute("shift-macro3", 7)
+		local writes, set = {}, frame.SetAttribute
+		rawset(frame, "SetAttribute", function(self, key, value)
+			writes[key] = value == nil and "nil" or value
+			return set(self, key, value)
+		end)
+		local plan = CG.Bindings:Compile(CG.Config:GetBindings())
+		CG.Bindings:Apply(frame, plan)
+		local expected, removals = 0, 0
+		for _, attribute in ipairs(plan) do
+			if attribute.value ~= nil then
+				expected = expected + 1
+				assert.equals(attribute.value, writes[attribute.key], attribute.key)
+			end
+		end
+		for key, value in pairs(writes) do
+			if value == "nil" then removals = removals + 1 end
+		end
+		assert.equals("nil", writes["*type1"], "oUF's wildcard default is still cleared")
+		assert.equals("nil", writes["shift-macro3"])
+		assert.equals(2, removals)
+		assert.is_true(expected < #plan / 2, "most of the plan is removals")
+		assert.is_nil(frame:GetAttribute("*type1"))
+		writes = {}
+		CG.Config:SetAction(3, "shift", "friendly", { action = "target" })
+		CG.Bindings:Apply(frame, CG.Bindings:Compile(CG.Config:GetBindings()))
+		assert.same({ ["shift-type-heal3"] = "target" }, writes)
+		CG.Config:SetAction(3, "shift", "friendly", nil)
+		writes = {}
+		CG.Bindings:Apply(frame, CG.Bindings:Compile(CG.Config:GetBindings()))
+		assert.same({ ["shift-type-heal3"] = "nil" }, writes, "later removals of set bindings are written")
+	end)
+
 	it("respects Clique ownership and does not rewrite its attributes", function()
 		local frame = CG.headers.party:GetAttribute("child1").Member
 		Clique = {}
