@@ -1119,7 +1119,7 @@ function Mock.Install()
 	-- The client's values, from the API snapshot.
 	_G.Enum = {}
 	for _, name in ipairs({ "LFGRole", "CustomAuraButtonDispelTypeTextureStyle", "StatusBarInterpolation",
-		"UnitDamageAbsorbClampMode", "UnitMaximumHealthMode", "StatusBarTimerDirection",
+		"UnitDamageAbsorbClampMode", "UnitMaximumHealthMode", "UnitIncomingHealClampMode", "StatusBarTimerDirection",
 		"SecondsFormatterAbbreviation", "SecondsFormatterInterval", "SecondsFormatterRounding",
 		"SecondsFormatterIntervalWhitespace", "AddOnProfilerMetric", "PowerType", "CompressionMethod",
 		"CompressionLevel", "LuaCurveType", "PlayerSwingType" }) do
@@ -1370,7 +1370,23 @@ function Mock.InstallUI()
 				return Secret(self.max + (self.maximumMode == Enum.UnitMaximumHealthMode.WithAbsorbs and self.absorb or 0))
 			end,
 			GetCurrentHealth = function(self) return Secret(self.current) end,
-			GetIncomingHeals = function(self) return Secret(self.heal), Secret(0), Secret(self.heal), false end,
+			SetIncomingHealClampMode = function(self, mode) self.incomingClampMode = mode end,
+			SetIncomingHealOverflowPercent = function(self, percent) self.incomingOverflow = percent end,
+			GetIncomingHealOverflowPercent = function(self) return self.incomingOverflow or 1.05 end,
+			-- Missing health clamps to the room left up to maximum health times the
+			-- overflow ratio, maximum health to maximum health. Without a configured
+			-- mode the amount is unclamped and the flag false, as before.
+			GetIncomingHeals = function(self)
+				local room
+				if self.incomingClampMode == Enum.UnitIncomingHealClampMode.MissingHealth then
+					room = math.max(0, self.max * self:GetIncomingHealOverflowPercent() - self.current)
+				elseif self.incomingClampMode == Enum.UnitIncomingHealClampMode.MaximumHealth then
+					room = self.max
+				end
+				local amount = room and math.min(self.heal, room) or self.heal
+				local clamped = room ~= nil and self.heal > room
+				return Secret(amount), Secret(0), Secret(amount), Secret(clamped)
+			end,
 			GetDamageAbsorbs = function(self) return Secret(self.absorb), false end,
 			GetHealAbsorbs = function(self) return Secret(self.healAbsorb), false end,
 		}

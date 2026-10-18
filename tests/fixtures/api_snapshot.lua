@@ -1477,6 +1477,7 @@ return {
 			key = "Interface/AddOns/Blizzard_GamepadSharedUtility/InputBindingStack/BindingSetFactory.lua",
 			label = "Interface/AddOns/Blizzard_GamepadSharedUtility/PromptedBindings/PromptedBinding.lua",
 			layout = "Interface/AddOns/Blizzard_CooldownViewer/CooldownViewerSettingsDialogs.lua",
+			left = "Interface/AddOns/Blizzard_UIPanels_Game/Mainline/EventScheduler.lua",
 			like = "Interface/AddOns/Blizzard_SharedXMLBase/TableUtil.lua",
 			menu = "Interface/AddOns/Blizzard_GroupFinder_VanillaStyle/Blizzard_LFGVanilla_Browse.lua",
 			method = "Interface/AddOns/Blizzard_LegacySystem/Blizzard_LegacySystemUtil.lua",

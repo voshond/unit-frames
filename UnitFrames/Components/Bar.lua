@@ -25,6 +25,8 @@ way oUF does heal prediction. They are declared per instance through `spec`:
 Segment positions are pure anchoring and every value goes straight into a
 StatusBar, so all of this works with secret values.
 
+spec.overheal: the bar offers an Overheal edge warning (Components/Overheal.lua).
+
 spec.nativeLayout: the owner may anchor the bar to native, possibly secret
 geometry (a collapsing aura row). The root opts into Blizzard's forbidden
 layout aspect at creation, so no size script runs: the owner supplies its
@@ -153,6 +155,9 @@ function Bar.BuildSchema(spec)
 		end
 		schema[#schema + 1] = { key = "segments", type = "group", label = "Segments", schema = segmentSchema }
 	end
+	if spec.overheal then
+		schema[#schema + 1] = { key = "overheal", type = "group", label = "Overheal", schema = ns.Overheal.schema }
+	end
 	return schema
 end
 
@@ -192,6 +197,8 @@ function Bar:OnCreate(parent, spec)
 		self.segments[#self.segments + 1] = entry
 		self.segmentsByKey[seg.key] = entry
 	end
+
+	if spec.overheal then self.overheal = ns.Overheal:New(self) end
 
 	self.overlay = CreateFrame("Frame", nil, self.bar)
 	self.overlay:SetAllPoints(self.bar)
@@ -277,6 +284,8 @@ function Bar:OnApply(cfg)
 			sb:Hide()
 		end
 	end
+
+	if self.overheal then self.overheal:Apply(cfg.overheal, cfg.orientation, cfg.reverseFill, layout) end
 
 	Bar.AnchorSpark(self.spark, fill, cfg.orientation, cfg.reverseFill)
 	self.spark:SetShown(cfg.spark and self.sparkActive ~= false)
@@ -384,6 +393,13 @@ function Bar:GetSegmentBar(key)
 	local seg = self.segmentsByKey[key]
 	if seg and self.resolved.segments[key].enabled then
 		return seg.bar
+	end
+end
+
+-- The overheal edge warning when it is offered and enabled, else nil.
+function Bar:GetOverheal()
+	if self.overheal and self.resolved.overheal.enabled then
+		return self.overheal
 	end
 end
 
