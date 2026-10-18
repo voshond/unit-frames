@@ -56,6 +56,8 @@ spec:
 Access: GetRow(key) and GetPart(key) return a row's TextBar or a present
 part's component; Rows() and Parts() iterate them with their resolved config.
 GetReadyCheck() returns the ReadyCheck presenter when the spec offers one.
+SetUnitState(state) shows the dead/ghost ("dead") or offline look (bars,
+portrait, border, texts); nil restores the frame.
 ]]
 local UnitFrame = ns.Component:Extend("UnitFrame")
 
@@ -228,10 +230,8 @@ function UnitFrame:OnCreate(parent, spec)
 	end
 	if spec.readyCheck then
 		self.readyCheck = ns.ReadyCheck:New(self.frame, function(color, amount)
-			for _, row in ipairs(self.rows) do
-				if color then row.component:SetTint(color[1], color[2], color[3], amount)
-				else row.component:SetTint(nil) end
-			end
+			self.readyTint, self.readyTintAmount = color, amount
+			self:ApplyRowTints()
 		end)
 		self.readyCheck:Attach(self.partsByKey.readyCheckIcon)
 	end
@@ -249,6 +249,31 @@ function UnitFrame.RowSpec(spec, def)
 	end
 	return rowSpec
 end
+
+local function StateOff(cfg) return not cfg.enabled end
+
+-- A unit state's look: greyscale, blended towards `color`.
+local function UnitStateSchema(tooltip, colorLabel, color)
+	return {
+		{ key = "enabled", type = "toggle", label = "Enabled", default = true, tooltip = tooltip },
+		{ key = "color", type = "color", label = colorLabel, default = color, hidden = StateOff },
+		{ key = "strength", type = "range", label = "Strength", min = 0, max = 1, step = 0.05, default = 0.85, hidden = StateOff,
+			tooltip = "How far bars, portrait artwork, border and texts blend towards the colour. 3D portraits only turn greyscale." },
+		{ key = "bars", type = "toggle", label = "Bars", default = true, hidden = StateOff },
+		{ key = "portrait", type = "toggle", label = "Portrait", default = true, hidden = StateOff },
+		{ key = "border", type = "toggle", label = "Border", default = true, hidden = StateOff },
+		{ key = "texts", type = "toggle", label = "Texts", default = true, hidden = StateOff },
+	}
+end
+
+UnitFrame.UNIT_STATES = {
+	{ key = "dead", label = "Dead & ghost", schema = UnitStateSchema(
+		"While the unit is dead or a ghost, turn this frame greyscale and tint it with the ghost colour. Bar fills take one uniform colour; the health bar shows it across its whole length instead of an empty or 1 health fill.",
+		"Ghost colour", { 0.6, 0.72, 0.82, 1 }) },
+	{ key = "offline", label = "Offline", schema = UnitStateSchema(
+		"While the unit is offline, turn this frame greyscale. Bar fills take one uniform grey; the health bar shows it across its whole length.",
+		"Offline colour", { 0.62, 0.62, 0.62, 1 }) },
+}
 
 function UnitFrame.BuildSchema(spec)
 	local schema = {
@@ -278,6 +303,9 @@ function UnitFrame.BuildSchema(spec)
 	end
 	if spec.readyCheck then
 		schema[#schema + 1] = { key = "readyCheck", type = "group", label = "Ready check", schema = ns.ReadyCheck.schema }
+	end
+	for _, state in ipairs(UnitFrame.UNIT_STATES) do
+		schema[#schema + 1] = { key = state.key, type = "group", label = state.label, schema = state.schema }
 	end
 	local function AddParts(beforeRows)
 		for _, part in ipairs(UnitFrame.PARTS) do
@@ -312,8 +340,70 @@ function UnitFrame:OnApply(cfg)
 	end
 	self:Layout()
 	self:ApplyRangeOpacity()
-	self:ApplyRestingBorder()
+	self:ApplyUnitState()
 	if self.readyCheck then self.readyCheck:Apply(cfg.readyCheck) end
+end
+
+-- The unit state look's colour and strength for `target` ("bars",
+-- "portrait", "border", "texts"), or nil while it does not apply.
+function UnitFrame:StateTint(target)
+	local cfg = self.unitState and self.resolved[self.unitState]
+	if not (cfg and cfg.enabled and cfg[target]) then return nil end
+	return cfg.color, cfg.strength
+end
+
+-- "dead", "offline" or nil: plain states only (Drivers.UnitState).
+function UnitFrame:SetUnitState(state)
+	if self.unitState == state then return end
+	self.unitState = state
+	self:ApplyUnitState()
+end
+
+function UnitFrame:GetUnitState()
+	return self.unitState
+end
+
+function UnitFrame:ApplyUnitState()
+	self:ApplyRowTints()
+	local barColor, barStrength = self:StateTint("bars")
+	for _, row in ipairs(self.rows) do
+		local bar = row.component:GetBar()
+		if barColor then bar:SetGhost(barColor[1], barColor[2], barColor[3], barStrength, row.def.key == "health")
+		else bar:SetGhost(nil) end
+	end
+	local portrait = self.partsByKey.portrait
+	if portrait then
+		local color, strength = self:StateTint("portrait")
+		if color then portrait:SetGhost(color[1], color[2], color[3], strength) else portrait:SetGhost(nil) end
+	end
+	local textColor, textStrength = self:StateTint("texts")
+	for _, row in ipairs(self.rows) do
+		for _, text in pairs(row.component.texts) do
+			if textColor then text:SetTint(textColor[1], textColor[2], textColor[3], textStrength)
+			else text:SetTint(nil) end
+		end
+	end
+	self:ApplyRestingBorder()
+end
+
+-- Bars blend the unit state tint and a ready check tint; the check draws over it.
+function UnitFrame:ApplyRowTints()
+	local state, strength = self:StateTint("bars")
+	local ready, amount = self.readyTint, self.readyTintAmount or 0
+	local r, g, b, t
+	if ready and state then
+		r = state[1] + (ready[1] - state[1]) * amount
+		g = state[2] + (ready[2] - state[2]) * amount
+		b = state[3] + (ready[3] - state[3]) * amount
+		t = strength + (1 - strength) * amount
+	elseif ready then
+		r, g, b, t = ready[1], ready[2], ready[3], amount
+	elseif state then
+		r, g, b, t = state[1], state[2], state[3], strength
+	end
+	for _, row in ipairs(self.rows) do
+		row.component:SetTint(r, g, b, t)
+	end
 end
 
 -- Resting is a plain player state (IsResting), never opaque unit data.
@@ -323,13 +413,22 @@ local function PulseRestingBorder(_, elapsed, component)
 	component:ColorRestingBorder(0.5 - 0.5 * math.cos(component.restingElapsed * 2 * math.pi / component.resolved.resting.period))
 end
 
+-- The configured border colour, blended towards the unit state tint.
+function UnitFrame:BorderColor()
+	local r, g, b, a = ns.Util.UnpackColor(self.resolved.border.color)
+	local state, t = self:StateTint("border")
+	if not state then return r, g, b, a end
+	return r + (state[1] - r) * t, g + (state[2] - g) * t, b + (state[3] - b) * t, a
+end
+
 function UnitFrame:ColorRestingBorder(amount)
-	local base, tint = self.resolved.border.color, self.resolved.resting.color
+	local tint = self.resolved.resting.color
+	local r, g, b, a = self:BorderColor()
 	Backdrop.SetBorderColor(self.border,
-		base[1] * (1 - amount) + tint[1] * amount,
-		base[2] * (1 - amount) + tint[2] * amount,
-		base[3] * (1 - amount) + tint[3] * amount,
-		(base[4] or 1) * (1 - amount) + (tint[4] or 1) * amount)
+		r * (1 - amount) + tint[1] * amount,
+		g * (1 - amount) + tint[2] * amount,
+		b * (1 - amount) + tint[3] * amount,
+		a * (1 - amount) + (tint[4] or 1) * amount)
 end
 
 function UnitFrame:ApplyRestingBorder()
@@ -345,7 +444,7 @@ function UnitFrame:ApplyRestingBorder()
 		end
 	else
 		self.restingElapsed = 0
-		Backdrop.SetBorderColor(self.border, ns.Util.UnpackColor(cfg.border.color))
+		Backdrop.SetBorderColor(self.border, self:BorderColor())
 	end
 end
 

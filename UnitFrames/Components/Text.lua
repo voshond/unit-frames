@@ -115,6 +115,11 @@ Text.WHILE_CASTING = {
 	{ "spell", "Show the spell name" },
 }
 
+Text.WHILE_STATUS = {
+	{ "status", "Show Dead / Offline" },
+	{ "keep", "Keep the values" },
+}
+
 local function PieceKey(i)
 	return "piece" .. i
 end
@@ -141,6 +146,7 @@ function Text.WriteCustom(group, presetId, context)
 		group[PieceKey(i)] = pieces[i] or { source = "none", before = "", after = "" }
 	end
 	group.whileCasting = whileCasting
+	group.whileStatus = "status"
 	group.customInitialized = true
 	group.format = Text.CUSTOM
 end
@@ -208,6 +214,9 @@ local function SlotSchema(spec)
 			end },
 		{ key = "whileCasting", type = "select", label = "While casting", values = Text.WHILE_CASTING,
 			default = "keep", hidden = NotCustom },
+		{ key = "whileStatus", type = "select", label = "While dead or offline", values = Text.WHILE_STATUS,
+			default = "status", hidden = NotCustom,
+			tooltip = "Health and power values make way for Dead or Offline: the first health value shows the word, other values and their separators disappear. Texts showing the Offline / dead source keep their values." },
 		-- Distinguishes retained custom edits (even an empty slot) from none yet.
 		{ key = "customInitialized", type = "toggle", label = "Custom text set up", default = false,
 			internal = "Records whether the slot has retained custom text pieces",
@@ -254,12 +263,6 @@ function Text:OnApply(cfg)
 	else
 		fs:SetShadowOffset(0, 0)
 	end
-	-- Reused: CreateColor copies every ColorMixin method into a new table.
-	if self.baseColor then
-		self.baseColor:SetRGBA(Util.UnpackColor(cfg.color))
-	else
-		self.baseColor = CreateColor(Util.UnpackColor(cfg.color))
-	end
 	self:ApplyColor()
 	fs:SetJustifyH(cfg.justifyH)
 	fs:SetWordWrap(false)
@@ -275,7 +278,8 @@ function Text:CompileTemplate(cfg)
 	if format == Text.CUSTOM then
 		local pieces = {}
 		for i = 1, Text.PIECES do pieces[i] = cfg[PieceKey(i)] end
-		return ns.TextTemplate.Get({ pieces = pieces, whileCasting = cfg.whileCasting }, self.spec.context)
+		return ns.TextTemplate.Get({ pieces = pieces, whileCasting = cfg.whileCasting, whileStatus = cfg.whileStatus },
+			self.spec.context)
 	end
 	local preset = Formats.Get(format)
 	if not preset.relative and Formats.Availability(preset.id, self.spec.context) == "all" then
@@ -374,15 +378,42 @@ function Text:SetColorCondition(condition, color)
 	self:ApplyColor()
 end
 
+-- Plain colour blended over the configured one at `amount` (0..1, default 1)
+-- (a dead unit); nil removes it. A colour condition still draws on top.
+function Text:SetTint(r, g, b, amount)
+	if r == nil then
+		self.tint = nil
+	else
+		self.tintStorage = self.tintStorage or {}
+		self.tint = self.tintStorage
+		self.tint[1], self.tint[2], self.tint[3], self.tint[4] = r, g, b, math.min(amount or 1, 1)
+	end
+	self:ApplyColor()
+end
+
+-- The configured colour with the tint blended in.
+function Text:BaseColor()
+	local r, g, b, a = Util.UnpackColor(self.resolved.color)
+	local tint = self.tint
+	if not tint then return r, g, b, a end
+	local t = tint[4]
+	return r + (tint[1] - r) * t, g + (tint[2] - g) * t, b + (tint[3] - b) * t, a
+end
+
 function Text:ApplyColor()
-	local base = self.resolved.color
+	-- Reused: CreateColor copies every ColorMixin method into a new table.
+	if self.baseColor then
+		self.baseColor:SetRGBA(self:BaseColor())
+	else
+		self.baseColor = CreateColor(self:BaseColor())
+	end
 	local override = self.colorCondition
 	if override and ns.Caps.curves then
 		local color = C_CurveUtil.EvaluateColorFromBoolean(override.condition,
 			override.color, self.baseColor)
 		self.frame:SetTextColor(color:GetRGBA())
 	else
-		self.frame:SetTextColor(Util.UnpackColor(base))
+		self.frame:SetTextColor(self.baseColor:GetRGBA())
 	end
 end
 

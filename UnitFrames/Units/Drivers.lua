@@ -69,6 +69,13 @@ function Drivers.ComboPoints(unit)
 	return GetComboPoints("player", unit == "player" and "target" or unit), max
 end
 
+-- "offline", "dead" (also a ghost) or nil, as the Offline / dead text shows
+-- it. These states are plain; an opaque one counts as neither.
+function Drivers.UnitState(unit)
+	if not unit or not UnitExists(unit) then return nil end
+	return ns.TextSources.UnitStatus(unit)
+end
+
 -- Whole-frame state ------------------------------------------------------------
 
 Drivers.frame = {
@@ -91,6 +98,13 @@ Drivers.frame = {
 		-- A check is event-driven: it starts, collects answers and fades after
 		-- it finishes. Only oUF frames follow one.
 		live = false },
+	{ key = "unitState", element = "UF_UnitState",
+		bind = function(uf)
+			local cfg = uf.resolved
+			return (cfg.dead.enabled or cfg.offline.enabled) and uf or nil
+		end,
+		sample = function(uf, v) uf:SetUnitState(v.status) end,
+		live = function(uf, unit) uf:SetUnitState(Drivers.UnitState(unit)) end },
 	-- The spell check is read when the element is enabled (events or polling).
 	{ key = "range", element = "UF_Range",
 		bind = function(uf)

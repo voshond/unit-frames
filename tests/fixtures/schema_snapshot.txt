@@ -156,6 +156,7 @@ resolved size = 12
 option format type="select" label="Shows" default="none" values=#c6b34039
 option customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option customInitialized type="toggle" label="Custom text set up" default=false hidden
 option piece1 type="group" label="Piece 1" hidden
 option piece1.source type="select" label="Source" default="none" values=#2e8ce511 tooltip=#719320d5
@@ -223,6 +224,7 @@ default piece4.source = "none"
 default shadow = true
 default vertical = "auto"
 default whileCasting = "keep"
+default whileStatus = "status"
 resolved color = {1,1,1,1}
 resolved customInitialized = false
 resolved enabled = true
@@ -257,6 +259,7 @@ resolved shadow = true
 resolved size = 11
 resolved vertical = "auto"
 resolved whileCasting = "keep"
+resolved whileStatus = "status"
 ## castbar
 option enabled type="toggle" label="Enabled" default=true
 option portraitLayout type="select" label="Portrait cast layout" default="bar" values=#c97f0a21 tooltip=#8fde9bad hidden
@@ -2285,6 +2288,22 @@ option readyCheck.readyColor type="color" label="Ready colour" default={0.15,0.8
 option readyCheck.notReadyColor type="color" label="Not ready colour" default={0.85,0.12,0.12,1}
 option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#01273847
 option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
+option dead type="group" label="Dead & ghost"
+option dead.enabled type="toggle" label="Enabled" default=true tooltip=#02954430
+option dead.color type="color" label="Ghost colour" default={0.6,0.72,0.82,1} hidden
+option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
+option dead.bars type="toggle" label="Bars" default=true hidden
+option dead.portrait type="toggle" label="Portrait" default=true hidden
+option dead.border type="toggle" label="Border" default=true hidden
+option dead.texts type="toggle" label="Texts" default=true hidden
+option offline type="group" label="Offline"
+option offline.enabled type="toggle" label="Enabled" default=true tooltip=#49943112
+option offline.color type="color" label="Offline colour" default={0.62,0.62,0.62,1} hidden
+option offline.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
+option offline.bars type="toggle" label="Bars" default=true hidden
+option offline.portrait type="toggle" label="Portrait" default=true hidden
+option offline.border type="toggle" label="Border" default=true hidden
+option offline.texts type="toggle" label="Texts" default=true hidden
 option portrait type="group" label="Portrait" defaults={enabled=true}
 option portrait.enabled type="toggle" label="Enabled" default=true
 option portrait.position type="select" label="Side" default="LEFT" values=#11c04b33
@@ -2374,6 +2393,7 @@ option health.left type="group" label="Left text" defaults={enabled=true,format=
 option health.left.format type="select" label="Shows" default="none" values=#19ed1b49
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.left.piece1 type="group" label="Piece 1" hidden
 option health.left.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2414,6 +2434,7 @@ option health.center type="group" label="Centre text" defaults={enabled=false,fo
 option health.center.format type="select" label="Shows" default="none" values=#19ed1b49
 option health.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.center.piece1 type="group" label="Piece 1" hidden
 option health.center.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2454,6 +2475,7 @@ option health.right type="group" label="Right text" defaults={enabled=true,forma
 option health.right.format type="select" label="Shows" default="none" values=#19ed1b49
 option health.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.right.piece1 type="group" label="Piece 1" hidden
 option health.right.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2494,6 +2516,7 @@ option health.belowLeft type="group" label="Small text below left" defaults={ena
 option health.belowLeft.format type="select" label="Shows" default="none" values=#19ed1b49
 option health.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowLeft.piece1 type="group" label="Piece 1" hidden
 option health.belowLeft.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2534,6 +2557,7 @@ option health.belowRight type="group" label="Small text below right" defaults={e
 option health.belowRight.format type="select" label="Shows" default="none" values=#19ed1b49
 option health.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowRight.piece1 type="group" label="Piece 1" hidden
 option health.belowRight.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2616,6 +2640,7 @@ option power.left type="group" label="Left text" defaults={enabled=false,format=
 option power.left.format type="select" label="Shows" default="none" values=#eb36ec28
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.left.piece1 type="group" label="Piece 1" hidden
 option power.left.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2656,6 +2681,7 @@ option power.center type="group" label="Centre text" defaults={enabled=false,for
 option power.center.format type="select" label="Shows" default="none" values=#eb36ec28
 option power.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.center.piece1 type="group" label="Piece 1" hidden
 option power.center.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2696,6 +2722,7 @@ option power.right type="group" label="Right text" defaults={enabled=true,format
 option power.right.format type="select" label="Shows" default="none" values=#eb36ec28
 option power.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.right.piece1 type="group" label="Piece 1" hidden
 option power.right.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2736,6 +2763,7 @@ option power.belowLeft type="group" label="Small text below left" defaults={enab
 option power.belowLeft.format type="select" label="Shows" default="none" values=#eb36ec28
 option power.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowLeft.piece1 type="group" label="Piece 1" hidden
 option power.belowLeft.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2776,6 +2804,7 @@ option power.belowRight type="group" label="Small text below right" defaults={en
 option power.belowRight.format type="select" label="Shows" default="none" values=#eb36ec28
 option power.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowRight.piece1 type="group" label="Piece 1" hidden
 option power.belowRight.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2858,6 +2887,7 @@ option experience.left type="group" label="Left text" defaults={enabled=false,fo
 option experience.left.format type="select" label="Shows" default="none" values=#9d1dcdcc
 option experience.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option experience.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option experience.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option experience.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option experience.left.piece1 type="group" label="Piece 1" hidden
 option experience.left.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2898,6 +2928,7 @@ option experience.center type="group" label="Centre text" defaults={enabled=true
 option experience.center.format type="select" label="Shows" default="none" values=#9d1dcdcc
 option experience.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option experience.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option experience.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option experience.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option experience.center.piece1 type="group" label="Piece 1" hidden
 option experience.center.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2938,6 +2969,7 @@ option experience.right type="group" label="Right text" defaults={enabled=false,
 option experience.right.format type="select" label="Shows" default="none" values=#9d1dcdcc
 option experience.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option experience.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option experience.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option experience.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option experience.right.piece1 type="group" label="Piece 1" hidden
 option experience.right.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2978,6 +3010,7 @@ option experience.belowLeft type="group" label="Small text below left" defaults=
 option experience.belowLeft.format type="select" label="Shows" default="none" values=#9d1dcdcc
 option experience.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option experience.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option experience.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option experience.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option experience.belowLeft.piece1 type="group" label="Piece 1" hidden
 option experience.belowLeft.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -3018,6 +3051,7 @@ option experience.belowRight type="group" label="Small text below right" default
 option experience.belowRight.format type="select" label="Shows" default="none" values=#9d1dcdcc
 option experience.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option experience.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option experience.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option experience.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option experience.belowRight.piece1 type="group" label="Piece 1" hidden
 option experience.belowRight.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -3635,6 +3669,13 @@ default comboPoints.enabled = false
 default comboPoints.height = 8
 default comboPoints.position = "power"
 default comboPoints.spacing = 2
+default dead.bars = true
+default dead.border = true
+default dead.color = {0.6,0.72,0.82,1}
+default dead.enabled = true
+default dead.portrait = true
+default dead.strength = 0.85
+default dead.texts = true
 default experience.bar.background.alpha = 0.25
 default experience.bar.background.color = {0,0,0,0.5}
 default experience.bar.background.enabled = true
@@ -3691,6 +3732,7 @@ default experience.belowLeft.shadow = true
 default experience.belowLeft.size = 9
 default experience.belowLeft.vertical = "auto"
 default experience.belowLeft.whileCasting = "keep"
+default experience.belowLeft.whileStatus = "status"
 default experience.belowRight.color = {1,1,1,1}
 default experience.belowRight.customInitialized = false
 default experience.belowRight.enabled = false
@@ -3723,6 +3765,7 @@ default experience.belowRight.shadow = true
 default experience.belowRight.size = 9
 default experience.belowRight.vertical = "auto"
 default experience.belowRight.whileCasting = "keep"
+default experience.belowRight.whileStatus = "status"
 default experience.center.color = {1,1,1,1}
 default experience.center.customInitialized = false
 default experience.center.enabled = true
@@ -3755,6 +3798,7 @@ default experience.center.shadow = true
 default experience.center.size = 8
 default experience.center.vertical = "auto"
 default experience.center.whileCasting = "keep"
+default experience.center.whileStatus = "status"
 default experience.enabled = false
 default experience.height = 10
 default experience.left.color = {1,1,1,1}
@@ -3788,6 +3832,7 @@ default experience.left.piece4.source = "none"
 default experience.left.shadow = true
 default experience.left.vertical = "auto"
 default experience.left.whileCasting = "keep"
+default experience.left.whileStatus = "status"
 default experience.lineGap = 1
 default experience.right.color = {1,1,1,1}
 default experience.right.customInitialized = false
@@ -3820,6 +3865,7 @@ default experience.right.piece4.source = "none"
 default experience.right.shadow = true
 default experience.right.vertical = "auto"
 default experience.right.whileCasting = "keep"
+default experience.right.whileStatus = "status"
 default experience.textLayout = "edges"
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
@@ -3887,6 +3933,7 @@ default health.belowLeft.shadow = true
 default health.belowLeft.size = 9
 default health.belowLeft.vertical = "auto"
 default health.belowLeft.whileCasting = "keep"
+default health.belowLeft.whileStatus = "status"
 default health.belowRight.color = {1,1,1,1}
 default health.belowRight.customInitialized = false
 default health.belowRight.enabled = false
@@ -3919,6 +3966,7 @@ default health.belowRight.shadow = true
 default health.belowRight.size = 9
 default health.belowRight.vertical = "auto"
 default health.belowRight.whileCasting = "keep"
+default health.belowRight.whileStatus = "status"
 default health.center.color = {1,1,1,1}
 default health.center.customInitialized = false
 default health.center.enabled = false
@@ -3950,6 +3998,7 @@ default health.center.piece4.source = "none"
 default health.center.shadow = true
 default health.center.vertical = "auto"
 default health.center.whileCasting = "keep"
+default health.center.whileStatus = "status"
 default health.colorMode = "class"
 default health.enabled = true
 default health.height = 26
@@ -3984,6 +4033,7 @@ default health.left.piece4.source = "none"
 default health.left.shadow = true
 default health.left.vertical = "auto"
 default health.left.whileCasting = "keep"
+default health.left.whileStatus = "status"
 default health.lineGap = 1
 default health.right.color = {1,1,1,1}
 default health.right.customInitialized = false
@@ -4016,7 +4066,15 @@ default health.right.piece4.source = "none"
 default health.right.shadow = true
 default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
+default health.right.whileStatus = "status"
 default health.textLayout = "edges"
+default offline.bars = true
+default offline.border = true
+default offline.color = {0.62,0.62,0.62,1}
+default offline.enabled = true
+default offline.portrait = true
+default offline.strength = 0.85
+default offline.texts = true
 default portrait.background = {0,0,0,0.6}
 default portrait.border.enabled = false
 default portrait.border.inset = 3
@@ -4093,6 +4151,7 @@ default power.belowLeft.shadow = true
 default power.belowLeft.size = 9
 default power.belowLeft.vertical = "auto"
 default power.belowLeft.whileCasting = "keep"
+default power.belowLeft.whileStatus = "status"
 default power.belowRight.color = {1,1,1,1}
 default power.belowRight.customInitialized = false
 default power.belowRight.enabled = false
@@ -4125,6 +4184,7 @@ default power.belowRight.shadow = true
 default power.belowRight.size = 9
 default power.belowRight.vertical = "auto"
 default power.belowRight.whileCasting = "keep"
+default power.belowRight.whileStatus = "status"
 default power.center.color = {1,1,1,1}
 default power.center.customInitialized = false
 default power.center.enabled = false
@@ -4156,6 +4216,7 @@ default power.center.piece4.source = "none"
 default power.center.shadow = true
 default power.center.vertical = "auto"
 default power.center.whileCasting = "keep"
+default power.center.whileStatus = "status"
 default power.enabled = true
 default power.height = 12
 default power.left.color = {1,1,1,1}
@@ -4189,6 +4250,7 @@ default power.left.piece4.source = "none"
 default power.left.shadow = true
 default power.left.vertical = "auto"
 default power.left.whileCasting = "keep"
+default power.left.whileStatus = "status"
 default power.lineGap = 1
 default power.right.color = {1,1,1,1}
 default power.right.customInitialized = false
@@ -4222,6 +4284,7 @@ default power.right.shadow = true
 default power.right.size = 9
 default power.right.vertical = "auto"
 default power.right.whileCasting = "keep"
+default power.right.whileStatus = "status"
 default power.textLayout = "edges"
 default pvp.anchor = "TOPLEFT"
 default pvp.background = true
@@ -4558,6 +4621,13 @@ resolved comboPoints.height = 8
 resolved comboPoints.position = "power"
 resolved comboPoints.spacing = 2
 resolved comboPoints.texture = "Blizzard Raid Bar"
+resolved dead.bars = true
+resolved dead.border = true
+resolved dead.color = {0.6,0.72,0.82,1}
+resolved dead.enabled = true
+resolved dead.portrait = true
+resolved dead.strength = 0.85
+resolved dead.texts = true
 resolved experience.bar.background.alpha = 0.25
 resolved experience.bar.background.color = {0,0,0,0.5}
 resolved experience.bar.background.enabled = true
@@ -4624,6 +4694,7 @@ resolved experience.belowLeft.shadow = true
 resolved experience.belowLeft.size = 9
 resolved experience.belowLeft.vertical = "auto"
 resolved experience.belowLeft.whileCasting = "keep"
+resolved experience.belowLeft.whileStatus = "status"
 resolved experience.belowRight.color = {1,1,1,1}
 resolved experience.belowRight.customInitialized = false
 resolved experience.belowRight.enabled = false
@@ -4658,6 +4729,7 @@ resolved experience.belowRight.shadow = true
 resolved experience.belowRight.size = 9
 resolved experience.belowRight.vertical = "auto"
 resolved experience.belowRight.whileCasting = "keep"
+resolved experience.belowRight.whileStatus = "status"
 resolved experience.center.color = {1,1,1,1}
 resolved experience.center.customInitialized = false
 resolved experience.center.enabled = true
@@ -4692,6 +4764,7 @@ resolved experience.center.shadow = true
 resolved experience.center.size = 8
 resolved experience.center.vertical = "auto"
 resolved experience.center.whileCasting = "keep"
+resolved experience.center.whileStatus = "status"
 resolved experience.enabled = false
 resolved experience.height = 10
 resolved experience.left.color = {1,1,1,1}
@@ -4728,6 +4801,7 @@ resolved experience.left.shadow = true
 resolved experience.left.size = 11
 resolved experience.left.vertical = "auto"
 resolved experience.left.whileCasting = "keep"
+resolved experience.left.whileStatus = "status"
 resolved experience.lineGap = 1
 resolved experience.right.color = {1,1,1,1}
 resolved experience.right.customInitialized = false
@@ -4763,6 +4837,7 @@ resolved experience.right.shadow = true
 resolved experience.right.size = 11
 resolved experience.right.vertical = "auto"
 resolved experience.right.whileCasting = "keep"
+resolved experience.right.whileStatus = "status"
 resolved experience.textLayout = "edges"
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
@@ -4842,6 +4917,7 @@ resolved health.belowLeft.shadow = true
 resolved health.belowLeft.size = 9
 resolved health.belowLeft.vertical = "auto"
 resolved health.belowLeft.whileCasting = "keep"
+resolved health.belowLeft.whileStatus = "status"
 resolved health.belowRight.color = {1,1,1,1}
 resolved health.belowRight.customInitialized = false
 resolved health.belowRight.enabled = false
@@ -4876,6 +4952,7 @@ resolved health.belowRight.shadow = true
 resolved health.belowRight.size = 9
 resolved health.belowRight.vertical = "auto"
 resolved health.belowRight.whileCasting = "keep"
+resolved health.belowRight.whileStatus = "status"
 resolved health.center.color = {1,1,1,1}
 resolved health.center.customInitialized = false
 resolved health.center.enabled = false
@@ -4910,6 +4987,7 @@ resolved health.center.shadow = true
 resolved health.center.size = 11
 resolved health.center.vertical = "auto"
 resolved health.center.whileCasting = "keep"
+resolved health.center.whileStatus = "status"
 resolved health.colorMode = "class"
 resolved health.enabled = true
 resolved health.height = 26
@@ -4947,6 +5025,7 @@ resolved health.left.shadow = true
 resolved health.left.size = 11
 resolved health.left.vertical = "auto"
 resolved health.left.whileCasting = "keep"
+resolved health.left.whileStatus = "status"
 resolved health.lineGap = 1
 resolved health.right.color = {1,1,1,1}
 resolved health.right.customInitialized = false
@@ -4982,7 +5061,15 @@ resolved health.right.shadow = true
 resolved health.right.size = 11
 resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
+resolved health.right.whileStatus = "status"
 resolved health.textLayout = "edges"
+resolved offline.bars = true
+resolved offline.border = true
+resolved offline.color = {0.62,0.62,0.62,1}
+resolved offline.enabled = true
+resolved offline.portrait = true
+resolved offline.strength = 0.85
+resolved offline.texts = true
 resolved portrait.background = {0,0,0,0.6}
 resolved portrait.border.background = "Solid"
 resolved portrait.border.backgroundColor = {0,0,0,0.75}
@@ -5074,6 +5161,7 @@ resolved power.belowLeft.shadow = true
 resolved power.belowLeft.size = 9
 resolved power.belowLeft.vertical = "auto"
 resolved power.belowLeft.whileCasting = "keep"
+resolved power.belowLeft.whileStatus = "status"
 resolved power.belowRight.color = {1,1,1,1}
 resolved power.belowRight.customInitialized = false
 resolved power.belowRight.enabled = false
@@ -5108,6 +5196,7 @@ resolved power.belowRight.shadow = true
 resolved power.belowRight.size = 9
 resolved power.belowRight.vertical = "auto"
 resolved power.belowRight.whileCasting = "keep"
+resolved power.belowRight.whileStatus = "status"
 resolved power.center.color = {1,1,1,1}
 resolved power.center.customInitialized = false
 resolved power.center.enabled = false
@@ -5142,6 +5231,7 @@ resolved power.center.shadow = true
 resolved power.center.size = 11
 resolved power.center.vertical = "auto"
 resolved power.center.whileCasting = "keep"
+resolved power.center.whileStatus = "status"
 resolved power.enabled = true
 resolved power.height = 12
 resolved power.left.color = {1,1,1,1}
@@ -5178,6 +5268,7 @@ resolved power.left.shadow = true
 resolved power.left.size = 11
 resolved power.left.vertical = "auto"
 resolved power.left.whileCasting = "keep"
+resolved power.left.whileStatus = "status"
 resolved power.lineGap = 1
 resolved power.right.color = {1,1,1,1}
 resolved power.right.customInitialized = false
@@ -5213,6 +5304,7 @@ resolved power.right.shadow = true
 resolved power.right.size = 9
 resolved power.right.vertical = "auto"
 resolved power.right.whileCasting = "keep"
+resolved power.right.whileStatus = "status"
 resolved power.textLayout = "edges"
 resolved pvp.anchor = "TOPLEFT"
 resolved pvp.background = true
@@ -5320,6 +5412,22 @@ option readyCheck.readyColor type="color" label="Ready colour" default={0.15,0.8
 option readyCheck.notReadyColor type="color" label="Not ready colour" default={0.85,0.12,0.12,1}
 option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#01273847
 option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
+option dead type="group" label="Dead & ghost"
+option dead.enabled type="toggle" label="Enabled" default=true tooltip=#02954430
+option dead.color type="color" label="Ghost colour" default={0.6,0.72,0.82,1} hidden
+option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
+option dead.bars type="toggle" label="Bars" default=true hidden
+option dead.portrait type="toggle" label="Portrait" default=true hidden
+option dead.border type="toggle" label="Border" default=true hidden
+option dead.texts type="toggle" label="Texts" default=true hidden
+option offline type="group" label="Offline"
+option offline.enabled type="toggle" label="Enabled" default=true tooltip=#49943112
+option offline.color type="color" label="Offline colour" default={0.62,0.62,0.62,1} hidden
+option offline.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
+option offline.bars type="toggle" label="Bars" default=true hidden
+option offline.portrait type="toggle" label="Portrait" default=true hidden
+option offline.border type="toggle" label="Border" default=true hidden
+option offline.texts type="toggle" label="Texts" default=true hidden
 option portrait type="group" label="Portrait" defaults={enabled=false}
 option portrait.enabled type="toggle" label="Enabled" default=true
 option portrait.position type="select" label="Side" default="LEFT" values=#11c04b33
@@ -5409,6 +5517,7 @@ option health.left type="group" label="Left text" defaults={enabled=true,format=
 option health.left.format type="select" label="Shows" default="none" values=#22e0981a
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.left.piece1 type="group" label="Piece 1" hidden
 option health.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -5449,6 +5558,7 @@ option health.center type="group" label="Centre text" defaults={enabled=false,fo
 option health.center.format type="select" label="Shows" default="none" values=#22e0981a
 option health.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.center.piece1 type="group" label="Piece 1" hidden
 option health.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -5489,6 +5599,7 @@ option health.right type="group" label="Right text" defaults={enabled=true,forma
 option health.right.format type="select" label="Shows" default="none" values=#22e0981a
 option health.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.right.piece1 type="group" label="Piece 1" hidden
 option health.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -5529,6 +5640,7 @@ option health.belowLeft type="group" label="Small text below left" defaults={ena
 option health.belowLeft.format type="select" label="Shows" default="none" values=#22e0981a
 option health.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowLeft.piece1 type="group" label="Piece 1" hidden
 option health.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -5569,6 +5681,7 @@ option health.belowRight type="group" label="Small text below right" defaults={e
 option health.belowRight.format type="select" label="Shows" default="none" values=#22e0981a
 option health.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowRight.piece1 type="group" label="Piece 1" hidden
 option health.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -5651,6 +5764,7 @@ option power.left type="group" label="Left text" defaults={enabled=false,format=
 option power.left.format type="select" label="Shows" default="none" values=#7588ca59
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.left.piece1 type="group" label="Piece 1" hidden
 option power.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -5691,6 +5805,7 @@ option power.center type="group" label="Centre text" defaults={enabled=false,for
 option power.center.format type="select" label="Shows" default="none" values=#7588ca59
 option power.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.center.piece1 type="group" label="Piece 1" hidden
 option power.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -5731,6 +5846,7 @@ option power.right type="group" label="Right text" defaults={enabled=true,format
 option power.right.format type="select" label="Shows" default="none" values=#7588ca59
 option power.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.right.piece1 type="group" label="Piece 1" hidden
 option power.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -5771,6 +5887,7 @@ option power.belowLeft type="group" label="Small text below left" defaults={enab
 option power.belowLeft.format type="select" label="Shows" default="none" values=#7588ca59
 option power.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowLeft.piece1 type="group" label="Piece 1" hidden
 option power.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -5811,6 +5928,7 @@ option power.belowRight type="group" label="Small text below right" defaults={en
 option power.belowRight.format type="select" label="Shows" default="none" values=#7588ca59
 option power.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowRight.piece1 type="group" label="Piece 1" hidden
 option power.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -6344,6 +6462,13 @@ default classification.offsetX = 0
 default classification.offsetY = 0
 default classification.order = 1
 default classification.size = 18
+default dead.bars = true
+default dead.border = true
+default dead.color = {0.6,0.72,0.82,1}
+default dead.enabled = true
+default dead.portrait = true
+default dead.strength = 0.85
+default dead.texts = true
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -6410,6 +6535,7 @@ default health.belowLeft.shadow = true
 default health.belowLeft.size = 9
 default health.belowLeft.vertical = "auto"
 default health.belowLeft.whileCasting = "keep"
+default health.belowLeft.whileStatus = "status"
 default health.belowRight.color = {1,1,1,1}
 default health.belowRight.customInitialized = false
 default health.belowRight.enabled = false
@@ -6442,6 +6568,7 @@ default health.belowRight.shadow = true
 default health.belowRight.size = 9
 default health.belowRight.vertical = "auto"
 default health.belowRight.whileCasting = "keep"
+default health.belowRight.whileStatus = "status"
 default health.center.color = {1,1,1,1}
 default health.center.customInitialized = false
 default health.center.enabled = false
@@ -6473,6 +6600,7 @@ default health.center.piece4.source = "none"
 default health.center.shadow = true
 default health.center.vertical = "auto"
 default health.center.whileCasting = "keep"
+default health.center.whileStatus = "status"
 default health.colorMode = "class"
 default health.enabled = true
 default health.height = 22
@@ -6508,6 +6636,7 @@ default health.left.shadow = true
 default health.left.size = 10
 default health.left.vertical = "auto"
 default health.left.whileCasting = "keep"
+default health.left.whileStatus = "status"
 default health.lineGap = 1
 default health.right.color = {1,1,1,1}
 default health.right.customInitialized = false
@@ -6541,7 +6670,15 @@ default health.right.shadow = true
 default health.right.size = 9
 default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
+default health.right.whileStatus = "status"
 default health.textLayout = "edges"
+default offline.bars = true
+default offline.border = true
+default offline.color = {0.62,0.62,0.62,1}
+default offline.enabled = true
+default offline.portrait = true
+default offline.strength = 0.85
+default offline.texts = true
 default portrait.background = {0,0,0,0.6}
 default portrait.border.enabled = false
 default portrait.border.inset = 3
@@ -6618,6 +6755,7 @@ default power.belowLeft.shadow = true
 default power.belowLeft.size = 9
 default power.belowLeft.vertical = "auto"
 default power.belowLeft.whileCasting = "keep"
+default power.belowLeft.whileStatus = "status"
 default power.belowRight.color = {1,1,1,1}
 default power.belowRight.customInitialized = false
 default power.belowRight.enabled = false
@@ -6650,6 +6788,7 @@ default power.belowRight.shadow = true
 default power.belowRight.size = 9
 default power.belowRight.vertical = "auto"
 default power.belowRight.whileCasting = "keep"
+default power.belowRight.whileStatus = "status"
 default power.center.color = {1,1,1,1}
 default power.center.customInitialized = false
 default power.center.enabled = false
@@ -6681,6 +6820,7 @@ default power.center.piece4.source = "none"
 default power.center.shadow = true
 default power.center.vertical = "auto"
 default power.center.whileCasting = "keep"
+default power.center.whileStatus = "status"
 default power.enabled = true
 default power.height = 10
 default power.left.color = {1,1,1,1}
@@ -6714,6 +6854,7 @@ default power.left.piece4.source = "none"
 default power.left.shadow = true
 default power.left.vertical = "auto"
 default power.left.whileCasting = "keep"
+default power.left.whileStatus = "status"
 default power.lineGap = 1
 default power.right.color = {1,1,1,1}
 default power.right.customInitialized = false
@@ -6747,6 +6888,7 @@ default power.right.shadow = true
 default power.right.size = 8
 default power.right.vertical = "auto"
 default power.right.whileCasting = "keep"
+default power.right.whileStatus = "status"
 default power.textLayout = "edges"
 default pvp.anchor = "TOPLEFT"
 default pvp.background = true
@@ -7035,6 +7177,13 @@ resolved classification.offsetX = 0
 resolved classification.offsetY = 0
 resolved classification.order = 1
 resolved classification.size = 18
+resolved dead.bars = true
+resolved dead.border = true
+resolved dead.color = {0.6,0.72,0.82,1}
+resolved dead.enabled = true
+resolved dead.portrait = true
+resolved dead.strength = 0.85
+resolved dead.texts = true
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -7113,6 +7262,7 @@ resolved health.belowLeft.shadow = true
 resolved health.belowLeft.size = 9
 resolved health.belowLeft.vertical = "auto"
 resolved health.belowLeft.whileCasting = "keep"
+resolved health.belowLeft.whileStatus = "status"
 resolved health.belowRight.color = {1,1,1,1}
 resolved health.belowRight.customInitialized = false
 resolved health.belowRight.enabled = false
@@ -7147,6 +7297,7 @@ resolved health.belowRight.shadow = true
 resolved health.belowRight.size = 9
 resolved health.belowRight.vertical = "auto"
 resolved health.belowRight.whileCasting = "keep"
+resolved health.belowRight.whileStatus = "status"
 resolved health.center.color = {1,1,1,1}
 resolved health.center.customInitialized = false
 resolved health.center.enabled = false
@@ -7181,6 +7332,7 @@ resolved health.center.shadow = true
 resolved health.center.size = 11
 resolved health.center.vertical = "auto"
 resolved health.center.whileCasting = "keep"
+resolved health.center.whileStatus = "status"
 resolved health.colorMode = "class"
 resolved health.enabled = true
 resolved health.height = 22
@@ -7218,6 +7370,7 @@ resolved health.left.shadow = true
 resolved health.left.size = 10
 resolved health.left.vertical = "auto"
 resolved health.left.whileCasting = "keep"
+resolved health.left.whileStatus = "status"
 resolved health.lineGap = 1
 resolved health.right.color = {1,1,1,1}
 resolved health.right.customInitialized = false
@@ -7253,7 +7406,15 @@ resolved health.right.shadow = true
 resolved health.right.size = 9
 resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
+resolved health.right.whileStatus = "status"
 resolved health.textLayout = "edges"
+resolved offline.bars = true
+resolved offline.border = true
+resolved offline.color = {0.62,0.62,0.62,1}
+resolved offline.enabled = true
+resolved offline.portrait = true
+resolved offline.strength = 0.85
+resolved offline.texts = true
 resolved portrait.background = {0,0,0,0.6}
 resolved portrait.border.background = "Solid"
 resolved portrait.border.backgroundColor = {0,0,0,0.75}
@@ -7345,6 +7506,7 @@ resolved power.belowLeft.shadow = true
 resolved power.belowLeft.size = 9
 resolved power.belowLeft.vertical = "auto"
 resolved power.belowLeft.whileCasting = "keep"
+resolved power.belowLeft.whileStatus = "status"
 resolved power.belowRight.color = {1,1,1,1}
 resolved power.belowRight.customInitialized = false
 resolved power.belowRight.enabled = false
@@ -7379,6 +7541,7 @@ resolved power.belowRight.shadow = true
 resolved power.belowRight.size = 9
 resolved power.belowRight.vertical = "auto"
 resolved power.belowRight.whileCasting = "keep"
+resolved power.belowRight.whileStatus = "status"
 resolved power.center.color = {1,1,1,1}
 resolved power.center.customInitialized = false
 resolved power.center.enabled = false
@@ -7413,6 +7576,7 @@ resolved power.center.shadow = true
 resolved power.center.size = 11
 resolved power.center.vertical = "auto"
 resolved power.center.whileCasting = "keep"
+resolved power.center.whileStatus = "status"
 resolved power.enabled = true
 resolved power.height = 10
 resolved power.left.color = {1,1,1,1}
@@ -7449,6 +7613,7 @@ resolved power.left.shadow = true
 resolved power.left.size = 11
 resolved power.left.vertical = "auto"
 resolved power.left.whileCasting = "keep"
+resolved power.left.whileStatus = "status"
 resolved power.lineGap = 1
 resolved power.right.color = {1,1,1,1}
 resolved power.right.customInitialized = false
@@ -7484,6 +7649,7 @@ resolved power.right.shadow = true
 resolved power.right.size = 8
 resolved power.right.vertical = "auto"
 resolved power.right.whileCasting = "keep"
+resolved power.right.whileStatus = "status"
 resolved power.textLayout = "edges"
 resolved pvp.anchor = "TOPLEFT"
 resolved pvp.background = true
@@ -7600,6 +7766,22 @@ option readyCheck.readyColor type="color" label="Ready colour" default={0.15,0.8
 option readyCheck.notReadyColor type="color" label="Not ready colour" default={0.85,0.12,0.12,1}
 option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#01273847
 option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
+option dead type="group" label="Dead & ghost"
+option dead.enabled type="toggle" label="Enabled" default=true tooltip=#02954430
+option dead.color type="color" label="Ghost colour" default={0.6,0.72,0.82,1} hidden
+option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
+option dead.bars type="toggle" label="Bars" default=true hidden
+option dead.portrait type="toggle" label="Portrait" default=true hidden
+option dead.border type="toggle" label="Border" default=true hidden
+option dead.texts type="toggle" label="Texts" default=true hidden
+option offline type="group" label="Offline"
+option offline.enabled type="toggle" label="Enabled" default=true tooltip=#49943112
+option offline.color type="color" label="Offline colour" default={0.62,0.62,0.62,1} hidden
+option offline.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
+option offline.bars type="toggle" label="Bars" default=true hidden
+option offline.portrait type="toggle" label="Portrait" default=true hidden
+option offline.border type="toggle" label="Border" default=true hidden
+option offline.texts type="toggle" label="Texts" default=true hidden
 option portrait type="group" label="Portrait" defaults={enabled=true,position="RIGHT"}
 option portrait.enabled type="toggle" label="Enabled" default=true
 option portrait.position type="select" label="Side" default="LEFT" values=#11c04b33
@@ -7689,6 +7871,7 @@ option health.left type="group" label="Left text" defaults={enabled=true,format=
 option health.left.format type="select" label="Shows" default="none" values=#22e0981a
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.left.piece1 type="group" label="Piece 1" hidden
 option health.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -7729,6 +7912,7 @@ option health.center type="group" label="Centre text" defaults={enabled=false,fo
 option health.center.format type="select" label="Shows" default="none" values=#22e0981a
 option health.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.center.piece1 type="group" label="Piece 1" hidden
 option health.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -7769,6 +7953,7 @@ option health.right type="group" label="Right text" defaults={enabled=true,forma
 option health.right.format type="select" label="Shows" default="none" values=#22e0981a
 option health.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.right.piece1 type="group" label="Piece 1" hidden
 option health.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -7809,6 +7994,7 @@ option health.belowLeft type="group" label="Small text below left" defaults={ena
 option health.belowLeft.format type="select" label="Shows" default="none" values=#22e0981a
 option health.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowLeft.piece1 type="group" label="Piece 1" hidden
 option health.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -7849,6 +8035,7 @@ option health.belowRight type="group" label="Small text below right" defaults={e
 option health.belowRight.format type="select" label="Shows" default="none" values=#22e0981a
 option health.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowRight.piece1 type="group" label="Piece 1" hidden
 option health.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -7931,6 +8118,7 @@ option power.left type="group" label="Left text" defaults={enabled=false,format=
 option power.left.format type="select" label="Shows" default="none" values=#7588ca59
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.left.piece1 type="group" label="Piece 1" hidden
 option power.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -7971,6 +8159,7 @@ option power.center type="group" label="Centre text" defaults={enabled=false,for
 option power.center.format type="select" label="Shows" default="none" values=#7588ca59
 option power.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.center.piece1 type="group" label="Piece 1" hidden
 option power.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -8011,6 +8200,7 @@ option power.right type="group" label="Right text" defaults={enabled=true,format
 option power.right.format type="select" label="Shows" default="none" values=#7588ca59
 option power.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.right.piece1 type="group" label="Piece 1" hidden
 option power.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -8051,6 +8241,7 @@ option power.belowLeft type="group" label="Small text below left" defaults={enab
 option power.belowLeft.format type="select" label="Shows" default="none" values=#7588ca59
 option power.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowLeft.piece1 type="group" label="Piece 1" hidden
 option power.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -8091,6 +8282,7 @@ option power.belowRight type="group" label="Small text below right" defaults={en
 option power.belowRight.format type="select" label="Shows" default="none" values=#7588ca59
 option power.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowRight.piece1 type="group" label="Piece 1" hidden
 option power.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -8678,6 +8870,13 @@ default comboPoints.enabled = true
 default comboPoints.height = 8
 default comboPoints.position = "power"
 default comboPoints.spacing = 2
+default dead.bars = true
+default dead.border = true
+default dead.color = {0.6,0.72,0.82,1}
+default dead.enabled = true
+default dead.portrait = true
+default dead.strength = 0.85
+default dead.texts = true
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -8744,6 +8943,7 @@ default health.belowLeft.shadow = true
 default health.belowLeft.size = 9
 default health.belowLeft.vertical = "auto"
 default health.belowLeft.whileCasting = "keep"
+default health.belowLeft.whileStatus = "status"
 default health.belowRight.color = {1,1,1,1}
 default health.belowRight.customInitialized = false
 default health.belowRight.enabled = false
@@ -8776,6 +8976,7 @@ default health.belowRight.shadow = true
 default health.belowRight.size = 9
 default health.belowRight.vertical = "auto"
 default health.belowRight.whileCasting = "keep"
+default health.belowRight.whileStatus = "status"
 default health.center.color = {1,1,1,1}
 default health.center.customInitialized = false
 default health.center.enabled = false
@@ -8807,6 +9008,7 @@ default health.center.piece4.source = "none"
 default health.center.shadow = true
 default health.center.vertical = "auto"
 default health.center.whileCasting = "keep"
+default health.center.whileStatus = "status"
 default health.colorMode = "class"
 default health.enabled = true
 default health.height = 26
@@ -8841,6 +9043,7 @@ default health.left.piece4.source = "none"
 default health.left.shadow = true
 default health.left.vertical = "auto"
 default health.left.whileCasting = "keep"
+default health.left.whileStatus = "status"
 default health.lineGap = 1
 default health.right.color = {1,1,1,1}
 default health.right.customInitialized = false
@@ -8873,7 +9076,15 @@ default health.right.piece4.source = "none"
 default health.right.shadow = true
 default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
+default health.right.whileStatus = "status"
 default health.textLayout = "edges"
+default offline.bars = true
+default offline.border = true
+default offline.color = {0.62,0.62,0.62,1}
+default offline.enabled = true
+default offline.portrait = true
+default offline.strength = 0.85
+default offline.texts = true
 default portrait.background = {0,0,0,0.6}
 default portrait.border.enabled = false
 default portrait.border.inset = 3
@@ -8950,6 +9161,7 @@ default power.belowLeft.shadow = true
 default power.belowLeft.size = 9
 default power.belowLeft.vertical = "auto"
 default power.belowLeft.whileCasting = "keep"
+default power.belowLeft.whileStatus = "status"
 default power.belowRight.color = {1,1,1,1}
 default power.belowRight.customInitialized = false
 default power.belowRight.enabled = false
@@ -8982,6 +9194,7 @@ default power.belowRight.shadow = true
 default power.belowRight.size = 9
 default power.belowRight.vertical = "auto"
 default power.belowRight.whileCasting = "keep"
+default power.belowRight.whileStatus = "status"
 default power.center.color = {1,1,1,1}
 default power.center.customInitialized = false
 default power.center.enabled = false
@@ -9013,6 +9226,7 @@ default power.center.piece4.source = "none"
 default power.center.shadow = true
 default power.center.vertical = "auto"
 default power.center.whileCasting = "keep"
+default power.center.whileStatus = "status"
 default power.enabled = true
 default power.height = 12
 default power.left.color = {1,1,1,1}
@@ -9046,6 +9260,7 @@ default power.left.piece4.source = "none"
 default power.left.shadow = true
 default power.left.vertical = "auto"
 default power.left.whileCasting = "keep"
+default power.left.whileStatus = "status"
 default power.lineGap = 1
 default power.right.color = {1,1,1,1}
 default power.right.customInitialized = false
@@ -9079,6 +9294,7 @@ default power.right.shadow = true
 default power.right.size = 9
 default power.right.vertical = "auto"
 default power.right.whileCasting = "keep"
+default power.right.whileStatus = "status"
 default power.textLayout = "edges"
 default pvp.anchor = "TOPLEFT"
 default pvp.background = true
@@ -9395,6 +9611,13 @@ resolved comboPoints.height = 8
 resolved comboPoints.position = "power"
 resolved comboPoints.spacing = 2
 resolved comboPoints.texture = "Blizzard Raid Bar"
+resolved dead.bars = true
+resolved dead.border = true
+resolved dead.color = {0.6,0.72,0.82,1}
+resolved dead.enabled = true
+resolved dead.portrait = true
+resolved dead.strength = 0.85
+resolved dead.texts = true
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -9473,6 +9696,7 @@ resolved health.belowLeft.shadow = true
 resolved health.belowLeft.size = 9
 resolved health.belowLeft.vertical = "auto"
 resolved health.belowLeft.whileCasting = "keep"
+resolved health.belowLeft.whileStatus = "status"
 resolved health.belowRight.color = {1,1,1,1}
 resolved health.belowRight.customInitialized = false
 resolved health.belowRight.enabled = false
@@ -9507,6 +9731,7 @@ resolved health.belowRight.shadow = true
 resolved health.belowRight.size = 9
 resolved health.belowRight.vertical = "auto"
 resolved health.belowRight.whileCasting = "keep"
+resolved health.belowRight.whileStatus = "status"
 resolved health.center.color = {1,1,1,1}
 resolved health.center.customInitialized = false
 resolved health.center.enabled = false
@@ -9541,6 +9766,7 @@ resolved health.center.shadow = true
 resolved health.center.size = 11
 resolved health.center.vertical = "auto"
 resolved health.center.whileCasting = "keep"
+resolved health.center.whileStatus = "status"
 resolved health.colorMode = "class"
 resolved health.enabled = true
 resolved health.height = 26
@@ -9578,6 +9804,7 @@ resolved health.left.shadow = true
 resolved health.left.size = 11
 resolved health.left.vertical = "auto"
 resolved health.left.whileCasting = "keep"
+resolved health.left.whileStatus = "status"
 resolved health.lineGap = 1
 resolved health.right.color = {1,1,1,1}
 resolved health.right.customInitialized = false
@@ -9613,7 +9840,15 @@ resolved health.right.shadow = true
 resolved health.right.size = 11
 resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
+resolved health.right.whileStatus = "status"
 resolved health.textLayout = "edges"
+resolved offline.bars = true
+resolved offline.border = true
+resolved offline.color = {0.62,0.62,0.62,1}
+resolved offline.enabled = true
+resolved offline.portrait = true
+resolved offline.strength = 0.85
+resolved offline.texts = true
 resolved portrait.background = {0,0,0,0.6}
 resolved portrait.border.background = "Solid"
 resolved portrait.border.backgroundColor = {0,0,0,0.75}
@@ -9705,6 +9940,7 @@ resolved power.belowLeft.shadow = true
 resolved power.belowLeft.size = 9
 resolved power.belowLeft.vertical = "auto"
 resolved power.belowLeft.whileCasting = "keep"
+resolved power.belowLeft.whileStatus = "status"
 resolved power.belowRight.color = {1,1,1,1}
 resolved power.belowRight.customInitialized = false
 resolved power.belowRight.enabled = false
@@ -9739,6 +9975,7 @@ resolved power.belowRight.shadow = true
 resolved power.belowRight.size = 9
 resolved power.belowRight.vertical = "auto"
 resolved power.belowRight.whileCasting = "keep"
+resolved power.belowRight.whileStatus = "status"
 resolved power.center.color = {1,1,1,1}
 resolved power.center.customInitialized = false
 resolved power.center.enabled = false
@@ -9773,6 +10010,7 @@ resolved power.center.shadow = true
 resolved power.center.size = 11
 resolved power.center.vertical = "auto"
 resolved power.center.whileCasting = "keep"
+resolved power.center.whileStatus = "status"
 resolved power.enabled = true
 resolved power.height = 12
 resolved power.left.color = {1,1,1,1}
@@ -9809,6 +10047,7 @@ resolved power.left.shadow = true
 resolved power.left.size = 11
 resolved power.left.vertical = "auto"
 resolved power.left.whileCasting = "keep"
+resolved power.left.whileStatus = "status"
 resolved power.lineGap = 1
 resolved power.right.color = {1,1,1,1}
 resolved power.right.customInitialized = false
@@ -9844,6 +10083,7 @@ resolved power.right.shadow = true
 resolved power.right.size = 9
 resolved power.right.vertical = "auto"
 resolved power.right.whileCasting = "keep"
+resolved power.right.whileStatus = "status"
 resolved power.textLayout = "edges"
 resolved pvp.anchor = "TOPLEFT"
 resolved pvp.background = true
@@ -9951,6 +10191,22 @@ option readyCheck.readyColor type="color" label="Ready colour" default={0.15,0.8
 option readyCheck.notReadyColor type="color" label="Not ready colour" default={0.85,0.12,0.12,1}
 option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#01273847
 option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
+option dead type="group" label="Dead & ghost"
+option dead.enabled type="toggle" label="Enabled" default=true tooltip=#02954430
+option dead.color type="color" label="Ghost colour" default={0.6,0.72,0.82,1} hidden
+option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
+option dead.bars type="toggle" label="Bars" default=true hidden
+option dead.portrait type="toggle" label="Portrait" default=true hidden
+option dead.border type="toggle" label="Border" default=true hidden
+option dead.texts type="toggle" label="Texts" default=true hidden
+option offline type="group" label="Offline"
+option offline.enabled type="toggle" label="Enabled" default=true tooltip=#49943112
+option offline.color type="color" label="Offline colour" default={0.62,0.62,0.62,1} hidden
+option offline.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
+option offline.bars type="toggle" label="Bars" default=true hidden
+option offline.portrait type="toggle" label="Portrait" default=true hidden
+option offline.border type="toggle" label="Border" default=true hidden
+option offline.texts type="toggle" label="Texts" default=true hidden
 option portrait type="group" label="Portrait" defaults={enabled=false}
 option portrait.enabled type="toggle" label="Enabled" default=true
 option portrait.position type="select" label="Side" default="LEFT" values=#11c04b33
@@ -10040,6 +10296,7 @@ option health.left type="group" label="Left text" defaults={enabled=true,format=
 option health.left.format type="select" label="Shows" default="none" values=#22e0981a
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.left.piece1 type="group" label="Piece 1" hidden
 option health.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -10080,6 +10337,7 @@ option health.center type="group" label="Centre text" defaults={enabled=false,fo
 option health.center.format type="select" label="Shows" default="none" values=#22e0981a
 option health.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.center.piece1 type="group" label="Piece 1" hidden
 option health.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -10120,6 +10378,7 @@ option health.right type="group" label="Right text" defaults={enabled=true,forma
 option health.right.format type="select" label="Shows" default="none" values=#22e0981a
 option health.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.right.piece1 type="group" label="Piece 1" hidden
 option health.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -10160,6 +10419,7 @@ option health.belowLeft type="group" label="Small text below left" defaults={ena
 option health.belowLeft.format type="select" label="Shows" default="none" values=#22e0981a
 option health.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowLeft.piece1 type="group" label="Piece 1" hidden
 option health.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -10200,6 +10460,7 @@ option health.belowRight type="group" label="Small text below right" defaults={e
 option health.belowRight.format type="select" label="Shows" default="none" values=#22e0981a
 option health.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowRight.piece1 type="group" label="Piece 1" hidden
 option health.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -10282,6 +10543,7 @@ option power.left type="group" label="Left text" defaults={enabled=false,format=
 option power.left.format type="select" label="Shows" default="none" values=#7588ca59
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.left.piece1 type="group" label="Piece 1" hidden
 option power.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -10322,6 +10584,7 @@ option power.center type="group" label="Centre text" defaults={enabled=false,for
 option power.center.format type="select" label="Shows" default="none" values=#7588ca59
 option power.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.center.piece1 type="group" label="Piece 1" hidden
 option power.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -10362,6 +10625,7 @@ option power.right type="group" label="Right text" defaults={enabled=true,format
 option power.right.format type="select" label="Shows" default="none" values=#7588ca59
 option power.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.right.piece1 type="group" label="Piece 1" hidden
 option power.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -10402,6 +10666,7 @@ option power.belowLeft type="group" label="Small text below left" defaults={enab
 option power.belowLeft.format type="select" label="Shows" default="none" values=#7588ca59
 option power.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowLeft.piece1 type="group" label="Piece 1" hidden
 option power.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -10442,6 +10707,7 @@ option power.belowRight type="group" label="Small text below right" defaults={en
 option power.belowRight.format type="select" label="Shows" default="none" values=#7588ca59
 option power.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowRight.piece1 type="group" label="Piece 1" hidden
 option power.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -10975,6 +11241,13 @@ default classification.offsetX = 0
 default classification.offsetY = 0
 default classification.order = 1
 default classification.size = 18
+default dead.bars = true
+default dead.border = true
+default dead.color = {0.6,0.72,0.82,1}
+default dead.enabled = true
+default dead.portrait = true
+default dead.strength = 0.85
+default dead.texts = true
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -11041,6 +11314,7 @@ default health.belowLeft.shadow = true
 default health.belowLeft.size = 9
 default health.belowLeft.vertical = "auto"
 default health.belowLeft.whileCasting = "keep"
+default health.belowLeft.whileStatus = "status"
 default health.belowRight.color = {1,1,1,1}
 default health.belowRight.customInitialized = false
 default health.belowRight.enabled = false
@@ -11073,6 +11347,7 @@ default health.belowRight.shadow = true
 default health.belowRight.size = 9
 default health.belowRight.vertical = "auto"
 default health.belowRight.whileCasting = "keep"
+default health.belowRight.whileStatus = "status"
 default health.center.color = {1,1,1,1}
 default health.center.customInitialized = false
 default health.center.enabled = false
@@ -11104,6 +11379,7 @@ default health.center.piece4.source = "none"
 default health.center.shadow = true
 default health.center.vertical = "auto"
 default health.center.whileCasting = "keep"
+default health.center.whileStatus = "status"
 default health.colorMode = "class"
 default health.enabled = true
 default health.height = 20
@@ -11139,6 +11415,7 @@ default health.left.shadow = true
 default health.left.size = 10
 default health.left.vertical = "auto"
 default health.left.whileCasting = "keep"
+default health.left.whileStatus = "status"
 default health.lineGap = 1
 default health.right.color = {1,1,1,1}
 default health.right.customInitialized = false
@@ -11172,7 +11449,15 @@ default health.right.shadow = true
 default health.right.size = 9
 default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
+default health.right.whileStatus = "status"
 default health.textLayout = "edges"
+default offline.bars = true
+default offline.border = true
+default offline.color = {0.62,0.62,0.62,1}
+default offline.enabled = true
+default offline.portrait = true
+default offline.strength = 0.85
+default offline.texts = true
 default portrait.background = {0,0,0,0.6}
 default portrait.border.enabled = false
 default portrait.border.inset = 3
@@ -11249,6 +11534,7 @@ default power.belowLeft.shadow = true
 default power.belowLeft.size = 9
 default power.belowLeft.vertical = "auto"
 default power.belowLeft.whileCasting = "keep"
+default power.belowLeft.whileStatus = "status"
 default power.belowRight.color = {1,1,1,1}
 default power.belowRight.customInitialized = false
 default power.belowRight.enabled = false
@@ -11281,6 +11567,7 @@ default power.belowRight.shadow = true
 default power.belowRight.size = 9
 default power.belowRight.vertical = "auto"
 default power.belowRight.whileCasting = "keep"
+default power.belowRight.whileStatus = "status"
 default power.center.color = {1,1,1,1}
 default power.center.customInitialized = false
 default power.center.enabled = false
@@ -11312,6 +11599,7 @@ default power.center.piece4.source = "none"
 default power.center.shadow = true
 default power.center.vertical = "auto"
 default power.center.whileCasting = "keep"
+default power.center.whileStatus = "status"
 default power.enabled = true
 default power.height = 8
 default power.left.color = {1,1,1,1}
@@ -11345,6 +11633,7 @@ default power.left.piece4.source = "none"
 default power.left.shadow = true
 default power.left.vertical = "auto"
 default power.left.whileCasting = "keep"
+default power.left.whileStatus = "status"
 default power.lineGap = 1
 default power.right.color = {1,1,1,1}
 default power.right.customInitialized = false
@@ -11378,6 +11667,7 @@ default power.right.shadow = true
 default power.right.size = 8
 default power.right.vertical = "auto"
 default power.right.whileCasting = "keep"
+default power.right.whileStatus = "status"
 default power.textLayout = "edges"
 default pvp.anchor = "TOPLEFT"
 default pvp.background = true
@@ -11666,6 +11956,13 @@ resolved classification.offsetX = 0
 resolved classification.offsetY = 0
 resolved classification.order = 1
 resolved classification.size = 18
+resolved dead.bars = true
+resolved dead.border = true
+resolved dead.color = {0.6,0.72,0.82,1}
+resolved dead.enabled = true
+resolved dead.portrait = true
+resolved dead.strength = 0.85
+resolved dead.texts = true
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -11744,6 +12041,7 @@ resolved health.belowLeft.shadow = true
 resolved health.belowLeft.size = 9
 resolved health.belowLeft.vertical = "auto"
 resolved health.belowLeft.whileCasting = "keep"
+resolved health.belowLeft.whileStatus = "status"
 resolved health.belowRight.color = {1,1,1,1}
 resolved health.belowRight.customInitialized = false
 resolved health.belowRight.enabled = false
@@ -11778,6 +12076,7 @@ resolved health.belowRight.shadow = true
 resolved health.belowRight.size = 9
 resolved health.belowRight.vertical = "auto"
 resolved health.belowRight.whileCasting = "keep"
+resolved health.belowRight.whileStatus = "status"
 resolved health.center.color = {1,1,1,1}
 resolved health.center.customInitialized = false
 resolved health.center.enabled = false
@@ -11812,6 +12111,7 @@ resolved health.center.shadow = true
 resolved health.center.size = 11
 resolved health.center.vertical = "auto"
 resolved health.center.whileCasting = "keep"
+resolved health.center.whileStatus = "status"
 resolved health.colorMode = "class"
 resolved health.enabled = true
 resolved health.height = 20
@@ -11849,6 +12149,7 @@ resolved health.left.shadow = true
 resolved health.left.size = 10
 resolved health.left.vertical = "auto"
 resolved health.left.whileCasting = "keep"
+resolved health.left.whileStatus = "status"
 resolved health.lineGap = 1
 resolved health.right.color = {1,1,1,1}
 resolved health.right.customInitialized = false
@@ -11884,7 +12185,15 @@ resolved health.right.shadow = true
 resolved health.right.size = 9
 resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
+resolved health.right.whileStatus = "status"
 resolved health.textLayout = "edges"
+resolved offline.bars = true
+resolved offline.border = true
+resolved offline.color = {0.62,0.62,0.62,1}
+resolved offline.enabled = true
+resolved offline.portrait = true
+resolved offline.strength = 0.85
+resolved offline.texts = true
 resolved portrait.background = {0,0,0,0.6}
 resolved portrait.border.background = "Solid"
 resolved portrait.border.backgroundColor = {0,0,0,0.75}
@@ -11976,6 +12285,7 @@ resolved power.belowLeft.shadow = true
 resolved power.belowLeft.size = 9
 resolved power.belowLeft.vertical = "auto"
 resolved power.belowLeft.whileCasting = "keep"
+resolved power.belowLeft.whileStatus = "status"
 resolved power.belowRight.color = {1,1,1,1}
 resolved power.belowRight.customInitialized = false
 resolved power.belowRight.enabled = false
@@ -12010,6 +12320,7 @@ resolved power.belowRight.shadow = true
 resolved power.belowRight.size = 9
 resolved power.belowRight.vertical = "auto"
 resolved power.belowRight.whileCasting = "keep"
+resolved power.belowRight.whileStatus = "status"
 resolved power.center.color = {1,1,1,1}
 resolved power.center.customInitialized = false
 resolved power.center.enabled = false
@@ -12044,6 +12355,7 @@ resolved power.center.shadow = true
 resolved power.center.size = 11
 resolved power.center.vertical = "auto"
 resolved power.center.whileCasting = "keep"
+resolved power.center.whileStatus = "status"
 resolved power.enabled = true
 resolved power.height = 8
 resolved power.left.color = {1,1,1,1}
@@ -12080,6 +12392,7 @@ resolved power.left.shadow = true
 resolved power.left.size = 11
 resolved power.left.vertical = "auto"
 resolved power.left.whileCasting = "keep"
+resolved power.left.whileStatus = "status"
 resolved power.lineGap = 1
 resolved power.right.color = {1,1,1,1}
 resolved power.right.customInitialized = false
@@ -12115,6 +12428,7 @@ resolved power.right.shadow = true
 resolved power.right.size = 8
 resolved power.right.vertical = "auto"
 resolved power.right.whileCasting = "keep"
+resolved power.right.whileStatus = "status"
 resolved power.textLayout = "edges"
 resolved pvp.anchor = "TOPLEFT"
 resolved pvp.background = true
@@ -12223,6 +12537,22 @@ option readyCheck.readyColor type="color" label="Ready colour" default={0.15,0.8
 option readyCheck.notReadyColor type="color" label="Not ready colour" default={0.85,0.12,0.12,1}
 option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#01273847
 option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
+option dead type="group" label="Dead & ghost"
+option dead.enabled type="toggle" label="Enabled" default=true tooltip=#02954430
+option dead.color type="color" label="Ghost colour" default={0.6,0.72,0.82,1} hidden
+option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
+option dead.bars type="toggle" label="Bars" default=true hidden
+option dead.portrait type="toggle" label="Portrait" default=true hidden
+option dead.border type="toggle" label="Border" default=true hidden
+option dead.texts type="toggle" label="Texts" default=true hidden
+option offline type="group" label="Offline"
+option offline.enabled type="toggle" label="Enabled" default=true tooltip=#49943112
+option offline.color type="color" label="Offline colour" default={0.62,0.62,0.62,1} hidden
+option offline.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
+option offline.bars type="toggle" label="Bars" default=true hidden
+option offline.portrait type="toggle" label="Portrait" default=true hidden
+option offline.border type="toggle" label="Border" default=true hidden
+option offline.texts type="toggle" label="Texts" default=true hidden
 option portrait type="group" label="Portrait" defaults={enabled=false}
 option portrait.enabled type="toggle" label="Enabled" default=true
 option portrait.position type="select" label="Side" default="LEFT" values=#11c04b33
@@ -12312,6 +12642,7 @@ option health.left type="group" label="Left text" defaults={enabled=true,format=
 option health.left.format type="select" label="Shows" default="none" values=#22e0981a
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.left.piece1 type="group" label="Piece 1" hidden
 option health.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -12352,6 +12683,7 @@ option health.center type="group" label="Centre text" defaults={enabled=false,fo
 option health.center.format type="select" label="Shows" default="none" values=#22e0981a
 option health.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.center.piece1 type="group" label="Piece 1" hidden
 option health.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -12392,6 +12724,7 @@ option health.right type="group" label="Right text" defaults={enabled=true,forma
 option health.right.format type="select" label="Shows" default="none" values=#22e0981a
 option health.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.right.piece1 type="group" label="Piece 1" hidden
 option health.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -12432,6 +12765,7 @@ option health.belowLeft type="group" label="Small text below left" defaults={ena
 option health.belowLeft.format type="select" label="Shows" default="none" values=#22e0981a
 option health.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowLeft.piece1 type="group" label="Piece 1" hidden
 option health.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -12472,6 +12806,7 @@ option health.belowRight type="group" label="Small text below right" defaults={e
 option health.belowRight.format type="select" label="Shows" default="none" values=#22e0981a
 option health.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowRight.piece1 type="group" label="Piece 1" hidden
 option health.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -12554,6 +12889,7 @@ option power.left type="group" label="Left text" defaults={enabled=false,format=
 option power.left.format type="select" label="Shows" default="none" values=#7588ca59
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.left.piece1 type="group" label="Piece 1" hidden
 option power.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -12594,6 +12930,7 @@ option power.center type="group" label="Centre text" defaults={enabled=false,for
 option power.center.format type="select" label="Shows" default="none" values=#7588ca59
 option power.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.center.piece1 type="group" label="Piece 1" hidden
 option power.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -12634,6 +12971,7 @@ option power.right type="group" label="Right text" defaults={enabled=true,format
 option power.right.format type="select" label="Shows" default="none" values=#7588ca59
 option power.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.right.piece1 type="group" label="Piece 1" hidden
 option power.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -12674,6 +13012,7 @@ option power.belowLeft type="group" label="Small text below left" defaults={enab
 option power.belowLeft.format type="select" label="Shows" default="none" values=#7588ca59
 option power.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowLeft.piece1 type="group" label="Piece 1" hidden
 option power.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -12714,6 +13053,7 @@ option power.belowRight type="group" label="Small text below right" defaults={en
 option power.belowRight.format type="select" label="Shows" default="none" values=#7588ca59
 option power.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowRight.piece1 type="group" label="Piece 1" hidden
 option power.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -13247,6 +13587,13 @@ default classification.offsetX = 0
 default classification.offsetY = 0
 default classification.order = 1
 default classification.size = 18
+default dead.bars = true
+default dead.border = true
+default dead.color = {0.6,0.72,0.82,1}
+default dead.enabled = true
+default dead.portrait = true
+default dead.strength = 0.85
+default dead.texts = true
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -13313,6 +13660,7 @@ default health.belowLeft.shadow = true
 default health.belowLeft.size = 9
 default health.belowLeft.vertical = "auto"
 default health.belowLeft.whileCasting = "keep"
+default health.belowLeft.whileStatus = "status"
 default health.belowRight.color = {1,1,1,1}
 default health.belowRight.customInitialized = false
 default health.belowRight.enabled = false
@@ -13345,6 +13693,7 @@ default health.belowRight.shadow = true
 default health.belowRight.size = 9
 default health.belowRight.vertical = "auto"
 default health.belowRight.whileCasting = "keep"
+default health.belowRight.whileStatus = "status"
 default health.center.color = {1,1,1,1}
 default health.center.customInitialized = false
 default health.center.enabled = false
@@ -13376,6 +13725,7 @@ default health.center.piece4.source = "none"
 default health.center.shadow = true
 default health.center.vertical = "auto"
 default health.center.whileCasting = "keep"
+default health.center.whileStatus = "status"
 default health.colorMode = "class"
 default health.enabled = true
 default health.height = 24
@@ -13410,6 +13760,7 @@ default health.left.piece4.source = "none"
 default health.left.shadow = true
 default health.left.vertical = "auto"
 default health.left.whileCasting = "keep"
+default health.left.whileStatus = "status"
 default health.lineGap = 1
 default health.right.color = {1,1,1,1}
 default health.right.customInitialized = false
@@ -13442,7 +13793,15 @@ default health.right.piece4.source = "none"
 default health.right.shadow = true
 default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
+default health.right.whileStatus = "status"
 default health.textLayout = "edges"
+default offline.bars = true
+default offline.border = true
+default offline.color = {0.62,0.62,0.62,1}
+default offline.enabled = true
+default offline.portrait = true
+default offline.strength = 0.85
+default offline.texts = true
 default portrait.background = {0,0,0,0.6}
 default portrait.border.enabled = false
 default portrait.border.inset = 3
@@ -13519,6 +13878,7 @@ default power.belowLeft.shadow = true
 default power.belowLeft.size = 9
 default power.belowLeft.vertical = "auto"
 default power.belowLeft.whileCasting = "keep"
+default power.belowLeft.whileStatus = "status"
 default power.belowRight.color = {1,1,1,1}
 default power.belowRight.customInitialized = false
 default power.belowRight.enabled = false
@@ -13551,6 +13911,7 @@ default power.belowRight.shadow = true
 default power.belowRight.size = 9
 default power.belowRight.vertical = "auto"
 default power.belowRight.whileCasting = "keep"
+default power.belowRight.whileStatus = "status"
 default power.center.color = {1,1,1,1}
 default power.center.customInitialized = false
 default power.center.enabled = false
@@ -13582,6 +13943,7 @@ default power.center.piece4.source = "none"
 default power.center.shadow = true
 default power.center.vertical = "auto"
 default power.center.whileCasting = "keep"
+default power.center.whileStatus = "status"
 default power.enabled = true
 default power.height = 10
 default power.left.color = {1,1,1,1}
@@ -13615,6 +13977,7 @@ default power.left.piece4.source = "none"
 default power.left.shadow = true
 default power.left.vertical = "auto"
 default power.left.whileCasting = "keep"
+default power.left.whileStatus = "status"
 default power.lineGap = 1
 default power.right.color = {1,1,1,1}
 default power.right.customInitialized = false
@@ -13648,6 +14011,7 @@ default power.right.shadow = true
 default power.right.size = 9
 default power.right.vertical = "auto"
 default power.right.whileCasting = "keep"
+default power.right.whileStatus = "status"
 default power.textLayout = "edges"
 default pvp.anchor = "TOPLEFT"
 default pvp.background = true
@@ -13936,6 +14300,13 @@ resolved classification.offsetX = 0
 resolved classification.offsetY = 0
 resolved classification.order = 1
 resolved classification.size = 18
+resolved dead.bars = true
+resolved dead.border = true
+resolved dead.color = {0.6,0.72,0.82,1}
+resolved dead.enabled = true
+resolved dead.portrait = true
+resolved dead.strength = 0.85
+resolved dead.texts = true
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -14014,6 +14385,7 @@ resolved health.belowLeft.shadow = true
 resolved health.belowLeft.size = 9
 resolved health.belowLeft.vertical = "auto"
 resolved health.belowLeft.whileCasting = "keep"
+resolved health.belowLeft.whileStatus = "status"
 resolved health.belowRight.color = {1,1,1,1}
 resolved health.belowRight.customInitialized = false
 resolved health.belowRight.enabled = false
@@ -14048,6 +14420,7 @@ resolved health.belowRight.shadow = true
 resolved health.belowRight.size = 9
 resolved health.belowRight.vertical = "auto"
 resolved health.belowRight.whileCasting = "keep"
+resolved health.belowRight.whileStatus = "status"
 resolved health.center.color = {1,1,1,1}
 resolved health.center.customInitialized = false
 resolved health.center.enabled = false
@@ -14082,6 +14455,7 @@ resolved health.center.shadow = true
 resolved health.center.size = 11
 resolved health.center.vertical = "auto"
 resolved health.center.whileCasting = "keep"
+resolved health.center.whileStatus = "status"
 resolved health.colorMode = "class"
 resolved health.enabled = true
 resolved health.height = 24
@@ -14119,6 +14493,7 @@ resolved health.left.shadow = true
 resolved health.left.size = 11
 resolved health.left.vertical = "auto"
 resolved health.left.whileCasting = "keep"
+resolved health.left.whileStatus = "status"
 resolved health.lineGap = 1
 resolved health.right.color = {1,1,1,1}
 resolved health.right.customInitialized = false
@@ -14154,7 +14529,15 @@ resolved health.right.shadow = true
 resolved health.right.size = 11
 resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
+resolved health.right.whileStatus = "status"
 resolved health.textLayout = "edges"
+resolved offline.bars = true
+resolved offline.border = true
+resolved offline.color = {0.62,0.62,0.62,1}
+resolved offline.enabled = true
+resolved offline.portrait = true
+resolved offline.strength = 0.85
+resolved offline.texts = true
 resolved portrait.background = {0,0,0,0.6}
 resolved portrait.border.background = "Solid"
 resolved portrait.border.backgroundColor = {0,0,0,0.75}
@@ -14246,6 +14629,7 @@ resolved power.belowLeft.shadow = true
 resolved power.belowLeft.size = 9
 resolved power.belowLeft.vertical = "auto"
 resolved power.belowLeft.whileCasting = "keep"
+resolved power.belowLeft.whileStatus = "status"
 resolved power.belowRight.color = {1,1,1,1}
 resolved power.belowRight.customInitialized = false
 resolved power.belowRight.enabled = false
@@ -14280,6 +14664,7 @@ resolved power.belowRight.shadow = true
 resolved power.belowRight.size = 9
 resolved power.belowRight.vertical = "auto"
 resolved power.belowRight.whileCasting = "keep"
+resolved power.belowRight.whileStatus = "status"
 resolved power.center.color = {1,1,1,1}
 resolved power.center.customInitialized = false
 resolved power.center.enabled = false
@@ -14314,6 +14699,7 @@ resolved power.center.shadow = true
 resolved power.center.size = 11
 resolved power.center.vertical = "auto"
 resolved power.center.whileCasting = "keep"
+resolved power.center.whileStatus = "status"
 resolved power.enabled = true
 resolved power.height = 10
 resolved power.left.color = {1,1,1,1}
@@ -14350,6 +14736,7 @@ resolved power.left.shadow = true
 resolved power.left.size = 11
 resolved power.left.vertical = "auto"
 resolved power.left.whileCasting = "keep"
+resolved power.left.whileStatus = "status"
 resolved power.lineGap = 1
 resolved power.right.color = {1,1,1,1}
 resolved power.right.customInitialized = false
@@ -14385,6 +14772,7 @@ resolved power.right.shadow = true
 resolved power.right.size = 9
 resolved power.right.vertical = "auto"
 resolved power.right.whileCasting = "keep"
+resolved power.right.whileStatus = "status"
 resolved power.textLayout = "edges"
 resolved pvp.anchor = "TOPLEFT"
 resolved pvp.background = true
@@ -14485,6 +14873,22 @@ option readyCheck.readyColor type="color" label="Ready colour" default={0.15,0.8
 option readyCheck.notReadyColor type="color" label="Not ready colour" default={0.85,0.12,0.12,1}
 option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#01273847
 option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
+option dead type="group" label="Dead & ghost"
+option dead.enabled type="toggle" label="Enabled" default=true tooltip=#02954430
+option dead.color type="color" label="Ghost colour" default={0.6,0.72,0.82,1} hidden
+option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
+option dead.bars type="toggle" label="Bars" default=true hidden
+option dead.portrait type="toggle" label="Portrait" default=true hidden
+option dead.border type="toggle" label="Border" default=true hidden
+option dead.texts type="toggle" label="Texts" default=true hidden
+option offline type="group" label="Offline"
+option offline.enabled type="toggle" label="Enabled" default=true tooltip=#49943112
+option offline.color type="color" label="Offline colour" default={0.62,0.62,0.62,1} hidden
+option offline.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
+option offline.bars type="toggle" label="Bars" default=true hidden
+option offline.portrait type="toggle" label="Portrait" default=true hidden
+option offline.border type="toggle" label="Border" default=true hidden
+option offline.texts type="toggle" label="Texts" default=true hidden
 option portrait type="group" label="Portrait" defaults={enabled=false}
 option portrait.enabled type="toggle" label="Enabled" default=true
 option portrait.position type="select" label="Side" default="LEFT" values=#11c04b33
@@ -14574,6 +14978,7 @@ option health.left type="group" label="Left text" defaults={enabled=true,format=
 option health.left.format type="select" label="Shows" default="none" values=#22e0981a
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.left.piece1 type="group" label="Piece 1" hidden
 option health.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -14614,6 +15019,7 @@ option health.center type="group" label="Centre text" defaults={enabled=false,fo
 option health.center.format type="select" label="Shows" default="none" values=#22e0981a
 option health.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.center.piece1 type="group" label="Piece 1" hidden
 option health.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -14654,6 +15060,7 @@ option health.right type="group" label="Right text" defaults={enabled=true,forma
 option health.right.format type="select" label="Shows" default="none" values=#22e0981a
 option health.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.right.piece1 type="group" label="Piece 1" hidden
 option health.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -14694,6 +15101,7 @@ option health.belowLeft type="group" label="Small text below left" defaults={ena
 option health.belowLeft.format type="select" label="Shows" default="none" values=#22e0981a
 option health.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowLeft.piece1 type="group" label="Piece 1" hidden
 option health.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -14734,6 +15142,7 @@ option health.belowRight type="group" label="Small text below right" defaults={e
 option health.belowRight.format type="select" label="Shows" default="none" values=#22e0981a
 option health.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowRight.piece1 type="group" label="Piece 1" hidden
 option health.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -14816,6 +15225,7 @@ option power.left type="group" label="Left text" defaults={enabled=false,format=
 option power.left.format type="select" label="Shows" default="none" values=#7588ca59
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.left.piece1 type="group" label="Piece 1" hidden
 option power.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -14856,6 +15266,7 @@ option power.center type="group" label="Centre text" defaults={enabled=false,for
 option power.center.format type="select" label="Shows" default="none" values=#7588ca59
 option power.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.center.piece1 type="group" label="Piece 1" hidden
 option power.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -14896,6 +15307,7 @@ option power.right type="group" label="Right text" defaults={enabled=true,format
 option power.right.format type="select" label="Shows" default="none" values=#7588ca59
 option power.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.right.piece1 type="group" label="Piece 1" hidden
 option power.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -14936,6 +15348,7 @@ option power.belowLeft type="group" label="Small text below left" defaults={enab
 option power.belowLeft.format type="select" label="Shows" default="none" values=#7588ca59
 option power.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowLeft.piece1 type="group" label="Piece 1" hidden
 option power.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -14976,6 +15389,7 @@ option power.belowRight type="group" label="Small text below right" defaults={en
 option power.belowRight.format type="select" label="Shows" default="none" values=#7588ca59
 option power.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowRight.piece1 type="group" label="Piece 1" hidden
 option power.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -15509,6 +15923,13 @@ default classification.offsetX = 0
 default classification.offsetY = 0
 default classification.order = 1
 default classification.size = 18
+default dead.bars = true
+default dead.border = true
+default dead.color = {0.6,0.72,0.82,1}
+default dead.enabled = true
+default dead.portrait = true
+default dead.strength = 0.85
+default dead.texts = true
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -15575,6 +15996,7 @@ default health.belowLeft.shadow = true
 default health.belowLeft.size = 9
 default health.belowLeft.vertical = "auto"
 default health.belowLeft.whileCasting = "keep"
+default health.belowLeft.whileStatus = "status"
 default health.belowRight.color = {1,1,1,1}
 default health.belowRight.customInitialized = false
 default health.belowRight.enabled = false
@@ -15607,6 +16029,7 @@ default health.belowRight.shadow = true
 default health.belowRight.size = 9
 default health.belowRight.vertical = "auto"
 default health.belowRight.whileCasting = "keep"
+default health.belowRight.whileStatus = "status"
 default health.center.color = {1,1,1,1}
 default health.center.customInitialized = false
 default health.center.enabled = false
@@ -15638,6 +16061,7 @@ default health.center.piece4.source = "none"
 default health.center.shadow = true
 default health.center.vertical = "auto"
 default health.center.whileCasting = "keep"
+default health.center.whileStatus = "status"
 default health.colorMode = "class"
 default health.enabled = true
 default health.height = 20
@@ -15673,6 +16097,7 @@ default health.left.shadow = true
 default health.left.size = 10
 default health.left.vertical = "auto"
 default health.left.whileCasting = "keep"
+default health.left.whileStatus = "status"
 default health.lineGap = 1
 default health.right.color = {1,1,1,1}
 default health.right.customInitialized = false
@@ -15706,7 +16131,15 @@ default health.right.shadow = true
 default health.right.size = 9
 default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
+default health.right.whileStatus = "status"
 default health.textLayout = "edges"
+default offline.bars = true
+default offline.border = true
+default offline.color = {0.62,0.62,0.62,1}
+default offline.enabled = true
+default offline.portrait = true
+default offline.strength = 0.85
+default offline.texts = true
 default portrait.background = {0,0,0,0.6}
 default portrait.border.enabled = false
 default portrait.border.inset = 3
@@ -15783,6 +16216,7 @@ default power.belowLeft.shadow = true
 default power.belowLeft.size = 9
 default power.belowLeft.vertical = "auto"
 default power.belowLeft.whileCasting = "keep"
+default power.belowLeft.whileStatus = "status"
 default power.belowRight.color = {1,1,1,1}
 default power.belowRight.customInitialized = false
 default power.belowRight.enabled = false
@@ -15815,6 +16249,7 @@ default power.belowRight.shadow = true
 default power.belowRight.size = 9
 default power.belowRight.vertical = "auto"
 default power.belowRight.whileCasting = "keep"
+default power.belowRight.whileStatus = "status"
 default power.center.color = {1,1,1,1}
 default power.center.customInitialized = false
 default power.center.enabled = false
@@ -15846,6 +16281,7 @@ default power.center.piece4.source = "none"
 default power.center.shadow = true
 default power.center.vertical = "auto"
 default power.center.whileCasting = "keep"
+default power.center.whileStatus = "status"
 default power.enabled = true
 default power.height = 8
 default power.left.color = {1,1,1,1}
@@ -15879,6 +16315,7 @@ default power.left.piece4.source = "none"
 default power.left.shadow = true
 default power.left.vertical = "auto"
 default power.left.whileCasting = "keep"
+default power.left.whileStatus = "status"
 default power.lineGap = 1
 default power.right.color = {1,1,1,1}
 default power.right.customInitialized = false
@@ -15912,6 +16349,7 @@ default power.right.shadow = true
 default power.right.size = 8
 default power.right.vertical = "auto"
 default power.right.whileCasting = "keep"
+default power.right.whileStatus = "status"
 default power.textLayout = "edges"
 default pvp.anchor = "TOPLEFT"
 default pvp.background = true
@@ -16200,6 +16638,13 @@ resolved classification.offsetX = 0
 resolved classification.offsetY = 0
 resolved classification.order = 1
 resolved classification.size = 18
+resolved dead.bars = true
+resolved dead.border = true
+resolved dead.color = {0.6,0.72,0.82,1}
+resolved dead.enabled = true
+resolved dead.portrait = true
+resolved dead.strength = 0.85
+resolved dead.texts = true
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -16278,6 +16723,7 @@ resolved health.belowLeft.shadow = true
 resolved health.belowLeft.size = 9
 resolved health.belowLeft.vertical = "auto"
 resolved health.belowLeft.whileCasting = "keep"
+resolved health.belowLeft.whileStatus = "status"
 resolved health.belowRight.color = {1,1,1,1}
 resolved health.belowRight.customInitialized = false
 resolved health.belowRight.enabled = false
@@ -16312,6 +16758,7 @@ resolved health.belowRight.shadow = true
 resolved health.belowRight.size = 9
 resolved health.belowRight.vertical = "auto"
 resolved health.belowRight.whileCasting = "keep"
+resolved health.belowRight.whileStatus = "status"
 resolved health.center.color = {1,1,1,1}
 resolved health.center.customInitialized = false
 resolved health.center.enabled = false
@@ -16346,6 +16793,7 @@ resolved health.center.shadow = true
 resolved health.center.size = 11
 resolved health.center.vertical = "auto"
 resolved health.center.whileCasting = "keep"
+resolved health.center.whileStatus = "status"
 resolved health.colorMode = "class"
 resolved health.enabled = true
 resolved health.height = 20
@@ -16383,6 +16831,7 @@ resolved health.left.shadow = true
 resolved health.left.size = 10
 resolved health.left.vertical = "auto"
 resolved health.left.whileCasting = "keep"
+resolved health.left.whileStatus = "status"
 resolved health.lineGap = 1
 resolved health.right.color = {1,1,1,1}
 resolved health.right.customInitialized = false
@@ -16418,7 +16867,15 @@ resolved health.right.shadow = true
 resolved health.right.size = 9
 resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
+resolved health.right.whileStatus = "status"
 resolved health.textLayout = "edges"
+resolved offline.bars = true
+resolved offline.border = true
+resolved offline.color = {0.62,0.62,0.62,1}
+resolved offline.enabled = true
+resolved offline.portrait = true
+resolved offline.strength = 0.85
+resolved offline.texts = true
 resolved portrait.background = {0,0,0,0.6}
 resolved portrait.border.background = "Solid"
 resolved portrait.border.backgroundColor = {0,0,0,0.75}
@@ -16510,6 +16967,7 @@ resolved power.belowLeft.shadow = true
 resolved power.belowLeft.size = 9
 resolved power.belowLeft.vertical = "auto"
 resolved power.belowLeft.whileCasting = "keep"
+resolved power.belowLeft.whileStatus = "status"
 resolved power.belowRight.color = {1,1,1,1}
 resolved power.belowRight.customInitialized = false
 resolved power.belowRight.enabled = false
@@ -16544,6 +17002,7 @@ resolved power.belowRight.shadow = true
 resolved power.belowRight.size = 9
 resolved power.belowRight.vertical = "auto"
 resolved power.belowRight.whileCasting = "keep"
+resolved power.belowRight.whileStatus = "status"
 resolved power.center.color = {1,1,1,1}
 resolved power.center.customInitialized = false
 resolved power.center.enabled = false
@@ -16578,6 +17037,7 @@ resolved power.center.shadow = true
 resolved power.center.size = 11
 resolved power.center.vertical = "auto"
 resolved power.center.whileCasting = "keep"
+resolved power.center.whileStatus = "status"
 resolved power.enabled = true
 resolved power.height = 8
 resolved power.left.color = {1,1,1,1}
@@ -16614,6 +17074,7 @@ resolved power.left.shadow = true
 resolved power.left.size = 11
 resolved power.left.vertical = "auto"
 resolved power.left.whileCasting = "keep"
+resolved power.left.whileStatus = "status"
 resolved power.lineGap = 1
 resolved power.right.color = {1,1,1,1}
 resolved power.right.customInitialized = false
@@ -16649,6 +17110,7 @@ resolved power.right.shadow = true
 resolved power.right.size = 8
 resolved power.right.vertical = "auto"
 resolved power.right.whileCasting = "keep"
+resolved power.right.whileStatus = "status"
 resolved power.textLayout = "edges"
 resolved pvp.anchor = "TOPLEFT"
 resolved pvp.background = true
@@ -16779,6 +17241,7 @@ option left type="group" label="Left text" defaults={enabled=true,format="name",
 option left.format type="select" label="Shows" default="none" values=#19ed1b49
 option left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option left.piece1 type="group" label="Piece 1" hidden
 option left.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -16819,6 +17282,7 @@ option center type="group" label="Centre text" defaults={enabled=false,format="n
 option center.format type="select" label="Shows" default="none" values=#19ed1b49
 option center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option center.piece1 type="group" label="Piece 1" hidden
 option center.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -16859,6 +17323,7 @@ option right type="group" label="Right text" defaults={enabled=true,format="heal
 option right.format type="select" label="Shows" default="none" values=#19ed1b49
 option right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option right.piece1 type="group" label="Piece 1" hidden
 option right.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -16899,6 +17364,7 @@ option belowLeft type="group" label="Small text below left" defaults={enabled=fa
 option belowLeft.format type="select" label="Shows" default="none" values=#19ed1b49
 option belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option belowLeft.piece1 type="group" label="Piece 1" hidden
 option belowLeft.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -16939,6 +17405,7 @@ option belowRight type="group" label="Small text below right" defaults={enabled=
 option belowRight.format type="select" label="Shows" default="none" values=#19ed1b49
 option belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option belowRight.piece1 type="group" label="Piece 1" hidden
 option belowRight.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -17041,6 +17508,7 @@ default belowLeft.shadow = true
 default belowLeft.size = 9
 default belowLeft.vertical = "auto"
 default belowLeft.whileCasting = "keep"
+default belowLeft.whileStatus = "status"
 default belowRight.color = {1,1,1,1}
 default belowRight.customInitialized = false
 default belowRight.enabled = false
@@ -17073,6 +17541,7 @@ default belowRight.shadow = true
 default belowRight.size = 9
 default belowRight.vertical = "auto"
 default belowRight.whileCasting = "keep"
+default belowRight.whileStatus = "status"
 default center.color = {1,1,1,1}
 default center.customInitialized = false
 default center.enabled = false
@@ -17104,6 +17573,7 @@ default center.piece4.source = "none"
 default center.shadow = true
 default center.vertical = "auto"
 default center.whileCasting = "keep"
+default center.whileStatus = "status"
 default enabled = true
 default left.color = {1,1,1,1}
 default left.customInitialized = false
@@ -17136,6 +17606,7 @@ default left.piece4.source = "none"
 default left.shadow = true
 default left.vertical = "auto"
 default left.whileCasting = "keep"
+default left.whileStatus = "status"
 default lineGap = 1
 default right.color = {1,1,1,1}
 default right.customInitialized = false
@@ -17168,6 +17639,7 @@ default right.piece4.source = "none"
 default right.shadow = true
 default right.vertical = "auto"
 default right.whileCasting = "keep"
+default right.whileStatus = "status"
 default textLayout = "edges"
 resolved bar.background.alpha = 0.25
 resolved bar.background.color = {0,0,0,0.5}
@@ -17247,6 +17719,7 @@ resolved belowLeft.shadow = true
 resolved belowLeft.size = 9
 resolved belowLeft.vertical = "auto"
 resolved belowLeft.whileCasting = "keep"
+resolved belowLeft.whileStatus = "status"
 resolved belowRight.color = {1,1,1,1}
 resolved belowRight.customInitialized = false
 resolved belowRight.enabled = false
@@ -17281,6 +17754,7 @@ resolved belowRight.shadow = true
 resolved belowRight.size = 9
 resolved belowRight.vertical = "auto"
 resolved belowRight.whileCasting = "keep"
+resolved belowRight.whileStatus = "status"
 resolved center.color = {1,1,1,1}
 resolved center.customInitialized = false
 resolved center.enabled = false
@@ -17315,6 +17789,7 @@ resolved center.shadow = true
 resolved center.size = 11
 resolved center.vertical = "auto"
 resolved center.whileCasting = "keep"
+resolved center.whileStatus = "status"
 resolved enabled = true
 resolved left.color = {1,1,1,1}
 resolved left.customInitialized = false
@@ -17350,6 +17825,7 @@ resolved left.shadow = true
 resolved left.size = 11
 resolved left.vertical = "auto"
 resolved left.whileCasting = "keep"
+resolved left.whileStatus = "status"
 resolved lineGap = 1
 resolved right.color = {1,1,1,1}
 resolved right.customInitialized = false
@@ -17385,6 +17861,7 @@ resolved right.shadow = true
 resolved right.size = 11
 resolved right.vertical = "auto"
 resolved right.whileCasting = "keep"
+resolved right.whileStatus = "status"
 resolved textLayout = "edges"
 ## row.power
 option enabled type="toggle" label="Enabled" default=true
@@ -17431,6 +17908,7 @@ option left type="group" label="Left text" defaults={enabled=false,format="none"
 option left.format type="select" label="Shows" default="none" values=#eb36ec28
 option left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option left.piece1 type="group" label="Piece 1" hidden
 option left.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -17471,6 +17949,7 @@ option center type="group" label="Centre text" defaults={enabled=false,format="n
 option center.format type="select" label="Shows" default="none" values=#eb36ec28
 option center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option center.piece1 type="group" label="Piece 1" hidden
 option center.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -17511,6 +17990,7 @@ option right type="group" label="Right text" defaults={enabled=true,format="powe
 option right.format type="select" label="Shows" default="none" values=#eb36ec28
 option right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option right.piece1 type="group" label="Piece 1" hidden
 option right.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -17551,6 +18031,7 @@ option belowLeft type="group" label="Small text below left" defaults={enabled=fa
 option belowLeft.format type="select" label="Shows" default="none" values=#eb36ec28
 option belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option belowLeft.piece1 type="group" label="Piece 1" hidden
 option belowLeft.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -17591,6 +18072,7 @@ option belowRight type="group" label="Small text below right" defaults={enabled=
 option belowRight.format type="select" label="Shows" default="none" values=#eb36ec28
 option belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option belowRight.piece1 type="group" label="Piece 1" hidden
 option belowRight.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -17683,6 +18165,7 @@ default belowLeft.shadow = true
 default belowLeft.size = 9
 default belowLeft.vertical = "auto"
 default belowLeft.whileCasting = "keep"
+default belowLeft.whileStatus = "status"
 default belowRight.color = {1,1,1,1}
 default belowRight.customInitialized = false
 default belowRight.enabled = false
@@ -17715,6 +18198,7 @@ default belowRight.shadow = true
 default belowRight.size = 9
 default belowRight.vertical = "auto"
 default belowRight.whileCasting = "keep"
+default belowRight.whileStatus = "status"
 default center.color = {1,1,1,1}
 default center.customInitialized = false
 default center.enabled = false
@@ -17746,6 +18230,7 @@ default center.piece4.source = "none"
 default center.shadow = true
 default center.vertical = "auto"
 default center.whileCasting = "keep"
+default center.whileStatus = "status"
 default enabled = true
 default left.color = {1,1,1,1}
 default left.customInitialized = false
@@ -17778,6 +18263,7 @@ default left.piece4.source = "none"
 default left.shadow = true
 default left.vertical = "auto"
 default left.whileCasting = "keep"
+default left.whileStatus = "status"
 default lineGap = 1
 default right.color = {1,1,1,1}
 default right.customInitialized = false
@@ -17810,6 +18296,7 @@ default right.piece4.source = "none"
 default right.shadow = true
 default right.vertical = "auto"
 default right.whileCasting = "keep"
+default right.whileStatus = "status"
 default textLayout = "edges"
 resolved bar.background.alpha = 0.25
 resolved bar.background.color = {0,0,0,0.5}
@@ -17877,6 +18364,7 @@ resolved belowLeft.shadow = true
 resolved belowLeft.size = 9
 resolved belowLeft.vertical = "auto"
 resolved belowLeft.whileCasting = "keep"
+resolved belowLeft.whileStatus = "status"
 resolved belowRight.color = {1,1,1,1}
 resolved belowRight.customInitialized = false
 resolved belowRight.enabled = false
@@ -17911,6 +18399,7 @@ resolved belowRight.shadow = true
 resolved belowRight.size = 9
 resolved belowRight.vertical = "auto"
 resolved belowRight.whileCasting = "keep"
+resolved belowRight.whileStatus = "status"
 resolved center.color = {1,1,1,1}
 resolved center.customInitialized = false
 resolved center.enabled = false
@@ -17945,6 +18434,7 @@ resolved center.shadow = true
 resolved center.size = 11
 resolved center.vertical = "auto"
 resolved center.whileCasting = "keep"
+resolved center.whileStatus = "status"
 resolved enabled = true
 resolved left.color = {1,1,1,1}
 resolved left.customInitialized = false
@@ -17980,6 +18470,7 @@ resolved left.shadow = true
 resolved left.size = 11
 resolved left.vertical = "auto"
 resolved left.whileCasting = "keep"
+resolved left.whileStatus = "status"
 resolved lineGap = 1
 resolved right.color = {1,1,1,1}
 resolved right.customInitialized = false
@@ -18015,6 +18506,7 @@ resolved right.shadow = true
 resolved right.size = 11
 resolved right.vertical = "auto"
 resolved right.whileCasting = "keep"
+resolved right.whileStatus = "status"
 resolved textLayout = "edges"
 ## row.experience
 option enabled type="toggle" label="Enabled" default=true
@@ -18061,6 +18553,7 @@ option left type="group" label="Left text" defaults={enabled=false,format="none"
 option left.format type="select" label="Shows" default="none" values=#9d1dcdcc
 option left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option left.piece1 type="group" label="Piece 1" hidden
 option left.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -18101,6 +18594,7 @@ option center type="group" label="Centre text" defaults={enabled=true,format="xp
 option center.format type="select" label="Shows" default="none" values=#9d1dcdcc
 option center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option center.piece1 type="group" label="Piece 1" hidden
 option center.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -18141,6 +18635,7 @@ option right type="group" label="Right text" defaults={enabled=false,format="non
 option right.format type="select" label="Shows" default="none" values=#9d1dcdcc
 option right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option right.piece1 type="group" label="Piece 1" hidden
 option right.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -18181,6 +18676,7 @@ option belowLeft type="group" label="Small text below left" defaults={enabled=fa
 option belowLeft.format type="select" label="Shows" default="none" values=#9d1dcdcc
 option belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option belowLeft.piece1 type="group" label="Piece 1" hidden
 option belowLeft.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -18221,6 +18717,7 @@ option belowRight type="group" label="Small text below right" defaults={enabled=
 option belowRight.format type="select" label="Shows" default="none" values=#9d1dcdcc
 option belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option belowRight.piece1 type="group" label="Piece 1" hidden
 option belowRight.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -18313,6 +18810,7 @@ default belowLeft.shadow = true
 default belowLeft.size = 9
 default belowLeft.vertical = "auto"
 default belowLeft.whileCasting = "keep"
+default belowLeft.whileStatus = "status"
 default belowRight.color = {1,1,1,1}
 default belowRight.customInitialized = false
 default belowRight.enabled = false
@@ -18345,6 +18843,7 @@ default belowRight.shadow = true
 default belowRight.size = 9
 default belowRight.vertical = "auto"
 default belowRight.whileCasting = "keep"
+default belowRight.whileStatus = "status"
 default center.color = {1,1,1,1}
 default center.customInitialized = false
 default center.enabled = true
@@ -18376,6 +18875,7 @@ default center.piece4.source = "none"
 default center.shadow = true
 default center.vertical = "auto"
 default center.whileCasting = "keep"
+default center.whileStatus = "status"
 default enabled = true
 default left.color = {1,1,1,1}
 default left.customInitialized = false
@@ -18408,6 +18908,7 @@ default left.piece4.source = "none"
 default left.shadow = true
 default left.vertical = "auto"
 default left.whileCasting = "keep"
+default left.whileStatus = "status"
 default lineGap = 1
 default right.color = {1,1,1,1}
 default right.customInitialized = false
@@ -18440,6 +18941,7 @@ default right.piece4.source = "none"
 default right.shadow = true
 default right.vertical = "auto"
 default right.whileCasting = "keep"
+default right.whileStatus = "status"
 default textLayout = "edges"
 resolved bar.background.alpha = 0.25
 resolved bar.background.color = {0,0,0,0.5}
@@ -18507,6 +19009,7 @@ resolved belowLeft.shadow = true
 resolved belowLeft.size = 9
 resolved belowLeft.vertical = "auto"
 resolved belowLeft.whileCasting = "keep"
+resolved belowLeft.whileStatus = "status"
 resolved belowRight.color = {1,1,1,1}
 resolved belowRight.customInitialized = false
 resolved belowRight.enabled = false
@@ -18541,6 +19044,7 @@ resolved belowRight.shadow = true
 resolved belowRight.size = 9
 resolved belowRight.vertical = "auto"
 resolved belowRight.whileCasting = "keep"
+resolved belowRight.whileStatus = "status"
 resolved center.color = {1,1,1,1}
 resolved center.customInitialized = false
 resolved center.enabled = true
@@ -18575,6 +19079,7 @@ resolved center.shadow = true
 resolved center.size = 11
 resolved center.vertical = "auto"
 resolved center.whileCasting = "keep"
+resolved center.whileStatus = "status"
 resolved enabled = true
 resolved left.color = {1,1,1,1}
 resolved left.customInitialized = false
@@ -18610,6 +19115,7 @@ resolved left.shadow = true
 resolved left.size = 11
 resolved left.vertical = "auto"
 resolved left.whileCasting = "keep"
+resolved left.whileStatus = "status"
 resolved lineGap = 1
 resolved right.color = {1,1,1,1}
 resolved right.customInitialized = false
@@ -18645,6 +19151,7 @@ resolved right.shadow = true
 resolved right.size = 11
 resolved right.vertical = "auto"
 resolved right.whileCasting = "keep"
+resolved right.whileStatus = "status"
 resolved textLayout = "edges"
 ## clickgrid.member
 option width type="range" label="Width" default=150 min=60 max=600 step=1
@@ -18680,6 +19187,22 @@ option readyCheck.readyColor type="color" label="Ready colour" default={0.15,0.8
 option readyCheck.notReadyColor type="color" label="Not ready colour" default={0.85,0.12,0.12,1}
 option readyCheck.hold type="range" label="Hold after the check (seconds)" default=2 min=0 max=10 step=0.5 tooltip=#01273847
 option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
+option dead type="group" label="Dead & ghost"
+option dead.enabled type="toggle" label="Enabled" default=true tooltip=#02954430
+option dead.color type="color" label="Ghost colour" default={0.6,0.72,0.82,1} hidden
+option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
+option dead.bars type="toggle" label="Bars" default=true hidden
+option dead.portrait type="toggle" label="Portrait" default=true hidden
+option dead.border type="toggle" label="Border" default=true hidden
+option dead.texts type="toggle" label="Texts" default=true hidden
+option offline type="group" label="Offline"
+option offline.enabled type="toggle" label="Enabled" default=true tooltip=#49943112
+option offline.color type="color" label="Offline colour" default={0.62,0.62,0.62,1} hidden
+option offline.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
+option offline.bars type="toggle" label="Bars" default=true hidden
+option offline.portrait type="toggle" label="Portrait" default=true hidden
+option offline.border type="toggle" label="Border" default=true hidden
+option offline.texts type="toggle" label="Texts" default=true hidden
 option portrait type="group" label="Portrait" defaults={enabled=false}
 option portrait.enabled type="toggle" label="Enabled" default=true
 option portrait.position type="select" label="Side" default="LEFT" values=#11c04b33
@@ -18769,6 +19292,7 @@ option health.left type="group" label="Left text" defaults={enabled=true,format=
 option health.left.format type="select" label="Shows" default="none" values=#22e0981a
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.left.piece1 type="group" label="Piece 1" hidden
 option health.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -18809,6 +19333,7 @@ option health.center type="group" label="Centre text" defaults={enabled=false,fo
 option health.center.format type="select" label="Shows" default="none" values=#22e0981a
 option health.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.center.piece1 type="group" label="Piece 1" hidden
 option health.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -18849,6 +19374,7 @@ option health.right type="group" label="Right text" defaults={enabled=true,forma
 option health.right.format type="select" label="Shows" default="none" values=#22e0981a
 option health.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.right.piece1 type="group" label="Piece 1" hidden
 option health.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -18889,6 +19415,7 @@ option health.belowLeft type="group" label="Small text below left" defaults={ena
 option health.belowLeft.format type="select" label="Shows" default="none" values=#22e0981a
 option health.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowLeft.piece1 type="group" label="Piece 1" hidden
 option health.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -18929,6 +19456,7 @@ option health.belowRight type="group" label="Small text below right" defaults={e
 option health.belowRight.format type="select" label="Shows" default="none" values=#22e0981a
 option health.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowRight.piece1 type="group" label="Piece 1" hidden
 option health.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -19011,6 +19539,7 @@ option power.left type="group" label="Left text" defaults={enabled=false,format=
 option power.left.format type="select" label="Shows" default="none" values=#7588ca59
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.left.piece1 type="group" label="Piece 1" hidden
 option power.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -19051,6 +19580,7 @@ option power.center type="group" label="Centre text" defaults={enabled=false,for
 option power.center.format type="select" label="Shows" default="none" values=#7588ca59
 option power.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.center.piece1 type="group" label="Piece 1" hidden
 option power.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -19091,6 +19621,7 @@ option power.right type="group" label="Right text" defaults={enabled=true,format
 option power.right.format type="select" label="Shows" default="none" values=#7588ca59
 option power.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.right.piece1 type="group" label="Piece 1" hidden
 option power.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -19131,6 +19662,7 @@ option power.belowLeft type="group" label="Small text below left" defaults={enab
 option power.belowLeft.format type="select" label="Shows" default="none" values=#7588ca59
 option power.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowLeft.piece1 type="group" label="Piece 1" hidden
 option power.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -19171,6 +19703,7 @@ option power.belowRight type="group" label="Small text below right" defaults={en
 option power.belowRight.format type="select" label="Shows" default="none" values=#7588ca59
 option power.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowRight.piece1 type="group" label="Piece 1" hidden
 option power.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -19672,6 +20205,13 @@ default categoryAuras.showDuration = true
 default categoryAuras.showSwipeEdge = true
 default categoryAuras.size = 18
 default categoryAuras.swipe = "normal"
+default dead.bars = true
+default dead.border = true
+default dead.color = {0.6,0.72,0.82,1}
+default dead.enabled = true
+default dead.portrait = true
+default dead.strength = 0.85
+default dead.texts = true
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -19738,6 +20278,7 @@ default health.belowLeft.shadow = true
 default health.belowLeft.size = 9
 default health.belowLeft.vertical = "auto"
 default health.belowLeft.whileCasting = "keep"
+default health.belowLeft.whileStatus = "status"
 default health.belowRight.color = {1,1,1,1}
 default health.belowRight.customInitialized = false
 default health.belowRight.enabled = false
@@ -19770,6 +20311,7 @@ default health.belowRight.shadow = true
 default health.belowRight.size = 9
 default health.belowRight.vertical = "auto"
 default health.belowRight.whileCasting = "keep"
+default health.belowRight.whileStatus = "status"
 default health.center.color = {1,1,1,1}
 default health.center.customInitialized = false
 default health.center.enabled = false
@@ -19801,6 +20343,7 @@ default health.center.piece4.source = "none"
 default health.center.shadow = true
 default health.center.vertical = "auto"
 default health.center.whileCasting = "keep"
+default health.center.whileStatus = "status"
 default health.colorMode = "class"
 default health.enabled = true
 default health.height = 28
@@ -19836,6 +20379,7 @@ default health.left.shadow = true
 default health.left.size = 10
 default health.left.vertical = "auto"
 default health.left.whileCasting = "keep"
+default health.left.whileStatus = "status"
 default health.lineGap = 1
 default health.right.color = {1,1,1,1}
 default health.right.customInitialized = false
@@ -19869,7 +20413,15 @@ default health.right.shadow = true
 default health.right.size = 9
 default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
+default health.right.whileStatus = "status"
 default health.textLayout = "edges"
+default offline.bars = true
+default offline.border = true
+default offline.color = {0.62,0.62,0.62,1}
+default offline.enabled = true
+default offline.portrait = true
+default offline.strength = 0.85
+default offline.texts = true
 default portrait.background = {0,0,0,0.6}
 default portrait.border.enabled = false
 default portrait.border.inset = 3
@@ -19946,6 +20498,7 @@ default power.belowLeft.shadow = true
 default power.belowLeft.size = 9
 default power.belowLeft.vertical = "auto"
 default power.belowLeft.whileCasting = "keep"
+default power.belowLeft.whileStatus = "status"
 default power.belowRight.color = {1,1,1,1}
 default power.belowRight.customInitialized = false
 default power.belowRight.enabled = false
@@ -19978,6 +20531,7 @@ default power.belowRight.shadow = true
 default power.belowRight.size = 9
 default power.belowRight.vertical = "auto"
 default power.belowRight.whileCasting = "keep"
+default power.belowRight.whileStatus = "status"
 default power.center.color = {1,1,1,1}
 default power.center.customInitialized = false
 default power.center.enabled = false
@@ -20009,6 +20563,7 @@ default power.center.piece4.source = "none"
 default power.center.shadow = true
 default power.center.vertical = "auto"
 default power.center.whileCasting = "keep"
+default power.center.whileStatus = "status"
 default power.enabled = false
 default power.height = 6
 default power.left.color = {1,1,1,1}
@@ -20042,6 +20597,7 @@ default power.left.piece4.source = "none"
 default power.left.shadow = true
 default power.left.vertical = "auto"
 default power.left.whileCasting = "keep"
+default power.left.whileStatus = "status"
 default power.lineGap = 1
 default power.right.color = {1,1,1,1}
 default power.right.customInitialized = false
@@ -20075,6 +20631,7 @@ default power.right.shadow = true
 default power.right.size = 8
 default power.right.vertical = "auto"
 default power.right.whileCasting = "keep"
+default power.right.whileStatus = "status"
 default power.textLayout = "edges"
 default raidTarget.anchor = "TOP"
 default raidTarget.enabled = true
@@ -20341,6 +20898,13 @@ resolved categoryAuras.showDuration = true
 resolved categoryAuras.showSwipeEdge = true
 resolved categoryAuras.size = 18
 resolved categoryAuras.swipe = "normal"
+resolved dead.bars = true
+resolved dead.border = true
+resolved dead.color = {0.6,0.72,0.82,1}
+resolved dead.enabled = true
+resolved dead.portrait = true
+resolved dead.strength = 0.85
+resolved dead.texts = true
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -20419,6 +20983,7 @@ resolved health.belowLeft.shadow = true
 resolved health.belowLeft.size = 9
 resolved health.belowLeft.vertical = "auto"
 resolved health.belowLeft.whileCasting = "keep"
+resolved health.belowLeft.whileStatus = "status"
 resolved health.belowRight.color = {1,1,1,1}
 resolved health.belowRight.customInitialized = false
 resolved health.belowRight.enabled = false
@@ -20453,6 +21018,7 @@ resolved health.belowRight.shadow = true
 resolved health.belowRight.size = 9
 resolved health.belowRight.vertical = "auto"
 resolved health.belowRight.whileCasting = "keep"
+resolved health.belowRight.whileStatus = "status"
 resolved health.center.color = {1,1,1,1}
 resolved health.center.customInitialized = false
 resolved health.center.enabled = false
@@ -20487,6 +21053,7 @@ resolved health.center.shadow = true
 resolved health.center.size = 11
 resolved health.center.vertical = "auto"
 resolved health.center.whileCasting = "keep"
+resolved health.center.whileStatus = "status"
 resolved health.colorMode = "class"
 resolved health.enabled = true
 resolved health.height = 28
@@ -20524,6 +21091,7 @@ resolved health.left.shadow = true
 resolved health.left.size = 10
 resolved health.left.vertical = "auto"
 resolved health.left.whileCasting = "keep"
+resolved health.left.whileStatus = "status"
 resolved health.lineGap = 1
 resolved health.right.color = {1,1,1,1}
 resolved health.right.customInitialized = false
@@ -20559,7 +21127,15 @@ resolved health.right.shadow = true
 resolved health.right.size = 9
 resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
+resolved health.right.whileStatus = "status"
 resolved health.textLayout = "edges"
+resolved offline.bars = true
+resolved offline.border = true
+resolved offline.color = {0.62,0.62,0.62,1}
+resolved offline.enabled = true
+resolved offline.portrait = true
+resolved offline.strength = 0.85
+resolved offline.texts = true
 resolved portrait.background = {0,0,0,0.6}
 resolved portrait.border.background = "Solid"
 resolved portrait.border.backgroundColor = {0,0,0,0.75}
@@ -20651,6 +21227,7 @@ resolved power.belowLeft.shadow = true
 resolved power.belowLeft.size = 9
 resolved power.belowLeft.vertical = "auto"
 resolved power.belowLeft.whileCasting = "keep"
+resolved power.belowLeft.whileStatus = "status"
 resolved power.belowRight.color = {1,1,1,1}
 resolved power.belowRight.customInitialized = false
 resolved power.belowRight.enabled = false
@@ -20685,6 +21262,7 @@ resolved power.belowRight.shadow = true
 resolved power.belowRight.size = 9
 resolved power.belowRight.vertical = "auto"
 resolved power.belowRight.whileCasting = "keep"
+resolved power.belowRight.whileStatus = "status"
 resolved power.center.color = {1,1,1,1}
 resolved power.center.customInitialized = false
 resolved power.center.enabled = false
@@ -20719,6 +21297,7 @@ resolved power.center.shadow = true
 resolved power.center.size = 11
 resolved power.center.vertical = "auto"
 resolved power.center.whileCasting = "keep"
+resolved power.center.whileStatus = "status"
 resolved power.enabled = false
 resolved power.height = 6
 resolved power.left.color = {1,1,1,1}
@@ -20755,6 +21334,7 @@ resolved power.left.shadow = true
 resolved power.left.size = 11
 resolved power.left.vertical = "auto"
 resolved power.left.whileCasting = "keep"
+resolved power.left.whileStatus = "status"
 resolved power.lineGap = 1
 resolved power.right.color = {1,1,1,1}
 resolved power.right.customInitialized = false
@@ -20790,6 +21370,7 @@ resolved power.right.shadow = true
 resolved power.right.size = 8
 resolved power.right.vertical = "auto"
 resolved power.right.whileCasting = "keep"
+resolved power.right.whileStatus = "status"
 resolved power.textLayout = "edges"
 resolved raidTarget.anchor = "TOP"
 resolved raidTarget.enabled = true
@@ -20896,6 +21477,22 @@ option range.enabled type="toggle" label="Enabled" default=false
 option range.outsideAlpha type="range" label="Out-of-range opacity" default=0.55 min=0 max=1 step=0.05 tooltip=#31bd172e
 option range.mode type="select" label="Range check" default="group" values=#b1e9e395 tooltip=#2c964cf0
 option range.spell type="text" label="Spell ID or name" default="" tooltip=#a735d466 hidden
+option dead type="group" label="Dead & ghost"
+option dead.enabled type="toggle" label="Enabled" default=true tooltip=#02954430
+option dead.color type="color" label="Ghost colour" default={0.6,0.72,0.82,1} hidden
+option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
+option dead.bars type="toggle" label="Bars" default=true hidden
+option dead.portrait type="toggle" label="Portrait" default=true hidden
+option dead.border type="toggle" label="Border" default=true hidden
+option dead.texts type="toggle" label="Texts" default=true hidden
+option offline type="group" label="Offline"
+option offline.enabled type="toggle" label="Enabled" default=true tooltip=#49943112
+option offline.color type="color" label="Offline colour" default={0.62,0.62,0.62,1} hidden
+option offline.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
+option offline.bars type="toggle" label="Bars" default=true hidden
+option offline.portrait type="toggle" label="Portrait" default=true hidden
+option offline.border type="toggle" label="Border" default=true hidden
+option offline.texts type="toggle" label="Texts" default=true hidden
 option portrait type="group" label="Portrait" defaults={enabled=false}
 option portrait.enabled type="toggle" label="Enabled" default=true
 option portrait.position type="select" label="Side" default="LEFT" values=#11c04b33
@@ -20985,6 +21582,7 @@ option health.left type="group" label="Left text" defaults={enabled=true,format=
 option health.left.format type="select" label="Shows" default="none" values=#22e0981a
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.left.piece1 type="group" label="Piece 1" hidden
 option health.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -21025,6 +21623,7 @@ option health.center type="group" label="Centre text" defaults={enabled=false,fo
 option health.center.format type="select" label="Shows" default="none" values=#22e0981a
 option health.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.center.piece1 type="group" label="Piece 1" hidden
 option health.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -21065,6 +21664,7 @@ option health.right type="group" label="Right text" defaults={enabled=true,forma
 option health.right.format type="select" label="Shows" default="none" values=#22e0981a
 option health.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.right.piece1 type="group" label="Piece 1" hidden
 option health.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -21105,6 +21705,7 @@ option health.belowLeft type="group" label="Small text below left" defaults={ena
 option health.belowLeft.format type="select" label="Shows" default="none" values=#22e0981a
 option health.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowLeft.piece1 type="group" label="Piece 1" hidden
 option health.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -21145,6 +21746,7 @@ option health.belowRight type="group" label="Small text below right" defaults={e
 option health.belowRight.format type="select" label="Shows" default="none" values=#22e0981a
 option health.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option health.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option health.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowRight.piece1 type="group" label="Piece 1" hidden
 option health.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -21227,6 +21829,7 @@ option power.left type="group" label="Left text" defaults={enabled=false,format=
 option power.left.format type="select" label="Shows" default="none" values=#7588ca59
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.left.piece1 type="group" label="Piece 1" hidden
 option power.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -21267,6 +21870,7 @@ option power.center type="group" label="Centre text" defaults={enabled=false,for
 option power.center.format type="select" label="Shows" default="none" values=#7588ca59
 option power.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.center.piece1 type="group" label="Piece 1" hidden
 option power.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -21307,6 +21911,7 @@ option power.right type="group" label="Right text" defaults={enabled=true,format
 option power.right.format type="select" label="Shows" default="none" values=#7588ca59
 option power.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.right.piece1 type="group" label="Piece 1" hidden
 option power.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -21347,6 +21952,7 @@ option power.belowLeft type="group" label="Small text below left" defaults={enab
 option power.belowLeft.format type="select" label="Shows" default="none" values=#7588ca59
 option power.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowLeft.piece1 type="group" label="Piece 1" hidden
 option power.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -21387,6 +21993,7 @@ option power.belowRight type="group" label="Small text below right" defaults={en
 option power.belowRight.format type="select" label="Shows" default="none" values=#7588ca59
 option power.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
+option power.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
 option power.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowRight.piece1 type="group" label="Piece 1" hidden
 option power.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -21888,6 +22495,13 @@ default categoryAuras.showDuration = true
 default categoryAuras.showSwipeEdge = true
 default categoryAuras.size = 22
 default categoryAuras.swipe = "normal"
+default dead.bars = true
+default dead.border = true
+default dead.color = {0.6,0.72,0.82,1}
+default dead.enabled = true
+default dead.portrait = true
+default dead.strength = 0.85
+default dead.texts = true
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -21954,6 +22568,7 @@ default health.belowLeft.shadow = true
 default health.belowLeft.size = 9
 default health.belowLeft.vertical = "auto"
 default health.belowLeft.whileCasting = "keep"
+default health.belowLeft.whileStatus = "status"
 default health.belowRight.color = {1,1,1,1}
 default health.belowRight.customInitialized = false
 default health.belowRight.enabled = false
@@ -21986,6 +22601,7 @@ default health.belowRight.shadow = true
 default health.belowRight.size = 9
 default health.belowRight.vertical = "auto"
 default health.belowRight.whileCasting = "keep"
+default health.belowRight.whileStatus = "status"
 default health.center.color = {1,1,1,1}
 default health.center.customInitialized = false
 default health.center.enabled = false
@@ -22017,6 +22633,7 @@ default health.center.piece4.source = "none"
 default health.center.shadow = true
 default health.center.vertical = "auto"
 default health.center.whileCasting = "keep"
+default health.center.whileStatus = "status"
 default health.colorMode = "class"
 default health.enabled = true
 default health.height = 28
@@ -22052,6 +22669,7 @@ default health.left.shadow = true
 default health.left.size = 10
 default health.left.vertical = "auto"
 default health.left.whileCasting = "keep"
+default health.left.whileStatus = "status"
 default health.lineGap = 1
 default health.right.color = {1,1,1,1}
 default health.right.customInitialized = false
@@ -22085,7 +22703,15 @@ default health.right.shadow = true
 default health.right.size = 9
 default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
+default health.right.whileStatus = "status"
 default health.textLayout = "edges"
+default offline.bars = true
+default offline.border = true
+default offline.color = {0.62,0.62,0.62,1}
+default offline.enabled = true
+default offline.portrait = true
+default offline.strength = 0.85
+default offline.texts = true
 default portrait.background = {0,0,0,0.6}
 default portrait.border.enabled = false
 default portrait.border.inset = 3
@@ -22162,6 +22788,7 @@ default power.belowLeft.shadow = true
 default power.belowLeft.size = 9
 default power.belowLeft.vertical = "auto"
 default power.belowLeft.whileCasting = "keep"
+default power.belowLeft.whileStatus = "status"
 default power.belowRight.color = {1,1,1,1}
 default power.belowRight.customInitialized = false
 default power.belowRight.enabled = false
@@ -22194,6 +22821,7 @@ default power.belowRight.shadow = true
 default power.belowRight.size = 9
 default power.belowRight.vertical = "auto"
 default power.belowRight.whileCasting = "keep"
+default power.belowRight.whileStatus = "status"
 default power.center.color = {1,1,1,1}
 default power.center.customInitialized = false
 default power.center.enabled = false
@@ -22225,6 +22853,7 @@ default power.center.piece4.source = "none"
 default power.center.shadow = true
 default power.center.vertical = "auto"
 default power.center.whileCasting = "keep"
+default power.center.whileStatus = "status"
 default power.enabled = false
 default power.height = 8
 default power.left.color = {1,1,1,1}
@@ -22258,6 +22887,7 @@ default power.left.piece4.source = "none"
 default power.left.shadow = true
 default power.left.vertical = "auto"
 default power.left.whileCasting = "keep"
+default power.left.whileStatus = "status"
 default power.lineGap = 1
 default power.right.color = {1,1,1,1}
 default power.right.customInitialized = false
@@ -22291,6 +22921,7 @@ default power.right.shadow = true
 default power.right.size = 8
 default power.right.vertical = "auto"
 default power.right.whileCasting = "keep"
+default power.right.whileStatus = "status"
 default power.textLayout = "edges"
 default raidTarget.anchor = "TOP"
 default raidTarget.enabled = true
@@ -22552,6 +23183,13 @@ resolved categoryAuras.showDuration = true
 resolved categoryAuras.showSwipeEdge = true
 resolved categoryAuras.size = 22
 resolved categoryAuras.swipe = "normal"
+resolved dead.bars = true
+resolved dead.border = true
+resolved dead.color = {0.6,0.72,0.82,1}
+resolved dead.enabled = true
+resolved dead.portrait = true
+resolved dead.strength = 0.85
+resolved dead.texts = true
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -22630,6 +23268,7 @@ resolved health.belowLeft.shadow = true
 resolved health.belowLeft.size = 9
 resolved health.belowLeft.vertical = "auto"
 resolved health.belowLeft.whileCasting = "keep"
+resolved health.belowLeft.whileStatus = "status"
 resolved health.belowRight.color = {1,1,1,1}
 resolved health.belowRight.customInitialized = false
 resolved health.belowRight.enabled = false
@@ -22664,6 +23303,7 @@ resolved health.belowRight.shadow = true
 resolved health.belowRight.size = 9
 resolved health.belowRight.vertical = "auto"
 resolved health.belowRight.whileCasting = "keep"
+resolved health.belowRight.whileStatus = "status"
 resolved health.center.color = {1,1,1,1}
 resolved health.center.customInitialized = false
 resolved health.center.enabled = false
@@ -22698,6 +23338,7 @@ resolved health.center.shadow = true
 resolved health.center.size = 11
 resolved health.center.vertical = "auto"
 resolved health.center.whileCasting = "keep"
+resolved health.center.whileStatus = "status"
 resolved health.colorMode = "class"
 resolved health.enabled = true
 resolved health.height = 28
@@ -22735,6 +23376,7 @@ resolved health.left.shadow = true
 resolved health.left.size = 10
 resolved health.left.vertical = "auto"
 resolved health.left.whileCasting = "keep"
+resolved health.left.whileStatus = "status"
 resolved health.lineGap = 1
 resolved health.right.color = {1,1,1,1}
 resolved health.right.customInitialized = false
@@ -22770,7 +23412,15 @@ resolved health.right.shadow = true
 resolved health.right.size = 9
 resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
+resolved health.right.whileStatus = "status"
 resolved health.textLayout = "edges"
+resolved offline.bars = true
+resolved offline.border = true
+resolved offline.color = {0.62,0.62,0.62,1}
+resolved offline.enabled = true
+resolved offline.portrait = true
+resolved offline.strength = 0.85
+resolved offline.texts = true
 resolved portrait.background = {0,0,0,0.6}
 resolved portrait.border.background = "Solid"
 resolved portrait.border.backgroundColor = {0,0,0,0.75}
@@ -22862,6 +23512,7 @@ resolved power.belowLeft.shadow = true
 resolved power.belowLeft.size = 9
 resolved power.belowLeft.vertical = "auto"
 resolved power.belowLeft.whileCasting = "keep"
+resolved power.belowLeft.whileStatus = "status"
 resolved power.belowRight.color = {1,1,1,1}
 resolved power.belowRight.customInitialized = false
 resolved power.belowRight.enabled = false
@@ -22896,6 +23547,7 @@ resolved power.belowRight.shadow = true
 resolved power.belowRight.size = 9
 resolved power.belowRight.vertical = "auto"
 resolved power.belowRight.whileCasting = "keep"
+resolved power.belowRight.whileStatus = "status"
 resolved power.center.color = {1,1,1,1}
 resolved power.center.customInitialized = false
 resolved power.center.enabled = false
@@ -22930,6 +23582,7 @@ resolved power.center.shadow = true
 resolved power.center.size = 11
 resolved power.center.vertical = "auto"
 resolved power.center.whileCasting = "keep"
+resolved power.center.whileStatus = "status"
 resolved power.enabled = false
 resolved power.height = 8
 resolved power.left.color = {1,1,1,1}
@@ -22966,6 +23619,7 @@ resolved power.left.shadow = true
 resolved power.left.size = 11
 resolved power.left.vertical = "auto"
 resolved power.left.whileCasting = "keep"
+resolved power.left.whileStatus = "status"
 resolved power.lineGap = 1
 resolved power.right.color = {1,1,1,1}
 resolved power.right.customInitialized = false
@@ -23001,6 +23655,7 @@ resolved power.right.shadow = true
 resolved power.right.size = 8
 resolved power.right.vertical = "auto"
 resolved power.right.whileCasting = "keep"
+resolved power.right.whileStatus = "status"
 resolved power.textLayout = "edges"
 resolved raidTarget.anchor = "TOP"
 resolved raidTarget.enabled = true

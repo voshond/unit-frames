@@ -450,6 +450,11 @@ function Methods:SetDesaturated(desaturated)
 	Record(self, "SetDesaturated", desaturated)
 	self.__state.desaturated = desaturated
 end
+function Methods:SetDesaturation(strength)
+	assert(type(strength) == "number", "bad argument #1 to 'SetDesaturation' (Usage: self:SetDesaturation(strength))")
+	Record(self, "SetDesaturation", strength)
+	self.__state.desaturation = strength
+end
 function Methods:GetTexture() return self.__state.texture end
 function Methods:SetVertexColor(r, g, b, a) self.__state.vertexColor = { r, g, b, a } end
 function Methods:SetColorTexture(r, g, b, a) self.__state.colorTexture = { r, g, b, a } end
@@ -1377,6 +1382,7 @@ function Mock.InstallUI()
 	_G.UnitIsConnected = function() return true end
 	_G.UnitIsDead = function(unit) return Mock.dead[unit] or false end
 	_G.UnitIsGhost = function(unit) return Mock.ghosts[unit] or false end
+	_G.UnitIsDeadOrGhost = function(unit) return Mock.dead[unit] or Mock.ghosts[unit] or false end
 	_G.UnitHasIncomingResurrection = function(unit) return Mock.incomingResurrections[unit] or false end
 	_G.UnitIsTapDenied = function() return false end
 	_G.UnitReaction = function() return 2 end

@@ -173,6 +173,8 @@ function Preview:Values(index, value)
 	value.absorb = value.healthMax * 0.2
 	value.heal = value.healthMax * (SAMPLE_HEALS[index] or UF.Units.SAMPLE.heal / UF.Units.SAMPLE.healthMax)
 	value.raidTarget = index == 1 and 8 or nil
+	-- Member 3 is dead and member 5 a ghost, like the status indicator samples.
+	value.status = (index == 3 or index == 5) and "dead" or nil
 	-- Ready check demo: mixed answers; one in four never answers. Animated
 	-- members answer one after another, then the check ends and fades.
 	value.readyCheck, value.readyCheckTime, value.readyCheckAnswerAt = nil, nil, nil

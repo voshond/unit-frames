@@ -84,6 +84,21 @@ the same way (**Indicators & states > Ready check tints & icon — Member style*
 which holds and fades with the tints; its **Preview only > Ready check**
 shows a sample check with mixed answers.
 
+While a unit is dead or a ghost, its frame takes on a ghostly look, enabled by
+default under **Indicators & states > Dead & ghost**. Bars, 2D and class
+portraits, the border and texts turn greyscale and blend towards the blue-grey
+**Ghost colour** at the configured **Strength**; 3D portraits only turn
+greyscale. Bar fills are painted in one uniform ghost colour, so class and
+power colours no longer show through; the health bar shows it across its
+whole length instead of an empty or 1 health fill. Each of the four targets has its own
+toggle. A ready check tint draws over the look and fades back to it, and
+ClickGrid's green resurrection text still shows on top. Offline units get the
+same look in pure greyscale (**Indicators & states > Offline**, neutral grey
+**Offline colour**), which wins over the dead look. Health and power texts show
+`Dead` or `Offline` instead of their values (see Text content). **Preview only >
+Offline / dead** previews both; the ClickGrid preview shows members 3 and 5
+dead.
+
 ## ClickGrid
 
 **UnitFrames ClickGrid** is an optional companion for party/raid healing.
@@ -201,7 +216,13 @@ text appears only when its piece has a value, so put a separator on the piece
 that may be missing: **Health: Missing** with before ` (-` and after `)`
 shows nothing at full health. Missing values are whole numbers so that they
 can disappear at zero. **While casting** can replace the whole text with the
-spell name. **Preview only > Offline / dead** previews the status text.
+spell name. While the unit is dead, a ghost or offline, health and power values
+make way for `Dead` or `Offline`: the first health value shows the word, the
+other values and their separators disappear, so `1 / 82` reads `Dead`, a name
+plus percentage reads `Jaina Dead` and power texts go empty. Presets always do
+this; custom texts choose it under **While dead or offline**, and texts that
+show **Offline / dead** themselves keep their values. **Preview only >
+Offline / dead** previews the status text.
 
 The first switch to **Custom** starts from the preset that was selected.
 Switching back to a preset keeps your custom pieces for later; **Edit as custom
