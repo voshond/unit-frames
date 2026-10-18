@@ -86,7 +86,7 @@ shows a sample check with mixed answers.
 
 While a unit is dead or a ghost, its frame takes on a ghostly look, enabled by
 default under **Indicators & states > Dead & ghost**. Bars, 2D and class
-portraits, the border and texts turn greyscale and blend towards the blue-grey
+portraits, the border and texts turn greyscale and blend towards the spirit world's teal-blue
 **Ghost colour** at the configured **Strength**; 3D portraits only turn
 greyscale. Bar fills are painted in one uniform ghost colour, so class and
 power colours no longer show through; the health bar shows it across its

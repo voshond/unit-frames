@@ -271,7 +271,7 @@ end
 UnitFrame.UNIT_STATES = {
 	{ key = "dead", label = "Dead & ghost", schema = UnitStateSchema(
 		"While the unit is dead or a ghost, turn this frame greyscale and tint it with the ghost colour. Bar fills take one uniform colour; the health bar shows it across its whole length instead of an empty or 1 health fill.",
-		"Ghost colour", { 0.6, 0.72, 0.82, 1 }) },
+		"Ghost colour", { 0.55, 0.85, 0.94, 1 }) },
 	{ key = "offline", label = "Offline", schema = UnitStateSchema(
 		"While the unit is offline, turn this frame greyscale. Bar fills take one uniform grey; the health bar shows it across its whole length.",
 		"Offline colour", { 0.62, 0.62, 0.62, 1 }) },
