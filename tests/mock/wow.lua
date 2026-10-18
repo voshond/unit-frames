@@ -1225,9 +1225,12 @@ function Mock.Install()
 				info = { width = 64, height = 64 }
 			end
 			if not info then return nil end
+			-- Optional info.uv matches the four texture coordinate fields below.
+			local rect = info.uv or { 0, 1, 0, 1 }
 			return { elementName = atlas, width = info.width, height = info.height,
 				rawSize = { x = info.width, y = info.height },
-				leftTexCoord = 0, rightTexCoord = 1, topTexCoord = 0, bottomTexCoord = 1,
+				leftTexCoord = rect[1], rightTexCoord = rect[2],
+				topTexCoord = rect[3], bottomTexCoord = rect[4],
 				tilesHorizontally = false, tilesVertically = false }
 		end,
 	}

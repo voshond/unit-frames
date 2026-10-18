@@ -1,9 +1,12 @@
 local _, ns = ...
 local Util = ns.Util
 
--- Blizzard's raid frame shield overflow strip: bright at the bar's end,
--- drawn additively. Desaturated so the configured colour tints it.
-local EDGE_TEXTURE = [[Interface\RaidFrame\Shield-Overshield]]
+-- Blizzard's raid frame shield overflow strip, drawn additively and set up as
+-- CompactUnitFrame does: the atlas (not its file), a 16 unit strip that starts
+-- 7 units inside the bar's end and so reaches 9 units beyond it. Desaturated
+-- so the configured colour tints it.
+local EDGE_ATLAS = "RaidFrame-Shield-Overshield"
+local STRIP_SIZE, STRIP_INSIDE = 16, 7
 local SWITCH_TEXTURE = [[Interface\Buttons\WHITE8X8]]
 
 --[[
@@ -46,17 +49,35 @@ Overheal.schema = {
 		tooltip = "Length of the glow along the bar." },
 }
 
--- Texture coordinates that put the artwork's bright edge on the bar's end,
--- by orientation and fill direction. Vertical strips rotate the artwork.
-local COORDS = {
-	HORIZONTAL = { [false] = { 0, 1, 0, 1 }, [true] = { 1, 0, 0, 1 } },
-	VERTICAL = { [false] = { 1, 0, 0, 0, 1, 1, 0, 1 }, [true] = { 0, 0, 1, 0, 0, 1, 1, 1 } },
+-- Which way the strip reaches past the bar's end, by orientation and fill direction.
+local OUTWARD = {
+	HORIZONTAL = { [false] = { 1, 0 }, [true] = { -1, 0 } },
+	VERTICAL = { [false] = { 0, 1 }, [true] = { 0, -1 } },
 }
+
+-- Puts the atlas's end edge on the bar's end. The artwork is drawn for a bar
+-- ending on the right; other ends mirror or rotate its own sub-rectangle, so
+-- the coordinates come from the atlas, never from the whole file.
+local function ApplyArtwork(strip, orientation, reverseFill)
+	strip:SetAtlas(EDGE_ATLAS, false)
+	if orientation == "HORIZONTAL" and not reverseFill then return end
+	local info = C_Texture.GetAtlasInfo(EDGE_ATLAS)
+	local l, r, t, b = 0, 1, 0, 1
+	if info then l, r, t, b = info.leftTexCoord, info.rightTexCoord, info.topTexCoord, info.bottomTexCoord end
+	if orientation == "HORIZONTAL" then
+		strip:SetTexCoord(r, l, t, b)
+	elseif reverseFill then
+		strip:SetTexCoord(l, t, r, t, l, b, r, b)
+	else
+		strip:SetTexCoord(r, t, l, t, r, b, l, b)
+	end
+end
 
 function Overheal:Init(bar)
 	self.bar = bar
 	self.enabled = false
-	self.gate = CreateFrame("Frame", nil, bar.clip)
+	-- Not the clipping frame: the strip reaches past the bar's end.
+	self.gate = CreateFrame("Frame", nil, bar.overlay)
 	self.gate:SetAllPoints(bar.bar)
 	self.gate:SetAlpha(0)
 	self.gate:Hide()
@@ -66,7 +87,7 @@ function Overheal:Init(bar)
 	self.switch:SetMinMaxValues(0, 1)
 	self.switch:SetValue(0)
 	self.strip = self.gate:CreateTexture(nil, "OVERLAY")
-	self.strip:SetTexture(EDGE_TEXTURE)
+	self.strip:SetAtlas(EDGE_ATLAS, false)
 	self.strip:SetBlendMode("ADD")
 	self.strip:SetDesaturated(true)
 	local fill = self.switch:GetStatusBarTexture()
@@ -75,7 +96,7 @@ function Overheal:Init(bar)
 end
 
 -- layout: the bar's Bar.LAYOUT entry; its inset pair pins the strip to the
--- whole bar's end, like an overlay segment.
+-- whole bar's end, like an overlay segment, then it moves outward.
 function Overheal:Apply(cfg, orientation, reverseFill, layout)
 	self.enabled = cfg.enabled
 	self.gate:SetShown(cfg.enabled)
@@ -84,9 +105,11 @@ function Overheal:Apply(cfg, orientation, reverseFill, layout)
 		return
 	end
 	local switch = self.switch
+	local outward = OUTWARD[orientation][reverseFill]
+	local overshoot = cfg.size - math.floor(cfg.size * STRIP_INSIDE / STRIP_SIZE + 0.5)
 	switch:ClearAllPoints()
 	for _, pair in ipairs(layout.inset) do
-		switch:SetPoint(pair[1], self.bar.bar, pair[2])
+		switch:SetPoint(pair[1], self.bar.bar, pair[2], outward[1] * overshoot, outward[2] * overshoot)
 	end
 	if orientation == "HORIZONTAL" then
 		switch:SetWidth(cfg.size)
@@ -94,7 +117,7 @@ function Overheal:Apply(cfg, orientation, reverseFill, layout)
 		switch:SetHeight(cfg.size)
 	end
 	switch:SetOrientation(orientation)
-	self.strip:SetTexCoord(unpack(COORDS[orientation][reverseFill]))
+	ApplyArtwork(self.strip, orientation, reverseFill)
 	self.strip:SetVertexColor(Util.UnpackColor(cfg.color))
 	if self.overflow then self.overflow:SetIncomingHealOverflowPercent(cfg.threshold) end
 	self.threshold = cfg.threshold

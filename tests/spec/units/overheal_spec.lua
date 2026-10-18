@@ -111,30 +111,60 @@ describe("Overheal edge indicator #overheal", function()
 		assert.equals(1, max)
 	end)
 
-	it("anchors the strip to the whole bar's end for every orientation and fill direction", function()
+	it("starts 7 units inside the bar's end and reaches past it, like Blizzard's raid frames", function()
 		Enable()
 		local overheal = Bar():GetOverheal()
+		local outward = { HORIZONTAL = { [false] = { 1, 0 }, [true] = { -1, 0 } }, VERTICAL = { [false] = { 0, 1 }, [true] = { 0, -1 } } }
 		for _, orientation in ipairs({ "HORIZONTAL", "VERTICAL" }) do
 			for _, reverse in ipairs({ false, true }) do
-				Bar():Apply({ orientation = orientation, reverseFill = reverse, overheal = { enabled = true, size = 12 } })
+				Bar():Apply({ orientation = orientation, reverseFill = reverse, overheal = { enabled = true, size = 16 } })
+				local dx, dy = outward[orientation][reverse][1] * 9, outward[orientation][reverse][2] * 9
 				for _, pair in ipairs(ns.Components.Bar.LAYOUT[orientation][reverse].inset) do
-					assert.same({ pair[1], Bar().bar, pair[2], 0, 0 }, overheal.switch:GetAnchor(pair[1]))
+					assert.same({ pair[1], Bar().bar, pair[2], dx, dy }, overheal.switch:GetAnchor(pair[1]))
 				end
-				assert.equals(12, orientation == "HORIZONTAL" and overheal.switch:GetWidth() or overheal.switch:GetHeight())
+				assert.equals(16, orientation == "HORIZONTAL" and overheal.switch:GetWidth() or overheal.switch:GetHeight())
 				assert.equals(orientation, overheal.switch.__state.orientation)
-				local coords = overheal.strip.__state.texCoords
-				assert.equals(orientation == "HORIZONTAL" and 4 or 8, #coords)
+				assert.equals(Bar().overlay, overheal.gate:GetParent(), "not the clipping frame")
 				assert.equals(overheal.switch:GetStatusBarTexture(), select(2, overheal.strip:GetPoint(1)))
 				assert.equals(overheal.switch:GetStatusBarTexture(), select(2, overheal.strip:GetPoint(2)))
 			end
 		end
 	end)
 
-	it("draws Blizzard's shield overflow artwork additively, tinted, and applies repeatedly", function()
+	it("scales the overshoot with the size and keeps 7/16 of the strip inside the bar", function()
+		Enable()
+		local overheal = Bar():GetOverheal()
+		Bar():Apply({ orientation = "HORIZONTAL", reverseFill = false, overheal = { enabled = true, size = 32 } })
+		assert.equals(18, select(4, overheal.switch:GetPoint(1)))
+		assert.equals(32, overheal.switch:GetWidth())
+	end)
+
+	it("uses the atlas's own coordinates, mirrored or rotated for other bar ends", function()
+		Mock.atlasInfo["RaidFrame-Shield-Overshield"] = { width = 16, height = 64, uv = { 0.25, 0.5, 0.1, 0.9 } }
+		Enable()
+		local overheal = Bar():GetOverheal()
+		local function Coords(orientation, reverse)
+			Bar():Apply({ orientation = orientation, reverseFill = reverse, overheal = { enabled = true } })
+			return overheal.strip.__state.texCoords
+		end
+		Bar():Apply({ orientation = "HORIZONTAL", reverseFill = false, overheal = { enabled = true } })
+		assert.equals("RaidFrame-Shield-Overshield", overheal.strip.__state.atlas)
+		assert.same({ 0.5, 0.25, 0.1, 0.9 }, Coords("HORIZONTAL", true))
+		assert.same({ 0.5, 0.1, 0.25, 0.1, 0.5, 0.9, 0.25, 0.9 }, Coords("VERTICAL", false))
+		assert.same({ 0.25, 0.1, 0.5, 0.1, 0.25, 0.9, 0.5, 0.9 }, Coords("VERTICAL", true))
+		Mock.atlasInfo["RaidFrame-Shield-Overshield"] = nil
+	end)
+
+	it("draws Blizzard's shield overflow atlas additively, tinted, and applies repeatedly", function()
 		Enable()
 		Enable("color", { 0.2, 0.6, 1, 0.5 })
 		local overheal = Bar():GetOverheal()
-		assert.equals([[Interface\RaidFrame\Shield-Overshield]], overheal.strip:GetTexture())
+		assert.equals("RaidFrame-Shield-Overshield", overheal.strip.__state.atlas)
+		local call
+		for _, entry in ipairs(overheal.strip.__calls) do
+			if entry[1] == "SetAtlas" then call = entry end
+		end
+		assert.is_false(call[3], "the strip keeps the size it is anchored to")
 		assert.equals("ADD", overheal.strip.__state.blendMode)
 		assert.is_true(overheal.strip.__state.desaturated)
 		assert.same({ 0.2, 0.6, 1, 0.5 }, overheal.strip.__state.vertexColor)

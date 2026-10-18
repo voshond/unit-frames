@@ -198,11 +198,12 @@ function Bar:OnCreate(parent, spec)
 		self.segmentsByKey[seg.key] = entry
 	end
 
-	if spec.overheal then self.overheal = ns.Overheal:New(self) end
-
 	self.overlay = CreateFrame("Frame", nil, self.bar)
 	self.overlay:SetAllPoints(self.bar)
 	self.overlay:SetFrameLevel(self.bar:GetFrameLevel() + 3)
+
+	-- Created before the texts, which join the overlay later and so draw above it.
+	if spec.overheal then self.overheal = ns.Overheal:New(self) end
 
 	self.spark = self.overlay:CreateTexture(nil, "OVERLAY")
 	self.spark:SetTexture(SPARK_TEXTURE)
