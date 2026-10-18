@@ -69,7 +69,20 @@ function Component:GetSchema()
 	return self.schemaCache
 end
 
-function Component:Apply(config)
+local function Apply(self, resolved)
+	local Perf = ns.Perf
+	Perf:Count(self.componentOwner and "childApply" or "rootApply")
+	Perf:Begin(self.className)
+	self.resolved = resolved or Schema.Resolve(self:GetSchema(), self.config, ns.Config:GetTheme())
+	Perf:Count("presentationApply")
+	self:OnApply(self.resolved)
+	if self.resolved.enabled ~= nil then
+		self:SetEnabled(self.resolved.enabled)
+	end
+	Perf:End(self.className)
+end
+
+function Component:Apply(config, resolved)
 	assert(not self.released, "Cannot apply a released component")
 	if config then
 		self.config = config
@@ -80,16 +93,7 @@ function Component:Apply(config)
 		return
 	end
 	ns.AfterCombat:Cancel(self, "apply")
-	local Perf = ns.Perf
-	Perf:Count(self.componentOwner and "childApply" or "rootApply")
-	Perf:Begin(self.className)
-	self.resolved = Schema.Resolve(self:GetSchema(), self.config, ns.Config:GetTheme())
-	Perf:Count("presentationApply")
-	self:OnApply(self.resolved)
-	if self.resolved.enabled ~= nil then
-		self:SetEnabled(self.resolved.enabled)
-	end
-	Perf:End(self.className)
+	Schema.Shared(Apply, self, resolved)
 end
 
 function Component:SetCombatDeferred(deferred)
@@ -136,8 +140,10 @@ function Component:ChildConfig(key)
 end
 
 -- Applies the `key` group of this component's config to a child component.
-function Component:ApplyChild(child, key)
-	child:Apply(self:ChildConfig(key))
+function Component:ApplyChild(child, key, resolved)
+	local config = self:ChildConfig(key)
+	local effective = Schema.ReuseGroup(self:GetSchema(), key, child:GetSchema(), resolved)
+	child:Apply(config, effective)
 end
 
 function Component:SetEnabled(enabled)

@@ -8,8 +8,8 @@ local ADDONS = { "UnitFrames", "UnitFrames_ClickGrid", "UnitFrames_Workbench", "
 local THRESHOLDS = { "CountTimeOver1Ms", "CountTimeOver5Ms", "CountTimeOver10Ms", "CountTimeOver50Ms",
 	"CountTimeOver100Ms", "CountTimeOver500Ms", "CountTimeOver1000Ms" }
 
-function Perf:Count(key)
-	if self.counters then self.counters[key] = (self.counters[key] or 0) + 1 end
+function Perf:Count(key, amount)
+	if self.counters then self.counters[key] = (self.counters[key] or 0) + (amount or 1) end
 end
 
 -- Phase markers for an active measurement only; elsewhere they are no-ops.

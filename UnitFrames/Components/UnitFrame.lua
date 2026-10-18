@@ -334,10 +334,10 @@ end
 function UnitFrame:OnApply(cfg)
 	Backdrop.ApplyTo(self.border, cfg.border)
 	for _, row in ipairs(self.rows) do
-		self:ApplyChild(row.component, row.def.key)
+		self:ApplyChild(row.component, row.def.key, cfg)
 	end
 	for _, part in ipairs(self.parts) do
-		self:ApplyChild(part.component, part.def.key)
+		self:ApplyChild(part.component, part.def.key, cfg)
 		if part.def.apply then part.def.apply(part.component, cfg[part.def.key]) end
 	end
 	self:Layout()

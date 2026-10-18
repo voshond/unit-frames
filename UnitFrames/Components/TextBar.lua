@@ -86,7 +86,7 @@ function TextBar.BuildSchema(spec)
 end
 
 function TextBar:OnApply(cfg)
-	self:ApplyChild(self.bar, "bar")
+	self:ApplyChild(self.bar, "bar", cfg)
 	local centred = cfg.textLayout == "centred"
 	for _, slot in ipairs(TextBar.SLOTS) do
 		local text = self.texts[slot.key]
@@ -107,7 +107,7 @@ function TextBar:OnApply(cfg)
 		else
 			text:SetAutoVertical(below and cfg[below].enabled and "top" or "middle")
 		end
-		self:ApplyChild(text, slot.key)
+		self:ApplyChild(text, slot.key, cfg)
 	end
 end
 

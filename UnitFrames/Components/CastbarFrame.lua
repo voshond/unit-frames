@@ -53,9 +53,9 @@ function CastbarFrame:OnCreate(parent)
 end
 
 function CastbarFrame:OnApply(cfg)
-	self:ApplyChild(self.castbar, "castbar")
+	self:ApplyChild(self.castbar, "castbar", cfg)
 	for _, row in ipairs(self.SWING_ROWS) do
-		self:ApplyChild(self.rows[row.key], row.key)
+		self:ApplyChild(self.rows[row.key], row.key, cfg)
 	end
 	local height, count = 0, 0
 	local function Place(component, options)

@@ -167,6 +167,7 @@ function Schema.Source(schema, config, theme, path, reset)
 end
 
 local function Resolve(schema, config, theme, layers)
+	ns.Perf:Count("resolveOptions", #schema)
 	-- Presized: growing a table key by key reallocates it several times.
 	local out = table.create(0, #schema)
 	for _, opt in ipairs(schema) do
@@ -259,6 +260,58 @@ function Schema.Resolve(schema, config, theme, overrides)
 	end
 	Perf:End("resolve")
 	return resolved
+end
+
+local compatibleSchemas = setmetatable({}, { __mode = "k" })
+local reusableGroups = setmetatable({}, { __mode = "k" })
+
+local function Compatible(a, b)
+	if a == b then return true end
+	local cached = compatibleSchemas[a]
+	if not cached then cached = setmetatable({}, { __mode = "k" }); compatibleSchemas[a] = cached end
+	if cached[b] ~= nil then return cached[b] end
+	local matches = #a == #b
+	if matches then
+		for index, opt in ipairs(a) do
+			local other = b[index]
+			if opt.key ~= other.key or opt.type ~= other.type or opt.inherit ~= other.inherit
+				or not Util.Equals(opt.default, other.default) or not Util.Equals(opt.defaults, other.defaults)
+				or (opt.type == "group" and not Compatible(opt.schema, other.schema)) then
+				matches = false
+				break
+			end
+		end
+	end
+	cached[b] = matches
+	return matches
+end
+
+local function ReusableGroup(schema, key)
+	local groups = reusableGroups[schema]
+	if not groups then groups = {}; reusableGroups[schema] = groups end
+	if groups[key] ~= nil then return groups[key] end
+	local group = Schema.Find(schema, key)
+	if not group or group.type ~= "group" then group = false end
+	if group then
+		for _, value in pairs(group.defaults or NO_DEFAULTS) do
+			if type(value) == "table" then group = false; break end
+		end
+	end
+	groups[key] = group
+	return group
+end
+
+function Schema.ReuseGroup(schema, key, childSchema, resolved)
+	if not scope or not resolved then return end
+	local Perf = ns.Perf
+	Perf:Begin("resolve reuse")
+	local group = ReusableGroup(schema, key)
+	local compatible = group and Compatible(group.schema, childSchema)
+	Perf:End("resolve reuse")
+	if not compatible then return end
+	Perf:Count("resolveCall")
+	Perf:Count("resolveReuse")
+	return resolved[key]
 end
 
 -- Composition. Each returns a new list and never mutates its inputs; the

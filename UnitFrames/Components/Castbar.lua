@@ -144,9 +144,9 @@ end
 function Castbar:OnApply(cfg)
 	self:ApplyBorder()
 	self:UpdateBacking()
-	self:ApplyChild(self.bar, "bar")
-	self:ApplyChild(self.nameText, "name")
-	self:ApplyChild(self.timeText, "time")
+	self:ApplyChild(self.bar, "bar", cfg)
+	self:ApplyChild(self.nameText, "name", cfg)
+	self:ApplyChild(self.timeText, "time", cfg)
 	if self.latency then
 		self.latency:Apply(cfg.latency, self.bar.resolved)
 		self.gcd:Apply(cfg.gcd, self.bar.resolved)
