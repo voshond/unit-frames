@@ -139,6 +139,33 @@ local function GroupLayers(opt, layers)
 	return out
 end
 
+local function ResolveValue(opt, value, theme, layers)
+	if value ~= nil then return value, "Custom value" end
+	value = LayeredValue(layers, opt.key)
+	if value ~= nil then return value, "Frame default" end
+	if opt.inherit and theme then
+		value = Util.GetPath(theme, opt.inherit)
+		if value ~= nil then return value, "Shared appearance" end
+	end
+	return opt.default, "Built-in default"
+end
+
+function Schema.Source(schema, config, theme, path, reset)
+	local layers = NO_LAYERS
+	for key in path:gmatch("[^%.]+") do
+		local opt = Schema.Find(schema, key)
+		if not opt then return end
+		local value = config and config[key]
+		if opt.type ~= "group" then
+			if reset then value = nil end
+			local resolved, source = ResolveValue(opt, value, theme, layers)
+			return source, Util.Copy(resolved), opt.inherit
+		end
+		layers, schema = GroupLayers(opt, layers), opt.schema
+		config = type(value) == "table" and value or nil
+	end
+end
+
 local function Resolve(schema, config, theme, layers)
 	-- Presized: growing a table key by key reallocates it several times.
 	local out = table.create(0, #schema)
@@ -147,15 +174,7 @@ local function Resolve(schema, config, theme, layers)
 		if opt.type == "group" then
 			out[opt.key] = Resolve(opt.schema, type(value) == "table" and value or nil, theme, GroupLayers(opt, layers))
 		else
-			if value == nil then
-				value = LayeredValue(layers, opt.key)
-			end
-			if value == nil and opt.inherit and theme then
-				value = Util.GetPath(theme, opt.inherit)
-			end
-			if value == nil then
-				value = opt.default
-			end
+			value = ResolveValue(opt, value, theme, layers)
 			out[opt.key] = Util.Copy(value)
 		end
 	end

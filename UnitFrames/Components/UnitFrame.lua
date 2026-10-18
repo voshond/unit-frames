@@ -263,6 +263,7 @@ function UnitFrame.BuildSchema(spec)
 			{ key = "mode", type = "select", label = "Range check", values = UnitFrame.RANGE_MODES, default = "group",
 				tooltip = "Group range uses the game's group-member check (normally 40 yards), not enemy distance. Spell range checks the chosen spell against this frame's unit, including enemy targets." },
 			{ key = "spell", type = "text", label = "Spell ID or name", default = "",
+				prerequisite = { path = "range.mode", message = "Choose Spell range under Range check to set a spell." },
 				hidden = function(cfg) return cfg.mode ~= "spell" end,
 				tooltip = "Choose a spell you know that applies to this unit (a heal for allies, an attack for enemies). Unknown spells, invalid targets and spells without a range check do not fade the frame. Names must match your client language." },
 		} },
