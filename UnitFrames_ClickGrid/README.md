@@ -6,8 +6,11 @@ It provides party/raid healing groups with modifier click spells.
 
 ## Use
 
-Enable this addon alongside UnitFrames. Open `/ufcg` for **Panel & indicators**,
-**Member bars**, **Target bars**, and **Click spells** under the ClickGrid category.
+Enable this addon alongside UnitFrames. Open `/ufcg` for **Panel layout, auras & states**,
+**Member frames**, **Member targets**, and **Click spells** under **Party & raid (ClickGrid)**.
+Member **Buffs & debuffs** and **Indicators & states** links open their canonical
+panel pages. Section scope labels distinguish member style from panel settings;
+member targets keep their own independent aura and indicator controls.
 `/ufcg bindings` opens click spells directly; `/ufcg on` and `/ufcg off` toggle
 the panel. It appears in groups by default; enable **Show when solo** to test
 without a group. Move its enclosing panel in Blizzard Edit Mode.
@@ -28,16 +31,16 @@ client after adding it. For local builds and incremental updates, see the
   extra rows when filling across, without changing saved settings or hiding
   raiders. Live panel bounds reserve forty-member capacity before combat;
   previews reserve the configured grid plus any needed sample overflow.
-- **Group / column titles** under **Panel & indicators**: editable party,
+- **Group / column titles** under **Panel layout, auras & states**: editable party,
   tank and individual raid-subgroup/flat-column labels (Group 1, Group 2,
   etc., not one Raid title). Shared font, size,
   outline, shadow and colour; above/below placement, left/centre/right
   alignment, gap and offsets. Hiding titles removes their reserved space.
   The single enclosing backdrop excludes the outer title band, so headings
   hover outside it. No independent group backdrops are created.
-- **Panel border** under **Panel & indicators** controls the enclosing panel's
+- **Panel border** under **Panel layout, auras & states** controls the enclosing panel's
   border and background independently of the member bars. It inherits the
-  Theme until overridden. Choose **Blizzard Raid** for the native raid artwork;
+  shared appearance until overridden. Choose **Blizzard Raid** for the native raid artwork;
   **Content padding** controls the space around the members. Enable **Content
   padding per side** at the top of the section for independent left, right,
   top and bottom values. **Background inset per side** provides independent
@@ -45,7 +48,7 @@ client after adding it. For local builds and incremental updates, see the
   automatically in these shared controls. Borders draw above the members;
   the background stays behind them.
 - Member targets beside the bars, as tall as the member's bar, with independent
-  target styling. Switch them on under **Target bars > General** (an earlier
+  target styling. Switch them on under **Member targets > Layout & border** (an earlier
   *Show member targets* panel choice is carried over). Existing
   UnitFrames health, shields, power, portrait, castbar, text, range, marker,
   font and border controls are reused rather than duplicated.
@@ -86,9 +89,9 @@ client after adding it. For local builds and incremental updates, see the
   **Mouseover highlight** (on by default, colour configurable) lightens the
   cell under the mouse, so you can see which member you are about to cast on. Private auras sit inside the right edge by default
   (**Private aura position**), leaving the centre to crowd control.
-- Ready check bar tints on member bars (**Member bars > Ready check**): grey
+- Ready check bar tints on member bars (**Indicators & states > Ready check tints & icon — Member style**): grey
   while waiting, then green or red, holding and fading after the check with
-  the ready check icon. Without a group, **Preview data > Ready check** shows
+  the ready check icon. Without a group, **Preview only > Ready check** shows
   a sample check; Animated lets members answer in turn and fades out.
   The ready check icon uses the same state and fade as the bars, including
   when bar tinting is disabled; its existing indicator controls place it.

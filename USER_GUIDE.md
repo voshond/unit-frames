@@ -8,9 +8,38 @@ see the [developer guide](DEVELOPMENT.md).
 
 In game: `/uf wb` opens the Workbench.
 
-Unit-frame settings group raid markers, PvP flags, classification markers and
-the player's resting icon under **Icons**, and range, resting and ready checks under **State effects**.
-The inspector remembers scrolling separately for each settings page.
+The sidebar groups settings under **Unit Frames**, **Cast Bar & Swing Timers**,
+**Global Settings**, **Party & Raid** (when ClickGrid is loaded), **Profiles**,
+and **Developer Tools** (development builds). **Global Settings** directly exposes
+**Fonts**, **Bars, Borders & Backgrounds**, and **Colours**.
+
+Choose a frame in the sidebar, then a feature such as **Health & Shields**,
+**Buffs & Debuffs** or **Indicators & States**. The **Section** selector opens
+related controls, including individual text slots. Each section remembers its
+scroll position and whether **Detailed adjustments** is expanded. This toggle
+appears only when the section has available horizontal or vertical offsets.
+Text-slot labels include their current content. **Related Settings** links cast
+bars, portrait overlays and status text to their existing controls. **Buffs &
+Debuffs** includes an **Overview** with links to each independent display.
+
+Search all settings at the top of the window. Results include their frame,
+feature and scope; use Up/Down and Enter to open one, or Escape to close the
+results. **Search scope** can restrict results to the current frame/page or
+include preview/developer destinations. Opening a result never runs an action.
+Hidden settings explain known prerequisites and link to the controlling field.
+Returning to search preserves the results, selection and scroll position until
+the query or scope changes. Preview results have a separate **Preview Only —
+Simulation** heading and appear only when included through **Search scope**.
+
+Settings apply immediately. The scope header identifies the affected frames;
+source labels distinguish custom values, frame defaults, shared appearance and
+built-in defaults. The reset icon restores the inherited/default value, and
+**Edit shared default** opens the corresponding setting in **Global Settings**.
+
+**Preview only** contains simulation controls. **Preview zoom** and
+**Preview background** affect the preview; **Show preview** restores it when
+collapsed. Narrow windows collapse the preview automatically until you choose
+a preference. Profile sharing and click spells keep their specialised editors.
 
 With Titan Panel or another LibDataBroker display installed, enable its
 **UnitFrames** launcher. Left-click the portrait icon to toggle the Workbench,
@@ -34,9 +63,9 @@ Aura spacing keeps its existing controls.
 The player's **Resting border** slowly pulses from the configured frame border
 colour to yellow while resting in an inn or city. It is enabled by default;
 its colour and pulse duration (default four seconds) are configurable. A visible
-frame border is required. Choose **Resting (zZz)** in a text slot's **Shows**
+frame border is required. Choose **Resting (zZz)** in a text slot's **text content**
 picker to display `zZz` while the player is resting, and empty text otherwise.
-**Preview data > Resting** tests both effects: Static holds the resting colour,
+**Preview only > Resting** tests both effects: Static holds the resting colour,
 while Animated pulses it. Resting is independent of accumulated rested XP.
 
 During a ready check, each frame's bars turn grey while its unit has not
@@ -49,10 +78,10 @@ adds Blizzard's matching check mark (waiting, ready, not ready) to the frame's
 icon groups, centred on the frame by default; it holds and fades with the
 tints. The **Ready check** section has **Tint bars**, the three colours,
 and the hold and fade durations shared by tints and icon.
-**Preview data > Ready check** previews each state: Static holds it, while
+**Preview only > Ready check** previews each state: Static holds it, while
 Animated loops a whole check including the fade. ClickGrid member bars tint
-the same way (Member bars > Ready check) and keep their own ready check icon,
-which holds and fades with the tints; its **Preview data > Ready check**
+the same way (**Indicators & states > Ready check tints & icon — Member style**) and keep their own ready check icon,
+which holds and fades with the tints; its **Preview only > Ready check**
 shows a sample check with mixed answers.
 
 ## ClickGrid
@@ -81,7 +110,7 @@ default. It hides when no pet exists and updates when you summon, dismiss or rep
 your pet. Its preview shows
 a friendly wolf with focus power; the same frame supports mana-based pets.
 Their previews include distinct samples and NPC reaction/classification controls.
-Each new frame's **General** section has **Copy player settings** to replace
+Each other frame's **Layout & border** page has **Copy player style** to replace
 its style with the player's current settings (including sizes and enabled
 extras). This is an independent, one-time copy; positions and XP are excluded.
 In Edit Mode, Blizzard's **Snap** checkbox also controls our frames. With
@@ -120,8 +149,8 @@ Addons and setup tools can use `UnitFrames:ExportProfile()`,
 
 ## Absorb shields
 
-Under each frame's **Health > Bar > Segments > Absorb shields**, **Enabled**
-controls shield visibility and **Placement** defaults to **Overlay health**.
+Under each frame's **Health & shields > Shields**, **Show Absorb shields**
+controls shield visibility and **Shield placement** defaults to **Overlay health**.
 This draws shields inward from the bar's end, so they remain visible at full
 health. **After health** reserves shield space inside the existing bar by
 scaling it to maximum health plus shields; the shield starts at the health
@@ -140,13 +169,12 @@ piece's **Text before** so it disappears when the unit has no last name.
 The **Level + class** and **Level + class or creature type** text formats
 include a small PvP flag after the text when the unit is flagged. The flag
 shows Alliance, Horde (accounting for mercenary mode), or free-for-all PvP
-and updates when the unit's faction/PvP state changes. Enable **Health >
-Small text below left** to show the default level/class line. **Preview data >
+and updates when the unit's faction/PvP state changes. Enable **Health & shields > Small text below left** to show the default level/class line. **Preview only >
 PvP flag** lets you preview each flag or **Not flagged**.
 
 ### Custom text
 
-Choose **Custom** in a text slot's **Shows** picker to build the text from up
+Choose **Custom** in a text slot's **text content** picker to build the text from up
 to four pieces. Each piece shows one value (name, last name, level, class, creature
 type, PvP flag, **Offline / dead**, health/power current, max, percent, missing
 or missing percent, spell name, and on the player frame XP and resting) with
@@ -154,18 +182,18 @@ optional **Text before** and **Text after**. Current and max take a **Number
 style** (short `12.3K`, full `12,345` or plain `12345`), percentages one
 optional decimal. **This bar** values show whichever bar the text is on, so
 the same choice works on health, power and XP bars and ClickGrid; the **This
-bar** presets in **Shows** do the same. That
+bar** presets in **text content** do the same. That
 text appears only when its piece has a value, so put a separator on the piece
 that may be missing: **Health: Missing** with before ` (-` and after `)`
 shows nothing at full health. Missing values are whole numbers so that they
 can disappear at zero. **While casting** can replace the whole text with the
-spell name. **Preview data > Offline / dead** previews the status text.
+spell name. **Preview only > Offline / dead** previews the status text.
 
 The first switch to **Custom** starts from the preset that was selected.
 Switching back to a preset keeps your custom pieces for later; **Edit as custom
 text** replaces them with a fresh copy of the selected preset. Custom pieces
 drop their own spaces when their value is missing, unlike the presets, which
-keep e.g. `42 ` for a unit without a known class. **Copy player settings**
+keep e.g. `42 ` for a unit without a known class. **Copy player style**
 switches off pieces the destination frame can't show (XP, resting) and keeps
 the others in place.
 
@@ -191,7 +219,7 @@ for the spell icon and bar (side by side or top/bottom). **Bar > Orientation**
 chooses horizontal or vertical fill; **Reverse fill** changes its direction.
 Remaining time stays on the bar. Disable **Spell name > Enabled** if the
 portrait is too small, and choose **Spell name while casting** or
-**Level + class / spell name while casting** in a Health text slot's **Shows**
+**Level + class / spell name while casting** in a Health text slot's **text content**
 picker. The latter restores level/class when idle; a creature-type variant
 is available for NPCs. These choices also work with channels and sample previews.
 
@@ -201,7 +229,7 @@ so a translucent out-of-range frame shows only the cast, not both layers.
 
 ## Standalone castbar and swing timers
 
-Choose **Unit frames > Standalone castbar** in the Workbench and turn on
+Choose **Cast bar & swing timers** in the Workbench and turn on
 **Enabled** to add a separate player timer frame. It starts disabled and
 has its own width, row spacing and style. Move it in Edit Mode; its position
 is saved separately for each layout. Edit Mode shows a frozen sample.
@@ -225,7 +253,7 @@ the timer ends. Weapon changes clear old timers. A weapon slot without a
 weapon stays empty. Restricted timing values cannot be displayed and clear
 the affected row. Blizzard's own swing timer settings remain independent.
 
-Use **Static**, **Animated** or **Live: player** in Preview data. Static and
+Use **Static**, **Animated** or **Live: player** in Preview only. Static and
 animated samples remain visible even while the standalone feature is off;
 live previews wait for actual swings. Appearance edits apply to the real
 frame immediately. Profiles, share strings and Reset include these settings;
@@ -244,7 +272,7 @@ centred, border corners grow inward. **Order** sets its place in the group
 and **Gap to next icon** the spacing after it. Size and horizontal/vertical
 offsets are independent per frame; offsets nudge only this icon, and
 positive offsets move right/up. Portrait icons shrink to fit small portraits;
-offsets can deliberately move them outside. **Preview data > Raid target marker** offers all eight markers and
+offsets can deliberately move them outside. **Preview only > Raid target marker** offers all eight markers and
 None. Live markers follow the unit's raid target assignment automatically.
 
 Each frame's **PvP flag icon** section places the unit's PvP flag in the
@@ -253,7 +281,7 @@ the raid marker when both share an anchor. The game chooses the Alliance,
 Horde (accounting for mercenary mode) or free-for-all art and its
 visibility, so the flag updates safely in combat; an unflagged unit leaves
 no gap. **Background circle** draws the flag on the default frames' dark
-circle. **Preview data > PvP flag** previews each flag on the icon as well
+circle. **Preview only > PvP flag** previews each flag on the icon as well
 as in the level/class texts. ClickGrid group bars do not include this icon.
 
 The **Elite / rare icon** section adds the game's own classification
@@ -261,13 +289,13 @@ markers, enabled by default at the top-right border corner: a gold dragon
 for elites and bosses, a silver dragon for rare elites and a star for rares,
 matching Blizzard's nameplates. Other units show nothing and leave no gap.
 It is placed like the raid marker and updates when the unit's classification
-changes. Preview it with **Preview data > NPC** and **Classification**.
+changes. Preview it with **Preview only > NPC** and **Classification**.
 
 The player frame's **Resting icon** section adds the default player frame's
 animated zZz while you are resting in an inn or city, enabled by default at
 the top-left border corner after the PvP flag. It is placed like the raid
 marker and leaves no gap while you are not resting. Preview it with
-**Preview data > Resting**.
+**Preview only > Resting**.
 
 ## Range fading
 
@@ -281,7 +309,7 @@ enemies. Spell mode refreshes every 0.2 seconds while the frame is shown.
 Missing/offline units, unknown spells and unavailable range checks stay fully
 opaque. Range fading works in combat. The whole frame and its extras fade together;
 you can still click the frame.
-**Preview data > Out of range** lets you tune the fade in either sample mode.
+**Preview only > Out of range** lets you tune the fade in either sample mode.
 
 ## Buffs and debuffs
 
@@ -304,7 +332,7 @@ use offsets to separate groups when placing both on the same side.
 disease, poison, and debuffs without a dispel type. Turn off **Colour debuff
 border by type** to use **Icon frame > Border colour** for every icon.
 
-**Preview data** includes sample buff/debuff counts. Static previews freeze
+**Preview only** includes sample buff/debuff counts. Static previews freeze
 their timers; Animated previews cycle them. Samples include stacks, a
 permanent buff, and all four debuff dispel types, using the saved aura style.
 
@@ -323,7 +351,7 @@ positions sit on that anchor without moving the other icons there, and cover
 them while an aura shows. **Colour border by category** tints each icon frame
 with its category colour. Time-left text stays inside the icon.
 
-**Preview data > Crowd control & defensives** shows one category, **All (highest on top)**,
+**Preview only > Crowd control & defensives** shows one category, **All (highest on top)**,
 or **Cycle**: Animated previews show each category in turn, then none; Static
 previews show them all. **None** (the default) keeps the portrait visible.
 
