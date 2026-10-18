@@ -2310,6 +2310,7 @@ option portrait.position type="select" label="Side" default="LEFT" values=#11c04
 option portrait.rowSpan type="select" label="Rows to span" default=0 values=#e0ec7f96 tooltip=#2d262f9f
 option portrait.size type="range" label="Width" default=0 min=0 max=200 step=1 tooltip=#404b1aba
 option portrait.gap type="range" label="Gap to the bars" default=2 min=0 max=20 step=1
+option portrait.includeInWidth type="toggle" label="Width includes portrait" default=false tooltip=#b00c7051
 option portrait.mode type="select" label="Style" default="3D" values=#db0171ae
 option portrait.background type="color" label="Background" default={0,0,0,0.6}
 option portrait.border type="group" label="Border" defaults={enabled=false}
@@ -4091,6 +4092,7 @@ default portrait.border.separateInset = false
 default portrait.border.separatePadding = false
 default portrait.enabled = true
 default portrait.gap = 2
+default portrait.includeInWidth = false
 default portrait.mode = "3D"
 default portrait.position = "LEFT"
 default portrait.rowSpan = 0
@@ -5091,6 +5093,7 @@ resolved portrait.border.separatePadding = false
 resolved portrait.border.size = 12
 resolved portrait.enabled = true
 resolved portrait.gap = 2
+resolved portrait.includeInWidth = false
 resolved portrait.mode = "3D"
 resolved portrait.position = "LEFT"
 resolved portrait.rowSpan = 0
@@ -5434,6 +5437,7 @@ option portrait.position type="select" label="Side" default="LEFT" values=#11c04
 option portrait.rowSpan type="select" label="Rows to span" default=0 values=#e0ec7f96 tooltip=#2d262f9f
 option portrait.size type="range" label="Width" default=0 min=0 max=200 step=1 tooltip=#404b1aba
 option portrait.gap type="range" label="Gap to the bars" default=2 min=0 max=20 step=1
+option portrait.includeInWidth type="toggle" label="Width includes portrait" default=false tooltip=#b00c7051
 option portrait.mode type="select" label="Style" default="3D" values=#db0171ae
 option portrait.background type="color" label="Background" default={0,0,0,0.6}
 option portrait.border type="group" label="Border" defaults={enabled=false}
@@ -6695,6 +6699,7 @@ default portrait.border.separateInset = false
 default portrait.border.separatePadding = false
 default portrait.enabled = false
 default portrait.gap = 2
+default portrait.includeInWidth = false
 default portrait.mode = "3D"
 default portrait.position = "LEFT"
 default portrait.rowSpan = 0
@@ -7436,6 +7441,7 @@ resolved portrait.border.separatePadding = false
 resolved portrait.border.size = 12
 resolved portrait.enabled = false
 resolved portrait.gap = 2
+resolved portrait.includeInWidth = false
 resolved portrait.mode = "3D"
 resolved portrait.position = "LEFT"
 resolved portrait.rowSpan = 0
@@ -7788,6 +7794,7 @@ option portrait.position type="select" label="Side" default="LEFT" values=#11c04
 option portrait.rowSpan type="select" label="Rows to span" default=0 values=#e0ec7f96 tooltip=#2d262f9f
 option portrait.size type="range" label="Width" default=0 min=0 max=200 step=1 tooltip=#404b1aba
 option portrait.gap type="range" label="Gap to the bars" default=2 min=0 max=20 step=1
+option portrait.includeInWidth type="toggle" label="Width includes portrait" default=false tooltip=#b00c7051
 option portrait.mode type="select" label="Style" default="3D" values=#db0171ae
 option portrait.background type="color" label="Background" default={0,0,0,0.6}
 option portrait.border type="group" label="Border" defaults={enabled=false}
@@ -9101,6 +9108,7 @@ default portrait.border.separateInset = false
 default portrait.border.separatePadding = false
 default portrait.enabled = true
 default portrait.gap = 2
+default portrait.includeInWidth = false
 default portrait.mode = "3D"
 default portrait.position = "RIGHT"
 default portrait.rowSpan = 0
@@ -9870,6 +9878,7 @@ resolved portrait.border.separatePadding = false
 resolved portrait.border.size = 12
 resolved portrait.enabled = true
 resolved portrait.gap = 2
+resolved portrait.includeInWidth = false
 resolved portrait.mode = "3D"
 resolved portrait.position = "RIGHT"
 resolved portrait.rowSpan = 0
@@ -10213,6 +10222,7 @@ option portrait.position type="select" label="Side" default="LEFT" values=#11c04
 option portrait.rowSpan type="select" label="Rows to span" default=0 values=#e0ec7f96 tooltip=#2d262f9f
 option portrait.size type="range" label="Width" default=0 min=0 max=200 step=1 tooltip=#404b1aba
 option portrait.gap type="range" label="Gap to the bars" default=2 min=0 max=20 step=1
+option portrait.includeInWidth type="toggle" label="Width includes portrait" default=false tooltip=#b00c7051
 option portrait.mode type="select" label="Style" default="3D" values=#db0171ae
 option portrait.background type="color" label="Background" default={0,0,0,0.6}
 option portrait.border type="group" label="Border" defaults={enabled=false}
@@ -11474,6 +11484,7 @@ default portrait.border.separateInset = false
 default portrait.border.separatePadding = false
 default portrait.enabled = false
 default portrait.gap = 2
+default portrait.includeInWidth = false
 default portrait.mode = "3D"
 default portrait.position = "LEFT"
 default portrait.rowSpan = 0
@@ -12215,6 +12226,7 @@ resolved portrait.border.separatePadding = false
 resolved portrait.border.size = 12
 resolved portrait.enabled = false
 resolved portrait.gap = 2
+resolved portrait.includeInWidth = false
 resolved portrait.mode = "3D"
 resolved portrait.position = "LEFT"
 resolved portrait.rowSpan = 0
@@ -12559,6 +12571,7 @@ option portrait.position type="select" label="Side" default="LEFT" values=#11c04
 option portrait.rowSpan type="select" label="Rows to span" default=0 values=#e0ec7f96 tooltip=#2d262f9f
 option portrait.size type="range" label="Width" default=0 min=0 max=200 step=1 tooltip=#404b1aba
 option portrait.gap type="range" label="Gap to the bars" default=2 min=0 max=20 step=1
+option portrait.includeInWidth type="toggle" label="Width includes portrait" default=false tooltip=#b00c7051
 option portrait.mode type="select" label="Style" default="3D" values=#db0171ae
 option portrait.background type="color" label="Background" default={0,0,0,0.6}
 option portrait.border type="group" label="Border" defaults={enabled=false}
@@ -13818,6 +13831,7 @@ default portrait.border.separateInset = false
 default portrait.border.separatePadding = false
 default portrait.enabled = false
 default portrait.gap = 2
+default portrait.includeInWidth = false
 default portrait.mode = "3D"
 default portrait.position = "LEFT"
 default portrait.rowSpan = 0
@@ -14559,6 +14573,7 @@ resolved portrait.border.separatePadding = false
 resolved portrait.border.size = 12
 resolved portrait.enabled = false
 resolved portrait.gap = 2
+resolved portrait.includeInWidth = false
 resolved portrait.mode = "3D"
 resolved portrait.position = "LEFT"
 resolved portrait.rowSpan = 0
@@ -14895,6 +14910,7 @@ option portrait.position type="select" label="Side" default="LEFT" values=#11c04
 option portrait.rowSpan type="select" label="Rows to span" default=0 values=#e0ec7f96 tooltip=#2d262f9f
 option portrait.size type="range" label="Width" default=0 min=0 max=200 step=1 tooltip=#404b1aba
 option portrait.gap type="range" label="Gap to the bars" default=2 min=0 max=20 step=1
+option portrait.includeInWidth type="toggle" label="Width includes portrait" default=false tooltip=#b00c7051
 option portrait.mode type="select" label="Style" default="3D" values=#db0171ae
 option portrait.background type="color" label="Background" default={0,0,0,0.6}
 option portrait.border type="group" label="Border" defaults={enabled=false}
@@ -16156,6 +16172,7 @@ default portrait.border.separateInset = false
 default portrait.border.separatePadding = false
 default portrait.enabled = false
 default portrait.gap = 2
+default portrait.includeInWidth = false
 default portrait.mode = "3D"
 default portrait.position = "LEFT"
 default portrait.rowSpan = 0
@@ -16897,6 +16914,7 @@ resolved portrait.border.separatePadding = false
 resolved portrait.border.size = 12
 resolved portrait.enabled = false
 resolved portrait.gap = 2
+resolved portrait.includeInWidth = false
 resolved portrait.mode = "3D"
 resolved portrait.position = "LEFT"
 resolved portrait.rowSpan = 0
@@ -19209,6 +19227,7 @@ option portrait.position type="select" label="Side" default="LEFT" values=#11c04
 option portrait.rowSpan type="select" label="Rows to span" default=0 values=#e0ec7f96 tooltip=#2d262f9f
 option portrait.size type="range" label="Width" default=0 min=0 max=200 step=1 tooltip=#404b1aba
 option portrait.gap type="range" label="Gap to the bars" default=2 min=0 max=20 step=1
+option portrait.includeInWidth type="toggle" label="Width includes portrait" default=false tooltip=#b00c7051
 option portrait.mode type="select" label="Style" default="3D" values=#db0171ae
 option portrait.background type="color" label="Background" default={0,0,0,0.6}
 option portrait.border type="group" label="Border" defaults={enabled=false}
@@ -20438,6 +20457,7 @@ default portrait.border.separateInset = false
 default portrait.border.separatePadding = false
 default portrait.enabled = false
 default portrait.gap = 2
+default portrait.includeInWidth = false
 default portrait.mode = "3D"
 default portrait.position = "LEFT"
 default portrait.rowSpan = 0
@@ -21157,6 +21177,7 @@ resolved portrait.border.separatePadding = false
 resolved portrait.border.size = 12
 resolved portrait.enabled = false
 resolved portrait.gap = 2
+resolved portrait.includeInWidth = false
 resolved portrait.mode = "3D"
 resolved portrait.position = "LEFT"
 resolved portrait.rowSpan = 0
@@ -21499,6 +21520,7 @@ option portrait.position type="select" label="Side" default="LEFT" values=#11c04
 option portrait.rowSpan type="select" label="Rows to span" default=0 values=#e0ec7f96 tooltip=#2d262f9f
 option portrait.size type="range" label="Width" default=0 min=0 max=200 step=1 tooltip=#404b1aba
 option portrait.gap type="range" label="Gap to the bars" default=2 min=0 max=20 step=1
+option portrait.includeInWidth type="toggle" label="Width includes portrait" default=false tooltip=#b00c7051
 option portrait.mode type="select" label="Style" default="3D" values=#db0171ae
 option portrait.background type="color" label="Background" default={0,0,0,0.6}
 option portrait.border type="group" label="Border" defaults={enabled=false}
@@ -22728,6 +22750,7 @@ default portrait.border.separateInset = false
 default portrait.border.separatePadding = false
 default portrait.enabled = false
 default portrait.gap = 2
+default portrait.includeInWidth = false
 default portrait.mode = "3D"
 default portrait.position = "LEFT"
 default portrait.rowSpan = 0
@@ -23442,6 +23465,7 @@ resolved portrait.border.separatePadding = false
 resolved portrait.border.size = 12
 resolved portrait.enabled = false
 resolved portrait.gap = 2
+resolved portrait.includeInWidth = false
 resolved portrait.mode = "3D"
 resolved portrait.position = "LEFT"
 resolved portrait.rowSpan = 0
