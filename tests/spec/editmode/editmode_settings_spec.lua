@@ -47,6 +47,18 @@ describe("Edit Mode quick settings", function()
 		assert.same({ kind = "checkbox", name = "Show castbar", default = false }, tot[7])
 	end)
 
+	it("builds a unit's defaults once for all of its quick settings", function()
+		local schema, builds = ns.Units:GetSchema("player"), 0
+		local defaults = ns.Schema.Defaults
+		ns.Schema.Defaults = function(target, ...)
+			if target == schema then builds = builds + 1 end
+			return defaults(target, ...)
+		end
+		ns.EditMode:Register(CreateFrame("Frame", nil, UIParent), "player", "Player copy", { point = "CENTER", x = 0, y = 0 })
+		ns.Schema.Defaults = defaults
+		assert.equals(1, builds)
+	end)
+
 	it("reads resolved values and clears a setting that returns to its default", function()
 		local width = settings[ns.Units.frames.target][1]
 		assert.equals(230, width.get())
