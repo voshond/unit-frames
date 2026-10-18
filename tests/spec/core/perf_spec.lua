@@ -168,6 +168,28 @@ describe("Opt-in performance diagnostics", function()
 		assert.is_nil(UF.Perf.counters)
 	end)
 
+	it("measures cold preview creation once after an armed ClickGrid startup", function()
+		local _, CG = Helpers.LoadClickGrid()
+		UF = CG.UF
+		UF.Print = function(_, ...) messages[#messages + 1] = { ... } end
+		Mock.profilerEnabled = true
+		local creates = 0
+		local new = CG.Preview.New
+		CG.Preview.New = function(...) creates = creates + 1; return new(...) end
+		UF.Perf:Startup("clickgrid", function() end)
+		assert.equals(0, creates, "unarmed: no creation")
+		UF.Perf:Command("startup")
+		UF.Perf:Startup("units", function() end)
+		assert.equals(0, creates, "unit startup does not create previews")
+		UF.Perf:Startup("clickgrid", function() end)
+		assert.equals(1, creates)
+		local saved = UF.Config.db.global.perfMeasurements
+		assert.is_not_nil(saved["startup clickgrid"])
+		assert.is_true(saved["measure create"].counters.componentCreate > 0)
+		assert.is_nil(next(CG.previews))
+		assert.is_nil(UF.Perf.counters)
+	end)
+
 	it("measures creating a released ClickGrid preview as a startup stand-in", function()
 		local _, CG = Helpers.LoadClickGrid()
 		UF = CG.UF

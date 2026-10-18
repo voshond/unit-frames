@@ -271,7 +271,7 @@ end
 function Perf:ArmStartup()
 	self:Divider("arm startup measurement")
 	ns.Config.db.global.measureStartup = true
-	ns:Print("startup will be measured once after the next /reload")
+	ns:Print("startup and cold ClickGrid preview creation will be measured once after the next /reload")
 end
 
 function Perf:Startup(label, fn, ...)
@@ -287,6 +287,7 @@ function Perf:Startup(label, fn, ...)
 	local ok, err = self:Run("startup " .. label, fn, ...)
 	-- Fail as an unmeasured startup would.
 	if not ok then error(err, 0) end
+	if label == "clickgrid" and ns.ClickGrid and ns.ClickGrid.started then self:Measure("create") end
 end
 
 function Perf:Command(arguments)
@@ -317,7 +318,7 @@ function Perf:Command(arguments)
 		ns:Print("/uf perf cancel - cancel performance observation")
 		ns:Print("/uf perf measure <operation> - actively measure an operation")
 		ns:Print("/uf perf edit <operation> - measure a ClickGrid settings edit, then restore its overrides")
-		ns:Print("/uf perf startup - measure startup after the next /reload")
+		ns:Print("/uf perf startup - measure startup and cold preview creation after the next /reload")
 		ns:Print("/uf perf suite baseline - run the out-of-combat baseline suite")
 		ns:Print("/uf perf suite report - show the last saved suite report")
 		ns:Print("/uf perf suite save | saved - preserve or show a comparison baseline")
