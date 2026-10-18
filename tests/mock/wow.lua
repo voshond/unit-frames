@@ -942,6 +942,7 @@ function Mock.Install()
 	Mock.time = 100
 	Mock.raidTargets = {}
 	Mock.dead, Mock.ghosts = {}, {}
+	Mock.attackable, Mock.difficulties = {}, {}
 	Mock.incomingResurrections = {}
 	Mock.pvpInfo = {}
 	Mock.ranges = {}
@@ -1157,7 +1158,7 @@ function Mock.Install()
 		"UnitDamageAbsorbClampMode", "UnitMaximumHealthMode", "UnitIncomingHealClampMode", "StatusBarTimerDirection",
 		"SecondsFormatterAbbreviation", "SecondsFormatterInterval", "SecondsFormatterRounding",
 		"SecondsFormatterIntervalWhitespace", "AddOnProfilerMetric", "PowerType", "CompressionMethod",
-		"CompressionLevel", "LuaCurveType", "PlayerSwingType" }) do
+		"CompressionLevel", "LuaCurveType", "PlayerSwingType", "RelativeContentDifficulty" }) do
 		local values = assert(API.Snapshot().enums[name], "Enum." .. name .. " is not a client enum")
 		_G.Enum[name] = {}
 		for field, value in pairs(values) do _G.Enum[name][field] = value end
@@ -1393,6 +1394,34 @@ function Mock.InstallUI()
 	_G.UnitClass = function() return Secret("Warrior"), Secret("WARRIOR"), Secret(1) end
 	_G.UnitRace = function() return Secret("Human"), Secret("Human") end
 	_G.UnitLevel = function() return 30 end
+	_G.UnitEffectiveLevel = function() return 30 end
+	_G.UnitQuestTrivialLevelRange = function() return 8 end
+	_G.UnitCanAttack = function(_, unit) return Mock.attackable[unit] or false end
+	_G.C_PlayerInfo = {
+		GetContentDifficultyCreatureForPlayer = function(unit)
+			return Mock.difficulties[unit] or Enum.RelativeContentDifficulty.Fair
+		end,
+	}
+	-- Blizzard_FrameXMLBase/Constants.lua and Mainline/DifficultyUtil.lua.
+	_G.QuestDifficultyColors = {
+		impossible = { r = 1.00, g = 0.10, b = 0.10 },
+		verydifficult = { r = 1.00, g = 0.50, b = 0.25 },
+		difficult = { r = 1.00, g = 0.82, b = 0.00 },
+		standard = { r = 0.25, g = 0.75, b = 0.25 },
+		trivial = { r = 0.50, g = 0.50, b = 0.50 },
+	}
+	local DIFFICULTY_KEYS = { [0] = "trivial", "standard", "difficult", "verydifficult", "impossible" }
+	_G.GetDifficultyColor = function(difficulty)
+		return QuestDifficultyColors[DIFFICULTY_KEYS[difficulty] or "difficult"]
+	end
+	_G.GetCreatureDifficultyColor = function(level)
+		local levelDiff = level - UnitEffectiveLevel("player")
+		if levelDiff >= 5 then return QuestDifficultyColors.impossible end
+		if levelDiff >= 3 then return QuestDifficultyColors.verydifficult end
+		if levelDiff >= -4 then return QuestDifficultyColors.difficult end
+		if -levelDiff <= UnitQuestTrivialLevelRange("player") then return QuestDifficultyColors.standard end
+		return QuestDifficultyColors.trivial
+	end
 	_G.UnitHealth = function() return Secret(500) end
 	_G.UnitHealthMax = function() return Secret(1000) end
 	_G.UnitHealthMissing = function() return Secret(500) end

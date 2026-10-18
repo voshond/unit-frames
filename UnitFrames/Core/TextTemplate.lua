@@ -6,7 +6,7 @@ The text composer: compiles a slot's content into a template that oUF tags,
 live previews and samples all use, so they cannot disagree.
 
   Template.Compile({ pieces = { ... }, whileCasting = "spell" | "keep",
-    whileStatus = "status" | "keep" }, context)
+    whileStatus = "status" | "keep", levelColor = true }, context)
   Template.Get(def, context)   the same, shared between equal contents
 
 context describes the slot's host: { player = false } on frames that don't
@@ -30,6 +30,9 @@ health and power values while the unit is dead, a ghost or offline: the
 first health value shows the word, the other values nothing, so their
 affixes disappear with them ("1 / 82" becomes "Dead", a power text empties).
 Texts that show the Offline / dead source themselves keep their values.
+levelColor tints the level pieces (sources marked `difficulty`) in their
+difficulty colour (TextSources.DIFFICULTY); affixes and other pieces keep the
+text's own colour.
 
 The template has
   live(unit)      possibly secret text; "" for an absent unit
@@ -75,7 +78,7 @@ function Template.Available(source, context)
 	return not source.player or not context or context.player ~= false
 end
 
-local function Nodes(pieces, context)
+local function Nodes(pieces, context, levelColor)
 	local nodes = {}
 	for _, piece in ipairs(pieces or {}) do
 		if piece.literal then
@@ -84,7 +87,8 @@ local function Nodes(pieces, context)
 			local source = piece.source and Sources.Get(piece.source)
 			if source and Template.Available(source, context) then
 				local before, after = piece.before or "", piece.after or ""
-				nodes[#nodes + 1] = { source = Sources.Resolve(source, context), piece = piece,
+				local resolved = Sources.Resolve(source, context)
+				nodes[#nodes + 1] = { source = resolved, piece = piece, tint = levelColor and resolved.difficulty,
 					before = before, after = after, affixed = before ~= "" or after ~= "" }
 			end
 		end
@@ -130,8 +134,17 @@ local function Composer(nodes, read)
 	end
 end
 
-local function ReadLive(node, unit) return node.source.live(unit, node.piece) end
-local function ReadSample(node, values) return node.source.sample(values, node.piece) end
+local function ReadLive(node, unit)
+	local text = node.source.live(unit, node.piece)
+	if node.tint then return Sources.Tint(text, Sources.DIFFICULTY.live(unit)) end
+	return text
+end
+
+local function ReadSample(node, values)
+	local text = node.source.sample(values, node.piece)
+	if node.tint then return Sources.Tint(text, Sources.DIFFICULTY.sample(values)) end
+	return text
+end
 
 -- Reads with the status in place of the values; `state` is { arg, text }.
 local function StatusReader(read)
@@ -160,16 +173,19 @@ local function MarkStatusNodes(nodes)
 end
 
 function Template.Compile(def, context)
-	local nodes = Nodes(def.pieces, context)
+	local nodes = Nodes(def.pieces, context, def.levelColor)
 	local casting = def.whileCasting == "spell"
 	local status = def.whileStatus ~= "keep" and MarkStatusNodes(nodes)
 	local events, shared, sources = {}, {}, {}
+	local tinted = false
 	for _, node in ipairs(nodes) do
 		if node.source then
 			AddEvents(events, shared, node.source)
 			sources[#sources + 1] = node.source.id
+			tinted = tinted or node.tint
 		end
 	end
+	if tinted then AddEvents(events, shared, Sources.DIFFICULTY) end
 	if casting then AddEvents(events, shared, Sources.Get(CAST_SOURCE)) end
 	if status then AddEvents(events, shared, Sources.Get(STATUS_SOURCE)) end
 
@@ -228,7 +244,7 @@ end
 
 function Template.Signature(def, context)
 	local out = { def.whileCasting == "spell" and "c" or "-", def.whileStatus == "keep" and "k" or "s" }
-	for _, node in ipairs(Nodes(def.pieces, context)) do
+	for _, node in ipairs(Nodes(def.pieces, context, def.levelColor)) do
 		if node.literal then
 			out[#out + 1] = "l" .. Encode(node.literal)
 		else
@@ -241,7 +257,7 @@ function Template.Signature(def, context)
 				end
 			end
 			out[#out + 1] = "s" .. Encode(node.source.id) .. Encode(node.before) .. Encode(node.after)
-				.. #options .. ":" .. table.concat(options)
+				.. (node.tint and "t" or "-") .. #options .. ":" .. table.concat(options)
 		end
 	end
 	return table.concat(out)

@@ -137,6 +137,26 @@ local function SourceValues(context)
 	end
 end
 
+-- Whether `pieces` show a level, which the slot can colour by difficulty.
+local function ShowsLevel(pieces)
+	for _, piece in ipairs(pieces) do
+		local source = piece.source and ns.TextSources.Get(piece.source)
+		if source and source.difficulty then return true end
+	end
+	return false
+end
+
+local function CustomPieces(cfg)
+	local pieces = {}
+	for i = 1, Text.PIECES do pieces[i] = cfg[PieceKey(i)] end
+	return pieces
+end
+
+local function SlotShowsLevel(cfg)
+	if cfg.format == Text.CUSTOM then return ShowsLevel(CustomPieces(cfg)) end
+	return ShowsLevel(ns.Formats.Get(cfg.format).pieces)
+end
+
 -- Writes `presetId` (on a host with `context`) into a slot's override
 -- group as its custom pieces and selects Custom: all pieces, casting
 -- behaviour and the initialised flag at once, as independent tables.
@@ -217,6 +237,9 @@ local function SlotSchema(spec)
 		{ key = "whileStatus", type = "select", label = "While dead or offline", values = Text.WHILE_STATUS,
 			default = "status", hidden = NotCustom,
 			tooltip = "Health and power values make way for Dead or Offline: the first health value shows the word, other values and their separators disappear. Texts showing the Offline / dead source keep their values." },
+		{ key = "levelColor", type = "toggle", label = "Colour level by difficulty", default = false,
+			hidden = function(cfg) return not SlotShowsLevel(cfg) end,
+			tooltip = "Colours only the level, in the game's difficulty colours, for units you can attack. Other units and the rest of the text keep the text colour." },
 		-- Distinguishes retained custom edits (even an empty slot) from none yet.
 		{ key = "customInitialized", type = "toggle", label = "Custom text set up", default = false,
 			internal = "Records whether the slot has retained custom text pieces",
@@ -276,16 +299,16 @@ function Text:CompileTemplate(cfg)
 	local Formats = ns.Formats
 	local format = self.spec.formats and cfg.format or "none"
 	if format == Text.CUSTOM then
-		local pieces = {}
-		for i = 1, Text.PIECES do pieces[i] = cfg[PieceKey(i)] end
-		return ns.TextTemplate.Get({ pieces = pieces, whileCasting = cfg.whileCasting, whileStatus = cfg.whileStatus },
-			self.spec.context)
+		return ns.TextTemplate.Get({ pieces = CustomPieces(cfg), whileCasting = cfg.whileCasting,
+			whileStatus = cfg.whileStatus, levelColor = cfg.levelColor }, self.spec.context)
 	end
 	local preset = Formats.Get(format)
-	if not preset.relative and Formats.Availability(preset.id, self.spec.context) == "all" then
+	local levelColor = cfg.levelColor and ShowsLevel(preset.pieces)
+	if not levelColor and not preset.relative and Formats.Availability(preset.id, self.spec.context) == "all" then
 		return preset.template
 	end
-	return ns.TextTemplate.Get(preset, self.spec.context)
+	return ns.TextTemplate.Get({ pieces = preset.pieces, whileCasting = preset.whileCasting, levelColor = levelColor },
+		self.spec.context)
 end
 
 function Text:GetTemplate()
