@@ -435,6 +435,16 @@ Every performance command starts with a labelled `============` divider,
 including suite report/save, help, acknowledgements and rejected requests.
 Asynchronous suite/watch/combat results have their own report divider.
 
+`/uf perf capture` is the combined warm capture: five blank chat lines,
+then the normal two-warmup/ten-run baseline, followed by one detailed schema,
+units and prepared ClickGrid measurement. The entire capture uses the same
+one-operation-per-0.1-second scheduler and combat/configuration/roster cancellation
+rules. Detailed calls are excluded from baseline statistics and counters;
+their reports use the usual `perfMeasurements` titles. ClickGrid is skipped
+when unprepared. Wait for the final combined-capture status, then `/reload`
+and tell the agent the reports are saved. Startup, creation probes and
+settings-edit probes remain explicitly separate operations.
+
 Chat copy/paste is optional. After measuring, `/reload` or log out to flush
 SavedVariables, then read the saved diagnostics from the repository root:
 

@@ -37,6 +37,16 @@ function Perf:TickSuite(elapsed)
 	local ok, result, counters = self:CaptureOperation(operation.name)
 	if self.suite ~= suite then return end
 	if not ok then self:FinishSuite("failed", tostring(result)); return end
+	if suite.details then
+		local title = "measure " .. operation.name
+		self:Divider(title)
+		local reported, err = pcall(self.ReportMeasurement, self, title, result, counters)
+		if not reported then self:FinishSuite("failed", tostring(err)); return end
+		if self.suite ~= suite then return end
+		suite.index = suite.index + 1
+		if suite.index > #suite.report.operations then self:FinishSuite("completed") end
+		return
+	end
 	suite.iteration = suite.iteration + 1
 	if suite.iteration > WARMUPS then
 		operation.samples[#operation.samples + 1] = { ms = result.elapsedMilliseconds,
@@ -46,11 +56,19 @@ function Perf:TickSuite(elapsed)
 	end
 	if suite.iteration < WARMUPS + RUNS then return end
 	suite.index, suite.iteration = suite.index + 1, 0
-	if suite.index > #suite.report.operations then self:FinishSuite("completed") end
+	if suite.index <= #suite.report.operations then return end
+	if suite.report.capture then
+		suite.index, suite.details = 1, true
+		return
+	end
+	self:FinishSuite("completed")
 end
 
-function Perf:StartSuite()
-	self:Divider("baseline suite start")
+function Perf:StartSuite(capture)
+	if capture then
+		for _ = 1, 5 do print(" ") end
+		self:Divider("performance capture start")
+	else self:Divider("baseline suite start") end
 	if InCombatLockdown() then ns:Print("baseline suite must start outside combat"); return end
 	if not ns.Caps.profiler or not C_AddOnProfiler.IsEnabled() then
 		ns:Print("native addon profiler unavailable/disabled"); return
@@ -59,6 +77,7 @@ function Perf:StartSuite()
 		ns:Print("cancel the current observation or suite first"); return
 	end
 	local report = { format = 2, suite = "baseline", status = "running", timestamp = GetServerTime(),
+		capture = capture or nil,
 		warmups = WARMUPS, runs = RUNS, interval = INTERVAL, context = self:SuiteContext(),
 		before = self:Snapshot(), operations = {}, skipped = {} }
 	local names = { "schema", "units" }
@@ -79,6 +98,7 @@ function Perf:StartSuite()
 	self.driver:Show()
 	ns:Print("baseline suite started: 2 warmups + 10 runs per operation, one call per 0.1 seconds")
 	ns:Print("keep settings, units and preview state stable; /uf perf cancel stops the suite")
+	if capture then ns:Print("detailed schema, unit and prepared ClickGrid reports follow the baseline runs") end
 end
 
 function Perf:SuiteCommand(command)

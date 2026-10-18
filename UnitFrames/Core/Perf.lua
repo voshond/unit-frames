@@ -222,15 +222,7 @@ function Perf:CaptureOperation(operation)
 	return Capture(self, assert(operations[operation], "Invalid performance operation"))
 end
 
--- Runs fn(...) inside an active measurement and reports it under `title`.
--- Returns whether it succeeded and the error otherwise.
-function Perf:Run(title, fn, ...)
-	local ok, result, counters = Capture(self, fn, ...)
-	if not ok then
-		ns.Logs:Error(title, result)
-		ns:Print("measurement failed:", result)
-		return false, result
-	end
+function Perf:ReportMeasurement(title, result, counters)
 	local summary = string.format("active %s: %.3f ms; allocated %s bytes; deallocated %s bytes", title,
 		result.elapsedMilliseconds, tostring(result.allocatedBytes), tostring(result.deallocatedBytes))
 	ns.Logs:Info(title, summary)
@@ -245,6 +237,16 @@ function Perf:Run(title, fn, ...)
 		ms = result.elapsedMilliseconds, allocatedBytes = result.allocatedBytes,
 		deallocatedBytes = result.deallocatedBytes, counters = counters, phases = phases }
 	ns:Print("structured measurement: UnitFramesDB.global.perfMeasurements[" .. string.format("%q", title) .. "]; /reload writes it to SavedVariables")
+end
+
+function Perf:Run(title, fn, ...)
+	local ok, result, counters = Capture(self, fn, ...)
+	if not ok then
+		ns.Logs:Error(title, result)
+		ns:Print("measurement failed:", result)
+		return false, result
+	end
+	self:ReportMeasurement(title, result, counters)
 	return true
 end
 
@@ -305,6 +307,7 @@ function Perf:Command(arguments)
 	elseif command == "startup" then self:ArmStartup()
 	elseif command == "combat" then self:Combat()
 	elseif command == "suite" then self:SuiteCommand(value)
+	elseif command == "capture" then self:StartSuite(true)
 	elseif not command then self:Report(self:Snapshot())
 	else
 		self:Divider("performance help")
@@ -318,5 +321,6 @@ function Perf:Command(arguments)
 		ns:Print("/uf perf suite baseline - run the out-of-combat baseline suite")
 		ns:Print("/uf perf suite report - show the last saved suite report")
 		ns:Print("/uf perf suite save | saved - preserve or show a comparison baseline")
+		ns:Print("/uf perf capture - run the baseline and detailed refresh reports together")
 	end
 end
