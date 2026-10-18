@@ -38,6 +38,37 @@ describe("Lazy live aura containers", function()
 		assert.is_false(buffs:IsEnabled())
 	end)
 
+	it("styles each new live button once when its containers are built", function()
+		local function Counter(target)
+			local counts, style = {}, target.StyleButton
+			target.StyleButton = function(self, button)
+				counts[button] = (counts[button] or 0) + 1
+				return style(self, button)
+			end
+			return counts
+		end
+		local function AssertOnce(counts, container, kind)
+			local total = container:GetAuraGroupFrameCount(kind)
+			assert.is_true(total > 0)
+			for index = 1, total do
+				assert.equals(1, counts[container:GetAuraGroupFrame(kind, index)])
+			end
+		end
+		local bar = uf:GetPart("auraBar")
+		local barCounts = Counter(bar)
+		bar:SetUnit("target")
+		uf:Apply({ portrait = { enabled = false }, castbar = { placement = "off" }, auraBar = { enabled = true } })
+		AssertOnce(barCounts, bar:GetContainer("buffs"), "buffs")
+		AssertOnce(barCounts, bar:GetContainer("debuffs"), "debuffs")
+		local auraCounts = Counter(ns.Components.Auras)
+		local fresh = ns.Units:CreateFromDefinition(ns.Units:GetDefinition("target"), UIParent, config):GetPart("auras")
+		AssertOnce(auraCounts, fresh:GetContainer("buffs"), "buffs")
+		ns.Config:SetThemeValue("font", "Arial Narrow")
+		local button = fresh:GetContainer("buffs"):GetAuraGroupFrame("buffs", 1)
+		assert.equals(2, auraCounts[button], "a style change still restyles existing buttons")
+		assert.equals(fresh.styleToken, button.ufStyleToken)
+	end)
+
 	it("builds and configures containers when an owner enables the part directly", function()
 		local bar = uf:GetPart("auraBar")
 		bar:SetUnit("target")

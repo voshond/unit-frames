@@ -139,8 +139,10 @@ function AuraIcon.Create(button, kind, preview, opts)
 	-- A separate themed border lets the engine own the complete edge's
 	-- colour/shown state. Hide the holder to toggle type colouring, and
 	-- make the base edge transparent so no neutral border shows through.
+	ns.Perf:Begin("aura dispel border frame")
 	button.ufBorder = CreateFrame("Frame", nil, cover, "BackdropTemplate")
 	button.ufBorder:SetAllPoints(iconFrame)
+	ns.Perf:End("aura dispel border frame")
 	button.ufDispelTextures = {}
 	if preview then
 		button:EnableMouse(false)
