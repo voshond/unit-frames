@@ -443,6 +443,15 @@ end
 function Methods:SetTexture(texture) self.__state.texture = texture end
 function Methods:SetTexCoord(...) self.__state.texCoords = { ... } end
 function Methods:SetBlendMode(mode) self.__state.blendMode = mode end
+function Methods:SetTextureSliceMargins(left, top, right, bottom)
+	self.__state.sliceMargins = { left, top, right, bottom }
+end
+function Methods:GetTextureSliceMargins()
+	local margins = self.__state.sliceMargins
+	if margins then return unpack(margins) end
+end
+function Methods:SetTextureSliceMode(mode) self.__state.sliceMode = mode end
+function Methods:GetTextureSliceMode() return self.__state.sliceMode end
 function Methods:SetGradient(orientation, minColor, maxColor)
 	self.__state.gradient = { orientation, { minColor:GetRGBA() }, { maxColor:GetRGBA() } }
 end
@@ -1158,7 +1167,7 @@ function Mock.Install()
 		"UnitDamageAbsorbClampMode", "UnitMaximumHealthMode", "UnitIncomingHealClampMode", "StatusBarTimerDirection",
 		"SecondsFormatterAbbreviation", "SecondsFormatterInterval", "SecondsFormatterRounding",
 		"SecondsFormatterIntervalWhitespace", "AddOnProfilerMetric", "PowerType", "CompressionMethod",
-		"CompressionLevel", "LuaCurveType", "PlayerSwingType", "RelativeContentDifficulty" }) do
+		"CompressionLevel", "LuaCurveType", "PlayerSwingType", "RelativeContentDifficulty", "UITextureSliceMode" }) do
 		local values = assert(API.Snapshot().enums[name], "Enum." .. name .. " is not a client enum")
 		_G.Enum[name] = {}
 		for field, value in pairs(values) do _G.Enum[name][field] = value end

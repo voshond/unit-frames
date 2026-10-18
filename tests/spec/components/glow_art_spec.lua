@@ -1,0 +1,27 @@
+describe("Generated glow artwork #glow", function()
+	local function Read(path)
+		local file = assert(io.open(path, "rb"))
+		local bytes = file:read("*a")
+		file:close()
+		return bytes
+	end
+
+	it("matches the generator: a 64x64 32-bit top-left TGA with a clear centre", function()
+		local output = os.tmpname()
+		local chunk = assert(loadfile("scripts/generate-glow.lua"))
+		setfenv(chunk, setmetatable({ arg = { output }, print = function() end }, { __index = _G }))
+		chunk()
+		local generated, committed = Read(output), Read("UnitFrames/Media/Glow.tga")
+		os.remove(output)
+		assert.equals(generated, committed, "regenerate with luajit scripts/generate-glow.lua")
+		assert.equals(2, committed:byte(3))
+		assert.equals(64, committed:byte(13) + committed:byte(14) * 256)
+		assert.equals(64, committed:byte(15) + committed:byte(16) * 256)
+		assert.equals(32, committed:byte(17))
+		assert.equals(0x28, committed:byte(18))
+		local function Alpha(x, y) return committed:byte(18 + (y * 64 + x) * 4 + 4) end
+		assert.equals(0, Alpha(32, 32))
+		assert.equals(0, Alpha(0, 0))
+		assert.is_true(Alpha(16, 32) > 200)
+	end)
+end)

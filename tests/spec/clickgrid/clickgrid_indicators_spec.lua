@@ -218,8 +218,9 @@ describe("ClickGrid status indicators", function()
 		assert.is_false(threat.Highlight:IsShown())
 		assert.is_true(threat.Glow:IsShown())
 		assert.equals(0.6, threat.Glow:GetAlpha())
-		assert.equals(8, #threat.Glow.textures)
-		assert.equals(16, threat.Glow.TopLeft:GetWidth())
+		assert.equals(1, #threat.Glow.textures)
+		local halo = threat.Glow.Halo
+		assert.equals(16, math.floor(halo:GetScale() * halo:GetTextureSliceMargins() + 0.5))
 
 		member.__unit = "raid1"
 		local previous = UnitThreatSituation
@@ -286,7 +287,7 @@ describe("ClickGrid status indicators", function()
 		-- Owned by the engine-shown slot button, anchored around the whole cell.
 		assert.equals(slot, glow:GetParent())
 		assert.equals(member, select(2, glow:GetPoint(1)))
-		assert.equals(8, #glow.textures)
+		assert.equals(1, #glow.textures)
 		for _, texture in ipairs(glow.textures) do
 			local options = slot.__state.dispelTextures[texture]
 			assert.equals(Enum.CustomAuraButtonDispelTypeTextureStyle.PreserveAsset, options.style)
