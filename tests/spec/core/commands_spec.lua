@@ -55,7 +55,9 @@ describe("Slash command help", function()
 		ns.Perf.MeasureEdit = function() error("help must not edit settings") end
 		ns.Perf.StartSuite = function() error("help must not start a suite") end
 		SlashCmdList.UNITFRAMES("perf help")
-		assert.equals(10, #messages)
+		assert.equals(11, #messages)
+		assert.is_not_nil(messages[1][1]:find("=|r performance help |c", 1, true))
+		table.remove(messages, 1)
 		assert.equals("/uf perf - performance snapshot", messages[1][1])
 		assert.equals("/uf perf edit <operation> - measure a ClickGrid settings edit, then restore its overrides", messages[6][1])
 		assert.equals("/uf perf startup - measure startup after the next /reload", messages[7][1])

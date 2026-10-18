@@ -36,11 +36,12 @@ function Perf.Phases(results)
 	return Perf.RankPhases(list, "bytes")
 end
 
-function Perf:ReportPhases(phases)
+function Perf:ReportPhases(phases, limit)
+	limit = limit or 15
 	for _, ranking in ipairs({ { "ms", "time" }, { "bytes", "allocation" } }) do
-		ns:Print(string.format("phases by %s (exclusive; showing %d of %d)", ranking[2], math.min(15, #phases), #phases))
+		ns:Print(string.format("phases by %s (exclusive; showing %d of %d)", ranking[2], math.min(limit, #phases), #phases))
 		for index, phase in ipairs(self.RankPhases(phases, ranking[1])) do
-			if index > 15 then break end
+			if index > limit then break end
 			ns:Print(string.format("  %s: %.3f ms, %.1f KB allocated, %d entries",
 				phase.name, phase.ms, phase.bytes / 1024, phase.calls))
 		end

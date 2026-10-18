@@ -72,6 +72,21 @@ describe("Opt-in performance diagnostics", function()
 		end
 	end)
 
+	it("separates every performance command including acknowledgements, help and rejected requests", function()
+		for _, command in ipairs({ "", "help", "watch invalid", "watch 0", "watch 1", "cancel", "combat", "startup",
+			"suite baseline", "suite report", "suite saved", "suite save", "suite", "measure", "measure units", "edit", "edit titles" }) do
+			UF.Perf:Cancel()
+			messages = {}
+			UF.Perf:Command(command)
+			assert.is_not_nil(messages[1][1]:find("============", 1, true), command)
+			local dividers = 0
+			for _, message in ipairs(messages) do
+				if tostring(message[1]):find("=|r", 1, true) then dividers = dividers + 1 end
+			end
+			assert.equals(1, dividers, command)
+		end
+	end)
+
 	it("observes only the next combat and retires its events after reporting", function()
 		Mock.profilerEnabled = true
 		local metric = Enum.AddOnProfilerMetric.CountTimeOver1Ms

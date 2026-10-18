@@ -64,13 +64,13 @@ end
 
 -- Separates consecutive reports in the chat frame.
 local DIVIDER = string.rep("=", 12)
-local function Divider(title)
+function Perf:Divider(title)
 	ns:Print(string.format("|cff808080%s|r %s |cff808080%s|r", DIVIDER, title, DIVIDER))
 end
 
 -- `untitled`: the caller has already started the report with its divider.
 function Perf:Report(snapshot, baseline, untitled)
-	if not untitled then Divider("snapshot") end
+	if not untitled then self:Divider("snapshot") end
 	ns:Print("performance snapshot; profiler", snapshot.profiler and "enabled" or "unavailable/disabled")
 	for _, name in ipairs(ADDONS) do
 		local addon, before = snapshot.addons[name], baseline and baseline.addons[name]
@@ -126,6 +126,7 @@ end
 -- Observe exactly the next combat. Native metrics are sampled only at the
 -- endpoints; counters run only between the two events, with no per-frame work.
 function Perf:Combat()
+	self:Divider("combat observation")
 	if InCombatLockdown() then ns:Print("arm the next combat outside combat"); return end
 	self:Cancel()
 	self.combatArmed = true
@@ -140,7 +141,7 @@ function Perf:Combat()
 		else
 			local counters, baseline, duration = self.counters, self.baseline, GetTime() - self.startedAt
 			self:Cancel()
-			Divider(string.format("combat %.2f s", duration))
+			self:Divider(string.format("combat %.2f s", duration))
 			self:Report(self:Snapshot(), baseline, true)
 			ReportCounters(counters)
 		end
@@ -149,6 +150,7 @@ function Perf:Combat()
 end
 
 function Perf:Watch(seconds)
+	self:Divider("watch observation")
 	seconds = tonumber(seconds) or 60
 	if seconds ~= seconds or seconds < 1 or seconds > 300 then
 		ns:Print("watch duration must be 1–300 seconds")
@@ -165,7 +167,7 @@ function Perf:Watch(seconds)
 		if self.elapsed < self.seconds then return end
 		local counters, baseline, duration = self.counters, self.baseline, self.elapsed
 		self:Cancel()
-		Divider(string.format("watch %g s", seconds))
+		self:Divider(string.format("watch %g s", seconds))
 		ns:Print(string.format("passive observation %.2f seconds", duration))
 		self:Report(self:Snapshot(), baseline, true)
 		ReportCounters(counters)
@@ -224,7 +226,6 @@ end
 -- Returns whether it succeeded and the error otherwise.
 function Perf:Run(title, fn, ...)
 	local ok, result, counters = Capture(self, fn, ...)
-	Divider(title)
 	if not ok then
 		ns.Logs:Error(title, result)
 		ns:Print("measurement failed:", result)
@@ -255,6 +256,7 @@ function Perf:CanMeasure()
 end
 
 function Perf:Measure(operation)
+	self:Divider("measure " .. operation)
 	local run = operations[operation]
 	if not run then ns:Print("measure operations: auras, units, clickgrid, preview, create, schema"); return end
 	if not self:CanMeasure() then return end
@@ -265,6 +267,7 @@ end
 -- there each Perf:Startup call (unit frame spawning, the ClickGrid panel)
 -- runs inside an active measurement. Otherwise it simply calls fn(...).
 function Perf:ArmStartup()
+	self:Divider("arm startup measurement")
 	ns.Config.db.global.measureStartup = true
 	ns:Print("startup will be measured once after the next /reload")
 end
@@ -278,6 +281,7 @@ function Perf:Startup(label, fn, ...)
 	if not self.startupArmed or self.counters or self.suite or InCombatLockdown() or not ProfilerEnabled() then
 		return fn(...)
 	end
+	self:Divider("startup " .. label)
 	local ok, err = self:Run("startup " .. label, fn, ...)
 	-- Fail as an unmeasured startup would.
 	if not ok then error(err, 0) end
@@ -286,9 +290,16 @@ end
 function Perf:Command(arguments)
 	local command, value = arguments:match("^(%S+)%s*(.-)$")
 	if command == "watch" then
-		if value ~= "" and not tonumber(value) then ns:Print("watch duration must be numeric"); return end
+		if value ~= "" and not tonumber(value) then
+			self:Divider("watch observation")
+			ns:Print("watch duration must be numeric")
+			return
+		end
 		self:Watch(value ~= "" and value or nil)
-	elseif command == "cancel" then self:Cancel(); ns:Print("performance observation cancelled")
+	elseif command == "cancel" then
+		self:Divider("cancel performance observation")
+		self:Cancel()
+		ns:Print("performance observation cancelled")
 	elseif command == "measure" then self:Measure(value)
 	elseif command == "edit" then self:MeasureEdit(value)
 	elseif command == "startup" then self:ArmStartup()
@@ -296,6 +307,7 @@ function Perf:Command(arguments)
 	elseif command == "suite" then self:SuiteCommand(value)
 	elseif not command then self:Report(self:Snapshot())
 	else
+		self:Divider("performance help")
 		ns:Print("/uf perf - performance snapshot")
 		ns:Print("/uf perf watch <seconds> - observe a bounded window")
 		ns:Print("/uf perf combat - observe the next complete combat")

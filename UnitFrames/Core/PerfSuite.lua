@@ -50,6 +50,7 @@ function Perf:TickSuite(elapsed)
 end
 
 function Perf:StartSuite()
+	self:Divider("baseline suite start")
 	if InCombatLockdown() then ns:Print("baseline suite must start outside combat"); return end
 	if not ns.Caps.profiler or not C_AddOnProfiler.IsEnabled() then
 		ns:Print("native addon profiler unavailable/disabled"); return
@@ -83,8 +84,9 @@ end
 function Perf:SuiteCommand(command)
 	if command == "baseline" then self:StartSuite()
 	elseif command == "report" then self:ReportSuite(ns.Config.db.global.perfSuiteReport)
-	elseif command == "saved" then self:ReportSuite(ns.Config.db.global.perfSuiteBaselineReport)
+	elseif command == "saved" then self:ReportSuite(ns.Config.db.global.perfSuiteBaselineReport, "saved comparison baseline")
 	elseif command == "save" then
+		self:Divider("save comparison baseline")
 		local report = ns.Config.db.global.perfSuiteReport
 		if self.suite or not report or report.status ~= "completed" then
 			ns:Print("finish a baseline suite before saving a comparison baseline")
@@ -92,5 +94,8 @@ function Perf:SuiteCommand(command)
 		end
 		ns.Config.db.global.perfSuiteBaselineReport = ns.Util.Copy(report)
 		ns:Print("comparison baseline saved; /uf perf suite saved shows it; /reload writes it to SavedVariables")
-	else ns:Print("/uf perf suite baseline | report | save | saved") end
+	else
+		self:Divider("baseline suite help")
+		ns:Print("/uf perf suite baseline | report | save | saved")
+	end
 end

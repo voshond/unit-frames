@@ -51,7 +51,8 @@ function Perf:SuiteContext()
 	return context
 end
 
-function Perf:ReportSuite(report)
+function Perf:ReportSuite(report, title)
+	self:Divider(title or "baseline suite")
 	if not report then ns:Print("no saved baseline suite report"); return end
 	ns:Print("baseline suite", report.status, report.reason or "", "timestamp", report.timestamp)
 	local context = report.context

@@ -431,6 +431,29 @@ history. Suite summaries exclude warmups and include synchronous operation costs
 only. Capture a fresh baseline after attribution changes so profiler overhead
 is consistent across later optimization comparisons.
 
+Every performance command starts with a labelled `============` divider,
+including suite report/save, help, acknowledgements and rejected requests.
+Asynchronous suite/watch/combat results have their own report divider.
+
+Chat copy/paste is optional. After measuring, `/reload` or log out to flush
+SavedVariables, then read the saved diagnostics from the repository root:
+
+```sh
+luajit scripts/read-perf.lua '/path/to/WTF/Account/ACCOUNT/SavedVariables/UnitFrames.lua'
+luajit scripts/read-perf.lua '/path/to/UnitFrames.lua' suite
+luajit scripts/read-perf.lua '/path/to/UnitFrames.lua' saved
+luajit scripts/read-perf.lua '/path/to/UnitFrames.lua' 'measure clickgrid'
+```
+
+The default selection is `all`: the latest suite and all saved active/startup
+measurements. `saved` selects the pinned comparison baseline. The reader prints
+all measurement phases, reusing the addon's formatting, without writing to the
+saved file or printing unrelated profiles/logs. The source chunk loads into an
+empty environment; use the client-generated text SavedVariables file. Check
+report timestamps to distinguish the latest in-memory measurements from the
+last disk flush. This reader works with the existing P0 saved-report format;
+no addon update is needed to read reports already written to disk.
+
 Schemas returned by components are immutable metadata. Definition-created
 frames explicitly share schema ownership, including row text contexts;
 arbitrary caller specs retain independent dynamic schemas. Derive a definition

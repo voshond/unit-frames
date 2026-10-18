@@ -2,6 +2,7 @@ local _, ns = ...
 local Perf = ns.Perf
 
 function Perf:MeasureEdit(operation)
+	self:Divider("edit " .. operation)
 	if not self:CanMeasure() then return end
 	local cg = ns.ClickGrid
 	if not cg or not cg.started then ns:Print("ClickGrid must already be loaded and prepared"); return end
