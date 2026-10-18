@@ -34,6 +34,11 @@ function Component:Extend(className)
 	return class
 end
 
+-- Components created during another component's OnCreate join its
+-- construction: the outermost first Apply reaches them through ApplyChild,
+-- and any it did not reach are applied before New returns.
+local constructing
+
 function Component:New(parent, config, spec)
 	local instance = setmetatable({}, self)
 	instance.spec = spec or {}
@@ -42,11 +47,20 @@ function Component:New(parent, config, spec)
 	instance.enabled = true
 	local Perf = ns.Perf
 	Perf:Count("componentCreate")
+	local outer = constructing
+	local created = outer or {}
+	created[#created + 1] = instance
+	constructing = created
 	Perf:Begin("create")
-	instance:OnCreate(parent, instance.spec)
+	local ok, err = pcall(instance.OnCreate, instance, parent, instance.spec)
 	Perf:End("create")
+	constructing = outer
+	if not ok then error(err, 0) end
 	live[instance] = true
-	instance:Apply()
+	if outer then return instance end
+	for _, component in ipairs(created) do
+		if not component.resolved and not component.released then component:Apply() end
+	end
 	return instance
 end
 

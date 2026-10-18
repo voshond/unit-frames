@@ -2,6 +2,8 @@ local _, ns = ...
 local Util = ns.Util
 local Bar, Text, Backdrop = ns.Components.Bar, ns.Components.Text, ns.Components.Backdrop
 local CastExtras = ns.CastExtras
+-- Every cast bar's bar and texts have the same structure: one schema each.
+local BAR_SCHEMA_OWNER, TEXT_SCHEMA_OWNER = {}, {}
 
 --[[
 Cast bar: one bordered frame holding the spell icon (left or right) and the
@@ -100,10 +102,11 @@ function Castbar:OnCreate(parent)
 	self.icon:SetPoint("CENTER", self.iconFrame, "CENTER")
 	self.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
-	self.bar = self:Own(Bar:New(self.frame, self:ChildConfig("bar"), { colorInherit = "colors.cast" }))
+	self.bar = self:Own(Bar:New(self.frame, self:ChildConfig("bar"),
+		{ colorInherit = "colors.cast", schemaOwner = BAR_SCHEMA_OWNER }))
 	local textParent = self.bar:GetTextParent()
-	self.nameText = self:Own(Text:New(textParent, self:ChildConfig("name")))
-	self.timeText = self:Own(Text:New(textParent, self:ChildConfig("time")))
+	self.nameText = self:Own(Text:New(textParent, self:ChildConfig("name"), { schemaOwner = TEXT_SCHEMA_OWNER }))
+	self.timeText = self:Own(Text:New(textParent, self:ChildConfig("time"), { schemaOwner = TEXT_SCHEMA_OWNER }))
 	if self.spec.playerCast then
 		self.latency = CastExtras.Latency:New(self.bar)
 		self.gcd = CastExtras.GCD:New(parent, self.bar:GetStatusBar(), self.spec.nativeLayout)

@@ -147,8 +147,9 @@ UnitFrame.PARTS = {
 				HeightOption(18, OverHealth),
 			})
 		end,
-		create = function(frame, partSpec, native, config)
-			local castbar = Castbar:New(frame, config, { nativeLayout = native, playerCast = partSpec.playerCast })
+		create = function(frame, partSpec, native, config, schemaOwner)
+			local castbar = Castbar:New(frame, config,
+				{ nativeLayout = native, playerCast = partSpec.playerCast, schemaOwner = schemaOwner })
 			castbar:Hide()
 			return castbar
 		end },
@@ -173,8 +174,9 @@ UnitFrame.PARTS = {
 		end },
 	{ key = "auraBar", label = "Buff & debuff icon row",
 		schema = function(partSpec) return ns.Components.AuraBar.BuildSchema(partSpec) end,
-		create = function(frame, partSpec, _, config)
-			return ns.Components.AuraBar:New(frame, config, { clickThrough = true, collapsible = partSpec.collapsible })
+		create = function(frame, partSpec, _, config, schemaOwner)
+			return ns.Components.AuraBar:New(frame, config,
+				{ clickThrough = true, collapsible = partSpec.collapsible, schemaOwner = schemaOwner })
 		end },
 	{ key = "raidTarget", label = "Raid target icon", stack = true,
 		schema = function() return RaidTarget.schema end,
@@ -225,7 +227,8 @@ function UnitFrame:OnCreate(parent, spec)
 	self.partsByKey = {}
 	for _, part in ipairs(UnitFrame.PARTS) do
 		if spec[part.key] then
-			local component = self:Own(part.create(self.frame, spec[part.key], native, self:ChildConfig(part.key)))
+			local component = self:Own(part.create(self.frame, spec[part.key], native, self:ChildConfig(part.key),
+				UnitFrame.SchemaOwner(spec, part.key)))
 			self.parts[#self.parts + 1] = { def = part, component = component }
 			self.partsByKey[part.key] = component
 		end
@@ -239,16 +242,21 @@ function UnitFrame:OnCreate(parent, spec)
 	end
 end
 
+-- The schema owner of a row or part `key` on frames of a definition, whose
+-- structure is fixed per definition. Nil for frames without an owner.
+local childSchemaOwners = setmetatable({}, { __mode = "k" })
+function UnitFrame.SchemaOwner(spec, key)
+	if not spec.schemaOwner then return nil end
+	local owners = childSchemaOwners[spec.schemaOwner]
+	if not owners then owners = {}; childSchemaOwners[spec.schemaOwner] = owners end
+	owners[key] = owners[key] or {}
+	return owners[key]
+end
+
 -- A row's spec on this frame: its texts learn what the frame provides.
-local rowSchemaOwners = setmetatable({}, { __mode = "k" })
 function UnitFrame.RowSpec(spec, def)
 	local rowSpec = ns.Util.Merge(ns.Util.Copy(def.spec), { textContext = { player = spec.playerFrame == true } })
-	if spec.schemaOwner then
-		local owners = rowSchemaOwners[spec.schemaOwner]
-		if not owners then owners = {}; rowSchemaOwners[spec.schemaOwner] = owners end
-		owners[def.key] = owners[def.key] or {}
-		rowSpec.schemaOwner = owners[def.key]
-	end
+	rowSpec.schemaOwner = UnitFrame.SchemaOwner(spec, def.key)
 	return rowSpec
 end
 

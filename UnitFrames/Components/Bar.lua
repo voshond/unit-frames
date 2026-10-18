@@ -306,7 +306,7 @@ end
 
 function Bar:SetSparkActive(active)
 	self.sparkActive = active
-	self.spark:SetShown(self.resolved.spark and active ~= false)
+	if self.resolved then self.spark:SetShown(self.resolved.spark and active ~= false) end
 end
 
 -- Native-layout bars: the row size the owner laid out, in plain numbers.
