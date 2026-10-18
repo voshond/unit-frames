@@ -150,6 +150,9 @@ local sampleBuffIDs = { [1] = 21562, [2] = 1459, [3] = 139, [4] = 774, [6] = 17,
 -- Varied debuffs per member (positions in Units.SAMPLE.debuffs): typed
 -- dispels next to an untyped crowd control, so debuff glows show both.
 local SAMPLE_DEBUFFS = { { 1 }, { 2, 5 }, { 4, 3 }, {} }
+-- Incoming heals as a share of maximum health. With their static health,
+-- members 1, 4 and 5 cross one, two and three overheal levels.
+local SAMPLE_HEALS = { [1] = 0.1, [4] = 0.45, [5] = 0.9 }
 function Preview:Values(index, value)
 	if not value then
 		value = UF.Util.Copy(UF.Units.SAMPLE)
@@ -168,6 +171,7 @@ function Preview:Values(index, value)
 	value.health = value.healthMax * (self.data.source == "animated" and (0.2 + 0.8 * (math.sin(self.time + index) + 1) / 2)
 		or (index == 1 and 1 or 0.35 + 0.6 * ((index * 7) % 10) / 10))
 	value.absorb = value.healthMax * 0.2
+	value.heal = value.healthMax * (SAMPLE_HEALS[index] or UF.Units.SAMPLE.heal / UF.Units.SAMPLE.healthMax)
 	value.raidTarget = index == 1 and 8 or nil
 	-- Ready check demo: mixed answers; one in four never answers. Animated
 	-- members answer one after another, then the check ends and fades.

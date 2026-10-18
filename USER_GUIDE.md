@@ -162,12 +162,16 @@ Health bar preview has the same settings; set **Health %** to 100 to test.
 ## Overheal edge
 
 **Health > Bar > Overheal > Show overheal** (off by default) lights the end of
-the health bar while incoming healing goes past full health, using Blizzard's
-raid frame shield overflow glow. **Show when** sets how far past full health
-the heal must reach, as a share of maximum health (default: any amount).
-Colour (with opacity) and size are configurable. It works in combat and on
-every unit and ClickGrid member bar. In the Health bar preview, set **Health %**
-and **Incoming heals %** so that they add up to more than 100.
+the health bar while incoming healing goes past full health. It steps up with
+the size of the overheal: a fade painted into the bar's end plus Blizzard's
+raid frame shield overflow glow, reaching further and glowing brighter once the
+heal passes full health, then 25% and 50% of maximum health past it.
+**Levels** chooses how many of those steps to show (each costs one more heal
+prediction per update), **Length** how far the strongest one reaches, plus
+**Colour** (with opacity) and **Edge glow**. It works in combat and on every
+unit and ClickGrid member bar; the ClickGrid preview shows one, two and three
+levels on members 1, 4 and 5. In the Health bar preview, set **Health %** and
+**Incoming heals %** to add up to more than 100, 125 or 150.
 
 ## Text formats
 

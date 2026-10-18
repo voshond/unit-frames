@@ -1,7 +1,7 @@
 local Helpers = require("helpers")
 local Mock = Helpers.Mock
 
-describe("Overheal edge indicator #overheal", function()
+describe("Stepped overheal indicator #overheal", function()
 	local ns, saved
 
 	before_each(function()
@@ -16,7 +16,9 @@ describe("Overheal edge indicator #overheal", function()
 	end)
 
 	local function Bar(unit) return ns.Units.frames[unit or "player"].uf:GetRow("health"):GetBar() end
-	local function Enable(path, value) ns.Config:SetUnitValue("player", "health.bar.overheal." .. (path or "enabled"), value == nil or value) end
+	local function Row() return ns.Units.frames.player.uf:GetRow("health") end
+	local function Set(path, value) ns.Config:SetUnitValue("player", "health.bar.overheal." .. path, value) end
+	local function Enable() Set("enabled", true) end
 
 	-- Secret health values, as in combat: the mock engine fills its calculators from these.
 	local function Health(current, max, heal)
@@ -30,16 +32,32 @@ describe("Overheal edge indicator #overheal", function()
 		health:PostUpdate("player")
 	end
 
-	local function GateAlpha(overheal) return overheal.gate.__state.alpha.secretValue end
-	local function Filled(overheal) return overheal.switch:GetValue().secretValue end
+	-- Engine oracle: which levels a live update lit (tests alone read secrets).
+	local function Lit(overheal)
+		local lit = {}
+		for index = 1, overheal.count do lit[index] = overheal.levels[index].gate.__state.alpha.secretValue end
+		return lit
+	end
 
-	it("is offered on health rows only and is off by default, creating nothing live", function()
-		assert.is_not_nil(ns.Schema.Find(ns.Schema.Find(Bar():GetSchema(), "overheal").schema, "threshold"))
+	local function SampleLit(overheal)
+		local lit = {}
+		for index = 1, overheal.count do lit[index] = overheal.levels[index].gate.__state.alpha end
+		return lit
+	end
+
+	local function Sample(health, heal)
+		ns.UnitRows.SampleHealth(Row(), { health = health, healthMax = 1000, heal = heal, absorb = 0, healAbsorb = 0 })
+	end
+
+	it("is offered on health rows only and off by default, allocating no level artwork", function()
+		local schema = ns.Schema.Find(Bar():GetSchema(), "overheal").schema
+		assert.equals(3, ns.Schema.Find(schema, "levels").default)
 		assert.is_nil(ns.Schema.Find(ns.Units.frames.player.uf:GetRow("power"):GetBar():GetSchema(), "overheal"))
 		assert.is_nil(Bar():GetOverheal())
-		assert.is_false(Bar().overheal.gate:IsShown())
+		assert.is_false(Bar().overheal.holder:IsShown())
+		assert.same({}, Bar().overheal.levels)
+		assert.same({}, Bar().overheal.calculators)
 		assert.is_nil(rawget(ns.Units.frames.player.Health, "PostUpdate"))
-		assert.is_nil(Bar().overheal.overflow, "calculators are created on first update")
 		assert.is_nil(ns.Config:GetUnitConfig("player").health)
 	end)
 
@@ -47,155 +65,188 @@ describe("Overheal edge indicator #overheal", function()
 		local health = ns.Units.frames.player.Health
 		Enable()
 		local overheal = Bar():GetOverheal()
-		assert.is_true(Bar().overheal.gate:IsShown())
+		assert.equals(3, #overheal.levels)
 		assert.equals(overheal, health.ufOverheal)
 		assert.equals("function", type(rawget(health, "PostUpdate")))
-		Enable("enabled", false)
+		Set("enabled", false)
 		assert.is_nil(Bar():GetOverheal())
 		assert.is_nil(rawget(health, "PostUpdate"))
-		assert.is_false(Bar().overheal.gate:IsShown())
-		assert.equals(0, Bar().overheal.gate.__state.alpha)
+		assert.is_false(overheal.holder:IsShown())
 		for _ = 1, 3 do
 			Enable()
-			Enable("enabled", false)
+			Set("enabled", false)
 		end
 		Enable()
-		assert.equals(overheal, Bar():GetOverheal(), "toggling reuses the same widgets")
+		assert.equals(3, #overheal.levels, "toggling reuses the same widgets")
 	end)
 
-	it("configures its two native calculators: missing health at the threshold, and maximum health", function()
+	it("gives every level its own missing-health boundary and shares one raw amount", function()
 		Enable()
 		Health(500, 1000, 50)
 		Update()
-		local overheal = Bar():GetOverheal()
-		assert.equals(Enum.UnitIncomingHealClampMode.MissingHealth, overheal.overflow.incomingClampMode)
-		assert.equals(1, overheal.overflow.incomingOverflow)
-		assert.equals(Enum.UnitIncomingHealClampMode.MaximumHealth, overheal.raw.incomingClampMode)
-		local created = overheal.overflow
-		Enable("threshold", 1.25)
-		assert.equals(1.25, overheal.overflow.incomingOverflow)
-		assert.equals(created, overheal.overflow, "a threshold change reconfigures the calculator")
+		local calculators = Bar():GetOverheal().calculators
+		assert.equals(Enum.UnitIncomingHealClampMode.MaximumHealth, calculators[0].incomingClampMode)
+		for index, threshold in ipairs({ 1, 1.25, 1.5 }) do
+			assert.equals(Enum.UnitIncomingHealClampMode.MissingHealth, calculators[index].incomingClampMode)
+			assert.equals(threshold, calculators[index].incomingOverflow)
+		end
 		assert.is_nil(rawget(ns.Units.frames.player.Health, "incomingHealClampMode"), "the shared prediction bar is untouched")
 	end)
 
-	it("lights the edge only when the heal passes the threshold, without reading secrets", function()
+	it("lights more levels for bigger overheals, without reading secrets", function()
 		Enable()
 		local overheal = Bar():GetOverheal()
+		Health(1000, 1000, 100)
+		Update()
+		assert.same({ 1, 0, 0 }, Lit(overheal), "a small heal at full health")
+		assert.is_true(Mock.IsSecret(overheal.levels[1].gate.__state.alpha), "results stay secret")
+		Health(1000, 1000, 251)
+		Update()
+		assert.same({ 1, 1, 0 }, Lit(overheal), "a heal of over 25% of maximum health")
+		Health(1000, 1000, 501)
+		Update()
+		assert.same({ 1, 1, 1 }, Lit(overheal))
 		Health(500, 1000, 500)
 		Update()
-		assert.equals(0, GateAlpha(overheal), "exactly full is not past full")
-		Health(500, 1000, 501)
+		assert.same({ 0, 0, 0 }, Lit(overheal), "a heal that exactly fills the bar")
+		Health(500, 1000, 750)
 		Update()
-		assert.equals(1, GateAlpha(overheal))
-		assert.is_true(Mock.IsSecret(overheal.gate.__state.alpha), "the result stays secret")
-		Enable("threshold", 1.1)
-		Health(500, 1000, 601)
-		Update()
-		assert.equals(1, GateAlpha(overheal))
-		Health(500, 1000, 600)
-		Update()
-		assert.equals(0, GateAlpha(overheal), "exactly 10% of maximum health past full is not past it")
+		assert.same({ 1, 0, 0 }, Lit(overheal), "exactly 25% past full is not past it")
 	end)
 
-	it("gates on any incoming heal, including at full health and with nothing incoming", function()
+	it("gates every level on any incoming heal, including at full health and with nothing incoming", function()
 		Enable()
 		local overheal = Bar():GetOverheal()
 		Health(1000, 1000, 0)
 		Update()
-		assert.equals(0, Filled(overheal), "nothing incoming leaves the strip empty")
+		for _, level in ipairs(overheal.levels) do
+			assert.equals(0, level.fade:GetValue().secretValue, "nothing incoming leaves the artwork empty")
+			assert.equals(0, level.light:GetValue().secretValue)
+		end
 		Health(1000, 1000, 80)
 		Update()
-		assert.equals(1, GateAlpha(overheal))
-		assert.equals(80, Filled(overheal), "the amount is not clamped to the missing health")
-		local _, max = overheal.switch:GetMinMaxValues()
-		assert.equals(1, max)
+		for _, level in ipairs(overheal.levels) do
+			assert.equals(80, level.fade:GetValue().secretValue)
+			assert.equals(80, level.light:GetValue().secretValue)
+			assert.equals(1, select(2, level.fade:GetMinMaxValues()))
+		end
 	end)
 
-	it("starts 7 units inside the bar's end and reaches past it, like Blizzard's raid frames", function()
+	it("runs only as many predictions as levels are shown", function()
+		Set("levels", 1)
 		Enable()
+		Health(1000, 1000, 600)
+		Update()
+		local overheal = Bar():GetOverheal()
+		assert.equals(1, overheal.count)
+		assert.is_nil(overheal.calculators[2])
+		assert.is_nil(overheal.levels[2], "unused levels are never built")
+		Set("levels", 3)
+		assert.equals(3, #overheal.levels)
+		Set("levels", 2)
+		assert.is_false(overheal.levels[3].gate:IsShown())
+		assert.equals(0, overheal.levels[3].gate.__state.alpha)
+	end)
+
+	it("pins longer fades for stronger levels inside the bar's end, the edge light past it", function()
+		Enable()
+		Set("length", 60)
 		local overheal = Bar():GetOverheal()
 		local outward = { HORIZONTAL = { [false] = { 1, 0 }, [true] = { -1, 0 } }, VERTICAL = { [false] = { 0, 1 }, [true] = { 0, -1 } } }
 		for _, orientation in ipairs({ "HORIZONTAL", "VERTICAL" }) do
 			for _, reverse in ipairs({ false, true }) do
-				Bar():Apply({ orientation = orientation, reverseFill = reverse, overheal = { enabled = true, size = 16 } })
-				local dx, dy = outward[orientation][reverse][1] * 9, outward[orientation][reverse][2] * 9
-				for _, pair in ipairs(ns.Components.Bar.LAYOUT[orientation][reverse].inset) do
-					assert.same({ pair[1], Bar().bar, pair[2], dx, dy }, overheal.switch:GetAnchor(pair[1]))
+				Bar():Apply({ orientation = orientation, reverseFill = reverse, overheal = { enabled = true, length = 60 } })
+				local out = outward[orientation][reverse]
+				local inset = ns.Components.Bar.LAYOUT[orientation][reverse].inset
+				local function Length(switch) return orientation == "HORIZONTAL" and switch:GetWidth() or switch:GetHeight() end
+				for index, reach in ipairs({ 21, 39, 60 }) do
+					local level = overheal.levels[index]
+					for _, pair in ipairs(inset) do
+						assert.same({ pair[1], Bar().bar, pair[2], 0, 0 }, level.fade:GetAnchor(pair[1]))
+						assert.same({ pair[1], Bar().bar, pair[2], out[1] * 9, out[2] * 9 }, level.light:GetAnchor(pair[1]))
+					end
+					assert.equals(reach, Length(level.fade))
+					assert.equals(16, Length(level.light))
+					assert.equals(level.fade:GetStatusBarTexture(), select(2, level.paint:GetPoint(1)))
+					assert.equals(level.light:GetStatusBarTexture(), select(2, level.strip:GetPoint(1)))
+					-- Transparent away from the end, coloured at it.
+					local gradient = level.paint.__state.gradient
+					assert.equals(orientation, gradient[1])
+					local atEnd = reverse and gradient[2] or gradient[3]
+					local away = reverse and gradient[3] or gradient[2]
+					assert.equals(0, away[4])
+					assert.is_true(atEnd[4] > 0)
 				end
-				assert.equals(16, orientation == "HORIZONTAL" and overheal.switch:GetWidth() or overheal.switch:GetHeight())
-				assert.equals(orientation, overheal.switch.__state.orientation)
-				assert.equals(Bar().overlay, overheal.gate:GetParent(), "not the clipping frame")
-				assert.equals(overheal.switch:GetStatusBarTexture(), select(2, overheal.strip:GetPoint(1)))
-				assert.equals(overheal.switch:GetStatusBarTexture(), select(2, overheal.strip:GetPoint(2)))
+				assert.equals(Bar().overlay, overheal.holder:GetParent(), "not the clipping frame")
 			end
 		end
 	end)
 
-	it("scales the overshoot with the size and keeps 7/16 of the strip inside the bar", function()
+	it("paints over the bar and adds Blizzard's edge atlas, brighter with every level", function()
 		Enable()
+		Set("color", { 0.2, 0.6, 1, 1 })
 		local overheal = Bar():GetOverheal()
-		Bar():Apply({ orientation = "HORIZONTAL", reverseFill = false, overheal = { enabled = true, size = 32 } })
-		assert.equals(18, select(4, overheal.switch:GetPoint(1)))
-		assert.equals(32, overheal.switch:GetWidth())
+		local previous = 0
+		for index, def in ipairs(ns.Overheal.LEVELS) do
+			local level = overheal.levels[index]
+			assert.equals("RaidFrame-Shield-Overshield", level.strip.__state.atlas)
+			assert.equals("ADD", level.strip.__state.blendMode)
+			assert.is_true(level.strip.__state.desaturated)
+			assert.same({ 0.2, 0.6, 1, def.light }, level.strip.__state.vertexColor)
+			assert.is_nil(level.paint.__state.blendMode, "painted, not added: visible on pale bars")
+			assert.is_true(def.reach > previous)
+			previous = def.reach
+		end
+		Set("edge", false)
+		for _, level in ipairs(overheal.levels) do assert.is_false(level.strip:IsShown()) end
+		local points = overheal.levels[1].fade:GetNumPoints()
+		Bar():Apply(Bar().config)
+		Bar():Apply(Bar().config)
+		assert.equals(points, overheal.levels[1].fade:GetNumPoints())
 	end)
 
 	it("uses the atlas's own coordinates, mirrored or rotated for other bar ends", function()
 		Mock.atlasInfo["RaidFrame-Shield-Overshield"] = { width = 16, height = 64, uv = { 0.25, 0.5, 0.1, 0.9 } }
 		Enable()
-		local overheal = Bar():GetOverheal()
+		local strip = Bar():GetOverheal().levels[1].strip
 		local function Coords(orientation, reverse)
 			Bar():Apply({ orientation = orientation, reverseFill = reverse, overheal = { enabled = true } })
-			return overheal.strip.__state.texCoords
+			return strip.__state.texCoords
 		end
-		Bar():Apply({ orientation = "HORIZONTAL", reverseFill = false, overheal = { enabled = true } })
-		assert.equals("RaidFrame-Shield-Overshield", overheal.strip.__state.atlas)
 		assert.same({ 0.5, 0.25, 0.1, 0.9 }, Coords("HORIZONTAL", true))
 		assert.same({ 0.5, 0.1, 0.25, 0.1, 0.5, 0.9, 0.25, 0.9 }, Coords("VERTICAL", false))
 		assert.same({ 0.25, 0.1, 0.5, 0.1, 0.25, 0.9, 0.5, 0.9 }, Coords("VERTICAL", true))
-		Mock.atlasInfo["RaidFrame-Shield-Overshield"] = nil
-	end)
-
-	it("draws Blizzard's shield overflow atlas additively, tinted, and applies repeatedly", function()
-		Enable()
-		Enable("color", { 0.2, 0.6, 1, 0.5 })
-		local overheal = Bar():GetOverheal()
-		assert.equals("RaidFrame-Shield-Overshield", overheal.strip.__state.atlas)
 		local call
-		for _, entry in ipairs(overheal.strip.__calls) do
+		for _, entry in ipairs(strip.__calls) do
 			if entry[1] == "SetAtlas" then call = entry end
 		end
 		assert.is_false(call[3], "the strip keeps the size it is anchored to")
-		assert.equals("ADD", overheal.strip.__state.blendMode)
-		assert.is_true(overheal.strip.__state.desaturated)
-		assert.same({ 0.2, 0.6, 1, 0.5 }, overheal.strip.__state.vertexColor)
-		local points = overheal.switch:GetNumPoints()
-		Bar():Apply(Bar().config)
-		Bar():Apply(Bar().config)
-		assert.equals(points, overheal.switch:GetNumPoints())
+		Mock.atlasInfo["RaidFrame-Shield-Overshield"] = nil
 	end)
 
-	it("shows plain samples through the same widgets", function()
+	it("steps plain samples through the same widgets", function()
 		Enable()
 		local overheal = Bar():GetOverheal()
-		ns.UnitRows.SampleHealth(ns.Units.frames.player.uf:GetRow("health"), { health = 900, healthMax = 1000, heal = 200,
-			absorb = 0, healAbsorb = 0 })
-		assert.equals(1, overheal.gate.__state.alpha)
-		assert.equals(200, overheal.switch:GetValue())
-		ns.UnitRows.SampleHealth(ns.Units.frames.player.uf:GetRow("health"), { health = 900, healthMax = 1000, heal = 100,
-			absorb = 0, healAbsorb = 0 })
-		assert.equals(0, overheal.gate.__state.alpha, "an exact fill is not overheal")
-		ns.UnitRows.SampleHealth(ns.Units.frames.player.uf:GetRow("health"), { health = 1000, healthMax = 1000, heal = 0,
-			absorb = 0, healAbsorb = 0 })
-		assert.equals(0, overheal.gate.__state.alpha)
+		Sample(900, 150)
+		assert.same({ 1, 0, 0 }, SampleLit(overheal))
+		assert.equals(150, overheal.levels[1].fade:GetValue())
+		Sample(900, 400)
+		assert.same({ 1, 1, 0 }, SampleLit(overheal))
+		Sample(1000, 600)
+		assert.same({ 1, 1, 1 }, SampleLit(overheal))
+		Sample(900, 100)
+		assert.same({ 0, 0, 0 }, SampleLit(overheal), "an exact fill is not overheal")
+		Sample(1000, 0)
+		assert.same({ 0, 0, 0 }, SampleLit(overheal))
 	end)
 
 	it("updates polled live previews from their own calculators", function()
 		Enable()
 		local overheal = Bar():GetOverheal()
-		Health(990, 1000, 120)
-		ns.UnitRows.LiveHealth(ns.Units.frames.player.uf:GetRow("health"), "player", CreateUnitHealPredictionCalculator(), "theme")
-		assert.equals(1, GateAlpha(overheal))
-		assert.equals(120, Filled(overheal))
+		Health(990, 1000, 300)
+		ns.UnitRows.LiveHealth(Row(), "player", CreateUnitHealPredictionCalculator(), "theme")
+		assert.same({ 1, 1, 0 }, Lit(overheal))
+		assert.equals(300, overheal.levels[1].fade:GetValue().secretValue)
 	end)
 
 	it("keeps the stock health prediction and shield behaviour unchanged", function()

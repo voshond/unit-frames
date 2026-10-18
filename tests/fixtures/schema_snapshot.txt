@@ -2363,10 +2363,11 @@ option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" defa
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
 option health.bar.overheal type="group" label="Overheal"
-option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#1240a3cb
-option health.bar.overheal.threshold type="select" label="Show when" default=1 values=#61565bcf tooltip=#f7dcfb04 hidden
-option health.bar.overheal.color type="color" label="Colour" default={1,0.82,0.45,1} hidden
-option health.bar.overheal.size type="range" label="Size" default=16 min=4 max=40 step=1 tooltip=#659d4ecb hidden
+option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#e900a858
+option health.bar.overheal.levels type="select" label="Levels" default=3 values=#dcbe8729 tooltip=#a18a2155 hidden
+option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
+option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
+option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -3839,10 +3840,11 @@ default health.bar.border.separateInset = false
 default health.bar.border.separatePadding = false
 default health.bar.enabled = true
 default health.bar.orientation = "HORIZONTAL"
-default health.bar.overheal.color = {1,0.82,0.45,1}
+default health.bar.overheal.color = {1,0.7,0.35,1}
+default health.bar.overheal.edge = true
 default health.bar.overheal.enabled = false
-default health.bar.overheal.size = 16
-default health.bar.overheal.threshold = 1
+default health.bar.overheal.length = 40
+default health.bar.overheal.levels = 3
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -4787,10 +4789,11 @@ resolved health.bar.border.size = 12
 resolved health.bar.color = {0.1,0.8,0.1,1}
 resolved health.bar.enabled = true
 resolved health.bar.orientation = "HORIZONTAL"
-resolved health.bar.overheal.color = {1,0.82,0.45,1}
+resolved health.bar.overheal.color = {1,0.7,0.35,1}
+resolved health.bar.overheal.edge = true
 resolved health.bar.overheal.enabled = false
-resolved health.bar.overheal.size = 16
-resolved health.bar.overheal.threshold = 1
+resolved health.bar.overheal.length = 40
+resolved health.bar.overheal.levels = 3
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true
@@ -5395,10 +5398,11 @@ option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" defa
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
 option health.bar.overheal type="group" label="Overheal"
-option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#1240a3cb
-option health.bar.overheal.threshold type="select" label="Show when" default=1 values=#61565bcf tooltip=#f7dcfb04 hidden
-option health.bar.overheal.color type="color" label="Colour" default={1,0.82,0.45,1} hidden
-option health.bar.overheal.size type="range" label="Size" default=16 min=4 max=40 step=1 tooltip=#659d4ecb hidden
+option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#e900a858
+option health.bar.overheal.levels type="select" label="Levels" default=3 values=#dcbe8729 tooltip=#a18a2155 hidden
+option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
+option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
+option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -6359,10 +6363,11 @@ default health.bar.border.separateInset = false
 default health.bar.border.separatePadding = false
 default health.bar.enabled = true
 default health.bar.orientation = "HORIZONTAL"
-default health.bar.overheal.color = {1,0.82,0.45,1}
+default health.bar.overheal.color = {1,0.7,0.35,1}
+default health.bar.overheal.edge = true
 default health.bar.overheal.enabled = false
-default health.bar.overheal.size = 16
-default health.bar.overheal.threshold = 1
+default health.bar.overheal.length = 40
+default health.bar.overheal.levels = 3
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -7055,10 +7060,11 @@ resolved health.bar.border.size = 12
 resolved health.bar.color = {0.1,0.8,0.1,1}
 resolved health.bar.enabled = true
 resolved health.bar.orientation = "HORIZONTAL"
-resolved health.bar.overheal.color = {1,0.82,0.45,1}
+resolved health.bar.overheal.color = {1,0.7,0.35,1}
+resolved health.bar.overheal.edge = true
 resolved health.bar.overheal.enabled = false
-resolved health.bar.overheal.size = 16
-resolved health.bar.overheal.threshold = 1
+resolved health.bar.overheal.length = 40
+resolved health.bar.overheal.levels = 3
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true
@@ -7672,10 +7678,11 @@ option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" defa
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
 option health.bar.overheal type="group" label="Overheal"
-option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#1240a3cb
-option health.bar.overheal.threshold type="select" label="Show when" default=1 values=#61565bcf tooltip=#f7dcfb04 hidden
-option health.bar.overheal.color type="color" label="Colour" default={1,0.82,0.45,1} hidden
-option health.bar.overheal.size type="range" label="Size" default=16 min=4 max=40 step=1 tooltip=#659d4ecb hidden
+option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#e900a858
+option health.bar.overheal.levels type="select" label="Levels" default=3 values=#dcbe8729 tooltip=#a18a2155 hidden
+option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
+option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
+option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -8690,10 +8697,11 @@ default health.bar.border.separateInset = false
 default health.bar.border.separatePadding = false
 default health.bar.enabled = true
 default health.bar.orientation = "HORIZONTAL"
-default health.bar.overheal.color = {1,0.82,0.45,1}
+default health.bar.overheal.color = {1,0.7,0.35,1}
+default health.bar.overheal.edge = true
 default health.bar.overheal.enabled = false
-default health.bar.overheal.size = 16
-default health.bar.overheal.threshold = 1
+default health.bar.overheal.length = 40
+default health.bar.overheal.levels = 3
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -9412,10 +9420,11 @@ resolved health.bar.border.size = 12
 resolved health.bar.color = {0.1,0.8,0.1,1}
 resolved health.bar.enabled = true
 resolved health.bar.orientation = "HORIZONTAL"
-resolved health.bar.overheal.color = {1,0.82,0.45,1}
+resolved health.bar.overheal.color = {1,0.7,0.35,1}
+resolved health.bar.overheal.edge = true
 resolved health.bar.overheal.enabled = false
-resolved health.bar.overheal.size = 16
-resolved health.bar.overheal.threshold = 1
+resolved health.bar.overheal.length = 40
+resolved health.bar.overheal.levels = 3
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true
@@ -10020,10 +10029,11 @@ option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" defa
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
 option health.bar.overheal type="group" label="Overheal"
-option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#1240a3cb
-option health.bar.overheal.threshold type="select" label="Show when" default=1 values=#61565bcf tooltip=#f7dcfb04 hidden
-option health.bar.overheal.color type="color" label="Colour" default={1,0.82,0.45,1} hidden
-option health.bar.overheal.size type="range" label="Size" default=16 min=4 max=40 step=1 tooltip=#659d4ecb hidden
+option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#e900a858
+option health.bar.overheal.levels type="select" label="Levels" default=3 values=#dcbe8729 tooltip=#a18a2155 hidden
+option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
+option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
+option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -10984,10 +10994,11 @@ default health.bar.border.separateInset = false
 default health.bar.border.separatePadding = false
 default health.bar.enabled = true
 default health.bar.orientation = "HORIZONTAL"
-default health.bar.overheal.color = {1,0.82,0.45,1}
+default health.bar.overheal.color = {1,0.7,0.35,1}
+default health.bar.overheal.edge = true
 default health.bar.overheal.enabled = false
-default health.bar.overheal.size = 16
-default health.bar.overheal.threshold = 1
+default health.bar.overheal.length = 40
+default health.bar.overheal.levels = 3
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -11680,10 +11691,11 @@ resolved health.bar.border.size = 12
 resolved health.bar.color = {0.1,0.8,0.1,1}
 resolved health.bar.enabled = true
 resolved health.bar.orientation = "HORIZONTAL"
-resolved health.bar.overheal.color = {1,0.82,0.45,1}
+resolved health.bar.overheal.color = {1,0.7,0.35,1}
+resolved health.bar.overheal.edge = true
 resolved health.bar.overheal.enabled = false
-resolved health.bar.overheal.size = 16
-resolved health.bar.overheal.threshold = 1
+resolved health.bar.overheal.length = 40
+resolved health.bar.overheal.levels = 3
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true
@@ -12289,10 +12301,11 @@ option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" defa
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
 option health.bar.overheal type="group" label="Overheal"
-option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#1240a3cb
-option health.bar.overheal.threshold type="select" label="Show when" default=1 values=#61565bcf tooltip=#f7dcfb04 hidden
-option health.bar.overheal.color type="color" label="Colour" default={1,0.82,0.45,1} hidden
-option health.bar.overheal.size type="range" label="Size" default=16 min=4 max=40 step=1 tooltip=#659d4ecb hidden
+option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#e900a858
+option health.bar.overheal.levels type="select" label="Levels" default=3 values=#dcbe8729 tooltip=#a18a2155 hidden
+option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
+option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
+option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -13253,10 +13266,11 @@ default health.bar.border.separateInset = false
 default health.bar.border.separatePadding = false
 default health.bar.enabled = true
 default health.bar.orientation = "HORIZONTAL"
-default health.bar.overheal.color = {1,0.82,0.45,1}
+default health.bar.overheal.color = {1,0.7,0.35,1}
+default health.bar.overheal.edge = true
 default health.bar.overheal.enabled = false
-default health.bar.overheal.size = 16
-default health.bar.overheal.threshold = 1
+default health.bar.overheal.length = 40
+default health.bar.overheal.levels = 3
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -13947,10 +13961,11 @@ resolved health.bar.border.size = 12
 resolved health.bar.color = {0.1,0.8,0.1,1}
 resolved health.bar.enabled = true
 resolved health.bar.orientation = "HORIZONTAL"
-resolved health.bar.overheal.color = {1,0.82,0.45,1}
+resolved health.bar.overheal.color = {1,0.7,0.35,1}
+resolved health.bar.overheal.edge = true
 resolved health.bar.overheal.enabled = false
-resolved health.bar.overheal.size = 16
-resolved health.bar.overheal.threshold = 1
+resolved health.bar.overheal.length = 40
+resolved health.bar.overheal.levels = 3
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true
@@ -14548,10 +14563,11 @@ option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" defa
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
 option health.bar.overheal type="group" label="Overheal"
-option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#1240a3cb
-option health.bar.overheal.threshold type="select" label="Show when" default=1 values=#61565bcf tooltip=#f7dcfb04 hidden
-option health.bar.overheal.color type="color" label="Colour" default={1,0.82,0.45,1} hidden
-option health.bar.overheal.size type="range" label="Size" default=16 min=4 max=40 step=1 tooltip=#659d4ecb hidden
+option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#e900a858
+option health.bar.overheal.levels type="select" label="Levels" default=3 values=#dcbe8729 tooltip=#a18a2155 hidden
+option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
+option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
+option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -15512,10 +15528,11 @@ default health.bar.border.separateInset = false
 default health.bar.border.separatePadding = false
 default health.bar.enabled = true
 default health.bar.orientation = "HORIZONTAL"
-default health.bar.overheal.color = {1,0.82,0.45,1}
+default health.bar.overheal.color = {1,0.7,0.35,1}
+default health.bar.overheal.edge = true
 default health.bar.overheal.enabled = false
-default health.bar.overheal.size = 16
-default health.bar.overheal.threshold = 1
+default health.bar.overheal.length = 40
+default health.bar.overheal.levels = 3
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -16208,10 +16225,11 @@ resolved health.bar.border.size = 12
 resolved health.bar.color = {0.1,0.8,0.1,1}
 resolved health.bar.enabled = true
 resolved health.bar.orientation = "HORIZONTAL"
-resolved health.bar.overheal.color = {1,0.82,0.45,1}
+resolved health.bar.overheal.color = {1,0.7,0.35,1}
+resolved health.bar.overheal.edge = true
 resolved health.bar.overheal.enabled = false
-resolved health.bar.overheal.size = 16
-resolved health.bar.overheal.threshold = 1
+resolved health.bar.overheal.length = 40
+resolved health.bar.overheal.levels = 3
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true
@@ -16750,10 +16768,11 @@ option bar.segments.healAbsorb.enabled type="toggle" label="Enabled" default=tru
 option bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
 option bar.overheal type="group" label="Overheal"
-option bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#1240a3cb
-option bar.overheal.threshold type="select" label="Show when" default=1 values=#61565bcf tooltip=#f7dcfb04 hidden
-option bar.overheal.color type="color" label="Colour" default={1,0.82,0.45,1} hidden
-option bar.overheal.size type="range" label="Size" default=16 min=4 max=40 step=1 tooltip=#659d4ecb hidden
+option bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#e900a858
+option bar.overheal.levels type="select" label="Levels" default=3 values=#dcbe8729 tooltip=#a18a2155 hidden
+option bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
+option bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
+option bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
 option textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -16975,10 +16994,11 @@ default bar.border.separateInset = false
 default bar.border.separatePadding = false
 default bar.enabled = true
 default bar.orientation = "HORIZONTAL"
-default bar.overheal.color = {1,0.82,0.45,1}
+default bar.overheal.color = {1,0.7,0.35,1}
+default bar.overheal.edge = true
 default bar.overheal.enabled = false
-default bar.overheal.size = 16
-default bar.overheal.threshold = 1
+default bar.overheal.length = 40
+default bar.overheal.levels = 3
 default bar.reverseFill = false
 default bar.segments.absorb.color = {1,1,1,0.5}
 default bar.segments.absorb.enabled = true
@@ -17174,10 +17194,11 @@ resolved bar.border.size = 12
 resolved bar.color = {0.1,0.8,0.1,1}
 resolved bar.enabled = true
 resolved bar.orientation = "HORIZONTAL"
-resolved bar.overheal.color = {1,0.82,0.45,1}
+resolved bar.overheal.color = {1,0.7,0.35,1}
+resolved bar.overheal.edge = true
 resolved bar.overheal.enabled = false
-resolved bar.overheal.size = 16
-resolved bar.overheal.threshold = 1
+resolved bar.overheal.length = 40
+resolved bar.overheal.levels = 3
 resolved bar.reverseFill = false
 resolved bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved bar.segments.absorb.enabled = true
@@ -18737,10 +18758,11 @@ option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" defa
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
 option health.bar.overheal type="group" label="Overheal"
-option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#1240a3cb
-option health.bar.overheal.threshold type="select" label="Show when" default=1 values=#61565bcf tooltip=#f7dcfb04 hidden
-option health.bar.overheal.color type="color" label="Colour" default={1,0.82,0.45,1} hidden
-option health.bar.overheal.size type="range" label="Size" default=16 min=4 max=40 step=1 tooltip=#659d4ecb hidden
+option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#e900a858
+option health.bar.overheal.levels type="select" label="Levels" default=3 values=#dcbe8729 tooltip=#a18a2155 hidden
+option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
+option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
+option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -19669,10 +19691,11 @@ default health.bar.border.separateInset = false
 default health.bar.border.separatePadding = false
 default health.bar.enabled = true
 default health.bar.orientation = "HORIZONTAL"
-default health.bar.overheal.color = {1,0.82,0.45,1}
+default health.bar.overheal.color = {1,0.7,0.35,1}
+default health.bar.overheal.edge = true
 default health.bar.overheal.enabled = false
-default health.bar.overheal.size = 16
-default health.bar.overheal.threshold = 1
+default health.bar.overheal.length = 40
+default health.bar.overheal.levels = 3
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -20343,10 +20366,11 @@ resolved health.bar.border.size = 12
 resolved health.bar.color = {0.1,0.8,0.1,1}
 resolved health.bar.enabled = true
 resolved health.bar.orientation = "HORIZONTAL"
-resolved health.bar.overheal.color = {1,0.82,0.45,1}
+resolved health.bar.overheal.color = {1,0.7,0.35,1}
+resolved health.bar.overheal.edge = true
 resolved health.bar.overheal.enabled = false
-resolved health.bar.overheal.size = 16
-resolved health.bar.overheal.threshold = 1
+resolved health.bar.overheal.length = 40
+resolved health.bar.overheal.levels = 3
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true
@@ -20950,10 +20974,11 @@ option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" defa
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
 option health.bar.overheal type="group" label="Overheal"
-option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#1240a3cb
-option health.bar.overheal.threshold type="select" label="Show when" default=1 values=#61565bcf tooltip=#f7dcfb04 hidden
-option health.bar.overheal.color type="color" label="Colour" default={1,0.82,0.45,1} hidden
-option health.bar.overheal.size type="range" label="Size" default=16 min=4 max=40 step=1 tooltip=#659d4ecb hidden
+option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#e900a858
+option health.bar.overheal.levels type="select" label="Levels" default=3 values=#dcbe8729 tooltip=#a18a2155 hidden
+option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
+option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
+option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -21882,10 +21907,11 @@ default health.bar.border.separateInset = false
 default health.bar.border.separatePadding = false
 default health.bar.enabled = true
 default health.bar.orientation = "HORIZONTAL"
-default health.bar.overheal.color = {1,0.82,0.45,1}
+default health.bar.overheal.color = {1,0.7,0.35,1}
+default health.bar.overheal.edge = true
 default health.bar.overheal.enabled = false
-default health.bar.overheal.size = 16
-default health.bar.overheal.threshold = 1
+default health.bar.overheal.length = 40
+default health.bar.overheal.levels = 3
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -22551,10 +22577,11 @@ resolved health.bar.border.size = 12
 resolved health.bar.color = {0.1,0.8,0.1,1}
 resolved health.bar.enabled = true
 resolved health.bar.orientation = "HORIZONTAL"
-resolved health.bar.overheal.color = {1,0.82,0.45,1}
+resolved health.bar.overheal.color = {1,0.7,0.35,1}
+resolved health.bar.overheal.edge = true
 resolved health.bar.overheal.enabled = false
-resolved health.bar.overheal.size = 16
-resolved health.bar.overheal.threshold = 1
+resolved health.bar.overheal.length = 40
+resolved health.bar.overheal.levels = 3
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true

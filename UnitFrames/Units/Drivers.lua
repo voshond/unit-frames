@@ -158,7 +158,7 @@ Drivers.rows.health = {
 		-- Enabling the edge changes the signature, so oUF updates it at once.
 		local overheal = bar:GetOverheal()
 		health.ufOverheal, health.PostUpdate = overheal, overheal and UpdateOverheal or nil
-		return health, { healing, absorb, healAbsorb, overheal and overheal.gate or false }
+		return health, { healing, absorb, healAbsorb, overheal and overheal.holder or false }
 	end,
 	sample = function(row, v, cfg)
 		Rows.SampleHealth(row, v)

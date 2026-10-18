@@ -443,6 +443,9 @@ end
 function Methods:SetTexture(texture) self.__state.texture = texture end
 function Methods:SetTexCoord(...) self.__state.texCoords = { ... } end
 function Methods:SetBlendMode(mode) self.__state.blendMode = mode end
+function Methods:SetGradient(orientation, minColor, maxColor)
+	self.__state.gradient = { orientation, { minColor:GetRGBA() }, { maxColor:GetRGBA() } }
+end
 function Methods:SetDesaturated(desaturated)
 	Record(self, "SetDesaturated", desaturated)
 	self.__state.desaturated = desaturated

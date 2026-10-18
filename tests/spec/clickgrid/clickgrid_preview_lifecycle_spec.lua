@@ -79,8 +79,16 @@ describe("ClickGrid preview lifecycle", function()
 		wb:Open("clickgrid.panel")
 		local cells = wb.handle.cells
 		local function Edge(index) return cells[index].member:GetRow("health"):GetBar():GetOverheal() end
-		assert.equals(1, Edge(1).gate.__state.alpha, "a full-health member with incoming heals")
-		assert.equals(0, Edge(2).gate.__state.alpha, "a hurt member the heal does not overfill")
+		assert.equals(1, Edge(1).levels[1].gate.__state.alpha, "a full-health member with incoming heals")
+		assert.equals(0, Edge(2).levels[1].gate.__state.alpha, "a hurt member the heal does not overfill")
+		local function Lit(index)
+			local lit = {}
+			for level = 1, 3 do lit[level] = Edge(index).levels[level].gate.__state.alpha end
+			return lit
+		end
+		assert.same({ 1, 0, 0 }, Lit(1))
+		assert.same({ 1, 1, 0 }, Lit(4))
+		assert.same({ 1, 1, 1 }, Lit(5))
 		local live = CG.headers.party:GetAttribute("child1").Member
 		assert.equals(live.uf:GetRow("health"):GetBar():GetOverheal(), live.Health.ufOverheal)
 		CG.Config:SetStyle("member", "health.bar.overheal.enabled", false)

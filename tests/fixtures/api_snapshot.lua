@@ -1925,6 +1925,7 @@ return {
 			SetFormatter = "MoneyDenominationDisplayMixin",
 			SetFrameLevel = "HANDLE",
 			SetFrameStrata = "HANDLE",
+			SetGradient = "MarchingAntsMixin",
 			SetGrowthDirection = "FlowLayoutMixin",
 			SetHeight = "HANDLE",
 			SetHideIfUnscrollable = "ScrollBarMixin",

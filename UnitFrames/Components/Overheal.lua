@@ -10,18 +10,21 @@ local STRIP_SIZE, STRIP_INSIDE = 16, 7
 local SWITCH_TEXTURE = [[Interface\Buttons\WHITE8X8]]
 
 --[[
-An edge warning on a health bar while incoming healing goes past full health.
+A stepped warning at the end of a health bar while incoming healing goes past
+full health: each level is a painted fade inside the bar plus Blizzard's edge
+light, and stronger overheals light more levels, which reach further and stack.
 
-Two native calculators feed it, so Lua never reads a health or heal value:
-  overflow  clamps incoming heals to the missing health plus the configured
-            share of maximum health; its "clamped" flag says the heal goes
-            past that boundary. The flag is secret in combat: it only reaches
-            SetAlphaFromBoolean on the gate frame.
-  raw       clamps to maximum health, so its amount is above zero whenever any
-            heal is incoming, also at full health. The flag alone is true at
-            full health with nothing incoming, so the amount gates the strip:
-            an invisible 0..1 status bar is filled by any amount, and the strip
-            is anchored to its fill, so it has no size while nothing is incoming.
+Native calculators feed it, so Lua never reads a health or heal value:
+  one per level  clamps incoming heals to the missing health plus the level's
+                 share of maximum health; its "clamped" flag says the heal goes
+                 past that boundary. The flag is secret in combat: it only
+                 reaches SetAlphaFromBoolean on the level's gate frame.
+  raw            clamps to maximum health, so its amount is above zero whenever
+                 any heal is incoming, also at full health. The flags alone are
+                 true at full health with nothing incoming, so the amount gates
+                 the artwork: invisible 0..1 status bars are filled by any
+                 amount, and the fade and light are anchored to their fills, so
+                 they have no size while nothing is incoming.
 Bar owns the instance (Bar spec.overheal) and calls Apply; the health driver
 calls Update from the oUF health update, previews call Update or ShowSample.
 
@@ -30,26 +33,36 @@ Overheal:New(bar)
 local Overheal = ns.Object:Extend("Overheal")
 ns.Overheal = Overheal
 
--- Shares of maximum health the heal has to reach past full health.
-Overheal.THRESHOLDS = {
-	{ 1, "Past full health" }, { 1.05, "5% past full health" }, { 1.1, "10% past full health" },
-	{ 1.25, "25% past full health" }, { 1.5, "50% past full health" },
+-- threshold: share of maximum health the heal has to reach past full health.
+-- reach: share of the configured length. paint/light: share of the colour's
+-- opacity for the fade and the edge light. Levels stack, so each adds to the last.
+Overheal.LEVELS = {
+	{ threshold = 1, reach = 0.35, paint = 0.35, light = 0.25 },
+	{ threshold = 1.25, reach = 0.65, paint = 0.3, light = 0.35 },
+	{ threshold = 1.5, reach = 1, paint = 0.3, light = 0.5 },
 }
+
+Overheal.LEVEL_CHOICES = {
+	{ 1, "One: past full health" },
+	{ 2, "Two: also 25% past" },
+	{ 3, "Three: also 25% and 50% past" },
+}
+
+local function Off(cfg) return not cfg.enabled end
 
 Overheal.schema = {
 	{ key = "enabled", type = "toggle", label = "Show overheal", default = false,
-		tooltip = "Lights the end of the health bar while incoming healing goes past full health." },
-	{ key = "threshold", type = "select", label = "Show when", values = Overheal.THRESHOLDS, default = 1,
-		hidden = function(cfg) return not cfg.enabled end,
-		tooltip = "How far incoming healing must reach beyond maximum health, as a share of maximum health." },
-	{ key = "color", type = "color", label = "Colour", hasAlpha = true, default = { 1, 0.82, 0.45, 1 },
-		hidden = function(cfg) return not cfg.enabled end },
-	{ key = "size", type = "range", label = "Size", min = 4, max = 40, step = 1, default = 16,
-		hidden = function(cfg) return not cfg.enabled end,
-		tooltip = "Length of the glow along the bar." },
+		tooltip = "Lights the end of the health bar while incoming healing goes past full health. Bigger overheals reach further and glow brighter." },
+	{ key = "levels", type = "select", label = "Levels", values = Overheal.LEVEL_CHOICES, default = 3, hidden = Off,
+		tooltip = "Each level shows once the incoming heal reaches that far past maximum health, as a share of maximum health. Each level costs one more heal prediction per health update." },
+	{ key = "color", type = "color", label = "Colour", hasAlpha = true, default = { 1, 0.7, 0.35, 1 }, hidden = Off },
+	{ key = "length", type = "range", label = "Length", min = 8, max = 120, step = 1, default = 40, hidden = Off,
+		tooltip = "How far the strongest level reaches into the bar." },
+	{ key = "edge", type = "toggle", label = "Edge glow", default = true, hidden = Off,
+		tooltip = "Blizzard's shield overflow glow on the bar's end, brighter with every level." },
 }
 
--- Which way the strip reaches past the bar's end, by orientation and fill direction.
+-- Which way the end of the bar faces, by orientation and fill direction.
 local OUTWARD = {
 	HORIZONTAL = { [false] = { 1, 0 }, [true] = { -1, 0 } },
 	VERTICAL = { [false] = { 0, 1 }, [true] = { 0, -1 } },
@@ -73,89 +86,153 @@ local function ApplyArtwork(strip, orientation, reverseFill)
 	end
 end
 
+-- Transparent away from the bar's end, the colour at it. Horizontal gradients
+-- run from left to right, vertical ones from bottom to top.
+local function Paint(texture, orientation, reverseFill, r, g, b, a)
+	local clear, solid = CreateColor(r, g, b, 0), CreateColor(r, g, b, a)
+	if reverseFill then
+		texture:SetGradient(orientation, solid, clear)
+	else
+		texture:SetGradient(orientation, clear, solid)
+	end
+end
+
+-- An invisible 0..1 status bar: any incoming heal fills it.
+local function Switch(parent)
+	local switch = CreateFrame("StatusBar", nil, parent)
+	switch:SetStatusBarTexture(SWITCH_TEXTURE)
+	switch:SetStatusBarColor(0, 0, 0, 0)
+	switch:SetMinMaxValues(0, 1)
+	switch:SetValue(0)
+	return switch
+end
+
+local function Fill(texture, switch)
+	local fill = switch:GetStatusBarTexture()
+	texture:SetPoint("TOPLEFT", fill, "TOPLEFT")
+	texture:SetPoint("BOTTOMRIGHT", fill, "BOTTOMRIGHT")
+end
+
+-- Pins a switch to the whole bar's end, `beyond` units past it.
+local function Pin(switch, bar, layout, orientation, outward, length, beyond)
+	switch:ClearAllPoints()
+	for _, pair in ipairs(layout.inset) do
+		switch:SetPoint(pair[1], bar, pair[2], outward[1] * beyond, outward[2] * beyond)
+	end
+	if orientation == "HORIZONTAL" then
+		switch:SetWidth(length)
+	else
+		switch:SetHeight(length)
+	end
+	switch:SetOrientation(orientation)
+end
+
 function Overheal:Init(bar)
 	self.bar = bar
 	self.enabled = false
-	-- Not the clipping frame: the strip reaches past the bar's end.
-	self.gate = CreateFrame("Frame", nil, bar.overlay)
-	self.gate:SetAllPoints(bar.bar)
-	self.gate:SetAlpha(0)
-	self.gate:Hide()
-	self.switch = CreateFrame("StatusBar", nil, self.gate)
-	self.switch:SetStatusBarTexture(SWITCH_TEXTURE)
-	self.switch:SetStatusBarColor(0, 0, 0, 0)
-	self.switch:SetMinMaxValues(0, 1)
-	self.switch:SetValue(0)
-	self.strip = self.gate:CreateTexture(nil, "OVERLAY")
-	self.strip:SetAtlas(EDGE_ATLAS, false)
-	self.strip:SetBlendMode("ADD")
-	self.strip:SetDesaturated(true)
-	local fill = self.switch:GetStatusBarTexture()
-	self.strip:SetPoint("TOPLEFT", fill, "TOPLEFT")
-	self.strip:SetPoint("BOTTOMRIGHT", fill, "BOTTOMRIGHT")
+	self.count = 0
+	self.levels = {}
+	self.calculators = {}
+	-- Not the clipping frame: the edge light reaches past the bar's end.
+	self.holder = CreateFrame("Frame", nil, bar.overlay)
+	self.holder:SetAllPoints(bar.bar)
+	self.holder:Hide()
 end
 
--- layout: the bar's Bar.LAYOUT entry; its inset pair pins the strip to the
--- whole bar's end, like an overlay segment, then it moves outward.
+-- Level widgets are created when first shown: most bars never enable this.
+function Overheal:EnsureLevel(index)
+	local level = self.levels[index]
+	if level then return level end
+	level = { gate = CreateFrame("Frame", nil, self.holder) }
+	level.gate:SetAllPoints(self.holder)
+	level.gate:SetAlpha(0)
+	level.fade = Switch(level.gate)
+	level.paint = level.gate:CreateTexture(nil, "ARTWORK")
+	level.paint:SetColorTexture(1, 1, 1, 1)
+	Fill(level.paint, level.fade)
+	level.light = Switch(level.gate)
+	level.strip = level.gate:CreateTexture(nil, "OVERLAY")
+	level.strip:SetBlendMode("ADD")
+	level.strip:SetDesaturated(true)
+	Fill(level.strip, level.light)
+	self.levels[index] = level
+	return level
+end
+
+-- layout: the bar's Bar.LAYOUT entry; its inset pair pins the artwork to the
+-- whole bar's end, like an overlay segment.
 function Overheal:Apply(cfg, orientation, reverseFill, layout)
 	self.enabled = cfg.enabled
-	self.gate:SetShown(cfg.enabled)
-	if not cfg.enabled then
-		self:Clear()
-		return
-	end
-	local switch = self.switch
+	self.count = cfg.enabled and cfg.levels or 0
+	self.holder:SetShown(cfg.enabled)
 	local outward = OUTWARD[orientation][reverseFill]
-	local overshoot = cfg.size - math.floor(cfg.size * STRIP_INSIDE / STRIP_SIZE + 0.5)
-	switch:ClearAllPoints()
-	for _, pair in ipairs(layout.inset) do
-		switch:SetPoint(pair[1], self.bar.bar, pair[2], outward[1] * overshoot, outward[2] * overshoot)
+	local r, g, b, a = Util.UnpackColor(cfg.color)
+	for index, def in ipairs(Overheal.LEVELS) do
+		local shown = index <= self.count
+		local level = shown and self:EnsureLevel(index) or self.levels[index]
+		if level then
+			self:ClearLevel(level)
+			level.gate:SetShown(shown)
+			if shown then
+				local reach = math.max(1, math.floor(cfg.length * def.reach + 0.5))
+				Pin(level.fade, self.bar.bar, layout, orientation, outward, reach, 0)
+				Paint(level.paint, orientation, reverseFill, r, g, b, a * def.paint)
+				Pin(level.light, self.bar.bar, layout, orientation, outward, STRIP_SIZE, STRIP_SIZE - STRIP_INSIDE)
+				ApplyArtwork(level.strip, orientation, reverseFill)
+				level.strip:SetVertexColor(r, g, b, a * def.light)
+				level.strip:SetShown(cfg.edge)
+			end
+		end
 	end
-	if orientation == "HORIZONTAL" then
-		switch:SetWidth(cfg.size)
-	else
-		switch:SetHeight(cfg.size)
-	end
-	switch:SetOrientation(orientation)
-	ApplyArtwork(self.strip, orientation, reverseFill)
-	self.strip:SetVertexColor(Util.UnpackColor(cfg.color))
-	if self.overflow then self.overflow:SetIncomingHealOverflowPercent(cfg.threshold) end
-	self.threshold = cfg.threshold
 end
 
-function Overheal:Clear()
-	self.gate:SetAlpha(0)
-	self.switch:SetValue(0)
+function Overheal:ClearLevel(level)
+	level.gate:SetAlpha(0)
+	level.fade:SetValue(0)
+	level.light:SetValue(0)
 end
 
--- Calculators are created on first use: most bars never enable this.
-function Overheal:GetCalculators()
-	if not self.overflow then
-		self.overflow = CreateUnitHealPredictionCalculator()
-		self.overflow:SetIncomingHealClampMode(Enum.UnitIncomingHealClampMode.MissingHealth)
-		self.overflow:SetIncomingHealOverflowPercent(self.threshold)
-		self.raw = CreateUnitHealPredictionCalculator()
-		self.raw:SetIncomingHealClampMode(Enum.UnitIncomingHealClampMode.MaximumHealth)
+-- Index 0 is the raw amount; every level has its own boundary.
+function Overheal:GetCalculator(index)
+	local calculator = self.calculators[index]
+	if not calculator then
+		calculator = CreateUnitHealPredictionCalculator()
+		if index == 0 then
+			calculator:SetIncomingHealClampMode(Enum.UnitIncomingHealClampMode.MaximumHealth)
+		else
+			calculator:SetIncomingHealClampMode(Enum.UnitIncomingHealClampMode.MissingHealth)
+			calculator:SetIncomingHealOverflowPercent(Overheal.LEVELS[index].threshold)
+		end
+		self.calculators[index] = calculator
 	end
-	return self.overflow, self.raw
+	return calculator
 end
 
 -- Live: `unit` may have secret health and heals. Every result goes straight
 -- into a widget.
 function Overheal:Update(unit)
 	if not self.enabled then return end
-	local overflow, raw = self:GetCalculators()
-	UnitGetDetailedHealPrediction(unit, "player", overflow)
+	local raw = self:GetCalculator(0)
 	UnitGetDetailedHealPrediction(unit, "player", raw)
-	local _, _, _, clamped = overflow:GetIncomingHeals()
-	self.gate:SetAlphaFromBoolean(clamped, 1, 0)
-	self.switch:SetValue((raw:GetIncomingHeals()))
+	local amount = raw:GetIncomingHeals()
+	for index = 1, self.count do
+		local level, calculator = self.levels[index], self:GetCalculator(index)
+		UnitGetDetailedHealPrediction(unit, "player", calculator)
+		local _, _, _, clamped = calculator:GetIncomingHeals()
+		level.gate:SetAlphaFromBoolean(clamped, 1, 0)
+		level.fade:SetValue(amount)
+		level.light:SetValue(amount)
+	end
 end
 
 -- Samples: plain values (health, healthMax, heal), so plain arithmetic is fine.
 function Overheal:ShowSample(values)
 	if not self.enabled then return end
-	local past = values.health + values.heal > values.healthMax * self.threshold
-	self.gate:SetAlpha(past and values.heal > 0 and 1 or 0)
-	self.switch:SetValue(values.heal)
+	for index = 1, self.count do
+		local level = self.levels[index]
+		local past = values.heal > 0 and values.health + values.heal > values.healthMax * Overheal.LEVELS[index].threshold
+		level.gate:SetAlpha(past and 1 or 0)
+		level.fade:SetValue(values.heal)
+		level.light:SetValue(values.heal)
+	end
 end
