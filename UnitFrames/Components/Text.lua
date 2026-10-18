@@ -115,6 +115,11 @@ Text.WHILE_CASTING = {
 	{ "spell", "Show the spell name" },
 }
 
+Text.WHILE_STATUS = {
+	{ "status", "Show Dead / Offline" },
+	{ "keep", "Keep the values" },
+}
+
 local function PieceKey(i)
 	return "piece" .. i
 end
@@ -141,6 +146,7 @@ function Text.WriteCustom(group, presetId, context)
 		group[PieceKey(i)] = pieces[i] or { source = "none", before = "", after = "" }
 	end
 	group.whileCasting = whileCasting
+	group.whileStatus = "status"
 	group.customInitialized = true
 	group.format = Text.CUSTOM
 end
@@ -208,6 +214,9 @@ local function SlotSchema(spec)
 			end },
 		{ key = "whileCasting", type = "select", label = "While casting", values = Text.WHILE_CASTING,
 			default = "keep", hidden = NotCustom },
+		{ key = "whileStatus", type = "select", label = "While dead or offline", values = Text.WHILE_STATUS,
+			default = "status", hidden = NotCustom,
+			tooltip = "Health and power values make way for Dead or Offline: the first health value shows the word, other values and their separators disappear. Texts showing the Offline / dead source keep their values." },
 		-- Distinguishes retained custom edits (even an empty slot) from none yet.
 		{ key = "customInitialized", type = "toggle", label = "Custom text set up", default = false,
 			internal = "Records whether the slot has retained custom text pieces",
@@ -269,7 +278,8 @@ function Text:CompileTemplate(cfg)
 	if format == Text.CUSTOM then
 		local pieces = {}
 		for i = 1, Text.PIECES do pieces[i] = cfg[PieceKey(i)] end
-		return ns.TextTemplate.Get({ pieces = pieces, whileCasting = cfg.whileCasting }, self.spec.context)
+		return ns.TextTemplate.Get({ pieces = pieces, whileCasting = cfg.whileCasting, whileStatus = cfg.whileStatus },
+			self.spec.context)
 	end
 	local preset = Formats.Get(format)
 	if not preset.relative and Formats.Availability(preset.id, self.spec.context) == "all" then

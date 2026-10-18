@@ -1,7 +1,7 @@
 local Helpers = require("helpers")
 local Mock = Helpers.Mock
 
-describe("Dead & ghost look", function()
+describe("Dead & ghost and offline looks", function()
 	local ns, frame, uf, element, unitIsDeadOrGhost
 	local GHOST, STRENGTH = { 0.6, 0.72, 0.82 }, 0.85
 
@@ -10,7 +10,7 @@ describe("Dead & ghost look", function()
 		Mock.InstallUI()
 		frame = ns.Units.frames.player
 		uf = frame.uf
-		element = ns.oUF.elements.UF_Dead
+		element = ns.oUF.elements.UF_UnitState
 		unitIsDeadOrGhost = UnitIsDeadOrGhost
 	end)
 
@@ -27,9 +27,9 @@ describe("Dead & ghost look", function()
 	local function Health() return uf:GetRow("health"):GetBar() end
 	local function Update() element.update(frame, "UNIT_HEALTH", "player") end
 
-	local function AssertGhost(target)
+	local function AssertGhost(target, state)
 		local bar = Health()
-		assert.is_true(uf:IsDead())
+		assert.equals(state or "dead", uf:GetUnitState())
 		assert.is_true(bar.ghostFill:IsShown(), "the ghost paint covers the whole health bar")
 		assert.same(Blend({ 1, 1, 1 }, STRENGTH), bar.ghostFill.__state.vertexColor)
 		assert.same({ GHOST[1], GHOST[2], GHOST[3], STRENGTH }, { bar:GetTint() })
@@ -60,7 +60,7 @@ describe("Dead & ghost look", function()
 	end
 
 	local function AssertAlive()
-		assert.is_false(uf:IsDead())
+		assert.is_nil(uf:GetUnitState())
 		AssertLookOff()
 	end
 
@@ -74,7 +74,7 @@ describe("Dead & ghost look", function()
 		for _, unit in ipairs(ns.Units.order) do
 			local other = ns.Units.frames[unit]
 			assert.is_true(other.uf.resolved.dead.enabled, unit)
-			assert.is_true(other:IsElementEnabled("UF_Dead"), unit)
+			assert.is_true(other:IsElementEnabled("UF_UnitState"), unit)
 		end
 		assert.is_nil(ns.Config:GetUnitConfig("player").dead)
 	end)
@@ -107,12 +107,29 @@ describe("Dead & ghost look", function()
 		end
 		Mock.ghosts.player = true
 		handlers.PLAYER_ALIVE[1](frame, "PLAYER_ALIVE")
-		assert.is_true(uf:IsDead(), "releasing makes a ghost")
+		assert.equals("dead", uf:GetUnitState(), "releasing makes a ghost")
 		handlers.UNIT_HEALTH[1](frame, "UNIT_HEALTH", "party1")
-		assert.is_true(uf:IsDead(), "another unit's event leaves it alone")
+		assert.equals("dead", uf:GetUnitState(), "another unit's event leaves it alone")
 		Mock.ghosts.player = nil
 		handlers.PLAYER_UNGHOST[1](frame, "PLAYER_UNGHOST")
 		AssertAlive()
+	end)
+
+	it("turns an offline unit's frame grey, with its own colour, and wins over dead", function()
+		local unitIsConnected = UnitIsConnected
+		_G.UnitIsConnected = function() return false end
+		Mock.dead.player = true
+		local saved = GHOST
+		GHOST = { 0.62, 0.62, 0.62 }
+		Update()
+		AssertGhost("offline", "offline")
+		Set("offline.enabled", false)
+		assert.is_true(frame:IsElementEnabled("UF_UnitState"), "still bound for the dead look")
+		AssertLookOff()
+		Set("dead.enabled", false)
+		assert.is_false(frame:IsElementEnabled("UF_UnitState"), "neither look is on")
+		GHOST = saved
+		_G.UnitIsConnected = unitIsConnected
 	end)
 
 	it("counts an opaque state as alive", function()
@@ -133,13 +150,11 @@ describe("Dead & ghost look", function()
 		assert.same({ 0.2, 0.2, 0.9, STRENGTH }, { Health():GetTint() })
 		Set("dead.color", nil)
 		element.disable(frame)
-		assert.is_false(uf:IsDead(), "disabling the element resets the state")
+		assert.is_nil(uf:GetUnitState(), "disabling the element resets the state")
 		Update()
 		Set("dead.enabled", false)
-		assert.is_false(frame:IsElementEnabled("UF_Dead"))
 		AssertLookOff()
 		Set("dead.enabled", true)
-		assert.is_true(frame:IsElementEnabled("UF_Dead"))
 		Update()
 		AssertGhost("enabled again")
 	end)
@@ -168,16 +183,19 @@ describe("Dead & ghost look", function()
 		local sample = ns.Units:GetSample("player")
 		sample.status = "dead"
 		ns.Units:ShowSample(preview, sample)
-		assert.is_true(preview:IsDead())
+		assert.equals("dead", preview:GetUnitState())
 		assert.is_true(preview:GetRow("health"):GetBar().ghostFill:IsShown())
 		sample.status = nil
 		ns.Units:ShowSample(preview, sample)
-		assert.is_false(preview:IsDead())
+		assert.is_nil(preview:GetUnitState())
 		Mock.ghosts.party1 = true
 		ns.Units:ShowLive(preview, "party1", {})
-		assert.is_true(preview:IsDead())
+		assert.equals("dead", preview:GetUnitState())
 		Mock.ghosts.party1 = nil
 		ns.Units:ShowLive(preview, "party1", {})
-		assert.is_false(preview:IsDead())
+		assert.is_nil(preview:GetUnitState())
+		sample.status = "offline"
+		ns.Units:ShowSample(preview, sample)
+		assert.equals("offline", preview:GetUnitState())
 	end)
 end)

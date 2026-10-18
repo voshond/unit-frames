@@ -5,7 +5,8 @@ local Sources = ns.TextSources
 The text composer: compiles a slot's content into a template that oUF tags,
 live previews and samples all use, so they cannot disagree.
 
-  Template.Compile({ pieces = { ... }, whileCasting = "spell" | "keep" }, context)
+  Template.Compile({ pieces = { ... }, whileCasting = "spell" | "keep",
+    whileStatus = "status" | "keep" }, context)
   Template.Get(def, context)   the same, shared between equal contents
 
 context describes the slot's host: { player = false } on frames that don't
@@ -24,6 +25,11 @@ Pieces, in order:
       historical output; they are not a user-facing piece type.
 
 whileCasting = "spell" shows the spell name instead while the unit casts.
+whileStatus = "status" (the default) shows "Dead" or "Offline" in place of
+health and power values while the unit is dead, a ghost or offline: the
+first health value shows the word, the other values nothing, so their
+affixes disappear with them ("1 / 82" becomes "Dead", a power text empties).
+Texts that show the Offline / dead source themselves keep their values.
 
 The template has
   live(unit)      possibly secret text; "" for an absent unit
@@ -41,6 +47,12 @@ local Template = {}
 ns.TextTemplate = Template
 
 local CAST_SOURCE = "cast.spell"
+local STATUS_SOURCE = "status"
+
+-- Health and power values, which a dead or offline unit replaces.
+local function StatusValue(source)
+	return source.id:match("^health%.") ~= nil or source.id:match("^power%.") ~= nil
+end
 
 local function AddEvents(events, shared, source)
 	if not source.events then return end
@@ -121,9 +133,36 @@ end
 local function ReadLive(node, unit) return node.source.live(unit, node.piece) end
 local function ReadSample(node, values) return node.source.sample(values, node.piece) end
 
+-- Reads with the status in place of the values; `state` is { arg, text }.
+local function StatusReader(read)
+	return function(node, state)
+		if node.statusText then return state[2] end
+		if node.statusValue then return nil end
+		return read(node, state[1])
+	end
+end
+
+-- Marks the value nodes a status replaces; false when the text has none or
+-- shows the status itself.
+local function MarkStatusNodes(nodes)
+	local marked = false
+	for _, node in ipairs(nodes) do
+		if node.source and node.source.id == STATUS_SOURCE then return false end
+	end
+	for _, node in ipairs(nodes) do
+		if node.source and StatusValue(node.source) then
+			node.statusValue = true
+			if not marked and node.source.id:match("^health%.") then node.statusText = true end
+			marked = true
+		end
+	end
+	return marked
+end
+
 function Template.Compile(def, context)
 	local nodes = Nodes(def.pieces, context)
 	local casting = def.whileCasting == "spell"
+	local status = def.whileStatus ~= "keep" and MarkStatusNodes(nodes)
 	local events, shared, sources = {}, {}, {}
 	for _, node in ipairs(nodes) do
 		if node.source then
@@ -132,9 +171,14 @@ function Template.Compile(def, context)
 		end
 	end
 	if casting then AddEvents(events, shared, Sources.Get(CAST_SOURCE)) end
+	if status then AddEvents(events, shared, Sources.Get(STATUS_SOURCE)) end
 
 	local composeLive, composeSample = Composer(nodes, ReadLive), Composer(nodes, ReadSample)
+	local statusLive = status and Composer(nodes, StatusReader(ReadLive))
+	local statusSample = status and Composer(nodes, StatusReader(ReadSample))
+	local statusState = {}
 	local SpellName, SampleSpellName = Sources.SpellName, Sources.SampleSpellName
+	local UnitStatus, STATUS_TEXT = Sources.UnitStatus, Sources.STATUS_TEXT
 
 	local template = {
 		events = #events > 0 and table.concat(events, " ") or nil,
@@ -152,12 +196,22 @@ function Template.Compile(def, context)
 			local name = SpellName(unit)
 			if type(name) ~= "nil" then return name end
 		end
+		local word = status and STATUS_TEXT[UnitStatus(unit)]
+		if word then
+			statusState[1], statusState[2] = unit, word
+			return statusLive(statusState)
+		end
 		return composeLive(unit)
 	end
 	function template.sample(values)
 		if casting then
 			local name = SampleSpellName(values)
 			if type(name) ~= "nil" then return name end
+		end
+		local word = status and STATUS_TEXT[values.status]
+		if word then
+			statusState[1], statusState[2] = values, word
+			return statusSample(statusState)
 		end
 		return composeSample(values)
 	end
@@ -173,7 +227,7 @@ local function Encode(text)
 end
 
 function Template.Signature(def, context)
-	local out = { def.whileCasting == "spell" and "c" or "-" }
+	local out = { def.whileCasting == "spell" and "c" or "-", def.whileStatus == "keep" and "k" or "s" }
 	for _, node in ipairs(Nodes(def.pieces, context)) do
 		if node.literal then
 			out[#out + 1] = "l" .. Encode(node.literal)

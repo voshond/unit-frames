@@ -128,7 +128,7 @@ local function RegisterUnit(unit)
 		}, tooltip = "Preview the saved ready check tints and icon. Static holds the answer; Animated loops a whole check: waiting, the answer, then the hold and fade after it ends." },
 		{ key = "status", type = "select", label = "Offline / dead", default = "none",
 			values = { { "none", "Neither" }, { "offline", "Offline" }, { "dead", "Dead" } },
-			tooltip = "Sample state for the Offline / dead text source. Dead also previews the frame's Dead & ghost look; the bars otherwise show the sample values." },
+			tooltip = "Sample state for the Offline / dead text source. Also previews the frame's Dead & ghost or Offline look and the Dead / Offline text in place of values; the bars otherwise show the sample values." },
 		{ key = "pvp", type = "select", label = "PvP flag", default = "off", values = UF.Formats.PVP_FLAGS,
 			tooltip = "Sample flag for the PvP flag icon and beside Level + class or Level + class or creature type text." },
 		{ key = "buffsCount", type = "range", label = "Sample buffs", min = 0, max = 40, step = 1, default = 8,

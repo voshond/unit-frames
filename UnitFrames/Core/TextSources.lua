@@ -145,20 +145,23 @@ local function Plain(value)
 	return value
 end
 
-local STATUS_TEXT = {
+Sources.STATUS_TEXT = {
 	offline = PLAYER_OFFLINE or "Offline",
 	dead = DEAD or "Dead",
 }
+
+-- "offline", "dead" (also a ghost) or nil.
+function Sources.UnitStatus(unit)
+	if Plain(UnitIsConnected(unit)) == false then return "offline" end
+	if Plain(UnitIsDeadOrGhost(unit)) then return "dead" end
+end
 
 Sources.Register("status", {
 	label = "Offline / dead", group = "Identity", optional = true,
 	events = "UNIT_HEALTH UNIT_CONNECTION PLAYER_DEAD PLAYER_ALIVE PLAYER_UNGHOST",
 	sharedEvents = { PLAYER_DEAD = true, PLAYER_ALIVE = true, PLAYER_UNGHOST = true },
-	live = function(unit)
-		if Plain(UnitIsConnected(unit)) == false then return STATUS_TEXT.offline end
-		if Plain(UnitIsDead(unit)) or Plain(UnitIsGhost(unit)) then return STATUS_TEXT.dead end
-	end,
-	sample = function(v) return STATUS_TEXT[v.status] end,
+	live = function(unit) return Sources.STATUS_TEXT[Sources.UnitStatus(unit)] end,
+	sample = function(v) return Sources.STATUS_TEXT[v.status] end,
 })
 
 Sources.Register("pvp", {

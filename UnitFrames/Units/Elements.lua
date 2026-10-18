@@ -104,40 +104,40 @@ end
 oUF:AddElement("UF_Resting", UpdateResting, EnableResting, DisableResting)
 
 --[[
-UF_Dead: the dead/ghost look (frame.UF_Dead = UnitFrame), read by
-Drivers.DeadState. Releasing changes health before the ghost state, so the
-player's death events and unit flags redraw it too.
+UF_UnitState: the dead/ghost and offline looks (frame.UF_UnitState =
+UnitFrame), read by Drivers.UnitState. Releasing changes health before the
+ghost state, so the player's death events and unit flags redraw it too.
 ]]
-local DEAD_UNIT_EVENTS = { "UNIT_HEALTH", "UNIT_FLAGS", "UNIT_CONNECTION" }
-local DEAD_PLAYER_EVENTS = { "PLAYER_DEAD", "PLAYER_ALIVE", "PLAYER_UNGHOST" }
+local UNIT_STATE_UNIT_EVENTS = { "UNIT_HEALTH", "UNIT_FLAGS", "UNIT_CONNECTION" }
+local UNIT_STATE_PLAYER_EVENTS = { "PLAYER_DEAD", "PLAYER_ALIVE", "PLAYER_UNGHOST" }
 
-local function UpdateDead(self, _, unit)
+local function UpdateUnitState(self, _, unit)
 	if unit and unit ~= self.__unit then return end
-	self.UF_Dead:SetDead(Drivers.DeadState(self.__unit))
+	self.UF_UnitState:SetUnitState(Drivers.UnitState(self.__unit))
 end
 
-local function EnableDead(self)
-	if not self.UF_Dead then return end
-	for _, event in ipairs(DEAD_UNIT_EVENTS) do
-		self:RegisterEvent(event, UpdateDead)
+local function EnableUnitState(self)
+	if not self.UF_UnitState then return end
+	for _, event in ipairs(UNIT_STATE_UNIT_EVENTS) do
+		self:RegisterEvent(event, UpdateUnitState)
 	end
-	for _, event in ipairs(DEAD_PLAYER_EVENTS) do
-		self:RegisterEvent(event, UpdateDead, true)
+	for _, event in ipairs(UNIT_STATE_PLAYER_EVENTS) do
+		self:RegisterEvent(event, UpdateUnitState, true)
 	end
 	return true
 end
 
-local function DisableDead(self)
-	for _, event in ipairs(DEAD_UNIT_EVENTS) do
-		self:UnregisterEvent(event, UpdateDead)
+local function DisableUnitState(self)
+	for _, event in ipairs(UNIT_STATE_UNIT_EVENTS) do
+		self:UnregisterEvent(event, UpdateUnitState)
 	end
-	for _, event in ipairs(DEAD_PLAYER_EVENTS) do
-		self:UnregisterEvent(event, UpdateDead)
+	for _, event in ipairs(UNIT_STATE_PLAYER_EVENTS) do
+		self:UnregisterEvent(event, UpdateUnitState)
 	end
-	if self.UF_Dead then self.UF_Dead:SetDead(false) end
+	if self.UF_UnitState then self.UF_UnitState:SetUnitState(nil) end
 end
 
-oUF:AddElement("UF_Dead", UpdateDead, EnableDead, DisableDead)
+oUF:AddElement("UF_UnitState", UpdateUnitState, EnableUnitState, DisableUnitState)
 
 -- UF_Classification: the elite/rare/boss icon (frame.UF_Classification =
 -- Classification component), read by Drivers.Classification.

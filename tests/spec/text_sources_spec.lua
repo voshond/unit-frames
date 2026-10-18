@@ -96,7 +96,7 @@ describe("Status and identity sources", function()
 		UnitIsConnected = function() return false end
 		assert.equals("Jaina - Offline", template.live("party1"))
 		UnitIsConnected = function() return Mock.Secret(false) end
-		UnitIsGhost = function() return Mock.Secret(true) end
+		UnitIsDeadOrGhost = function() return Mock.Secret(true) end
 		assert.equals("Jaina", template.live("party1"))
 		local values = ns.Units:GetSample("player")
 		values.status = "offline"
@@ -144,7 +144,8 @@ describe("This bar's values", function()
 		local fs = Slot("target", "health", "right"):GetFrame()
 		local handle = ns.TextTags.GetHandle(fs)
 		assert.equals("[" .. handle .. "]", frame.tags[fs])
-		assert.equals("UNIT_HEALTH UNIT_MAXHEALTH UNIT_CONNECTION", ns.oUF.Tags.Events[handle])
+		assert.equals("UNIT_HEALTH UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_DEAD PLAYER_ALIVE PLAYER_UNGHOST", ns.oUF.Tags.Events[handle],
+			"values make way for Dead / Offline")
 		assert.equals("", ns.Formats.Get("bar:value").text("target"))
 	end)
 

@@ -24,6 +24,9 @@ function Presentation.Prerequisite(path, entryId)
 	if path:match("%.whileCasting$") then
 		return { path = path:gsub("whileCasting$", "format"), message = "Choose Custom in the text content selector to edit casting behaviour." }
 	end
+	if path:match("%.whileStatus$") then
+		return { path = path:gsub("whileStatus$", "format"), message = "Choose Custom in the text content selector to edit dead and offline behaviour." }
+	end
 	local background = path:match("^(.-%.background)%.")
 	if background and path:match("%.color$") then
 		return { path = background .. ".useBarColor", message = "Turn off Tint with bar colour to choose a separate background colour." }
