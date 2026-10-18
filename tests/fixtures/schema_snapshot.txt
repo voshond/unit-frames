@@ -157,6 +157,7 @@ option format type="select" label="Shows" default="none" values=#c6b34039
 option customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option customInitialized type="toggle" label="Custom text set up" default=false hidden
 option piece1 type="group" label="Piece 1" hidden
 option piece1.source type="select" label="Source" default="none" values=#2e8ce511 tooltip=#719320d5
@@ -199,6 +200,7 @@ default enabled = true
 default format = "none"
 default inset = 4
 default justifyH = "CENTER"
+default levelColor = false
 default offsetX = 0
 default offsetY = 0
 default piece1.after = ""
@@ -232,6 +234,7 @@ resolved font = "Friz Quadrata TT"
 resolved format = "none"
 resolved inset = 4
 resolved justifyH = "CENTER"
+resolved levelColor = false
 resolved offsetX = 0
 resolved offsetY = 0
 resolved outline = ""
@@ -2395,6 +2398,7 @@ option health.left.format type="select" label="Shows" default="none" values=#19e
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.left.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.left.piece1 type="group" label="Piece 1" hidden
 option health.left.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2436,6 +2440,7 @@ option health.center.format type="select" label="Shows" default="none" values=#1
 option health.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.center.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.center.piece1 type="group" label="Piece 1" hidden
 option health.center.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2477,6 +2482,7 @@ option health.right.format type="select" label="Shows" default="none" values=#19
 option health.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.right.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.right.piece1 type="group" label="Piece 1" hidden
 option health.right.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2518,6 +2524,7 @@ option health.belowLeft.format type="select" label="Shows" default="none" values
 option health.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.belowLeft.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowLeft.piece1 type="group" label="Piece 1" hidden
 option health.belowLeft.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2559,6 +2566,7 @@ option health.belowRight.format type="select" label="Shows" default="none" value
 option health.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.belowRight.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowRight.piece1 type="group" label="Piece 1" hidden
 option health.belowRight.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2642,6 +2650,7 @@ option power.left.format type="select" label="Shows" default="none" values=#eb36
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.left.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.left.piece1 type="group" label="Piece 1" hidden
 option power.left.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2683,6 +2692,7 @@ option power.center.format type="select" label="Shows" default="none" values=#eb
 option power.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.center.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.center.piece1 type="group" label="Piece 1" hidden
 option power.center.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2724,6 +2734,7 @@ option power.right.format type="select" label="Shows" default="none" values=#eb3
 option power.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.right.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.right.piece1 type="group" label="Piece 1" hidden
 option power.right.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2765,6 +2776,7 @@ option power.belowLeft.format type="select" label="Shows" default="none" values=
 option power.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.belowLeft.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowLeft.piece1 type="group" label="Piece 1" hidden
 option power.belowLeft.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2806,6 +2818,7 @@ option power.belowRight.format type="select" label="Shows" default="none" values
 option power.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.belowRight.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowRight.piece1 type="group" label="Piece 1" hidden
 option power.belowRight.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2889,6 +2902,7 @@ option experience.left.format type="select" label="Shows" default="none" values=
 option experience.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option experience.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option experience.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option experience.left.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option experience.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option experience.left.piece1 type="group" label="Piece 1" hidden
 option experience.left.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2930,6 +2944,7 @@ option experience.center.format type="select" label="Shows" default="none" value
 option experience.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option experience.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option experience.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option experience.center.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option experience.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option experience.center.piece1 type="group" label="Piece 1" hidden
 option experience.center.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -2971,6 +2986,7 @@ option experience.right.format type="select" label="Shows" default="none" values
 option experience.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option experience.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option experience.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option experience.right.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option experience.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option experience.right.piece1 type="group" label="Piece 1" hidden
 option experience.right.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -3012,6 +3028,7 @@ option experience.belowLeft.format type="select" label="Shows" default="none" va
 option experience.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option experience.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option experience.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option experience.belowLeft.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option experience.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option experience.belowLeft.piece1 type="group" label="Piece 1" hidden
 option experience.belowLeft.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -3053,6 +3070,7 @@ option experience.belowRight.format type="select" label="Shows" default="none" v
 option experience.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option experience.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option experience.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option experience.belowRight.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option experience.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option experience.belowRight.piece1 type="group" label="Piece 1" hidden
 option experience.belowRight.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -3707,6 +3725,7 @@ default experience.belowLeft.enabled = false
 default experience.belowLeft.format = "none"
 default experience.belowLeft.inset = 4
 default experience.belowLeft.justifyH = "LEFT"
+default experience.belowLeft.levelColor = false
 default experience.belowLeft.offsetX = 0
 default experience.belowLeft.offsetY = 0
 default experience.belowLeft.piece1.after = ""
@@ -3740,6 +3759,7 @@ default experience.belowRight.enabled = false
 default experience.belowRight.format = "none"
 default experience.belowRight.inset = 4
 default experience.belowRight.justifyH = "RIGHT"
+default experience.belowRight.levelColor = false
 default experience.belowRight.offsetX = 0
 default experience.belowRight.offsetY = 0
 default experience.belowRight.piece1.after = ""
@@ -3773,6 +3793,7 @@ default experience.center.enabled = true
 default experience.center.format = "xp:value:percent"
 default experience.center.inset = 4
 default experience.center.justifyH = "CENTER"
+default experience.center.levelColor = false
 default experience.center.offsetX = 0
 default experience.center.offsetY = 0
 default experience.center.piece1.after = ""
@@ -3808,6 +3829,7 @@ default experience.left.enabled = false
 default experience.left.format = "none"
 default experience.left.inset = 4
 default experience.left.justifyH = "LEFT"
+default experience.left.levelColor = false
 default experience.left.offsetX = 0
 default experience.left.offsetY = 0
 default experience.left.piece1.after = ""
@@ -3841,6 +3863,7 @@ default experience.right.enabled = false
 default experience.right.format = "none"
 default experience.right.inset = 4
 default experience.right.justifyH = "RIGHT"
+default experience.right.levelColor = false
 default experience.right.offsetX = 0
 default experience.right.offsetY = 0
 default experience.right.piece1.after = ""
@@ -3908,6 +3931,7 @@ default health.belowLeft.enabled = false
 default health.belowLeft.format = "level:class"
 default health.belowLeft.inset = 4
 default health.belowLeft.justifyH = "LEFT"
+default health.belowLeft.levelColor = false
 default health.belowLeft.offsetX = 0
 default health.belowLeft.offsetY = 0
 default health.belowLeft.piece1.after = ""
@@ -3941,6 +3965,7 @@ default health.belowRight.enabled = false
 default health.belowRight.format = "none"
 default health.belowRight.inset = 4
 default health.belowRight.justifyH = "RIGHT"
+default health.belowRight.levelColor = false
 default health.belowRight.offsetX = 0
 default health.belowRight.offsetY = 0
 default health.belowRight.piece1.after = ""
@@ -3974,6 +3999,7 @@ default health.center.enabled = false
 default health.center.format = "none"
 default health.center.inset = 4
 default health.center.justifyH = "CENTER"
+default health.center.levelColor = false
 default health.center.offsetX = 0
 default health.center.offsetY = 0
 default health.center.piece1.after = ""
@@ -4009,6 +4035,7 @@ default health.left.enabled = true
 default health.left.format = "name"
 default health.left.inset = 4
 default health.left.justifyH = "LEFT"
+default health.left.levelColor = false
 default health.left.offsetX = 0
 default health.left.offsetY = 0
 default health.left.piece1.after = ""
@@ -4042,6 +4069,7 @@ default health.right.enabled = true
 default health.right.format = "health:value"
 default health.right.inset = 4
 default health.right.justifyH = "RIGHT"
+default health.right.levelColor = false
 default health.right.offsetX = 0
 default health.right.offsetY = 0
 default health.right.piece1.after = ""
@@ -4127,6 +4155,7 @@ default power.belowLeft.enabled = false
 default power.belowLeft.format = "none"
 default power.belowLeft.inset = 4
 default power.belowLeft.justifyH = "LEFT"
+default power.belowLeft.levelColor = false
 default power.belowLeft.offsetX = 0
 default power.belowLeft.offsetY = 0
 default power.belowLeft.piece1.after = ""
@@ -4160,6 +4189,7 @@ default power.belowRight.enabled = false
 default power.belowRight.format = "none"
 default power.belowRight.inset = 4
 default power.belowRight.justifyH = "RIGHT"
+default power.belowRight.levelColor = false
 default power.belowRight.offsetX = 0
 default power.belowRight.offsetY = 0
 default power.belowRight.piece1.after = ""
@@ -4193,6 +4223,7 @@ default power.center.enabled = false
 default power.center.format = "none"
 default power.center.inset = 4
 default power.center.justifyH = "CENTER"
+default power.center.levelColor = false
 default power.center.offsetX = 0
 default power.center.offsetY = 0
 default power.center.piece1.after = ""
@@ -4227,6 +4258,7 @@ default power.left.enabled = false
 default power.left.format = "none"
 default power.left.inset = 4
 default power.left.justifyH = "LEFT"
+default power.left.levelColor = false
 default power.left.offsetX = 0
 default power.left.offsetY = 0
 default power.left.piece1.after = ""
@@ -4260,6 +4292,7 @@ default power.right.enabled = true
 default power.right.format = "power:value"
 default power.right.inset = 4
 default power.right.justifyH = "RIGHT"
+default power.right.levelColor = false
 default power.right.offsetX = 0
 default power.right.offsetY = 0
 default power.right.piece1.after = ""
@@ -4669,6 +4702,7 @@ resolved experience.belowLeft.font = "Friz Quadrata TT"
 resolved experience.belowLeft.format = "none"
 resolved experience.belowLeft.inset = 4
 resolved experience.belowLeft.justifyH = "LEFT"
+resolved experience.belowLeft.levelColor = false
 resolved experience.belowLeft.offsetX = 0
 resolved experience.belowLeft.offsetY = 0
 resolved experience.belowLeft.outline = ""
@@ -4704,6 +4738,7 @@ resolved experience.belowRight.font = "Friz Quadrata TT"
 resolved experience.belowRight.format = "none"
 resolved experience.belowRight.inset = 4
 resolved experience.belowRight.justifyH = "RIGHT"
+resolved experience.belowRight.levelColor = false
 resolved experience.belowRight.offsetX = 0
 resolved experience.belowRight.offsetY = 0
 resolved experience.belowRight.outline = ""
@@ -4739,6 +4774,7 @@ resolved experience.center.font = "Friz Quadrata TT"
 resolved experience.center.format = "xp:value:percent"
 resolved experience.center.inset = 4
 resolved experience.center.justifyH = "CENTER"
+resolved experience.center.levelColor = false
 resolved experience.center.offsetX = 0
 resolved experience.center.offsetY = 0
 resolved experience.center.outline = ""
@@ -4776,6 +4812,7 @@ resolved experience.left.font = "Friz Quadrata TT"
 resolved experience.left.format = "none"
 resolved experience.left.inset = 4
 resolved experience.left.justifyH = "LEFT"
+resolved experience.left.levelColor = false
 resolved experience.left.offsetX = 0
 resolved experience.left.offsetY = 0
 resolved experience.left.outline = ""
@@ -4812,6 +4849,7 @@ resolved experience.right.font = "Friz Quadrata TT"
 resolved experience.right.format = "none"
 resolved experience.right.inset = 4
 resolved experience.right.justifyH = "RIGHT"
+resolved experience.right.levelColor = false
 resolved experience.right.offsetX = 0
 resolved experience.right.offsetY = 0
 resolved experience.right.outline = ""
@@ -4892,6 +4930,7 @@ resolved health.belowLeft.font = "Friz Quadrata TT"
 resolved health.belowLeft.format = "level:class"
 resolved health.belowLeft.inset = 4
 resolved health.belowLeft.justifyH = "LEFT"
+resolved health.belowLeft.levelColor = false
 resolved health.belowLeft.offsetX = 0
 resolved health.belowLeft.offsetY = 0
 resolved health.belowLeft.outline = ""
@@ -4927,6 +4966,7 @@ resolved health.belowRight.font = "Friz Quadrata TT"
 resolved health.belowRight.format = "none"
 resolved health.belowRight.inset = 4
 resolved health.belowRight.justifyH = "RIGHT"
+resolved health.belowRight.levelColor = false
 resolved health.belowRight.offsetX = 0
 resolved health.belowRight.offsetY = 0
 resolved health.belowRight.outline = ""
@@ -4962,6 +5002,7 @@ resolved health.center.font = "Friz Quadrata TT"
 resolved health.center.format = "none"
 resolved health.center.inset = 4
 resolved health.center.justifyH = "CENTER"
+resolved health.center.levelColor = false
 resolved health.center.offsetX = 0
 resolved health.center.offsetY = 0
 resolved health.center.outline = ""
@@ -5000,6 +5041,7 @@ resolved health.left.font = "Friz Quadrata TT"
 resolved health.left.format = "name"
 resolved health.left.inset = 4
 resolved health.left.justifyH = "LEFT"
+resolved health.left.levelColor = false
 resolved health.left.offsetX = 0
 resolved health.left.offsetY = 0
 resolved health.left.outline = ""
@@ -5036,6 +5078,7 @@ resolved health.right.font = "Friz Quadrata TT"
 resolved health.right.format = "health:value"
 resolved health.right.inset = 4
 resolved health.right.justifyH = "RIGHT"
+resolved health.right.levelColor = false
 resolved health.right.offsetX = 0
 resolved health.right.offsetY = 0
 resolved health.right.outline = ""
@@ -5137,6 +5180,7 @@ resolved power.belowLeft.font = "Friz Quadrata TT"
 resolved power.belowLeft.format = "none"
 resolved power.belowLeft.inset = 4
 resolved power.belowLeft.justifyH = "LEFT"
+resolved power.belowLeft.levelColor = false
 resolved power.belowLeft.offsetX = 0
 resolved power.belowLeft.offsetY = 0
 resolved power.belowLeft.outline = ""
@@ -5172,6 +5216,7 @@ resolved power.belowRight.font = "Friz Quadrata TT"
 resolved power.belowRight.format = "none"
 resolved power.belowRight.inset = 4
 resolved power.belowRight.justifyH = "RIGHT"
+resolved power.belowRight.levelColor = false
 resolved power.belowRight.offsetX = 0
 resolved power.belowRight.offsetY = 0
 resolved power.belowRight.outline = ""
@@ -5207,6 +5252,7 @@ resolved power.center.font = "Friz Quadrata TT"
 resolved power.center.format = "none"
 resolved power.center.inset = 4
 resolved power.center.justifyH = "CENTER"
+resolved power.center.levelColor = false
 resolved power.center.offsetX = 0
 resolved power.center.offsetY = 0
 resolved power.center.outline = ""
@@ -5244,6 +5290,7 @@ resolved power.left.font = "Friz Quadrata TT"
 resolved power.left.format = "none"
 resolved power.left.inset = 4
 resolved power.left.justifyH = "LEFT"
+resolved power.left.levelColor = false
 resolved power.left.offsetX = 0
 resolved power.left.offsetY = 0
 resolved power.left.outline = ""
@@ -5280,6 +5327,7 @@ resolved power.right.font = "Friz Quadrata TT"
 resolved power.right.format = "power:value"
 resolved power.right.inset = 4
 resolved power.right.justifyH = "RIGHT"
+resolved power.right.levelColor = false
 resolved power.right.offsetX = 0
 resolved power.right.offsetY = 0
 resolved power.right.outline = ""
@@ -5522,6 +5570,7 @@ option health.left.format type="select" label="Shows" default="none" values=#22e
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.left.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.left.piece1 type="group" label="Piece 1" hidden
 option health.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -5563,6 +5612,7 @@ option health.center.format type="select" label="Shows" default="none" values=#2
 option health.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.center.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.center.piece1 type="group" label="Piece 1" hidden
 option health.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -5604,6 +5654,7 @@ option health.right.format type="select" label="Shows" default="none" values=#22
 option health.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.right.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.right.piece1 type="group" label="Piece 1" hidden
 option health.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -5645,6 +5696,7 @@ option health.belowLeft.format type="select" label="Shows" default="none" values
 option health.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.belowLeft.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowLeft.piece1 type="group" label="Piece 1" hidden
 option health.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -5686,6 +5738,7 @@ option health.belowRight.format type="select" label="Shows" default="none" value
 option health.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.belowRight.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowRight.piece1 type="group" label="Piece 1" hidden
 option health.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -5769,6 +5822,7 @@ option power.left.format type="select" label="Shows" default="none" values=#7588
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.left.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.left.piece1 type="group" label="Piece 1" hidden
 option power.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -5810,6 +5864,7 @@ option power.center.format type="select" label="Shows" default="none" values=#75
 option power.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.center.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.center.piece1 type="group" label="Piece 1" hidden
 option power.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -5851,6 +5906,7 @@ option power.right.format type="select" label="Shows" default="none" values=#758
 option power.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.right.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.right.piece1 type="group" label="Piece 1" hidden
 option power.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -5892,6 +5948,7 @@ option power.belowLeft.format type="select" label="Shows" default="none" values=
 option power.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.belowLeft.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowLeft.piece1 type="group" label="Piece 1" hidden
 option power.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -5933,6 +5990,7 @@ option power.belowRight.format type="select" label="Shows" default="none" values
 option power.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.belowRight.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowRight.piece1 type="group" label="Piece 1" hidden
 option power.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -6513,6 +6571,7 @@ default health.belowLeft.enabled = false
 default health.belowLeft.format = "level:info"
 default health.belowLeft.inset = 4
 default health.belowLeft.justifyH = "LEFT"
+default health.belowLeft.levelColor = false
 default health.belowLeft.offsetX = 0
 default health.belowLeft.offsetY = 0
 default health.belowLeft.piece1.after = ""
@@ -6546,6 +6605,7 @@ default health.belowRight.enabled = false
 default health.belowRight.format = "none"
 default health.belowRight.inset = 4
 default health.belowRight.justifyH = "RIGHT"
+default health.belowRight.levelColor = false
 default health.belowRight.offsetX = 0
 default health.belowRight.offsetY = 0
 default health.belowRight.piece1.after = ""
@@ -6579,6 +6639,7 @@ default health.center.enabled = false
 default health.center.format = "none"
 default health.center.inset = 4
 default health.center.justifyH = "CENTER"
+default health.center.levelColor = false
 default health.center.offsetX = 0
 default health.center.offsetY = 0
 default health.center.piece1.after = ""
@@ -6614,6 +6675,7 @@ default health.left.enabled = true
 default health.left.format = "name"
 default health.left.inset = 4
 default health.left.justifyH = "LEFT"
+default health.left.levelColor = false
 default health.left.offsetX = 0
 default health.left.offsetY = 0
 default health.left.piece1.after = ""
@@ -6648,6 +6710,7 @@ default health.right.enabled = true
 default health.right.format = "health:percent"
 default health.right.inset = 4
 default health.right.justifyH = "RIGHT"
+default health.right.levelColor = false
 default health.right.offsetX = 0
 default health.right.offsetY = 0
 default health.right.piece1.after = ""
@@ -6734,6 +6797,7 @@ default power.belowLeft.enabled = false
 default power.belowLeft.format = "none"
 default power.belowLeft.inset = 4
 default power.belowLeft.justifyH = "LEFT"
+default power.belowLeft.levelColor = false
 default power.belowLeft.offsetX = 0
 default power.belowLeft.offsetY = 0
 default power.belowLeft.piece1.after = ""
@@ -6767,6 +6831,7 @@ default power.belowRight.enabled = false
 default power.belowRight.format = "none"
 default power.belowRight.inset = 4
 default power.belowRight.justifyH = "RIGHT"
+default power.belowRight.levelColor = false
 default power.belowRight.offsetX = 0
 default power.belowRight.offsetY = 0
 default power.belowRight.piece1.after = ""
@@ -6800,6 +6865,7 @@ default power.center.enabled = false
 default power.center.format = "none"
 default power.center.inset = 4
 default power.center.justifyH = "CENTER"
+default power.center.levelColor = false
 default power.center.offsetX = 0
 default power.center.offsetY = 0
 default power.center.piece1.after = ""
@@ -6834,6 +6900,7 @@ default power.left.enabled = false
 default power.left.format = "none"
 default power.left.inset = 4
 default power.left.justifyH = "LEFT"
+default power.left.levelColor = false
 default power.left.offsetX = 0
 default power.left.offsetY = 0
 default power.left.piece1.after = ""
@@ -6867,6 +6934,7 @@ default power.right.enabled = true
 default power.right.format = "power:percent"
 default power.right.inset = 4
 default power.right.justifyH = "RIGHT"
+default power.right.levelColor = false
 default power.right.offsetX = 0
 default power.right.offsetY = 0
 default power.right.piece1.after = ""
@@ -7240,6 +7308,7 @@ resolved health.belowLeft.font = "Friz Quadrata TT"
 resolved health.belowLeft.format = "level:info"
 resolved health.belowLeft.inset = 4
 resolved health.belowLeft.justifyH = "LEFT"
+resolved health.belowLeft.levelColor = false
 resolved health.belowLeft.offsetX = 0
 resolved health.belowLeft.offsetY = 0
 resolved health.belowLeft.outline = ""
@@ -7275,6 +7344,7 @@ resolved health.belowRight.font = "Friz Quadrata TT"
 resolved health.belowRight.format = "none"
 resolved health.belowRight.inset = 4
 resolved health.belowRight.justifyH = "RIGHT"
+resolved health.belowRight.levelColor = false
 resolved health.belowRight.offsetX = 0
 resolved health.belowRight.offsetY = 0
 resolved health.belowRight.outline = ""
@@ -7310,6 +7380,7 @@ resolved health.center.font = "Friz Quadrata TT"
 resolved health.center.format = "none"
 resolved health.center.inset = 4
 resolved health.center.justifyH = "CENTER"
+resolved health.center.levelColor = false
 resolved health.center.offsetX = 0
 resolved health.center.offsetY = 0
 resolved health.center.outline = ""
@@ -7348,6 +7419,7 @@ resolved health.left.font = "Friz Quadrata TT"
 resolved health.left.format = "name"
 resolved health.left.inset = 4
 resolved health.left.justifyH = "LEFT"
+resolved health.left.levelColor = false
 resolved health.left.offsetX = 0
 resolved health.left.offsetY = 0
 resolved health.left.outline = ""
@@ -7384,6 +7456,7 @@ resolved health.right.font = "Friz Quadrata TT"
 resolved health.right.format = "health:percent"
 resolved health.right.inset = 4
 resolved health.right.justifyH = "RIGHT"
+resolved health.right.levelColor = false
 resolved health.right.offsetX = 0
 resolved health.right.offsetY = 0
 resolved health.right.outline = ""
@@ -7485,6 +7558,7 @@ resolved power.belowLeft.font = "Friz Quadrata TT"
 resolved power.belowLeft.format = "none"
 resolved power.belowLeft.inset = 4
 resolved power.belowLeft.justifyH = "LEFT"
+resolved power.belowLeft.levelColor = false
 resolved power.belowLeft.offsetX = 0
 resolved power.belowLeft.offsetY = 0
 resolved power.belowLeft.outline = ""
@@ -7520,6 +7594,7 @@ resolved power.belowRight.font = "Friz Quadrata TT"
 resolved power.belowRight.format = "none"
 resolved power.belowRight.inset = 4
 resolved power.belowRight.justifyH = "RIGHT"
+resolved power.belowRight.levelColor = false
 resolved power.belowRight.offsetX = 0
 resolved power.belowRight.offsetY = 0
 resolved power.belowRight.outline = ""
@@ -7555,6 +7630,7 @@ resolved power.center.font = "Friz Quadrata TT"
 resolved power.center.format = "none"
 resolved power.center.inset = 4
 resolved power.center.justifyH = "CENTER"
+resolved power.center.levelColor = false
 resolved power.center.offsetX = 0
 resolved power.center.offsetY = 0
 resolved power.center.outline = ""
@@ -7592,6 +7668,7 @@ resolved power.left.font = "Friz Quadrata TT"
 resolved power.left.format = "none"
 resolved power.left.inset = 4
 resolved power.left.justifyH = "LEFT"
+resolved power.left.levelColor = false
 resolved power.left.offsetX = 0
 resolved power.left.offsetY = 0
 resolved power.left.outline = ""
@@ -7628,6 +7705,7 @@ resolved power.right.font = "Friz Quadrata TT"
 resolved power.right.format = "power:percent"
 resolved power.right.inset = 4
 resolved power.right.justifyH = "RIGHT"
+resolved power.right.levelColor = false
 resolved power.right.offsetX = 0
 resolved power.right.offsetY = 0
 resolved power.right.outline = ""
@@ -7816,7 +7894,7 @@ option portrait.border.size type="range" label="Border size" inherit="borderSize
 option portrait.border.color type="color" label="Border colour" inherit="borderColor"
 option portrait.border.background type="background" label="Background" inherit="backgroundTexture"
 option portrait.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option health type="group" label="Health" defaults={height=26}
+option health type="group" label="Health" defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=26,left={levelColor=true},right={levelColor=true}}
 option health.enabled type="toggle" label="Enabled" default=true
 option health.height type="range" label="Height" default=20 min=2 max=100 step=1
 option health.colorMode type="select" label="Bar colour" default="class" values=#9f707d09
@@ -7879,6 +7957,7 @@ option health.left.format type="select" label="Shows" default="none" values=#22e
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.left.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.left.piece1 type="group" label="Piece 1" hidden
 option health.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -7920,6 +7999,7 @@ option health.center.format type="select" label="Shows" default="none" values=#2
 option health.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.center.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.center.piece1 type="group" label="Piece 1" hidden
 option health.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -7961,6 +8041,7 @@ option health.right.format type="select" label="Shows" default="none" values=#22
 option health.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.right.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.right.piece1 type="group" label="Piece 1" hidden
 option health.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -8002,6 +8083,7 @@ option health.belowLeft.format type="select" label="Shows" default="none" values
 option health.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.belowLeft.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowLeft.piece1 type="group" label="Piece 1" hidden
 option health.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -8043,6 +8125,7 @@ option health.belowRight.format type="select" label="Shows" default="none" value
 option health.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.belowRight.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowRight.piece1 type="group" label="Piece 1" hidden
 option health.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -8079,7 +8162,7 @@ option health.belowRight.vertical type="select" label="Vertical position" defaul
 option health.belowRight.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
 option health.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
-option power type="group" label="Power" defaults={height=12,right={size=9}}
+option power type="group" label="Power" defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=12,left={levelColor=true},right={levelColor=true,size=9}}
 option power.enabled type="toggle" label="Enabled" default=true
 option power.height type="range" label="Height" default=20 min=2 max=100 step=1
 option power.bar type="group" label="Bar"
@@ -8126,6 +8209,7 @@ option power.left.format type="select" label="Shows" default="none" values=#7588
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.left.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.left.piece1 type="group" label="Piece 1" hidden
 option power.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -8167,6 +8251,7 @@ option power.center.format type="select" label="Shows" default="none" values=#75
 option power.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.center.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.center.piece1 type="group" label="Piece 1" hidden
 option power.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -8208,6 +8293,7 @@ option power.right.format type="select" label="Shows" default="none" values=#758
 option power.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.right.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.right.piece1 type="group" label="Piece 1" hidden
 option power.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -8249,6 +8335,7 @@ option power.belowLeft.format type="select" label="Shows" default="none" values=
 option power.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.belowLeft.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowLeft.piece1 type="group" label="Piece 1" hidden
 option power.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -8290,6 +8377,7 @@ option power.belowRight.format type="select" label="Shows" default="none" values
 option power.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.belowRight.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowRight.piece1 type="group" label="Piece 1" hidden
 option power.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -8924,6 +9012,7 @@ default health.belowLeft.enabled = false
 default health.belowLeft.format = "level:info"
 default health.belowLeft.inset = 4
 default health.belowLeft.justifyH = "LEFT"
+default health.belowLeft.levelColor = true
 default health.belowLeft.offsetX = 0
 default health.belowLeft.offsetY = 0
 default health.belowLeft.piece1.after = ""
@@ -8957,6 +9046,7 @@ default health.belowRight.enabled = false
 default health.belowRight.format = "none"
 default health.belowRight.inset = 4
 default health.belowRight.justifyH = "RIGHT"
+default health.belowRight.levelColor = true
 default health.belowRight.offsetX = 0
 default health.belowRight.offsetY = 0
 default health.belowRight.piece1.after = ""
@@ -8990,6 +9080,7 @@ default health.center.enabled = false
 default health.center.format = "none"
 default health.center.inset = 4
 default health.center.justifyH = "CENTER"
+default health.center.levelColor = true
 default health.center.offsetX = 0
 default health.center.offsetY = 0
 default health.center.piece1.after = ""
@@ -9025,6 +9116,7 @@ default health.left.enabled = true
 default health.left.format = "name"
 default health.left.inset = 4
 default health.left.justifyH = "LEFT"
+default health.left.levelColor = true
 default health.left.offsetX = 0
 default health.left.offsetY = 0
 default health.left.piece1.after = ""
@@ -9058,6 +9150,7 @@ default health.right.enabled = true
 default health.right.format = "health:value"
 default health.right.inset = 4
 default health.right.justifyH = "RIGHT"
+default health.right.levelColor = true
 default health.right.offsetX = 0
 default health.right.offsetY = 0
 default health.right.piece1.after = ""
@@ -9143,6 +9236,7 @@ default power.belowLeft.enabled = false
 default power.belowLeft.format = "none"
 default power.belowLeft.inset = 4
 default power.belowLeft.justifyH = "LEFT"
+default power.belowLeft.levelColor = true
 default power.belowLeft.offsetX = 0
 default power.belowLeft.offsetY = 0
 default power.belowLeft.piece1.after = ""
@@ -9176,6 +9270,7 @@ default power.belowRight.enabled = false
 default power.belowRight.format = "none"
 default power.belowRight.inset = 4
 default power.belowRight.justifyH = "RIGHT"
+default power.belowRight.levelColor = true
 default power.belowRight.offsetX = 0
 default power.belowRight.offsetY = 0
 default power.belowRight.piece1.after = ""
@@ -9209,6 +9304,7 @@ default power.center.enabled = false
 default power.center.format = "none"
 default power.center.inset = 4
 default power.center.justifyH = "CENTER"
+default power.center.levelColor = true
 default power.center.offsetX = 0
 default power.center.offsetY = 0
 default power.center.piece1.after = ""
@@ -9243,6 +9339,7 @@ default power.left.enabled = false
 default power.left.format = "none"
 default power.left.inset = 4
 default power.left.justifyH = "LEFT"
+default power.left.levelColor = true
 default power.left.offsetX = 0
 default power.left.offsetY = 0
 default power.left.piece1.after = ""
@@ -9276,6 +9373,7 @@ default power.right.enabled = true
 default power.right.format = "power:value"
 default power.right.inset = 4
 default power.right.justifyH = "RIGHT"
+default power.right.levelColor = true
 default power.right.offsetX = 0
 default power.right.offsetY = 0
 default power.right.piece1.after = ""
@@ -9677,6 +9775,7 @@ resolved health.belowLeft.font = "Friz Quadrata TT"
 resolved health.belowLeft.format = "level:info"
 resolved health.belowLeft.inset = 4
 resolved health.belowLeft.justifyH = "LEFT"
+resolved health.belowLeft.levelColor = true
 resolved health.belowLeft.offsetX = 0
 resolved health.belowLeft.offsetY = 0
 resolved health.belowLeft.outline = ""
@@ -9712,6 +9811,7 @@ resolved health.belowRight.font = "Friz Quadrata TT"
 resolved health.belowRight.format = "none"
 resolved health.belowRight.inset = 4
 resolved health.belowRight.justifyH = "RIGHT"
+resolved health.belowRight.levelColor = true
 resolved health.belowRight.offsetX = 0
 resolved health.belowRight.offsetY = 0
 resolved health.belowRight.outline = ""
@@ -9747,6 +9847,7 @@ resolved health.center.font = "Friz Quadrata TT"
 resolved health.center.format = "none"
 resolved health.center.inset = 4
 resolved health.center.justifyH = "CENTER"
+resolved health.center.levelColor = true
 resolved health.center.offsetX = 0
 resolved health.center.offsetY = 0
 resolved health.center.outline = ""
@@ -9785,6 +9886,7 @@ resolved health.left.font = "Friz Quadrata TT"
 resolved health.left.format = "name"
 resolved health.left.inset = 4
 resolved health.left.justifyH = "LEFT"
+resolved health.left.levelColor = true
 resolved health.left.offsetX = 0
 resolved health.left.offsetY = 0
 resolved health.left.outline = ""
@@ -9821,6 +9923,7 @@ resolved health.right.font = "Friz Quadrata TT"
 resolved health.right.format = "health:value"
 resolved health.right.inset = 4
 resolved health.right.justifyH = "RIGHT"
+resolved health.right.levelColor = true
 resolved health.right.offsetX = 0
 resolved health.right.offsetY = 0
 resolved health.right.outline = ""
@@ -9922,6 +10025,7 @@ resolved power.belowLeft.font = "Friz Quadrata TT"
 resolved power.belowLeft.format = "none"
 resolved power.belowLeft.inset = 4
 resolved power.belowLeft.justifyH = "LEFT"
+resolved power.belowLeft.levelColor = true
 resolved power.belowLeft.offsetX = 0
 resolved power.belowLeft.offsetY = 0
 resolved power.belowLeft.outline = ""
@@ -9957,6 +10061,7 @@ resolved power.belowRight.font = "Friz Quadrata TT"
 resolved power.belowRight.format = "none"
 resolved power.belowRight.inset = 4
 resolved power.belowRight.justifyH = "RIGHT"
+resolved power.belowRight.levelColor = true
 resolved power.belowRight.offsetX = 0
 resolved power.belowRight.offsetY = 0
 resolved power.belowRight.outline = ""
@@ -9992,6 +10097,7 @@ resolved power.center.font = "Friz Quadrata TT"
 resolved power.center.format = "none"
 resolved power.center.inset = 4
 resolved power.center.justifyH = "CENTER"
+resolved power.center.levelColor = true
 resolved power.center.offsetX = 0
 resolved power.center.offsetY = 0
 resolved power.center.outline = ""
@@ -10029,6 +10135,7 @@ resolved power.left.font = "Friz Quadrata TT"
 resolved power.left.format = "none"
 resolved power.left.inset = 4
 resolved power.left.justifyH = "LEFT"
+resolved power.left.levelColor = true
 resolved power.left.offsetX = 0
 resolved power.left.offsetY = 0
 resolved power.left.outline = ""
@@ -10065,6 +10172,7 @@ resolved power.right.font = "Friz Quadrata TT"
 resolved power.right.format = "power:value"
 resolved power.right.inset = 4
 resolved power.right.justifyH = "RIGHT"
+resolved power.right.levelColor = true
 resolved power.right.offsetX = 0
 resolved power.right.offsetY = 0
 resolved power.right.outline = ""
@@ -10150,7 +10258,7 @@ definition pvp.defaults = {}
 definition raidTarget.defaults = {}
 definition readyCheck = true
 definition readyCheckIcon.defaults = {}
-definition rows = {{defaults={height=26},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={height=12,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
+definition rows = {{defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=26,left={levelColor=true},right={levelColor=true}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=12,left={levelColor=true},right={levelColor=true,size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
 definition sample.castTime = 1.5
 definition sample.classification = "elite"
 definition sample.cost = 15
@@ -10244,7 +10352,7 @@ option portrait.border.size type="range" label="Border size" inherit="borderSize
 option portrait.border.color type="color" label="Border colour" inherit="borderColor"
 option portrait.border.background type="background" label="Background" inherit="backgroundTexture"
 option portrait.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option health type="group" label="Health" defaults={height=20,left={size=10},right={format="health:percent",size=9}}
+option health type="group" label="Health" defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=20,left={levelColor=true,size=10},right={format="health:percent",levelColor=true,size=9}}
 option health.enabled type="toggle" label="Enabled" default=true
 option health.height type="range" label="Height" default=20 min=2 max=100 step=1
 option health.colorMode type="select" label="Bar colour" default="class" values=#9f707d09
@@ -10307,6 +10415,7 @@ option health.left.format type="select" label="Shows" default="none" values=#22e
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.left.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.left.piece1 type="group" label="Piece 1" hidden
 option health.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -10348,6 +10457,7 @@ option health.center.format type="select" label="Shows" default="none" values=#2
 option health.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.center.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.center.piece1 type="group" label="Piece 1" hidden
 option health.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -10389,6 +10499,7 @@ option health.right.format type="select" label="Shows" default="none" values=#22
 option health.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.right.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.right.piece1 type="group" label="Piece 1" hidden
 option health.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -10430,6 +10541,7 @@ option health.belowLeft.format type="select" label="Shows" default="none" values
 option health.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.belowLeft.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowLeft.piece1 type="group" label="Piece 1" hidden
 option health.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -10471,6 +10583,7 @@ option health.belowRight.format type="select" label="Shows" default="none" value
 option health.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.belowRight.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowRight.piece1 type="group" label="Piece 1" hidden
 option health.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -10507,7 +10620,7 @@ option health.belowRight.vertical type="select" label="Vertical position" defaul
 option health.belowRight.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
 option health.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
-option power type="group" label="Power" defaults={height=8,right={format="power:percent",size=8}}
+option power type="group" label="Power" defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=8,left={levelColor=true},right={format="power:percent",levelColor=true,size=8}}
 option power.enabled type="toggle" label="Enabled" default=true
 option power.height type="range" label="Height" default=20 min=2 max=100 step=1
 option power.bar type="group" label="Bar"
@@ -10554,6 +10667,7 @@ option power.left.format type="select" label="Shows" default="none" values=#7588
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.left.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.left.piece1 type="group" label="Piece 1" hidden
 option power.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -10595,6 +10709,7 @@ option power.center.format type="select" label="Shows" default="none" values=#75
 option power.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.center.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.center.piece1 type="group" label="Piece 1" hidden
 option power.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -10636,6 +10751,7 @@ option power.right.format type="select" label="Shows" default="none" values=#758
 option power.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.right.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.right.piece1 type="group" label="Piece 1" hidden
 option power.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -10677,6 +10793,7 @@ option power.belowLeft.format type="select" label="Shows" default="none" values=
 option power.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.belowLeft.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowLeft.piece1 type="group" label="Piece 1" hidden
 option power.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -10718,6 +10835,7 @@ option power.belowRight.format type="select" label="Shows" default="none" values
 option power.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.belowRight.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowRight.piece1 type="group" label="Piece 1" hidden
 option power.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -11298,6 +11416,7 @@ default health.belowLeft.enabled = false
 default health.belowLeft.format = "level:info"
 default health.belowLeft.inset = 4
 default health.belowLeft.justifyH = "LEFT"
+default health.belowLeft.levelColor = true
 default health.belowLeft.offsetX = 0
 default health.belowLeft.offsetY = 0
 default health.belowLeft.piece1.after = ""
@@ -11331,6 +11450,7 @@ default health.belowRight.enabled = false
 default health.belowRight.format = "none"
 default health.belowRight.inset = 4
 default health.belowRight.justifyH = "RIGHT"
+default health.belowRight.levelColor = true
 default health.belowRight.offsetX = 0
 default health.belowRight.offsetY = 0
 default health.belowRight.piece1.after = ""
@@ -11364,6 +11484,7 @@ default health.center.enabled = false
 default health.center.format = "none"
 default health.center.inset = 4
 default health.center.justifyH = "CENTER"
+default health.center.levelColor = true
 default health.center.offsetX = 0
 default health.center.offsetY = 0
 default health.center.piece1.after = ""
@@ -11399,6 +11520,7 @@ default health.left.enabled = true
 default health.left.format = "name"
 default health.left.inset = 4
 default health.left.justifyH = "LEFT"
+default health.left.levelColor = true
 default health.left.offsetX = 0
 default health.left.offsetY = 0
 default health.left.piece1.after = ""
@@ -11433,6 +11555,7 @@ default health.right.enabled = true
 default health.right.format = "health:percent"
 default health.right.inset = 4
 default health.right.justifyH = "RIGHT"
+default health.right.levelColor = true
 default health.right.offsetX = 0
 default health.right.offsetY = 0
 default health.right.piece1.after = ""
@@ -11519,6 +11642,7 @@ default power.belowLeft.enabled = false
 default power.belowLeft.format = "none"
 default power.belowLeft.inset = 4
 default power.belowLeft.justifyH = "LEFT"
+default power.belowLeft.levelColor = true
 default power.belowLeft.offsetX = 0
 default power.belowLeft.offsetY = 0
 default power.belowLeft.piece1.after = ""
@@ -11552,6 +11676,7 @@ default power.belowRight.enabled = false
 default power.belowRight.format = "none"
 default power.belowRight.inset = 4
 default power.belowRight.justifyH = "RIGHT"
+default power.belowRight.levelColor = true
 default power.belowRight.offsetX = 0
 default power.belowRight.offsetY = 0
 default power.belowRight.piece1.after = ""
@@ -11585,6 +11710,7 @@ default power.center.enabled = false
 default power.center.format = "none"
 default power.center.inset = 4
 default power.center.justifyH = "CENTER"
+default power.center.levelColor = true
 default power.center.offsetX = 0
 default power.center.offsetY = 0
 default power.center.piece1.after = ""
@@ -11619,6 +11745,7 @@ default power.left.enabled = false
 default power.left.format = "none"
 default power.left.inset = 4
 default power.left.justifyH = "LEFT"
+default power.left.levelColor = true
 default power.left.offsetX = 0
 default power.left.offsetY = 0
 default power.left.piece1.after = ""
@@ -11652,6 +11779,7 @@ default power.right.enabled = true
 default power.right.format = "power:percent"
 default power.right.inset = 4
 default power.right.justifyH = "RIGHT"
+default power.right.levelColor = true
 default power.right.offsetX = 0
 default power.right.offsetY = 0
 default power.right.piece1.after = ""
@@ -12025,6 +12153,7 @@ resolved health.belowLeft.font = "Friz Quadrata TT"
 resolved health.belowLeft.format = "level:info"
 resolved health.belowLeft.inset = 4
 resolved health.belowLeft.justifyH = "LEFT"
+resolved health.belowLeft.levelColor = true
 resolved health.belowLeft.offsetX = 0
 resolved health.belowLeft.offsetY = 0
 resolved health.belowLeft.outline = ""
@@ -12060,6 +12189,7 @@ resolved health.belowRight.font = "Friz Quadrata TT"
 resolved health.belowRight.format = "none"
 resolved health.belowRight.inset = 4
 resolved health.belowRight.justifyH = "RIGHT"
+resolved health.belowRight.levelColor = true
 resolved health.belowRight.offsetX = 0
 resolved health.belowRight.offsetY = 0
 resolved health.belowRight.outline = ""
@@ -12095,6 +12225,7 @@ resolved health.center.font = "Friz Quadrata TT"
 resolved health.center.format = "none"
 resolved health.center.inset = 4
 resolved health.center.justifyH = "CENTER"
+resolved health.center.levelColor = true
 resolved health.center.offsetX = 0
 resolved health.center.offsetY = 0
 resolved health.center.outline = ""
@@ -12133,6 +12264,7 @@ resolved health.left.font = "Friz Quadrata TT"
 resolved health.left.format = "name"
 resolved health.left.inset = 4
 resolved health.left.justifyH = "LEFT"
+resolved health.left.levelColor = true
 resolved health.left.offsetX = 0
 resolved health.left.offsetY = 0
 resolved health.left.outline = ""
@@ -12169,6 +12301,7 @@ resolved health.right.font = "Friz Quadrata TT"
 resolved health.right.format = "health:percent"
 resolved health.right.inset = 4
 resolved health.right.justifyH = "RIGHT"
+resolved health.right.levelColor = true
 resolved health.right.offsetX = 0
 resolved health.right.offsetY = 0
 resolved health.right.outline = ""
@@ -12270,6 +12403,7 @@ resolved power.belowLeft.font = "Friz Quadrata TT"
 resolved power.belowLeft.format = "none"
 resolved power.belowLeft.inset = 4
 resolved power.belowLeft.justifyH = "LEFT"
+resolved power.belowLeft.levelColor = true
 resolved power.belowLeft.offsetX = 0
 resolved power.belowLeft.offsetY = 0
 resolved power.belowLeft.outline = ""
@@ -12305,6 +12439,7 @@ resolved power.belowRight.font = "Friz Quadrata TT"
 resolved power.belowRight.format = "none"
 resolved power.belowRight.inset = 4
 resolved power.belowRight.justifyH = "RIGHT"
+resolved power.belowRight.levelColor = true
 resolved power.belowRight.offsetX = 0
 resolved power.belowRight.offsetY = 0
 resolved power.belowRight.outline = ""
@@ -12340,6 +12475,7 @@ resolved power.center.font = "Friz Quadrata TT"
 resolved power.center.format = "none"
 resolved power.center.inset = 4
 resolved power.center.justifyH = "CENTER"
+resolved power.center.levelColor = true
 resolved power.center.offsetX = 0
 resolved power.center.offsetY = 0
 resolved power.center.outline = ""
@@ -12377,6 +12513,7 @@ resolved power.left.font = "Friz Quadrata TT"
 resolved power.left.format = "none"
 resolved power.left.inset = 4
 resolved power.left.justifyH = "LEFT"
+resolved power.left.levelColor = true
 resolved power.left.offsetX = 0
 resolved power.left.offsetY = 0
 resolved power.left.outline = ""
@@ -12413,6 +12550,7 @@ resolved power.right.font = "Friz Quadrata TT"
 resolved power.right.format = "power:percent"
 resolved power.right.inset = 4
 resolved power.right.justifyH = "RIGHT"
+resolved power.right.levelColor = true
 resolved power.right.offsetX = 0
 resolved power.right.offsetY = 0
 resolved power.right.outline = ""
@@ -12503,7 +12641,7 @@ definition pvp.defaults = {}
 definition raidTarget.defaults = {}
 definition readyCheck = true
 definition readyCheckIcon.defaults = {}
-definition rows = {{defaults={height=20,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={height=8,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
+definition rows = {{defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=20,left={levelColor=true,size=10},right={format="health:percent",levelColor=true,size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=8,left={levelColor=true},right={format="power:percent",levelColor=true,size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
 definition sample.class = "WARRIOR"
 definition sample.className = "Warrior"
 definition sample.cost = 15
@@ -12593,7 +12731,7 @@ option portrait.border.size type="range" label="Border size" inherit="borderSize
 option portrait.border.color type="color" label="Border colour" inherit="borderColor"
 option portrait.border.background type="background" label="Background" inherit="backgroundTexture"
 option portrait.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option health type="group" label="Health" defaults={height=24}
+option health type="group" label="Health" defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=24,left={levelColor=true},right={levelColor=true}}
 option health.enabled type="toggle" label="Enabled" default=true
 option health.height type="range" label="Height" default=20 min=2 max=100 step=1
 option health.colorMode type="select" label="Bar colour" default="class" values=#9f707d09
@@ -12656,6 +12794,7 @@ option health.left.format type="select" label="Shows" default="none" values=#22e
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.left.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.left.piece1 type="group" label="Piece 1" hidden
 option health.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -12697,6 +12836,7 @@ option health.center.format type="select" label="Shows" default="none" values=#2
 option health.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.center.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.center.piece1 type="group" label="Piece 1" hidden
 option health.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -12738,6 +12878,7 @@ option health.right.format type="select" label="Shows" default="none" values=#22
 option health.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.right.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.right.piece1 type="group" label="Piece 1" hidden
 option health.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -12779,6 +12920,7 @@ option health.belowLeft.format type="select" label="Shows" default="none" values
 option health.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.belowLeft.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowLeft.piece1 type="group" label="Piece 1" hidden
 option health.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -12820,6 +12962,7 @@ option health.belowRight.format type="select" label="Shows" default="none" value
 option health.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.belowRight.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowRight.piece1 type="group" label="Piece 1" hidden
 option health.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -12856,7 +12999,7 @@ option health.belowRight.vertical type="select" label="Vertical position" defaul
 option health.belowRight.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
 option health.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
-option power type="group" label="Power" defaults={height=10,right={size=9}}
+option power type="group" label="Power" defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=10,left={levelColor=true},right={levelColor=true,size=9}}
 option power.enabled type="toggle" label="Enabled" default=true
 option power.height type="range" label="Height" default=20 min=2 max=100 step=1
 option power.bar type="group" label="Bar"
@@ -12903,6 +13046,7 @@ option power.left.format type="select" label="Shows" default="none" values=#7588
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.left.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.left.piece1 type="group" label="Piece 1" hidden
 option power.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -12944,6 +13088,7 @@ option power.center.format type="select" label="Shows" default="none" values=#75
 option power.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.center.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.center.piece1 type="group" label="Piece 1" hidden
 option power.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -12985,6 +13130,7 @@ option power.right.format type="select" label="Shows" default="none" values=#758
 option power.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.right.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.right.piece1 type="group" label="Piece 1" hidden
 option power.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -13026,6 +13172,7 @@ option power.belowLeft.format type="select" label="Shows" default="none" values=
 option power.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.belowLeft.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowLeft.piece1 type="group" label="Piece 1" hidden
 option power.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -13067,6 +13214,7 @@ option power.belowRight.format type="select" label="Shows" default="none" values
 option power.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.belowRight.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowRight.piece1 type="group" label="Piece 1" hidden
 option power.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -13647,6 +13795,7 @@ default health.belowLeft.enabled = false
 default health.belowLeft.format = "level:info"
 default health.belowLeft.inset = 4
 default health.belowLeft.justifyH = "LEFT"
+default health.belowLeft.levelColor = true
 default health.belowLeft.offsetX = 0
 default health.belowLeft.offsetY = 0
 default health.belowLeft.piece1.after = ""
@@ -13680,6 +13829,7 @@ default health.belowRight.enabled = false
 default health.belowRight.format = "none"
 default health.belowRight.inset = 4
 default health.belowRight.justifyH = "RIGHT"
+default health.belowRight.levelColor = true
 default health.belowRight.offsetX = 0
 default health.belowRight.offsetY = 0
 default health.belowRight.piece1.after = ""
@@ -13713,6 +13863,7 @@ default health.center.enabled = false
 default health.center.format = "none"
 default health.center.inset = 4
 default health.center.justifyH = "CENTER"
+default health.center.levelColor = true
 default health.center.offsetX = 0
 default health.center.offsetY = 0
 default health.center.piece1.after = ""
@@ -13748,6 +13899,7 @@ default health.left.enabled = true
 default health.left.format = "name"
 default health.left.inset = 4
 default health.left.justifyH = "LEFT"
+default health.left.levelColor = true
 default health.left.offsetX = 0
 default health.left.offsetY = 0
 default health.left.piece1.after = ""
@@ -13781,6 +13933,7 @@ default health.right.enabled = true
 default health.right.format = "health:value"
 default health.right.inset = 4
 default health.right.justifyH = "RIGHT"
+default health.right.levelColor = true
 default health.right.offsetX = 0
 default health.right.offsetY = 0
 default health.right.piece1.after = ""
@@ -13866,6 +14019,7 @@ default power.belowLeft.enabled = false
 default power.belowLeft.format = "none"
 default power.belowLeft.inset = 4
 default power.belowLeft.justifyH = "LEFT"
+default power.belowLeft.levelColor = true
 default power.belowLeft.offsetX = 0
 default power.belowLeft.offsetY = 0
 default power.belowLeft.piece1.after = ""
@@ -13899,6 +14053,7 @@ default power.belowRight.enabled = false
 default power.belowRight.format = "none"
 default power.belowRight.inset = 4
 default power.belowRight.justifyH = "RIGHT"
+default power.belowRight.levelColor = true
 default power.belowRight.offsetX = 0
 default power.belowRight.offsetY = 0
 default power.belowRight.piece1.after = ""
@@ -13932,6 +14087,7 @@ default power.center.enabled = false
 default power.center.format = "none"
 default power.center.inset = 4
 default power.center.justifyH = "CENTER"
+default power.center.levelColor = true
 default power.center.offsetX = 0
 default power.center.offsetY = 0
 default power.center.piece1.after = ""
@@ -13966,6 +14122,7 @@ default power.left.enabled = false
 default power.left.format = "none"
 default power.left.inset = 4
 default power.left.justifyH = "LEFT"
+default power.left.levelColor = true
 default power.left.offsetX = 0
 default power.left.offsetY = 0
 default power.left.piece1.after = ""
@@ -13999,6 +14156,7 @@ default power.right.enabled = true
 default power.right.format = "power:value"
 default power.right.inset = 4
 default power.right.justifyH = "RIGHT"
+default power.right.levelColor = true
 default power.right.offsetX = 0
 default power.right.offsetY = 0
 default power.right.piece1.after = ""
@@ -14372,6 +14530,7 @@ resolved health.belowLeft.font = "Friz Quadrata TT"
 resolved health.belowLeft.format = "level:info"
 resolved health.belowLeft.inset = 4
 resolved health.belowLeft.justifyH = "LEFT"
+resolved health.belowLeft.levelColor = true
 resolved health.belowLeft.offsetX = 0
 resolved health.belowLeft.offsetY = 0
 resolved health.belowLeft.outline = ""
@@ -14407,6 +14566,7 @@ resolved health.belowRight.font = "Friz Quadrata TT"
 resolved health.belowRight.format = "none"
 resolved health.belowRight.inset = 4
 resolved health.belowRight.justifyH = "RIGHT"
+resolved health.belowRight.levelColor = true
 resolved health.belowRight.offsetX = 0
 resolved health.belowRight.offsetY = 0
 resolved health.belowRight.outline = ""
@@ -14442,6 +14602,7 @@ resolved health.center.font = "Friz Quadrata TT"
 resolved health.center.format = "none"
 resolved health.center.inset = 4
 resolved health.center.justifyH = "CENTER"
+resolved health.center.levelColor = true
 resolved health.center.offsetX = 0
 resolved health.center.offsetY = 0
 resolved health.center.outline = ""
@@ -14480,6 +14641,7 @@ resolved health.left.font = "Friz Quadrata TT"
 resolved health.left.format = "name"
 resolved health.left.inset = 4
 resolved health.left.justifyH = "LEFT"
+resolved health.left.levelColor = true
 resolved health.left.offsetX = 0
 resolved health.left.offsetY = 0
 resolved health.left.outline = ""
@@ -14516,6 +14678,7 @@ resolved health.right.font = "Friz Quadrata TT"
 resolved health.right.format = "health:value"
 resolved health.right.inset = 4
 resolved health.right.justifyH = "RIGHT"
+resolved health.right.levelColor = true
 resolved health.right.offsetX = 0
 resolved health.right.offsetY = 0
 resolved health.right.outline = ""
@@ -14617,6 +14780,7 @@ resolved power.belowLeft.font = "Friz Quadrata TT"
 resolved power.belowLeft.format = "none"
 resolved power.belowLeft.inset = 4
 resolved power.belowLeft.justifyH = "LEFT"
+resolved power.belowLeft.levelColor = true
 resolved power.belowLeft.offsetX = 0
 resolved power.belowLeft.offsetY = 0
 resolved power.belowLeft.outline = ""
@@ -14652,6 +14816,7 @@ resolved power.belowRight.font = "Friz Quadrata TT"
 resolved power.belowRight.format = "none"
 resolved power.belowRight.inset = 4
 resolved power.belowRight.justifyH = "RIGHT"
+resolved power.belowRight.levelColor = true
 resolved power.belowRight.offsetX = 0
 resolved power.belowRight.offsetY = 0
 resolved power.belowRight.outline = ""
@@ -14687,6 +14852,7 @@ resolved power.center.font = "Friz Quadrata TT"
 resolved power.center.format = "none"
 resolved power.center.inset = 4
 resolved power.center.justifyH = "CENTER"
+resolved power.center.levelColor = true
 resolved power.center.offsetX = 0
 resolved power.center.offsetY = 0
 resolved power.center.outline = ""
@@ -14724,6 +14890,7 @@ resolved power.left.font = "Friz Quadrata TT"
 resolved power.left.format = "none"
 resolved power.left.inset = 4
 resolved power.left.justifyH = "LEFT"
+resolved power.left.levelColor = true
 resolved power.left.offsetX = 0
 resolved power.left.offsetY = 0
 resolved power.left.outline = ""
@@ -14760,6 +14927,7 @@ resolved power.right.font = "Friz Quadrata TT"
 resolved power.right.format = "power:value"
 resolved power.right.inset = 4
 resolved power.right.justifyH = "RIGHT"
+resolved power.right.levelColor = true
 resolved power.right.offsetX = 0
 resolved power.right.offsetY = 0
 resolved power.right.outline = ""
@@ -14843,7 +15011,7 @@ definition pvp.defaults = {}
 definition raidTarget.defaults = {}
 definition readyCheck = true
 definition readyCheckIcon.defaults = {}
-definition rows = {{defaults={height=24},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={height=10,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
+definition rows = {{defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=24,left={levelColor=true},right={levelColor=true}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=10,left={levelColor=true},right={levelColor=true,size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
 definition sample.castTime = 2.5
 definition sample.class = "MAGE"
 definition sample.className = "Mage"
@@ -14995,6 +15163,7 @@ option health.left.format type="select" label="Shows" default="none" values=#22e
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.left.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.left.piece1 type="group" label="Piece 1" hidden
 option health.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -15036,6 +15205,7 @@ option health.center.format type="select" label="Shows" default="none" values=#2
 option health.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.center.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.center.piece1 type="group" label="Piece 1" hidden
 option health.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -15077,6 +15247,7 @@ option health.right.format type="select" label="Shows" default="none" values=#22
 option health.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.right.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.right.piece1 type="group" label="Piece 1" hidden
 option health.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -15118,6 +15289,7 @@ option health.belowLeft.format type="select" label="Shows" default="none" values
 option health.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.belowLeft.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowLeft.piece1 type="group" label="Piece 1" hidden
 option health.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -15159,6 +15331,7 @@ option health.belowRight.format type="select" label="Shows" default="none" value
 option health.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.belowRight.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowRight.piece1 type="group" label="Piece 1" hidden
 option health.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -15242,6 +15415,7 @@ option power.left.format type="select" label="Shows" default="none" values=#7588
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.left.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.left.piece1 type="group" label="Piece 1" hidden
 option power.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -15283,6 +15457,7 @@ option power.center.format type="select" label="Shows" default="none" values=#75
 option power.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.center.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.center.piece1 type="group" label="Piece 1" hidden
 option power.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -15324,6 +15499,7 @@ option power.right.format type="select" label="Shows" default="none" values=#758
 option power.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.right.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.right.piece1 type="group" label="Piece 1" hidden
 option power.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -15365,6 +15541,7 @@ option power.belowLeft.format type="select" label="Shows" default="none" values=
 option power.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.belowLeft.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowLeft.piece1 type="group" label="Piece 1" hidden
 option power.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -15406,6 +15583,7 @@ option power.belowRight.format type="select" label="Shows" default="none" values
 option power.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.belowRight.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowRight.piece1 type="group" label="Piece 1" hidden
 option power.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -15986,6 +16164,7 @@ default health.belowLeft.enabled = false
 default health.belowLeft.format = "level:info"
 default health.belowLeft.inset = 4
 default health.belowLeft.justifyH = "LEFT"
+default health.belowLeft.levelColor = false
 default health.belowLeft.offsetX = 0
 default health.belowLeft.offsetY = 0
 default health.belowLeft.piece1.after = ""
@@ -16019,6 +16198,7 @@ default health.belowRight.enabled = false
 default health.belowRight.format = "none"
 default health.belowRight.inset = 4
 default health.belowRight.justifyH = "RIGHT"
+default health.belowRight.levelColor = false
 default health.belowRight.offsetX = 0
 default health.belowRight.offsetY = 0
 default health.belowRight.piece1.after = ""
@@ -16052,6 +16232,7 @@ default health.center.enabled = false
 default health.center.format = "none"
 default health.center.inset = 4
 default health.center.justifyH = "CENTER"
+default health.center.levelColor = false
 default health.center.offsetX = 0
 default health.center.offsetY = 0
 default health.center.piece1.after = ""
@@ -16087,6 +16268,7 @@ default health.left.enabled = true
 default health.left.format = "name"
 default health.left.inset = 4
 default health.left.justifyH = "LEFT"
+default health.left.levelColor = false
 default health.left.offsetX = 0
 default health.left.offsetY = 0
 default health.left.piece1.after = ""
@@ -16121,6 +16303,7 @@ default health.right.enabled = true
 default health.right.format = "health:percent"
 default health.right.inset = 4
 default health.right.justifyH = "RIGHT"
+default health.right.levelColor = false
 default health.right.offsetX = 0
 default health.right.offsetY = 0
 default health.right.piece1.after = ""
@@ -16207,6 +16390,7 @@ default power.belowLeft.enabled = false
 default power.belowLeft.format = "none"
 default power.belowLeft.inset = 4
 default power.belowLeft.justifyH = "LEFT"
+default power.belowLeft.levelColor = false
 default power.belowLeft.offsetX = 0
 default power.belowLeft.offsetY = 0
 default power.belowLeft.piece1.after = ""
@@ -16240,6 +16424,7 @@ default power.belowRight.enabled = false
 default power.belowRight.format = "none"
 default power.belowRight.inset = 4
 default power.belowRight.justifyH = "RIGHT"
+default power.belowRight.levelColor = false
 default power.belowRight.offsetX = 0
 default power.belowRight.offsetY = 0
 default power.belowRight.piece1.after = ""
@@ -16273,6 +16458,7 @@ default power.center.enabled = false
 default power.center.format = "none"
 default power.center.inset = 4
 default power.center.justifyH = "CENTER"
+default power.center.levelColor = false
 default power.center.offsetX = 0
 default power.center.offsetY = 0
 default power.center.piece1.after = ""
@@ -16307,6 +16493,7 @@ default power.left.enabled = false
 default power.left.format = "none"
 default power.left.inset = 4
 default power.left.justifyH = "LEFT"
+default power.left.levelColor = false
 default power.left.offsetX = 0
 default power.left.offsetY = 0
 default power.left.piece1.after = ""
@@ -16340,6 +16527,7 @@ default power.right.enabled = true
 default power.right.format = "power:percent"
 default power.right.inset = 4
 default power.right.justifyH = "RIGHT"
+default power.right.levelColor = false
 default power.right.offsetX = 0
 default power.right.offsetY = 0
 default power.right.piece1.after = ""
@@ -16713,6 +16901,7 @@ resolved health.belowLeft.font = "Friz Quadrata TT"
 resolved health.belowLeft.format = "level:info"
 resolved health.belowLeft.inset = 4
 resolved health.belowLeft.justifyH = "LEFT"
+resolved health.belowLeft.levelColor = false
 resolved health.belowLeft.offsetX = 0
 resolved health.belowLeft.offsetY = 0
 resolved health.belowLeft.outline = ""
@@ -16748,6 +16937,7 @@ resolved health.belowRight.font = "Friz Quadrata TT"
 resolved health.belowRight.format = "none"
 resolved health.belowRight.inset = 4
 resolved health.belowRight.justifyH = "RIGHT"
+resolved health.belowRight.levelColor = false
 resolved health.belowRight.offsetX = 0
 resolved health.belowRight.offsetY = 0
 resolved health.belowRight.outline = ""
@@ -16783,6 +16973,7 @@ resolved health.center.font = "Friz Quadrata TT"
 resolved health.center.format = "none"
 resolved health.center.inset = 4
 resolved health.center.justifyH = "CENTER"
+resolved health.center.levelColor = false
 resolved health.center.offsetX = 0
 resolved health.center.offsetY = 0
 resolved health.center.outline = ""
@@ -16821,6 +17012,7 @@ resolved health.left.font = "Friz Quadrata TT"
 resolved health.left.format = "name"
 resolved health.left.inset = 4
 resolved health.left.justifyH = "LEFT"
+resolved health.left.levelColor = false
 resolved health.left.offsetX = 0
 resolved health.left.offsetY = 0
 resolved health.left.outline = ""
@@ -16857,6 +17049,7 @@ resolved health.right.font = "Friz Quadrata TT"
 resolved health.right.format = "health:percent"
 resolved health.right.inset = 4
 resolved health.right.justifyH = "RIGHT"
+resolved health.right.levelColor = false
 resolved health.right.offsetX = 0
 resolved health.right.offsetY = 0
 resolved health.right.outline = ""
@@ -16958,6 +17151,7 @@ resolved power.belowLeft.font = "Friz Quadrata TT"
 resolved power.belowLeft.format = "none"
 resolved power.belowLeft.inset = 4
 resolved power.belowLeft.justifyH = "LEFT"
+resolved power.belowLeft.levelColor = false
 resolved power.belowLeft.offsetX = 0
 resolved power.belowLeft.offsetY = 0
 resolved power.belowLeft.outline = ""
@@ -16993,6 +17187,7 @@ resolved power.belowRight.font = "Friz Quadrata TT"
 resolved power.belowRight.format = "none"
 resolved power.belowRight.inset = 4
 resolved power.belowRight.justifyH = "RIGHT"
+resolved power.belowRight.levelColor = false
 resolved power.belowRight.offsetX = 0
 resolved power.belowRight.offsetY = 0
 resolved power.belowRight.outline = ""
@@ -17028,6 +17223,7 @@ resolved power.center.font = "Friz Quadrata TT"
 resolved power.center.format = "none"
 resolved power.center.inset = 4
 resolved power.center.justifyH = "CENTER"
+resolved power.center.levelColor = false
 resolved power.center.offsetX = 0
 resolved power.center.offsetY = 0
 resolved power.center.outline = ""
@@ -17065,6 +17261,7 @@ resolved power.left.font = "Friz Quadrata TT"
 resolved power.left.format = "none"
 resolved power.left.inset = 4
 resolved power.left.justifyH = "LEFT"
+resolved power.left.levelColor = false
 resolved power.left.offsetX = 0
 resolved power.left.offsetY = 0
 resolved power.left.outline = ""
@@ -17101,6 +17298,7 @@ resolved power.right.font = "Friz Quadrata TT"
 resolved power.right.format = "power:percent"
 resolved power.right.inset = 4
 resolved power.right.justifyH = "RIGHT"
+resolved power.right.levelColor = false
 resolved power.right.offsetX = 0
 resolved power.right.offsetY = 0
 resolved power.right.outline = ""
@@ -17260,6 +17458,7 @@ option left.format type="select" label="Shows" default="none" values=#19ed1b49
 option left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option left.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option left.piece1 type="group" label="Piece 1" hidden
 option left.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -17301,6 +17500,7 @@ option center.format type="select" label="Shows" default="none" values=#19ed1b49
 option center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option center.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option center.piece1 type="group" label="Piece 1" hidden
 option center.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -17342,6 +17542,7 @@ option right.format type="select" label="Shows" default="none" values=#19ed1b49
 option right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option right.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option right.piece1 type="group" label="Piece 1" hidden
 option right.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -17383,6 +17584,7 @@ option belowLeft.format type="select" label="Shows" default="none" values=#19ed1
 option belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option belowLeft.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option belowLeft.piece1 type="group" label="Piece 1" hidden
 option belowLeft.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -17424,6 +17626,7 @@ option belowRight.format type="select" label="Shows" default="none" values=#19ed
 option belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option belowRight.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option belowRight.piece1 type="group" label="Piece 1" hidden
 option belowRight.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -17500,6 +17703,7 @@ default belowLeft.enabled = false
 default belowLeft.format = "level:class"
 default belowLeft.inset = 4
 default belowLeft.justifyH = "LEFT"
+default belowLeft.levelColor = false
 default belowLeft.offsetX = 0
 default belowLeft.offsetY = 0
 default belowLeft.piece1.after = ""
@@ -17533,6 +17737,7 @@ default belowRight.enabled = false
 default belowRight.format = "none"
 default belowRight.inset = 4
 default belowRight.justifyH = "RIGHT"
+default belowRight.levelColor = false
 default belowRight.offsetX = 0
 default belowRight.offsetY = 0
 default belowRight.piece1.after = ""
@@ -17566,6 +17771,7 @@ default center.enabled = false
 default center.format = "none"
 default center.inset = 4
 default center.justifyH = "CENTER"
+default center.levelColor = false
 default center.offsetX = 0
 default center.offsetY = 0
 default center.piece1.after = ""
@@ -17599,6 +17805,7 @@ default left.enabled = true
 default left.format = "name"
 default left.inset = 4
 default left.justifyH = "LEFT"
+default left.levelColor = false
 default left.offsetX = 0
 default left.offsetY = 0
 default left.piece1.after = ""
@@ -17632,6 +17839,7 @@ default right.enabled = true
 default right.format = "health:value"
 default right.inset = 4
 default right.justifyH = "RIGHT"
+default right.levelColor = false
 default right.offsetX = 0
 default right.offsetY = 0
 default right.piece1.after = ""
@@ -17710,6 +17918,7 @@ resolved belowLeft.font = "Friz Quadrata TT"
 resolved belowLeft.format = "level:class"
 resolved belowLeft.inset = 4
 resolved belowLeft.justifyH = "LEFT"
+resolved belowLeft.levelColor = false
 resolved belowLeft.offsetX = 0
 resolved belowLeft.offsetY = 0
 resolved belowLeft.outline = ""
@@ -17745,6 +17954,7 @@ resolved belowRight.font = "Friz Quadrata TT"
 resolved belowRight.format = "none"
 resolved belowRight.inset = 4
 resolved belowRight.justifyH = "RIGHT"
+resolved belowRight.levelColor = false
 resolved belowRight.offsetX = 0
 resolved belowRight.offsetY = 0
 resolved belowRight.outline = ""
@@ -17780,6 +17990,7 @@ resolved center.font = "Friz Quadrata TT"
 resolved center.format = "none"
 resolved center.inset = 4
 resolved center.justifyH = "CENTER"
+resolved center.levelColor = false
 resolved center.offsetX = 0
 resolved center.offsetY = 0
 resolved center.outline = ""
@@ -17816,6 +18027,7 @@ resolved left.font = "Friz Quadrata TT"
 resolved left.format = "name"
 resolved left.inset = 4
 resolved left.justifyH = "LEFT"
+resolved left.levelColor = false
 resolved left.offsetX = 0
 resolved left.offsetY = 0
 resolved left.outline = ""
@@ -17852,6 +18064,7 @@ resolved right.font = "Friz Quadrata TT"
 resolved right.format = "health:value"
 resolved right.inset = 4
 resolved right.justifyH = "RIGHT"
+resolved right.levelColor = false
 resolved right.offsetX = 0
 resolved right.offsetY = 0
 resolved right.outline = ""
@@ -17927,6 +18140,7 @@ option left.format type="select" label="Shows" default="none" values=#eb36ec28
 option left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option left.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option left.piece1 type="group" label="Piece 1" hidden
 option left.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -17968,6 +18182,7 @@ option center.format type="select" label="Shows" default="none" values=#eb36ec28
 option center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option center.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option center.piece1 type="group" label="Piece 1" hidden
 option center.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -18009,6 +18224,7 @@ option right.format type="select" label="Shows" default="none" values=#eb36ec28
 option right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option right.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option right.piece1 type="group" label="Piece 1" hidden
 option right.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -18050,6 +18266,7 @@ option belowLeft.format type="select" label="Shows" default="none" values=#eb36e
 option belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option belowLeft.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option belowLeft.piece1 type="group" label="Piece 1" hidden
 option belowLeft.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -18091,6 +18308,7 @@ option belowRight.format type="select" label="Shows" default="none" values=#eb36
 option belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option belowRight.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option belowRight.piece1 type="group" label="Piece 1" hidden
 option belowRight.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -18157,6 +18375,7 @@ default belowLeft.enabled = false
 default belowLeft.format = "none"
 default belowLeft.inset = 4
 default belowLeft.justifyH = "LEFT"
+default belowLeft.levelColor = false
 default belowLeft.offsetX = 0
 default belowLeft.offsetY = 0
 default belowLeft.piece1.after = ""
@@ -18190,6 +18409,7 @@ default belowRight.enabled = false
 default belowRight.format = "none"
 default belowRight.inset = 4
 default belowRight.justifyH = "RIGHT"
+default belowRight.levelColor = false
 default belowRight.offsetX = 0
 default belowRight.offsetY = 0
 default belowRight.piece1.after = ""
@@ -18223,6 +18443,7 @@ default center.enabled = false
 default center.format = "none"
 default center.inset = 4
 default center.justifyH = "CENTER"
+default center.levelColor = false
 default center.offsetX = 0
 default center.offsetY = 0
 default center.piece1.after = ""
@@ -18256,6 +18477,7 @@ default left.enabled = false
 default left.format = "none"
 default left.inset = 4
 default left.justifyH = "LEFT"
+default left.levelColor = false
 default left.offsetX = 0
 default left.offsetY = 0
 default left.piece1.after = ""
@@ -18289,6 +18511,7 @@ default right.enabled = true
 default right.format = "power:value"
 default right.inset = 4
 default right.justifyH = "RIGHT"
+default right.levelColor = false
 default right.offsetX = 0
 default right.offsetY = 0
 default right.piece1.after = ""
@@ -18355,6 +18578,7 @@ resolved belowLeft.font = "Friz Quadrata TT"
 resolved belowLeft.format = "none"
 resolved belowLeft.inset = 4
 resolved belowLeft.justifyH = "LEFT"
+resolved belowLeft.levelColor = false
 resolved belowLeft.offsetX = 0
 resolved belowLeft.offsetY = 0
 resolved belowLeft.outline = ""
@@ -18390,6 +18614,7 @@ resolved belowRight.font = "Friz Quadrata TT"
 resolved belowRight.format = "none"
 resolved belowRight.inset = 4
 resolved belowRight.justifyH = "RIGHT"
+resolved belowRight.levelColor = false
 resolved belowRight.offsetX = 0
 resolved belowRight.offsetY = 0
 resolved belowRight.outline = ""
@@ -18425,6 +18650,7 @@ resolved center.font = "Friz Quadrata TT"
 resolved center.format = "none"
 resolved center.inset = 4
 resolved center.justifyH = "CENTER"
+resolved center.levelColor = false
 resolved center.offsetX = 0
 resolved center.offsetY = 0
 resolved center.outline = ""
@@ -18461,6 +18687,7 @@ resolved left.font = "Friz Quadrata TT"
 resolved left.format = "none"
 resolved left.inset = 4
 resolved left.justifyH = "LEFT"
+resolved left.levelColor = false
 resolved left.offsetX = 0
 resolved left.offsetY = 0
 resolved left.outline = ""
@@ -18497,6 +18724,7 @@ resolved right.font = "Friz Quadrata TT"
 resolved right.format = "power:value"
 resolved right.inset = 4
 resolved right.justifyH = "RIGHT"
+resolved right.levelColor = false
 resolved right.offsetX = 0
 resolved right.offsetY = 0
 resolved right.outline = ""
@@ -18572,6 +18800,7 @@ option left.format type="select" label="Shows" default="none" values=#9d1dcdcc
 option left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option left.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option left.piece1 type="group" label="Piece 1" hidden
 option left.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -18613,6 +18842,7 @@ option center.format type="select" label="Shows" default="none" values=#9d1dcdcc
 option center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option center.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option center.piece1 type="group" label="Piece 1" hidden
 option center.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -18654,6 +18884,7 @@ option right.format type="select" label="Shows" default="none" values=#9d1dcdcc
 option right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option right.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option right.piece1 type="group" label="Piece 1" hidden
 option right.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -18695,6 +18926,7 @@ option belowLeft.format type="select" label="Shows" default="none" values=#9d1dc
 option belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option belowLeft.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option belowLeft.piece1 type="group" label="Piece 1" hidden
 option belowLeft.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -18736,6 +18968,7 @@ option belowRight.format type="select" label="Shows" default="none" values=#9d1d
 option belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option belowRight.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option belowRight.piece1 type="group" label="Piece 1" hidden
 option belowRight.piece1.source type="select" label="Source" default="none" values=#587830f9 tooltip=#719320d5
@@ -18802,6 +19035,7 @@ default belowLeft.enabled = false
 default belowLeft.format = "none"
 default belowLeft.inset = 4
 default belowLeft.justifyH = "LEFT"
+default belowLeft.levelColor = false
 default belowLeft.offsetX = 0
 default belowLeft.offsetY = 0
 default belowLeft.piece1.after = ""
@@ -18835,6 +19069,7 @@ default belowRight.enabled = false
 default belowRight.format = "none"
 default belowRight.inset = 4
 default belowRight.justifyH = "RIGHT"
+default belowRight.levelColor = false
 default belowRight.offsetX = 0
 default belowRight.offsetY = 0
 default belowRight.piece1.after = ""
@@ -18868,6 +19103,7 @@ default center.enabled = true
 default center.format = "xp:value:percent"
 default center.inset = 4
 default center.justifyH = "CENTER"
+default center.levelColor = false
 default center.offsetX = 0
 default center.offsetY = 0
 default center.piece1.after = ""
@@ -18901,6 +19137,7 @@ default left.enabled = false
 default left.format = "none"
 default left.inset = 4
 default left.justifyH = "LEFT"
+default left.levelColor = false
 default left.offsetX = 0
 default left.offsetY = 0
 default left.piece1.after = ""
@@ -18934,6 +19171,7 @@ default right.enabled = false
 default right.format = "none"
 default right.inset = 4
 default right.justifyH = "RIGHT"
+default right.levelColor = false
 default right.offsetX = 0
 default right.offsetY = 0
 default right.piece1.after = ""
@@ -19000,6 +19238,7 @@ resolved belowLeft.font = "Friz Quadrata TT"
 resolved belowLeft.format = "none"
 resolved belowLeft.inset = 4
 resolved belowLeft.justifyH = "LEFT"
+resolved belowLeft.levelColor = false
 resolved belowLeft.offsetX = 0
 resolved belowLeft.offsetY = 0
 resolved belowLeft.outline = ""
@@ -19035,6 +19274,7 @@ resolved belowRight.font = "Friz Quadrata TT"
 resolved belowRight.format = "none"
 resolved belowRight.inset = 4
 resolved belowRight.justifyH = "RIGHT"
+resolved belowRight.levelColor = false
 resolved belowRight.offsetX = 0
 resolved belowRight.offsetY = 0
 resolved belowRight.outline = ""
@@ -19070,6 +19310,7 @@ resolved center.font = "Friz Quadrata TT"
 resolved center.format = "xp:value:percent"
 resolved center.inset = 4
 resolved center.justifyH = "CENTER"
+resolved center.levelColor = false
 resolved center.offsetX = 0
 resolved center.offsetY = 0
 resolved center.outline = ""
@@ -19106,6 +19347,7 @@ resolved left.font = "Friz Quadrata TT"
 resolved left.format = "none"
 resolved left.inset = 4
 resolved left.justifyH = "LEFT"
+resolved left.levelColor = false
 resolved left.offsetX = 0
 resolved left.offsetY = 0
 resolved left.outline = ""
@@ -19142,6 +19384,7 @@ resolved right.font = "Friz Quadrata TT"
 resolved right.format = "none"
 resolved right.inset = 4
 resolved right.justifyH = "RIGHT"
+resolved right.levelColor = false
 resolved right.offsetX = 0
 resolved right.offsetY = 0
 resolved right.outline = ""
@@ -19312,6 +19555,7 @@ option health.left.format type="select" label="Shows" default="none" values=#22e
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.left.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.left.piece1 type="group" label="Piece 1" hidden
 option health.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -19353,6 +19597,7 @@ option health.center.format type="select" label="Shows" default="none" values=#2
 option health.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.center.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.center.piece1 type="group" label="Piece 1" hidden
 option health.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -19394,6 +19639,7 @@ option health.right.format type="select" label="Shows" default="none" values=#22
 option health.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.right.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.right.piece1 type="group" label="Piece 1" hidden
 option health.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -19435,6 +19681,7 @@ option health.belowLeft.format type="select" label="Shows" default="none" values
 option health.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.belowLeft.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowLeft.piece1 type="group" label="Piece 1" hidden
 option health.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -19476,6 +19723,7 @@ option health.belowRight.format type="select" label="Shows" default="none" value
 option health.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.belowRight.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowRight.piece1 type="group" label="Piece 1" hidden
 option health.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -19559,6 +19807,7 @@ option power.left.format type="select" label="Shows" default="none" values=#7588
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.left.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.left.piece1 type="group" label="Piece 1" hidden
 option power.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -19600,6 +19849,7 @@ option power.center.format type="select" label="Shows" default="none" values=#75
 option power.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.center.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.center.piece1 type="group" label="Piece 1" hidden
 option power.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -19641,6 +19891,7 @@ option power.right.format type="select" label="Shows" default="none" values=#758
 option power.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.right.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.right.piece1 type="group" label="Piece 1" hidden
 option power.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -19682,6 +19933,7 @@ option power.belowLeft.format type="select" label="Shows" default="none" values=
 option power.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.belowLeft.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowLeft.piece1 type="group" label="Piece 1" hidden
 option power.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -19723,6 +19975,7 @@ option power.belowRight.format type="select" label="Shows" default="none" values
 option power.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.belowRight.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowRight.piece1 type="group" label="Piece 1" hidden
 option power.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -20271,6 +20524,7 @@ default health.belowLeft.enabled = false
 default health.belowLeft.format = "level:class"
 default health.belowLeft.inset = 4
 default health.belowLeft.justifyH = "LEFT"
+default health.belowLeft.levelColor = false
 default health.belowLeft.offsetX = 0
 default health.belowLeft.offsetY = 0
 default health.belowLeft.piece1.after = ""
@@ -20304,6 +20558,7 @@ default health.belowRight.enabled = false
 default health.belowRight.format = "none"
 default health.belowRight.inset = 4
 default health.belowRight.justifyH = "RIGHT"
+default health.belowRight.levelColor = false
 default health.belowRight.offsetX = 0
 default health.belowRight.offsetY = 0
 default health.belowRight.piece1.after = ""
@@ -20337,6 +20592,7 @@ default health.center.enabled = false
 default health.center.format = "none"
 default health.center.inset = 4
 default health.center.justifyH = "CENTER"
+default health.center.levelColor = false
 default health.center.offsetX = 0
 default health.center.offsetY = 0
 default health.center.piece1.after = ""
@@ -20372,6 +20628,7 @@ default health.left.enabled = true
 default health.left.format = "name"
 default health.left.inset = 4
 default health.left.justifyH = "LEFT"
+default health.left.levelColor = false
 default health.left.offsetX = 0
 default health.left.offsetY = 0
 default health.left.piece1.after = ""
@@ -20406,6 +20663,7 @@ default health.right.enabled = true
 default health.right.format = "health:percent"
 default health.right.inset = 4
 default health.right.justifyH = "RIGHT"
+default health.right.levelColor = false
 default health.right.offsetX = 0
 default health.right.offsetY = 0
 default health.right.piece1.after = ""
@@ -20492,6 +20750,7 @@ default power.belowLeft.enabled = false
 default power.belowLeft.format = "none"
 default power.belowLeft.inset = 4
 default power.belowLeft.justifyH = "LEFT"
+default power.belowLeft.levelColor = false
 default power.belowLeft.offsetX = 0
 default power.belowLeft.offsetY = 0
 default power.belowLeft.piece1.after = ""
@@ -20525,6 +20784,7 @@ default power.belowRight.enabled = false
 default power.belowRight.format = "none"
 default power.belowRight.inset = 4
 default power.belowRight.justifyH = "RIGHT"
+default power.belowRight.levelColor = false
 default power.belowRight.offsetX = 0
 default power.belowRight.offsetY = 0
 default power.belowRight.piece1.after = ""
@@ -20558,6 +20818,7 @@ default power.center.enabled = false
 default power.center.format = "none"
 default power.center.inset = 4
 default power.center.justifyH = "CENTER"
+default power.center.levelColor = false
 default power.center.offsetX = 0
 default power.center.offsetY = 0
 default power.center.piece1.after = ""
@@ -20592,6 +20853,7 @@ default power.left.enabled = false
 default power.left.format = "none"
 default power.left.inset = 4
 default power.left.justifyH = "LEFT"
+default power.left.levelColor = false
 default power.left.offsetX = 0
 default power.left.offsetY = 0
 default power.left.piece1.after = ""
@@ -20625,6 +20887,7 @@ default power.right.enabled = true
 default power.right.format = "power:percent"
 default power.right.inset = 4
 default power.right.justifyH = "RIGHT"
+default power.right.levelColor = false
 default power.right.offsetX = 0
 default power.right.offsetY = 0
 default power.right.piece1.after = ""
@@ -20976,6 +21239,7 @@ resolved health.belowLeft.font = "Friz Quadrata TT"
 resolved health.belowLeft.format = "level:class"
 resolved health.belowLeft.inset = 4
 resolved health.belowLeft.justifyH = "LEFT"
+resolved health.belowLeft.levelColor = false
 resolved health.belowLeft.offsetX = 0
 resolved health.belowLeft.offsetY = 0
 resolved health.belowLeft.outline = ""
@@ -21011,6 +21275,7 @@ resolved health.belowRight.font = "Friz Quadrata TT"
 resolved health.belowRight.format = "none"
 resolved health.belowRight.inset = 4
 resolved health.belowRight.justifyH = "RIGHT"
+resolved health.belowRight.levelColor = false
 resolved health.belowRight.offsetX = 0
 resolved health.belowRight.offsetY = 0
 resolved health.belowRight.outline = ""
@@ -21046,6 +21311,7 @@ resolved health.center.font = "Friz Quadrata TT"
 resolved health.center.format = "none"
 resolved health.center.inset = 4
 resolved health.center.justifyH = "CENTER"
+resolved health.center.levelColor = false
 resolved health.center.offsetX = 0
 resolved health.center.offsetY = 0
 resolved health.center.outline = ""
@@ -21084,6 +21350,7 @@ resolved health.left.font = "Friz Quadrata TT"
 resolved health.left.format = "name"
 resolved health.left.inset = 4
 resolved health.left.justifyH = "LEFT"
+resolved health.left.levelColor = false
 resolved health.left.offsetX = 0
 resolved health.left.offsetY = 0
 resolved health.left.outline = ""
@@ -21120,6 +21387,7 @@ resolved health.right.font = "Friz Quadrata TT"
 resolved health.right.format = "health:percent"
 resolved health.right.inset = 4
 resolved health.right.justifyH = "RIGHT"
+resolved health.right.levelColor = false
 resolved health.right.offsetX = 0
 resolved health.right.offsetY = 0
 resolved health.right.outline = ""
@@ -21221,6 +21489,7 @@ resolved power.belowLeft.font = "Friz Quadrata TT"
 resolved power.belowLeft.format = "none"
 resolved power.belowLeft.inset = 4
 resolved power.belowLeft.justifyH = "LEFT"
+resolved power.belowLeft.levelColor = false
 resolved power.belowLeft.offsetX = 0
 resolved power.belowLeft.offsetY = 0
 resolved power.belowLeft.outline = ""
@@ -21256,6 +21525,7 @@ resolved power.belowRight.font = "Friz Quadrata TT"
 resolved power.belowRight.format = "none"
 resolved power.belowRight.inset = 4
 resolved power.belowRight.justifyH = "RIGHT"
+resolved power.belowRight.levelColor = false
 resolved power.belowRight.offsetX = 0
 resolved power.belowRight.offsetY = 0
 resolved power.belowRight.outline = ""
@@ -21291,6 +21561,7 @@ resolved power.center.font = "Friz Quadrata TT"
 resolved power.center.format = "none"
 resolved power.center.inset = 4
 resolved power.center.justifyH = "CENTER"
+resolved power.center.levelColor = false
 resolved power.center.offsetX = 0
 resolved power.center.offsetY = 0
 resolved power.center.outline = ""
@@ -21328,6 +21599,7 @@ resolved power.left.font = "Friz Quadrata TT"
 resolved power.left.format = "none"
 resolved power.left.inset = 4
 resolved power.left.justifyH = "LEFT"
+resolved power.left.levelColor = false
 resolved power.left.offsetX = 0
 resolved power.left.offsetY = 0
 resolved power.left.outline = ""
@@ -21364,6 +21636,7 @@ resolved power.right.font = "Friz Quadrata TT"
 resolved power.right.format = "power:percent"
 resolved power.right.inset = 4
 resolved power.right.justifyH = "RIGHT"
+resolved power.right.levelColor = false
 resolved power.right.offsetX = 0
 resolved power.right.offsetY = 0
 resolved power.right.outline = ""
@@ -21542,7 +21815,7 @@ option portrait.border.size type="range" label="Border size" inherit="borderSize
 option portrait.border.color type="color" label="Border colour" inherit="borderColor"
 option portrait.border.background type="background" label="Background" inherit="backgroundTexture"
 option portrait.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option health type="group" label="Health" defaults={height=28,left={size=10},right={format="health:percent",size=9}}
+option health type="group" label="Health" defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=28,left={levelColor=true,size=10},right={format="health:percent",levelColor=true,size=9}}
 option health.enabled type="toggle" label="Enabled" default=true
 option health.height type="range" label="Height" default=20 min=2 max=100 step=1
 option health.colorMode type="select" label="Bar colour" default="class" values=#9f707d09
@@ -21605,6 +21878,7 @@ option health.left.format type="select" label="Shows" default="none" values=#22e
 option health.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.left.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.left.piece1 type="group" label="Piece 1" hidden
 option health.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -21646,6 +21920,7 @@ option health.center.format type="select" label="Shows" default="none" values=#2
 option health.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.center.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.center.piece1 type="group" label="Piece 1" hidden
 option health.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -21687,6 +21962,7 @@ option health.right.format type="select" label="Shows" default="none" values=#22
 option health.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.right.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.right.piece1 type="group" label="Piece 1" hidden
 option health.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -21728,6 +22004,7 @@ option health.belowLeft.format type="select" label="Shows" default="none" values
 option health.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.belowLeft.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowLeft.piece1 type="group" label="Piece 1" hidden
 option health.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -21769,6 +22046,7 @@ option health.belowRight.format type="select" label="Shows" default="none" value
 option health.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option health.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option health.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option health.belowRight.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option health.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option health.belowRight.piece1 type="group" label="Piece 1" hidden
 option health.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -21805,7 +22083,7 @@ option health.belowRight.vertical type="select" label="Vertical position" defaul
 option health.belowRight.inset type="range" label="Edge inset" default=4 min=0 max=30 step=1 tooltip=#756216c4
 option health.belowRight.offsetX type="range" label="Offset X" default=0 min=-100 max=100 step=1
 option health.belowRight.offsetY type="range" label="Offset Y" default=0 min=-50 max=50 step=1
-option power type="group" label="Power" defaults={enabled=false,height=8,right={format="power:percent",size=8}}
+option power type="group" label="Power" defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},enabled=false,height=8,left={levelColor=true},right={format="power:percent",levelColor=true,size=8}}
 option power.enabled type="toggle" label="Enabled" default=true
 option power.height type="range" label="Height" default=20 min=2 max=100 step=1
 option power.bar type="group" label="Bar"
@@ -21852,6 +22130,7 @@ option power.left.format type="select" label="Shows" default="none" values=#7588
 option power.left.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.left.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.left.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.left.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.left.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.left.piece1 type="group" label="Piece 1" hidden
 option power.left.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -21893,6 +22172,7 @@ option power.center.format type="select" label="Shows" default="none" values=#75
 option power.center.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.center.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.center.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.center.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.center.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.center.piece1 type="group" label="Piece 1" hidden
 option power.center.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -21934,6 +22214,7 @@ option power.right.format type="select" label="Shows" default="none" values=#758
 option power.right.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.right.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.right.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.right.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.right.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.right.piece1 type="group" label="Piece 1" hidden
 option power.right.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -21975,6 +22256,7 @@ option power.belowLeft.format type="select" label="Shows" default="none" values=
 option power.belowLeft.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowLeft.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.belowLeft.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.belowLeft.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.belowLeft.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowLeft.piece1 type="group" label="Piece 1" hidden
 option power.belowLeft.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -22016,6 +22298,7 @@ option power.belowRight.format type="select" label="Shows" default="none" values
 option power.belowRight.customize type="action" label="Edit as custom text" tooltip=#882590d8 hidden
 option power.belowRight.whileCasting type="select" label="While casting" default="keep" values=#e7d8d0cb hidden
 option power.belowRight.whileStatus type="select" label="While dead or offline" default="status" values=#d3c77f81 tooltip=#0dc2e8da hidden
+option power.belowRight.levelColor type="toggle" label="Colour level by difficulty" default=false tooltip=#4e8fa2a3 hidden
 option power.belowRight.customInitialized type="toggle" label="Custom text set up" default=false hidden
 option power.belowRight.piece1 type="group" label="Piece 1" hidden
 option power.belowRight.piece1.source type="select" label="Source" default="none" values=#7796b2fa tooltip=#719320d5
@@ -22564,6 +22847,7 @@ default health.belowLeft.enabled = false
 default health.belowLeft.format = "level:info"
 default health.belowLeft.inset = 4
 default health.belowLeft.justifyH = "LEFT"
+default health.belowLeft.levelColor = true
 default health.belowLeft.offsetX = 0
 default health.belowLeft.offsetY = 0
 default health.belowLeft.piece1.after = ""
@@ -22597,6 +22881,7 @@ default health.belowRight.enabled = false
 default health.belowRight.format = "none"
 default health.belowRight.inset = 4
 default health.belowRight.justifyH = "RIGHT"
+default health.belowRight.levelColor = true
 default health.belowRight.offsetX = 0
 default health.belowRight.offsetY = 0
 default health.belowRight.piece1.after = ""
@@ -22630,6 +22915,7 @@ default health.center.enabled = false
 default health.center.format = "none"
 default health.center.inset = 4
 default health.center.justifyH = "CENTER"
+default health.center.levelColor = true
 default health.center.offsetX = 0
 default health.center.offsetY = 0
 default health.center.piece1.after = ""
@@ -22665,6 +22951,7 @@ default health.left.enabled = true
 default health.left.format = "name"
 default health.left.inset = 4
 default health.left.justifyH = "LEFT"
+default health.left.levelColor = true
 default health.left.offsetX = 0
 default health.left.offsetY = 0
 default health.left.piece1.after = ""
@@ -22699,6 +22986,7 @@ default health.right.enabled = true
 default health.right.format = "health:percent"
 default health.right.inset = 4
 default health.right.justifyH = "RIGHT"
+default health.right.levelColor = true
 default health.right.offsetX = 0
 default health.right.offsetY = 0
 default health.right.piece1.after = ""
@@ -22785,6 +23073,7 @@ default power.belowLeft.enabled = false
 default power.belowLeft.format = "none"
 default power.belowLeft.inset = 4
 default power.belowLeft.justifyH = "LEFT"
+default power.belowLeft.levelColor = true
 default power.belowLeft.offsetX = 0
 default power.belowLeft.offsetY = 0
 default power.belowLeft.piece1.after = ""
@@ -22818,6 +23107,7 @@ default power.belowRight.enabled = false
 default power.belowRight.format = "none"
 default power.belowRight.inset = 4
 default power.belowRight.justifyH = "RIGHT"
+default power.belowRight.levelColor = true
 default power.belowRight.offsetX = 0
 default power.belowRight.offsetY = 0
 default power.belowRight.piece1.after = ""
@@ -22851,6 +23141,7 @@ default power.center.enabled = false
 default power.center.format = "none"
 default power.center.inset = 4
 default power.center.justifyH = "CENTER"
+default power.center.levelColor = true
 default power.center.offsetX = 0
 default power.center.offsetY = 0
 default power.center.piece1.after = ""
@@ -22885,6 +23176,7 @@ default power.left.enabled = false
 default power.left.format = "none"
 default power.left.inset = 4
 default power.left.justifyH = "LEFT"
+default power.left.levelColor = true
 default power.left.offsetX = 0
 default power.left.offsetY = 0
 default power.left.piece1.after = ""
@@ -22918,6 +23210,7 @@ default power.right.enabled = true
 default power.right.format = "power:percent"
 default power.right.inset = 4
 default power.right.justifyH = "RIGHT"
+default power.right.levelColor = true
 default power.right.offsetX = 0
 default power.right.offsetY = 0
 default power.right.piece1.after = ""
@@ -23264,6 +23557,7 @@ resolved health.belowLeft.font = "Friz Quadrata TT"
 resolved health.belowLeft.format = "level:info"
 resolved health.belowLeft.inset = 4
 resolved health.belowLeft.justifyH = "LEFT"
+resolved health.belowLeft.levelColor = true
 resolved health.belowLeft.offsetX = 0
 resolved health.belowLeft.offsetY = 0
 resolved health.belowLeft.outline = ""
@@ -23299,6 +23593,7 @@ resolved health.belowRight.font = "Friz Quadrata TT"
 resolved health.belowRight.format = "none"
 resolved health.belowRight.inset = 4
 resolved health.belowRight.justifyH = "RIGHT"
+resolved health.belowRight.levelColor = true
 resolved health.belowRight.offsetX = 0
 resolved health.belowRight.offsetY = 0
 resolved health.belowRight.outline = ""
@@ -23334,6 +23629,7 @@ resolved health.center.font = "Friz Quadrata TT"
 resolved health.center.format = "none"
 resolved health.center.inset = 4
 resolved health.center.justifyH = "CENTER"
+resolved health.center.levelColor = true
 resolved health.center.offsetX = 0
 resolved health.center.offsetY = 0
 resolved health.center.outline = ""
@@ -23372,6 +23668,7 @@ resolved health.left.font = "Friz Quadrata TT"
 resolved health.left.format = "name"
 resolved health.left.inset = 4
 resolved health.left.justifyH = "LEFT"
+resolved health.left.levelColor = true
 resolved health.left.offsetX = 0
 resolved health.left.offsetY = 0
 resolved health.left.outline = ""
@@ -23408,6 +23705,7 @@ resolved health.right.font = "Friz Quadrata TT"
 resolved health.right.format = "health:percent"
 resolved health.right.inset = 4
 resolved health.right.justifyH = "RIGHT"
+resolved health.right.levelColor = true
 resolved health.right.offsetX = 0
 resolved health.right.offsetY = 0
 resolved health.right.outline = ""
@@ -23509,6 +23807,7 @@ resolved power.belowLeft.font = "Friz Quadrata TT"
 resolved power.belowLeft.format = "none"
 resolved power.belowLeft.inset = 4
 resolved power.belowLeft.justifyH = "LEFT"
+resolved power.belowLeft.levelColor = true
 resolved power.belowLeft.offsetX = 0
 resolved power.belowLeft.offsetY = 0
 resolved power.belowLeft.outline = ""
@@ -23544,6 +23843,7 @@ resolved power.belowRight.font = "Friz Quadrata TT"
 resolved power.belowRight.format = "none"
 resolved power.belowRight.inset = 4
 resolved power.belowRight.justifyH = "RIGHT"
+resolved power.belowRight.levelColor = true
 resolved power.belowRight.offsetX = 0
 resolved power.belowRight.offsetY = 0
 resolved power.belowRight.outline = ""
@@ -23579,6 +23879,7 @@ resolved power.center.font = "Friz Quadrata TT"
 resolved power.center.format = "none"
 resolved power.center.inset = 4
 resolved power.center.justifyH = "CENTER"
+resolved power.center.levelColor = true
 resolved power.center.offsetX = 0
 resolved power.center.offsetY = 0
 resolved power.center.outline = ""
@@ -23616,6 +23917,7 @@ resolved power.left.font = "Friz Quadrata TT"
 resolved power.left.format = "none"
 resolved power.left.inset = 4
 resolved power.left.justifyH = "LEFT"
+resolved power.left.levelColor = true
 resolved power.left.offsetX = 0
 resolved power.left.offsetY = 0
 resolved power.left.outline = ""
@@ -23652,6 +23954,7 @@ resolved power.right.font = "Friz Quadrata TT"
 resolved power.right.format = "power:percent"
 resolved power.right.inset = 4
 resolved power.right.justifyH = "RIGHT"
+resolved power.right.levelColor = true
 resolved power.right.offsetX = 0
 resolved power.right.offsetY = 0
 resolved power.right.outline = ""
@@ -23721,7 +24024,7 @@ definition label = "Target of target"
 definition portrait.defaults.enabled = false
 definition portrait.lazyBackends = true
 definition raidTarget.defaults = {}
-definition rows = {{defaults={height=28,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={enabled=false,height=8,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
+definition rows = {{defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=28,left={levelColor=true,size=10},right={format="health:percent",levelColor=true,size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},enabled=false,height=8,left={levelColor=true},right={format="power:percent",levelColor=true,size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
 definition sample.class = "WARRIOR"
 definition sample.className = "Warrior"
 definition sample.cost = 15

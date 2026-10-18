@@ -85,7 +85,7 @@ Sources.Register("lastname", {
 })
 
 Sources.Register("level", {
-	label = "Level", group = "Identity",
+	label = "Level", group = "Identity", difficulty = true,
 	events = "UNIT_LEVEL PLAYER_LEVEL_UP",
 	live = function(unit) return UnitLevel(unit) end,
 	sample = function(v) if v.level ~= nil then return tostring(v.level) end end,
@@ -101,11 +101,44 @@ local function SmartLevel(level, classification)
 end
 
 Sources.Register("smartlevel", {
-	label = "Level with elite/rare marker", group = "Identity",
+	label = "Level with elite/rare marker", group = "Identity", difficulty = true,
 	events = "UNIT_LEVEL PLAYER_LEVEL_UP UNIT_CLASSIFICATION_CHANGED",
 	live = function(unit) return SmartLevel(UnitLevel(unit), UnitClassification(unit)) end,
 	sample = function(v) if v.level ~= nil then return SmartLevel(v.level, v.classification) end end,
 })
+
+--[[
+Difficulty colour of sources marked `difficulty` (the levels), as Blizzard's
+target frame colours its level: only for units the player can attack, other
+units keep the text's own colour, as do dead and offline units (their frame
+look tints the text). Sample NPCs that aren't friendly count as attackable. Level and difficulty are not secret; the tint wraps only that
+piece's text, natively.
+]]
+Sources.DIFFICULTY = {
+	events = "UNIT_FACTION",
+	live = function(unit)
+		if Sources.UnitStatus(unit) then return nil end
+		if UnitCanAttack("player", unit) then
+			return GetDifficultyColor(C_PlayerInfo.GetContentDifficultyCreatureForPlayer(unit))
+		end
+	end,
+	sample = function(v)
+		if v.status == nil and v.isPlayer == false and v.reaction ~= "friendly" and v.level ~= nil then
+			return GetCreatureDifficultyColor(v.level)
+		end
+	end,
+}
+
+local function ColorByte(value)
+	return math.floor(value * 255 + 0.5)
+end
+
+function Sources.Tint(text, color)
+	if type(text) == "nil" or not color then return text end
+	if type(text) ~= "string" then text = string.format("%s", text) end
+	local markup = string.format("|cff%02x%02x%02x", ColorByte(color.r), ColorByte(color.g), ColorByte(color.b))
+	return C_StringUtil.WrapString(text, markup, "|r")
+end
 
 Sources.Register("class", {
 	label = "Class", group = "Identity",

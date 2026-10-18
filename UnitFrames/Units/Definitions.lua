@@ -175,6 +175,15 @@ Units.definitions.focustarget.sample = {
 	name = "Thrall", lastname = "", level = 44, className = "Shaman", class = "SHAMAN", isPlayer = true,
 }
 
+-- Frames that usually show enemies colour their level by difficulty.
+for _, unit in ipairs({ "target", "targettarget", "focus" }) do
+	for _, row in ipairs(Units.definitions[unit].rows) do
+		for _, slot in ipairs(ns.Components.TextBar.SLOTS) do
+			row.defaults[slot.key] = ns.Util.Merge(row.defaults[slot.key] or {}, { levelColor = true })
+		end
+	end
+end
+
 -- Builds the visual frame for `unit` (no data binding). `frame` is optional.
 function Units:CreateFrame(unit, parent, frame)
 	local def = self.definitions[unit]
