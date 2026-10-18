@@ -68,12 +68,79 @@ describe("Combined performance capture", function()
 		assert.equals(38, calls)
 		assert.is_nil(UF.Config.db.global.perfMeasurements["measure clickgrid"])
 		Tick(1)
-		local report = UF.Config.db.global.perfSuiteReport
+		local report = UF.Perf.suite.report
 		assert.equals(39, calls)
-		assert.equals("completed", report.status)
 		assert.equals(10, report.operations[3].counters.clickgridRefresh)
 		assert.equals(1, UF.Config.db.global.perfMeasurements["measure clickgrid"].counters.clickgridRefresh)
 		assert.same({}, report.skipped)
+	end)
+
+	it("runs every ClickGrid edit probe after the detailed reports and restores each edit", function()
+		local cg
+		UF, cg = Helpers.LoadClickGrid()
+		Prepare()
+		local settings = UF.Util.Copy(cg.Config:Get())
+		local member = UF.Util.Copy(cg.Config:GetStyle("member"))
+		local bindings = UF.Util.Copy(cg.Config:GetBindings())
+		UF.Perf:Command("capture")
+		Tick(39)
+		local report = UF.Perf.suite.report
+		assert.equals(1, UF.Perf.suite.edit)
+		assert.same({}, report.edits)
+		assert.is_nil(UF.Config.db.global.perfMeasurements["edit indicators"])
+		Tick(1, 20)
+		assert.equals(40, calls, "a slow frame still runs only one edit probe")
+		assert.same({ "indicators" }, report.edits)
+		Tick(6)
+		assert.equals(46, calls)
+		assert.equals("completed", report.status)
+		assert.equals(report, UF.Config.db.global.perfSuiteReport)
+		assert.same(UF.Perf.EDITS, report.edits)
+		for _, name in ipairs(UF.Perf.EDITS) do
+			assert.is_true(UF.Config.db.global.perfMeasurements["edit " .. name].edit.restored, name)
+		end
+		assert.same(settings, cg.Config:Get())
+		assert.same(member, cg.Config:GetStyle("member"))
+		assert.same(bindings, cg.Config:GetBindings())
+		assert.is_nil(UF.Perf.suite)
+		assert.is_nil(UF.Perf.driver:GetScript("OnUpdate"))
+	end)
+
+	it("still cancels on user configuration changes between edit probes", function()
+		local cg
+		UF, cg = Helpers.LoadClickGrid()
+		Prepare()
+		UF.Perf:Command("capture")
+		Tick(41)
+		cg.Config.settings:Set("titles.enabled", not cg.Config.settings:Resolved().titles.enabled)
+		local report = UF.Config.db.global.perfSuiteReport
+		assert.equals("cancelled", report.status)
+		assert.equals("configuration changed", report.reason)
+		assert.same({ "indicators", "titles" }, report.edits)
+		Tick(10)
+		assert.equals(41, calls)
+	end)
+
+	it("fails the capture and stops further probes when an edit probe fails", function()
+		local cg
+		UF, cg = Helpers.LoadClickGrid()
+		Prepare()
+		local settings = UF.Util.Copy(cg.Config:Get())
+		local refresh = cg.Refresh
+		cg.Refresh = function(self)
+			if UF.Perf.measuring and UF.Perf.suite and UF.Perf.suite.edit == 2 then error("edit refresh failed") end
+			return refresh(self)
+		end
+		UF.Perf:Command("capture")
+		Tick(41)
+		local report = UF.Config.db.global.perfSuiteReport
+		assert.equals("failed", report.status)
+		assert.is_not_nil(report.reason:find("edit titles", 1, true))
+		assert.same({ "indicators" }, report.edits)
+		assert.same(settings, cg.Config:Get())
+		assert.is_nil(UF.Perf.suite)
+		Tick(10)
+		assert.equals(41, calls)
 	end)
 
 	it("cancels pending detailed operations on command or combat and retains the partial status", function()

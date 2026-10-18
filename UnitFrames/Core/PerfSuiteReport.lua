@@ -80,6 +80,7 @@ function Perf:ReportSuite(report, title)
 		else ns:Print(operation.name, "no recorded runs") end
 	end
 	for _, name in ipairs(report.skipped) do ns:Print("skipped", name, "not loaded/prepared") end
+	if report.edits then ns:Print("edit probes:", #report.edits > 0 and table.concat(report.edits, ", ") or "none") end
 	if report.capture then ns:Print("combined capture", report.status, "; /reload saves the reports for direct file reading") end
 	ns:Print("active refresh costs; excludes deferred rendering and combat; memory deltas depend on GC/cache state")
 	ns:Print("structured report: UnitFramesDB.global.perfSuiteReport; /reload writes it to SavedVariables")

@@ -1,4 +1,4 @@
-local usage = "luajit scripts/read-perf.lua [SavedVariables/UnitFrames.lua] [all|suite|saved|measurement title]"
+local usage = "luajit scripts/read-perf.lua [SavedVariables/UnitFrames.lua] [all|suite|saved|edits|measurement title]"
 local path, selection = arg[1], arg[2] or "all"
 if path == "--help" then print(usage); return end
 if not path or (not path:find("/", 1, true) and not path:match("%.lua$")) then
@@ -51,9 +51,11 @@ print("Saved diagnostics: " .. path)
 if selection == "all" or selection == "suite" then ns.Perf:ReportSuite(global.perfSuiteReport) end
 if selection == "saved" then
 	ns.Perf:ReportSuite(global.perfSuiteBaselineReport, "saved comparison baseline")
-elseif selection == "all" then
+elseif selection == "all" or selection == "edits" then
 	local titles = {}
-	for title in pairs(global.perfMeasurements or {}) do titles[#titles + 1] = title end
+	for title in pairs(global.perfMeasurements or {}) do
+		if selection == "all" or title:find("^edit ") then titles[#titles + 1] = title end
+	end
 	table.sort(titles)
 	for _, title in ipairs(titles) do Measurement(title, global.perfMeasurements[title]) end
 elseif selection ~= "suite" then

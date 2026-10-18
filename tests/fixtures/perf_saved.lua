@@ -1,7 +1,7 @@
 UnitFramesDB = {
 	global = {
 		perfSuiteReport = {
-			status = "completed", timestamp = 1792356815, skipped = {},
+			status = "completed", timestamp = 1792356815, skipped = {}, capture = true, edits = { "titles" },
 			context = {
 				client = { version = "1.60.1", build = "70450" }, version = "dev", commit = "unknown",
 				profile = "Performance fixture", groupSize = 0, raid = false, workbenchShown = false, loadedAddons = { "UnitFrames" },
@@ -20,6 +20,11 @@ UnitFramesDB = {
 					{ name = "decoration reflow", ms = 30.673, bytes = 0, calls = 816 },
 					{ name = "bind tags", ms = 14.820, bytes = 4837376, calls = 180 },
 				},
+			},
+			["edit titles"] = {
+				timestamp = 1792356836, ms = 8.843, allocatedBytes = 229376, deallocatedBytes = 6963,
+				counters = { clickgridRefresh = 1 }, phases = {},
+				edit = { path = "titles.enabled", before = true, value = false, restored = true },
 			},
 		},
 	},

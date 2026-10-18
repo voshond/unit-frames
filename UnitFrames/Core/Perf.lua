@@ -321,6 +321,6 @@ function Perf:Command(arguments)
 		ns:Print("/uf perf suite baseline - run the out-of-combat baseline suite")
 		ns:Print("/uf perf suite report - show the last saved suite report")
 		ns:Print("/uf perf suite save | saved - preserve or show a comparison baseline")
-		ns:Print("/uf perf capture - run the baseline and detailed refresh reports together")
+		ns:Print("/uf perf capture - run the baseline, detailed refresh reports and ClickGrid edit probes together")
 	end
 end

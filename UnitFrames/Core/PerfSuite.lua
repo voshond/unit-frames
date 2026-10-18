@@ -33,6 +33,7 @@ function Perf:TickSuite(elapsed)
 	suite.elapsed = suite.elapsed + elapsed
 	if suite.elapsed < INTERVAL then return end
 	suite.elapsed = 0
+	if suite.edit then self:TickSuiteEdit(suite); return end
 	local operation = suite.report.operations[suite.index]
 	local ok, result, counters = self:CaptureOperation(operation.name)
 	if self.suite ~= suite then return end
@@ -44,7 +45,9 @@ function Perf:TickSuite(elapsed)
 		if not reported then self:FinishSuite("failed", tostring(err)); return end
 		if self.suite ~= suite then return end
 		suite.index = suite.index + 1
-		if suite.index > #suite.report.operations then self:FinishSuite("completed") end
+		if suite.index <= #suite.report.operations then return end
+		if suite.report.edits then suite.edit = 1
+		else self:FinishSuite("completed") end
 		return
 	end
 	suite.iteration = suite.iteration + 1
@@ -81,8 +84,10 @@ function Perf:StartSuite(capture)
 		warmups = WARMUPS, runs = RUNS, interval = INTERVAL, context = self:SuiteContext(),
 		before = self:Snapshot(), operations = {}, skipped = {} }
 	local names = { "schema", "units" }
-	if ns.ClickGrid and ns.ClickGrid.started then names[#names + 1] = "clickgrid"
+	local clickgrid = ns.ClickGrid and ns.ClickGrid.started
+	if clickgrid then names[#names + 1] = "clickgrid"
 	else report.skipped[#report.skipped + 1] = "clickgrid" end
+	if capture and clickgrid then report.edits = {} end
 	for _, name in ipairs(names) do
 		report.operations[#report.operations + 1] = { name = name, samples = {}, counters = {} }
 	end
@@ -93,12 +98,16 @@ function Perf:StartSuite(capture)
 	self.driver:SetScript("OnEvent", function(_, event) self:FinishSuite("cancelled", event) end)
 	self.driver:SetScript("OnUpdate", function(_, elapsed) self:TickSuite(elapsed) end)
 	for _, event in ipairs({ "ThemeChanged", "UnitConfigChanged", "ClickGridConfigChanged" }) do
-		ns.Events.RegisterCallback(self, event, function() self:FinishSuite("cancelled", "configuration changed") end)
+		ns.Events.RegisterCallback(self, event, function()
+			if self.suite and self.suite.editing then return end
+			self:FinishSuite("cancelled", "configuration changed")
+		end)
 	end
 	self.driver:Show()
 	ns:Print("baseline suite started: 2 warmups + 10 runs per operation, one call per 0.1 seconds")
 	ns:Print("keep settings, units and preview state stable; /uf perf cancel stops the suite")
 	if capture then ns:Print("detailed schema, unit and prepared ClickGrid reports follow the baseline runs") end
+	if report.edits then ns:Print("ClickGrid settings edit probes follow the detailed reports, restoring overrides after each") end
 end
 
 function Perf:SuiteCommand(command)
