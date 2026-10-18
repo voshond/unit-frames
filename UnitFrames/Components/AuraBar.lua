@@ -57,7 +57,7 @@ end
 
 -- Offered where the owner can lend the row's space to its health bar.
 function AuraBar.BuildSchema(spec)
-	local out = ns.Util.Copy(AuraBar.schema)
+	local out = ns.Schema.Concat(AuraBar.schema)
 	if not (spec and spec.collapsible) then return out end
 	return ns.Schema.Insert(out, "position", {
 		{ key = "collapse", type = "toggle", label = "Collapse into health when empty", default = true,

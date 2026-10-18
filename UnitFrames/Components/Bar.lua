@@ -129,7 +129,7 @@ end
 
 function Bar.BuildSchema(spec)
 	spec = spec or {}
-	local schema = Util.Copy(Bar.schema)
+	local schema = ns.Schema.Concat(Bar.schema)
 	if spec.colorInherit then
 		schema = ns.Schema.Override(schema, "color", { inherit = spec.colorInherit })
 	end

@@ -336,7 +336,7 @@ function UnitFrame.BuildSchema(spec)
 			schema = GroupSchema(TextBar.BuildSchema(UnitFrame.RowSpec(spec, row)), extra), defaults = row.defaults }
 	end
 	AddParts(false)
-	return ns.Util.Copy(schema)
+	return schema
 end
 
 local function Apply(self, cfg)

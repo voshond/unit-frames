@@ -266,7 +266,7 @@ end
 function Text.BuildSchema(spec)
 	spec = spec or {}
 	local slot = spec.formats and SlotSchema(spec) or {}
-	return ns.Util.Copy(ns.Schema.Concat(slot, Text.schema, spec.host and HOST_OPTIONS or {}))
+	return ns.Schema.Concat(slot, Text.schema, spec.host and HOST_OPTIONS or {})
 end
 
 function Text:OnCreate(parent)

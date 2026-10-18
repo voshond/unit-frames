@@ -47,7 +47,7 @@ function Castbar.BuildSchema(spec)
 			{ "bar", "Bar only" }, { "split", "Icon / bar side by side" }, { "stack", "Icon / bar top and bottom" },
 		}, hidden = function() return true end, -- UnitFrame supplies hosting visibility.
 			tooltip = "Used when replacing the portrait. Split layouts give half the space to each part; Icon > Enabled can hide the icon." },
-		{ key = "border", type = "group", label = "Border", schema = ns.Util.Copy(Backdrop.schema),
+		{ key = "border", type = "group", label = "Border", schema = Backdrop.schema,
 			defaults = { enabled = true, padding = 3 } },
 		{ key = "icon", type = "group", label = "Icon", schema = {
 			{ key = "enabled", type = "toggle", label = "Enabled", default = true },
