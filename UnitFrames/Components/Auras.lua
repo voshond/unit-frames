@@ -97,7 +97,11 @@ function Auras:CreateContainers()
 			maxFrameCount = 16,
 			sortMethod = AuraContainerSortMethod.ExpirationOnly,
 			sortDirection = AuraContainerSortDirection.Normal,
-			initializeFrame = function(button) self:InitButton(button, kind) end,
+			initializeFrame = function(button)
+				ns.Perf:Begin("aura button init")
+				self:InitButton(button, kind)
+				ns.Perf:End("aura button init")
+			end,
 		})
 		if self.unit then container:SetUnit(self.unit) end
 	end

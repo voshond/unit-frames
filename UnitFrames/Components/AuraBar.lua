@@ -132,7 +132,7 @@ end
 function AuraBar:CreateContainers()
 	if not Auras.CreateContainers(self) then return false end
 	if self.spec.collapsible then
-		ns.Perf:Begin("aura containers")
+		ns.Perf:Begin("aura presence")
 		-- At most one artless button per category, mirroring the row's
 		-- filters and capacity: its flow extent is one cell exactly while
 		-- the row would show any icon, else Blizzard's 1-unit minimum.
@@ -149,7 +149,7 @@ function AuraBar:CreateContainers()
 		presence:SetEnabled(false)
 		if self.unit then presence:SetUnit(self.unit) end
 		self.presence = presence
-		ns.Perf:End("aura containers")
+		ns.Perf:End("aura presence")
 	end
 	return true
 end
