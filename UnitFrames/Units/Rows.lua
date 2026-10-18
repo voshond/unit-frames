@@ -6,6 +6,7 @@ ns.UnitRows = Rows
 -- not merged, so a standalone row can intentionally offer different slots.
 local specs = {
 	health = {
+		overheal = true,
 		segments = {
 			{ key = "heal", label = "Incoming heals", mode = "append", colorInherit = "colors.heal" },
 			{ key = "absorb", label = "Absorb shields", mode = "overlay", configurablePlacement = true,
@@ -52,6 +53,8 @@ function Rows.SampleHealth(row, values)
 	row:SetSegmentValue("heal", math.min(values.heal, math.max(0, values.healthMax - values.health)))
 	row:SetSegmentValue("absorb", values.absorb)
 	row:SetSegmentValue("healAbsorb", values.healAbsorb)
+	local overheal = row:GetBar():GetOverheal()
+	if overheal then overheal:ShowSample(values) end
 end
 
 function Rows.SamplePower(row, values)
@@ -97,6 +100,8 @@ function Rows.LiveHealth(row, unit, calculator, colorMode, classColor)
 	row:SetSegmentValue("heal", (calculator:GetIncomingHeals()))
 	row:SetSegmentValue("absorb", (calculator:GetDamageAbsorbs()))
 	row:SetSegmentValue("healAbsorb", (calculator:GetHealAbsorbs()))
+	local overheal = row:GetBar():GetOverheal()
+	if overheal then overheal:Update(unit) end
 	Rows.LiveHealthColor(row, colorMode, unit, classColor)
 	row:ShowLive(unit)
 end

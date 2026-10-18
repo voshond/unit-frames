@@ -87,6 +87,8 @@ Workbench:Register({
 		{ name = "Centre text", config = { row = { bar = { border = { enabled = true } },
 			left = { enabled = false }, right = { enabled = false },
 			center = { enabled = true, format = "health:current:percent" } } } },
+		{ name = "Overheal edge", config = { row = { bar = { border = { enabled = true },
+			overheal = { enabled = true } } } } },
 		{ name = "Flat", config = { row = { bar = { texture = "Solid", border = { enabled = true, border = "UnitFrames Pixel",
 			size = 1, inset = 0, padding = 1, color = { 0, 0, 0, 1 } } } } } },
 		{ name = "Reversed", config = { row = { bar = { reverseFill = true, border = { enabled = true } } } } },

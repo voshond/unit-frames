@@ -2362,6 +2362,12 @@ option health.bar.segments.healAbsorb type="group" label="Heal absorbs"
 option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" default=true
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
+option health.bar.overheal type="group" label="Overheal"
+option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#e900a858
+option health.bar.overheal.levels type="select" label="Levels" default=3 values=#dcbe8729 tooltip=#a18a2155 hidden
+option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
+option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
+option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -3834,6 +3840,11 @@ default health.bar.border.separateInset = false
 default health.bar.border.separatePadding = false
 default health.bar.enabled = true
 default health.bar.orientation = "HORIZONTAL"
+default health.bar.overheal.color = {1,0.7,0.35,1}
+default health.bar.overheal.edge = true
+default health.bar.overheal.enabled = false
+default health.bar.overheal.length = 40
+default health.bar.overheal.levels = 3
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -4778,6 +4789,11 @@ resolved health.bar.border.size = 12
 resolved health.bar.color = {0.1,0.8,0.1,1}
 resolved health.bar.enabled = true
 resolved health.bar.orientation = "HORIZONTAL"
+resolved health.bar.overheal.color = {1,0.7,0.35,1}
+resolved health.bar.overheal.edge = true
+resolved health.bar.overheal.enabled = false
+resolved health.bar.overheal.length = 40
+resolved health.bar.overheal.levels = 3
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true
@@ -5268,7 +5284,7 @@ definition readyCheck = true
 definition readyCheckIcon.defaults = {}
 definition resting = true
 definition restingIcon.defaults = {}
-definition rows = {{defaults={height=26},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:class"},left="name",right="health:value"},valueKind="health"}},{defaults={height=12,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}},{defaults={center={size=8},enabled=false,height=10},key="experience",label="Experience",spec={colorInherit="colors.experience",formats={"none","level","resting","xp:current","xp:value","xp:percent","xp:current:percent","xp:value:percent","xp:missing","xp:rested","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.rested",key="rested",label="Rested",mode="append"}},textDefaults={center="xp:value:percent"},valueKind="xp"}}}
+definition rows = {{defaults={height=26},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:class"},left="name",right="health:value"},valueKind="health"}},{defaults={height=12,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}},{defaults={center={size=8},enabled=false,height=10},key="experience",label="Experience",spec={colorInherit="colors.experience",formats={"none","level","resting","xp:current","xp:value","xp:percent","xp:current:percent","xp:value:percent","xp:missing","xp:rested","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.rested",key="rested",label="Rested",mode="append"}},textDefaults={center="xp:value:percent"},valueKind="xp"}}}
 definition width = 230
 ## unit.pet
 option width type="range" label="Width" default=170 min=60 max=600 step=1
@@ -5381,6 +5397,12 @@ option health.bar.segments.healAbsorb type="group" label="Heal absorbs"
 option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" default=true
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
+option health.bar.overheal type="group" label="Overheal"
+option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#e900a858
+option health.bar.overheal.levels type="select" label="Levels" default=3 values=#dcbe8729 tooltip=#a18a2155 hidden
+option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
+option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
+option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -6341,6 +6363,11 @@ default health.bar.border.separateInset = false
 default health.bar.border.separatePadding = false
 default health.bar.enabled = true
 default health.bar.orientation = "HORIZONTAL"
+default health.bar.overheal.color = {1,0.7,0.35,1}
+default health.bar.overheal.edge = true
+default health.bar.overheal.enabled = false
+default health.bar.overheal.length = 40
+default health.bar.overheal.levels = 3
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -7033,6 +7060,11 @@ resolved health.bar.border.size = 12
 resolved health.bar.color = {0.1,0.8,0.1,1}
 resolved health.bar.enabled = true
 resolved health.bar.orientation = "HORIZONTAL"
+resolved health.bar.overheal.color = {1,0.7,0.35,1}
+resolved health.bar.overheal.edge = true
+resolved health.bar.overheal.enabled = false
+resolved health.bar.overheal.length = 40
+resolved health.bar.overheal.levels = 3
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true
@@ -7513,7 +7545,7 @@ definition pvp.defaults = {}
 definition raidTarget.defaults = {}
 definition readyCheck = true
 definition readyCheckIcon.defaults = {}
-definition rows = {{defaults={height=22,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={height=10,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
+definition rows = {{defaults={height=22,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={height=10,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
 definition sample.absorb = 900
 definition sample.castTime = 1.5
 definition sample.classification = "normal"
@@ -7645,6 +7677,12 @@ option health.bar.segments.healAbsorb type="group" label="Heal absorbs"
 option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" default=true
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
+option health.bar.overheal type="group" label="Overheal"
+option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#e900a858
+option health.bar.overheal.levels type="select" label="Levels" default=3 values=#dcbe8729 tooltip=#a18a2155 hidden
+option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
+option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
+option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -8659,6 +8697,11 @@ default health.bar.border.separateInset = false
 default health.bar.border.separatePadding = false
 default health.bar.enabled = true
 default health.bar.orientation = "HORIZONTAL"
+default health.bar.overheal.color = {1,0.7,0.35,1}
+default health.bar.overheal.edge = true
+default health.bar.overheal.enabled = false
+default health.bar.overheal.length = 40
+default health.bar.overheal.levels = 3
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -9377,6 +9420,11 @@ resolved health.bar.border.size = 12
 resolved health.bar.color = {0.1,0.8,0.1,1}
 resolved health.bar.enabled = true
 resolved health.bar.orientation = "HORIZONTAL"
+resolved health.bar.overheal.color = {1,0.7,0.35,1}
+resolved health.bar.overheal.edge = true
+resolved health.bar.overheal.enabled = false
+resolved health.bar.overheal.length = 40
+resolved health.bar.overheal.levels = 3
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true
@@ -9853,7 +9901,7 @@ definition pvp.defaults = {}
 definition raidTarget.defaults = {}
 definition readyCheck = true
 definition readyCheckIcon.defaults = {}
-definition rows = {{defaults={height=26},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={height=12,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
+definition rows = {{defaults={height=26},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={height=12,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
 definition sample.castTime = 1.5
 definition sample.classification = "elite"
 definition sample.cost = 15
@@ -9980,6 +10028,12 @@ option health.bar.segments.healAbsorb type="group" label="Heal absorbs"
 option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" default=true
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
+option health.bar.overheal type="group" label="Overheal"
+option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#e900a858
+option health.bar.overheal.levels type="select" label="Levels" default=3 values=#dcbe8729 tooltip=#a18a2155 hidden
+option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
+option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
+option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -10940,6 +10994,11 @@ default health.bar.border.separateInset = false
 default health.bar.border.separatePadding = false
 default health.bar.enabled = true
 default health.bar.orientation = "HORIZONTAL"
+default health.bar.overheal.color = {1,0.7,0.35,1}
+default health.bar.overheal.edge = true
+default health.bar.overheal.enabled = false
+default health.bar.overheal.length = 40
+default health.bar.overheal.levels = 3
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -11632,6 +11691,11 @@ resolved health.bar.border.size = 12
 resolved health.bar.color = {0.1,0.8,0.1,1}
 resolved health.bar.enabled = true
 resolved health.bar.orientation = "HORIZONTAL"
+resolved health.bar.overheal.color = {1,0.7,0.35,1}
+resolved health.bar.overheal.edge = true
+resolved health.bar.overheal.enabled = false
+resolved health.bar.overheal.length = 40
+resolved health.bar.overheal.levels = 3
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true
@@ -12113,7 +12177,7 @@ definition pvp.defaults = {}
 definition raidTarget.defaults = {}
 definition readyCheck = true
 definition readyCheckIcon.defaults = {}
-definition rows = {{defaults={height=20,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={height=8,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
+definition rows = {{defaults={height=20,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={height=8,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
 definition sample.class = "WARRIOR"
 definition sample.className = "Warrior"
 definition sample.cost = 15
@@ -12236,6 +12300,12 @@ option health.bar.segments.healAbsorb type="group" label="Heal absorbs"
 option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" default=true
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
+option health.bar.overheal type="group" label="Overheal"
+option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#e900a858
+option health.bar.overheal.levels type="select" label="Levels" default=3 values=#dcbe8729 tooltip=#a18a2155 hidden
+option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
+option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
+option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -13196,6 +13266,11 @@ default health.bar.border.separateInset = false
 default health.bar.border.separatePadding = false
 default health.bar.enabled = true
 default health.bar.orientation = "HORIZONTAL"
+default health.bar.overheal.color = {1,0.7,0.35,1}
+default health.bar.overheal.edge = true
+default health.bar.overheal.enabled = false
+default health.bar.overheal.length = 40
+default health.bar.overheal.levels = 3
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -13886,6 +13961,11 @@ resolved health.bar.border.size = 12
 resolved health.bar.color = {0.1,0.8,0.1,1}
 resolved health.bar.enabled = true
 resolved health.bar.orientation = "HORIZONTAL"
+resolved health.bar.overheal.color = {1,0.7,0.35,1}
+resolved health.bar.overheal.edge = true
+resolved health.bar.overheal.enabled = false
+resolved health.bar.overheal.length = 40
+resolved health.bar.overheal.levels = 3
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true
@@ -14360,7 +14440,7 @@ definition pvp.defaults = {}
 definition raidTarget.defaults = {}
 definition readyCheck = true
 definition readyCheckIcon.defaults = {}
-definition rows = {{defaults={height=24},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={height=10,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
+definition rows = {{defaults={height=24},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={height=10,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
 definition sample.castTime = 2.5
 definition sample.class = "MAGE"
 definition sample.className = "Mage"
@@ -14482,6 +14562,12 @@ option health.bar.segments.healAbsorb type="group" label="Heal absorbs"
 option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" default=true
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
+option health.bar.overheal type="group" label="Overheal"
+option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#e900a858
+option health.bar.overheal.levels type="select" label="Levels" default=3 values=#dcbe8729 tooltip=#a18a2155 hidden
+option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
+option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
+option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -15442,6 +15528,11 @@ default health.bar.border.separateInset = false
 default health.bar.border.separatePadding = false
 default health.bar.enabled = true
 default health.bar.orientation = "HORIZONTAL"
+default health.bar.overheal.color = {1,0.7,0.35,1}
+default health.bar.overheal.edge = true
+default health.bar.overheal.enabled = false
+default health.bar.overheal.length = 40
+default health.bar.overheal.levels = 3
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -16134,6 +16225,11 @@ resolved health.bar.border.size = 12
 resolved health.bar.color = {0.1,0.8,0.1,1}
 resolved health.bar.enabled = true
 resolved health.bar.orientation = "HORIZONTAL"
+resolved health.bar.overheal.color = {1,0.7,0.35,1}
+resolved health.bar.overheal.edge = true
+resolved health.bar.overheal.enabled = false
+resolved health.bar.overheal.length = 40
+resolved health.bar.overheal.levels = 3
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true
@@ -16615,7 +16711,7 @@ definition pvp.defaults = {}
 definition raidTarget.defaults = {}
 definition readyCheck = true
 definition readyCheckIcon.defaults = {}
-definition rows = {{defaults={height=20,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={height=8,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
+definition rows = {{defaults={height=20,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={height=8,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
 definition sample.class = "SHAMAN"
 definition sample.className = "Shaman"
 definition sample.isPlayer = true
@@ -16671,6 +16767,12 @@ option bar.segments.healAbsorb type="group" label="Heal absorbs"
 option bar.segments.healAbsorb.enabled type="toggle" label="Enabled" default=true
 option bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
+option bar.overheal type="group" label="Overheal"
+option bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#e900a858
+option bar.overheal.levels type="select" label="Levels" default=3 values=#dcbe8729 tooltip=#a18a2155 hidden
+option bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
+option bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
+option bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
 option textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -16892,6 +16994,11 @@ default bar.border.separateInset = false
 default bar.border.separatePadding = false
 default bar.enabled = true
 default bar.orientation = "HORIZONTAL"
+default bar.overheal.color = {1,0.7,0.35,1}
+default bar.overheal.edge = true
+default bar.overheal.enabled = false
+default bar.overheal.length = 40
+default bar.overheal.levels = 3
 default bar.reverseFill = false
 default bar.segments.absorb.color = {1,1,1,0.5}
 default bar.segments.absorb.enabled = true
@@ -17087,6 +17194,11 @@ resolved bar.border.size = 12
 resolved bar.color = {0.1,0.8,0.1,1}
 resolved bar.enabled = true
 resolved bar.orientation = "HORIZONTAL"
+resolved bar.overheal.color = {1,0.7,0.35,1}
+resolved bar.overheal.edge = true
+resolved bar.overheal.enabled = false
+resolved bar.overheal.length = 40
+resolved bar.overheal.levels = 3
 resolved bar.reverseFill = false
 resolved bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved bar.segments.absorb.enabled = true
@@ -18645,6 +18757,12 @@ option health.bar.segments.healAbsorb type="group" label="Heal absorbs"
 option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" default=true
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
+option health.bar.overheal type="group" label="Overheal"
+option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#e900a858
+option health.bar.overheal.levels type="select" label="Levels" default=3 values=#dcbe8729 tooltip=#a18a2155 hidden
+option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
+option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
+option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -19573,6 +19691,11 @@ default health.bar.border.separateInset = false
 default health.bar.border.separatePadding = false
 default health.bar.enabled = true
 default health.bar.orientation = "HORIZONTAL"
+default health.bar.overheal.color = {1,0.7,0.35,1}
+default health.bar.overheal.edge = true
+default health.bar.overheal.enabled = false
+default health.bar.overheal.length = 40
+default health.bar.overheal.levels = 3
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -20243,6 +20366,11 @@ resolved health.bar.border.size = 12
 resolved health.bar.color = {0.1,0.8,0.1,1}
 resolved health.bar.enabled = true
 resolved health.bar.orientation = "HORIZONTAL"
+resolved health.bar.overheal.color = {1,0.7,0.35,1}
+resolved health.bar.overheal.edge = true
+resolved health.bar.overheal.enabled = false
+resolved health.bar.overheal.length = 40
+resolved health.bar.overheal.levels = 3
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true
@@ -20719,7 +20847,7 @@ definition portrait.defaults.enabled = false
 definition portrait.lazyBackends = true
 definition raidTarget.defaults.size = 12
 definition readyCheck = true
-definition rows = {{defaults={height=28,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:class"},left="name",right="health:value"},valueKind="health"}},{defaults={enabled=false,height=6,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
+definition rows = {{defaults={height=28,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:class"},left="name",right="health:value"},valueKind="health"}},{defaults={enabled=false,height=6,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
 definition sample.absorb = 900
 definition sample.castTime = 1.5
 definition sample.classification = "normal"
@@ -20845,6 +20973,12 @@ option health.bar.segments.healAbsorb type="group" label="Heal absorbs"
 option health.bar.segments.healAbsorb.enabled type="toggle" label="Enabled" default=true
 option health.bar.segments.healAbsorb.color type="color" label="Colour" default={1,1,1,0.5} inherit="colors.healAbsorb"
 option health.bar.segments.healAbsorb.texture type="statusbar" label="Texture" inherit="barTexture"
+option health.bar.overheal type="group" label="Overheal"
+option health.bar.overheal.enabled type="toggle" label="Show overheal" default=false tooltip=#e900a858
+option health.bar.overheal.levels type="select" label="Levels" default=3 values=#dcbe8729 tooltip=#a18a2155 hidden
+option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
+option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
+option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -21773,6 +21907,11 @@ default health.bar.border.separateInset = false
 default health.bar.border.separatePadding = false
 default health.bar.enabled = true
 default health.bar.orientation = "HORIZONTAL"
+default health.bar.overheal.color = {1,0.7,0.35,1}
+default health.bar.overheal.edge = true
+default health.bar.overheal.enabled = false
+default health.bar.overheal.length = 40
+default health.bar.overheal.levels = 3
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -22438,6 +22577,11 @@ resolved health.bar.border.size = 12
 resolved health.bar.color = {0.1,0.8,0.1,1}
 resolved health.bar.enabled = true
 resolved health.bar.orientation = "HORIZONTAL"
+resolved health.bar.overheal.color = {1,0.7,0.35,1}
+resolved health.bar.overheal.edge = true
+resolved health.bar.overheal.enabled = false
+resolved health.bar.overheal.length = 40
+resolved health.bar.overheal.levels = 3
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true
@@ -22898,7 +23042,7 @@ definition label = "Target of target"
 definition portrait.defaults.enabled = false
 definition portrait.lazyBackends = true
 definition raidTarget.defaults = {}
-definition rows = {{defaults={height=28,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={enabled=false,height=8,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
+definition rows = {{defaults={height=28,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={enabled=false,height=8,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
 definition sample.class = "WARRIOR"
 definition sample.className = "Warrior"
 definition sample.cost = 15

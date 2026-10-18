@@ -159,6 +159,20 @@ Shield colour defaults to blue to contrast with white priest health bars;
 colour and texture are independently configurable. The standalone
 Health bar preview has the same settings; set **Health %** to 100 to test.
 
+## Overheal edge
+
+**Health > Bar > Overheal > Show overheal** (off by default) lights the end of
+the health bar while incoming healing goes past full health. It steps up with
+the size of the overheal: a fade painted into the bar's end plus Blizzard's
+raid frame shield overflow glow, reaching further and glowing brighter once the
+heal passes full health, then 25% and 50% of maximum health past it.
+**Levels** chooses how many of those steps to show (each costs one more heal
+prediction per update), **Length** how far the strongest one reaches, plus
+**Colour** (with opacity) and **Edge glow**. It works in combat and on every
+unit and ClickGrid member bar; the ClickGrid preview shows one, two and three
+levels on members 1, 4 and 5. In the Health bar preview, set **Health %** and
+**Incoming heals %** to add up to more than 100, 125 or 150.
+
 ## Text formats
 
 **Character name** shows the unit's name without its Forever surname.

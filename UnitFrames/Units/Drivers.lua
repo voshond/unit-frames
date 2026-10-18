@@ -128,6 +128,11 @@ local function UpdatePowerColor(self, _, unit)
 	self.uf:GetRow("power"):SetColor(Colors.Power(token))
 end
 
+-- oUF calls this after every health update; the overheal edge reads the same unit.
+local function UpdateOverheal(element, unit)
+	element.ufOverheal:Update(unit)
+end
+
 Drivers.rows.health = {
 	element = "Health",
 	-- Prediction subscriptions depend on which sub-widgets are enabled.
@@ -150,7 +155,10 @@ Drivers.rows.health = {
 		health.colorReaction = true
 		health.colorTapping = true
 		health.UpdateColor = UpdateHealthColor
-		return health, { healing, absorb, healAbsorb }
+		-- Enabling the edge changes the signature, so oUF updates it at once.
+		local overheal = bar:GetOverheal()
+		health.ufOverheal, health.PostUpdate = overheal, overheal and UpdateOverheal or nil
+		return health, { healing, absorb, healAbsorb, overheal and overheal.holder or false }
 	end,
 	sample = function(row, v, cfg)
 		Rows.SampleHealth(row, v)
