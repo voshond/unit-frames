@@ -82,6 +82,9 @@ describe("Performance settings edit probes", function()
 		Mock.inCombat = true
 		UF.Perf:MeasureEdit("titles")
 		Mock.inCombat = false
+		local logged = UnitFramesLogs.general[#UnitFramesLogs.general]
+		assert.equals("active measurement refused", logged.context)
+		assert.equals("active measurements must wait until combat ends", logged.message)
 		Mock.profilerEnabled = false
 		UF.Perf:MeasureEdit("titles")
 		Mock.profilerEnabled = true

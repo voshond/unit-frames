@@ -250,10 +250,16 @@ function Perf:Run(title, fn, ...)
 	return true
 end
 
+local function Refuse(reason)
+	ns.Logs:Info("active measurement refused", reason)
+	ns:Print(reason)
+	return false
+end
+
 function Perf:CanMeasure()
-	if InCombatLockdown() then ns:Print("active measurements must wait until combat ends"); return false end
-	if not ProfilerEnabled() then ns:Print("native addon profiler unavailable/disabled"); return false end
-	if self.counters or self.combatArmed or self.suite then ns:Print("cancel the observation window before an active measurement"); return false end
+	if InCombatLockdown() then return Refuse("active measurements must wait until combat ends") end
+	if not ProfilerEnabled() then return Refuse("native addon profiler unavailable/disabled") end
+	if self.counters or self.combatArmed or self.suite then return Refuse("cancel the observation window before an active measurement") end
 	return true
 end
 
