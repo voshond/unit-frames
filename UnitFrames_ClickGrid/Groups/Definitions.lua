@@ -41,6 +41,8 @@ CG.definitions.target.readyCheck = nil
 
 CG.LayoutSchema = {
 	{ key = "enabled", type = "toggle", label = "Show healing panel", default = true },
+	{ key = "hideBlizzardFrames", type = "toggle", label = "Hide Blizzard party and raid frames", default = false,
+		tooltip = "Hide Blizzard's party frames, raid frames and raid manager while ClickGrid is enabled. Changes wait until combat ends. Turning this off or disabling ClickGrid restores Blizzard's visibility rules." },
 	{ key = "showSolo", type = "toggle", label = "Show when solo", default = false },
 	{ key = "mode", type = "select", label = "Raid layout", default = "subgroups",
 		values = { { "subgroups", "Keep raid subgroups" }, { "flat", "Flat grid" } } },

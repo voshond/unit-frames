@@ -60,6 +60,7 @@ events:SetScript("OnEvent", function(_, event, name)
 		elseif name == "UnitFrames_Workbench" and CG.loaded then
 			CG:RegisterWorkbench()
 		end
+		if CG.started then CG:UpdateBlizzardFrames() end
 	elseif event == "PLAYER_LOGIN" then
 		CG:Start()
 	elseif event == "PLAYER_REGEN_ENABLED" then

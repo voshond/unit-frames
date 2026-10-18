@@ -107,6 +107,7 @@ function Refresh(self)
 	assert(not InCombatLockdown(), "Healing panel changes must wait until combat ends")
 	self:Measure()
 	local cfg = self.Config:Resolved()
+	self:UpdateBlizzardFrames()
 	self:EnsureHeaders(cfg.panel)
 	local layout = self.Layout.Compute(cfg.panel, self.metrics.member, self.metrics.target, cfg.titles, cfg.border)
 	self.layout = layout

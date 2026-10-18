@@ -2,18 +2,6 @@ local _, wb = ...
 local UF = UnitFrames
 local Workbench, W, Skin = wb.Workbench, UF.Widgets, UF.Skin
 
--- Window, stage and toolbar presentation. Session lifetime stays in the controller.
-local STAGE_BACKGROUNDS = {
-	{ "dark", "Dark" },
-	{ "grey", "Grey" },
-	{ "light", "Light" },
-}
-local STAGE_COLORS = {
-	dark = { 0.02, 0.02, 0.03, 1 },
-	grey = { 0.25, 0.25, 0.27, 1 },
-	light = { 0.8, 0.8, 0.8, 1 },
-}
-
 function Workbench:Build()
 	local db = self:GetDB()
 	self.window = W.Window:New(UIParent, {
@@ -26,17 +14,21 @@ function Workbench:Build()
 		end,
 	})
 	local content = self.window:GetContent()
+	self.content = content
+	self:BuildSearch(content)
 
 	-- 1: entries.
 	self.list = W.ScrollList:New(content, {
 		rowHeight = 20,
 		onSelect = function(item)
-			self:Select(item.id)
+			if item.entryId and (not self.entry or self.entry.id ~= item.entryId) then self:Select(item.entryId) end
+			if item.pageId then self:SelectSection(item.pageId)
+			else self:Select(item.id) end
 		end,
 	})
-	self.list:SetPoint("TOPLEFT")
+	self.list:SetPoint("TOPLEFT", 0, -74)
 	self.list:SetPoint("BOTTOMLEFT")
-	self.list:SetWidth(150)
+	self.list:SetWidth(210)
 
 	-- 2: sections of the selected entry.
 	self.sectionList = W.ScrollList:New(content, {
@@ -48,22 +40,73 @@ function Workbench:Build()
 	self.sectionList:SetPoint("TOPLEFT", self.list:GetFrame(), "TOPRIGHT", 8, 0)
 	self.sectionList:SetPoint("BOTTOMLEFT", self.list:GetFrame(), "BOTTOMRIGHT", 8, 0)
 	self.sectionList:SetWidth(170)
+	self.sectionList:Hide()
 
 	-- 3: settings of the selected section.
 	local settings = CreateFrame("Frame", nil, content)
-	settings:SetPoint("TOPLEFT", self.sectionList:GetFrame(), "TOPRIGHT", 8, 0)
-	settings:SetPoint("BOTTOMLEFT", self.sectionList:GetFrame(), "BOTTOMRIGHT", 8, 0)
-	settings:SetWidth(290)
+	settings:SetPoint("TOPLEFT", self.list:GetFrame(), "TOPRIGHT", 12, 0)
+	settings:SetPoint("BOTTOMLEFT", self.list:GetFrame(), "BOTTOMRIGHT", 12, 0)
+	settings:SetWidth(380)
+	self.settingsPane = settings
 	self.sectionTitle = Skin.FontString(settings, "title")
 	self.sectionTitle:SetPoint("TOPLEFT", 0, -2)
 	self.sectionTitle:SetPoint("TOPRIGHT", 0, -2)
 	self.sectionTitle:SetJustifyH("LEFT")
+	self.scopeLabel = Skin.FontString(settings)
+	self.scopeLabel:SetPoint("TOPLEFT", 0, -24)
+	self.scopeLabel:SetPoint("TOPRIGHT", 0, -24)
+	self.scopeLabel:SetJustifyH("LEFT")
+	self.localSections = W.Dropdown:New(settings, { label = "Section", onChange = function(value)
+		self:SelectFeaturePage(self.state.section, value)
+	end })
+	self.localSections:SetPoint("TOPLEFT", 0, -46)
+	self.localSections:SetPoint("TOPRIGHT", 0, -46)
+	self.navigationMessage = Skin.FontString(settings)
+	self.navigationMessage:SetPoint("TOPLEFT", 0, -92)
+	self.navigationMessage:SetPoint("TOPRIGHT", 0, -92)
+	self.navigationMessage:SetHeight(36)
+	self.navigationMessage:SetWordWrap(true)
+	self.navigationMessage:SetJustifyH("LEFT")
+	self.prerequisiteButton = W.Button:New(settings, { text = "Open controlling setting", onClick = function()
+		if self.prerequisiteDestination then self:OpenDestination(self.prerequisiteDestination) end
+	end })
+	self.prerequisiteButton:SetPoint("TOPLEFT", 0, -128)
+	self.prerequisiteButton:Hide()
+	self.frameReset = W.Button:New(settings, { text = "Reset frame style", onClick = function()
+		if self.entry.reset then self.entry.reset() end
+	end })
+	self.frameReset:SetPoint("TOPLEFT", 0, -128)
+	self.frameReset:SetWidth(170)
+	self.frameReset:Hide()
+	self.detailsCheck = W.Checkbox:New(settings, { label = "Detailed adjustments",
+		tooltip = "Show horizontal and vertical offsets available in this section.", onChange = function(value)
+		self.inspector:SetDetails(value)
+	end })
+	self.detailsCheck:SetPoint("TOPRIGHT", 0, -128)
+	self.detailsCheck:SetWidth(170)
 	self.inspector = W.Inspector:New(settings)
-	self.inspector:SetPoint("TOPLEFT", 0, -24)
+	self.inspector.onDetailsChanged = function(available, expanded)
+		self.detailsCheck:SetValue(expanded)
+		self.detailsCheck:SetShown(available and not self.prerequisiteDestination)
+	end
+	self.inspector.onInherited = function(path)
+		local model = self:GetCatalogue().models.theme
+		local destination = model and model.owners["style|" .. path]
+		if destination then self:OpenDestination(destination) end
+	end
+	self.inspector:SetPoint("TOPLEFT", 0, -156)
 	self.inspector:SetPoint("BOTTOMRIGHT")
+	self.contextLinks = W.Dropdown:New(settings, { label = "Related Settings", onChange = function(value)
+		local link = self.contextDestinations[value]
+		if link then self:OpenDestination(link.record) end
+	end })
+	self.contextLinks:SetPoint("TOPLEFT", 0, -156)
+	self.contextLinks:SetPoint("TOPRIGHT", 0, -156)
+	self.contextLinks:Hide()
 
 	-- 4: preview: toolbar, stage, status line.
 	local center = CreateFrame("Frame", nil, content)
+	self.previewPane = center
 	center:SetPoint("TOPLEFT", settings, "TOPRIGHT", 12, 0)
 	center:SetPoint("BOTTOMRIGHT")
 	self:BuildToolbar(center)
@@ -104,6 +147,10 @@ function Workbench:Build()
 		self:OnUpdate(elapsed)
 	end)
 	self.window:GetFrame():HookScript("OnHide", function()
+		self.resultPanel:Hide()
+		self.search.input:ClearFocus()
+		self.inspector:ClearReveal()
+		self.inspector:FinishEditing()
 		if self.session then self.session:ActivateEvents(self.eventFrame, false) end
 	end)
 	self.window:GetFrame():HookScript("OnShow", function()
@@ -112,177 +159,24 @@ function Workbench:Build()
 	end)
 
 	self:ApplyStageOptions()
+	content:HookScript("OnSizeChanged", function() self:LayoutWorkbench() end)
 	self:FillList()
 	local first = db.selected and self.entries[db.selected] and db.selected or (self.order[1] and self.order[1].id)
 	if first then
 		self.list:Select(first)
 		self:Select(first)
 	end
+	self:LayoutWorkbench()
 end
 
-function Workbench:BuildToolbar(parent)
-	local db = self:GetDB()
-	local toolbar = CreateFrame("Frame", nil, parent)
-	toolbar:SetPoint("TOPLEFT")
-	toolbar:SetPoint("TOPRIGHT")
-	toolbar:SetHeight(72)
-	self.toolbar = toolbar
-
-	-- Stage options on top.
-	local row = CreateFrame("Frame", nil, toolbar)
-	row:SetPoint("TOPLEFT")
-	row:SetPoint("TOPRIGHT")
-	row:SetHeight(44)
-
-	-- Presets of the current entry below, wrapping onto more lines.
-	self.presetRow = CreateFrame("Frame", nil, toolbar)
-	self.presetRow:SetPoint("TOPLEFT", 0, -50)
-	self.presetRow:SetPoint("TOPRIGHT", 0, -50)
-	self.presetRow:SetHeight(22)
-	self.presetRow:SetScript("OnSizeChanged", function()
-		self:LayoutPresets()
-	end)
-	self.presetButtons = {}
-
-	local function Place(widget, width, previous)
-		widget:SetWidth(width)
-		if previous then
-			widget:SetPoint("TOPLEFT", previous:GetFrame(), "TOPRIGHT", 10, 0)
-		else
-			widget:SetPoint("TOPLEFT", row, "TOPLEFT")
-		end
-		return widget
-	end
-
-	self.widthSlider = Place(W.Slider:New(row, { label = "Width", min = 10, max = 600, step = 1,
-		onChange = function(value) self:SetEntrySize(value, nil) end }), 80)
-	self.heightSlider = Place(W.Slider:New(row, { label = "Height", min = 4, max = 300, step = 1,
-		onChange = function(value) self:SetEntrySize(nil, value) end }), 80, self.widthSlider)
-	self.scaleSlider = Place(W.Slider:New(row, { label = "Scale", min = 0.5, max = 3, step = 0.1,
-		onChange = function(value)
-			db.stage.scale = value
-			self:ApplyStageOptions()
-		end }), 80, self.heightSlider)
-	self.backgroundDropdown = Place(W.Dropdown:New(row, { label = "Background", values = STAGE_BACKGROUNDS,
-		onChange = function(value)
-			db.stage.background = value
-			self:ApplyStageOptions()
-		end }), 100, self.scaleSlider)
-
-	self.boundsCheck = W.Checkbox:New(row, { label = "Bounds", onChange = function(value)
-		db.stage.bounds = value
-		self:ApplyStageOptions()
-	end })
-	self.boundsCheck:SetWidth(70)
-	self.boundsCheck:SetPoint("TOPLEFT", self.backgroundDropdown:GetFrame(), "TOPRIGHT", 10, -2)
-
-	self.secretCheck = W.Checkbox:New(row, {
-		label = "Force secrets",
-		tooltip = "Turns on the addonCombatRestrictionsForced and addonEncounterRestrictionsForced CVars so the live sources return real secret values outside combat. Turned off again when the Workbench closes.",
-		onChange = function(value)
-			self:SetForcedRestrictions(value)
-		end,
-	})
-	self.secretCheck:SetWidth(110)
-	self.secretCheck:SetPoint("TOPLEFT", self.boundsCheck:GetFrame(), "BOTTOMLEFT", 0, -2)
-end
-
-function Workbench:ApplyStageOptions()
-	local stageDB = self:GetDB().stage
-	self.stage:SetBackdropColor(unpack(STAGE_COLORS[stageDB.background] or STAGE_COLORS.dark))
+function Workbench:LayoutWorkbench()
+	local available = self.content:GetWidth()
+	if available <= 0 then available = self.window:GetFrame():GetWidth() - 24 end
+	local preference = self:GetDB().stage.preview
+	local shown = preference == true or (preference ~= false and available >= 1160)
+	if self.entry and self.entry.fillStage then shown = true end
+	self.previewPane:SetShown(shown)
+	self.previewToggle:SetText(shown and "Hide preview" or "Show preview")
+	self.settingsPane:SetWidth(shown and 380 or math.max(380, available - 222))
 	self:FitStage()
-	self.scaleSlider:SetValue(stageDB.scale)
-	self.backgroundDropdown:SetValue(stageDB.background)
-	self.boundsCheck:SetValue(stageDB.bounds)
-	self.bounds:SetShown(stageDB.bounds and self.handle ~= nil)
-	self.secretCheck:SetValue(self.forcedRestrictions)
-	self.banner:SetShown(self.forcedRestrictions == true)
-end
-
--- Only opt-in previews have ordinary, addon-owned dimensions. Never inspect
--- native aura/container bounds here: those can be secret even outside combat.
-function Workbench:FitStage()
-	if not self.holder then return end
-	if self.entry and self.entry.fitToStage and InCombatLockdown() then
-		self.pendingStageFit = true
-		return
-	end
-	self.pendingStageFit = nil
-	local scale = self:GetDB().stage.scale
-	if self.entry and self.entry.fitToStage and self.handle then
-		local width, height = self.handle.frame:GetSize()
-		local availableWidth, availableHeight = self.stage:GetWidth() - 32, self.stage:GetHeight() - 32
-		if width > 0 and height > 0 and availableWidth > 0 and availableHeight > 0 then
-			scale = math.min(scale, availableWidth / width, availableHeight / height)
-		end
-	end
-	if self.holder:GetScale() ~= scale then self.holder:SetScale(scale) end
-end
-
-function Workbench:BuildPresets(entry)
-	for _, button in ipairs(self.presetButtons) do
-		button:Hide()
-	end
-	local presets = {}
-	for _, preset in ipairs(entry.presets or {}) do
-		presets[#presets + 1] = preset
-	end
-	presets[#presets + 1] = { name = "Reset", reset = true }
-
-	for i, preset in ipairs(presets) do
-		local button = self.presetButtons[i]
-		if not button then
-			button = W.Button:New(self.presetRow, {})
-			self.presetButtons[i] = button
-		end
-		button:SetText(preset.name)
-		button:SetWidth(math.max(60, button.text:GetStringWidth() + 20))
-		button.opts.onClick = function()
-			self:ApplyPreset(preset)
-		end
-		button:Show()
-	end
-	self.presetCount = #presets
-	self:LayoutPresets()
-end
-
--- Flows the preset buttons into lines that fit the preview column.
-function Workbench:LayoutPresets()
-	local maxWidth = self.presetRow:GetWidth()
-	local x, line = 0, 0
-	for i = 1, self.presetCount or 0 do
-		local button = self.presetButtons[i]
-		local width = button:GetFrame():GetWidth()
-		if x > 0 and maxWidth > 0 and x + width > maxWidth then
-			x, line = 0, line + 1
-		end
-		button:ClearAllPoints()
-		button:SetPoint("TOPLEFT", self.presetRow, "TOPLEFT", x, -line * 26)
-		x = x + width + 4
-	end
-	local height = (line + 1) * 26
-	self.presetRow:SetHeight(height)
-	self.toolbar:SetHeight(50 + height)
-end
-
-function Workbench:SetEntrySize(width, height)
-	local state = self.state
-	if not state then
-		return
-	end
-	state.width = width or state.width
-	state.height = height or state.height
-	self:ApplySize()
-end
-
-function Workbench:ApplySize()
-	local state, autoSize = self.state, self.entry.autoSize or self.entry.fillStage
-	self.widthSlider:SetShown(not autoSize)
-	self.heightSlider:SetShown(not autoSize)
-	if autoSize then
-		return
-	end
-	self.handle.frame:SetSize(state.width, state.height)
-	self.widthSlider:SetValue(state.width)
-	self.heightSlider:SetValue(state.height)
 end

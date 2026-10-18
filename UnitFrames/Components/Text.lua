@@ -191,6 +191,7 @@ local function SlotSchema(spec)
 	local function NotCustom(cfg) return cfg.format ~= Text.CUSTOM end
 	local schema = {
 		{ key = "format", type = "select", label = "Shows", default = "none",
+			searchValues = ns.Formats.SearchValues(spec.formats, context),
 			values = ns.Formats.Values(spec.formats, context, { { Text.CUSTOM, "Custom" } }),
 			onSet = function(group, value, before)
 				if value == Text.CUSTOM and not before.customInitialized and before.format ~= Text.CUSTOM then
@@ -209,13 +210,14 @@ local function SlotSchema(spec)
 			default = "keep", hidden = NotCustom },
 		-- Distinguishes retained custom edits (even an empty slot) from none yet.
 		{ key = "customInitialized", type = "toggle", label = "Custom text set up", default = false,
+			internal = "Records whether the slot has retained custom text pieces",
 			hidden = function() return true end },
 	}
 	for i = 1, Text.PIECES do
 		schema[#schema + 1] = { key = PieceKey(i), type = "group", label = "Piece " .. i, inline = true,
 			hidden = NotCustom, schema = {
 				{ key = "source", type = "select", label = "Source", values = SourceValues(context), default = "none",
-					tooltip = "Values that are often missing (Missing, PvP flag, Resting, Rested, spell name) should carry the separator next to them, so it disappears with them." },
+					tooltip = "Values that are often missing should carry the separator next to them, so it disappears with them." },
 				PieceOption("number"),
 				PieceOption("decimals"),
 				{ key = "before", type = "text", label = "Text before", default = "",

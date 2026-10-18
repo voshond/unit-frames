@@ -18,13 +18,18 @@ local function ThemeTarget()
 		resolved = function()
 			return UF.Schema.Resolve(UF.Theme.schema, Config:GetTheme(), nil)
 		end,
+		source = function(path, reset)
+			return UF.Schema.Source(UF.Theme.schema, Config:GetThemeOverrides(), nil, path, reset)
+		end,
 	}
 end
 
 Workbench:Register({
 	id = "theme",
-	category = "Theme",
-	name = "Global theme",
+	category = "Shared appearance",
+	name = "Shared appearance",
+	scope = "Shared appearance defaults",
+	settingsTargets = function() return { { id = "style", schema = UF.Theme.schema, scope = "Shared appearance defaults" } } end,
 	size = { 240, 28 },
 	create = function(stage)
 		local bar = C.Bar:New(stage, {}, {

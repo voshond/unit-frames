@@ -151,6 +151,9 @@ function Store:Target(report, resolved)
 			return ok, reason
 		end,
 		resolved = resolved or function() return self:Resolved() end,
+		source = function(path, reset)
+			return Schema.Source(self:GetSchema(), self:Read(), self.opts.theme and ns.Config:GetTheme() or nil, path, reset)
+		end,
 		invoke = function(path) self:Invoke(path) end,
 	}
 end
