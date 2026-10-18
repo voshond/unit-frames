@@ -73,6 +73,15 @@ function Formats.Values(ids, context, extra)
 	end
 end
 
+function Formats.SearchValues(ids, context)
+	local values = {}
+	for _, id in ipairs(ids) do
+		local format = Formats.byId[id]
+		if format and Formats.Availability(id, context) ~= "none" then values[#values + 1] = { id, format.label } end
+	end
+	return values
+end
+
 --[[
 A preset as custom pieces { source, before, after } (fresh tables) plus its
 casting behaviour. Literal text joins the next piece's `before` (or the last

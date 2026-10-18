@@ -43,12 +43,18 @@ waiting for them to happen in game. Use **Static** for a still preview or
 **Animated** to see changes over time. Appearance changes also update your
 actual frames.
 
-Use **Theme** to adjust shared appearance defaults. Development builds also
-include a Bars/Basics component gallery for testing; those demonstrations do
+Use the search field to find settings across all frames, or select a feature
+page and its local section. Search opens and highlights the matching control.
+The scope header shows which frames an edit affects; source labels explain
+inheritance. Preview controls live under **Preview only**, and the preview
+can be collapsed to give settings more room.
+
+Use **Global Settings** to adjust inherited defaults. Development builds also
+include a **Developer tools** component gallery for testing; those demonstrations do
 not change your unit settings.
 
 To move frames, open the game's **Edit Mode**. If you want matching frames,
-start with your player and use **Copy player settings** on the others.
+start with your player and use **Copy player style** under **Layout & border** on the others.
 You can still customise each one afterward.
 
 Under **Profiles**, you can create, copy, switch, delete or reset profiles,
@@ -73,7 +79,8 @@ the clicks instead.
 The panel normally appears when you are in a group. Turn on **Show when solo**
 in its settings to try it on your own. Move it through **Edit Mode**.
 
-ClickGrid is experimental and leaves Blizzard's party and raid frames visible.
+ClickGrid is experimental. Its **Hide Blizzard party and raid frames** setting
+optionally hides the native group frames while ClickGrid is enabled.
 See the [ClickGrid guide](UnitFrames_ClickGrid/README.md) for more details.
 
 ## Getting started

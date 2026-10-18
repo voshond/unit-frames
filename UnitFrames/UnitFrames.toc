@@ -79,6 +79,9 @@ Widgets\ActionSlot.lua
 Widgets\ScrollList.lua
 Widgets\ScrollPanel.lua
 Widgets\Inspector.lua
+Widgets\InspectorRows.lua
+Widgets\InspectorControls.lua
+Widgets\InspectorLayout.lua
 
 Units\Rows.lua
 Units\Definitions.lua

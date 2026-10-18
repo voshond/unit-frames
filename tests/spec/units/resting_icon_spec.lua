@@ -108,11 +108,11 @@ describe("Resting icon previews", function()
 		assert.is_nil(wb.handle.parts.uf:GetPart("restingIcon"))
 	end)
 
-	it("lists its settings on the player's Icons page only", function()
+	it("lists its settings in the player's resting section only", function()
 		local _, wb = Helpers.LoadWorkbench()
 		local function Listed(unit)
 			wb:Open("unit." .. unit)
-			wb:SelectSection("@icons")
+			wb:SelectSection("restingIcon")
 			for _, row in ipairs(wb.inspector.page.rows) do
 				if row.path and row.path:find("^restingIcon") then return true end
 			end

@@ -273,6 +273,12 @@ Workbench:Register({
 	id = "profiles",
 	category = "Profiles",
 	name = "Profiles & sharing",
+	scope = "Active profile; click bindings use the current specialization",
+	settingsTargets = function() return { { id = "style", schema = SCHEMA } } end,
+	destinations = {
+		{ label = "Import profile", aliases = "paste share string", reveal = function(handle) handle.box:SetFocus() end },
+		{ label = "Export profile", aliases = "copy share string", reveal = function(handle) handle.box:SetFocus() end },
+	},
 	fillStage = true,
 	size = { 600, 400 },
 	-- Switching, copying and resetting restyle everything; the form follows.

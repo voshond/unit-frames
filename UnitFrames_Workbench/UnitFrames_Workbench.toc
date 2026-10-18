@@ -10,10 +10,16 @@
 ## SavedVariables: UnitFramesWorkbenchDB
 
 Workbench.lua
+Presentation.lua
+Pages.lua
+Catalogue.lua
 Data.lua
 PreviewSession.lua
 View.lua
+Stage.lua
+Search.lua
 Sections.lua
+Navigation.lua
 
 Entries\Units.lua
 Entries\Timers.lua

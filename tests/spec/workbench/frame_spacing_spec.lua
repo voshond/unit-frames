@@ -76,8 +76,10 @@ describe("Shared frame and panel spacing previews", function()
 			wb:Open(entry)
 			wb:SelectSection("border")
 			local rows = wb.inspector.page.rows
-			assert.equals("border.separatePadding", rows[2].path)
-			assert.is_true(rows[2].region:IsShown())
+			local controls = {}
+			for _, row in ipairs(rows) do if row.control then controls[#controls + 1] = row end end
+			assert.equals("border.separatePadding", controls[2].path)
+			assert.is_true(controls[2].region:IsShown())
 			assert.equals("Content padding per side", rows[2].opt.label)
 			local byPath = {}
 			for _, row in ipairs(rows) do byPath[row.path] = row end

@@ -35,6 +35,14 @@ local function SectionItems(items, schema, prefix, depth, excluded)
 end
 
 function Workbench:FillSections()
+	self.pageModel = nil
+	if self.entry.settingsTargets then self:FillFeaturePages(); return end
+	if self.localSections then self.localSections:Hide() end
+	self.frameReset:Hide()
+	self.detailsCheck:Hide()
+	self.contextLinks:Hide()
+	self.inspector:SetPoint("TOPLEFT", 0, -156)
+	self.scopeLabel:SetText("Developer tools — preview only")
 	local items = {}
 	local excluded, pages = {}, {}
 	local wanted = self.state.section
@@ -74,6 +82,7 @@ function Workbench:FillSections()
 	self.sectionList:SetItems(items)
 	self.sectionList:Select(first)
 	self.inspector:SetShown(first ~= nil)
+	self:FillList()
 	if first then
 		self:SelectSection(first)
 	else
@@ -83,6 +92,7 @@ end
 
 -- Shows the settings of one section ("" = top level, DATA_SECTION = data).
 function Workbench:SelectSection(id)
+	if self.pageModel then self:SelectFeaturePage(id); return end
 	self.state.section = id
 	local title
 	for _, item in ipairs(self.sections) do

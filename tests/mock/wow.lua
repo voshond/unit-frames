@@ -204,11 +204,37 @@ function Methods:SetShown(shown)
 	if Mock.IsSecret(shown) then self.__state.shown = shown else self.__state.shown = shown and true or false end
 end
 function Methods:IsShown() return self.__state.shown end
+local function RolesetFiltered(self)
+	for _, name in ipairs(self.__state.rolesets or {}) do
+		if name == "alwaysBlocked" then return true end
+	end
+	return false
+end
+
 function Methods:IsVisible()
 	local shown = self:IsShown()
 	if Mock.IsSecret(shown) then return Mock.Secret(shown.secretValue) end
+	if RolesetFiltered(self) then return false end
 	local parent = self:GetParent()
 	return shown and (not parent or parent:IsVisible())
+end
+
+function Methods:SetRolesets(names)
+	local rolesets = {}
+	for name in (names or ""):gmatch("[^,]+") do rolesets[#rolesets + 1] = name end
+	self.__state.rolesets = rolesets
+end
+
+function Methods:GetRolesetNames()
+	local rolesets = self.__state.rolesets
+	if not rolesets or #rolesets == 0 then return { "roleless" } end
+	local copy = {}
+	for index, name in ipairs(rolesets) do copy[index] = name end
+	return copy
+end
+
+function Methods:IsRolesetFiltered()
+	return RolesetFiltered(self)
 end
 
 function Methods:SetParent(parent)
@@ -556,6 +582,7 @@ function Methods:RegisterEvent(event) self.__state.events[event] = true; Mock.re
 function Methods:RegisterUnitEvent(event) self.__state.events[event] = true; Mock.registeredEvents[event] = true end
 function Methods:UnregisterEvent(event) self.__state.events[event] = nil end
 function Methods:UnregisterAllEvents() self.__state.events = {} end
+function Methods:IsEventRegistered(event) return self.__state.events[event] == true end
 
 function Mock.FireEvent(event, ...)
 	for _, obj in ipairs(registry) do

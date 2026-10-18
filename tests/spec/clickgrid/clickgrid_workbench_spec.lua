@@ -5,6 +5,44 @@ describe("ClickGrid Workbench", function()
 	local UF, CG, wb
 	before_each(function() UF, CG, wb = Helpers.LoadClickGrid(true); wb:Open("clickgrid.panel") end)
 
+	it("edits ready-check icon and member tint destinations through their owning stores on one feature page", function()
+		local model = wb:GetCatalogue().models["clickgrid.panel"]
+		local icon = model.owners["style|indicators.ready"]
+		local tint = model.owners["member|readyCheck.enabled"]
+		assert.is_not_nil(tint)
+		assert.equals(icon.pageId, tint.pageId)
+		local session = wb.session
+		local function Control(path)
+			for _, row in ipairs(wb.inspector.page.rows) do if row.path == path and row.control then return row end end
+		end
+		wb:OpenDestination(icon)
+		Control(icon.path).control.opts.onChange(false)
+		assert.is_false(CG.Config:Get().indicators.ready)
+		assert.is_nil(CG.Config:GetStyle("member").indicators)
+		wb:OpenDestination(tint)
+		Control(tint.path).control.opts.onChange(false)
+		assert.is_false(CG.Config:GetStyle("member").readyCheck.enabled)
+		Control(tint.path).reset:RunScript("OnClick")
+		assert.is_nil(CG.Config:GetStyle("member").readyCheck)
+		assert.equals(session, wb.session)
+		local row = Control(tint.path)
+		local callback = row.control.opts.onChange
+		wb:Select("unit.player")
+		callback(false)
+		assert.is_nil(CG.Config:GetStyle("member").readyCheck)
+	end)
+
+	it("routes member aura links to the canonical panel page and keeps member targets independent", function()
+		wb:Select("clickgrid.member")
+		wb:SelectSection("@auras")
+		assert.equals("clickgrid.panel", wb.entry.id)
+		assert.equals("@auras", wb.state.section)
+		local member = wb:GetCatalogue().models["clickgrid.member"]
+		local target = wb:GetCatalogue().models["clickgrid.target"]
+		assert.is_nil(member.owners["style|auras.enabled"])
+		assert.is_not_nil(target.owners["style|auras.enabled"])
+	end)
+
 	it("renders matching flat-grid column headings outside the single backdrop", function()
 		CG.Config:Set("panel.mode", "flat")
 		CG.Config:Set("panel.columns", 5)
@@ -406,7 +444,7 @@ describe("ClickGrid Workbench", function()
 		handle.cells["2:3"].lines.friendly:RunScript("OnClick")
 		assert.equals(3, wb.styleTarget.resolved().button)
 		assert.equals("shift", wb.styleTarget.resolved().modifier)
-		assert.equals("friendly", wb.state.section)
+		assert.equals("style:friendly", wb.state.localSections["@bindings"])
 		wb.styleTarget.set("friendly.action", "focus")
 		assert.equals(session, wb.session)
 		assert.is_false(handle.released == true)
@@ -525,7 +563,7 @@ describe("ClickGrid Workbench", function()
 		-- The dropped cell becomes the edited one, on the dropped reaction's page.
 		assert.equals(2, wb.styleTarget.resolved().button)
 		assert.equals("ctrl", wb.styleTarget.resolved().modifier)
-		assert.equals("friendly", wb.state.section)
+		assert.equals("style:friendly", wb.state.localSections["@bindings"])
 		assert.equals("Flash Heal", wb.inspector.page.rows[1].control.name:GetText())
 		assert.same(UF.Skin.colors.accent, handle.cells["3:2"].__state.backdropBorderColor)
 		assert.same(UF.Skin.colors.border, handle.cells["1:1"].__state.backdropBorderColor)
@@ -534,7 +572,7 @@ describe("ClickGrid Workbench", function()
 		handle.cells["3:2"].lines.hostile:RunScript("OnClick")
 		assert.is_nil(Mock.cursorInfo)
 		assert.equals(139, frame:GetAttribute("ctrl-spell-harm2"))
-		assert.equals("hostile", wb.state.section)
+		assert.equals("style:hostile", wb.state.localSections["@bindings"])
 	end)
 
 	it("rejects grid drops without touching the binding or the cursor, and says why", function()

@@ -14,19 +14,21 @@ local function UnitHandle(stage, unit)
 	end)
 end
 
+local function UnitSchema(unit)
+	local schema = {}
+	if unit ~= "player" then
+		schema[#schema + 1] = { key = "copyPlayerSettings", type = "action", label = "Copy player style",
+			hint = "Replaces this frame's style once. Position, player-only XP and combo points are excluded." }
+	end
+	for _, opt in ipairs(UF.Units:GetSchema(unit)) do schema[#schema + 1] = opt end
+	return schema
+end
+
 local function UnitStyleTarget(unit)
 	return function(handle)
-		local schema = {}
-		if unit ~= "player" then
-			schema[#schema + 1] = {
-				key = "copyPlayerSettings", type = "action", label = "Copy player settings",
-				tooltip = "Replace this frame's style with the player's current settings, including sizes, text, portrait, castbar, auras, raid target, PvP flag and elite icons, range opacity and ready check colours. Position, player-only XP and combo points are not copied. This is a one-time copy, not a link.",
-			}
-		end
-		for _, opt in ipairs(handle.schema) do schema[#schema + 1] = opt end
 		-- Writes also refresh the live frame (UnitConfigChanged).
 		local target = UF.Config:UnitStore(unit):Target(nil, function() return handle:Resolved() end)
-		target.schema = schema
+		target.schema = UnitSchema(unit)
 		local invoke = target.invoke
 		target.invoke = function(path)
 			if path == "copyPlayerSettings" then UF.Units:CopyPlayerSettings(unit) else invoke(path) end
@@ -98,15 +100,6 @@ end
 
 local function RegisterUnit(unit)
 	local def, sample = UF.Units:GetDefinition(unit), UF.Units:GetSample(unit)
-	local settingsPages = {
-		{ id = "@icons", label = "Icons", paths = { "raidTarget", "pvp", "classification" } },
-		{ id = "@effects", label = "State effects", paths = { "range" } },
-	}
-	if def.restingIcon then table.insert(settingsPages[1].paths, "restingIcon") end
-	local effects = settingsPages[2].paths
-	if def.resting then effects[#effects + 1] = "resting" end
-	effects[#effects + 1] = "readyCheck"
-	effects[#effects + 1] = "readyCheckIcon"
 	-- Animated health waves; static uses the Data tab's health.
 	local function ShowSample(handle, d, es)
 		local animated = d.source == "animated"
@@ -175,13 +168,16 @@ local function RegisterUnit(unit)
 		refreshOn = { { "UnitConfigChanged", unit } },
 		category = "Unit frames",
 		name = def.label,
+		scope = def.label,
+		settingsTargets = function() return { { id = "style", schema = UnitSchema(unit), scope = def.label } } end,
+		destinations = { { label = "Move " .. def.label:lower() .. " frame", aliases = "position positioning edit mode",
+			pageId = "@layout", hint = "Open the game's Edit Mode to position this frame. Positions belong to the active Edit Mode layout." } },
 		autoSize = true,
 		size = { def.width, 60 },
 		create = function(stage)
 			return UnitHandle(stage, unit)
 		end,
 		styleTarget = UnitStyleTarget(unit),
-		settingsPages = settingsPages,
 		reset = function() UF.Config:UnitStore(unit):Reset() end,
 		data = {
 			schema = schema,

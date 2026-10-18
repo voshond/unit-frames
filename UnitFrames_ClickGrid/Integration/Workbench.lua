@@ -11,9 +11,16 @@ local function Report(reason)
 	CG:Print(reason)
 end
 
+local function SharedMemberPath(path)
+	local root = path:match("^[^%.]+")
+	return root == "auras" or root == "auraBar" or root == "categoryAuras" or root == "range"
+		or root == "readyCheck" or root == "readyCheckIcon" or root == "raidTarget" or root == "pvp" or root == "classification"
+end
+
 function CG:RegisterWorkbench()
 	local wb = UF.Workbench
 	if not wb or not self.started or wb.entries["clickgrid.panel"] then return end
+	wb:BeginRegistration()
 	local data = {
 		schema = {
 			{ key = "source", type = "select", label = "Source", default = "static",
@@ -32,21 +39,35 @@ function CG:RegisterWorkbench()
 		tick = function(handle, values, _, elapsed) handle.data = values; handle:Tick(elapsed) end,
 	}
 	local function Create(stage) return CG.Preview:New(stage) end
-	wb:Register({ id = "clickgrid.panel", name = "Panel & indicators", category = "ClickGrid", autoSize = true, fitToStage = true,
+	wb:Register({ id = "clickgrid.panel", name = "Panel layout, auras & states", category = "Party & raid (ClickGrid)", autoSize = true, fitToStage = true,
 		size = { 500, 500 }, create = Create, data = data, refreshOn = REFRESH_ON,
+		scope = "ClickGrid panel",
+		settingsTargets = function() return {
+			{ id = "style", storeId = "clickgrid.panel", schema = CG.Config.schema, scope = "ClickGrid panel indicators and tracked buffs" },
+			{ id = "member", storeId = "clickgrid.member", schema = CG:StyleSchema("member"), include = SharedMemberPath,
+				scope = "All ClickGrid members", target = function() return CG.Config.styles.member:Target(Report) end },
+		} end,
 		styleTarget = function() return CG.Config.settings:Target(Report) end,
 		reset = function() CG.Config.settings:Reset() end,
 	})
 	for _, kind in ipairs({ "member", "target" }) do
 		local styleKind = kind
-		wb:Register({ id = "clickgrid." .. styleKind, name = styleKind == "member" and "Member bars" or "Target bars",
-			category = "ClickGrid", autoSize = true, fitToStage = true, size = { 500, 500 }, create = Create, data = data,
+		wb:Register({ id = "clickgrid." .. styleKind, name = styleKind == "member" and "Member frames" or "Member targets",
+			category = "Party & raid (ClickGrid)", autoSize = true, fitToStage = true, size = { 500, 500 }, create = Create, data = data,
+			scope = styleKind == "member" and "All ClickGrid members" or "Each ClickGrid member's target",
+			settingsTargets = function() return { { id = "style", schema = CG:StyleSchema(styleKind),
+				include = function(path) return styleKind ~= "member" or not SharedMemberPath(path) end } } end,
+			links = styleKind == "member" and {
+				{ id = "@auras", label = "Buffs & debuffs", entryId = "clickgrid.panel" },
+				{ id = "@states", label = "Indicators & states", entryId = "clickgrid.panel" },
+			} or nil,
 			refreshOn = REFRESH_ON,
 			styleTarget = function() return CG.Config.styles[styleKind]:Target(Report) end,
 			reset = function() CG.Config.styles[styleKind]:Reset() end,
 		})
 	end
 	self:RegisterBindingEntry(wb)
+	wb:EndRegistration()
 end
 
 function CG:RegisterBindingEntry(wb)
@@ -105,7 +126,11 @@ function CG:RegisterBindingEntry(wb)
 	local FONT_SIZE, NOTE_HEIGHT, HEADER_HEIGHT, LABEL_WIDTH, GAP = 10, 54, 16, 84, 3
 	local MIN_WIDTH, MIN_HEIGHT, MAX_HEIGHT = 64, 30, 52
 	local function Font() return UF.Media:GetFontObject(UF.Config:GetTheme().font, FONT_SIZE) end
-	wb:Register({ id = "clickgrid.bindings", name = "Click spells", category = "ClickGrid", fillStage = true,
+	wb:Register({ id = "clickgrid.bindings", name = "Click spells", category = "Party & raid (ClickGrid)", fillStage = true,
+		scope = "Current ClickGrid specialization; friendly and hostile clicks",
+		settingsTargets = function() return { { id = "style", schema = schema } } end,
+		destinations = { { label = "Click-spell binding editor", aliases = "left click heal friendly hostile specialization drag drop spell macro",
+			pageId = "@bindings", hint = "Select a grid cell to edit its friendly or hostile action for the current specialization. Clique may own live clicks." } },
 		size = { 700, 460 }, refreshOn = { "ClickGridConfigChanged", "ClickGridBindingsCompiled" },
 		create = function(stage)
 			local handle = { frame = CreateFrame("Frame", nil, stage), cells = {}, columns = {}, rows = {} }
