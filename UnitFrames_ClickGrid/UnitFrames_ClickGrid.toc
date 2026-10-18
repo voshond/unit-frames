@@ -17,6 +17,8 @@ Indicators\Status.lua
 Groups\Targets.xml
 Groups\Layout.lua
 Groups\Style.lua
+Groups\Refresh.lua
+Groups\Panel.lua
 Integration\BlizzardFrames.lua
 Groups\Runtime.lua
 Preview.lua

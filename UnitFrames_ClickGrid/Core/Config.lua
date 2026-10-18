@@ -41,9 +41,11 @@ local function CheckSlots(candidate)
 	return true
 end
 
-local function Changed(path)
-	CG:RequestRefresh()
-	UF.Events:Fire("ClickGridConfigChanged", path)
+local function Changed(kind, path)
+	CG:RequestRefresh(kind, path)
+	local eventPath = path
+	if kind ~= "settings" then eventPath = kind end
+	UF.Events:Fire("ClickGridConfigChanged", eventPath, kind, path)
 end
 
 -- Every write path is a validated store: settings, the member/target bar
@@ -55,7 +57,8 @@ function Config:Initialize()
 	})
 	local db = self.db
 	self.settings = UF.Store:New({
-		schema = self.schema, theme = true, validate = true, check = CheckSlots, changed = Changed,
+		schema = self.schema, theme = true, validate = true, check = CheckSlots,
+		changed = function(path) Changed("settings", path) end,
 		read = function()
 			MigrateTargets(db.profile)
 			return self:MigrateSettings(db.profile.settings)
@@ -71,7 +74,7 @@ function Config:Initialize()
 				return UF.Units:MigrateConfig(db.profile[kind])
 			end,
 			write = function(style) db.profile[kind] = style end,
-			changed = function() Changed(kind) end,
+			changed = function(path) Changed(kind, path) end,
 		})
 	end
 	self.bindings = UF.Store:New({
@@ -79,9 +82,9 @@ function Config:Initialize()
 		read = function() return self:GetBindings() end,
 		write = function(bindings) db.char.loadouts[self:SpecKey()] = bindings end,
 		-- The config event that follows refreshes the binding grid.
-		changed = function()
+		changed = function(path)
 			CG:RequestBindings(false)
-			UF.Events:Fire("ClickGridConfigChanged", "bindings")
+			UF.Events:Fire("ClickGridConfigChanged", "bindings", "bindings", path)
 		end,
 	})
 end
