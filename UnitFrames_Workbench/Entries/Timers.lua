@@ -10,8 +10,12 @@ end
 
 Workbench:Register({
 	id = "timers",
-	category = "Unit frames",
-	name = "Standalone castbar",
+	category = "Cast bar & swing timers",
+	name = "Cast bar & swing timers",
+	scope = "Standalone player timers",
+	settingsTargets = function() return { { id = "style", schema = UF.Config:TimerStore():GetSchema() } } end,
+	destinations = { { label = "Move standalone cast bar", aliases = "position edit mode independent player castbar",
+		pageId = "@layout", hint = "Position these timers independently in Edit Mode. Player > Cast bar is a separate display." } },
 	autoSize = true,
 	fitToStage = true,
 	size = { 280, 24 },

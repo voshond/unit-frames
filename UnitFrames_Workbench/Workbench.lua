@@ -62,8 +62,25 @@ local RESTRICTION_CVARS = { "addonCombatRestrictionsForced", "addonEncounterRest
 
 function Workbench:Register(entry)
 	assert(entry.id and not self.entries[entry.id], "Workbench: missing or duplicate entry id")
+	if not entry.settingsTargets then entry.developer, entry.category = true, "Developer tools" end
 	self.entries[entry.id] = entry
 	self.order[#self.order + 1] = entry
+	self.catalogue = nil
+	if self.window and not self.registering then
+		self:FillList()
+		if self.UpdateSearch then self:UpdateSearch() end
+	end
+end
+
+function Workbench:BeginRegistration()
+	self.registering = true
+end
+
+function Workbench:EndRegistration()
+	self.registering = nil
+	if not self.window then return end
+	self:FillList()
+	self:UpdateSearch()
 end
 
 --[[
@@ -185,14 +202,37 @@ function Workbench:FillList()
 		end
 		table.insert(byCategory[entry.category], entry)
 	end
+	local order = { ["Unit frames"] = 1, ["Cast bar & swing timers"] = 2, ["Shared appearance"] = 3,
+		["Party & raid (ClickGrid)"] = 4, Profiles = 5, ["Developer tools"] = 6 }
+	table.sort(categories, function(a, b)
+		local left, right = order[a] or 7, order[b] or 7
+		if left ~= right then return left < right end
+		return a < b
+	end)
 	local items = {}
 	for _, category in ipairs(categories) do
-		items[#items + 1] = { text = category, header = true }
+		items[#items + 1] = { text = wb.Presentation.CategoryLabel(category), header = true }
 		for _, entry in ipairs(byCategory[category]) do
-			items[#items + 1] = { id = entry.id, text = entry.name }
+			if entry.id == "theme" then
+				for _, page in ipairs(self:GetCatalogue().models.theme.pages) do
+					items[#items + 1] = { id = entry.id .. "|" .. page.id, text = wb.Presentation.NavLabel(page.label),
+						entryId = entry.id, pageId = page.id }
+				end
+			else
+				items[#items + 1] = { id = entry.id, text = wb.Presentation.NavLabel(entry.name) }
+			end
+			if entry.id ~= "theme" and self.entry == entry and self.sections then
+				for _, page in ipairs(self.sections) do
+					items[#items + 1] = { id = page.id and entry.id .. "|" .. page.id, text = wb.Presentation.NavLabel(page.text),
+						depth = 1 + (page.depth or 0), pageId = page.id, header = page.header }
+				end
+			end
 		end
 	end
 	self.list:SetItems(items)
+	if self.entry and self.state then
+		self.list:Select(self.state.section and self.entry.id .. "|" .. self.state.section or self.entry.id)
+	end
 end
 
 -- Entries ---------------------------------------------------------------------
@@ -203,6 +243,9 @@ function Workbench:Select(id)
 		return
 	end
 	self.inspector:ClearTarget()
+	self.pageTargets = nil
+	if self.navigationMessage then self.navigationMessage:SetText("") end
+	if self.prerequisiteButton then self.prerequisiteButton:Hide() end
 	if self.session then self.session:Release() end
 	self.session, self.handle = nil, nil
 	self.eventFrame:UnregisterAllEvents()
@@ -217,7 +260,7 @@ function Workbench:Select(id)
 	self.session = session
 	self.handle = handle
 	session.onRefresh = function()
-		if self.session == session then self.inspector:Refresh(); self:FitStage() end
+		if self.session == session then self.inspector:Refresh(); self:FitStage(); self:UpdateFeatureHeader() end
 	end
 	session:WatchSize(function() if self.session == session then self:FitStage() end end)
 	handle.frame:ClearAllPoints()
@@ -252,6 +295,12 @@ function Workbench:Select(id)
 	self:ApplyStageOptions()
 	self:RegisterEntryEvents()
 	self:UpdateData()
+	self:LayoutWorkbench()
+	local developer = not entry.settingsTargets
+	self.boundsCheck:SetShown(developer)
+	self.secretCheck:SetShown(developer)
+	self.status:SetShown(developer)
+	self.profileLabel:SetText("Active profile: " .. UF.Profiles:GetCurrent())
 end
 
 function Workbench:ApplyPreset(preset)
@@ -319,6 +368,8 @@ function Workbench:OnUpdate(elapsed)
 end
 
 function Workbench:UpdateStatus()
+	if self.profileLabel then self.profileLabel:SetText("Active profile: " .. UF.Profiles:GetCurrent()) end
+	if not self.entry or not self.entry.developer then return end
 	local health = UnitHealth("player")
 	local secret = UF.Util.IsSecret(health)
 	self.status:SetFormattedText("UnitHealth(\"player\") is %s   |   combat restrictions forced: %s   |   in combat: %s",

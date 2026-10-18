@@ -254,7 +254,14 @@ describe("Workbench", function()
 				if not item.header then
 					assert.has_no_error(function()
 						workbench:SelectSection(item.id)
-						Operate(workbench.inspector)
+						local page = workbench.pageModel and workbench.pageModel.byId[item.id]
+						if page then
+							for _, section in ipairs(page.sections) do
+								workbench:SelectFeaturePage(page.id, section.id)
+								Operate(workbench.inspector)
+								sections = sections + 1
+							end
+						else Operate(workbench.inspector) end
 						Tick(workbench, 0.2)
 					end, entry.id .. " / " .. item.id)
 					sections = sections + 1
@@ -264,19 +271,20 @@ describe("Workbench", function()
 		assert.is_true(sections > 40, "expected many sections, got " .. sections)
 	end)
 
-	it("lists the settings tree as sections, with data first", function()
+	it("lists feature pages with layout first and preview data separate", function()
 		workbench:Select("unit.player")
 		local ids = {}
 		for _, item in ipairs(workbench.sections) do
 			ids[#ids + 1] = item.id or ("[" .. item.text .. "]")
 		end
-		assert.equals("@data", ids[1])
-		assert.equals("", ids[2], "top-level options (width, spacing)")
+		assert.equals("@layout", ids[1])
+		assert.equals("@health", ids[2])
 		local text = table.concat(ids, ",")
-		assert.is_not_nil(text:find("health.bar.background", 1, true))
-		assert.is_not_nil(text:find("[Segments]", 1, true), "groups with only sub-groups are headers")
+		assert.is_not_nil(text:find("@auras", 1, true))
+		assert.equals("@data", ids[#ids])
 		workbench:SelectSection("health.belowLeft")
-		assert.equals("Health > Small text below left", workbench.sectionTitle:GetText())
+		assert.equals("Player > Health & Shields", workbench.sectionTitle:GetText())
+		assert.equals("style:text.belowLeft", workbench.state.localSections["@health"])
 	end)
 
 	it("previews fonts in menus without SetFont (forbidden there)", function()
