@@ -26,6 +26,7 @@ concurrency:
 jobs:
   build:
     name: Test and package
+    if: github.event_name != 'release'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -66,6 +67,7 @@ jobs:
   github:
     name: Attach GitHub release files
     needs: build
+    if: github.event_name != 'release'
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -91,17 +93,19 @@ jobs:
   curseforge:
     name: Publish to CurseForge
     needs: github
-    if: (github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.publish_curseforge)) && vars.CF_ENABLED == 'true'
+    if: ${{ !failure() && !cancelled() && (github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.publish_curseforge)) && vars.CF_ENABLED == 'true' }}
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.ref || github.event.release.tag_name }}
           persist-credentials: false
-      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
-        with:
-          name: installable-addon
-          path: release-files
+      - name: Download the tested ZIP from the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ inputs.tag || github.event.release.tag_name }}
+        run: gh release download "$RELEASE_TAG" --pattern "UnitFrames-$RELEASE_TAG.zip" --dir release-files
       - name: Upload the tested ZIP
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
