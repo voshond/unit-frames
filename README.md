@@ -10,6 +10,8 @@ each change.
   separately, or copy your player style to another frame.
 - Choose fonts, colours, borders, bar sizes and portraits.
 - Show health, power, absorb shields, cast bars, buffs and debuffs.
+- Light the end of a health bar while incoming heals go past full health
+  (**Overheal**), using Blizzard's shield overflow glow.
 - See your latency or spell queue window at the end of your casts, and an
   optional global cooldown strip on the player cast bar.
 - Add a standalone player castbar with optional main-hand, off-hand and
