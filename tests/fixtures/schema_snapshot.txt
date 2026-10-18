@@ -22913,6 +22913,7 @@ definition width = 85
 ## clickgrid.settings
 option panel type="group" label="Panel layout"
 option panel.enabled type="toggle" label="Show healing panel" default=true
+option panel.hideBlizzardFrames type="toggle" label="Hide Blizzard party and raid frames" default=false tooltip=#1cad414b
 option panel.showSolo type="toggle" label="Show when solo" default=false
 option panel.mode type="select" label="Raid layout" default="subgroups" values=#6a064e0e
 option panel.columns type="range" label="Columns / subgroup columns" default=4 min=1 max=10 step=1 tooltip=#d6a9662d
@@ -23130,6 +23131,7 @@ default indicators.threatStyle = "highlight"
 default panel.columns = 4
 default panel.enabled = true
 default panel.flow = "down"
+default panel.hideBlizzardFrames = false
 default panel.mode = "subgroups"
 default panel.rows = 10
 default panel.scale = 1
@@ -23261,6 +23263,7 @@ resolved indicators.threatStyle = "highlight"
 resolved panel.columns = 4
 resolved panel.enabled = true
 resolved panel.flow = "down"
+resolved panel.hideBlizzardFrames = false
 resolved panel.mode = "subgroups"
 resolved panel.rows = 10
 resolved panel.scale = 1

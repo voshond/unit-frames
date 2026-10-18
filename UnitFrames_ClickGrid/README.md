@@ -140,8 +140,11 @@ layouts retain hidden reusable frames for the session.
 
 ## Limits and release gate
 
-Blizzard party/raid frames remain visible. This is currently an additive panel,
-not a verified replacement. Missing-buff warnings, action icons,
+Blizzard party/raid frames remain visible by default. In **Panel Layout**, enable
+**Hide Blizzard party and raid frames** to hide the native party frames, raid
+frames and raid manager while ClickGrid is enabled. Changes wait until combat
+ends. Turning the option off or disabling the panel restores Blizzard's
+visibility rules. This is not yet a verified replacement. Missing-buff warnings, action icons,
 items, communications, plugins and sound alerts remain future work.
 Arbitrary spell-ID priority logic for restricted friendly debuffs is not
 promised; native selection and private-aura presentation are used instead.

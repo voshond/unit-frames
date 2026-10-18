@@ -77,7 +77,8 @@ the clicks instead.
 The panel normally appears when you are in a group. Turn on **Show when solo**
 in its settings to try it on your own. Move it through **Edit Mode**.
 
-ClickGrid is experimental and leaves Blizzard's party and raid frames visible.
+ClickGrid is experimental. Its **Hide Blizzard party and raid frames** setting
+optionally hides the native group frames while ClickGrid is enabled.
 See the [ClickGrid guide](UnitFrames_ClickGrid/README.md) for more details.
 
 ## Getting started
