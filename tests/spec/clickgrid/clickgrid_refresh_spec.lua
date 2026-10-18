@@ -82,6 +82,26 @@ describe("ClickGrid targeted refresh", function()
 		assert.is_true(slots:IsEnabled())
 	end)
 
+	it("reuses indicator placement inputs and unchanged stack members without hiding changed settings", function()
+		local first = Cell().Member
+		local second = CG.headers.party:GetAttribute("child2").Member
+		local status = CG:GetGridButton(first).status
+		local role = first.uf:GetDecorations().members.role
+		local counters = Observe(function() CG:Refresh() end)
+		assert.equals(90, counters.decorationReflow)
+		assert.is_nil(counters.textTagClear)
+		assert.equals(2, counters.auraArtConfigBuild)
+		assert.is_nil(counters.glowLayoutWrite)
+		assert.equals(role, first.uf:GetDecorations().members.role)
+		assert.equals(status.readyCheckIcon.config, CG:GetGridButton(second).status.readyCheckIcon.config)
+		CG.Config:Set("indicators.roleSize", 24)
+		assert.equals(24, first.uf:GetDecorations().members.role.size)
+		assert.is_true(role ~= first.uf:GetDecorations().members.role)
+		CG.Config:Set("indicators.role", false)
+		CG.Config.settings:Reset()
+		assert.is_true(status.resolved.role)
+	end)
+
 	it("relayouts titles, borders and panel spacing without restyling units or compiling bindings", function()
 		for _, edit in ipairs({
 			function() CG.Config:Set("titles.size", 18) end,
@@ -178,9 +198,14 @@ describe("ClickGrid targeted refresh", function()
 	end)
 
 	it("reactivates retained headers with current style, indicators and bindings before raid eligibility", function()
+		local retained = CG.headers.group1:GetAttribute("child1").Member
+		local text = retained.uf:GetRow("health"):GetText("left"):GetFrame()
+		local tag = retained.tags[text]
+		assert.is_not_nil(tag)
 		CG.Config:Set("panel.mode", "flat")
 		local inactive = CG.headers.group1:GetAttribute("child1").Member
 		assert.is_true(CG:GetGridButton(inactive).inactive)
+		assert.is_nil(inactive.tags[text])
 		CG.Config:SetStyle("member", "width", 191)
 		CG.Config:Set("indicators.role", false)
 		CG.Config:SetAction(2, "shift", "friendly", { action = "spell", spell = "2061" })
@@ -190,6 +215,7 @@ describe("ClickGrid targeted refresh", function()
 		assert.equals(191, inactive.uf.resolved.width)
 		assert.is_false(CG:GetGridButton(inactive).status.resolved.role)
 		assert.equals(2061, inactive:GetAttribute("shift-spell-heal2"))
+		assert.equals(tag, inactive.tags[text])
 		assert.is_true(CG.headers.group1:GetAttribute("showRaid"))
 	end)
 end)

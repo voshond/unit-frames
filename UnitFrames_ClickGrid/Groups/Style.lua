@@ -15,7 +15,7 @@ end
 -- Status indicators and fixed slots belong to the member UnitFrame, sharing
 -- its combat deferral, theme management and release.
 function CG:AddMemberExtras(uf, button, live)
-	local status = uf:Own(self.Status:New(button, self.Config:Get().indicators, { unitFrame = uf, live = live }))
+	local status = uf:Own(self.Status:New(button, self.Config:GetIndicators(), { unitFrame = uf, live = live }))
 	local slots = uf:Own(self.Slots:New(button, self:SlotConfig(uf)))
 	return status, slots
 end

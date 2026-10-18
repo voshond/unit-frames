@@ -331,7 +331,7 @@ function UnitFrame.BuildSchema(spec)
 	return ns.Util.Copy(schema)
 end
 
-function UnitFrame:OnApply(cfg)
+local function Apply(self, cfg)
 	Backdrop.ApplyTo(self.border, cfg.border)
 	for _, row in ipairs(self.rows) do
 		self:ApplyChild(row.component, row.def.key, cfg)
@@ -344,6 +344,10 @@ function UnitFrame:OnApply(cfg)
 	self:ApplyRangeOpacity()
 	self:ApplyUnitState()
 	if self.readyCheck then self.readyCheck:Apply(cfg.readyCheck) end
+end
+
+function UnitFrame:OnApply(cfg)
+	self.decorations:Batch(Apply, self, cfg)
 end
 
 -- The unit state look's colour and strength for `target` ("bars",

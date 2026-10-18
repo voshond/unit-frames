@@ -1,5 +1,6 @@
 local _, CG = ...
 local UF = CG.UF
+local EMPTY_INDICATORS = {}
 local Config = {}
 CG.Config = Config
 Config.schema = {
@@ -95,6 +96,10 @@ end
 
 function Config:Resolved()
 	return self.settings:Resolved()
+end
+
+function Config:GetIndicators()
+	return self:Get().indicators or EMPTY_INDICATORS
 end
 
 function Config:Set(path, value)

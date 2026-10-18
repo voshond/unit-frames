@@ -63,10 +63,14 @@ function Glow.Create(parent)
 end
 
 -- width/height: the holder's known configured size, when the owner has one.
+local applied = setmetatable({}, { __mode = "k" })
+
 function Glow.Apply(holder, cfg, width, height)
 	local offset = math.min(cfg.offset, cfg.size)
 	local size = cfg.size
 	if width and height then size = math.min(size, offset + math.floor(math.min(width, height) / 2)) end
+	local previous = applied[holder]
+	if previous and previous.size == size and previous.offset == offset and previous.opacity == cfg.opacity then return end
 	for _, key in ipairs({ "TopLeft", "TopRight", "BottomLeft", "BottomRight" }) do
 		holder[key]:SetSize(size, size)
 		holder[key]:ClearAllPoints()
@@ -76,6 +80,8 @@ function Glow.Apply(holder, cfg, width, height)
 	holder.BottomLeft:SetPoint("BOTTOMLEFT", holder, "BOTTOMLEFT", -offset, -offset)
 	holder.BottomRight:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", offset, -offset)
 	holder:SetAlpha(cfg.opacity)
+	applied[holder] = { size = size, offset = offset, opacity = cfg.opacity }
+	ns.Perf:Count("glowLayoutWrite")
 end
 
 -- Blizzard's action button spell alert (ActionButtonSpellAlerts.xml): a burst

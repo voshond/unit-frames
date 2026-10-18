@@ -154,10 +154,16 @@ function AuraBar:CreateContainers()
 	return true
 end
 
+local function ArtworkConfig(cfg)
+	ns.Perf:Count("auraArtConfigBuild")
+	local art = ns.Util.Copy(cfg)
+	if cfg.durationPosition == "below" then art.durationPosition = "BOTTOM" end
+	return art
+end
+
 function AuraBar:OnApply(cfg)
 	ns.Perf:Begin("aura art config")
-	self.artConfig = ns.Util.Copy(cfg)
-	if cfg.durationPosition == "below" then self.artConfig.durationPosition = "BOTTOM" end
+	self.artConfig = ns.Schema.Memo(ArtworkConfig, cfg)
 	self.dispelColors = ns.AuraIcon.DispelColors(cfg, self.dispelColors)
 	if cfg.enabled then self:CreateContainers() end
 	if self.presence then

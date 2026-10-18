@@ -31,6 +31,9 @@ local PLACED = {
 	{ "summon", { "SummonIndicator" } },
 }
 
+local PLACEMENT_KEYS = {}
+for _, item in ipairs(PLACED) do PLACEMENT_KEYS[item[1]] = UF.IconPlacement.PrefixedKeys(item[1]) end
+
 -- Private aura row offsets from the cell edge it sits on.
 local PRIVATE_INSETS = { RIGHT = { -2, 0 }, LEFT = { 2, 0 }, TOP = { 0, -2 }, BOTTOM = { 0, 2 }, CENTER = { 0, 0 } }
 
@@ -164,6 +167,7 @@ function Status:OnCreate(button, spec)
 		if not self.released then self.unitFrame:GetDecorations():Reflow() end
 	end
 	self.hosts = {}
+	self.placementWidgets = {}
 	local native = self.unitFrame:IsNativeLayout()
 	for _, item in ipairs(PLACED) do
 		local ready = item[1] == "ready"
@@ -174,13 +178,21 @@ function Status:OnCreate(button, spec)
 		end
 		local host = ready and ready:GetFrame() or Host(overlay, native)
 		self.hosts[item[1]] = host
+		local widgets = {}
+		self.placementWidgets[item[1]] = widgets
 		for _, element in ipairs(item[2]) do
 			local icon = ready and ready:GetWidget() or host:CreateTexture(nil, "OVERLAY")
 			icon:SetAllPoints(host)
 			icon.PostUpdate = Reflow
 			icon:Hide()
 			self[element] = icon
+			widgets[#widgets + 1] = icon
 		end
+	end
+	self.rolePresent = function() return self:RolePresent() end
+	self.resurrectionPresent = function()
+		if issecretvalue(self.incomingResurrection) then return nil end
+		return self.incomingResurrection
 	end
 	for _, def in ipairs(FIXED) do
 		if def[1] == "PhaseIndicator" then
@@ -308,28 +320,22 @@ end
 -- only: no reads of native icon dimensions.
 function Status:LayoutIcons()
 	local cfg, stack = self.resolved, self.unitFrame:GetDecorations()
-	self.readyCheckIcon:Apply(UF.IconPlacement.Read(cfg, UF.IconPlacement.PrefixedKeys("ready")))
+	self.readyCheckIcon:Apply(UF.Schema.Memo(UF.IconPlacement.Read, cfg, PLACEMENT_KEYS.ready))
 	self.readyCheckIcon:Layout(self.unitFrame:GetLayoutContext())
 	self.frame:SetFrameLevel(self.button:GetFrameLevel() + 20)
-	local function RolePresent() return self:RolePresent() end
-	local function ResurrectionPresent()
-		if issecretvalue(self.incomingResurrection) then return nil end
-		return self.incomingResurrection
-	end
 	for _, item in ipairs(PLACED) do
-		local key, widgets = item[1], {}
-		for i, element in ipairs(item[2]) do widgets[i] = self[element] end
+		local key = item[1]
 		if key ~= "ready" then
-			local placement = UF.IconPlacement.Read(cfg, UF.IconPlacement.PrefixedKeys(key))
-			local present = key == "role" and self.live and CG.Caps.roleEnum and RolePresent
-				or key == "resurrection" and ResurrectionPresent or nil
-			stack:Set(key, UF.IconPlacement.Member(placement, self.hosts[key], widgets, present))
+			local placement = UF.Schema.Memo(UF.IconPlacement.Read, cfg, PLACEMENT_KEYS[key])
+			local present = key == "role" and self.live and CG.Caps.roleEnum and self.rolePresent
+				or key == "resurrection" and self.resurrectionPresent or nil
+			stack:Set(key, UF.IconPlacement.Member(placement, self.hosts[key], self.placementWidgets[key], present))
 		end
 	end
 	stack:Reflow()
 end
 
-function Status:OnApply(cfg)
+local function Apply(self, cfg)
 	local button, live = self.button, self.live
 	local function Bind(element, widget)
 		if live then UF.Units.SetElement(button, element, widget) end
@@ -389,6 +395,10 @@ function Status:OnApply(cfg)
 	-- After binding: disabled elements have hidden their art.
 	self:LayoutIcons()
 	self.unitFrame:GetReadyCheck():Attach(self.readyCheckIcon)
+end
+
+function Status:OnApply(cfg)
+	self.unitFrame:GetDecorations():Batch(Apply, self, cfg)
 end
 
 function Status:OnRelease()

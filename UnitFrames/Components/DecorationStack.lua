@@ -79,8 +79,33 @@ function Stack:SetContext(context)
 	self.context = context
 end
 
+local MEMBER_FIELDS = { "host", "enabled", "anchor", "size", "gap", "order", "x", "y", "present" }
+
+local function SameMember(a, b)
+	for _, key in ipairs(MEMBER_FIELDS) do if a[key] ~= b[key] then return false end end
+	local first, second = a.widgets or a, b.widgets or b
+	if #first ~= #second then return false end
+	for index, widget in ipairs(first) do if widget ~= second[index] then return false end end
+	return true
+end
+
 function Stack:Set(key, member)
-	if not self.released then self.members[key] = member end
+	if self.released then return end
+	local previous = self.members[key]
+	if previous and SameMember(previous, member) then return end
+	self.members[key] = member
+end
+
+function Stack:Batch(fn, ...)
+	self.batchDepth = (self.batchDepth or 0) + 1
+	local ok, result = pcall(fn, ...)
+	self.batchDepth = self.batchDepth - 1
+	if self.batchDepth == 0 and self.pendingReflow then
+		self.pendingReflow = nil
+		if ok then self:Reflow() end
+	end
+	if not ok then error(result, 0) end
+	return result
 end
 
 function Stack:Remove(key)
@@ -169,6 +194,8 @@ end
 
 function Stack:Reflow()
 	if self.released then return end
+	ns.Perf:Count("decorationReflowRequest")
+	if (self.batchDepth or 0) > 0 then self.pendingReflow = true; return end
 	ns.Perf:Count("decorationReflow")
 	ns.Perf:Begin("decoration reflow")
 	local context, groups = self.context, self.groups
@@ -236,6 +263,7 @@ end
 function Stack:Release()
 	if self.released then return end
 	self.released = true
+	self.pendingReflow = nil
 	if self.nameText then
 		self.nameText:SetLeadingSpace(0)
 		self.nameText = nil

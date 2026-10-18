@@ -45,7 +45,7 @@ function CG:ApplyExtras(uf, extras, changes, force)
 	local full = not changes or changes.full
 	local changed = false
 	if extras.status and (full or force or changes.indicators) then
-		extras.status:Apply(self.Config:Get().indicators)
+		extras.status:Apply(self.Config:GetIndicators())
 		changed = true
 	end
 	if extras.slots and (full or force or changes.slots) then
@@ -71,16 +71,11 @@ function CG:DeactivateFrame(frame)
 	DisableAuras(frame.uf)
 	if button.slots then button.slots:SetEnabled(false) end
 	if frame.uf:GetReadyCheck() then frame.uf:GetReadyCheck():Set(nil) end
-	for _, row in frame.uf:Rows() do
-		for _, text in pairs(row.texts) do
-			UF.TextTags.Unbind(text:GetFrame())
-			frame:Untag(text:GetFrame())
-		end
-	end
+	UF.Units:ClearTags(frame)
 	button.inactive = true
 end
 
-function CG:RefreshFrame(frame, changes, layout)
+local function RefreshFrame(self, frame, changes, layout)
 	local button = self:GetGridButton(frame)
 	local kind, cell = button.kind, frame:GetParent()
 	local activated = button.inactive or not button.refreshed
@@ -120,6 +115,10 @@ function CG:RefreshFrame(frame, changes, layout)
 	end
 	button.refreshed = true
 	return activated
+end
+
+function CG:RefreshFrame(frame, changes, layout)
+	return frame.uf:GetDecorations():Batch(RefreshFrame, self, frame, changes, layout)
 end
 
 function CG:CommitLayout()

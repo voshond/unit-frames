@@ -22,6 +22,23 @@ oUF:RegisterInitCallback(function(frame) ready[frame] = true end)
 -- signatures). Compared entry by entry: signatures may contain nils.
 local signatures = setmetatable({}, { __mode = "k" })
 local presetTags = setmetatable({}, { __mode = "k" })
+local clearedTags = setmetatable({}, { __mode = "k" })
+
+local function ClearTag(frame, fs)
+	if clearedTags[fs] then return end
+	presetTags[fs] = nil
+	ns.TextTags.Unbind(fs)
+	frame:Untag(fs)
+	fs:SetText("")
+	clearedTags[fs] = true
+	ns.Perf:Count("textTagClear")
+end
+
+function Units:ClearTags(frame)
+	for _, row in frame.uf:Rows() do
+		for _, text in pairs(row.texts) do ClearTag(frame, text:GetFrame()) end
+	end
+end
 
 local function SameSignature(a, b)
 	if a == b then return true end
@@ -71,6 +88,7 @@ local function TagRow(frame, row, rowEnabled)
 		local fs = text:GetFrame()
 		local template, preset = text:GetTemplate(), text:GetPresetTag()
 		if rowEnabled and text:IsEnabled() and not template.empty then
+			clearedTags[fs] = nil
 			if preset then
 				TextTags.Unbind(fs)
 				if presetTags[fs] ~= preset then
@@ -83,10 +101,7 @@ local function TagRow(frame, row, rowEnabled)
 				TextTags.Bind(frame, fs, template)
 			end
 		else
-			presetTags[fs] = nil
-			TextTags.Unbind(fs)
-			frame:Untag(fs)
-			fs:SetText("")
+			ClearTag(frame, fs)
 		end
 	end
 	ns.Perf:End("bind tags")
@@ -138,14 +153,16 @@ function Units:UpdateFrame(frame, reason)
 end
 
 -- Re-applies config to a live frame and refreshes everything shown on it.
-function Units:Refresh(unit)
-	local frame = self.frames[unit]
-	if not frame then
-		return
-	end
+local function Refresh(self, frame, unit)
 	frame.uf:Apply(ns.Config:GetUnitConfig(unit))
 	self:Bind(frame)
 	self:UpdateFrame(frame, "UnitFramesRefresh")
+end
+
+function Units:Refresh(unit)
+	local frame = self.frames[unit]
+	if not frame then return end
+	frame.uf:GetDecorations():Batch(Refresh, self, frame, unit)
 end
 
 -- Copy effective settings, not just overrides: the units have different
