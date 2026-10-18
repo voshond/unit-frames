@@ -60,10 +60,10 @@ function Component:GetSchema()
 		elseif owner then
 			local cache = schemas[class]
 			if not cache then cache = setmetatable({}, { __mode = "k" }); schemas[class] = cache end
-			if not cache[owner] then cache[owner] = self.BuildSchema(self.spec) end
+			if not cache[owner] then cache[owner] = Schema.Build(self.BuildSchema, self.spec) end
 			self.schemaCache = cache[owner]
 		else
-			self.schemaCache = self.BuildSchema(self.spec)
+			self.schemaCache = Schema.Build(self.BuildSchema, self.spec)
 		end
 	end
 	return self.schemaCache
@@ -83,9 +83,7 @@ function Component:Apply(config)
 	local Perf = ns.Perf
 	Perf:Count(self.componentOwner and "childApply" or "rootApply")
 	Perf:Begin(self.className)
-	Perf:Begin("resolve")
 	self.resolved = Schema.Resolve(self:GetSchema(), self.config, ns.Config:GetTheme())
-	Perf:End("resolve")
 	Perf:Count("presentationApply")
 	self:OnApply(self.resolved)
 	if self.resolved.enabled ~= nil then
@@ -129,8 +127,10 @@ local function BuildChildConfig(schema, config, key)
 end
 
 function Component:ChildConfig(key)
+	local schema = self:GetSchema()
+	ns.Perf:Count("childConfigCall")
 	ns.Perf:Begin("child config")
-	local config = Schema.Memo(BuildChildConfig, self:GetSchema(), self.config, key)
+	local config = Schema.Memo(BuildChildConfig, schema, self.config, key)
 	ns.Perf:End("child config")
 	return config
 end

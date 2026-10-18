@@ -101,6 +101,16 @@ local function ReportCounters(counters)
 	for _, key in ipairs(keys) do ns:Print(key, counters[key], "calls") end
 end
 
+function Perf:ReportCacheReuse(counters, label)
+	for _, keys in ipairs({ { "resolveCall", "resolveBuild", "resolution" }, { "childConfigCall", "childConfigBuild", "child config" } }) do
+		local calls = counters[keys[1]]
+		if calls then
+			local builds = counters[keys[2]] or 0
+			ns:Print(label or "", string.format("%s: %d calls, %d builds, %d shared hits", keys[3], calls, builds, calls - builds))
+		end
+	end
+end
+
 function Perf:Cancel()
 	if self.suite then self:FinishSuite("cancelled"); return end
 	if self.driver then
@@ -163,44 +173,6 @@ function Perf:Watch(seconds)
 	ns:Print("observing for", seconds, "seconds; /uf perf cancel stops the window")
 end
 
--- Exclusive time and allocation per phase: each interval between markers
--- belongs to the innermost open phase (outside any phase: "unmarked").
-local function Phases(results)
-	local phases, stack, ms, bytes = {}, {}, 0, 0
-	local function Add(name, toMS, toBytes)
-		local phase = phases[name] or { name = name, ms = 0, bytes = 0, calls = 0 }
-		phases[name] = phase
-		phase.ms, phase.bytes = phase.ms + toMS - ms, phase.bytes + toBytes - bytes
-		ms, bytes = toMS, toBytes
-		return phase
-	end
-	for _, event in ipairs(results.events or {}) do
-		Add(stack[#stack] or "unmarked", event.elapsedMilliseconds, event.allocatedBytes)
-		local kind, name = event.name:sub(1, 1), event.name:sub(2)
-		if kind == ">" then
-			stack[#stack + 1] = name
-			local phase = phases[name] or { name = name, ms = 0, bytes = 0, calls = 0 }
-			phases[name], phase.calls = phase, phase.calls + 1
-		elseif kind == "<" then
-			stack[#stack] = nil
-		end
-	end
-	Add("unmarked", results.elapsedMilliseconds, results.allocatedBytes)
-	local list = {}
-	for _, phase in pairs(phases) do list[#list + 1] = phase end
-	table.sort(list, function(a, b) return a.bytes > b.bytes end)
-	return list
-end
-Perf.Phases = Phases
-
-local function ReportPhases(results)
-	for index, phase in ipairs(Phases(results)) do
-		if index > 15 then break end
-		ns:Print(string.format("  %s: %.3f ms, %.1f KB allocated, %d calls (exclusive)",
-			phase.name, phase.ms, phase.bytes / 1024, phase.calls))
-	end
-end
-
 local operations = {
 	-- Native aura creation, isolated from oUF/ClickGrid. No unit or fake aura
 	-- data is assigned. Each run retains engine frames until the next reload.
@@ -250,7 +222,7 @@ end
 
 -- Runs fn(...) inside an active measurement and reports it under `title`.
 -- Returns whether it succeeded and the error otherwise.
-local function Run(self, title, fn, ...)
+function Perf:Run(title, fn, ...)
 	local ok, result, counters = Capture(self, fn, ...)
 	Divider(title)
 	if not ok then
@@ -263,17 +235,30 @@ local function Run(self, title, fn, ...)
 	ns.Logs:Info(title, summary)
 	ns:Print(summary)
 	ReportCounters(counters)
-	ReportPhases(result)
+	self:ReportCacheReuse(counters)
+	local phases = self.Phases(result)
+	self:ReportPhases(phases)
+	local global = ns.Config.db.global
+	global.perfMeasurements = global.perfMeasurements or {}
+	global.perfMeasurements[title] = { format = 2, timestamp = GetServerTime(), context = self:SuiteContext(),
+		ms = result.elapsedMilliseconds, allocatedBytes = result.allocatedBytes,
+		deallocatedBytes = result.deallocatedBytes, counters = counters, phases = phases }
+	ns:Print("structured measurement: UnitFramesDB.global.perfMeasurements[" .. string.format("%q", title) .. "]; /reload writes it to SavedVariables")
+	return true
+end
+
+function Perf:CanMeasure()
+	if InCombatLockdown() then ns:Print("active measurements must wait until combat ends"); return false end
+	if not ProfilerEnabled() then ns:Print("native addon profiler unavailable/disabled"); return false end
+	if self.counters or self.combatArmed or self.suite then ns:Print("cancel the observation window before an active measurement"); return false end
 	return true
 end
 
 function Perf:Measure(operation)
 	local run = operations[operation]
 	if not run then ns:Print("measure operations: auras, units, clickgrid, preview, create, schema"); return end
-	if InCombatLockdown() then ns:Print("active measurements must wait until combat ends"); return end
-	if not ProfilerEnabled() then ns:Print("native addon profiler unavailable/disabled"); return end
-	if self.counters or self.combatArmed or self.suite then ns:Print("cancel the observation window before an active measurement"); return end
-	Run(self, "measure " .. operation, run)
+	if not self:CanMeasure() then return end
+	self:Run("measure " .. operation, run)
 end
 
 -- Startup measurement. "/uf perf startup" arms it for the next load only;
@@ -293,7 +278,7 @@ function Perf:Startup(label, fn, ...)
 	if not self.startupArmed or self.counters or self.suite or InCombatLockdown() or not ProfilerEnabled() then
 		return fn(...)
 	end
-	local ok, err = Run(self, "startup " .. label, fn, ...)
+	local ok, err = self:Run("startup " .. label, fn, ...)
 	-- Fail as an unmeasured startup would.
 	if not ok then error(err, 0) end
 end
@@ -305,6 +290,7 @@ function Perf:Command(arguments)
 		self:Watch(value ~= "" and value or nil)
 	elseif command == "cancel" then self:Cancel(); ns:Print("performance observation cancelled")
 	elseif command == "measure" then self:Measure(value)
+	elseif command == "edit" then self:MeasureEdit(value)
 	elseif command == "startup" then self:ArmStartup()
 	elseif command == "combat" then self:Combat()
 	elseif command == "suite" then self:SuiteCommand(value)
@@ -315,8 +301,10 @@ function Perf:Command(arguments)
 		ns:Print("/uf perf combat - observe the next complete combat")
 		ns:Print("/uf perf cancel - cancel performance observation")
 		ns:Print("/uf perf measure <operation> - actively measure an operation")
+		ns:Print("/uf perf edit <operation> - measure a ClickGrid settings edit, then restore its overrides")
 		ns:Print("/uf perf startup - measure startup after the next /reload")
 		ns:Print("/uf perf suite baseline - run the out-of-combat baseline suite")
 		ns:Print("/uf perf suite report - show the last saved suite report")
+		ns:Print("/uf perf suite save | saved - preserve or show a comparison baseline")
 	end
 end

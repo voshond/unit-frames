@@ -64,6 +64,7 @@ end
 -- Presets the host fully shows use their shared [uf:<id>] tag; other slots
 -- a reusable handle tag (Units/TextTags.lua).
 local function TagRow(frame, row, rowEnabled)
+	ns.Perf:Begin("bind tags")
 	local TextTags = ns.TextTags
 	for _, slot in ipairs(ns.Components.TextBar.SLOTS) do
 		local text = row:GetText(slot.key)
@@ -88,6 +89,7 @@ local function TagRow(frame, row, rowEnabled)
 			fs:SetText("")
 		end
 	end
+	ns.Perf:End("bind tags")
 end
 
 -- Points oUF elements and tags at the current frame state, rows and parts.
@@ -95,6 +97,7 @@ function Units:Bind(frame)
 	ns.Perf:Count("unitBind")
 	ns.Perf:Begin("bind")
 	local uf, Drivers = frame.uf, ns.UnitDrivers
+	ns.Perf:Begin("bind drivers")
 	-- Companions attach their own ready check icon later: rebind on changes.
 	local readyCheck = uf:GetReadyCheck()
 	if readyCheck then
@@ -103,15 +106,22 @@ function Units:Bind(frame)
 	for _, driver in ipairs(Drivers.frame) do
 		BindDriver(frame, driver, uf, true)
 	end
+	ns.Perf:End("bind drivers")
 	for key, row, cfg in uf:Rows() do
+		ns.Perf:Begin("bind drivers")
 		BindDriver(frame, Drivers.Row(key), row, cfg.enabled)
+		ns.Perf:End("bind drivers")
 		TagRow(frame, row, cfg.enabled)
 	end
+	ns.Perf:Begin("bind drivers")
 	for key, part in uf:Parts() do
 		BindDriver(frame, Drivers.Part(key), part, part:IsEnabled())
 	end
+	ns.Perf:End("bind drivers")
 	-- Element enable/disable can hide artwork after the component layout.
+	ns.Perf:Begin("bind decorations")
 	uf:GetDecorations():Reflow()
+	ns.Perf:End("bind decorations")
 	ns.Perf:End("bind")
 end
 
@@ -214,11 +224,15 @@ end)
 -- Spawning --------------------------------------------------------------------
 
 local function Spawn(factory, unit)
+	ns.Perf:Begin("unit spawn")
 	local def = Units.definitions[unit]
 	local name = "UnitFrames" .. unit:gsub("^%l", string.upper)
 	local frame = factory:Spawn(unit, name)
 	Units.frames[unit] = frame
+	ns.Perf:End("unit spawn")
+	ns.Perf:Begin("edit mode registration")
 	ns.EditMode:Register(frame, unit, "UnitFrames: " .. def.label, def.defaultPosition)
+	ns.Perf:End("edit mode registration")
 	return frame
 end
 

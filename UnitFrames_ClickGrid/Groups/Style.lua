@@ -24,7 +24,7 @@ end
 function CG:StyleSchema(kind)
 	self.styleSchemas = self.styleSchemas or {}
 	if not self.styleSchemas[kind] then
-		local schema = UF.Components.UnitFrame.BuildSchema(UF.Units:GetSpec(self.definitions[kind]))
+		local schema = UF.Schema.Build(UF.Components.UnitFrame.BuildSchema, UF.Units:GetSpec(self.definitions[kind]))
 		if kind == "target" then
 			-- Narrow strips are useful beside a member bar.
 			schema = UF.Schema.Override(schema, "width", { min = 20 })

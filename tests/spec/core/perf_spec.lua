@@ -243,7 +243,7 @@ describe("Opt-in performance diagnostics", function()
 			opened[label] = (opened[label] or 0) + (kind == ">" and 1 or -1)
 			assert.is_true(#name < 48)
 		end
-		for _, label in ipairs({ "UnitFrame", "resolve", "bind", "oUF elements", "oUF tags" }) do
+		for _, label in ipairs({ "UnitFrame", "resolve", "bind", "bind drivers", "bind tags", "bind decorations", "oUF elements", "oUF tags" }) do
 			assert.is_not_nil(opened[label], label)
 		end
 		for label, open in pairs(opened) do assert.equals(0, open, label .. " is balanced") end

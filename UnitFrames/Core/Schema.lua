@@ -237,12 +237,28 @@ local function ResolvePlain(schema, config, theme)
 	return Resolve(schema, config, theme, NO_LAYERS)
 end
 
+function Schema.Build(build, spec)
+	ns.Perf:Count("schemaBuild")
+	ns.Perf:Begin("schema build")
+	local schema = build(spec)
+	ns.Perf:End("schema build")
+	return schema
+end
+
 -- Fresh tables outside a sharing scope; shared read-only ones inside it.
 function Schema.Resolve(schema, config, theme, overrides)
+	local Perf = ns.Perf
+	Perf:Count("resolveCall")
+	Perf:Begin("resolve")
+	local resolved
 	if overrides then
-		return Resolve(schema, config, theme, { overrides })
+		Perf:Count("resolveBuild")
+		resolved = Resolve(schema, config, theme, { overrides })
+	else
+		resolved = Schema.Memo(ResolvePlain, schema, config, theme)
 	end
-	return Schema.Memo(ResolvePlain, schema, config, theme)
+	Perf:End("resolve")
+	return resolved
 end
 
 -- Composition. Each returns a new list and never mutates its inputs; the

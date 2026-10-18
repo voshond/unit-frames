@@ -13,7 +13,11 @@ function Perf:FinishSuite(status, reason)
 	report.duration = GetTime() - suite.startedAt
 	for _, operation in ipairs(report.operations) do self:SummarizeSuiteOperation(operation) end
 	report.after = self:Snapshot()
-	ns.Config.db.global.perfSuiteReport = report
+	local global = ns.Config.db.global
+	if not global.perfSuiteBaselineReport and global.perfSuiteReport and global.perfSuiteReport.status == "completed" then
+		global.perfSuiteBaselineReport = ns.Util.Copy(global.perfSuiteReport)
+	end
+	global.perfSuiteReport = report
 	if status == "failed" then ns.Logs:Error("baseline suite", reason)
 	else ns.Logs:Info("baseline suite", status .. (reason and ": " .. reason or "")) end
 	self:ReportSuite(report)
@@ -53,7 +57,7 @@ function Perf:StartSuite()
 	if self.counters or self.combatArmed or self.suite then
 		ns:Print("cancel the current observation or suite first"); return
 	end
-	local report = { format = 1, suite = "baseline", status = "running", timestamp = GetServerTime(),
+	local report = { format = 2, suite = "baseline", status = "running", timestamp = GetServerTime(),
 		warmups = WARMUPS, runs = RUNS, interval = INTERVAL, context = self:SuiteContext(),
 		before = self:Snapshot(), operations = {}, skipped = {} }
 	local names = { "schema", "units" }
@@ -79,5 +83,14 @@ end
 function Perf:SuiteCommand(command)
 	if command == "baseline" then self:StartSuite()
 	elseif command == "report" then self:ReportSuite(ns.Config.db.global.perfSuiteReport)
-	else ns:Print("/uf perf suite baseline | report") end
+	elseif command == "saved" then self:ReportSuite(ns.Config.db.global.perfSuiteBaselineReport)
+	elseif command == "save" then
+		local report = ns.Config.db.global.perfSuiteReport
+		if self.suite or not report or report.status ~= "completed" then
+			ns:Print("finish a baseline suite before saving a comparison baseline")
+			return
+		end
+		ns.Config.db.global.perfSuiteBaselineReport = ns.Util.Copy(report)
+		ns:Print("comparison baseline saved; /uf perf suite saved shows it; /reload writes it to SavedVariables")
+	else ns:Print("/uf perf suite baseline | report | save | saved") end
 end

@@ -373,10 +373,36 @@ census, then explicitly creates a preview for the final workload.
 recent profiler milliseconds per tick, session peaks and session threshold
 counts. `/uf perf watch 60` reports threshold deltas and addon-owned operation
 counts over one bounded observation window; it does not report a window peak
-or treat ticks as rendered frames. `/uf perf measure units|clickgrid|preview|schema`
+or treat ticks as rendered frames. `/uf perf measure units|clickgrid|preview|schema|auras|create`
 actively runs one prepared operation outside combat and reports native elapsed
 milliseconds and allocated/deallocated bytes. Cancel a watch before measuring.
-Measurements are session-local and optional APIs have capability checks.
+Optional APIs have capability checks. Reports print separate top-15 rankings by
+exclusive time and allocation; phase entries include cache hits and are distinct
+from build counters. Resolution and child-config summaries show calls, builds
+and shared hits. Cold schema construction, oUF driver/tag binding, native unit
+spawning and Edit Mode registration have separate attribution.
+
+Successful active measurements retain their complete phases, counters, timing,
+allocations and environment/settings context under
+`UnitFramesDB.global.perfMeasurements["measure units"]` (or the corresponding
+operation title). Each title retains only its latest successful measurement.
+`/uf perf startup` arms measurements for unit and ClickGrid startup on the next
+reload; these use the `"startup units"` and `"startup clickgrid"` titles. New
+TOC files require a client restart after installation before using the commands.
+
+`/uf perf edit indicators|titles|spacing|member|target|slots|bindings` measures
+one representative ClickGrid edit through the real settings store and its
+callbacks, then restores the original store overrides outside the timed call.
+The probes toggle the phase indicator or titles, adjust horizontal spacing,
+member/target width or first-slot size by one schema step, or switch the first
+friendly click action between target and assist. They require prepared ClickGrid,
+enabled profiling, no active observation/suite and no combat. Reports are saved
+as `"edit indicators"`, etc., including the edited path, previous effective value,
+probe value, original overrides and restoration result. These costs include
+store validation and synchronous callbacks; compare the same probe before and
+after targeted refresh work. Restoration also runs if measurement/reporting
+fails. Creating an enabled native feature can retain its widgets after restore;
+use fresh reloads when comparing cold creation, independently of warm edit costs.
 
 `/uf perf suite baseline` automates schema, unit and prepared ClickGrid refresh
 measurements outside combat. Each operation runs two warmups and ten recorded
@@ -388,9 +414,22 @@ configuration changes cancel the run, as does profiler deactivation.
 `/uf perf suite report` prints the latest attempt. Its structured data persists
 under `UnitFramesDB.global.perfSuiteReport`, including completion status, raw
 samples, timing/allocation summaries, exclusive phases, counters, environment
-and settings context, and endpoint snapshots. Each attempt replaces the previous
-report; copy the SavedVariables report after `/reload` to preserve comparisons.
-Suite summaries exclude warmups and include synchronous operation costs only.
+and settings context, and endpoint snapshots. The context also records selected
+ClickGrid layout, target visibility, prepared/active frame counts and preview
+count. Active frames belong to enabled layout headers; they may be hidden while
+solo. Builds with missing/unknown commit metadata are labelled unidentified;
+record the installed revision before comparing them. Local copies currently
+retain the repository TOC metadata, so a `dev` version alone identifies no revision.
+
+Each attempt replaces the latest report. Before replacement, an existing completed
+report is automatically copied to `UnitFramesDB.global.perfSuiteBaselineReport`
+if no comparison baseline exists. `/uf perf suite save` explicitly replaces that
+comparison baseline with the latest completed report; `/uf perf suite saved`
+prints it. Partial/failed attempts cannot be explicitly saved as baselines.
+`/reload` writes diagnostics to SavedVariables; save an external copy for longer
+history. Suite summaries exclude warmups and include synchronous operation costs
+only. Capture a fresh baseline after attribution changes so profiler overhead
+is consistent across later optimization comparisons.
 
 Schemas returned by components are immutable metadata. Definition-created
 frames explicitly share schema ownership, including row text contexts;
