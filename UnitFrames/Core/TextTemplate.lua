@@ -31,8 +31,8 @@ first health value shows the word, the other values nothing, so their
 affixes disappear with them ("1 / 82" becomes "Dead", a power text empties).
 Texts that show the Offline / dead source themselves keep their values.
 levelColor tints the level pieces (sources marked `difficulty`) in their
-difficulty colour (TextSources.DIFFICULTY); affixes and other pieces keep the
-text's own colour.
+difficulty colour (TextSources.DIFFICULTY), except while the unit is dead
+or offline; affixes and other pieces keep the text's own colour.
 
 The template has
   live(unit)      possibly secret text; "" for an absent unit
@@ -185,7 +185,10 @@ function Template.Compile(def, context)
 			tinted = tinted or node.tint
 		end
 	end
-	if tinted then AddEvents(events, shared, Sources.DIFFICULTY) end
+	if tinted then
+		AddEvents(events, shared, Sources.DIFFICULTY)
+		AddEvents(events, shared, Sources.Get(STATUS_SOURCE))
+	end
 	if casting then AddEvents(events, shared, Sources.Get(CAST_SOURCE)) end
 	if status then AddEvents(events, shared, Sources.Get(STATUS_SOURCE)) end
 

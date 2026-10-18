@@ -110,19 +110,20 @@ Sources.Register("smartlevel", {
 --[[
 Difficulty colour of sources marked `difficulty` (the levels), as Blizzard's
 target frame colours its level: only for units the player can attack, other
-units keep the text's own colour. Sample NPCs that aren't friendly count as
-attackable. Level and difficulty are not secret; the tint wraps only that
+units keep the text's own colour, as do dead and offline units (their frame
+look tints the text). Sample NPCs that aren't friendly count as attackable. Level and difficulty are not secret; the tint wraps only that
 piece's text, natively.
 ]]
 Sources.DIFFICULTY = {
 	events = "UNIT_FACTION",
 	live = function(unit)
+		if Sources.UnitStatus(unit) then return nil end
 		if UnitCanAttack("player", unit) then
 			return GetDifficultyColor(C_PlayerInfo.GetContentDifficultyCreatureForPlayer(unit))
 		end
 	end,
 	sample = function(v)
-		if v.isPlayer == false and v.reaction ~= "friendly" and v.level ~= nil then
+		if v.status == nil and v.isPlayer == false and v.reaction ~= "friendly" and v.level ~= nil then
 			return GetCreatureDifficultyColor(v.level)
 		end
 	end,

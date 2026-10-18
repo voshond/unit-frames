@@ -50,7 +50,8 @@ describe("Custom text slots", function()
 		local text = Slot("target", "health", "belowLeft")
 		local sample = ns.Units:GetSample("target")
 		sample.showCast = false
-		assert.equals(ns.Formats.Get("level:info").sample(sample), (text:GetTemplate().sample(sample)))
+		local preset = ns.TextTemplate.Compile({ pieces = ns.Formats.Get("level:info").pieces, levelColor = true })
+		assert.equals(preset.sample(sample), (text:GetTemplate().sample(sample)))
 		-- Preset-owned pieces are independent copies.
 		saved.piece1.source = "name"
 		assert.equals("smartlevel", ns.Formats.Get("level:info").pieces[1].source)

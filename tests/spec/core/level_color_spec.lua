@@ -31,6 +31,27 @@ describe("Level difficulty colour", function()
 		assert.equals("L30! Warrior", Compile(pieces).live("target"), "off by default")
 	end)
 
+	it("leaves dead and offline units to their frame look", function()
+		local pieces = { { source = "level" } }
+		Mock.attackable.target = true
+		Mock.dead.target = true
+		assert.equals(30, Compile(pieces, true).live("target"), "dead")
+		Mock.dead.target = nil
+		Mock.ghosts.target = true
+		assert.equals(30, Compile(pieces, true).live("target"), "ghost")
+		Mock.ghosts.target = nil
+		local connected = UnitIsConnected
+		UnitIsConnected = function() return false end
+		assert.equals(30, Compile(pieces, true).live("target"), "offline")
+		UnitIsConnected = connected
+		assert.equals(FAIR .. "30|r", Compile(pieces, true).live("target"))
+		assert.is_true(Compile(pieces, true).sharedEvents.PLAYER_DEAD, "follows death and release")
+		assert.is_nil(Compile(pieces).sharedEvents)
+		local target = ns.Units:GetSample("target")
+		target.status = "dead"
+		assert.equals("42", Compile(pieces, true).sample(target), "dead sample #workbench")
+	end)
+
 	it("updates on attackability changes and compiles apart", function()
 		local pieces = { { source = "level" } }
 		assert.is_true(Compile(pieces, true).events:find("UNIT_FACTION", 1, true) ~= nil)
@@ -63,8 +84,22 @@ describe("Level difficulty colour", function()
 		assert.is_true(option.hidden({ format = ns.Components.Text.CUSTOM, piece1 = { source = "name" } }))
 	end)
 
+	it("is on by default for target, target of target and focus", function()
+		local expected = { player = false, pet = false, target = true, targettarget = true, focus = true, focustarget = false }
+		for unit, on in pairs(expected) do
+			local uf = ns.Units.frames[unit].uf
+			for _, row in ipairs({ "health", "power" }) do
+				for _, slot in ipairs(ns.Components.TextBar.SLOTS) do
+					assert.equals(on, uf:GetRow(row):GetText(slot.key).resolved.levelColor, unit .. " " .. row .. "." .. slot.key)
+				end
+			end
+		end
+		assert.is_nil(BelowLeft():GetPresetTag(), "the default level text colours its level")
+	end)
+
 	it("moves a preset off its shared tag only while it colours a level", function()
 		local text = BelowLeft()
+		ns.Config:SetUnitValue("target", "health.belowLeft.levelColor", false)
 		ns.Config:SetUnitValue("target", "health.belowLeft.format", "smartlevel")
 		assert.equals("smartlevel", text:GetPresetTag())
 		ns.Config:SetUnitValue("target", "health.belowLeft.levelColor", true)

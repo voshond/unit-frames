@@ -175,7 +175,7 @@ describe("Workbench", function()
 		workbench.dataTarget.set("classification", "elite")
 		workbench.dataTarget.set("creatureType", "Humanoid")
 		local health = workbench.handle.parts.uf:GetRow("health")
-		assert.equals("42+ Humanoid", health:GetText("belowLeft"):GetFrame():GetText())
+		assert.equals("|cffff1a1a42+|r Humanoid", health:GetText("belowLeft"):GetFrame():GetText(), "hostile level by difficulty")
 		for _, reaction in ipairs({ "hostile", "neutral", "friendly", "tapped" }) do
 			workbench.dataTarget.set("reaction", reaction)
 			assert.same(ns.Config:GetTheme().colors[reaction], health:GetBar().bar.__state.color)
