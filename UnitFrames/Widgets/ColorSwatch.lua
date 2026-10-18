@@ -6,6 +6,7 @@ Colour swatch with a label; opens Blizzard's colour picker.
 opts: label, tooltip, hasAlpha (default true), onChange({ r, g, b, a })
 ]]
 local ColorSwatch = ns.Widget:Extend("ColorSwatch")
+local activePicker
 
 function ColorSwatch:OnCreate(parent, opts)
 	local frame = CreateFrame("Button", nil, parent)
@@ -61,12 +62,15 @@ function ColorSwatch:Commit(r, g, b, a)
 end
 
 function ColorSwatch:OpenPicker()
+	if activePicker then activePicker:ClosePicker() end
+	local token = {}
+	self.pickerToken, activePicker = token, self
 	local r, g, b, a = unpack(self.value)
 	local hasAlpha = self.opts.hasAlpha ~= false
 	-- The picker fires its callbacks while it sets itself up; ignore those.
 	local ready = false
 	local function OnPick()
-		if not ready or self.released then
+		if not ready or self.released or self.pickerToken ~= token then
 			return
 		end
 		local nr, ng, nb = ColorPickerFrame:GetColorRGB()
@@ -80,8 +84,17 @@ function ColorSwatch:OpenPicker()
 		swatchFunc = OnPick,
 		opacityFunc = OnPick,
 		cancelFunc = function(previous)
-			if not self.released then self:Commit(previous.r, previous.g, previous.b, previous.a or 1) end
+			if not self.released and self.pickerToken == token then self:Commit(previous.r, previous.g, previous.b, previous.a or 1) end
 		end,
 	})
 	ready = true
+end
+
+function ColorSwatch:ClosePicker()
+	self.pickerToken = nil
+	if activePicker == self then activePicker = nil; ColorPickerFrame:Hide() end
+end
+
+function ColorSwatch:OnRelease()
+	self:ClosePicker()
 end

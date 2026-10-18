@@ -33,8 +33,19 @@ function EditBox:OnCreate(parent, opts)
 		end
 	end
 	input:SetScript("OnEnterPressed", Commit)
+	if opts.onTextChanged then
+		input:SetScript("OnTextChanged", function(box)
+			if not self.settingValue then opts.onTextChanged(box:GetText()) end
+		end)
+	end
+	if opts.onArrowPressed then
+		input:SetAltArrowKeyMode(false)
+		input:SetScript("OnArrowPressed", function(_, key) opts.onArrowPressed(key) end)
+	end
+	if opts.onEnter then input:SetScript("OnEnterPressed", function() opts.onEnter() end) end
 	input:SetScript("OnEditFocusLost", Commit)
 	input:SetScript("OnEscapePressed", function(box)
+		if opts.onEscape then opts.onEscape(); return end
 		box:SetText(self.value or "")
 		box:ClearFocus()
 	end)
@@ -45,7 +56,9 @@ end
 
 function EditBox:SetValue(text)
 	self.value = text or ""
+	self.settingValue = true
 	self.input:SetText(self.value)
+	self.settingValue = nil
 end
 
 function EditBox:GetValue()
@@ -53,6 +66,8 @@ function EditBox:GetValue()
 end
 
 function EditBox:OnRelease()
+	self.input:SetScript("OnTextChanged", nil)
+	self.input:SetScript("OnArrowPressed", nil)
 	self.input:SetScript("OnEnterPressed", nil)
 	self.input:SetScript("OnEditFocusLost", nil)
 	self.input:SetScript("OnEscapePressed", nil)
