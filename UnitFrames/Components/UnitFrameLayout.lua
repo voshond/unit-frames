@@ -24,6 +24,16 @@ function Layout.PointBarShown(spec, cfg)
 	return spec.comboPoints ~= nil and spec.comboPoints.available ~= false and cfg.comboPoints.enabled
 end
 
+-- Narrowest bar a portrait counted into the frame width may leave.
+Layout.MIN_ROW_WIDTH = 20
+
+-- The frame width: `width` covers the bars, or bars and portrait together
+-- when the portrait counts into it (growing only to keep MIN_ROW_WIDTH).
+local function FrameWidth(cfg, portraitWidth, padding)
+	if portraitWidth == 0 or not cfg.portrait.includeInWidth then return cfg.width + portraitWidth end
+	return math.max(cfg.width, portraitWidth + padding + Layout.MIN_ROW_WIDTH)
+end
+
 -- `fillHeight` stretches the health row so the frame is at least that tall.
 function Layout.Compute(spec, cfg, fillHeight)
 	local padLeft, padRight, padTop, padBottom = ns.Components.Backdrop.Padding(cfg.border)
@@ -91,6 +101,6 @@ function Layout.Compute(spec, cfg, fillHeight)
 		item.left, item.right, item.y = i <= portraitRows and left or padLeft, i <= portraitRows and right or padRight, -y
 		y = y + item.height
 	end
-	return { width = cfg.width + portraitWidth, height = math.max(stackHeight + padTop + padBottom, 1),
+	return { width = FrameWidth(cfg, portraitWidth, padLeft + padRight), height = math.max(stackHeight + padTop + padBottom, 1),
 		rows = items, portrait = portrait, castbarPlacement = placement, auraBarCollapses = collapse }
 end

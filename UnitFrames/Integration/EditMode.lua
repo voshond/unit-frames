@@ -203,6 +203,7 @@ end
 -- Optional parts offered in the quick settings: { part key, option path, name }.
 local PART_SETTINGS = {
 	{ "portrait", "portrait.enabled", "Show portrait" },
+	{ "portrait", "portrait.includeInWidth", "Width includes portrait" },
 	{ "auras", "auras.enabled", "Show buffs & debuffs" },
 	{ "castbar", "castbar.enabled", "Show castbar" },
 }

@@ -39,4 +39,36 @@ describe("Frame-free unit layout", function()
 		assert.equals(measured.width, uf:GetFrame():GetWidth())
 		assert.equals(measured.height, uf:GetFrame():GetHeight())
 	end)
+
+	it("keeps frames of one width equally wide whatever their portrait when it counts into the width", function()
+		local ns = Helpers.LoadAddon(true)
+		local function Measure(unit, config)
+			local spec = ns.Units:GetSpec(ns.Units.definitions[unit])
+			local cfg = ns.Schema.Resolve(ns.Components.UnitFrame.BuildSchema(spec), config, ns.Config:GetTheme())
+			return ns.UnitFrameLayout.Compute(spec, cfg)
+		end
+		local short = Measure("player", { width = 230 })
+		local tall = Measure("player", { width = 230, experience = { enabled = true } })
+		assert.is_true(tall.portrait.width > short.portrait.width)
+		assert.equals(230 + short.portrait.width + 2, short.width)
+		assert.is_true(short.width < tall.width)
+
+		short = Measure("player", { width = 230, portrait = { includeInWidth = true } })
+		tall = Measure("player", { width = 230, experience = { enabled = true }, portrait = { includeInWidth = true } })
+		assert.equals(230, short.width)
+		assert.equals(230, tall.width)
+		assert.equals(short.rows[1].left, short.portrait.width + 2 + short.rows[1].right)
+
+		local narrow = Measure("player", { width = 60, portrait = { includeInWidth = true, size = 100 } })
+		local padding = narrow.rows[1].right * 2
+		assert.equals(100 + 2 + padding + ns.UnitFrameLayout.MIN_ROW_WIDTH, narrow.width)
+	end)
+
+	it("adds nothing for a hidden portrait that counts into the width", function()
+		local ns = Helpers.LoadAddon(true)
+		local spec = ns.Units:GetSpec(ns.Units.definitions.player)
+		local cfg = ns.Schema.Resolve(ns.Components.UnitFrame.BuildSchema(spec),
+			{ width = 230, portrait = { enabled = false, includeInWidth = true } }, ns.Config:GetTheme())
+		assert.equals(230, ns.UnitFrameLayout.Compute(spec, cfg).width)
+	end)
 end)

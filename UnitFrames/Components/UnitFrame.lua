@@ -126,6 +126,8 @@ UnitFrame.PARTS = {
 				{ key = "size", type = "range", label = "Width", min = 0, max = 200, step = 1, default = 0,
 					tooltip = "0 = square, as wide as the rows the portrait spans are tall." },
 				{ key = "gap", type = "range", label = "Gap to the bars", min = 0, max = 20, step = 1, default = 2 },
+				{ key = "includeInWidth", type = "toggle", label = "Width includes portrait", default = false,
+					tooltip = "Frame width covers bars and portrait together, so frames with the same width line up whatever their portrait size. Off: the portrait is added beside bars of that width." },
 			})
 		end,
 		create = function(frame, partSpec, _, config)
