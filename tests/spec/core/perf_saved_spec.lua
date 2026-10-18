@@ -38,4 +38,24 @@ describe("Saved performance diagnostics reader", function()
 		assert.is_false(ok)
 		assert.is_not_nil(err:find("No saved measurement: missing", 1, true))
 	end)
+
+	it("uses the local remembered path when only a selection is supplied", function()
+		for _, selection in ipairs({ "suite", "all" }) do
+			local chunk = assert(loadfile("scripts/read-perf.lua"))
+			local output = {}
+			setfenv(chunk, setmetatable({
+				arg = selection == "all" and {} or { selection },
+				print = function(message) output[#output + 1] = message end,
+				io = { open = function(path, mode)
+					if path == "plans/perf-saved-path" then
+						return { read = function() return "tests/fixtures/perf_saved.lua" end, close = function() end }
+					end
+					return io.open(path, mode)
+				end },
+			}, { __index = _G }))
+			chunk()
+			assert.equals("Saved diagnostics: tests/fixtures/perf_saved.lua", output[1])
+			assert.is_not_nil(table.concat(output, "\n"):find("baseline suite completed", 1, true))
+		end
+	end)
 end)

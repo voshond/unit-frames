@@ -1,7 +1,12 @@
-local usage = "luajit scripts/read-perf.lua <SavedVariables/UnitFrames.lua> [all|suite|saved|measurement title]"
+local usage = "luajit scripts/read-perf.lua [SavedVariables/UnitFrames.lua] [all|suite|saved|measurement title]"
 local path, selection = arg[1], arg[2] or "all"
 if path == "--help" then print(usage); return end
-assert(path, usage)
+if not path or (not path:find("/", 1, true) and not path:match("%.lua$")) then
+	selection = path or "all"
+	local remembered = assert(io.open("plans/perf-saved-path", "rb"), "No remembered path; supply a SavedVariables file. " .. usage)
+	path = assert(remembered:read("*l"), "Remembered SavedVariables path is empty")
+	remembered:close()
+end
 
 local file = assert(io.open(path, "rb"))
 local source = file:read("*a")
