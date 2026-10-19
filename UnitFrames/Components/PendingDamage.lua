@@ -69,6 +69,8 @@ local function NotSingle(cfg) return Off(cfg) or cfg.colorMode ~= "single" end
 local function NoPattern(cfg) return Off(cfg) or cfg.pattern == "none" end
 local function NoIcon(cfg) return Off(cfg) or not cfg.lethalIcon end
 local function NoTint(cfg) return Off(cfg) or not cfg.lethalTint end
+local function NoDividers(cfg) return Single(cfg) or not cfg.dividers end
+local function NoEdge(cfg) return Off(cfg) or not cfg.edge end
 
 PendingDamage.schema = {
 	{ key = "enabled", type = "toggle", label = "Show DoT damage", default = false,
@@ -84,7 +86,15 @@ PendingDamage.schema = {
 	{ key = "patternOpacity", type = "range", label = "Stripe opacity", min = 0, max = 1, step = 0.05, default = 0.35,
 		hidden = NoPattern },
 	{ key = "dividers", type = "toggle", label = "Dividers between DoTs", default = true, hidden = Single },
+	{ key = "dividerColor", type = "color", label = "Divider colour", hasAlpha = true, default = { 0, 0, 0, 0.85 },
+		hidden = NoDividers },
+	{ key = "dividerThickness", type = "range", label = "Divider thickness", min = 1, max = 10, step = 1, default = 1,
+		hidden = NoDividers },
 	{ key = "edge", type = "toggle", label = "Line where health will end", default = true, hidden = Off },
+	{ key = "edgeColor", type = "color", label = "Health end line colour", hasAlpha = true, default = { 1, 1, 1, 0.9 },
+		hidden = NoEdge },
+	{ key = "edgeThickness", type = "range", label = "Health end line thickness", min = 1, max = 10, step = 1, default = 2,
+		hidden = NoEdge },
 	{ key = "waitMode", type = "select", label = "Wait for a DoT's first tick", values = ns.DotTracker.WAIT_MODES,
 		default = "off", hidden = Off,
 		tooltip = "When unsure: a DoT whose tick size hasn't been seen yet (or a finisher with unknown combo points) only counts once it has ticked. Always: only DoTs that have ticked count." },
@@ -175,11 +185,9 @@ function PendingDamage:Build()
 	self.ink:SetFrameLevel(self.holder:GetFrameLevel() + 2)
 	for _, segment in ipairs(self.segments) do
 		segment.divider = self.ink:CreateTexture(nil, "OVERLAY")
-		segment.divider:SetColorTexture(0, 0, 0, 0.85)
 		segment.divider:Hide()
 	end
 	self.edge = self.ink:CreateTexture(nil, "OVERLAY", nil, 1)
-	self.edge:SetColorTexture(1, 1, 1, 0.9)
 	self.edge:Hide()
 	local overlay = self.bar.overlay
 	self.tint = Lethal(overlay, function(texture) texture:SetColorTexture(1, 1, 1, 1) end)
@@ -224,7 +232,8 @@ function PendingDamage:Apply(cfg, orientation, reverseFill, layout)
 		statusBar:SetOrientation(orientation)
 		statusBar:SetReverseFill(not reverseFill)
 		previous = statusBar:GetStatusBarTexture()
-		AtFarEdge(segment.divider, previous, self.chain, 1, self.horizontal)
+		AtFarEdge(segment.divider, previous, self.chain, cfg.dividerThickness, self.horizontal)
+		segment.divider:SetColorTexture(Util.UnpackColor(cfg.dividerColor))
 		-- Over the fill, not as it: a plain texture repeats; a stretched fill would smear the hatch.
 		segment.pattern:ClearAllPoints()
 		segment.pattern:SetPoint("TOPLEFT", previous, "TOPLEFT")
@@ -233,6 +242,7 @@ function PendingDamage:Apply(cfg, orientation, reverseFill, layout)
 		segment.pattern:SetShown(cfg.pattern ~= "none")
 	end
 
+	self.edge:SetColorTexture(Util.UnpackColor(cfg.edgeColor))
 	self:Layout(self.layoutContext)
 	self.tint.texture:SetVertexColor(Util.UnpackColor(cfg.lethalTintColor))
 	if self.width then self:SetLength(self.width, self.height) end
@@ -298,7 +308,7 @@ function PendingDamage:Draw()
 		segment.divider:SetShown(cfg.dividers and not single and index < used)
 	end
 	if used > 0 and cfg.edge then
-		AtFarEdge(self.edge, self.segments[used].bar:GetStatusBarTexture(), self.chain, 2, self.horizontal)
+		AtFarEdge(self.edge, self.segments[used].bar:GetStatusBarTexture(), self.chain, cfg.edgeThickness, self.horizontal)
 		self.edge:Show()
 	else
 		self.edge:Hide()
