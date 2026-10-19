@@ -241,6 +241,23 @@ describe("Pending DoT damage on health bars #dots", function()
 		assert.same({ 1, 1, 1, 0 }, Pending("target").segments[2].pattern.__state.vertexColor)
 	end)
 
+	it("colours the dividers and the health end line from settings, in any toggle order", function()
+		local pending = Pending("target")
+		assert.same({ 0, 0, 0, 0.85 }, pending.segments[1].divider.__state.colorTexture)
+		assert.same({ 1, 1, 1, 0.9 }, pending.edge.__state.colorTexture)
+		Set("target", "dividers", false)
+		Set("target", "edge", false)
+		Set("target", "dividerColor", { 1, 0, 0, 0.5 })
+		Set("target", "edgeColor", { 0, 1, 0 })
+		Set("target", "dividers", true)
+		Set("target", "edge", true)
+		pending = Pending("target")
+		for _, segment in ipairs(pending.segments) do
+			assert.same({ 1, 0, 0, 0.5 }, segment.divider.__state.colorTexture)
+		end
+		assert.same({ 0, 1, 0, 1 }, pending.edge.__state.colorTexture)
+	end)
+
 	it("folds DoTs beyond the last segment into it", function()
 		local entries, expected = {}, 0
 		for i = 1, 8 do
