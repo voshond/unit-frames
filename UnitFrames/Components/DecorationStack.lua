@@ -27,6 +27,8 @@ next Reflow is still placed on its anchor.
   stack:Set(key, member)   { host, enabled, anchor, size, gap, order, x, y, widgets, present }
   stack:Remove(key)
   stack:SetContext(ctx)    the owning UnitFrame's layout context
+  stack:SetNameAlpha(a)    opacity of icons before the name, which hide with it
+                           under a castbar covering the health row
   stack:Reflow()           after visibility changes; moves only plain addon hosts
 ]]
 local Stack = ns.Object:Extend("DecorationStack")
@@ -73,6 +75,7 @@ end
 function Stack:Init()
 	self.members = {}
 	self.items, self.groups, self.ordered = {}, {}, {}
+	self.nameAlpha = 1
 end
 
 function Stack:SetContext(context)
@@ -108,7 +111,26 @@ function Stack:Batch(fn, ...)
 	return result
 end
 
+local function SetHostAlpha(item, alpha)
+	if item.alpha ~= alpha then
+		item.member.host:SetAlpha(alpha)
+		item.alpha = alpha
+	end
+end
+
+local function NameAlpha(item, nameAlpha)
+	return item.member.anchor == "NAME" and nameAlpha or 1
+end
+
+function Stack:SetNameAlpha(alpha)
+	if self.released then return end
+	self.nameAlpha = alpha
+	for _, item in pairs(self.items) do SetHostAlpha(item, NameAlpha(item, alpha)) end
+end
+
 function Stack:Remove(key)
+	local item = self.items[key]
+	if item then SetHostAlpha(item, 1) end
 	self.members[key] = nil
 	self.items[key] = nil
 	self.orderDirty = true
@@ -208,7 +230,8 @@ function Stack:Reflow()
 		if item.member ~= member or item.order ~= member.order then self.orderDirty = true end
 		item.order = member.order
 		if item.member ~= member or item.appliedHost ~= member.host then
-			item.member, item.host, item.shown, item.appliedSize, item.level = member, nil, nil, nil, nil
+			if item.member and item.member.host ~= member.host then SetHostAlpha(item, 1) end
+			item.member, item.host, item.shown, item.appliedSize, item.level, item.alpha = member, nil, nil, nil, nil, nil
 			item.appliedHost = member.host
 		end
 	end
@@ -226,6 +249,7 @@ function Stack:Reflow()
 		local size = Size(member, context)
 		local shown = size ~= nil
 		if item.shown ~= shown then member.host:SetShown(shown); item.shown = shown end
+		SetHostAlpha(item, NameAlpha(item, self.nameAlpha))
 		if size then
 			local level = context.root:GetFrameLevel() + ns.Components.Backdrop.LEVELS.decorations
 			if item.level ~= level then member.host:SetFrameLevel(level); item.level = level end
