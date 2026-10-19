@@ -168,13 +168,18 @@ function AuraIcon.ApplySwipe(button, swipe, showSwipeEdge)
 	button.ufCooldown:SetReverse(swipe == "reverse")
 end
 
+-- The icon artwork's inset inside its frame border. Keep a drawable centre
+-- even at the smallest icon size.
+local function ArtPadding(cfg, size)
+	return cfg.border.enabled and math.min(cfg.border.padding, (size - 2) / 2) or 0
+end
+
 function AuraIcon.Apply(button, cfg, size, dispelColors, swipe, showSwipeEdge)
 	AuraIcon.ApplySwipe(button, swipe, showSwipeEdge)
 	button:SetSize(size, size + AuraIcon.TextRoom(cfg))
 	button.ufIconFrame:SetSize(size, size)
 	Backdrop.ApplyToFixedSize(button.ufIconFrame, cfg.border, size, size, false)
-	-- Keep a drawable centre even at the smallest icon size.
-	local pad = cfg.border.enabled and math.min(cfg.border.padding, (size - 2) / 2) or 0
+	local pad = ArtPadding(cfg, size)
 	for _, region in ipairs({ button.ufIcon, button.ufCooldown }) do
 		region:ClearAllPoints()
 		region:SetPoint("TOPLEFT", button.ufIconFrame, "TOPLEFT", pad, -pad)
@@ -290,6 +295,12 @@ function AuraIcon.ApplyDispelGlow(button, cfg, size, dispelColors)
 	if style == "proc" then
 		Glow.ApplyProc(active, glow, size)
 	elseif active then
+		-- From the artwork's edge: border art draws its line anywhere within
+		-- the edge, so the halo starts under the border to leave no gap.
+		local pad = ArtPadding(cfg, size)
+		active:ClearAllPoints()
+		active:SetPoint("TOPLEFT", button.ufIconFrame, "TOPLEFT", pad, -pad)
+		active:SetPoint("BOTTOMRIGHT", button.ufIconFrame, "BOTTOMRIGHT", -pad, pad)
 		Glow.Apply(active, glow)
 	end
 	local state = dispelGlows[button]
