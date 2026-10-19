@@ -3,8 +3,10 @@ local Skin = ns.Skin
 
 --[[
 Virtualised list (Blizzard ScrollBox). Only visible rows exist.
-opts: rowHeight, onSelect(item)
-Items: { id, text, header = true|nil, depth = 0.. (indent level) }
+opts: rowHeight, stickyHeaders, onSelect(item)
+Items: { id, text, header = true|nil, sticky = true|nil, depth = 0.. (indent level) }
+With stickyHeaders, the sticky header above the first visible row stays pinned
+until the next header pushes it out.
 ]]
 local ScrollList = ns.Widget:Extend("ScrollList")
 
@@ -21,12 +23,50 @@ function ScrollList:OnCreate(parent, opts)
 	bar:SetHideIfUnscrollable(true)
 	self.box = box
 
+	self.rowHeight = opts.rowHeight or 20
 	local view = CreateScrollBoxListLinearView()
-	view:SetElementExtent(opts.rowHeight or 20)
+	view:SetElementExtent(self.rowHeight)
 	view:SetElementInitializer("Button", function(row, item)
 		self:InitRow(row, item)
 	end)
 	ScrollUtil.InitScrollBoxListWithScrollBar(box, bar, view)
+	if opts.stickyHeaders then self:CreateStickyHeader() end
+end
+
+function ScrollList:CreateStickyHeader()
+	local clip = CreateFrame("Frame", nil, self.frame)
+	clip:SetAllPoints(self.box)
+	clip:SetClipsChildren(true)
+	clip:SetFrameLevel(self.box:GetFrameLevel() + 10)
+	local sticky = CreateFrame("Frame", nil, clip, "BackdropTemplate")
+	sticky:SetHeight(self.rowHeight)
+	sticky:EnableMouse(true)
+	Skin.ApplyPanel(sticky, "panel")
+	sticky.text = Skin.FontString(sticky, "header")
+	sticky.text:SetPoint("LEFT", 4, 0)
+	sticky.text:SetPoint("RIGHT", -4, 0)
+	sticky.text:SetJustifyH("LEFT")
+	sticky:Hide()
+	self.sticky = sticky
+	self.box:RegisterCallback(BaseScrollBoxEvents.OnScroll, function() self:UpdateStickyHeader() end, self)
+end
+
+function ScrollList:UpdateStickyHeader()
+	local sticky, items = self.sticky, self.items or {}
+	if not sticky then return end
+	local offset = self.box:GetDerivedScrollOffset()
+	local first = math.min(math.floor(offset / self.rowHeight) + 1, #items)
+	local header
+	for index = first, 1, -1 do
+		if items[index].header then header = items[index]; break end
+	end
+	sticky:SetShown(header and header.sticky or false)
+	if not sticky:IsShown() then return end
+	sticky.text:SetText(header.text)
+	local following = items[first + 1]
+	local push = following and following.header and offset - (first - 1) * self.rowHeight or 0
+	sticky:SetPoint("TOPLEFT", 0, push)
+	sticky:SetPoint("TOPRIGHT", 0, push)
 end
 
 function ScrollList:InitRow(row, item)
@@ -69,6 +109,7 @@ end
 function ScrollList:SetItems(items)
 	self.items = items
 	self.box:SetDataProvider(CreateDataProvider(items))
+	self:UpdateStickyHeader()
 end
 
 function ScrollList:Select(id, notify)

@@ -564,6 +564,20 @@ end
 -- DropdownButton (Blizzard menu system): GenerateMenu runs the generator
 function Methods:GetScrollPercentage() return self.__state.scrollPercentage or 0 end
 function Methods:SetScrollPercentage(value) self.__state.scrollPercentage = math.max(0, math.min(1, value)) end
+-- ScrollBox (CallbackRegistryMixin): offsets are set directly, without a view extent.
+function Methods:GetDerivedScrollOffset() return self.__state.scrollOffset or 0 end
+function Methods:ScrollToOffset(offset)
+	self.__state.scrollOffset = offset
+	for _, callback in ipairs((self.__state.callbacks or {}).OnScroll or {}) do callback() end
+end
+function Methods:SetDataProvider(provider)
+	self.__state.dataProvider, self.__state.scrollOffset = provider, 0
+end
+function Methods:RegisterCallback(event, func)
+	self.__state.callbacks = self.__state.callbacks or {}
+	self.__state.callbacks[event] = self.__state.callbacks[event] or {}
+	table.insert(self.__state.callbacks[event], func)
+end
 
 -- against a fake root description so menu code gets exercised.
 function Methods:SetupMenu(generator)
@@ -1379,6 +1393,8 @@ function Mock.InstallUI()
 		RegisterScrollBoxWithScrollBar = function() end,
 	}
 	_G.ScrollBoxConstants = { UpdateImmediately = true }
+	_G.BaseScrollBoxEvents = { OnAllowScrollChanged = "OnAllowScrollChanged", OnSizeChanged = "OnSizeChanged",
+		OnScroll = "OnScroll", OnLayout = "OnLayout" }
 	_G.CreateScrollBoxListLinearView = function() return CatchAll("ScrollBoxListLinearView") end
 	_G.CreateScrollBoxLinearView = function() return CatchAll("ScrollBoxLinearView") end
 	_G.CreateDataProvider = function(items) return { items = items } end
