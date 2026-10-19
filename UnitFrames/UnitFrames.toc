@@ -37,7 +37,8 @@ Core\PerfSuite.lua
 Core\PerfEdits.lua
 Core\Profiles.lua
 
-Tracking\DotParser.lua
+Tracking\DotCatalog.lua
+Tracking\DotSpells.lua
 Tracking\DotTracker.lua
 
 Components\Component.lua

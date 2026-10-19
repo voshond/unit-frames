@@ -1,10 +1,10 @@
 local _, ns = ...
-local DotParser = ns.DotParser
+local DotSpells = ns.DotSpells
 
 --[[
 Estimates the damage the player's DoTs still have to deal per mob (ported
 from DoesItDie, MIT, Licenses/DoesItDie-MIT.txt). Target health, auras and
-combat logs are out of reach on Forever, so a cast's description gives the
+combat logs are out of reach on Forever, so the pinned catalogue gives the
 first estimate and UNIT_COMBAT hits on the target or focus, matched by
 school, rhythm and size, replace it with the real tick size.
 
@@ -33,7 +33,7 @@ local SENT_TARGET_SECONDS = 10
 local COMBO_CAP = 5
 local COMBO_CACHE_SECONDS = 3
 local TICKS_VERSION = 1
-local PHYSICAL = DotParser.SCHOOLS.Physical
+local PHYSICAL = 1
 
 DotTracker.WAIT_MODES = {
 	{ "off", "Never (estimate straight away)" },
@@ -75,7 +75,7 @@ end
 -- Lifecycle ------------------------------------------------------------------
 
 function DotTracker:Acquire(owner)
-	if not self:IsActive() then self:Start() end
+	if not self:IsActive() and not self:Start() then return end
 	self.owners[owner] = true
 end
 
@@ -90,6 +90,13 @@ function DotTracker:IsActive()
 end
 
 function DotTracker:Start()
+	if not DotSpells.IsCompatible() then
+		if not self.buildWarning then
+			ns:Print("DoT tracking requires Forever " .. ns.DotCatalog.build .. "; update the addon for this client build.")
+			self.buildWarning = true
+		end
+		return false
+	end
 	self.ticks = self:LearnedTicks()
 	local events = self.events
 	events:RegisterEvent("PLAYER_TARGET_CHANGED")
@@ -100,6 +107,7 @@ function DotTracker:Start()
 	if not issecretvalue(class) and ns.Units.COMBO_POINT_CLASSES[class] then
 		events:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 	end
+	return true
 end
 
 function DotTracker:Stop()
@@ -157,7 +165,6 @@ local function TickNumberAt(dot, when)
 	return math.max(1, math.floor((when - dot.appliedAt) / dot.interval + 0.5))
 end
 
--- Uneven DoTs (DotParser.TICK_SHAPES) scale each tick; shapes stretch to the tick count.
 local function TickShape(dot, number)
 	local shape = dot.shape
 	if not shape then return 1 end
@@ -279,8 +286,6 @@ local function RemainingDamage(self, dot)
 end
 
 -- Combo points ---------------------------------------------------------------
--- Secret in combat, so builders are also counted ("Awards N combo point"),
--- taken back when avoided and reset by finishers and target changes.
 
 local function ReadComboPoints()
 	local points = GetComboPoints("player", "target")
@@ -329,7 +334,7 @@ end
 -- this cast's, so its own outcome may still come.
 function DotTracker:RemoveAvoidedDot(cast, action, school)
 	local dot, dots = cast.dot, self.dots[cast.key]
-	if not dots or dots[cast.name] ~= dot then return true end
+	if not dots or dots[cast.family] ~= dot then return true end
 	if dot.school ~= PHYSICAL and school ~= dot.school then
 		if MELEE_ONLY_AVOIDS[action] then
 			Trace(self, "AVOID %s (school %s) right after %s: not the spell, ignored", action, tostring(school), cast.name)
@@ -344,10 +349,10 @@ function DotTracker:RemoveAvoidedDot(cast, action, school)
 		end
 	end
 	if cast.previous then
-		dots[cast.name] = cast.previous
+		dots[cast.family] = cast.previous
 		Trace(self, "AVOID %s (school %s) right after %s recast; keeping the earlier one", action, tostring(school), cast.name)
 	else
-		dots[cast.name] = nil
+		dots[cast.family] = nil
 		Trace(self, "AVOID %s (school %s) right after %s; dropped", action, tostring(school), cast.name)
 	end
 	self:Changed(cast.key)
@@ -399,24 +404,22 @@ function DotTracker:OnCastSent(spellID, castGUID)
 		if now - sent.at > SENT_TARGET_SECONDS then self.sentTargets[guid] = nil end
 	end
 	self.sentTargets[castGUID] = { key = self:KeyFor("target"), at = now }
-	if not DotParser.IsFinisher(C_Spell.GetSpellDescription(spellID)) then return end
+	if not DotSpells.IsFinisher(spellID) then return end
 	self.comboAtSend = ReadComboPoints()
 	Trace(self, "COMBO at send: %s, counted=%d", tostring(self.comboAtSend), self.countedPoints)
 end
 
 function DotTracker:OnCast(spellID, castGUID)
 	local key = self:CastTargetKey(castGUID)
+	if not C_SpellBook.IsSpellKnown(spellID) then return end
 	local name = C_Spell.GetSpellName(spellID)
-	if issecretvalue(name) or not name then return end
-	local desc = C_Spell.GetSpellDescription(spellID)
-	local awarded = DotParser.AwardedComboPoints(desc)
+	if issecretvalue(name) or not name then name = tostring(spellID) end
+	local awarded = DotSpells.AwardedComboPoints(spellID)
 	if awarded then self:OnBuilderCast(key, awarded) end
-	if DotParser.IGNORED[name] then return end
-	local isFinisher = DotParser.IsFinisher(desc)
+	local isFinisher = DotSpells.IsFinisher(spellID)
 	local comboPoints, comboSource
 	if isFinisher then comboPoints, comboSource = self:ComboPointsForCast() end
-	-- Unknown points parse the lowest entry (errs low) and neither use nor teach tick sizes.
-	local dot = DotParser.Describe(name, desc, comboPoints or 1)
+	local dot = DotSpells.Describe(spellID, comboPoints or 1)
 	if not dot or not key then return end
 
 	local now = GetTime()
@@ -430,13 +433,14 @@ function DotTracker:OnCast(spellID, castGUID)
 
 	local dots = self.dots[key] or {}
 	self.dots[key] = dots
-	local previous = dots[name]
-	dots[name] = dot
-	self.lastDotCast = { key = key, name = name, dot = dot, previous = previous, at = now }
+	dot.name = name
+	local previous = dots[dot.family]
+	dots[dot.family] = dot
+	self.lastDotCast = { key = key, name = name, family = dot.family, dot = dot, previous = previous, at = now }
 	if self.trace then
 		Trace(self, "CAST %s (id %d)%s: %d dmg over %ss, school %d, tick every %ss, per-tick %s%s", name, spellID,
 			isFinisher and string.format(" %s combo points (%s)", tostring(comboPoints or "?"), comboSource) or "",
-			dot.total, dot.duration, dot.school, dot.interval, learned and ("learned " .. learned) or "from description",
+			dot.total, dot.duration, dot.school, dot.interval, learned and ("learned " .. learned) or "catalogue baseline",
 			key ~= self:KeyFor("target") and (" on " .. tostring(key) .. ", the target when sent") or "")
 	end
 	local avoided = self:AvoidJustBefore(key)
@@ -475,7 +479,7 @@ function DotTracker:OnCombat(unit, action, flag, amount, school)
 			local window = dot.firstTickAt and TICK_MATCH_WINDOW_ANCHORED or TICK_MATCH_WINDOW
 			local freshSlot = not dot.firstTickAt or index > dot.lastTickIndex
 			if freshSlot and distance <= window and (not bestDistance or distance < bestDistance) then
-				best, bestName, bestDistance, bestIndex = dot, name, distance, index
+				best, bestName, bestDistance, bestIndex = dot, dot.name, distance, index
 			end
 		end
 	end
@@ -483,8 +487,8 @@ function DotTracker:OnCombat(unit, action, flag, amount, school)
 		for name, dot in pairs(dots) do
 			if dot.school == school then
 				local distance, index = DistanceToExpectedTick(dot, now)
-				if TrySwapSameSlot(self, dot, name, amount, isCrit, now)
-					or TryRelearn(self, dot, name, amount, isCrit, index, distance, now) then
+				if TrySwapSameSlot(self, dot, dot.name, amount, isCrit, now)
+					or TryRelearn(self, dot, dot.name, amount, isCrit, index, distance, now) then
 					self:Changed(key)
 					return
 				end
@@ -530,10 +534,10 @@ function DotTracker:Housekeep(now)
 			end
 			if now > dot.expiresAt + TICK_MATCH_WINDOW then
 				dots[name], changed = nil, true
-				Trace(self, "EXPIRE %s", name)
+				Trace(self, "EXPIRE %s", dot.name)
 			elseif dot.ticksSeen == 0 and dot.missed >= MISSED_TICKS_BEFORE_DROP then
 				dots[name], changed = nil, true
-				Trace(self, "DROP %s never ticked (resisted or immune?)", name)
+				Trace(self, "DROP %s never ticked (resisted or immune?)", dot.name)
 			else
 				local due = dot.expiresAt + TICK_MATCH_WINDOW
 				if dot.nextTickAt <= dot.expiresAt then due = math.min(due, dot.nextTickAt + TICK_MATCH_WINDOW + late) end
@@ -569,7 +573,7 @@ function DotTracker:Breakdown(key, waitMode, out)
 				count = count + 1
 				local entry = out[count] or {}
 				out[count] = entry
-				entry.name, entry.spellID, entry.school, entry.appliedAt = name, dot.spellID, dot.school, dot.appliedAt
+				entry.name, entry.spellID, entry.school, entry.appliedAt = dot.name, dot.spellID, dot.school, dot.appliedAt
 				entry.damage = RemainingDamage(self, dot)
 				total = total + entry.damage
 			end

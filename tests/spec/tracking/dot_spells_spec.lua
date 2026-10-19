@@ -1,0 +1,50 @@
+local Helpers = require("helpers")
+local Mock = Helpers.Mock
+
+describe("Generated DoT spell metadata #dots", function()
+	local ns, spells
+
+	before_each(function()
+		ns = Helpers.LoadAddon()
+		spells = ns.DotSpells
+	end)
+
+	it("derives priests' damage and timing without reading spell names or descriptions", function()
+		local pain, plague, fire = spells.Describe(589), spells.Describe(2944), spells.Describe(14914)
+		assert.equals(30, pain.total)
+		assert.equals(18, pain.duration)
+		assert.equals(3, pain.interval)
+		assert.equals(32, pain.school)
+		assert.equals(128, plague.total)
+		assert.equals(24, plague.duration)
+		assert.equals(2, fire.school)
+		assert.equals(2, fire.interval)
+		assert.is_nil(spells.Describe(15407))
+		assert.is_nil(spells.Describe(139))
+	end)
+
+	it("uses generated spell families for ranks and preserves Agony's uneven tick shape", function()
+		assert.equals(spells.Describe(172).family, spells.Describe(6222).family)
+		assert.equals(spells.Describe(980).family, spells.Describe(1014).family)
+		assert.same({ 0.5, 0.5, 0.5, 0.5, 1, 1, 1, 1, 1.5, 1.5, 1.5, 1.5 }, spells.Describe(1014).shape)
+		assert.equals(1.5, spells.Describe(1978).travel)
+	end)
+
+	it("computes finisher damage and duration from resource coefficients", function()
+		local rip = spells.Describe(9896, 5)
+		assert.equals(855, rip.total)
+		assert.equals(12, rip.duration)
+		assert.equals(8, spells.Describe(1943, 1).duration)
+		assert.equals(16, spells.Describe(1943, 5).duration)
+		assert.is_true(spells.IsFinisher(1943))
+		assert.is_true(spells.IsFinisher(2098))
+		assert.equals(1, spells.AwardedComboPoints(1082))
+		assert.equals(1, spells.AwardedComboPoints(1822))
+	end)
+
+	it("does not inspect secret spell identifiers", function()
+		assert.is_nil(spells.Describe(Mock.Secret(589)))
+		assert.is_false(spells.IsFinisher(Mock.Secret(1943)))
+		assert.is_nil(spells.AwardedComboPoints(Mock.Secret(1082)))
+	end)
+end)

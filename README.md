@@ -16,8 +16,9 @@ each change.
   (**DoT damage**): one coloured marker per DoT inside the health bar, and a
   targeting-frame skull in the decoration stack (or a red tint) once they
   will finish it. DoT damage settings include icon placement and separate
-  stripe opacity. Estimates start from the spell's tooltip and learn your
-  real tick sizes as you fight.
+  stripe opacity. Estimates use a build-pinned spell catalogue and learn your
+  real tick sizes as you fight, independently of your client language. Base
+  estimates exclude gear and talent adjustments until real ticks are learned.
 - See your latency or spell queue window at the end of your casts, and an
   optional global cooldown strip on the player cast bar.
 - Add a standalone player castbar with optional main-hand, off-hand and

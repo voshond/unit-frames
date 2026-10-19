@@ -20,6 +20,18 @@ describe("DoT tracker #dots", function()
 		Mock.InstallUI()
 		tracker = ns.DotTracker
 		for id, spell in pairs(SPELLS) do Mock.spells[id] = { name = spell[1], description = spell[2] } end
+		local definitions = {
+			[1] = { 1, 32, 40, 12, 3 }, [2] = { 2, 1, 39, 9, 3 },
+			[4] = { 4, 1, 42, 12, 2 }, [5] = { 5, 1, 45, 9, 3 },
+			[6] = { 980, 32, 72, 24, 2 }, [7] = { 7, 8, 10, 15, 3 },
+		}
+		for id, entry in pairs(definitions) do
+			ns.DotCatalog.spells[id] = { family = entry[1], school = entry[2],
+				basePoints = entry[3] / (entry[4] / entry[5]), durationMs = entry[4] * 1000,
+				maxDurationMs = entry[4] * 1000, durationPerResourceMs = 0, pointsPerResource = 0,
+				periodMs = entry[5] * 1000, projectile = id == 7 }
+		end
+		ns.DotCatalog.builders[2], ns.DotCatalog.builders[3], ns.DotCatalog.finishers[4] = 1, 1, true
 		Mock.guids.target = "mob"
 		log, casts, waitMode, changes = {}, 0, "off", {}
 		tracker:SetTrace(function(message) log[#log + 1] = string.format("%.2f %s", Mock.time, message) end)
@@ -283,6 +295,40 @@ describe("DoT tracker #dots", function()
 	end)
 
 	describe("mobs and units", function()
+		it("tracks translated priest spells without reading descriptions or keying by names", function()
+			C_Spell.GetSpellDescription = function() error("descriptions must not be read") end
+			Mock.spells[589], Mock.spells[172] = { name = "Schmerz" }, { name = "Schmerz" }
+			Mock.spells[2944] = { name = "Verschlingende Seuche" }
+			Cast(589); Cast(172); Cast(2944)
+			local total, count = tracker:Breakdown("mob", "off")
+			assert.equals(198, total)
+			assert.equals(3, count)
+			Advance(3); Hit(5, 32)
+			assert.equals(3, select(2, tracker:Breakdown("mob", "off")))
+		end)
+
+		it("replaces ranks by generated family and restores the previous rank on a resisted refresh", function()
+			Mock.spells[172], Mock.spells[6222] = { name = "腐蚀术" }, { name = "Corrompre" }
+			Cast(172)
+			assert.equals("40 dmg from 1 DoT(s)", Marker())
+			Advance(1); Cast(6222)
+			assert.equals("65 dmg from 1 DoT(s)", Marker())
+			Avoid("RESIST", 32)
+			assert.equals("40 dmg from 1 DoT(s)", Marker())
+			Mock.spells[172].name = "Verderbnis"
+			Advance(1); Cast(172)
+			assert.equals("40 dmg from 1 DoT(s)", Marker())
+		end)
+
+		it("counts numeric combo builders and resets them for non-DoT finishers", function()
+			Mock.spells[1082], Mock.spells[2098] = { name = "Griffe" }, { name = "Ausweiden" }
+			Cast(1082); Advance(1); Cast(1082)
+			assert.equals(2, tracker.countedPoints)
+			Cast(2098)
+			assert.equals(0, tracker.countedPoints)
+			assert.equals("0 dmg from 0 DoT(s)", Marker())
+		end)
+
 		it("puts a tab-dotted DoT on the mob targeted when the cast was sent", function()
 			Target("A"); local guid = Send(6); Target("B"); Succeed(6, guid)
 			assert.equals("72 dmg", MarkerOn("A"))
@@ -362,6 +408,21 @@ describe("DoT tracker #dots", function()
 	end)
 
 	describe("lifecycle and cost", function()
+		it("refuses a different client patch even when its TOC interface matches", function()
+			tracker:Release("spec")
+			GetBuildInfo = function() return "1.60.1", "99999", "", 16001 end
+			tracker:Acquire("spec")
+			assert.is_false(tracker:IsActive())
+			assert.is_false(tracker.events:IsEventRegistered("UNIT_COMBAT"))
+		end)
+
+		it("ignores unused catalogue records the player does not know", function()
+			Mock.unknownSpells[589] = true
+			Mock.spells[589] = { name = "Schmerz" }
+			Cast(589)
+			assert.equals("0 dmg from 0 DoT(s)", Marker())
+		end)
+
 		it("listens to nothing until acquired and forgets everything once released by all owners", function()
 			tracker:Release("spec")
 			assert.is_false(tracker.events:IsEventRegistered("UNIT_COMBAT"))

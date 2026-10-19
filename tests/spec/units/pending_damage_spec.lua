@@ -14,6 +14,10 @@ describe("Pending DoT damage on health bars #dots", function()
 		Mock.InstallUI()
 		element = ns.oUF.elements.UF_PendingDamage
 		for id, spell in pairs(SPELLS) do Mock.spells[id] = { name = spell[1], description = spell[2] } end
+		ns.DotCatalog.spells[1] = { family = 1, school = 32, basePoints = 10, durationMs = 12000,
+			maxDurationMs = 12000, durationPerResourceMs = 0, pointsPerResource = 0, periodMs = 3000 }
+		ns.DotCatalog.spells[2] = { family = 2, school = 4, basePoints = 6, durationMs = 15000,
+			maxDurationMs = 15000, durationPerResourceMs = 0, pointsPerResource = 0, periodMs = 3000 }
 		Mock.guids.target = "mob"
 	end)
 

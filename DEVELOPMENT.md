@@ -11,7 +11,7 @@ lifecycle, API verification and regression-sensitive behaviour.
 
 ## Local setup
 
-You need LuaJIT, Bash and Git to run the offline tests. The release integration
+You need LuaJIT, Python 3.10+, Bash and Git to run the offline tests. The release integration
 checks also need zip, unzip and jq. Library fetching uses curl, tar and
 sha256sum; local installation uses rsync.
 
@@ -49,6 +49,94 @@ library versions are recorded in `UnitFrames/Libs/VERSIONS.md`.
 Verify unfamiliar APIs against the actual client or Blizzard's UI/API
 documentation. The optional local source checkout is
 `examples/wow-ui-source-forever`, using Gethe/wow-ui-source's `forever` branch.
+
+## Forever spell catalogue
+
+`scripts/spell_catalog.py` compiles `UnitFrames/Tracking/DotCatalog.lua` from
+Blizzard client tables exported by [Wago](https://wago.tools/db2). It uses the
+exact Forever build and UI-source commit pinned in both test and release
+workflows, and verifies the addon's TOC interface against that build. Interface
+`16001` alone is insufficient to select spell data.
+
+Refresh the UI source, API snapshot and spell catalogue together with:
+
+```sh
+bash scripts/update-blizzard-source.sh
+```
+
+To refresh just the spell snapshot for the already-pinned source:
+
+```sh
+python3 -B scripts/spell_catalog.py --update
+```
+
+The downloader requires a matching local UI-source checkout and requests an
+explicit build for every table. It rejects responses whose download filename
+does not confirm that build. There is no fallback to the latest build. A missing
+build, changed schema or changed classification evidence stops the update for
+review. The weekly Upstream workflow includes spell data in its source-update PR.
+
+`data/forever-spells/manifest.json` records the build, UI commit, interface,
+URLs, confirmed filenames, row counts and SHA-256 hashes of the uncompressed
+tables. Compressed CSV snapshots and the full JSON audit live under ignored
+`examples/forever-spells/<build>/`. Only the manifest, generated runtime Lua and
+small regression fixtures are committed. Raw tables and the audit are not
+shipped in addon ZIPs.
+
+```sh
+python3 -B scripts/spell_catalog.py
+python3 -B scripts/spell_catalog.py --check
+python3 -B scripts/spell_catalog.py --fetch --check
+```
+
+The first command regenerates the Lua catalogue, small fixtures and ignored
+audit from the verified local cache. The second rejects changed input hashes,
+mismatched pins and stale generated output. On a fresh checkout, the third
+command downloads the exact pinned exports, checks their committed hashes and
+verifies regeneration. It never updates the manifest to accept changed data.
+Use `--cache <directory>` to choose a different cache location.
+
+CI runs the full download/regeneration check and uploads the classification
+audit as an artifact. Ordinary LuaJIT tests need no raw database or network:
+they check the build pins and run classification regressions against small
+native-record fixtures, including replacing every spell name with non-English
+text without changing the generated Lua.
+
+Classification is our interpretation of the pinned Forever records, with
+build-specific regression evidence, rather than imported server-emulator rules.
+Direct enemy auras with numeric periodic damage (aura 3) or periodic leech
+(aura 53), a positive period and finite duration are candidates. Channels are
+excluded using the channel flags in `SpellInterrupts` and the corresponding
+`SpellMisc.Attributes_1` bits. Evidence checks compare the actual records for
+Shadow Word: Pain, Holy Fire, Devouring Plague, Mind Flay, Blizzard and Health
+Funnel; changed evidence requires review. Spell names are only audit labels.
+
+Every default-difficulty effect with a periodic damage, leech, percentage-damage
+or periodic-trigger aura receives an included or excluded disposition in the
+audit. Exclusions distinguish channels, passive spells, unsupported targeting,
+missing metadata, multiple periodic effects and triggered/percentage mechanics.
+The audit does not claim to cover arbitrary server-scripted effects.
+
+Skill-line membership identifies potential player abilities, not current
+availability: the client also contains old, test, pet and unused spell records.
+The tracker checks `C_SpellBook.IsSpellKnown` before processing player casts.
+It refuses to start on a different client build or TOC interface and reports
+the required build in chat. Unrelated client entries cannot become tracked
+merely by existing in the catalogue.
+
+`DotSpells` replaces description parsing with numeric base damage, periods and
+resource coefficients. The generator derives combo builders from resource-gain
+effects, finishers from combo-point costs in `SpellPower`, rank families from
+the class set and full masks in `SpellClassOptions`, and projectile flags from
+`SpellMisc`. Active spells use family IDs while learned tick sizes remain keyed
+by cast ID and combo points. Names are localized display labels only.
+
+The existing Agony tick ramp is retained as an explicit exception for generated
+family ID 980 in `DotSpells`. Base estimates exclude talents, gear, level scaling
+and hotfixes; real matched ticks replace them. Use the wait-for-first-tick option
+when an unmodified baseline is unsuitable. Trigger-only payloads and effects
+requiring special application or stack handling are not fully covered by this
+cast-based tracker. Channels remain outside the supported scope.
 
 ## Build versions and development previews
 

@@ -33,4 +33,5 @@ for workflow in tests release; do
 		"$repo_dir/.github/workflows/$workflow.yml"
 done
 (cd "$repo_dir" && luajit scripts/api-snapshot.lua "$source_dir")
+python3 -B "$repo_dir/scripts/spell_catalog.py" --update --source "$source_dir"
 echo "Pinned wow-ui-source $commit (Forever $version)"

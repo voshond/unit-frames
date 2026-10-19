@@ -74,7 +74,7 @@ describe("Automated performance baseline suite", function()
 		UF.Perf:StartSuite()
 		local report = UF.Perf.suite.report
 		assert.equals("clickgrid", report.operations[3].name)
-		assert.equals("test-build", report.context.client.build)
+		assert.equals(Mock.API.Snapshot().version:match("%.(%d+)$"), report.context.client.build)
 		assert.equals(UF.commit, report.context.commit)
 		assert.equals(5, report.context.groupSize)
 		assert.equals(UF.Config.db:GetCurrentProfile(), report.context.profile)

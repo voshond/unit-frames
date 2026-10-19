@@ -1248,7 +1248,11 @@ function Mock.Install()
 			return loaded, loaded
 		end,
 	}
-	_G.GetBuildInfo = function() return "16.0.1", "test-build", "Oct 16 2026", 16001 end
+	_G.GetBuildInfo = function()
+		local version, build = API.Snapshot().version:match("^(.+)%.(%d+)$")
+		local major, minor, patch = version:match("^(%d+)%.(%d+)%.(%d+)$")
+		return version, build, "Oct 16 2026", major * 10000 + minor * 100 + patch
+	end
 	_G.C_UIFileAsset = { IsKnownFile = function() return true end }
 	-- Atlas metadata (AtlasInfo); tests may override entries by atlas name.
 	-- Unknown atlases return nil, like the client. Class icons default square.
