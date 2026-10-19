@@ -4,6 +4,7 @@ local HELP = {
 	"/uf help - show this list of commands",
 	"/uf wb - open settings and previews",
 	"/uf logs [clear] - show or clear saved diagnostic entries",
+	"/uf dots [reset] - toggle DoT tracking with its trace in chat, or forget learned tick sizes",
 	"/uf perf help - show developer performance commands",
 }
 
@@ -35,6 +36,23 @@ function commands.wb()
 end
 commands.workbench = commands.wb
 
+-- Tracking (and its trace) in chat, to check estimates before any frame shows them.
+local function DotsCommand(argument)
+	local tracker = ns.DotTracker
+	if argument == "reset" then
+		tracker:ResetLearned()
+		ns:Print("learned DoT tick sizes cleared")
+	elseif tracker.owners.command then
+		tracker:SetTrace(nil)
+		tracker:Release("command")
+		ns:Print("DoT trace off")
+	else
+		tracker:SetTrace(function(message) ns:Print("|cff888888" .. message .. "|r") end)
+		tracker:Acquire("command")
+		ns:Print("DoT trace on")
+	end
+end
+
 SLASH_UNITFRAMES1 = "/uf"
 SLASH_UNITFRAMES2 = "/unitframes"
 SlashCmdList.UNITFRAMES = function(msg)
@@ -45,6 +63,7 @@ SlashCmdList.UNITFRAMES = function(msg)
 		ns.Logs:Command(command:match("^logs%s*(.*)$"))
 		return
 	end
+	if command == "dots" or command:match("^dots%s") then DotsCommand(command:match("^dots%s*(.*)$")); return end
 	local handler = commands[command]
 	if handler then
 		handler()

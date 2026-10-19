@@ -554,6 +554,10 @@ function UnitFrame:Layout()
 		frame = portrait:GetFrame(), width = bounds.width, height = bounds.height,
 	} or nil, name = self:GetLeadingName(), decorations = self.decorations }
 	self.decorations:SetContext(self.layoutContext)
+	for _, row in ipairs(self.rows) do
+		local pending = row.component:GetBar().pendingDamage
+		if pending then pending:Layout(self.layoutContext, row.component.enabled) end
+	end
 
 	if self.partsByKey.auras then
 		self.partsByKey.auras:Layout(layout.width, layout.height)

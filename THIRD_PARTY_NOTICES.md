@@ -18,6 +18,7 @@ PolyForm license text is reproduced unchanged.
 | LibSharedMedia-3.0 | UnitFrames, UnitFrames_Media | GNU LGPL 2.1; author Elkano, inspired by SurfaceLib by Haste/Otravi. Preserve the library's source header. Full LGPL and accompanying GPL text in each addon's `Licenses/`. |
 | oUF | UnitFrames | MIT; copyright (c) 2006–2026 Trond A Ekseth and (c) 2016–2026 Val Voronov, Adrian L Lange and Rainrider. Full text in `UnitFrames/Libs/oUF/LICENSE.txt`. |
 | LibEditMode | UnitFrames | Custom upstream license; copyright (c) 2022–2026 Adrian L Lange. Full text in `UnitFrames/Libs/LibEditMode/LICENSE.txt`. |
+| DoesItDie (ported DoT tracking logic) | UnitFrames (`Tracking/`) | MIT; copyright (c) 2026 Joe Greive. Full text in `UnitFrames/Licenses/DoesItDie-MIT.txt`. Its scraped spellbook test data (`tests/fixtures/forever_dot_spellbook.lua`) is not shipped. |
 | Roboto Condensed Light, Regular, Medium and Bold | UnitFrames_Media | SIL Open Font License 1.1; copyright 2011 The Roboto Project Authors. Full text in `UnitFrames_Media/Fonts/RobotoCondensed-OFL.txt`; notices also appear in the font metadata. |
 
 Ace3's license allows embedding but prohibits standalone redistribution

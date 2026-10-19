@@ -26,6 +26,8 @@ Segment positions are pure anchoring and every value goes straight into a
 StatusBar, so all of this works with secret values.
 
 spec.overheal: the bar offers an Overheal edge warning (Components/Overheal.lua).
+spec.pendingDamage: the bar offers the player's pending DoT damage
+(Components/PendingDamage.lua).
 
 spec.nativeLayout: the owner may anchor the bar to native, possibly secret
 geometry (a collapsing aura row). The root opts into Blizzard's forbidden
@@ -158,6 +160,9 @@ function Bar.BuildSchema(spec)
 	if spec.overheal then
 		schema[#schema + 1] = { key = "overheal", type = "group", label = "Overheal", schema = ns.Overheal.schema }
 	end
+	if spec.pendingDamage then
+		schema[#schema + 1] = { key = "pendingDamage", type = "group", label = "DoT damage", schema = ns.PendingDamage.schema }
+	end
 	return schema
 end
 
@@ -208,6 +213,7 @@ function Bar:OnCreate(parent, spec)
 
 	-- Created before the texts, which join the overlay later and so draw above it.
 	if spec.overheal then self.overheal = ns.Overheal:New(self) end
+	if spec.pendingDamage then self.pendingDamage = ns.PendingDamage:New(self) end
 
 	self.spark = self.overlay:CreateTexture(nil, "OVERLAY")
 	self.spark:SetTexture(SPARK_TEXTURE)
@@ -293,6 +299,7 @@ function Bar:OnApply(cfg)
 	end
 
 	if self.overheal then self.overheal:Apply(cfg.overheal, cfg.orientation, cfg.reverseFill, layout) end
+	if self.pendingDamage then self.pendingDamage:Apply(cfg.pendingDamage, cfg.orientation, cfg.reverseFill, layout) end
 
 	Bar.AnchorSpark(self.spark, fill, cfg.orientation, cfg.reverseFill)
 	self.spark:SetShown(cfg.spark and self.sparkActive ~= false)
@@ -351,6 +358,9 @@ function Bar:SizeParts(width, height)
 			seg.bar:SetHeight(height)
 		end
 	end
+	if self.pendingDamage and not Util.IsSecret(horizontal and height or width) then
+		self.pendingDamage:SetLength(width, height)
+	end
 end
 
 function Bar:ApplyColor(r, g, b, a)
@@ -373,6 +383,7 @@ function Bar:SetRange(min, max)
 	for _, seg in ipairs(self.segments) do
 		seg.bar:SetMinMaxValues(min, max)
 	end
+	if self.pendingDamage then self.pendingDamage:SetRange(min, max) end
 end
 
 function Bar:SetValue(value)
@@ -407,6 +418,16 @@ end
 function Bar:GetOverheal()
 	if self.overheal and self.resolved.overheal.enabled then
 		return self.overheal
+	end
+end
+
+function Bar:OnRelease()
+	if self.pendingDamage then self.pendingDamage:Release() end
+end
+
+function Bar:GetPendingDamage()
+	if self.pendingDamage and self.resolved.pendingDamage.enabled then
+		return self.pendingDamage
 	end
 end
 

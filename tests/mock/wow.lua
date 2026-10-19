@@ -1030,7 +1030,19 @@ function Mock.Install()
 			return duration
 		end,
 		GetSpellQueueWindow = function() return Mock.spellQueueWindow end,
+		-- Mock.spells[spellID] = { name = ..., description = ... }; nothing if unknown.
+		GetSpellName = function(id)
+			local spell = Mock.spells[id]
+			if spell then return spell.name end
+		end,
+		GetSpellDescription = function(id)
+			local spell = Mock.spells[id]
+			if spell then return spell.description end
+		end,
 	}
+	Mock.spells = {}
+	-- Blizzard_UnitFrame (always loaded): a sprite sheet cell of the raid icon sheet.
+	_G.SetRaidTargetIconTexture = function(texture, index) texture.__state.raidTargetIndex = index end
 	Mock.spellOverrides, Mock.unknownSpells, Mock.cooldowns, Mock.spellQueueWindow = {}, {}, {}, 400
 	-- Mock.latency = { home, world } in milliseconds.
 	Mock.latency = { 40, 80 }
@@ -1383,7 +1395,6 @@ function Mock.InstallUI()
 
 	_G.SetPortraitTexture = function(texture) texture.__state.texture = "portrait" end
 	_G.GetRaidTargetIndex = function(unit) return Mock.raidTargets and Mock.raidTargets[unit] end
-	_G.SetRaidTargetIconTexture = function(texture, index) texture.__state.raidTargetIndex = index end
 	_G.UnitFrameUtil = {
 		GetUnitPvPIndicatorDisplayInfo = Mock.SecureDelegate(function(unit, checkMercenary)
 			assert(checkMercenary == true, "live PvP flags should account for mercenary mode")
@@ -1391,6 +1402,9 @@ function Mock.InstallUI()
 		end),
 	}
 	_G.UnitExists = function() return true end
+	-- Mock.guids[unit]; Mock.Secret(...) as in identity-restricted content.
+	Mock.guids = {}
+	_G.UnitGUID = function(unit) return Mock.guids[unit] end
 	Mock.assignedRole = Secret(Enum.LFGRole.Tank)
 	_G.UnitGroupRolesAssignedEnum = function() return Mock.assignedRole end
 	_G.UnitIsPlayer = function() return true end

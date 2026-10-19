@@ -37,9 +37,15 @@ Core\PerfSuite.lua
 Core\PerfEdits.lua
 Core\Profiles.lua
 
+Tracking\DotParser.lua
+Tracking\DotTracker.lua
+
 Components\Component.lua
 Components\Backdrop.lua
 Components\Overheal.lua
+Components\DecorationStack.lua
+Components\IconPlacement.lua
+Components\PendingDamage.lua
 Components\Text.lua
 Components\Bar.lua
 Components\TextBar.lua
@@ -53,8 +59,6 @@ Components\Glow.lua
 Components\AuraIcon.lua
 Components\Auras.lua
 Components\AuraBar.lua
-Components\DecorationStack.lua
-Components\IconPlacement.lua
 Components\StackIcon.lua
 Components\RaidTarget.lua
 Components\PvPFlag.lua

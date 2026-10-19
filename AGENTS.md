@@ -11,6 +11,8 @@
 ## Code map and conventions
 
 - `UnitFrames/Core/`: namespace/bootstrap, schema, AceDB configuration, theme, media, colours and text formats. Core Lua files receive `local _, ns = ...`; the public `UnitFrames` handle exposes that namespace to companion addons.
+- `UnitFrames/Tracking/`: data-only DoT damage estimates (ported from DoesItDie, MIT). `DotParser` reads enUS spell descriptions; `ns.DotTracker` runs only while `Acquire`d, matches `UNIT_COMBAT` ticks on target/focus, fires `DotsChanged(key)` and fills reused lists through `Breakdown`. It never touches secret values; learned tick sizes live in AceDB `global`.
+- Pending DoT damage: `Components/PendingDamage.lua` is owned by Bar (`spec.pendingDamage`, health rows) like Overheal; the `pendingDamage` frame driver binds `UF_PendingDamage` (Elements.lua), and the health `PostUpdate` (`ufHealthHooks`) gives it the secret scale and current health.
 - `UnitFrames/Components/`: reusable visual building blocks. Keep them independent of oUF bindings; their configuration and data APIs also serve previews. `UnitFrame` exposes rows and optional parts through `GetRow(key)`/`GetPart(key)` and the `Rows()`/`Parts()` iterators; add a part to `UnitFrame.PARTS` rather than adding per-part getters. Ready-check state lives in the `ReadyCheck` presenter (`GetReadyCheck()`), which also owns its settings schema.
 - Classes (`Core/Class.lua`): configurable visuals extend `Component`, settings controls extend `Widget`, other stateful helpers extend `Object` (`Class:New(...)` calls `Init(...)`). Stateless calculations stay plain module tables of functions.
 - `UnitFrames/Widgets/`: the shared settings toolkit and schema-driven inspector. Reuse these controls instead of introducing a separate settings framework.
@@ -59,6 +61,13 @@
 - An appended shield anchors directly after the health fill (`appendToFill`), not after incoming heals. Health text/percentages still use actual maximum health, not the combined health-plus-shield display scale.
 - The default shield colour is blue to contrast with white priest health bars; keep user colour overrides. Verify full-health and damaged-health cases in both live bindings and previews, including disabling/re-enabling shields.
 
+### Pending DoT damage
+
+- The estimate is plain addon data, health is secret: never compare them in Lua. Segments share the bar's scale; the kill icon and tint appear only through clipped gates at the end of a long probe ranged to current health. Lethal gates stay hidden until a health scale has arrived.
+- The stripes hatch (`UnitFrames/Media/Stripes.tga`, from `scripts/generate-stripes.lua`; a spec pins it) is a plain texture repeated over each segment's fill, never the StatusBar fill itself.
+- The kill icon uses the targeting-frame skull, never raid-marker artwork. Its host joins the frame's DecorationStack; placement and stripe opacity remain under DoT damage. The icon's slot stays reserved while DoTs and a health scale are present because lethal visibility is secret.
+- Segments are chained inset bars from the health fill's end; they must follow vertical and reversed bars. Verify full and low health, several DoTs, unit switches and toggling in game.
+
 ### Edit Mode, fonts and borders
 
 - Snapping respects Blizzard's **Snap** and **Show grid** controls and uses private read-only geometry adapters around native magnetism. Do not insert addon objects into Blizzard's shared `magneticFrames` table. Snapped positions remain independent UIParent-relative coordinates, not linked anchors.
@@ -77,7 +86,7 @@ luajit tests/run.lua --tag shields
 luajit tests/run.lua workbench -t "preview"
 ```
 
-- Specs live in `tests/spec/<area>/` (`core`, `contract`, `components`, `auras`, `units`, `workbench`, `editmode`, `clickgrid`). Put new specs in the area of the code they exercise; a feature spec keeps its live and Workbench preview tests together. When behaviour also has tests in other areas, tag them in the `describe`/`it` name (`#shields`) and keep existing tags.
+- Specs live in `tests/spec/<area>/` (`core`, `contract`, `components`, `auras`, `units`, `workbench`, `editmode`, `clickgrid`, `tracking`). Put new specs in the area of the code they exercise; a feature spec keeps its live and Workbench preview tests together. When behaviour also has tests in other areas, tag them in the `describe`/`it` name (`#shields`) and keep existing tags.
 - Path filters match **spec paths** (`units/` is exactly that folder, `name_spec.lua` exactly that file); `-t` matches test names and `--tag` matches tags. `-j [N]` runs spec files in parallel; `--times` (runner or `scripts/run-tests.sh`) reports per-spec durations; `luajit -jp=F tests/run.lua ...` profiles. The runner includes addon Lua syntax checks. No external busted installation is needed.
 - `tests/helpers.lua` loads TOCs into a fresh mocked client; `tests/mock/wow.lua` includes fake secrets and `tests/mock/ouf.lua` supplies the usual oUF stand-in. Some specs exercise embedded oUF paths explicitly.
 - The mock is held to the client API through `tests/fixtures/api_snapshot.lua`, generated from Blizzard's API documentation and Lua source by `luajit scripts/api-snapshot.lua` (regenerate after adding API usage or updating the source checkout, and review the diff). The checkout must match the commit pinned in the workflows, or CI regenerates a different snapshot. `tests/mock/api.lua` enforces it on every mock call: undocumented widget methods, rejected arguments, secrets passed where addon (tainted) code may not pass them, and protected calls in combat raise errors. `tests/spec/contract/api_contract_spec.lua` checks the mock's functions, methods, enums, restricted secret returns and our event names, and that the snapshot is current when the source checkout exists.

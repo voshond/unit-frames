@@ -55,4 +55,5 @@ for _, weight in ipairs({ "Light", "Regular", "Medium", "Bold" }) do
 	Read("UnitFrames_Media/Fonts/RobotoCondensed-" .. weight .. ".ttf")
 end
 Read("UnitFrames/Media/Glow.tga")
+Read("UnitFrames/Media/Stripes.tga")
 print("Release bundle references, versions, fonts, media and licenses verified.")

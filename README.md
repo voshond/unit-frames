@@ -12,6 +12,12 @@ each change.
 - Show health, power, absorb shields, cast bars, buffs and debuffs.
 - Light the end of a health bar while incoming heals go past full health
   (**Overheal**), using Blizzard's shield overflow glow.
+- See how much damage your DoTs will still deal on your target or focus
+  (**DoT damage**): one coloured marker per DoT inside the health bar, and a
+  targeting-frame skull in the decoration stack (or a red tint) once they
+  will finish it. DoT damage settings include icon placement and separate
+  stripe opacity. Estimates start from the spell's tooltip and learn your
+  real tick sizes as you fight.
 - See your latency or spell queue window at the end of your casts, and an
   optional global cooldown strip on the player cast bar.
 - Add a standalone player castbar with optional main-hand, off-hand and
@@ -150,6 +156,10 @@ until reload. The suite does not create synthetic combat or load extra addons.
 entries, retained across reloads in `UnitFramesLogs` with Unix timestamps.
 `/uf logs clear` clears them. Caught aura restyle failures and active measurement
 results/failures are recorded; this does not replace a global Lua error reporter.
+
+`/uf dots` echoes the DoT damage tracker's decisions (casts, ticks, drops) to
+chat, to check its estimates in play; `/uf dots reset` forgets the tick sizes
+it has learned.
 
 ## License
 
