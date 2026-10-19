@@ -215,6 +215,7 @@ describe("Native debuff glow #glow", function()
 		assert.is_false(option.hidden({ style = "halo" }))
 		assert.is_nil(ns.Schema.Find(schema, "offset"), "the halo always stays outside the icon")
 		assert.is_nil(ns.Schema.Find(ns.Glow.schema, "size").hidden, "the shared halo schema stays unchanged")
+		assert.is_nil(ns.Schema.Find(schema, "corners"), "only glows under a frame have corner shapes")
 	end)
 
 	it("matches proc samples to the live type colour", function()

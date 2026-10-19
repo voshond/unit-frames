@@ -8,9 +8,16 @@ local _, ns = ...
 local Glow = {}
 ns.Glow = Glow
 
-local TEXTURE = "Interface\\AddOns\\" .. ns.name .. "\\Media\\Glow"
--- The artwork's slice margin in texels.
-local MARGIN = 31
+local REACH = 31
+local MEDIA = "Interface\\AddOns\\" .. ns.name .. "\\Media\\"
+-- Artwork and slice margin in texels: the reach outside the frame, plus for
+-- glows under a frame the inset, corner radius and inner fade inside it.
+local OUTSIDE = { texture = MEDIA .. "Glow", margin = REACH }
+Glow.FRAME_SHAPES = {
+	sharp = { texture = MEDIA .. "GlowFrame", margin = REACH + 12 },
+	soft = { texture = MEDIA .. "GlowFrameSoft", margin = REACH + 20 },
+	round = { texture = MEDIA .. "GlowFrameRound", margin = REACH + 32 },
+}
 
 Glow.schema = {
 	{ key = "size", type = "range", label = "Glow size", min = 4, max = 32, step = 1, default = 12,
@@ -18,34 +25,60 @@ Glow.schema = {
 	{ key = "opacity", type = "range", label = "Glow opacity", min = 0.1, max = 1, step = 0.05, default = 1 },
 }
 
--- A hidden holder; toggle it rather than its texture.
-function Glow.Create(parent)
+-- Corner shapes of glows drawn under a frame (Create with `under`).
+Glow.CORNERS_OPTION = { key = "corners", type = "select", label = "Glow corners", default = "round", values = {
+	{ "sharp", "Sharp" }, { "soft", "Slightly rounded" }, { "round", "Rounded" },
+}, tooltip = "Rounded corners soften the glow around the frame's corners. They grow with the glow size." }
+
+Glow.UNDER_SCHEMA = ns.Schema.Concat(Glow.schema, { Glow.CORNERS_OPTION })
+
+-- Holders drawn under a frame -> that frame.
+local underFrames = setmetatable({}, { __mode = "k" })
+
+local function SyncLevel(holder)
+	local under = underFrames[holder]
+	if under then holder:SetFrameLevel(math.max(0, under:GetFrameLevel() - 1)) end
+end
+
+--[[
+A hidden holder; toggle it rather than its texture. With `under` (the frame
+the glow surrounds) the holder covers that frame one frame level below it,
+so the frame's backdrop and contents sit on top of the glow; it starts
+under the frame's edge (Glow.FRAME_SHAPES) and takes Glow.UNDER_SCHEMA.
+The holder stays `parent`'s child for its visibility either way.
+]]
+function Glow.Create(parent, under)
 	local holder = CreateFrame("Frame", nil, parent)
-	holder:SetAllPoints(parent)
-	local halo = holder:CreateTexture(nil, "OVERLAY")
-	halo:SetTexture(TEXTURE)
-	halo:SetTextureSliceMargins(MARGIN, MARGIN, MARGIN, MARGIN)
+	holder:SetAllPoints(under or parent)
+	local halo = holder:CreateTexture(nil, under and "BACKGROUND" or "OVERLAY")
 	halo:SetTextureSliceMode(Enum.UITextureSliceMode.Stretched)
 	halo:SetBlendMode("ADD")
 	holder.Halo, holder.textures = halo, { halo }
+	underFrames[holder] = under
+	SyncLevel(holder)
 	holder:Hide()
 	return holder
 end
 
 local applied = setmetatable({}, { __mode = "k" })
 
--- The slices' inner edge meets the holder's edge: in the scaled texture's
--- units the anchor offset is the margin itself.
+-- The glow reaches the same distance outside the frame for every shape: in
+-- the scaled texture's units that is the anchor offset.
 function Glow.Apply(holder, cfg)
+	SyncLevel(holder)
+	local corners = underFrames[holder] and cfg.corners or nil
 	local previous = applied[holder]
-	if previous and previous.size == cfg.size and previous.opacity == cfg.opacity then return end
+	if previous and previous.size == cfg.size and previous.opacity == cfg.opacity and previous.corners == corners then return end
 	local halo = holder.Halo
-	halo:SetScale(cfg.size / MARGIN)
+	local shape = corners and Glow.FRAME_SHAPES[corners] or OUTSIDE
+	halo:SetTexture(shape.texture)
+	halo:SetTextureSliceMargins(shape.margin, shape.margin, shape.margin, shape.margin)
+	halo:SetScale(cfg.size / REACH)
 	halo:ClearAllPoints()
-	halo:SetPoint("TOPLEFT", holder, "TOPLEFT", -MARGIN, MARGIN)
-	halo:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", MARGIN, -MARGIN)
+	halo:SetPoint("TOPLEFT", holder, "TOPLEFT", -REACH, REACH)
+	halo:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", REACH, -REACH)
 	holder:SetAlpha(cfg.opacity)
-	applied[holder] = { size = cfg.size, opacity = cfg.opacity }
+	applied[holder] = { size = cfg.size, opacity = cfg.opacity, corners = corners }
 	ns.Perf:Count("glowLayoutWrite")
 end
 
