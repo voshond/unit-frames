@@ -24,6 +24,20 @@ describe("ClickGrid companion", function()
 		assert.equals(UF.Units.STYLE, UF.oUF:GetActiveStyle())
 	end)
 
+	it("starts member and target bars without frame borders and keeps standalone borders", function()
+		CG:Refresh()
+		local button = CG.headers.party:GetAttribute("child1")
+		assert.is_false(CG.Config.styles.member:Resolved().border.enabled)
+		assert.is_false(CG.Config.styles.target:Resolved().border.enabled)
+		assert.is_false(button.Member.uf.resolved.border.enabled)
+		assert.is_false(button.Target.uf.resolved.border.enabled)
+		for _, key in ipairs(UF.Units.order) do
+			assert.is_true(UF.Units.frames[key].uf.resolved.border.enabled, key)
+		end
+		CG.Config:SetStyle("member", "border.enabled", true)
+		assert.is_true(button.Member.uf.resolved.border.enabled)
+	end)
+
 	it("resolves each style once per refresh and keeps member aura config apart from slots", function()
 		CG:Refresh()
 		local a = CG.headers.party:GetAttribute("child1")

@@ -34,6 +34,7 @@ CG.definitions = {
 -- icon. Status places its own ready check icon among the other indicators and
 -- attaches it to the member's ReadyCheck. Targets are not part of the check.
 for _, def in pairs(CG.definitions) do
+	def.borderDefaults = { enabled = false }
 	def.portrait.lazyBackends = true
 	def.pvp, def.classification, def.readyCheckIcon = nil, nil, nil
 end

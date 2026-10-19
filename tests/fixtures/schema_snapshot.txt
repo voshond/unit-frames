@@ -19792,7 +19792,7 @@ resolved textLayout = "edges"
 ## clickgrid.member
 option width type="range" label="Width" default=150 min=60 max=600 step=1
 option spacing type="range" label="Row spacing" default=1 min=0 max=20 step=1
-option border type="group" label="Frame border" defaults={enabled=true}
+option border type="group" label="Frame border" defaults={enabled=false}
 option border.enabled type="toggle" label="Enabled" default=true
 option border.separatePadding type="toggle" label="Content padding per side" default=false tooltip=#51bafd13
 option border.padding type="range" label="Content padding" default=3 min=0 max=40 step=1 tooltip=#152e5e50 hidden
@@ -20771,7 +20771,7 @@ default auras.fontOutline = "OUTLINE"
 default auras.showCount = true
 default auras.showDuration = true
 default auras.spacing = 2
-default border.enabled = true
+default border.enabled = false
 default border.inset = 3
 default border.insetBottom = 3
 default border.insetLeft = 3
@@ -21467,7 +21467,7 @@ resolved border.background = "Solid"
 resolved border.backgroundColor = {0,0,0,0.75}
 resolved border.border = "Blizzard Tooltip"
 resolved border.color = {0.5,0.5,0.5,1}
-resolved border.enabled = true
+resolved border.enabled = false
 resolved border.inset = 3
 resolved border.insetBottom = 3
 resolved border.insetLeft = 3
@@ -22134,6 +22134,7 @@ definition auras.defaults.debuffs.size = 16
 definition auras.defaults.debuffs.sort = "unitDebuff"
 definition auras.defaults.durationPosition = "CENTER"
 definition auras.defaults.durationSize = 8
+definition borderDefaults.enabled = false
 definition castbar.defaults.border.enabled = false
 definition castbar.defaults.enabled = false
 definition castbar.defaults.height = 14
@@ -22176,7 +22177,7 @@ definition width = 150
 option shown type="toggle" label="Show member targets" default=false tooltip=#04184f2b
 option width type="range" label="Width" default=85 min=20 max=600 step=1
 option spacing type="range" label="Row spacing" default=1 min=0 max=20 step=1
-option border type="group" label="Frame border" defaults={enabled=true}
+option border type="group" label="Frame border" defaults={enabled=false}
 option border.enabled type="toggle" label="Enabled" default=true
 option border.separatePadding type="toggle" label="Content padding per side" default=false tooltip=#51bafd13
 option border.padding type="range" label="Content padding" default=3 min=0 max=40 step=1 tooltip=#152e5e50 hidden
@@ -23148,7 +23149,7 @@ default auras.fontOutline = "OUTLINE"
 default auras.showCount = true
 default auras.showDuration = true
 default auras.spacing = 2
-default border.enabled = true
+default border.enabled = false
 default border.inset = 3
 default border.insetBottom = 3
 default border.insetLeft = 3
@@ -23839,7 +23840,7 @@ resolved border.background = "Solid"
 resolved border.backgroundColor = {0,0,0,0.75}
 resolved border.border = "Blizzard Tooltip"
 resolved border.color = {0.5,0.5,0.5,1}
-resolved border.enabled = true
+resolved border.enabled = false
 resolved border.inset = 3
 resolved border.insetBottom = 3
 resolved border.insetLeft = 3
@@ -24492,6 +24493,7 @@ definition auras.defaults.debuffs.size = 18
 definition auras.defaults.durationPosition = "CENTER"
 definition auras.defaults.durationSize = 9
 definition auras.defaults.enabled = false
+definition borderDefaults.enabled = false
 definition castbar.defaults.border.enabled = false
 definition castbar.defaults.enabled = false
 definition castbar.defaults.height = 14
