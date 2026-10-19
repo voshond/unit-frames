@@ -50,7 +50,8 @@ function CG:TargetsShown()
 end
 
 -- ClickGrid's own state per unit button, kept off the secure buttons:
--- { kind = "member" or "target", status, slots } (members only have extras).
+-- { kind = "member" or "target", status, slots, empty } (members have
+-- status and slots, targets their empty state).
 local buttons = {}
 
 function CG:GetGridButton(frame)
@@ -69,7 +70,8 @@ oUF:RegisterStyle(CG.STYLE, function(frame)
 	frame:HookScript("OnEnter", UF.Units.ShowTooltip)
 	frame:HookScript("OnLeave", UF.Units.HideTooltip)
 	UF.Units:Bind(frame)
-	if not target then
+	if target then button.empty = CG.EmptyTarget:New(frame:GetParent(), frame)
+	else
 		button.status, button.slots = CG:AddMemberExtras(frame.uf, frame, true)
 		UF.Units.SetElement(frame, "UFCG_Slots", button.slots)
 	end

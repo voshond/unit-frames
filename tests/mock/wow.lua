@@ -1062,7 +1062,12 @@ function Mock.Install()
 	_G.IsInRaid = function() return Mock.inRaid == true end
 	_G.IsInGroup = function() return Mock.inParty == true or Mock.inRaid == true end
 	_G.GetNumGroupMembers = function() return Mock.groupSize or 0 end
-	Mock.inRaid, Mock.inParty, Mock.groupSize = false, false, 0
+	-- Members fill subgroups in order unless Mock.raidSubgroups[index] moves them.
+	_G.GetRaidRosterInfo = function(index)
+		if not Mock.inRaid or index > Mock.groupSize then return nil end
+		return "Raider" .. index, 0, Mock.raidSubgroups[index] or math.ceil(index / 5)
+	end
+	Mock.inRaid, Mock.inParty, Mock.groupSize, Mock.raidSubgroups = false, false, 0, {}
 	_G.Clique, _G.ClickCastFrames = nil, nil
 	_G.RegisterAttributeDriver = function(frame, name, condition)
 		assert(not InCombatLockdown(), "Attribute drivers must be configured outside combat")

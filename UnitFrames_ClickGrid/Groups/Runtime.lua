@@ -108,7 +108,7 @@ function Refresh(self, changes)
 	local full = not changes or changes.full or not self.layout
 	if full then changes = nil end
 	UF.Perf:Count(full and "clickgridFullRefresh" or "clickgridTargetedRefresh")
-	local layoutChanged = full or changes.layout
+	local layoutChanged = full or changes.layout or changes.roster
 	if full or changes.blizzard then self:UpdateBlizzardFrames() end
 	if layoutChanged then self:LayoutPanel() end
 	local bindings = full or changes.bindings

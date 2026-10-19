@@ -36,7 +36,8 @@ function Preview:CreateCell()
 		uf:SetThemeManaged(true)
 	end
 	-- Plain samples drive ordinary buttons and never touch restricted live art.
-	local cell = { frame = host, member = member, target = target, slots = slots, status = status }
+	local cell = { frame = host, member = member, target = target, slots = slots, status = status,
+		empty = CG.EmptyTarget:New(host, target:GetFrame()) }
 	self.cells[#self.cells + 1] = cell
 	return cell
 end
@@ -106,12 +107,15 @@ function Preview:StyleCell(cell, changes)
 	end
 	if layoutChanged or targetStyled then
 		cell.target:GetFrame():SetShown(CG.metrics.target.shown)
+		cell.empty:Apply(cell.target, self.layout.cellHeight, CG.metrics.target.shown)
 		if not CG.metrics.target.shown then EnableAuras(cell.target, false) end
 	end
 	CG:ApplyExtras(cell.member, cell, changes, force)
 	cell.styled, cell.changes = true, nil
 end
 
+-- Every fourth member from the second has no target, showing the empty state.
+local SAMPLE_NO_TARGET = 2
 function Preview:FeedCell(cell, index, live, unit)
 	UF.Perf:Count("previewFeed")
 	if live then
@@ -133,9 +137,12 @@ function Preview:FeedCell(cell, index, live, unit)
 		cell.slots:SetEnabled(cell.slots.resolved.enabled)
 		cell.slots:ShowSample(values)
 		cell.status:ShowSample(index, self.data.readyCheck == "check", values)
+		local targeted = index % 4 ~= SAMPLE_NO_TARGET
 		if CG.metrics.target.shown then
-			cell.target:GetFrame():Show()
-			EnableAuras(cell.target, true)
+			cell.target:GetFrame():SetShown(targeted)
+			EnableAuras(cell.target, targeted)
+		end
+		if CG.metrics.target.shown and targeted then
 			local targetValues = self:Values(index, cell.targetValues)
 			cell.targetValues = targetValues
 			targetValues.name, targetValues.class, targetValues.reaction = "Enemy " .. index, nil, "hostile"
@@ -218,10 +225,12 @@ function Preview:ShowData(data)
 	self:ChangeSource(data.source)
 	local count = data.count or 5
 	local live = data.source == "live"
-	if live then count = math.max(1, GetNumGroupMembers()) end
+	local roster = live and CG:Roster()
+	if live then count = roster.count end
 	local raid = live and IsInRaid() or count > 5
 	local cfg = self.cfg.panel
-	local layout = CG.Layout.Compute(cfg, CG.metrics.member, CG.metrics.target, self.cfg.titles, self.cfg.border, count, count)
+	local layout = CG.Layout.Compute(cfg, CG.metrics.member, CG.metrics.target, self.cfg.titles, self.cfg.border,
+		count, count, roster and roster.groups)
 	self.layout = layout
 	local size = raid and layout.raid or count == 1 and layout.solo or layout.party
 	self.frame:SetSize(size.width, size.height)
@@ -273,9 +282,8 @@ function Preview:ShowData(data)
 		if cfg.tanks then Section("tanks", live and cfg.tankSlots or math.min(2, cfg.tankSlots), 1) end
 		if cfg.mode == "flat" then Section("raid", count, 1)
 		else
-			for group = 1, 8 do
-				-- Live subgroup occupancy is not derivable from total raid size.
-				-- Inspect all preallocated positions; ShowLive hides empty units.
+			for _, group in ipairs(layout.groups) do
+				-- Live members fill their subgroup's positions; ShowLive hides empty units.
 				Section("group" .. group, live and 5 or math.max(0, math.min(5, count - (group - 1) * 5)), (group - 1) * 5 + 1)
 			end
 		end

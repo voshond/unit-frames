@@ -16,6 +16,7 @@ Auras\Slots.lua
 Indicators\Status.lua
 Groups\Targets.xml
 Groups\Layout.lua
+Groups\EmptyTarget.lua
 Groups\Style.lua
 Groups\Refresh.lua
 Groups\Panel.lua

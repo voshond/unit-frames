@@ -13,6 +13,7 @@ function CG.MergeChanges(into, changes)
 end
 
 function CG:RefreshChanges(kind, path)
+	if kind == "roster" then return { roster = true } end
 	if not path then return { full = true } end
 	if kind == "member" or kind == "target" then
 		if not UF.Schema.Find(self:StyleSchema(kind), path) then return { full = true } end
@@ -98,6 +99,7 @@ local function RefreshFrame(self, frame, changes, layout)
 		cell:SetSize(layout.cellWidth, layout.cellHeight)
 	end
 	if kind == "target" and (styled or layoutChanged) then
+		button.empty:Apply(frame.uf, layout.cellHeight, self.metrics.target.shown)
 		if self.metrics.target.shown then
 			UnregisterAttributeDriver(frame, "state-visibility")
 			frame:SetAttribute("statehidden", nil)

@@ -21,7 +21,26 @@ function Layout.TitleHeight(titles)
 	return titles.enabled and (titles.size + titles.gap + 2) or 0
 end
 
-function Layout.Compute(cfg, member, target, titles, border, raidCount, partyCount)
+local function DefaultGroups(raidCount)
+	local groups = {}
+	for group = 1, math.max(1, math.min(8, math.ceil((raidCount or 40) / 5))) do groups[group] = group end
+	return groups
+end
+
+local function FlatGrid(cfg, columns, count)
+	if cfg.flow == "down" then return math.max(columns, math.ceil(count / cfg.rows)), cfg.rows end
+	return columns, math.max(cfg.rows, math.ceil(count / columns))
+end
+
+local function FilledGrid(cfg, columns, count)
+	if cfg.flow == "down" then return math.ceil(count / cfg.rows), math.min(cfg.rows, count) end
+	return math.min(columns, count), math.ceil(count / columns)
+end
+
+-- `groups` lists the populated raid subgroups in order (default: enough for
+-- `raidCount`). Empty subgroups follow them as parked sections outside the
+-- panel size, so members joining in combat still get a native slot.
+function Layout.Compute(cfg, member, target, titles, border, raidCount, partyCount, groups)
 	local left, right, top, bottom = CG.UF.Components.Backdrop.Padding(border)
 	local titleHeight = Layout.TitleHeight(titles)
 	local below = titles and titles.position == "below"
@@ -49,24 +68,34 @@ function Layout.Compute(cfg, member, target, titles, border, raidCount, partyCou
 		y, width = y + grid.height + cfg.sectionGap + titleHeight, grid.width
 	end
 	if cfg.mode == "flat" then
-		-- Preserve the user's wrap axis and saved preferences. Runtime reserves
-		-- all 40 slots before combat; previews need only their plain roster count.
-		local columns, rows = cols, cfg.rows
-		if cfg.flow == "down" then columns = math.max(columns, math.ceil((raidCount or 40) / rows))
-		else rows = math.max(rows, math.ceil((raidCount or 40) / columns)) end
+		-- Preserve the user's wrap axis and saved preferences. The secure
+		-- capacity keeps all 40 slots; the panel covers only the filled cells.
+		local count = math.max(1, math.min(40, raidCount or 40))
+		local columns, rows = FlatGrid(cfg, cols, 40)
+		local capacity = Layout.Grid(columns, rows, cellWidth, cellHeight, cfg.spacingX, cfg.spacingY)
+		columns, rows = FilledGrid(cfg, cols, count)
 		local grid = Layout.Grid(columns, rows, cellWidth, cellHeight, cfg.spacingX, cfg.spacingY)
-		result.sections.raid = { x = left, y = y, grid = grid }
+		result.sections.raid = { x = left, y = y, grid = grid, capacity = capacity }
 		y, width = y + grid.height, math.max(width, grid.width)
 	else
-		local block = Layout.Grid(1, 5, cellWidth, cellHeight, cfg.spacingX, cfg.spacingY)
-		local blockRows = math.ceil(8 / cols)
-		for group = 1, 8 do
-			local column, row = (group - 1) % cols, math.floor((group - 1) / cols)
-			result.sections["group" .. group] = { x = left + column * (block.width + cfg.spacingX),
-				y = y + row * (block.height + cfg.sectionGap + titleHeight), grid = block }
+		groups = groups and #groups > 0 and groups or DefaultGroups(raidCount)
+		local order, populated = {}, {}
+		for _, group in ipairs(groups) do
+			order[#order + 1], populated[group] = group, true
 		end
+		for group = 1, 8 do
+			if not populated[group] then order[#order + 1] = group end
+		end
+		local block = Layout.Grid(1, 5, cellWidth, cellHeight, cfg.spacingX, cfg.spacingY)
+		for slot, group in ipairs(order) do
+			local column, row = (slot - 1) % cols, math.floor((slot - 1) / cols)
+			result.sections["group" .. group] = { x = left + column * (block.width + cfg.spacingX),
+				y = y + row * (block.height + cfg.sectionGap + titleHeight), grid = block, parked = slot > #groups }
+		end
+		local columns, blockRows = math.min(cols, #groups), math.ceil(#groups / cols)
 		y = y + blockRows * block.height + (blockRows - 1) * (cfg.sectionGap + titleHeight)
-		width = math.max(width, cols * block.width + (cols - 1) * cfg.spacingX)
+		width = math.max(width, columns * block.width + (columns - 1) * cfg.spacingX)
+		result.groups = groups
 	end
 	result.raid = { width = width + left + right, height = y + bottom + trailing }
 	result.sections.party = { x = left, y = top + leading, grid = party }
