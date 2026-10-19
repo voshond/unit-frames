@@ -91,12 +91,13 @@ Sources.Register("level", {
 	sample = function(v) if v.level ~= nil then return tostring(v.level) end end,
 })
 
--- Level with markers: "??" for skull level, "+" elite, "R" rare, "R+" rare
--- elite, "B" boss. Level and classification are not secret.
-local CLASSIFICATION = { elite = "+", rare = "R", rareelite = "R+", worldboss = "B" }
+-- Level with markers: Blizzard's skull for too-high levels, "+" elite, "R" rare,
+-- "R+" rare elite. Level and classification are not secret.
+local CLASSIFICATION = { elite = "+", rare = "R", rareelite = "R+" }
+local SKULL_LEVEL = "|A:UI-HUD-UnitFrame-Target-HighLevelTarget_Icon:0:0:0:0|a"
 
 local function SmartLevel(level, classification)
-	local text = level and level > 0 and tostring(level) or "??"
+	local text = level and level > 0 and tostring(level) or SKULL_LEVEL
 	return text .. (CLASSIFICATION[classification] or "")
 end
 
