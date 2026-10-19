@@ -61,6 +61,7 @@ function Rows.SampleHealth(row, values)
 end
 
 function Rows.SamplePower(row, values)
+	row:GetBar():SetPowerBackground(values.powerType)
 	row:SetRange(0, values.powerMax)
 	row:SetValue(values.power)
 	row:SetSegmentValue("cost", values.cost)
@@ -113,6 +114,7 @@ end
 
 function Rows.LivePower(row, unit)
 	local _, token = UnitPowerType(unit)
+	row:GetBar():SetPowerBackground(token)
 	row:SetRange(0, UnitPowerMax(unit))
 	row:SetValue(UnitPower(unit))
 	row:SetSegmentValue("cost", 0)

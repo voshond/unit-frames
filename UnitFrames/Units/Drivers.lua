@@ -156,6 +156,7 @@ local function UpdatePowerColor(self, _, unit)
 		return
 	end
 	local _, token = UnitPowerType(unit)
+	self.uf:GetRow("power"):GetBar():SetPowerBackground(token)
 	self.uf:GetRow("power"):SetColor(Colors.Power(token))
 end
 

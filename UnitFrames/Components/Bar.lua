@@ -172,6 +172,27 @@ function Bar:OnCreate(parent, spec)
 	self.bar = CreateFrame("StatusBar", nil, self.frame)
 	self.bar:SetMinMaxValues(0, 1)
 	self.bar:SetValue(1)
+	if spec.valueKind == "power" then
+		self.powerViewport = CreateFrame("Frame", nil, self.frame)
+		self.powerViewport:SetAllPoints(self.bar)
+		self.powerViewport:SetClipsChildren(true)
+		self.powerViewport:SetFrameLevel(self.frame:GetFrameLevel() + 1)
+		self.powerBackground = CreateFrame("PlayerModel", nil, self.powerViewport)
+		self.powerBackground:SetPoint("CENTER", self.powerViewport, "CENTER")
+		self.powerBackground:SetFrameLevel(self.powerViewport:GetFrameLevel())
+		self.bar:SetFrameLevel(self.frame:GetFrameLevel() + 2)
+		self.powerBackground:Hide()
+		self.powerBackground:SetKeepModelOnHide(true)
+		self.powerBackground:SetScript("OnModelLoaded", function(model)
+			model:SetPortraitZoom(0)
+			model:SetCamDistanceScale(1.3)
+			model:SetPosition(0, 0, 0)
+			model:SetModelAlpha(0.22)
+		end)
+		self.powerBackground:SetScript("OnShow", function(model)
+			model:SetDisplayInfo(10045)
+		end)
+	end
 
 	self.bg = self.bar:CreateTexture(nil, "BACKGROUND")
 	self.bg:SetAllPoints(self.bar)
@@ -249,6 +270,7 @@ function Bar:OnApply(cfg)
 	self.bar:SetReverseFill(cfg.reverseFill)
 	self.bg:SetTexture(texture)
 	self.bg:SetShown(cfg.background.enabled)
+	self:SetPowerBackground(self.powerType)
 	self.tintBg:SetTexture(texture)
 	self.tintFill:SetTexture(texture)
 	self.tintFill:ClearAllPoints()
@@ -311,6 +333,16 @@ function Bar:OnApply(cfg)
 	end
 end
 
+function Bar:SetPowerBackground(token)
+	if not self.powerBackground then return end
+	self.powerType = token
+	local mana = token == "MANA"
+	self.powerBackground:SetShown(mana)
+	self.bg:SetShown(self.resolved.background.enabled)
+	local fill = self.bar:GetStatusBarTexture()
+	fill:SetBlendMode(mana and "ADD" or "BLEND")
+end
+
 function Bar:SetSparkActive(active)
 	self.sparkActive = active
 	if self.resolved then self.spark:SetShown(self.resolved.spark and active ~= false) end
@@ -346,6 +378,10 @@ end
 function Bar:SizeParts(width, height)
 	if not self.resolved then
 		return
+	end
+	if self.powerBackground and not Util.IsSecret(width) and not Util.IsSecret(height) then
+		local size = math.max(width, height)
+		self.powerBackground:SetSize(size, size)
 	end
 	local horizontal = self.resolved.orientation == "HORIZONTAL"
 	if Util.IsSecret(horizontal and width or height) then
