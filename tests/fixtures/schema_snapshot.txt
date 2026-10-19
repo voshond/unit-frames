@@ -25132,11 +25132,13 @@ option indicators.threatStyle type="select" label="Threat style" default="highli
 option indicators.threatGlow type="group" label="Threat glow" hidden
 option indicators.threatGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368
 option indicators.threatGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option indicators.threatGlow.corners type="select" label="Glow corners" default="round" values=#588056eb tooltip=#2e13768c
 option indicators.dispel type="toggle" label="Dispellable debuff glow" default=false tooltip=#f7b90564
 option indicators.dispelFilter type="select" label="Dispellable by" default="HARMFUL|RAID" values=#77fc2dc4 tooltip=#a27ba28b hidden
 option indicators.dispelGlow type="group" label="Dispellable glow" hidden
 option indicators.dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368
 option indicators.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option indicators.dispelGlow.corners type="select" label="Glow corners" default="round" values=#588056eb tooltip=#2e13768c
 option indicators.hover type="toggle" label="Mouseover highlight" default=true tooltip=#a498db58
 option indicators.hoverColor type="color" label="Mouseover colour" default={1,1,1,0.12} hidden
 option indicators.phase type="toggle" label="Different phase" default=true
@@ -25191,6 +25193,7 @@ default indicators.deathPosition = "TOP"
 default indicators.deathSize = 14
 default indicators.dispel = false
 default indicators.dispelFilter = "HARMFUL|RAID"
+default indicators.dispelGlow.corners = "round"
 default indicators.dispelGlow.opacity = 1
 default indicators.dispelGlow.size = 12
 default indicators.hover = true
@@ -25237,6 +25240,7 @@ default indicators.summonOrder = 7
 default indicators.summonPosition = "TOP"
 default indicators.summonSize = 14
 default indicators.threat = false
+default indicators.threatGlow.corners = "round"
 default indicators.threatGlow.opacity = 1
 default indicators.threatGlow.size = 12
 default indicators.threatStyle = "highlight"
@@ -25321,6 +25325,7 @@ resolved indicators.deathPosition = "TOP"
 resolved indicators.deathSize = 14
 resolved indicators.dispel = false
 resolved indicators.dispelFilter = "HARMFUL|RAID"
+resolved indicators.dispelGlow.corners = "round"
 resolved indicators.dispelGlow.opacity = 1
 resolved indicators.dispelGlow.size = 12
 resolved indicators.hover = true
@@ -25367,6 +25372,7 @@ resolved indicators.summonOrder = 7
 resolved indicators.summonPosition = "TOP"
 resolved indicators.summonSize = 14
 resolved indicators.threat = false
+resolved indicators.threatGlow.corners = "round"
 resolved indicators.threatGlow.opacity = 1
 resolved indicators.threatGlow.size = 12
 resolved indicators.threatStyle = "highlight"

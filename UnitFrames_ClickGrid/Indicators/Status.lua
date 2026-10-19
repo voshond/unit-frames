@@ -102,26 +102,19 @@ UFCG_DispelGlow: a glow around the cell while the member has a dispellable
 debuff. Auras are secret, so a hidden native aura slot is the gate: the
 engine shows its button only while a matching debuff exists, and tints the
 glow pieces registered on it by dispel type (native colours). The glow is
-owned by that button but anchored to the whole cell; no aura data is read.
+owned by that button but covers the whole cell, one level below it so the
+cell sits on top (Glow.Create with `under`); no aura data is read.
 ]]
 local function UpdateDispel(frame)
 	if frame.__unit then frame.UFCG_DispelGlow:SetDispelUnit(frame.__unit) end
 end
 UF.oUF:AddElement("UFCG_DispelGlow", UpdateDispel, function(frame) return frame.UFCG_DispelGlow ~= nil end, function() end)
 
-local threatCurve
 local function Threat(frame)
 	if not frame.__unit then return end
 	local status = UnitThreatSituation(frame.__unit)
 	if type(status) == "nil" then status = 0 end
-	if not threatCurve then
-		threatCurve = C_CurveUtil.CreateColorCurve()
-		threatCurve:AddPoint(0, CreateColor(1, 0, 0, 0))
-		threatCurve:AddPoint(1, CreateColor(1, 0.6, 0, 0.4))
-		threatCurve:AddPoint(2, CreateColor(1, 0.3, 0, 0.8))
-		threatCurve:AddPoint(3, CreateColor(1, 0, 0, 1))
-	end
-	ColorThreat(frame.ThreatIndicator, threatCurve:Evaluate(status):GetRGBA())
+	ColorThreat(frame.ThreatIndicator, UF.Colors.ThreatCurve():Evaluate(status):GetRGBA())
 	frame.ThreatIndicator:Show()
 end
 
@@ -211,7 +204,8 @@ function Status:OnCreate(button, spec)
 	threat.Highlight = threat:CreateTexture(nil, "OVERLAY")
 	threat.Highlight:SetAtlas(THREAT_ATLAS)
 	threat.Highlight:SetAllPoints()
-	threat.Glow = UF.Glow.Create(threat)
+	-- Under the cell like the unit frames' glows; the host still toggles it.
+	threat.Glow = UF.Glow.Create(threat, button)
 	threat.Override = Threat
 	threat:Hide()
 	self.ThreatIndicator = threat
@@ -263,9 +257,7 @@ function Status:InitDispelSlot(slot)
 	slot:SetMouseMotionEnabled(false)
 	slot:SetSize(1, 1)
 	slot:SetPoint("CENTER", self.frame, "CENTER")
-	local glow = UF.Glow.Create(slot)
-	glow:ClearAllPoints()
-	glow:SetAllPoints(self.button)
+	local glow = UF.Glow.Create(slot, self.button)
 	glow:Show()
 	for _, texture in ipairs(glow.textures) do
 		slot:AddDispelTypeTexture(texture, {
@@ -460,9 +452,7 @@ function Status:ShowSample(index, ready, values)
 	local dispel = cfg.dispel and SampleDispel(cfg, values and values.debuffs)
 	if dispel then
 		if not self.dispelSample then
-			self.dispelSample = UF.Glow.Create(self.frame)
-			self.dispelSample:ClearAllPoints()
-			self.dispelSample:SetAllPoints(self.button)
+			self.dispelSample = UF.Glow.Create(self.frame, self.button)
 			UF.Glow.Apply(self.dispelSample, cfg.dispelGlow)
 		end
 		UF.Glow.SetColor(self.dispelSample, AuraUtil.GetAuraBorderColor(dispel.dispelName):GetRGBA())
