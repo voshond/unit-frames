@@ -586,9 +586,10 @@ end
 
 -- Row placements are positioned with the rows. A covering castbar ("health",
 -- "portrait") instead sits over its host, opaque, and replaces it while a
--- cast is shown. Portrait placement needs a visible portrait. Over a health
--- bar that lends its edge to a collapsing aura bar, the castbar follows the
--- bar's native edge so it grows and shrinks with it.
+-- cast is shown; icons before the health row's name hide with it. Portrait
+-- placement needs a visible portrait. Over a health bar that lends its edge
+-- to a collapsing aura bar, the castbar follows the bar's native edge so it
+-- grows and shrinks with it.
 function UnitFrame:LayoutCastbar(layout)
 	local castbar = self.partsByKey.castbar
 	if not castbar then return end
@@ -607,6 +608,7 @@ function UnitFrame:LayoutCastbar(layout)
 		host = self.rowsByKey.health:GetFrame()
 		hostLevel = host:GetFrameLevel()
 		coverArea = layout.auraBarCollapses and self.rowsByKey.health:GetBar():GetFrame() or host
+		onCoverChanged = function(alpha) self.decorations:SetNameAlpha(alpha) end
 	elseif placement == "portrait" and portrait then
 		width, height = layout.portrait.width, layout.portrait.height
 		host = portrait:GetFrame()
