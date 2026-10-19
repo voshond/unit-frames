@@ -20,6 +20,7 @@ describe("Shared frame and panel spacing previews", function()
 
 	it("edits per-side background insets in frame and panel inspectors without moving content", function()
 		local UF, CG, wb = Helpers.LoadClickGrid(true)
+		CG.Config:SetStyle("member", "border.enabled", true)
 		for _, entry in ipairs({ "unit.player", "clickgrid.member", "clickgrid.panel" }) do
 			wb:Open(entry)
 			wb:SelectSection("border")
@@ -100,6 +101,7 @@ describe("Shared frame and panel spacing previews", function()
 
 	it("keeps every live and preview decoration host above member and panel borders", function()
 		local UF, CG, wb = Helpers.LoadClickGrid(true)
+		CG.Config:SetStyle("member", "border.enabled", true)
 		wb:Open("clickgrid.panel")
 		local live = CG.headers.party:GetAttribute("child1").Member.uf
 		local preview = wb.handle.cells[1].member
@@ -189,6 +191,7 @@ describe("Shared frame and panel spacing previews", function()
 
 	it("keeps frame and panel edges above their contents without raising backgrounds", function()
 		local UF, CG, wb = Helpers.LoadClickGrid(true)
+		CG.Config:SetStyle("member", "border.enabled", true)
 		wb:Open("clickgrid.panel")
 		local B = UF.Components.Backdrop
 		for _, kind in ipairs({ "Blizzard Tooltip", "Blizzard Raid", "Blizzard Tooltip" }) do
