@@ -1383,6 +1383,7 @@ return {
 			[":SetDrawBling"] = "Interface/AddOns/Blizzard_Transmog/Blizzard_Transmog.lua",
 			[":SetDrawEdge"] = "Interface/AddOns/Blizzard_CooldownViewer/CooldownViewer.lua",
 			[":SetDrawSwipe"] = "Interface/AddOns/Blizzard_Commentator/Classic/Blizzard_CommentatorSpell.lua",
+			[":SetFixedFrameLevel"] = "Interface/AddOns/Blizzard_SharedTalentUI/Blizzard_SharedTalentFrame.lua",
 			[":SetIgnoreParentAlpha"] = "Interface/AddOns/Blizzard_GamepadActionBars/PageUnit.lua",
 			[":SetReverse"] = "Interface/AddOns/Blizzard_UIWidgets/Blizzard_UIWidgetTemplateBase.lua",
 			[":SetRolesets"] = "Interface/AddOns/Blizzard_ChatFrameBase/Mainline/FloatingChatFrame.lua",

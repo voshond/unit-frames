@@ -35,10 +35,16 @@ Glow.UNDER_SCHEMA = ns.Schema.Concat(Glow.schema, { Glow.CORNERS_OPTION })
 -- Holders drawn under a frame -> that frame.
 local underFrames = setmetatable({}, { __mode = "k" })
 
-local function SyncLevel(holder)
+-- One level below its frame. The level is fixed: the client re-levels
+-- children above their parent whenever the parent's level changes, which
+-- would lift the glow over the frame. Owners call this after re-levelling.
+function Glow.SyncLevel(holder)
 	local under = underFrames[holder]
-	if under then holder:SetFrameLevel(math.max(0, under:GetFrameLevel() - 1)) end
+	if not under then return end
+	holder:SetFrameLevel(math.max(0, under:GetFrameLevel() - 1))
+	holder:SetFixedFrameLevel(true)
 end
+local SyncLevel = Glow.SyncLevel
 
 --[[
 A hidden holder; toggle it rather than its texture. With `under` (the frame

@@ -136,6 +136,8 @@ describe("Threat glow #threat", function()
 		-- One level under the frame, so its backdrop and bars cover the inner edge.
 		assert.equals(uf.frame:GetFrameLevel() - 1, uf.threatGlow:GetFrameLevel())
 		assert.equals(uf.frame, uf.threatGlow:GetParent())
+		uf.frame:SetFrameLevel(uf.frame:GetFrameLevel() + 5)
+		assert.is_true(uf.threatGlow:GetFrameLevel() < uf.frame:GetFrameLevel(), "re-levelling the frame leaves the glow under it")
 		-- The reach outside the frame follows the size whatever the corners.
 		for corners, file in pairs({ sharp = "GlowFrame", soft = "GlowFrameSoft", round = "GlowFrameRound" }) do
 			ns.Config:SetUnitValue("target", "threat.corners", corners)

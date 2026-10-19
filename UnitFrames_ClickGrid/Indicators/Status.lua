@@ -310,6 +310,10 @@ function Status:LayoutIcons()
 	self.readyCheckIcon:Apply(UF.Schema.Memo(UF.IconPlacement.Read, cfg, PLACEMENT_KEYS.ready))
 	self.readyCheckIcon:Layout(self.unitFrame:GetLayoutContext())
 	self.frame:SetFrameLevel(self.button:GetFrameLevel() + 20)
+	-- Glows stay under the cell whatever its level (the dispel slot's glow
+	-- with its restyle, which waits for combat to end).
+	UF.Glow.SyncLevel(self.ThreatIndicator.Glow)
+	if self.dispelSample then UF.Glow.SyncLevel(self.dispelSample) end
 	for _, item in ipairs(PLACED) do
 		local key = item[1]
 		if key ~= "ready" then

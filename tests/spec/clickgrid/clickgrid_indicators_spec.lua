@@ -228,6 +228,16 @@ describe("ClickGrid status indicators", function()
 		CG.Config:Set("indicators.threatGlow.corners", "sharp")
 		assert.equals("Interface\\AddOns\\UnitFrames\\Media\\GlowFrame", halo:GetTexture())
 		assert.equals(UF.Glow.FRAME_SHAPES.sharp.margin, halo:GetTextureSliceMargins())
+		-- Re-levelling the cell re-levels its children (the status overlay):
+		-- the glow keeps its fixed level below the cell, and follows it on apply.
+		local level = member:GetFrameLevel()
+		member:SetFrameLevel(level + 5)
+		assert.is_true(status.frame:GetFrameLevel() > member:GetFrameLevel(), "the overlay followed the cell")
+		assert.is_true(threat.Glow:GetFrameLevel() < member:GetFrameLevel(), "the glow stayed under it")
+		member:SetFrameLevel(level + 2)
+		CG.Config:Set("indicators.threatGlow.opacity", 0.7)
+		assert.equals(member:GetFrameLevel() - 1, threat.Glow:GetFrameLevel())
+		CG.Config:Set("indicators.threatGlow.opacity", 0.6)
 
 		member.__unit = "raid1"
 		local previous = UnitThreatSituation
@@ -302,6 +312,8 @@ describe("ClickGrid status indicators", function()
 		assert.equals(member, select(2, glow:GetPoint(1)))
 		assert.equals(member:GetFrameLevel() - 1, glow:GetFrameLevel())
 		assert.equals("Interface\\AddOns\\UnitFrames\\Media\\GlowFrameRound", glow.Halo:GetTexture())
+		member:SetFrameLevel(member:GetFrameLevel() + 5)
+		assert.is_true(glow:GetFrameLevel() < member:GetFrameLevel(), "re-levelling the cell leaves the glow under it")
 		assert.equals(1, #glow.textures)
 		for _, texture in ipairs(glow.textures) do
 			local options = slot.__state.dispelTextures[texture]

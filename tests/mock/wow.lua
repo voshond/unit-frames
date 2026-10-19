@@ -66,6 +66,10 @@ local function NewObject(objectType, parent, name)
 		},
 	}, ObjectMT)
 	registry[#registry + 1] = obj
+	if parent and parent.__state then
+		parent.__state.kids = parent.__state.kids or {}
+		parent.__state.kids[obj] = true
+	end
 	if name then
 		_G[name] = obj
 	end
@@ -239,6 +243,12 @@ end
 
 function Methods:SetParent(parent)
 	CheckLayoutAspect(self, parent, "SetParent")
+	local previous = self.__state.parent
+	if previous and previous.__state and previous.__state.kids then previous.__state.kids[self] = nil end
+	if parent and parent.__state then
+		parent.__state.kids = parent.__state.kids or {}
+		parent.__state.kids[self] = true
+	end
 	self.__state.parent = parent
 end
 function Methods:GetParent() return self.__state.parent end
@@ -315,7 +325,22 @@ function Methods:GetAnchor(point)
 	end
 end
 
-function Methods:SetFrameLevel(level) self.__state.level = level end
+-- Like the client, a changed level re-levels the frame's children above it,
+-- except frames with a fixed level (and what they hold).
+local function RelevelChildren(frame)
+	for child in pairs(frame.__state.kids or {}) do
+		if not child.__state.fixedLevel and child.__state.parent == frame then
+			child.__state.level = frame.__state.level + 1
+			RelevelChildren(child)
+		end
+	end
+end
+function Methods:SetFrameLevel(level)
+	local changed = self.__state.level ~= level
+	self.__state.level = level
+	if changed then RelevelChildren(self) end
+end
+function Methods:SetFixedFrameLevel(fixed) self.__state.fixedLevel = fixed == true end
 function Methods:IsProtected() return self.__state.protected == true end
 function Methods:SetAttribute(name, value) self.__state.attributes = self.__state.attributes or {}; self.__state.attributes[name] = value end
 function Methods:GetAttribute(name) return self.__state.attributes and self.__state.attributes[name] end
