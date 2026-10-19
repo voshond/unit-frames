@@ -76,6 +76,12 @@ function Drivers.UnitState(unit)
 	return ns.TextSources.UnitStatus(unit)
 end
 
+-- The enabled health row's pending DoT damage, else nil.
+function Drivers.PendingDamage(uf)
+	local row = uf:GetRow("health")
+	if row and uf:GetRowConfig("health").enabled then return row:GetBar():GetPendingDamage() end
+end
+
 -- Whole-frame state ------------------------------------------------------------
 
 Drivers.frame = {
@@ -106,6 +112,17 @@ Drivers.frame = {
 		sample = function(uf, v) uf:SetUnitState(v.status) end,
 		live = function(uf, unit) uf:SetUnitState(Drivers.UnitState(unit)) end },
 	-- The spell check is read when the element is enabled (events or polling).
+	-- The health bar's pending DoT damage (ns.DotTracker); health feeds it too.
+	{ key = "pendingDamage", element = "UF_PendingDamage",
+		bind = function(uf) return Drivers.PendingDamage(uf) end,
+		sample = function(uf, v)
+			local pending = Drivers.PendingDamage(uf)
+			if pending then pending:ShowSample(v) end
+		end,
+		live = function(uf, unit)
+			local pending = Drivers.PendingDamage(uf)
+			if pending then pending:ShowLive(unit) end
+		end },
 	{ key = "range", element = "UF_Range",
 		bind = function(uf)
 			local range = uf.resolved.range
@@ -142,9 +159,15 @@ local function UpdatePowerColor(self, _, unit)
 	self.uf:GetRow("power"):SetColor(Colors.Power(token))
 end
 
--- oUF calls this after every health update; the overheal edge reads the same unit.
-local function UpdateOverheal(element, unit)
-	element.ufOverheal:Update(unit)
+-- oUF calls this after every health update: the overheal edge reads the same
+-- unit; pending DoT damage takes the (secret) health scale and current health.
+local function PostUpdateHealth(element, unit, cur, max)
+	local hooks = element.ufHealthHooks
+	if hooks.overheal then hooks.overheal:Update(unit) end
+	if hooks.pending then
+		hooks.pending:SetRange(0, max)
+		hooks.pending:SetHealth(cur)
+	end
 end
 
 Drivers.rows.health = {
@@ -170,8 +193,9 @@ Drivers.rows.health = {
 		health.colorTapping = true
 		health.UpdateColor = UpdateHealthColor
 		-- Enabling the edge changes the signature, so oUF updates it at once.
-		local overheal = bar:GetOverheal()
-		health.ufOverheal, health.PostUpdate = overheal, overheal and UpdateOverheal or nil
+		local overheal, pending = bar:GetOverheal(), bar:GetPendingDamage()
+		health.ufHealthHooks = { overheal = overheal, pending = pending }
+		health.PostUpdate = (overheal or pending) and PostUpdateHealth or nil
 		return health, { healing, absorb, healAbsorb, overheal and overheal.holder or false }
 	end,
 	sample = function(row, v, cfg)

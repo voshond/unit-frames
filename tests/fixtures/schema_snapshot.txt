@@ -2382,6 +2382,27 @@ option health.bar.overheal.levels type="select" label="Levels" default=3 values=
 option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
 option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
 option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
+option health.bar.pendingDamage type="group" label="DoT damage"
+option health.bar.pendingDamage.enabled type="toggle" label="Show DoT damage" default=false tooltip=#a3e84a0b
+option health.bar.pendingDamage.colorMode type="select" label="DoT colours" default="school" values=#075343d5 hidden
+option health.bar.pendingDamage.color type="color" label="DoT colour" default={0.7,0.3,1,0.75} hidden
+option health.bar.pendingDamage.opacity type="range" label="DoT opacity" default=0.75 min=0.1 max=1 step=0.05 hidden
+option health.bar.pendingDamage.texture type="statusbar" label="DoT texture" inherit="barTexture" hidden
+option health.bar.pendingDamage.pattern type="select" label="DoT pattern" default="stripes" values=#3d209c14 hidden
+option health.bar.pendingDamage.patternColor type="color" label="Pattern colour" default={0,0,0} hidden
+option health.bar.pendingDamage.patternOpacity type="range" label="Stripe opacity" default=0.35 min=0 max=1 step=0.05 hidden
+option health.bar.pendingDamage.dividers type="toggle" label="Dividers between DoTs" default=true hidden
+option health.bar.pendingDamage.edge type="toggle" label="Line where health will end" default=true hidden
+option health.bar.pendingDamage.waitMode type="select" label="Wait for a DoT's first tick" default="off" values=#739bfea6 tooltip=#194a2bcc hidden
+option health.bar.pendingDamage.lethalTint type="toggle" label="Tint the bar when lethal" default=false hidden
+option health.bar.pendingDamage.lethalTintColor type="color" label="Lethal tint" default={1,0.1,0.1,0.35} hidden
+option health.bar.pendingDamage.lethalIcon type="toggle" label="Kill icon" default=true tooltip=#713e7728 hidden
+option health.bar.pendingDamage.lethalIconPosition type="select" label="Anchor" default="CENTER" values=#264ec2f3 tooltip=#62138585 hidden
+option health.bar.pendingDamage.lethalIconOrder type="range" label="Order" default=8 min=1 max=10 step=1 tooltip=#07604784 hidden
+option health.bar.pendingDamage.lethalIconGap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
+option health.bar.pendingDamage.lethalIconSize type="range" label="Size" default=16 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
+option health.bar.pendingDamage.lethalIconOffsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
+option health.bar.pendingDamage.lethalIconOffsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -3902,6 +3923,25 @@ default health.bar.overheal.edge = true
 default health.bar.overheal.enabled = false
 default health.bar.overheal.length = 40
 default health.bar.overheal.levels = 3
+default health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
+default health.bar.pendingDamage.colorMode = "school"
+default health.bar.pendingDamage.dividers = true
+default health.bar.pendingDamage.edge = true
+default health.bar.pendingDamage.enabled = false
+default health.bar.pendingDamage.lethalIcon = true
+default health.bar.pendingDamage.lethalIconGap = 2
+default health.bar.pendingDamage.lethalIconOffsetX = 0
+default health.bar.pendingDamage.lethalIconOffsetY = 0
+default health.bar.pendingDamage.lethalIconOrder = 8
+default health.bar.pendingDamage.lethalIconPosition = "CENTER"
+default health.bar.pendingDamage.lethalIconSize = 16
+default health.bar.pendingDamage.lethalTint = false
+default health.bar.pendingDamage.lethalTintColor = {1,0.1,0.1,0.35}
+default health.bar.pendingDamage.opacity = 0.75
+default health.bar.pendingDamage.pattern = "stripes"
+default health.bar.pendingDamage.patternColor = {0,0,0}
+default health.bar.pendingDamage.patternOpacity = 0.35
+default health.bar.pendingDamage.waitMode = "off"
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -4894,6 +4934,26 @@ resolved health.bar.overheal.edge = true
 resolved health.bar.overheal.enabled = false
 resolved health.bar.overheal.length = 40
 resolved health.bar.overheal.levels = 3
+resolved health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
+resolved health.bar.pendingDamage.colorMode = "school"
+resolved health.bar.pendingDamage.dividers = true
+resolved health.bar.pendingDamage.edge = true
+resolved health.bar.pendingDamage.enabled = false
+resolved health.bar.pendingDamage.lethalIcon = true
+resolved health.bar.pendingDamage.lethalIconGap = 2
+resolved health.bar.pendingDamage.lethalIconOffsetX = 0
+resolved health.bar.pendingDamage.lethalIconOffsetY = 0
+resolved health.bar.pendingDamage.lethalIconOrder = 8
+resolved health.bar.pendingDamage.lethalIconPosition = "CENTER"
+resolved health.bar.pendingDamage.lethalIconSize = 16
+resolved health.bar.pendingDamage.lethalTint = false
+resolved health.bar.pendingDamage.lethalTintColor = {1,0.1,0.1,0.35}
+resolved health.bar.pendingDamage.opacity = 0.75
+resolved health.bar.pendingDamage.pattern = "stripes"
+resolved health.bar.pendingDamage.patternColor = {0,0,0}
+resolved health.bar.pendingDamage.patternOpacity = 0.35
+resolved health.bar.pendingDamage.texture = "Blizzard Raid Bar"
+resolved health.bar.pendingDamage.waitMode = "off"
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true
@@ -5412,7 +5472,7 @@ definition readyCheck = true
 definition readyCheckIcon.defaults = {}
 definition resting = true
 definition restingIcon.defaults = {}
-definition rows = {{defaults={height=26},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:class"},left="name",right="health:value"},valueKind="health"}},{defaults={height=12,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}},{defaults={center={size=8},enabled=false,height=10},key="experience",label="Experience",spec={colorInherit="colors.experience",formats={"none","level","resting","xp:current","xp:value","xp:percent","xp:current:percent","xp:value:percent","xp:missing","xp:rested","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.rested",key="rested",label="Rested",mode="append"}},textDefaults={center="xp:value:percent"},valueKind="xp"}}}
+definition rows = {{defaults={height=26},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,pendingDamage=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:class"},left="name",right="health:value"},valueKind="health"}},{defaults={height=12,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}},{defaults={center={size=8},enabled=false,height=10},key="experience",label="Experience",spec={colorInherit="colors.experience",formats={"none","level","resting","xp:current","xp:value","xp:percent","xp:current:percent","xp:value:percent","xp:missing","xp:rested","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.rested",key="rested",label="Rested",mode="append"}},textDefaults={center="xp:value:percent"},valueKind="xp"}}}
 definition width = 230
 ## unit.pet
 option width type="range" label="Width" default=170 min=60 max=600 step=1
@@ -5548,6 +5608,27 @@ option health.bar.overheal.levels type="select" label="Levels" default=3 values=
 option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
 option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
 option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
+option health.bar.pendingDamage type="group" label="DoT damage"
+option health.bar.pendingDamage.enabled type="toggle" label="Show DoT damage" default=false tooltip=#a3e84a0b
+option health.bar.pendingDamage.colorMode type="select" label="DoT colours" default="school" values=#075343d5 hidden
+option health.bar.pendingDamage.color type="color" label="DoT colour" default={0.7,0.3,1,0.75} hidden
+option health.bar.pendingDamage.opacity type="range" label="DoT opacity" default=0.75 min=0.1 max=1 step=0.05 hidden
+option health.bar.pendingDamage.texture type="statusbar" label="DoT texture" inherit="barTexture" hidden
+option health.bar.pendingDamage.pattern type="select" label="DoT pattern" default="stripes" values=#3d209c14 hidden
+option health.bar.pendingDamage.patternColor type="color" label="Pattern colour" default={0,0,0} hidden
+option health.bar.pendingDamage.patternOpacity type="range" label="Stripe opacity" default=0.35 min=0 max=1 step=0.05 hidden
+option health.bar.pendingDamage.dividers type="toggle" label="Dividers between DoTs" default=true hidden
+option health.bar.pendingDamage.edge type="toggle" label="Line where health will end" default=true hidden
+option health.bar.pendingDamage.waitMode type="select" label="Wait for a DoT's first tick" default="off" values=#739bfea6 tooltip=#194a2bcc hidden
+option health.bar.pendingDamage.lethalTint type="toggle" label="Tint the bar when lethal" default=false hidden
+option health.bar.pendingDamage.lethalTintColor type="color" label="Lethal tint" default={1,0.1,0.1,0.35} hidden
+option health.bar.pendingDamage.lethalIcon type="toggle" label="Kill icon" default=true tooltip=#713e7728 hidden
+option health.bar.pendingDamage.lethalIconPosition type="select" label="Anchor" default="CENTER" values=#264ec2f3 tooltip=#62138585 hidden
+option health.bar.pendingDamage.lethalIconOrder type="range" label="Order" default=8 min=1 max=10 step=1 tooltip=#07604784 hidden
+option health.bar.pendingDamage.lethalIconGap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
+option health.bar.pendingDamage.lethalIconSize type="range" label="Size" default=16 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
+option health.bar.pendingDamage.lethalIconOffsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
+option health.bar.pendingDamage.lethalIconOffsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -6536,6 +6617,25 @@ default health.bar.overheal.edge = true
 default health.bar.overheal.enabled = false
 default health.bar.overheal.length = 40
 default health.bar.overheal.levels = 3
+default health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
+default health.bar.pendingDamage.colorMode = "school"
+default health.bar.pendingDamage.dividers = true
+default health.bar.pendingDamage.edge = true
+default health.bar.pendingDamage.enabled = false
+default health.bar.pendingDamage.lethalIcon = true
+default health.bar.pendingDamage.lethalIconGap = 2
+default health.bar.pendingDamage.lethalIconOffsetX = 0
+default health.bar.pendingDamage.lethalIconOffsetY = 0
+default health.bar.pendingDamage.lethalIconOrder = 8
+default health.bar.pendingDamage.lethalIconPosition = "CENTER"
+default health.bar.pendingDamage.lethalIconSize = 16
+default health.bar.pendingDamage.lethalTint = false
+default health.bar.pendingDamage.lethalTintColor = {1,0.1,0.1,0.35}
+default health.bar.pendingDamage.opacity = 0.75
+default health.bar.pendingDamage.pattern = "stripes"
+default health.bar.pendingDamage.patternColor = {0,0,0}
+default health.bar.pendingDamage.patternOpacity = 0.35
+default health.bar.pendingDamage.waitMode = "off"
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -7266,6 +7366,26 @@ resolved health.bar.overheal.edge = true
 resolved health.bar.overheal.enabled = false
 resolved health.bar.overheal.length = 40
 resolved health.bar.overheal.levels = 3
+resolved health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
+resolved health.bar.pendingDamage.colorMode = "school"
+resolved health.bar.pendingDamage.dividers = true
+resolved health.bar.pendingDamage.edge = true
+resolved health.bar.pendingDamage.enabled = false
+resolved health.bar.pendingDamage.lethalIcon = true
+resolved health.bar.pendingDamage.lethalIconGap = 2
+resolved health.bar.pendingDamage.lethalIconOffsetX = 0
+resolved health.bar.pendingDamage.lethalIconOffsetY = 0
+resolved health.bar.pendingDamage.lethalIconOrder = 8
+resolved health.bar.pendingDamage.lethalIconPosition = "CENTER"
+resolved health.bar.pendingDamage.lethalIconSize = 16
+resolved health.bar.pendingDamage.lethalTint = false
+resolved health.bar.pendingDamage.lethalTintColor = {1,0.1,0.1,0.35}
+resolved health.bar.pendingDamage.opacity = 0.75
+resolved health.bar.pendingDamage.pattern = "stripes"
+resolved health.bar.pendingDamage.patternColor = {0,0,0}
+resolved health.bar.pendingDamage.patternOpacity = 0.35
+resolved health.bar.pendingDamage.texture = "Blizzard Raid Bar"
+resolved health.bar.pendingDamage.waitMode = "off"
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true
@@ -7774,7 +7894,7 @@ definition pvp.defaults = {}
 definition raidTarget.defaults = {}
 definition readyCheck = true
 definition readyCheckIcon.defaults = {}
-definition rows = {{defaults={height=22,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={height=10,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
+definition rows = {{defaults={height=22,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,pendingDamage=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={height=10,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
 definition sample.absorb = 900
 definition sample.castTime = 1.5
 definition sample.classification = "normal"
@@ -7873,7 +7993,7 @@ option portrait.border.size type="range" label="Border size" inherit="borderSize
 option portrait.border.color type="color" label="Border colour" inherit="borderColor"
 option portrait.border.background type="background" label="Background" inherit="backgroundTexture"
 option portrait.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option health type="group" label="Health" defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=26,left={levelColor=true},right={levelColor=true}}
+option health type="group" label="Health" defaults={bar={pendingDamage={enabled=true}},belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=26,left={levelColor=true},right={levelColor=true}}
 option health.enabled type="toggle" label="Enabled" default=true
 option health.height type="range" label="Height" default=20 min=2 max=100 step=1
 option health.colorMode type="select" label="Bar colour" default="class" values=#9f707d09
@@ -7929,6 +8049,27 @@ option health.bar.overheal.levels type="select" label="Levels" default=3 values=
 option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
 option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
 option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
+option health.bar.pendingDamage type="group" label="DoT damage"
+option health.bar.pendingDamage.enabled type="toggle" label="Show DoT damage" default=false tooltip=#a3e84a0b
+option health.bar.pendingDamage.colorMode type="select" label="DoT colours" default="school" values=#075343d5 hidden
+option health.bar.pendingDamage.color type="color" label="DoT colour" default={0.7,0.3,1,0.75} hidden
+option health.bar.pendingDamage.opacity type="range" label="DoT opacity" default=0.75 min=0.1 max=1 step=0.05 hidden
+option health.bar.pendingDamage.texture type="statusbar" label="DoT texture" inherit="barTexture" hidden
+option health.bar.pendingDamage.pattern type="select" label="DoT pattern" default="stripes" values=#3d209c14 hidden
+option health.bar.pendingDamage.patternColor type="color" label="Pattern colour" default={0,0,0} hidden
+option health.bar.pendingDamage.patternOpacity type="range" label="Stripe opacity" default=0.35 min=0 max=1 step=0.05 hidden
+option health.bar.pendingDamage.dividers type="toggle" label="Dividers between DoTs" default=true hidden
+option health.bar.pendingDamage.edge type="toggle" label="Line where health will end" default=true hidden
+option health.bar.pendingDamage.waitMode type="select" label="Wait for a DoT's first tick" default="off" values=#739bfea6 tooltip=#194a2bcc hidden
+option health.bar.pendingDamage.lethalTint type="toggle" label="Tint the bar when lethal" default=false hidden
+option health.bar.pendingDamage.lethalTintColor type="color" label="Lethal tint" default={1,0.1,0.1,0.35} hidden
+option health.bar.pendingDamage.lethalIcon type="toggle" label="Kill icon" default=true tooltip=#713e7728 hidden
+option health.bar.pendingDamage.lethalIconPosition type="select" label="Anchor" default="CENTER" values=#264ec2f3 tooltip=#62138585 hidden
+option health.bar.pendingDamage.lethalIconOrder type="range" label="Order" default=8 min=1 max=10 step=1 tooltip=#07604784 hidden
+option health.bar.pendingDamage.lethalIconGap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
+option health.bar.pendingDamage.lethalIconSize type="range" label="Size" default=16 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
+option health.bar.pendingDamage.lethalIconOffsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
+option health.bar.pendingDamage.lethalIconOffsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -8971,6 +9112,25 @@ default health.bar.overheal.edge = true
 default health.bar.overheal.enabled = false
 default health.bar.overheal.length = 40
 default health.bar.overheal.levels = 3
+default health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
+default health.bar.pendingDamage.colorMode = "school"
+default health.bar.pendingDamage.dividers = true
+default health.bar.pendingDamage.edge = true
+default health.bar.pendingDamage.enabled = true
+default health.bar.pendingDamage.lethalIcon = true
+default health.bar.pendingDamage.lethalIconGap = 2
+default health.bar.pendingDamage.lethalIconOffsetX = 0
+default health.bar.pendingDamage.lethalIconOffsetY = 0
+default health.bar.pendingDamage.lethalIconOrder = 8
+default health.bar.pendingDamage.lethalIconPosition = "CENTER"
+default health.bar.pendingDamage.lethalIconSize = 16
+default health.bar.pendingDamage.lethalTint = false
+default health.bar.pendingDamage.lethalTintColor = {1,0.1,0.1,0.35}
+default health.bar.pendingDamage.opacity = 0.75
+default health.bar.pendingDamage.pattern = "stripes"
+default health.bar.pendingDamage.patternColor = {0,0,0}
+default health.bar.pendingDamage.patternOpacity = 0.35
+default health.bar.pendingDamage.waitMode = "off"
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -9727,6 +9887,26 @@ resolved health.bar.overheal.edge = true
 resolved health.bar.overheal.enabled = false
 resolved health.bar.overheal.length = 40
 resolved health.bar.overheal.levels = 3
+resolved health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
+resolved health.bar.pendingDamage.colorMode = "school"
+resolved health.bar.pendingDamage.dividers = true
+resolved health.bar.pendingDamage.edge = true
+resolved health.bar.pendingDamage.enabled = true
+resolved health.bar.pendingDamage.lethalIcon = true
+resolved health.bar.pendingDamage.lethalIconGap = 2
+resolved health.bar.pendingDamage.lethalIconOffsetX = 0
+resolved health.bar.pendingDamage.lethalIconOffsetY = 0
+resolved health.bar.pendingDamage.lethalIconOrder = 8
+resolved health.bar.pendingDamage.lethalIconPosition = "CENTER"
+resolved health.bar.pendingDamage.lethalIconSize = 16
+resolved health.bar.pendingDamage.lethalTint = false
+resolved health.bar.pendingDamage.lethalTintColor = {1,0.1,0.1,0.35}
+resolved health.bar.pendingDamage.opacity = 0.75
+resolved health.bar.pendingDamage.pattern = "stripes"
+resolved health.bar.pendingDamage.patternColor = {0,0,0}
+resolved health.bar.pendingDamage.patternOpacity = 0.35
+resolved health.bar.pendingDamage.texture = "Blizzard Raid Bar"
+resolved health.bar.pendingDamage.waitMode = "off"
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true
@@ -10231,7 +10411,7 @@ definition pvp.defaults = {}
 definition raidTarget.defaults = {}
 definition readyCheck = true
 definition readyCheckIcon.defaults = {}
-definition rows = {{defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=26,left={levelColor=true},right={levelColor=true}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=12,left={levelColor=true},right={levelColor=true,size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
+definition rows = {{defaults={bar={pendingDamage={enabled=true}},belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=26,left={levelColor=true},right={levelColor=true}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,pendingDamage=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=12,left={levelColor=true},right={levelColor=true,size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
 definition sample.castTime = 1.5
 definition sample.classification = "elite"
 definition sample.cost = 15
@@ -10381,6 +10561,27 @@ option health.bar.overheal.levels type="select" label="Levels" default=3 values=
 option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
 option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
 option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
+option health.bar.pendingDamage type="group" label="DoT damage"
+option health.bar.pendingDamage.enabled type="toggle" label="Show DoT damage" default=false tooltip=#a3e84a0b
+option health.bar.pendingDamage.colorMode type="select" label="DoT colours" default="school" values=#075343d5 hidden
+option health.bar.pendingDamage.color type="color" label="DoT colour" default={0.7,0.3,1,0.75} hidden
+option health.bar.pendingDamage.opacity type="range" label="DoT opacity" default=0.75 min=0.1 max=1 step=0.05 hidden
+option health.bar.pendingDamage.texture type="statusbar" label="DoT texture" inherit="barTexture" hidden
+option health.bar.pendingDamage.pattern type="select" label="DoT pattern" default="stripes" values=#3d209c14 hidden
+option health.bar.pendingDamage.patternColor type="color" label="Pattern colour" default={0,0,0} hidden
+option health.bar.pendingDamage.patternOpacity type="range" label="Stripe opacity" default=0.35 min=0 max=1 step=0.05 hidden
+option health.bar.pendingDamage.dividers type="toggle" label="Dividers between DoTs" default=true hidden
+option health.bar.pendingDamage.edge type="toggle" label="Line where health will end" default=true hidden
+option health.bar.pendingDamage.waitMode type="select" label="Wait for a DoT's first tick" default="off" values=#739bfea6 tooltip=#194a2bcc hidden
+option health.bar.pendingDamage.lethalTint type="toggle" label="Tint the bar when lethal" default=false hidden
+option health.bar.pendingDamage.lethalTintColor type="color" label="Lethal tint" default={1,0.1,0.1,0.35} hidden
+option health.bar.pendingDamage.lethalIcon type="toggle" label="Kill icon" default=true tooltip=#713e7728 hidden
+option health.bar.pendingDamage.lethalIconPosition type="select" label="Anchor" default="CENTER" values=#264ec2f3 tooltip=#62138585 hidden
+option health.bar.pendingDamage.lethalIconOrder type="range" label="Order" default=8 min=1 max=10 step=1 tooltip=#07604784 hidden
+option health.bar.pendingDamage.lethalIconGap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
+option health.bar.pendingDamage.lethalIconSize type="range" label="Size" default=16 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
+option health.bar.pendingDamage.lethalIconOffsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
+option health.bar.pendingDamage.lethalIconOffsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -11369,6 +11570,25 @@ default health.bar.overheal.edge = true
 default health.bar.overheal.enabled = false
 default health.bar.overheal.length = 40
 default health.bar.overheal.levels = 3
+default health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
+default health.bar.pendingDamage.colorMode = "school"
+default health.bar.pendingDamage.dividers = true
+default health.bar.pendingDamage.edge = true
+default health.bar.pendingDamage.enabled = false
+default health.bar.pendingDamage.lethalIcon = true
+default health.bar.pendingDamage.lethalIconGap = 2
+default health.bar.pendingDamage.lethalIconOffsetX = 0
+default health.bar.pendingDamage.lethalIconOffsetY = 0
+default health.bar.pendingDamage.lethalIconOrder = 8
+default health.bar.pendingDamage.lethalIconPosition = "CENTER"
+default health.bar.pendingDamage.lethalIconSize = 16
+default health.bar.pendingDamage.lethalTint = false
+default health.bar.pendingDamage.lethalTintColor = {1,0.1,0.1,0.35}
+default health.bar.pendingDamage.opacity = 0.75
+default health.bar.pendingDamage.pattern = "stripes"
+default health.bar.pendingDamage.patternColor = {0,0,0}
+default health.bar.pendingDamage.patternOpacity = 0.35
+default health.bar.pendingDamage.waitMode = "off"
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -12099,6 +12319,26 @@ resolved health.bar.overheal.edge = true
 resolved health.bar.overheal.enabled = false
 resolved health.bar.overheal.length = 40
 resolved health.bar.overheal.levels = 3
+resolved health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
+resolved health.bar.pendingDamage.colorMode = "school"
+resolved health.bar.pendingDamage.dividers = true
+resolved health.bar.pendingDamage.edge = true
+resolved health.bar.pendingDamage.enabled = false
+resolved health.bar.pendingDamage.lethalIcon = true
+resolved health.bar.pendingDamage.lethalIconGap = 2
+resolved health.bar.pendingDamage.lethalIconOffsetX = 0
+resolved health.bar.pendingDamage.lethalIconOffsetY = 0
+resolved health.bar.pendingDamage.lethalIconOrder = 8
+resolved health.bar.pendingDamage.lethalIconPosition = "CENTER"
+resolved health.bar.pendingDamage.lethalIconSize = 16
+resolved health.bar.pendingDamage.lethalTint = false
+resolved health.bar.pendingDamage.lethalTintColor = {1,0.1,0.1,0.35}
+resolved health.bar.pendingDamage.opacity = 0.75
+resolved health.bar.pendingDamage.pattern = "stripes"
+resolved health.bar.pendingDamage.patternColor = {0,0,0}
+resolved health.bar.pendingDamage.patternOpacity = 0.35
+resolved health.bar.pendingDamage.texture = "Blizzard Raid Bar"
+resolved health.bar.pendingDamage.waitMode = "off"
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true
@@ -12608,7 +12848,7 @@ definition pvp.defaults = {}
 definition raidTarget.defaults = {}
 definition readyCheck = true
 definition readyCheckIcon.defaults = {}
-definition rows = {{defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=20,left={levelColor=true,size=10},right={format="health:percent",levelColor=true,size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=8,left={levelColor=true},right={format="power:percent",levelColor=true,size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
+definition rows = {{defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=20,left={levelColor=true,size=10},right={format="health:percent",levelColor=true,size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,pendingDamage=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=8,left={levelColor=true},right={format="power:percent",levelColor=true,size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
 definition sample.class = "WARRIOR"
 definition sample.className = "Warrior"
 definition sample.cost = 15
@@ -12698,7 +12938,7 @@ option portrait.border.size type="range" label="Border size" inherit="borderSize
 option portrait.border.color type="color" label="Border colour" inherit="borderColor"
 option portrait.border.background type="background" label="Background" inherit="backgroundTexture"
 option portrait.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option health type="group" label="Health" defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=24,left={levelColor=true},right={levelColor=true}}
+option health type="group" label="Health" defaults={bar={pendingDamage={enabled=true}},belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=24,left={levelColor=true},right={levelColor=true}}
 option health.enabled type="toggle" label="Enabled" default=true
 option health.height type="range" label="Height" default=20 min=2 max=100 step=1
 option health.colorMode type="select" label="Bar colour" default="class" values=#9f707d09
@@ -12754,6 +12994,27 @@ option health.bar.overheal.levels type="select" label="Levels" default=3 values=
 option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
 option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
 option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
+option health.bar.pendingDamage type="group" label="DoT damage"
+option health.bar.pendingDamage.enabled type="toggle" label="Show DoT damage" default=false tooltip=#a3e84a0b
+option health.bar.pendingDamage.colorMode type="select" label="DoT colours" default="school" values=#075343d5 hidden
+option health.bar.pendingDamage.color type="color" label="DoT colour" default={0.7,0.3,1,0.75} hidden
+option health.bar.pendingDamage.opacity type="range" label="DoT opacity" default=0.75 min=0.1 max=1 step=0.05 hidden
+option health.bar.pendingDamage.texture type="statusbar" label="DoT texture" inherit="barTexture" hidden
+option health.bar.pendingDamage.pattern type="select" label="DoT pattern" default="stripes" values=#3d209c14 hidden
+option health.bar.pendingDamage.patternColor type="color" label="Pattern colour" default={0,0,0} hidden
+option health.bar.pendingDamage.patternOpacity type="range" label="Stripe opacity" default=0.35 min=0 max=1 step=0.05 hidden
+option health.bar.pendingDamage.dividers type="toggle" label="Dividers between DoTs" default=true hidden
+option health.bar.pendingDamage.edge type="toggle" label="Line where health will end" default=true hidden
+option health.bar.pendingDamage.waitMode type="select" label="Wait for a DoT's first tick" default="off" values=#739bfea6 tooltip=#194a2bcc hidden
+option health.bar.pendingDamage.lethalTint type="toggle" label="Tint the bar when lethal" default=false hidden
+option health.bar.pendingDamage.lethalTintColor type="color" label="Lethal tint" default={1,0.1,0.1,0.35} hidden
+option health.bar.pendingDamage.lethalIcon type="toggle" label="Kill icon" default=true tooltip=#713e7728 hidden
+option health.bar.pendingDamage.lethalIconPosition type="select" label="Anchor" default="CENTER" values=#264ec2f3 tooltip=#62138585 hidden
+option health.bar.pendingDamage.lethalIconOrder type="range" label="Order" default=8 min=1 max=10 step=1 tooltip=#07604784 hidden
+option health.bar.pendingDamage.lethalIconGap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
+option health.bar.pendingDamage.lethalIconSize type="range" label="Size" default=16 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
+option health.bar.pendingDamage.lethalIconOffsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
+option health.bar.pendingDamage.lethalIconOffsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -13742,6 +14003,25 @@ default health.bar.overheal.edge = true
 default health.bar.overheal.enabled = false
 default health.bar.overheal.length = 40
 default health.bar.overheal.levels = 3
+default health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
+default health.bar.pendingDamage.colorMode = "school"
+default health.bar.pendingDamage.dividers = true
+default health.bar.pendingDamage.edge = true
+default health.bar.pendingDamage.enabled = true
+default health.bar.pendingDamage.lethalIcon = true
+default health.bar.pendingDamage.lethalIconGap = 2
+default health.bar.pendingDamage.lethalIconOffsetX = 0
+default health.bar.pendingDamage.lethalIconOffsetY = 0
+default health.bar.pendingDamage.lethalIconOrder = 8
+default health.bar.pendingDamage.lethalIconPosition = "CENTER"
+default health.bar.pendingDamage.lethalIconSize = 16
+default health.bar.pendingDamage.lethalTint = false
+default health.bar.pendingDamage.lethalTintColor = {1,0.1,0.1,0.35}
+default health.bar.pendingDamage.opacity = 0.75
+default health.bar.pendingDamage.pattern = "stripes"
+default health.bar.pendingDamage.patternColor = {0,0,0}
+default health.bar.pendingDamage.patternOpacity = 0.35
+default health.bar.pendingDamage.waitMode = "off"
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -14470,6 +14750,26 @@ resolved health.bar.overheal.edge = true
 resolved health.bar.overheal.enabled = false
 resolved health.bar.overheal.length = 40
 resolved health.bar.overheal.levels = 3
+resolved health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
+resolved health.bar.pendingDamage.colorMode = "school"
+resolved health.bar.pendingDamage.dividers = true
+resolved health.bar.pendingDamage.edge = true
+resolved health.bar.pendingDamage.enabled = true
+resolved health.bar.pendingDamage.lethalIcon = true
+resolved health.bar.pendingDamage.lethalIconGap = 2
+resolved health.bar.pendingDamage.lethalIconOffsetX = 0
+resolved health.bar.pendingDamage.lethalIconOffsetY = 0
+resolved health.bar.pendingDamage.lethalIconOrder = 8
+resolved health.bar.pendingDamage.lethalIconPosition = "CENTER"
+resolved health.bar.pendingDamage.lethalIconSize = 16
+resolved health.bar.pendingDamage.lethalTint = false
+resolved health.bar.pendingDamage.lethalTintColor = {1,0.1,0.1,0.35}
+resolved health.bar.pendingDamage.opacity = 0.75
+resolved health.bar.pendingDamage.pattern = "stripes"
+resolved health.bar.pendingDamage.patternColor = {0,0,0}
+resolved health.bar.pendingDamage.patternOpacity = 0.35
+resolved health.bar.pendingDamage.texture = "Blizzard Raid Bar"
+resolved health.bar.pendingDamage.waitMode = "off"
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true
@@ -14972,7 +15272,7 @@ definition pvp.defaults = {}
 definition raidTarget.defaults = {}
 definition readyCheck = true
 definition readyCheckIcon.defaults = {}
-definition rows = {{defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=24,left={levelColor=true},right={levelColor=true}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=10,left={levelColor=true},right={levelColor=true,size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
+definition rows = {{defaults={bar={pendingDamage={enabled=true}},belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=24,left={levelColor=true},right={levelColor=true}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,pendingDamage=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=10,left={levelColor=true},right={levelColor=true,size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
 definition sample.castTime = 2.5
 definition sample.class = "MAGE"
 definition sample.className = "Mage"
@@ -15117,6 +15417,27 @@ option health.bar.overheal.levels type="select" label="Levels" default=3 values=
 option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
 option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
 option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
+option health.bar.pendingDamage type="group" label="DoT damage"
+option health.bar.pendingDamage.enabled type="toggle" label="Show DoT damage" default=false tooltip=#a3e84a0b
+option health.bar.pendingDamage.colorMode type="select" label="DoT colours" default="school" values=#075343d5 hidden
+option health.bar.pendingDamage.color type="color" label="DoT colour" default={0.7,0.3,1,0.75} hidden
+option health.bar.pendingDamage.opacity type="range" label="DoT opacity" default=0.75 min=0.1 max=1 step=0.05 hidden
+option health.bar.pendingDamage.texture type="statusbar" label="DoT texture" inherit="barTexture" hidden
+option health.bar.pendingDamage.pattern type="select" label="DoT pattern" default="stripes" values=#3d209c14 hidden
+option health.bar.pendingDamage.patternColor type="color" label="Pattern colour" default={0,0,0} hidden
+option health.bar.pendingDamage.patternOpacity type="range" label="Stripe opacity" default=0.35 min=0 max=1 step=0.05 hidden
+option health.bar.pendingDamage.dividers type="toggle" label="Dividers between DoTs" default=true hidden
+option health.bar.pendingDamage.edge type="toggle" label="Line where health will end" default=true hidden
+option health.bar.pendingDamage.waitMode type="select" label="Wait for a DoT's first tick" default="off" values=#739bfea6 tooltip=#194a2bcc hidden
+option health.bar.pendingDamage.lethalTint type="toggle" label="Tint the bar when lethal" default=false hidden
+option health.bar.pendingDamage.lethalTintColor type="color" label="Lethal tint" default={1,0.1,0.1,0.35} hidden
+option health.bar.pendingDamage.lethalIcon type="toggle" label="Kill icon" default=true tooltip=#713e7728 hidden
+option health.bar.pendingDamage.lethalIconPosition type="select" label="Anchor" default="CENTER" values=#264ec2f3 tooltip=#62138585 hidden
+option health.bar.pendingDamage.lethalIconOrder type="range" label="Order" default=8 min=1 max=10 step=1 tooltip=#07604784 hidden
+option health.bar.pendingDamage.lethalIconGap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
+option health.bar.pendingDamage.lethalIconSize type="range" label="Size" default=16 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
+option health.bar.pendingDamage.lethalIconOffsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
+option health.bar.pendingDamage.lethalIconOffsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -16105,6 +16426,25 @@ default health.bar.overheal.edge = true
 default health.bar.overheal.enabled = false
 default health.bar.overheal.length = 40
 default health.bar.overheal.levels = 3
+default health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
+default health.bar.pendingDamage.colorMode = "school"
+default health.bar.pendingDamage.dividers = true
+default health.bar.pendingDamage.edge = true
+default health.bar.pendingDamage.enabled = false
+default health.bar.pendingDamage.lethalIcon = true
+default health.bar.pendingDamage.lethalIconGap = 2
+default health.bar.pendingDamage.lethalIconOffsetX = 0
+default health.bar.pendingDamage.lethalIconOffsetY = 0
+default health.bar.pendingDamage.lethalIconOrder = 8
+default health.bar.pendingDamage.lethalIconPosition = "CENTER"
+default health.bar.pendingDamage.lethalIconSize = 16
+default health.bar.pendingDamage.lethalTint = false
+default health.bar.pendingDamage.lethalTintColor = {1,0.1,0.1,0.35}
+default health.bar.pendingDamage.opacity = 0.75
+default health.bar.pendingDamage.pattern = "stripes"
+default health.bar.pendingDamage.patternColor = {0,0,0}
+default health.bar.pendingDamage.patternOpacity = 0.35
+default health.bar.pendingDamage.waitMode = "off"
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -16835,6 +17175,26 @@ resolved health.bar.overheal.edge = true
 resolved health.bar.overheal.enabled = false
 resolved health.bar.overheal.length = 40
 resolved health.bar.overheal.levels = 3
+resolved health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
+resolved health.bar.pendingDamage.colorMode = "school"
+resolved health.bar.pendingDamage.dividers = true
+resolved health.bar.pendingDamage.edge = true
+resolved health.bar.pendingDamage.enabled = false
+resolved health.bar.pendingDamage.lethalIcon = true
+resolved health.bar.pendingDamage.lethalIconGap = 2
+resolved health.bar.pendingDamage.lethalIconOffsetX = 0
+resolved health.bar.pendingDamage.lethalIconOffsetY = 0
+resolved health.bar.pendingDamage.lethalIconOrder = 8
+resolved health.bar.pendingDamage.lethalIconPosition = "CENTER"
+resolved health.bar.pendingDamage.lethalIconSize = 16
+resolved health.bar.pendingDamage.lethalTint = false
+resolved health.bar.pendingDamage.lethalTintColor = {1,0.1,0.1,0.35}
+resolved health.bar.pendingDamage.opacity = 0.75
+resolved health.bar.pendingDamage.pattern = "stripes"
+resolved health.bar.pendingDamage.patternColor = {0,0,0}
+resolved health.bar.pendingDamage.patternOpacity = 0.35
+resolved health.bar.pendingDamage.texture = "Blizzard Raid Bar"
+resolved health.bar.pendingDamage.waitMode = "off"
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true
@@ -17344,7 +17704,7 @@ definition pvp.defaults = {}
 definition raidTarget.defaults = {}
 definition readyCheck = true
 definition readyCheckIcon.defaults = {}
-definition rows = {{defaults={height=20,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={height=8,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
+definition rows = {{defaults={height=20,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,pendingDamage=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={height=8,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
 definition sample.class = "SHAMAN"
 definition sample.className = "Shaman"
 definition sample.isPlayer = true
@@ -17406,6 +17766,27 @@ option bar.overheal.levels type="select" label="Levels" default=3 values=#dcbe87
 option bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
 option bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
 option bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
+option bar.pendingDamage type="group" label="DoT damage"
+option bar.pendingDamage.enabled type="toggle" label="Show DoT damage" default=false tooltip=#a3e84a0b
+option bar.pendingDamage.colorMode type="select" label="DoT colours" default="school" values=#075343d5 hidden
+option bar.pendingDamage.color type="color" label="DoT colour" default={0.7,0.3,1,0.75} hidden
+option bar.pendingDamage.opacity type="range" label="DoT opacity" default=0.75 min=0.1 max=1 step=0.05 hidden
+option bar.pendingDamage.texture type="statusbar" label="DoT texture" inherit="barTexture" hidden
+option bar.pendingDamage.pattern type="select" label="DoT pattern" default="stripes" values=#3d209c14 hidden
+option bar.pendingDamage.patternColor type="color" label="Pattern colour" default={0,0,0} hidden
+option bar.pendingDamage.patternOpacity type="range" label="Stripe opacity" default=0.35 min=0 max=1 step=0.05 hidden
+option bar.pendingDamage.dividers type="toggle" label="Dividers between DoTs" default=true hidden
+option bar.pendingDamage.edge type="toggle" label="Line where health will end" default=true hidden
+option bar.pendingDamage.waitMode type="select" label="Wait for a DoT's first tick" default="off" values=#739bfea6 tooltip=#194a2bcc hidden
+option bar.pendingDamage.lethalTint type="toggle" label="Tint the bar when lethal" default=false hidden
+option bar.pendingDamage.lethalTintColor type="color" label="Lethal tint" default={1,0.1,0.1,0.35} hidden
+option bar.pendingDamage.lethalIcon type="toggle" label="Kill icon" default=true tooltip=#713e7728 hidden
+option bar.pendingDamage.lethalIconPosition type="select" label="Anchor" default="CENTER" values=#264ec2f3 tooltip=#62138585 hidden
+option bar.pendingDamage.lethalIconOrder type="range" label="Order" default=8 min=1 max=10 step=1 tooltip=#07604784 hidden
+option bar.pendingDamage.lethalIconGap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
+option bar.pendingDamage.lethalIconSize type="range" label="Size" default=16 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
+option bar.pendingDamage.lethalIconOffsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
+option bar.pendingDamage.lethalIconOffsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
 option textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -17642,6 +18023,25 @@ default bar.overheal.edge = true
 default bar.overheal.enabled = false
 default bar.overheal.length = 40
 default bar.overheal.levels = 3
+default bar.pendingDamage.color = {0.7,0.3,1,0.75}
+default bar.pendingDamage.colorMode = "school"
+default bar.pendingDamage.dividers = true
+default bar.pendingDamage.edge = true
+default bar.pendingDamage.enabled = false
+default bar.pendingDamage.lethalIcon = true
+default bar.pendingDamage.lethalIconGap = 2
+default bar.pendingDamage.lethalIconOffsetX = 0
+default bar.pendingDamage.lethalIconOffsetY = 0
+default bar.pendingDamage.lethalIconOrder = 8
+default bar.pendingDamage.lethalIconPosition = "CENTER"
+default bar.pendingDamage.lethalIconSize = 16
+default bar.pendingDamage.lethalTint = false
+default bar.pendingDamage.lethalTintColor = {1,0.1,0.1,0.35}
+default bar.pendingDamage.opacity = 0.75
+default bar.pendingDamage.pattern = "stripes"
+default bar.pendingDamage.patternColor = {0,0,0}
+default bar.pendingDamage.patternOpacity = 0.35
+default bar.pendingDamage.waitMode = "off"
 default bar.reverseFill = false
 default bar.segments.absorb.color = {1,1,1,0.5}
 default bar.segments.absorb.enabled = true
@@ -17852,6 +18252,26 @@ resolved bar.overheal.edge = true
 resolved bar.overheal.enabled = false
 resolved bar.overheal.length = 40
 resolved bar.overheal.levels = 3
+resolved bar.pendingDamage.color = {0.7,0.3,1,0.75}
+resolved bar.pendingDamage.colorMode = "school"
+resolved bar.pendingDamage.dividers = true
+resolved bar.pendingDamage.edge = true
+resolved bar.pendingDamage.enabled = false
+resolved bar.pendingDamage.lethalIcon = true
+resolved bar.pendingDamage.lethalIconGap = 2
+resolved bar.pendingDamage.lethalIconOffsetX = 0
+resolved bar.pendingDamage.lethalIconOffsetY = 0
+resolved bar.pendingDamage.lethalIconOrder = 8
+resolved bar.pendingDamage.lethalIconPosition = "CENTER"
+resolved bar.pendingDamage.lethalIconSize = 16
+resolved bar.pendingDamage.lethalTint = false
+resolved bar.pendingDamage.lethalTintColor = {1,0.1,0.1,0.35}
+resolved bar.pendingDamage.opacity = 0.75
+resolved bar.pendingDamage.pattern = "stripes"
+resolved bar.pendingDamage.patternColor = {0,0,0}
+resolved bar.pendingDamage.patternOpacity = 0.35
+resolved bar.pendingDamage.texture = "Blizzard Raid Bar"
+resolved bar.pendingDamage.waitMode = "off"
 resolved bar.reverseFill = false
 resolved bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved bar.segments.absorb.enabled = true
@@ -19503,6 +19923,27 @@ option health.bar.overheal.levels type="select" label="Levels" default=3 values=
 option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
 option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
 option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
+option health.bar.pendingDamage type="group" label="DoT damage"
+option health.bar.pendingDamage.enabled type="toggle" label="Show DoT damage" default=false tooltip=#a3e84a0b
+option health.bar.pendingDamage.colorMode type="select" label="DoT colours" default="school" values=#075343d5 hidden
+option health.bar.pendingDamage.color type="color" label="DoT colour" default={0.7,0.3,1,0.75} hidden
+option health.bar.pendingDamage.opacity type="range" label="DoT opacity" default=0.75 min=0.1 max=1 step=0.05 hidden
+option health.bar.pendingDamage.texture type="statusbar" label="DoT texture" inherit="barTexture" hidden
+option health.bar.pendingDamage.pattern type="select" label="DoT pattern" default="stripes" values=#3d209c14 hidden
+option health.bar.pendingDamage.patternColor type="color" label="Pattern colour" default={0,0,0} hidden
+option health.bar.pendingDamage.patternOpacity type="range" label="Stripe opacity" default=0.35 min=0 max=1 step=0.05 hidden
+option health.bar.pendingDamage.dividers type="toggle" label="Dividers between DoTs" default=true hidden
+option health.bar.pendingDamage.edge type="toggle" label="Line where health will end" default=true hidden
+option health.bar.pendingDamage.waitMode type="select" label="Wait for a DoT's first tick" default="off" values=#739bfea6 tooltip=#194a2bcc hidden
+option health.bar.pendingDamage.lethalTint type="toggle" label="Tint the bar when lethal" default=false hidden
+option health.bar.pendingDamage.lethalTintColor type="color" label="Lethal tint" default={1,0.1,0.1,0.35} hidden
+option health.bar.pendingDamage.lethalIcon type="toggle" label="Kill icon" default=true tooltip=#713e7728 hidden
+option health.bar.pendingDamage.lethalIconPosition type="select" label="Anchor" default="CENTER" values=#264ec2f3 tooltip=#62138585 hidden
+option health.bar.pendingDamage.lethalIconOrder type="range" label="Order" default=8 min=1 max=10 step=1 tooltip=#07604784 hidden
+option health.bar.pendingDamage.lethalIconGap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
+option health.bar.pendingDamage.lethalIconSize type="range" label="Size" default=16 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
+option health.bar.pendingDamage.lethalIconOffsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
+option health.bar.pendingDamage.lethalIconOffsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -20459,6 +20900,25 @@ default health.bar.overheal.edge = true
 default health.bar.overheal.enabled = false
 default health.bar.overheal.length = 40
 default health.bar.overheal.levels = 3
+default health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
+default health.bar.pendingDamage.colorMode = "school"
+default health.bar.pendingDamage.dividers = true
+default health.bar.pendingDamage.edge = true
+default health.bar.pendingDamage.enabled = false
+default health.bar.pendingDamage.lethalIcon = true
+default health.bar.pendingDamage.lethalIconGap = 2
+default health.bar.pendingDamage.lethalIconOffsetX = 0
+default health.bar.pendingDamage.lethalIconOffsetY = 0
+default health.bar.pendingDamage.lethalIconOrder = 8
+default health.bar.pendingDamage.lethalIconPosition = "CENTER"
+default health.bar.pendingDamage.lethalIconSize = 16
+default health.bar.pendingDamage.lethalTint = false
+default health.bar.pendingDamage.lethalTintColor = {1,0.1,0.1,0.35}
+default health.bar.pendingDamage.opacity = 0.75
+default health.bar.pendingDamage.pattern = "stripes"
+default health.bar.pendingDamage.patternColor = {0,0,0}
+default health.bar.pendingDamage.patternOpacity = 0.35
+default health.bar.pendingDamage.waitMode = "off"
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -21167,6 +21627,26 @@ resolved health.bar.overheal.edge = true
 resolved health.bar.overheal.enabled = false
 resolved health.bar.overheal.length = 40
 resolved health.bar.overheal.levels = 3
+resolved health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
+resolved health.bar.pendingDamage.colorMode = "school"
+resolved health.bar.pendingDamage.dividers = true
+resolved health.bar.pendingDamage.edge = true
+resolved health.bar.pendingDamage.enabled = false
+resolved health.bar.pendingDamage.lethalIcon = true
+resolved health.bar.pendingDamage.lethalIconGap = 2
+resolved health.bar.pendingDamage.lethalIconOffsetX = 0
+resolved health.bar.pendingDamage.lethalIconOffsetY = 0
+resolved health.bar.pendingDamage.lethalIconOrder = 8
+resolved health.bar.pendingDamage.lethalIconPosition = "CENTER"
+resolved health.bar.pendingDamage.lethalIconSize = 16
+resolved health.bar.pendingDamage.lethalTint = false
+resolved health.bar.pendingDamage.lethalTintColor = {1,0.1,0.1,0.35}
+resolved health.bar.pendingDamage.opacity = 0.75
+resolved health.bar.pendingDamage.pattern = "stripes"
+resolved health.bar.pendingDamage.patternColor = {0,0,0}
+resolved health.bar.pendingDamage.patternOpacity = 0.35
+resolved health.bar.pendingDamage.texture = "Blizzard Raid Bar"
+resolved health.bar.pendingDamage.waitMode = "off"
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true
@@ -21671,7 +22151,7 @@ definition portrait.defaults.enabled = false
 definition portrait.lazyBackends = true
 definition raidTarget.defaults.size = 12
 definition readyCheck = true
-definition rows = {{defaults={height=28,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:class"},left="name",right="health:value"},valueKind="health"}},{defaults={enabled=false,height=6,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
+definition rows = {{defaults={height=28,left={size=10},right={format="health:percent",size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,pendingDamage=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:class"},left="name",right="health:value"},valueKind="health"}},{defaults={enabled=false,height=6,right={format="power:percent",size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
 definition sample.absorb = 900
 definition sample.castTime = 1.5
 definition sample.classification = "normal"
@@ -21820,6 +22300,27 @@ option health.bar.overheal.levels type="select" label="Levels" default=3 values=
 option health.bar.overheal.color type="color" label="Colour" default={1,0.7,0.35,1} hidden
 option health.bar.overheal.length type="range" label="Length" default=40 min=8 max=120 step=1 tooltip=#d7d53e47 hidden
 option health.bar.overheal.edge type="toggle" label="Edge glow" default=true tooltip=#4f7ef6bb hidden
+option health.bar.pendingDamage type="group" label="DoT damage"
+option health.bar.pendingDamage.enabled type="toggle" label="Show DoT damage" default=false tooltip=#a3e84a0b
+option health.bar.pendingDamage.colorMode type="select" label="DoT colours" default="school" values=#075343d5 hidden
+option health.bar.pendingDamage.color type="color" label="DoT colour" default={0.7,0.3,1,0.75} hidden
+option health.bar.pendingDamage.opacity type="range" label="DoT opacity" default=0.75 min=0.1 max=1 step=0.05 hidden
+option health.bar.pendingDamage.texture type="statusbar" label="DoT texture" inherit="barTexture" hidden
+option health.bar.pendingDamage.pattern type="select" label="DoT pattern" default="stripes" values=#3d209c14 hidden
+option health.bar.pendingDamage.patternColor type="color" label="Pattern colour" default={0,0,0} hidden
+option health.bar.pendingDamage.patternOpacity type="range" label="Stripe opacity" default=0.35 min=0 max=1 step=0.05 hidden
+option health.bar.pendingDamage.dividers type="toggle" label="Dividers between DoTs" default=true hidden
+option health.bar.pendingDamage.edge type="toggle" label="Line where health will end" default=true hidden
+option health.bar.pendingDamage.waitMode type="select" label="Wait for a DoT's first tick" default="off" values=#739bfea6 tooltip=#194a2bcc hidden
+option health.bar.pendingDamage.lethalTint type="toggle" label="Tint the bar when lethal" default=false hidden
+option health.bar.pendingDamage.lethalTintColor type="color" label="Lethal tint" default={1,0.1,0.1,0.35} hidden
+option health.bar.pendingDamage.lethalIcon type="toggle" label="Kill icon" default=true tooltip=#713e7728 hidden
+option health.bar.pendingDamage.lethalIconPosition type="select" label="Anchor" default="CENTER" values=#264ec2f3 tooltip=#62138585 hidden
+option health.bar.pendingDamage.lethalIconOrder type="range" label="Order" default=8 min=1 max=10 step=1 tooltip=#07604784 hidden
+option health.bar.pendingDamage.lethalIconGap type="range" label="Gap to next icon" default=2 min=0 max=20 step=1 hidden
+option health.bar.pendingDamage.lethalIconSize type="range" label="Size" default=16 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
+option health.bar.pendingDamage.lethalIconOffsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
+option health.bar.pendingDamage.lethalIconOffsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
 option health.textLayout type="select" label="Text layout" default="edges" values=#7104ea19 tooltip=#95c339b5
 option health.lineGap type="range" label="Line spacing" default=1 min=0 max=20 step=1 tooltip=#36be25e5 hidden
 option health.left type="group" label="Left text" defaults={enabled=true,format="name",justifyH="LEFT"}
@@ -22776,6 +23277,25 @@ default health.bar.overheal.edge = true
 default health.bar.overheal.enabled = false
 default health.bar.overheal.length = 40
 default health.bar.overheal.levels = 3
+default health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
+default health.bar.pendingDamage.colorMode = "school"
+default health.bar.pendingDamage.dividers = true
+default health.bar.pendingDamage.edge = true
+default health.bar.pendingDamage.enabled = false
+default health.bar.pendingDamage.lethalIcon = true
+default health.bar.pendingDamage.lethalIconGap = 2
+default health.bar.pendingDamage.lethalIconOffsetX = 0
+default health.bar.pendingDamage.lethalIconOffsetY = 0
+default health.bar.pendingDamage.lethalIconOrder = 8
+default health.bar.pendingDamage.lethalIconPosition = "CENTER"
+default health.bar.pendingDamage.lethalIconSize = 16
+default health.bar.pendingDamage.lethalTint = false
+default health.bar.pendingDamage.lethalTintColor = {1,0.1,0.1,0.35}
+default health.bar.pendingDamage.opacity = 0.75
+default health.bar.pendingDamage.pattern = "stripes"
+default health.bar.pendingDamage.patternColor = {0,0,0}
+default health.bar.pendingDamage.patternOpacity = 0.35
+default health.bar.pendingDamage.waitMode = "off"
 default health.bar.reverseFill = false
 default health.bar.segments.absorb.color = {1,1,1,0.5}
 default health.bar.segments.absorb.enabled = true
@@ -23479,6 +23999,26 @@ resolved health.bar.overheal.edge = true
 resolved health.bar.overheal.enabled = false
 resolved health.bar.overheal.length = 40
 resolved health.bar.overheal.levels = 3
+resolved health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
+resolved health.bar.pendingDamage.colorMode = "school"
+resolved health.bar.pendingDamage.dividers = true
+resolved health.bar.pendingDamage.edge = true
+resolved health.bar.pendingDamage.enabled = false
+resolved health.bar.pendingDamage.lethalIcon = true
+resolved health.bar.pendingDamage.lethalIconGap = 2
+resolved health.bar.pendingDamage.lethalIconOffsetX = 0
+resolved health.bar.pendingDamage.lethalIconOffsetY = 0
+resolved health.bar.pendingDamage.lethalIconOrder = 8
+resolved health.bar.pendingDamage.lethalIconPosition = "CENTER"
+resolved health.bar.pendingDamage.lethalIconSize = 16
+resolved health.bar.pendingDamage.lethalTint = false
+resolved health.bar.pendingDamage.lethalTintColor = {1,0.1,0.1,0.35}
+resolved health.bar.pendingDamage.opacity = 0.75
+resolved health.bar.pendingDamage.pattern = "stripes"
+resolved health.bar.pendingDamage.patternColor = {0,0,0}
+resolved health.bar.pendingDamage.patternOpacity = 0.35
+resolved health.bar.pendingDamage.texture = "Blizzard Raid Bar"
+resolved health.bar.pendingDamage.waitMode = "off"
 resolved health.bar.reverseFill = false
 resolved health.bar.segments.absorb.color = {0.2,0.65,1,0.75}
 resolved health.bar.segments.absorb.enabled = true
@@ -23967,7 +24507,7 @@ definition label = "Target of target"
 definition portrait.defaults.enabled = false
 definition portrait.lazyBackends = true
 definition raidTarget.defaults = {}
-definition rows = {{defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=28,left={levelColor=true,size=10},right={format="health:percent",levelColor=true,size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},enabled=false,height=8,left={levelColor=true},right={format="power:percent",levelColor=true,size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
+definition rows = {{defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},height=28,left={levelColor=true,size=10},right={format="health:percent",levelColor=true,size=9}},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast"},overheal=true,pendingDamage=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:info"},left="name",right="health:value"},valueKind="health"}},{defaults={belowLeft={levelColor=true},belowRight={levelColor=true},center={levelColor=true},enabled=false,height=8,left={levelColor=true},right={format="power:percent",levelColor=true,size=8}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}}}
 definition sample.class = "WARRIOR"
 definition sample.className = "Warrior"
 definition sample.cost = 15

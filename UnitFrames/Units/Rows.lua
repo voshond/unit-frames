@@ -7,6 +7,7 @@ ns.UnitRows = Rows
 local specs = {
 	health = {
 		overheal = true,
+		pendingDamage = true,
 		segments = {
 			{ key = "heal", label = "Incoming heals", mode = "append", colorInherit = "colors.heal" },
 			{ key = "absorb", label = "Absorb shields", mode = "overlay", configurablePlacement = true,
@@ -55,6 +56,8 @@ function Rows.SampleHealth(row, values)
 	row:SetSegmentValue("healAbsorb", values.healAbsorb)
 	local overheal = row:GetBar():GetOverheal()
 	if overheal then overheal:ShowSample(values) end
+	local pending = row:GetBar():GetPendingDamage()
+	if pending then pending:SetHealth(values.health) end
 end
 
 function Rows.SamplePower(row, values)
@@ -102,6 +105,8 @@ function Rows.LiveHealth(row, unit, calculator, colorMode, classColor)
 	row:SetSegmentValue("healAbsorb", (calculator:GetHealAbsorbs()))
 	local overheal = row:GetBar():GetOverheal()
 	if overheal then overheal:Update(unit) end
+	local pending = row:GetBar():GetPendingDamage()
+	if pending then pending:SetHealth(calculator:GetCurrentHealth()) end
 	Rows.LiveHealthColor(row, colorMode, unit, classColor)
 	row:ShowLive(unit)
 end

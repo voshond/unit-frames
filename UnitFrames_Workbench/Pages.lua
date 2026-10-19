@@ -71,6 +71,7 @@ local function Location(entry, path)
 		if root == feature[1] and root ~= "layout" then
 			local slot = path:match("^[^%.]+%.([^%.]+)")
 			if path:find("%.bar%.segments%.") then return root, feature[2], "shields", "Shields" end
+			if path:find("%.bar%.pendingDamage%.") then return root, feature[2], "dots", "DoT damage" end
 			local opt = slot and UF.Schema.Find(entry.primarySchema, root .. "." .. slot)
 			if opt and opt.textSlot then return root, feature[2], "text." .. slot, opt.label end
 			if slot == "textLayout" or slot == "lineGap" then return root, feature[2], "text", "Text layout" end

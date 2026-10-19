@@ -175,6 +175,15 @@ Units.definitions.focustarget.sample = {
 	name = "Thrall", lastname = "", level = 44, className = "Shaman", class = "SHAMAN", isPlayer = true,
 }
 
+-- Frames you DoT from show the damage still to come by default.
+for _, unit in ipairs({ "target", "focus" }) do
+	for _, row in ipairs(Units.definitions[unit].rows) do
+		if row.key == "health" then
+			row.defaults.bar = ns.Util.Merge(row.defaults.bar or {}, { pendingDamage = { enabled = true } })
+		end
+	end
+end
+
 -- Frames that usually show enemies colour their level by difficulty.
 for _, unit in ipairs({ "target", "targettarget", "focus" }) do
 	for _, row in ipairs(Units.definitions[unit].rows) do

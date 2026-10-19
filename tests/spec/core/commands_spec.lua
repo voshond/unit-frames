@@ -39,6 +39,7 @@ describe("Slash command help", function()
 			{ "/uf help - show this list of commands" },
 			{ "/uf wb - open settings and previews" },
 			{ "/uf logs [clear] - show or clear saved diagnostic entries" },
+			{ "/uf dots [reset] - toggle DoT tracking with its trace in chat, or forget learned tick sizes" },
 			{ "/uf perf help - show developer performance commands" },
 		}, help)
 		for _, command in ipairs({ "  HELP  ", "unknown" }) do

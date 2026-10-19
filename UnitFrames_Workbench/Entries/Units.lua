@@ -41,6 +41,22 @@ local function Range(key, label, default)
 	return { key = key, type = "range", label = label, min = 0, max = 100, step = 1, default = default }
 end
 
+-- Sample DoTs sharing `total`; animated, they tick down over 12 seconds and start again.
+local SAMPLE_DOTS = {
+	{ name = "Corruption", school = 32, share = 0.4 },
+	{ name = "Immolate", school = 4, share = 0.35 },
+	{ name = "Bane of Agony", school = 32, share = 0.25 },
+}
+
+local function PendingDamage(total, time)
+	local left = time and 1 - time % 12 / 12 or 1
+	local entries = {}
+	for i, dot in ipairs(SAMPLE_DOTS) do
+		entries[i] = { name = dot.name, school = dot.school, damage = total * dot.share * left }
+	end
+	return entries
+end
+
 -- Sample values from the Data tab percentages.
 local function Values(unit, d, healthPct, time)
 	local v = UF.Units:GetSample(unit)
@@ -54,6 +70,7 @@ local function Values(unit, d, healthPct, time)
 	v.health = v.healthMax * healthPct / 100
 	v.absorb = v.healthMax * d.absorb / 100
 	v.power = v.powerMax * d.power / 100
+	v.pendingDamage = PendingDamage(v.healthMax * d.dots / 100, time)
 	if d.xp then v.xp = v.xpMax * d.xp / 100 end
 	-- Animated: one more point per second, then empty again.
 	if d.comboPoints then
@@ -112,6 +129,8 @@ local function RegisterUnit(unit)
 		} },
 		Range("health", "Health %", 65),
 		Range("absorb", "Absorb shields %", 15),
+		{ key = "dots", type = "range", label = "Pending DoT damage %", min = 0, max = 100, step = 1, default = 30,
+			tooltip = "Sample damage your DoTs will still deal, as a share of maximum health, for the health bar's DoT damage. At or above the health share the kill icon shows. Animated ticks it down." },
 		Range("power", "Power %", 70),
 		{ key = "outOfRange", type = "toggle", label = "Out of range", default = false,
 			tooltip = "Preview the saved out-of-range opacity. Enable it in the frame's Out-of-range opacity style section first." },

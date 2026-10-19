@@ -23,7 +23,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Install test tools
-        run: sudo apt-get update && sudo apt-get install -y luajit zip unzip jq
+        run: sudo apt-get update && sudo apt-get install -y luajit python3 zip unzip jq
       - name: Set up pinned test libraries
         run: bash scripts/setup-test-libs.sh
       - name: Check out the matching Blizzard source
@@ -33,5 +33,15 @@ jobs:
           ref: 172a387e3ab85b26e6640d3058d5ec1e6ccd4c63 # Forever 1.60.1.70450
           path: examples/wow-ui-source-forever
           persist-credentials: false
+      - name: Verify the generated spell catalogue against pinned exports
+        run: python3 -B scripts/spell_catalog.py --fetch --check
       - name: Run all tests and addon syntax checks
         run: bash scripts/run-tests.sh --times -j
+      - name: Save spell classification audit
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: spell-classification-audit
+          path: examples/forever-spells/*/catalog.json
+          if-no-files-found: ignore
+          retention-days: 14

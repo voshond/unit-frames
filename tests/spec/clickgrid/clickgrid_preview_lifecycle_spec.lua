@@ -90,7 +90,7 @@ describe("ClickGrid preview lifecycle", function()
 		assert.same({ 1, 1, 0 }, Lit(4))
 		assert.same({ 1, 1, 1 }, Lit(5))
 		local live = CG.headers.party:GetAttribute("child1").Member
-		assert.equals(live.uf:GetRow("health"):GetBar():GetOverheal(), live.Health.ufOverheal)
+		assert.equals(live.uf:GetRow("health"):GetBar():GetOverheal(), live.Health.ufHealthHooks.overheal)
 		CG.Config:SetStyle("member", "health.bar.overheal.enabled", false)
 		assert.is_nil(Edge(1))
 		wb.handle:Release()

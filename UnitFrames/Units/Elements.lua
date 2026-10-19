@@ -349,3 +349,34 @@ local function DisableRange(self)
 end
 
 oUF:AddElement("UF_Range", UpdateRange, EnableRange, DisableRange)
+
+--[[
+UF_PendingDamage: the player's DoT damage still to come on the unit
+(frame.UF_PendingDamage = the health bar's PendingDamage), from ns.DotTracker.
+The tracker runs while any frame shows it and announces changes per mob;
+unit changes come through oUF's own full updates.
+]]
+local function UpdatePendingDamage(self)
+	local pending, tracker = self.UF_PendingDamage, ns.DotTracker
+	local total, count, entries = tracker:Breakdown(tracker:KeyFor(self.__unit), pending:GetWaitMode(), pending.liveEntries)
+	pending.liveEntries = entries
+	pending:SetDots(entries, count, total)
+end
+
+local function EnablePendingDamage(self)
+	local pending = self.UF_PendingDamage
+	if not pending then return end
+	ns.DotTracker:Acquire(self)
+	ns.Events.RegisterCallback(self, "DotsChanged", function(_, key)
+		if self.UF_PendingDamage and key == ns.DotTracker:KeyFor(self.__unit) then UpdatePendingDamage(self) end
+	end)
+	return true
+end
+
+local function DisablePendingDamage(self)
+	ns.Events.UnregisterCallback(self, "DotsChanged")
+	ns.DotTracker:Release(self)
+	if self.UF_PendingDamage then self.UF_PendingDamage:SetDots(nil, 0, 0) end
+end
+
+oUF:AddElement("UF_PendingDamage", UpdatePendingDamage, EnablePendingDamage, DisablePendingDamage)
