@@ -71,6 +71,7 @@ local function Alternatives(token)
 	end
 	return { token }
 end
+Catalogue.Alternatives = Alternatives
 
 function Catalogue.Query(index, query, options)
 	options = options or {}
