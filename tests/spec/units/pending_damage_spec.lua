@@ -309,6 +309,71 @@ describe("Pending DoT damage on health bars #dots", function()
 end)
 
 describe("Pending DoT damage in the Workbench #dots", function()
+	it("keeps the health end line colour and thickness after logout and reload", function()
+		local ns, wb = Helpers.LoadWorkbench()
+		wb:Open("unit.target")
+		wb:SelectFeaturePage("@health", "style:dots")
+		local color = { 1, 0, 0.25, 0.8 }
+		for _, row in ipairs(wb.inspector.page.rows) do
+			if row.path == "health.bar.pendingDamage.edgeColor" then row.control:Commit(unpack(color)) end
+			if row.path == "health.bar.pendingDamage.edgeThickness" then row.control:Commit(5) end
+		end
+		Mock.FireEvent("PLAYER_LOGOUT")
+		local saved = ns.Util.Copy(UnitFramesDB)
+		ns = Helpers.LoadAddon(true, true, saved)
+		Mock.InstallUI()
+		Helpers.LoadToc("UnitFrames_Workbench/UnitFrames_Workbench.toc", "UnitFrames_Workbench")
+		wb = ns.Workbench
+		wb:Open("unit.target")
+		wb:SelectFeaturePage("@health", "style:dots")
+		assert.same(color, wb.styleTarget.get("health.bar.pendingDamage.edgeColor"))
+		assert.equals(5, wb.styleTarget.get("health.bar.pendingDamage.edgeThickness"))
+		for _, row in ipairs(wb.inspector.page.rows) do
+			if row.path == "health.bar.pendingDamage.edgeColor" then assert.same(color, row.control:GetValue()) end
+			if row.path == "health.bar.pendingDamage.edgeThickness" then assert.equals(5, row.control:GetValue()) end
+		end
+		for _, uf in ipairs({ ns.Units.frames.target.uf, wb.handle.parts.uf }) do
+			local values = ns.Units:GetSample("target")
+			values.pendingDamage = { { name = "Corruption", school = 32, damage = 3000 } }
+			ns.Units:ShowSample(uf, values)
+			local pending = uf:GetRow("health"):GetBar():GetPendingDamage()
+			assert.same(color, pending.cfg.edgeColor)
+			assert.equals(5, pending.cfg.edgeThickness)
+			assert.same(color, pending.edge.__state.colorTexture)
+			assert.equals(5, pending.edge.__state.width)
+		end
+	end)
+
+	it("saves and reapplies edits after repeatedly switching profiles", function()
+		local ns, wb = Helpers.LoadWorkbench()
+		local original = ns.Profiles:GetCurrent()
+		wb:Open("unit.target")
+		wb:SelectFeaturePage("@health", "style:dots")
+		local path = "health.bar.pendingDamage."
+		wb.styleTarget.set(path .. "colorMode", "single")
+		wb.styleTarget.set(path .. "patternOpacity", 0.2)
+		wb.styleTarget.set(path .. "enabled", false)
+		assert.is_true(ns.Profiles:Create("Other dots"))
+		wb.styleTarget.set(path .. "colorMode", "spell")
+		wb.styleTarget.set(path .. "patternOpacity", 0.6)
+		for _ = 1, 3 do
+			for _, profile in ipairs({ original, "Other dots" }) do
+				assert.is_true(ns.Profiles:Switch(profile))
+				local mode = profile == original and "single" or "spell"
+				local opacity = profile == original and 0.2 or 0.6
+				assert.equals(mode, wb.styleTarget.get(path .. "colorMode"))
+				for _, uf in ipairs({ ns.Units.frames.target.uf, wb.handle.parts.uf }) do
+					local pending = uf:GetRow("health"):GetBar().pendingDamage
+					assert.equals(profile ~= original, pending.enabled)
+					assert.equals(mode, pending.cfg.colorMode)
+					assert.equals(opacity, pending.cfg.patternOpacity)
+				end
+				wb.styleTarget.set(path .. "lethalIconSize", 24)
+				assert.equals(24, wb.handle.parts.uf:GetRow("health"):GetBar().pendingDamage.cfg.lethalIconSize)
+			end
+		end
+	end)
+
 	it("has its own section under Health & shields and a sample in the unit preview", function()
 		local _, wb = Helpers.LoadWorkbench()
 		wb:Open("unit.target")
