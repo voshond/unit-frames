@@ -6,7 +6,7 @@ The text composer: compiles a slot's content into a template that oUF tags,
 live previews and samples all use, so they cannot disagree.
 
   Template.Compile({ pieces = { ... }, whileCasting = "spell" | "keep",
-    whileStatus = "status" | "keep", levelColor = true }, context)
+    whileStatus = "status" | "keep", levelColor = true, threatColor = true }, context)
   Template.Get(def, context)   the same, shared between equal contents
 
 context describes the slot's host: { player = false } on frames that don't
@@ -32,7 +32,9 @@ affixes disappear with them ("1 / 82" becomes "Dead", a power text empties).
 Texts that show the Offline / dead source themselves keep their values.
 levelColor tints the level pieces (sources marked `difficulty`) in their
 difficulty colour (TextSources.DIFFICULTY), except while the unit is dead
-or offline; affixes and other pieces keep the text's own colour.
+or offline; threatColor tints threat pieces (`threatStage`) in their threat
+stage colour (TextSources.TINTS). Affixes and other pieces keep the text's
+own colour.
 
 The template has
   live(unit)      possibly secret text; "" for an absent unit
@@ -78,7 +80,14 @@ function Template.Available(source, context)
 	return not source.player or not context or context.player ~= false
 end
 
-local function Nodes(pieces, context, levelColor)
+-- The slot's tint (TextSources.TINTS) for a resolved source, if switched on.
+local function Tint(def, source)
+	for _, tint in ipairs(Sources.TINTS) do
+		if def[tint.option] and source[tint.flag] then return tint end
+	end
+end
+
+local function Nodes(pieces, context, def)
 	local nodes = {}
 	for _, piece in ipairs(pieces or {}) do
 		if piece.literal then
@@ -88,7 +97,7 @@ local function Nodes(pieces, context, levelColor)
 			if source and Template.Available(source, context) then
 				local before, after = piece.before or "", piece.after or ""
 				local resolved = Sources.Resolve(source, context)
-				nodes[#nodes + 1] = { source = resolved, piece = piece, tint = levelColor and resolved.difficulty,
+				nodes[#nodes + 1] = { source = resolved, piece = piece, tint = Tint(def, resolved),
 					before = before, after = after, affixed = before ~= "" or after ~= "" }
 			end
 		end
@@ -136,13 +145,13 @@ end
 
 local function ReadLive(node, unit)
 	local text = node.source.live(unit, node.piece)
-	if node.tint then return Sources.Tint(text, Sources.DIFFICULTY.live(unit)) end
+	if node.tint then return node.tint.live(text, unit) end
 	return text
 end
 
 local function ReadSample(node, values)
 	local text = node.source.sample(values, node.piece)
-	if node.tint then return Sources.Tint(text, Sources.DIFFICULTY.sample(values)) end
+	if node.tint then return node.tint.sample(text, values) end
 	return text
 end
 
@@ -173,21 +182,22 @@ local function MarkStatusNodes(nodes)
 end
 
 function Template.Compile(def, context)
-	local nodes = Nodes(def.pieces, context, def.levelColor)
+	local nodes = Nodes(def.pieces, context, def)
 	local casting = def.whileCasting == "spell"
 	local status = def.whileStatus ~= "keep" and MarkStatusNodes(nodes)
 	local events, shared, sources = {}, {}, {}
-	local tinted = false
+	local tints = {}
 	for _, node in ipairs(nodes) do
 		if node.source then
 			AddEvents(events, shared, node.source)
 			sources[#sources + 1] = node.source.id
-			tinted = tinted or node.tint
+			if node.tint then tints[node.tint] = true end
 		end
 	end
-	if tinted then
-		AddEvents(events, shared, Sources.DIFFICULTY)
-		AddEvents(events, shared, Sources.Get(STATUS_SOURCE))
+	for _, tint in ipairs(Sources.TINTS) do
+		if tints[tint] then
+			for _, source in ipairs(tint.sources) do AddEvents(events, shared, source) end
+		end
 	end
 	if casting then AddEvents(events, shared, Sources.Get(CAST_SOURCE)) end
 	if status then AddEvents(events, shared, Sources.Get(STATUS_SOURCE)) end
@@ -247,7 +257,7 @@ end
 
 function Template.Signature(def, context)
 	local out = { def.whileCasting == "spell" and "c" or "-", def.whileStatus == "keep" and "k" or "s" }
-	for _, node in ipairs(Nodes(def.pieces, context, def.levelColor)) do
+	for _, node in ipairs(Nodes(def.pieces, context, def)) do
 		if node.literal then
 			out[#out + 1] = "l" .. Encode(node.literal)
 		else
@@ -260,7 +270,7 @@ function Template.Signature(def, context)
 				end
 			end
 			out[#out + 1] = "s" .. Encode(node.source.id) .. Encode(node.before) .. Encode(node.after)
-				.. (node.tint and "t" or "-") .. #options .. ":" .. table.concat(options)
+				.. (node.tint and Encode(node.tint.option) or "-") .. #options .. ":" .. table.concat(options)
 		end
 	end
 	return table.concat(out)

@@ -139,6 +139,34 @@ end
 
 oUF:AddElement("UF_UnitState", UpdateUnitState, EnableUnitState, DisableUnitState)
 
+--[[
+UF_Threat: the threat glow (frame.UF_Threat = UnitFrame), read by
+Drivers.Threat. Situation updates name the player, list updates the
+mob, so both are registered unit-less; any change re-reads this frame's unit.
+]]
+local THREAT_EVENTS = { "UNIT_THREAT_SITUATION_UPDATE", "UNIT_THREAT_LIST_UPDATE" }
+
+local function UpdateThreat(self)
+	self.UF_Threat:SetThreat(Drivers.Threat(self.__unit))
+end
+
+local function EnableThreat(self)
+	if not self.UF_Threat then return end
+	for _, event in ipairs(THREAT_EVENTS) do
+		self:RegisterEvent(event, UpdateThreat, true)
+	end
+	return true
+end
+
+local function DisableThreat(self)
+	for _, event in ipairs(THREAT_EVENTS) do
+		self:UnregisterEvent(event, UpdateThreat)
+	end
+	if self.UF_Threat then self.UF_Threat:SetThreat(nil, nil) end
+end
+
+oUF:AddElement("UF_Threat", UpdateThreat, EnableThreat, DisableThreat)
+
 -- UF_Classification: the elite/rare/boss icon (frame.UF_Classification =
 -- Classification component), read by Drivers.Classification.
 local function UpdateClassification(self, _, unit)

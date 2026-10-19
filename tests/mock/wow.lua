@@ -1330,7 +1330,17 @@ function Mock.Install()
 			if Mock.IsSecret(value) then
 				return Mock.Secret("truncated")
 			end
-			return value == 0 and "" or tostring(value)
+			-- An integer, rounded down; empty when that is zero.
+			local integer = math.floor(value)
+			return integer == 0 and "" or tostring(integer)
+		end,
+	}
+	_G.C_ColorUtil = {
+		-- ARGB hex with alpha forced to ff.
+		GenerateTextColorCode = function(color)
+			if AnySecret(color.r, color.g, color.b) then return Mock.Secret("colorcode") end
+			local function Byte(value) return math.floor(value * 255 + 0.5) end
+			return string.format("ff%02x%02x%02x", Byte(color.r), Byte(color.g), Byte(color.b))
 		end,
 	}
 	_G.C_EncodingUtil = Mock.NewEncodingUtil()
@@ -1445,6 +1455,9 @@ function Mock.InstallUI()
 	_G.UnitEffectiveLevel = function() return 30 end
 	_G.UnitQuestTrivialLevelRange = function() return 8 end
 	_G.UnitCanAttack = function(_, unit) return Mock.attackable[unit] or false end
+	-- Not on any threat list unless a spec says otherwise.
+	_G.UnitThreatSituation = function() return nil end
+	_G.UnitDetailedThreatSituation = function() end
 	_G.C_PlayerInfo = {
 		GetContentDifficultyCreatureForPlayer = function(unit)
 			return Mock.difficulties[unit] or Enum.RelativeContentDifficulty.Fair

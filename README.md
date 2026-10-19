@@ -35,6 +35,10 @@ each change.
 - Add raid markers, PvP flags, elite and rare icons, the resting zZz, and ready
   check indicators.
 - Fade frames when someone is out of range.
+- See your threat on your target or focus (**Threat glow**): a soft, optionally
+  rounded halo in green, yellow, orange and red as your threat % climbs (or by
+  threat status for tanks), from the stage you choose. A **Threat %** text,
+  on its own or in a custom text, can take the same colours.
 - Move your frames in the game's Edit Mode, with snapping to help line them up.
 - Keep several profiles, and share your style with others as a text string.
 

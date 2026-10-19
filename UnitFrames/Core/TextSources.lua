@@ -298,7 +298,7 @@ local function MissingCurve()
 end
 
 -- Integer percent, empty at zero, decided natively for secret values.
-local function NativeMissingPercent(percent)
+local function NativePercent(percent)
 	return C_StringUtil.WrapString(C_StringUtil.TruncateWhenZero(percent), "", "%")
 end
 
@@ -356,7 +356,7 @@ RegisterValues("health", "Health", "UNIT_HEALTH UNIT_MAXHEALTH UNIT_CONNECTION",
 	live = function(unit) return UnitHealth(unit), UnitHealthMax(unit) end,
 	livePercent = function(unit) return UnitHealthPercent(unit, true, ns.Colors.PercentCurve()) end,
 	liveMissing = function(unit) return C_StringUtil.TruncateWhenZero(UnitHealthMissing(unit)) end,
-	liveMissingPercent = function(unit) return NativeMissingPercent(UnitHealthPercent(unit, true, MissingCurve())) end,
+	liveMissingPercent = function(unit) return NativePercent(UnitHealthPercent(unit, true, MissingCurve())) end,
 	sample = { "health", "healthMax" },
 })
 
@@ -364,9 +364,61 @@ RegisterValues("power", "Power", "UNIT_POWER_UPDATE UNIT_MAXPOWER UNIT_DISPLAYPO
 	live = function(unit) return UnitPower(unit), UnitPowerMax(unit) end,
 	livePercent = function(unit) return UnitPowerPercent(unit, nil, false, ns.Colors.PercentCurve()) end,
 	liveMissing = function(unit) return C_StringUtil.TruncateWhenZero(UnitPowerMissing(unit)) end,
-	liveMissingPercent = function(unit) return NativeMissingPercent(UnitPowerPercent(unit, nil, false, MissingCurve())) end,
+	liveMissingPercent = function(unit) return NativePercent(UnitPowerPercent(unit, nil, false, MissingCurve())) end,
 	sample = { "power", "powerMax" },
 })
+
+-- Threat -----------------------------------------------------------------------
+
+--[[
+The player's scaled threat on the unit: 100% once they hold aggro. Secret
+while threat values are restricted, so only its type is checked; nothing off
+the threat list or at zero. Situation updates name the player, not the unit.
+]]
+Sources.Register("threat", {
+	label = "Threat %", group = "Threat", optional = true, threatStage = true,
+	events = "UNIT_THREAT_LIST_UPDATE UNIT_THREAT_SITUATION_UPDATE",
+	sharedEvents = { UNIT_THREAT_SITUATION_UPDATE = true },
+	live = function(unit)
+		local percent = Sources.ThreatPercent(unit)
+		if type(percent) == "nil" then return nil end
+		return NativePercent(percent)
+	end,
+	sample = function(v)
+		if v.threat ~= nil and v.threat >= 1 then return string.format("%d%%", math.floor(v.threat)) end
+	end,
+})
+
+-- The player's scaled threat % on the unit, or nil off its threat list.
+function Sources.ThreatPercent(unit)
+	local _, _, percent = UnitDetailedThreatSituation("player", unit)
+	return percent
+end
+
+-- Wraps `text` in the threat stage colour of `percent` (possibly secret):
+-- the colour code is generated natively and empty text stays empty.
+local function ThreatTint(text, percent)
+	if type(text) == "nil" or type(percent) == "nil" then return text end
+	if type(text) ~= "string" then text = string.format("%s", text) end
+	local code = C_ColorUtil.GenerateTextColorCode(ns.Colors.ThreatStageCurve("percent"):Evaluate(percent))
+	return C_StringUtil.WrapString(text, string.format("|c%s", code), "|r")
+end
+
+--[[
+Tints a text slot can switch on (its `option`, e.g. levelColor) for the
+pieces of sources marked `flag`. Each wraps only that piece's text natively,
+so affixes and other pieces keep the text's own colour.
+  live(text, unit), sample(text, values)   the tinted text
+  sources                                  whose events also redraw it
+]]
+Sources.TINTS = {
+	{ option = "levelColor", flag = "difficulty", sources = { Sources.DIFFICULTY, Sources.Get("status") },
+		live = function(text, unit) return Sources.Tint(text, Sources.DIFFICULTY.live(unit)) end,
+		sample = function(text, values) return Sources.Tint(text, Sources.DIFFICULTY.sample(values)) end },
+	{ option = "threatColor", flag = "threatStage", sources = {},
+		live = function(text, unit) return ThreatTint(text, Sources.ThreatPercent(unit)) end,
+		sample = function(text, values) return ThreatTint(text, values.threat) end },
+}
 
 -- Experience is player only and not secret, but stays pass-through where it can.
 local XP_EVENTS = "PLAYER_XP_UPDATE UPDATE_EXHAUSTION PLAYER_LEVEL_UP"

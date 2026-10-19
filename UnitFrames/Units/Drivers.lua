@@ -76,6 +76,14 @@ function Drivers.UnitState(unit)
 	return ns.TextSources.UnitStatus(unit)
 end
 
+-- The player's threat situation (0..3) and scaled threat % on the unit,
+-- both nil off its threat list. Either may be secret and is passed on.
+function Drivers.Threat(unit)
+	if not unit or not UnitExists(unit) then return nil, nil end
+	local _, status, percent = UnitDetailedThreatSituation("player", unit)
+	return status, percent
+end
+
 -- The enabled health row's pending DoT damage, else nil.
 function Drivers.PendingDamage(uf)
 	local row = uf:GetRow("health")
@@ -90,6 +98,10 @@ Drivers.frame = {
 		bind = function(uf) return uf.spec.resting and uf.resolved.resting.enabled and uf or nil end,
 		sample = function(uf, v) uf:SetResting(uf.spec.resting and v.resting == true, v.restingAnimated == true) end,
 		live = function(uf, unit) uf:SetResting(uf.spec.resting == true and unit == "player" and IsResting()) end },
+	{ key = "threat", element = "UF_Threat",
+		bind = function(uf) return uf:HasThreatGlow() and uf or nil end,
+		sample = function(uf, v) uf:SetThreat(v.threatStatus, v.threat) end,
+		live = function(uf, unit) uf:SetThreat(Drivers.Threat(unit)) end },
 	{ key = "readyCheck", element = "UF_ReadyCheck",
 		bind = function(uf)
 			local readyCheck = uf:GetReadyCheck()

@@ -37,6 +37,8 @@ spec:
   width     default width (of the rows area, including the border padding)
   borderDefaults  frame border option defaults, e.g. { enabled = false }
   resting   offer the resting border (player)
+  threat    { defaults } to offer the threat glow: the player's threat on the
+            unit as a soft halo in the threat stage colours (SetThreat)
   playerFrame  the frame always shows the player: its texts offer player-only
             sources (XP, resting)
   readyCheck  offer ready check bar tints
@@ -58,7 +60,8 @@ Access: GetRow(key) and GetPart(key) return a row's TextBar or a present
 part's component; Rows() and Parts() iterate them with their resolved config.
 GetReadyCheck() returns the ReadyCheck presenter when the spec offers one.
 SetUnitState(state) shows the dead/ghost ("dead") or offline look (bars,
-portrait, border, texts); nil restores the frame.
+portrait, border, texts); nil restores the frame. SetThreat(status, percent)
+tints the threat glow (either may be secret; nil off the threat list).
 ]]
 local UnitFrame = ns.Component:Extend("UnitFrame")
 
@@ -234,6 +237,8 @@ function UnitFrame:OnCreate(parent, spec)
 			self.partsByKey[part.key] = component
 		end
 	end
+	-- Under the frame, so its background and contents sit on top of the glow.
+	if spec.threat then self.threatGlow = ns.Glow.Create(self.frame, self.frame) end
 	if spec.readyCheck then
 		self.readyCheck = ns.ReadyCheck:New(self.frame, function(color, amount)
 			self.readyTint, self.readyTintAmount = color, amount
@@ -277,6 +282,27 @@ local function UnitStateSchema(tooltip, colorLabel, color)
 	}
 end
 
+UnitFrame.THREAT_COLOR_BY = {
+	{ "percent", "Threat %" },
+	{ "status", "Threat status" },
+}
+
+UnitFrame.THREAT_SHOW_FROM = {
+	{ "low", "Low (any threat)" },
+	{ "medium", "Medium" },
+	{ "high", "High" },
+	{ "aggro", "Aggro" },
+}
+
+UnitFrame.THREAT_SCHEMA = GroupSchema(ns.Glow.UNDER_SCHEMA, {
+	{ key = "enabled", type = "toggle", label = "Enabled", default = true,
+		tooltip = "A soft glow around the frame while you are on the unit's threat list, in the theme's threat colours. Works in combat." },
+	{ key = "colorBy", type = "select", label = "Colour by", values = UnitFrame.THREAT_COLOR_BY, default = "percent",
+		tooltip = "Threat %: low below 50%, medium from 50%, high from 80% and aggro at 100%, when you pull it. Suits damage dealers. Threat status: the game's threat situation: low while another unit holds aggro, medium when you are about to pull it, high while you tank it insecurely and aggro while you tank it securely. Suits tanks." },
+	{ key = "showFrom", type = "select", label = "Show from", values = UnitFrame.THREAT_SHOW_FROM, default = "medium",
+		tooltip = "The first stage that shows the glow. Earlier stages show nothing." },
+})
+
 UnitFrame.UNIT_STATES = {
 	{ key = "dead", label = "Dead & ghost", schema = UnitStateSchema(
 		"While the unit is dead or a ghost, turn this frame greyscale and tint it with the ghost colour. Bar fills take one uniform colour; the health bar shows it across its whole length instead of an empty or 1 health fill.",
@@ -311,6 +337,10 @@ function UnitFrame.BuildSchema(spec)
 			{ key = "period", type = "range", label = "Pulse duration (seconds)", min = 2, max = 10, step = 0.5, default = 4,
 				tooltip = "Time for one slow fade to the resting colour and back. Requires a visible frame border." },
 		} }
+	end
+	if spec.threat then
+		schema[#schema + 1] = { key = "threat", type = "group", label = "Threat glow", schema = UnitFrame.THREAT_SCHEMA,
+			defaults = spec.threat.defaults }
 	end
 	if spec.readyCheck then
 		schema[#schema + 1] = { key = "readyCheck", type = "group", label = "Ready check", schema = ns.ReadyCheck.schema }
@@ -352,6 +382,7 @@ local function Apply(self, cfg)
 	self:Layout()
 	self:ApplyRangeOpacity()
 	self:ApplyUnitState()
+	self:ApplyThreatGlow()
 	if self.readyCheck then self.readyCheck:Apply(cfg.readyCheck) end
 end
 
@@ -466,6 +497,39 @@ end
 function UnitFrame:SetResting(resting, animated)
 	self.resting, self.restingAnimated = resting, animated
 	self:ApplyRestingBorder()
+end
+
+-- The glow stays shown while enabled: the stage curve makes it transparent
+-- before the chosen stage, so secret threat values are never tested. Off
+-- the threat list (nil, a plain type check) it is transparent.
+function UnitFrame:ApplyThreatGlow()
+	local glow = self.threatGlow
+	if not glow then return end
+	local cfg = self.resolved.threat
+	if not (cfg.enabled and ns.Caps.curves) then
+		glow:Hide()
+		return
+	end
+	ns.Glow.Apply(glow, cfg)
+	local value = cfg.colorBy == "status" and self.threatStatus or self.threatPercent
+	if type(value) == "nil" then
+		ns.Glow.SetColor(glow, 0, 0, 0, 0)
+	else
+		ns.Glow.SetColor(glow, ns.Colors.ThreatStageCurve(cfg.colorBy, cfg.showFrom):Evaluate(value):GetRGBA())
+	end
+	glow:Show()
+end
+
+-- The player's threat situation (0..3) and scaled threat % on the unit;
+-- nil while it isn't on the unit's threat list.
+function UnitFrame:SetThreat(status, percent)
+	self.threatStatus, self.threatPercent = status, percent
+	self:ApplyThreatGlow()
+end
+
+-- Whether the threat glow is offered and switched on.
+function UnitFrame:HasThreatGlow()
+	return self.threatGlow ~= nil and self.resolved.threat.enabled and ns.Caps.curves
 end
 
 -- The ReadyCheck presenter (tints and icon), or nil when not offered.

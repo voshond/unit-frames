@@ -33,12 +33,13 @@ CG.definitions = {
 -- Group bars show status icons instead of the unit frames' PvP flag and elite
 -- icon. Status places its own ready check icon among the other indicators and
 -- attaches it to the member's ReadyCheck. Targets are not part of the check.
+-- Threat is the member's own indicator (Status), not a target glow.
 for _, def in pairs(CG.definitions) do
 	def.borderDefaults = { enabled = false }
 	def.portrait.lazyBackends = true
 	def.pvp, def.classification, def.readyCheckIcon = nil, nil, nil
 end
-CG.definitions.target.readyCheck = nil
+CG.definitions.target.readyCheck, CG.definitions.target.threat = nil, nil
 
 CG.LayoutSchema = {
 	{ key = "enabled", type = "toggle", label = "Show healing panel", default = true },

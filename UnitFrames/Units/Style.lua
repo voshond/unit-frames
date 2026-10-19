@@ -212,6 +212,8 @@ function Units:CopyPlayerSettings(unit)
 	-- The player's combo point row is opt-in and the target's on by default:
 	-- each frame keeps its own.
 	copy.comboPoints = ns.Util.Copy(ns.Config:GetUnitConfig(unit).comboPoints)
+	-- The player frame has no threat glow: each frame keeps its own.
+	copy.threat = ns.Util.Copy(ns.Config:GetUnitConfig(unit).threat)
 	return ns.Config:UnitStore(unit):Replace(copy)
 end
 

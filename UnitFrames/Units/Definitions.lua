@@ -96,9 +96,11 @@ Units.definitions.target = {
 	-- Combo points are stored on the target: the player's points on this unit.
 	comboPoints = { defaults = {} },
 	auras = { defaults = {} },
+	threat = { defaults = {} },
 	sample = { name = "Scarlet Myrmidon", lastname = "", level = 42, isPlayer = false, creatureType = "Humanoid",
 		classification = "elite", reaction = "hostile", powerType = "RAGE", powerMax = 100, power = 70, cost = 15,
-		spell = "Mortal Strike", spellIcon = [[Interface\Icons\Ability_Warrior_SavageBlow]], castTime = 1.5 },
+		spell = "Mortal Strike", spellIcon = [[Interface\Icons\Ability_Warrior_SavageBlow]], castTime = 1.5,
+		threat = 100, threatStatus = 3 },
 }
 
 Units.definitions.targettarget = {
@@ -110,6 +112,7 @@ Units.definitions.targettarget = {
 		name = { size = 9 }, time = { size = 9 } } },
 	auras = { defaults = { enabled = false, durationPosition = "CENTER", durationSize = 9, countSize = 8,
 		buffs = { max = 8, size = 16 }, debuffs = { max = 8, size = 18 } } },
+	threat = { defaults = { enabled = false } },
 	sample = { name = "Arthas", lastname = "Menethil", level = 44, className = "Warrior", class = "WARRIOR", isPlayer = true,
 		powerType = "RAGE", powerMax = 100, power = 70, cost = 15 },
 }
@@ -121,6 +124,7 @@ Units.definitions.focus = {
 	portrait = { defaults = { enabled = false } },
 	castbar = { defaults = ns.Util.Copy(Units.definitions.player.castbar.defaults) },
 	auras = { defaults = {} },
+	threat = { defaults = {} },
 	sample = { name = "Jaina", lastname = "Proudmoore", level = 44, className = "Mage", class = "MAGE", isPlayer = true,
 		spell = "Frostbolt", spellIcon = [[Interface\Icons\Spell_Frost_FrostBolt02]], castTime = 2.5 },
 }
@@ -240,7 +244,7 @@ end
 
 function Units:GetSpec(def, frame)
 	local spec = { frame = frame, rows = def.rows, width = def.width, resting = def.resting, readyCheck = def.readyCheck,
-		playerFrame = def.playerFrame, borderDefaults = def.borderDefaults }
+		playerFrame = def.playerFrame, borderDefaults = def.borderDefaults, threat = def.threat }
 	for _, part in ipairs(ns.Components.UnitFrame.PARTS) do spec[part.key] = def[part.key] end
 	-- The class is fixed for the session: other classes' frames leave the row out.
 	if spec.comboPoints then

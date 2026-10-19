@@ -121,6 +121,7 @@ return {
 		UnitClassification = { args = { "unit:UnitToken" }, returns = { "result:cstring" }, secretArguments = "AllowedWhenUntainted", system = "Unit" },
 		UnitCreatureFamily = { args = { "unit:UnitToken" }, returns = { "name:cstring", "id:number" }, secretArguments = "AllowedWhenUntainted", secretWhen = { "UnitIdentityRestricted" }, system = "Unit" },
 		UnitCreatureType = { args = { "unit:UnitToken" }, returns = { "name:cstring", "id:number" }, secretArguments = "AllowedWhenUntainted", secretWhen = { "UnitIdentityRestricted" }, system = "Unit" },
+		UnitDetailedThreatSituation = { args = { "unit:UnitToken", "mobGUID:UnitToken" }, returns = { "isTanking:bool", "status:number", "scaledPercentage:number", "rawPercentage:number", "rawThreat:number" }, secretArguments = "AllowedWhenUntainted", secretWhen = { "UnitThreatValuesRestricted" }, system = "Unit" },
 		UnitEffectiveLevel = { args = { "name:cstring" }, returns = { "result:number" }, secretArguments = "AllowedWhenUntainted", system = "Unit" },
 		UnitEmpoweredChannelDuration = { args = { "unit:UnitToken", "includeHoldAtMaxTime:bool?" }, returns = { "duration:LuaDurationObject" }, secretArguments = "AllowedWhenUntainted", system = "Unit" },
 		UnitEmpoweredStagePercentages = { args = { "unit:UnitToken", "includeHoldAtMaxTime:bool?" }, returns = { "percentages:table" }, secretArguments = "AllowedWhenUntainted", system = "Unit" },
