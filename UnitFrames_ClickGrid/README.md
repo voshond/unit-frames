@@ -29,8 +29,13 @@ client after adding it. For local builds and incremental updates, see the
   Flat-grid rows and columns are independent preferences: a 5 × 5 grid is
   valid. Larger rosters overflow into extra columns when filling down, or
   extra rows when filling across, without changing saved settings or hiding
-  raiders. Live panel bounds reserve forty-member capacity before combat;
-  previews reserve the configured grid plus any needed sample overflow.
+  raiders. Raid panel bounds and titles cover only populated subgroups, packed
+  in order (groups 1, 2 and 5 fill the first three columns), or only the filled
+  flat-grid cells. Secure headers keep forty-member capacity: empty subgroups
+  stay active in the slots after the populated ones, so a member joining an
+  empty subgroup or overflowing the flat grid during combat still appears,
+  untitled and outside the backdrop, until combat ends and the panel re-packs.
+  Previews follow the same occupancy from their sample or live roster.
 - **Group / column titles** under **Panel layout, auras & states**: editable party,
   tank and individual raid-subgroup/flat-column labels (Group 1, Group 2,
   etc., not one Raid title). Shared font, size,
@@ -54,6 +59,9 @@ client after adding it. For local builds and incremental updates, see the
   font and border controls are reused rather than duplicated.
   Hidden targets keep their prepared secure buttons but stop unit watches,
   oUF element updates, native aura subscriptions and preview data updates.
+  A member without a target shows a stacked **No / Target** state in the
+  target bar's border, drawn beneath the secure button and revealed by its
+  native unit watch, so it needs no combat updates.
 - Five mouse buttons × eight Alt/Ctrl/Shift combinations, with separate
   friendly/hostile actions: cast, macro, target, assist, focus, menu or unbound.
   The **Click spells** grid fills the Workbench stage and shows each cell's

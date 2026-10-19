@@ -47,6 +47,8 @@ describe("ClickGrid Workbench", function()
 		CG.Config:Set("panel.mode", "flat")
 		CG.Config:Set("panel.columns", 5)
 		CG.Config:Set("panel.rows", 5)
+		Mock.inRaid, Mock.groupSize = true, 25
+		Mock.FireEvent("GROUP_ROSTER_UPDATE")
 		wb.dataTarget.set("count", 25)
 		local preview, header = wb.handle, CG.headers.raid
 		assert.is_false(preview.labels.raid:IsShown())
@@ -418,13 +420,21 @@ describe("ClickGrid Workbench", function()
 		assert.is_nil(next(CG.retiredPreviews))
 	end)
 
-	it("previews sparse live raids without assuming consecutive subgroup occupancy", function()
-		Mock.inRaid, Mock.groupSize = true, 4
+	it("previews only the populated subgroups of sparse live raids", function()
+		Mock.inRaid, Mock.groupSize, Mock.raidSubgroups = true, 2, { 8, 3 }
 		CG.headers.group8:Assign(1, "raid1")
+		CG.headers.group3:Assign(1, "raid2")
 		wb.dataTarget.set("source", "live")
-		assert.equals(40, #wb.handle.cells)
-		assert.is_true(wb.handle.cells[36].member:GetFrame():IsShown())
-		assert.equals("raid1", wb.handle.cells[36].member:GetPart("auras").containers.buffs:GetUnit())
+		local preview = wb.handle
+		assert.same({ 3, 8 }, preview.layout.groups)
+		assert.equals(10, #preview.cells)
+		assert.equals("raid2", preview.cells[1].member:GetPart("auras").containers.buffs:GetUnit())
+		assert.equals("raid1", preview.cells[6].member:GetPart("auras").containers.buffs:GetUnit())
+		assert.is_true(preview.labels.group3:IsShown())
+		assert.is_true(preview.labels.group8:IsShown())
+		assert.is_false(preview.labels.group1 ~= nil and preview.labels.group1:IsShown())
+		assert.equals(preview.layout.sections.group3.x, preview.layout.sections.group8.x
+			- preview.layout.sections.group8.grid.width - CG.Config:Resolved().panel.spacingX)
 	end)
 
 	it("releases old previews and their native aura subscriptions when switching entries", function()

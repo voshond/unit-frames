@@ -206,7 +206,7 @@ describe("ClickGrid companion", function()
 		assert.equals(5, CG.Config:Resolved().panel.rows)
 		assert.equals(5, header:GetAttribute("unitsPerColumn"))
 		assert.equals(8, header:GetAttribute("maxColumns"))
-		assert.equals(8, CG.layout.sections.raid.grid.rows)
+		assert.equals(8, CG.layout.sections.raid.capacity.rows)
 	end)
 
 	it("compiles row-first layout spacing with positive native column spacing", function()

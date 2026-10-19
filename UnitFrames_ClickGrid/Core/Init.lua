@@ -53,7 +53,7 @@ end
 
 local events = CreateFrame("Frame")
 for _, event in ipairs({ "ADDON_LOADED", "PLAYER_LOGIN", "PLAYER_REGEN_ENABLED", "SPELLS_CHANGED",
-	"PLAYER_SPECIALIZATION_CHANGED", "PLAYER_TALENT_UPDATE", "UPDATE_MACROS" }) do events:RegisterEvent(event) end
+	"PLAYER_SPECIALIZATION_CHANGED", "PLAYER_TALENT_UPDATE", "UPDATE_MACROS", "GROUP_ROSTER_UPDATE" }) do events:RegisterEvent(event) end
 events:SetScript("OnEvent", function(_, event, name)
 	if event == "ADDON_LOADED" then
 		if name == addonName then
@@ -70,6 +70,8 @@ events:SetScript("OnEvent", function(_, event, name)
 		if not CG.started then CG:Start()
 		elseif CG.pending then CG:FlushRefresh()
 		elseif CG.pendingBindings then CG:RequestBindings(true) end
+	elseif event == "GROUP_ROSTER_UPDATE" then
+		CG:RequestRoster()
 	elseif event ~= "PLAYER_SPECIALIZATION_CHANGED" or name == "player" then
 		-- Spells, macros, talents and specialization select bindings, not styles.
 		CG:RequestBindings(true)
