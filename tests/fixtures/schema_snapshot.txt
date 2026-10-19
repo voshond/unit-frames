@@ -2393,8 +2393,10 @@ option health.bar.pendingDamage.patternColor type="color" label="Pattern colour"
 option health.bar.pendingDamage.patternOpacity type="range" label="Stripe opacity" default=0.35 min=0 max=1 step=0.05 hidden
 option health.bar.pendingDamage.dividers type="toggle" label="Dividers between DoTs" default=true hidden
 option health.bar.pendingDamage.dividerColor type="color" label="Divider colour" default={0,0,0,0.85} hidden
+option health.bar.pendingDamage.dividerThickness type="range" label="Divider thickness" default=1 min=1 max=10 step=1 hidden
 option health.bar.pendingDamage.edge type="toggle" label="Line where health will end" default=true hidden
 option health.bar.pendingDamage.edgeColor type="color" label="Health end line colour" default={1,1,1,0.9} hidden
+option health.bar.pendingDamage.edgeThickness type="range" label="Health end line thickness" default=2 min=1 max=10 step=1 hidden
 option health.bar.pendingDamage.waitMode type="select" label="Wait for a DoT's first tick" default="off" values=#739bfea6 tooltip=#194a2bcc hidden
 option health.bar.pendingDamage.lethalTint type="toggle" label="Tint the bar when lethal" default=false hidden
 option health.bar.pendingDamage.lethalTintColor type="color" label="Lethal tint" default={1,0.1,0.1,0.35} hidden
@@ -3928,9 +3930,11 @@ default health.bar.overheal.levels = 3
 default health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
 default health.bar.pendingDamage.colorMode = "school"
 default health.bar.pendingDamage.dividerColor = {0,0,0,0.85}
+default health.bar.pendingDamage.dividerThickness = 1
 default health.bar.pendingDamage.dividers = true
 default health.bar.pendingDamage.edge = true
 default health.bar.pendingDamage.edgeColor = {1,1,1,0.9}
+default health.bar.pendingDamage.edgeThickness = 2
 default health.bar.pendingDamage.enabled = false
 default health.bar.pendingDamage.lethalIcon = true
 default health.bar.pendingDamage.lethalIconGap = 2
@@ -4941,9 +4945,11 @@ resolved health.bar.overheal.levels = 3
 resolved health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
 resolved health.bar.pendingDamage.colorMode = "school"
 resolved health.bar.pendingDamage.dividerColor = {0,0,0,0.85}
+resolved health.bar.pendingDamage.dividerThickness = 1
 resolved health.bar.pendingDamage.dividers = true
 resolved health.bar.pendingDamage.edge = true
 resolved health.bar.pendingDamage.edgeColor = {1,1,1,0.9}
+resolved health.bar.pendingDamage.edgeThickness = 2
 resolved health.bar.pendingDamage.enabled = false
 resolved health.bar.pendingDamage.lethalIcon = true
 resolved health.bar.pendingDamage.lethalIconGap = 2
@@ -5625,8 +5631,10 @@ option health.bar.pendingDamage.patternColor type="color" label="Pattern colour"
 option health.bar.pendingDamage.patternOpacity type="range" label="Stripe opacity" default=0.35 min=0 max=1 step=0.05 hidden
 option health.bar.pendingDamage.dividers type="toggle" label="Dividers between DoTs" default=true hidden
 option health.bar.pendingDamage.dividerColor type="color" label="Divider colour" default={0,0,0,0.85} hidden
+option health.bar.pendingDamage.dividerThickness type="range" label="Divider thickness" default=1 min=1 max=10 step=1 hidden
 option health.bar.pendingDamage.edge type="toggle" label="Line where health will end" default=true hidden
 option health.bar.pendingDamage.edgeColor type="color" label="Health end line colour" default={1,1,1,0.9} hidden
+option health.bar.pendingDamage.edgeThickness type="range" label="Health end line thickness" default=2 min=1 max=10 step=1 hidden
 option health.bar.pendingDamage.waitMode type="select" label="Wait for a DoT's first tick" default="off" values=#739bfea6 tooltip=#194a2bcc hidden
 option health.bar.pendingDamage.lethalTint type="toggle" label="Tint the bar when lethal" default=false hidden
 option health.bar.pendingDamage.lethalTintColor type="color" label="Lethal tint" default={1,0.1,0.1,0.35} hidden
@@ -6628,9 +6636,11 @@ default health.bar.overheal.levels = 3
 default health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
 default health.bar.pendingDamage.colorMode = "school"
 default health.bar.pendingDamage.dividerColor = {0,0,0,0.85}
+default health.bar.pendingDamage.dividerThickness = 1
 default health.bar.pendingDamage.dividers = true
 default health.bar.pendingDamage.edge = true
 default health.bar.pendingDamage.edgeColor = {1,1,1,0.9}
+default health.bar.pendingDamage.edgeThickness = 2
 default health.bar.pendingDamage.enabled = false
 default health.bar.pendingDamage.lethalIcon = true
 default health.bar.pendingDamage.lethalIconGap = 2
@@ -7379,9 +7389,11 @@ resolved health.bar.overheal.levels = 3
 resolved health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
 resolved health.bar.pendingDamage.colorMode = "school"
 resolved health.bar.pendingDamage.dividerColor = {0,0,0,0.85}
+resolved health.bar.pendingDamage.dividerThickness = 1
 resolved health.bar.pendingDamage.dividers = true
 resolved health.bar.pendingDamage.edge = true
 resolved health.bar.pendingDamage.edgeColor = {1,1,1,0.9}
+resolved health.bar.pendingDamage.edgeThickness = 2
 resolved health.bar.pendingDamage.enabled = false
 resolved health.bar.pendingDamage.lethalIcon = true
 resolved health.bar.pendingDamage.lethalIconGap = 2
@@ -8072,8 +8084,10 @@ option health.bar.pendingDamage.patternColor type="color" label="Pattern colour"
 option health.bar.pendingDamage.patternOpacity type="range" label="Stripe opacity" default=0.35 min=0 max=1 step=0.05 hidden
 option health.bar.pendingDamage.dividers type="toggle" label="Dividers between DoTs" default=true hidden
 option health.bar.pendingDamage.dividerColor type="color" label="Divider colour" default={0,0,0,0.85} hidden
+option health.bar.pendingDamage.dividerThickness type="range" label="Divider thickness" default=1 min=1 max=10 step=1 hidden
 option health.bar.pendingDamage.edge type="toggle" label="Line where health will end" default=true hidden
 option health.bar.pendingDamage.edgeColor type="color" label="Health end line colour" default={1,1,1,0.9} hidden
+option health.bar.pendingDamage.edgeThickness type="range" label="Health end line thickness" default=2 min=1 max=10 step=1 hidden
 option health.bar.pendingDamage.waitMode type="select" label="Wait for a DoT's first tick" default="off" values=#739bfea6 tooltip=#194a2bcc hidden
 option health.bar.pendingDamage.lethalTint type="toggle" label="Tint the bar when lethal" default=false hidden
 option health.bar.pendingDamage.lethalTintColor type="color" label="Lethal tint" default={1,0.1,0.1,0.35} hidden
@@ -9129,9 +9143,11 @@ default health.bar.overheal.levels = 3
 default health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
 default health.bar.pendingDamage.colorMode = "school"
 default health.bar.pendingDamage.dividerColor = {0,0,0,0.85}
+default health.bar.pendingDamage.dividerThickness = 1
 default health.bar.pendingDamage.dividers = true
 default health.bar.pendingDamage.edge = true
 default health.bar.pendingDamage.edgeColor = {1,1,1,0.9}
+default health.bar.pendingDamage.edgeThickness = 2
 default health.bar.pendingDamage.enabled = true
 default health.bar.pendingDamage.lethalIcon = true
 default health.bar.pendingDamage.lethalIconGap = 2
@@ -9906,9 +9922,11 @@ resolved health.bar.overheal.levels = 3
 resolved health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
 resolved health.bar.pendingDamage.colorMode = "school"
 resolved health.bar.pendingDamage.dividerColor = {0,0,0,0.85}
+resolved health.bar.pendingDamage.dividerThickness = 1
 resolved health.bar.pendingDamage.dividers = true
 resolved health.bar.pendingDamage.edge = true
 resolved health.bar.pendingDamage.edgeColor = {1,1,1,0.9}
+resolved health.bar.pendingDamage.edgeThickness = 2
 resolved health.bar.pendingDamage.enabled = true
 resolved health.bar.pendingDamage.lethalIcon = true
 resolved health.bar.pendingDamage.lethalIconGap = 2
@@ -10590,8 +10608,10 @@ option health.bar.pendingDamage.patternColor type="color" label="Pattern colour"
 option health.bar.pendingDamage.patternOpacity type="range" label="Stripe opacity" default=0.35 min=0 max=1 step=0.05 hidden
 option health.bar.pendingDamage.dividers type="toggle" label="Dividers between DoTs" default=true hidden
 option health.bar.pendingDamage.dividerColor type="color" label="Divider colour" default={0,0,0,0.85} hidden
+option health.bar.pendingDamage.dividerThickness type="range" label="Divider thickness" default=1 min=1 max=10 step=1 hidden
 option health.bar.pendingDamage.edge type="toggle" label="Line where health will end" default=true hidden
 option health.bar.pendingDamage.edgeColor type="color" label="Health end line colour" default={1,1,1,0.9} hidden
+option health.bar.pendingDamage.edgeThickness type="range" label="Health end line thickness" default=2 min=1 max=10 step=1 hidden
 option health.bar.pendingDamage.waitMode type="select" label="Wait for a DoT's first tick" default="off" values=#739bfea6 tooltip=#194a2bcc hidden
 option health.bar.pendingDamage.lethalTint type="toggle" label="Tint the bar when lethal" default=false hidden
 option health.bar.pendingDamage.lethalTintColor type="color" label="Lethal tint" default={1,0.1,0.1,0.35} hidden
@@ -11593,9 +11613,11 @@ default health.bar.overheal.levels = 3
 default health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
 default health.bar.pendingDamage.colorMode = "school"
 default health.bar.pendingDamage.dividerColor = {0,0,0,0.85}
+default health.bar.pendingDamage.dividerThickness = 1
 default health.bar.pendingDamage.dividers = true
 default health.bar.pendingDamage.edge = true
 default health.bar.pendingDamage.edgeColor = {1,1,1,0.9}
+default health.bar.pendingDamage.edgeThickness = 2
 default health.bar.pendingDamage.enabled = false
 default health.bar.pendingDamage.lethalIcon = true
 default health.bar.pendingDamage.lethalIconGap = 2
@@ -12344,9 +12366,11 @@ resolved health.bar.overheal.levels = 3
 resolved health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
 resolved health.bar.pendingDamage.colorMode = "school"
 resolved health.bar.pendingDamage.dividerColor = {0,0,0,0.85}
+resolved health.bar.pendingDamage.dividerThickness = 1
 resolved health.bar.pendingDamage.dividers = true
 resolved health.bar.pendingDamage.edge = true
 resolved health.bar.pendingDamage.edgeColor = {1,1,1,0.9}
+resolved health.bar.pendingDamage.edgeThickness = 2
 resolved health.bar.pendingDamage.enabled = false
 resolved health.bar.pendingDamage.lethalIcon = true
 resolved health.bar.pendingDamage.lethalIconGap = 2
@@ -13029,8 +13053,10 @@ option health.bar.pendingDamage.patternColor type="color" label="Pattern colour"
 option health.bar.pendingDamage.patternOpacity type="range" label="Stripe opacity" default=0.35 min=0 max=1 step=0.05 hidden
 option health.bar.pendingDamage.dividers type="toggle" label="Dividers between DoTs" default=true hidden
 option health.bar.pendingDamage.dividerColor type="color" label="Divider colour" default={0,0,0,0.85} hidden
+option health.bar.pendingDamage.dividerThickness type="range" label="Divider thickness" default=1 min=1 max=10 step=1 hidden
 option health.bar.pendingDamage.edge type="toggle" label="Line where health will end" default=true hidden
 option health.bar.pendingDamage.edgeColor type="color" label="Health end line colour" default={1,1,1,0.9} hidden
+option health.bar.pendingDamage.edgeThickness type="range" label="Health end line thickness" default=2 min=1 max=10 step=1 hidden
 option health.bar.pendingDamage.waitMode type="select" label="Wait for a DoT's first tick" default="off" values=#739bfea6 tooltip=#194a2bcc hidden
 option health.bar.pendingDamage.lethalTint type="toggle" label="Tint the bar when lethal" default=false hidden
 option health.bar.pendingDamage.lethalTintColor type="color" label="Lethal tint" default={1,0.1,0.1,0.35} hidden
@@ -14032,9 +14058,11 @@ default health.bar.overheal.levels = 3
 default health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
 default health.bar.pendingDamage.colorMode = "school"
 default health.bar.pendingDamage.dividerColor = {0,0,0,0.85}
+default health.bar.pendingDamage.dividerThickness = 1
 default health.bar.pendingDamage.dividers = true
 default health.bar.pendingDamage.edge = true
 default health.bar.pendingDamage.edgeColor = {1,1,1,0.9}
+default health.bar.pendingDamage.edgeThickness = 2
 default health.bar.pendingDamage.enabled = true
 default health.bar.pendingDamage.lethalIcon = true
 default health.bar.pendingDamage.lethalIconGap = 2
@@ -14781,9 +14809,11 @@ resolved health.bar.overheal.levels = 3
 resolved health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
 resolved health.bar.pendingDamage.colorMode = "school"
 resolved health.bar.pendingDamage.dividerColor = {0,0,0,0.85}
+resolved health.bar.pendingDamage.dividerThickness = 1
 resolved health.bar.pendingDamage.dividers = true
 resolved health.bar.pendingDamage.edge = true
 resolved health.bar.pendingDamage.edgeColor = {1,1,1,0.9}
+resolved health.bar.pendingDamage.edgeThickness = 2
 resolved health.bar.pendingDamage.enabled = true
 resolved health.bar.pendingDamage.lethalIcon = true
 resolved health.bar.pendingDamage.lethalIconGap = 2
@@ -15458,8 +15488,10 @@ option health.bar.pendingDamage.patternColor type="color" label="Pattern colour"
 option health.bar.pendingDamage.patternOpacity type="range" label="Stripe opacity" default=0.35 min=0 max=1 step=0.05 hidden
 option health.bar.pendingDamage.dividers type="toggle" label="Dividers between DoTs" default=true hidden
 option health.bar.pendingDamage.dividerColor type="color" label="Divider colour" default={0,0,0,0.85} hidden
+option health.bar.pendingDamage.dividerThickness type="range" label="Divider thickness" default=1 min=1 max=10 step=1 hidden
 option health.bar.pendingDamage.edge type="toggle" label="Line where health will end" default=true hidden
 option health.bar.pendingDamage.edgeColor type="color" label="Health end line colour" default={1,1,1,0.9} hidden
+option health.bar.pendingDamage.edgeThickness type="range" label="Health end line thickness" default=2 min=1 max=10 step=1 hidden
 option health.bar.pendingDamage.waitMode type="select" label="Wait for a DoT's first tick" default="off" values=#739bfea6 tooltip=#194a2bcc hidden
 option health.bar.pendingDamage.lethalTint type="toggle" label="Tint the bar when lethal" default=false hidden
 option health.bar.pendingDamage.lethalTintColor type="color" label="Lethal tint" default={1,0.1,0.1,0.35} hidden
@@ -16461,9 +16493,11 @@ default health.bar.overheal.levels = 3
 default health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
 default health.bar.pendingDamage.colorMode = "school"
 default health.bar.pendingDamage.dividerColor = {0,0,0,0.85}
+default health.bar.pendingDamage.dividerThickness = 1
 default health.bar.pendingDamage.dividers = true
 default health.bar.pendingDamage.edge = true
 default health.bar.pendingDamage.edgeColor = {1,1,1,0.9}
+default health.bar.pendingDamage.edgeThickness = 2
 default health.bar.pendingDamage.enabled = false
 default health.bar.pendingDamage.lethalIcon = true
 default health.bar.pendingDamage.lethalIconGap = 2
@@ -17212,9 +17246,11 @@ resolved health.bar.overheal.levels = 3
 resolved health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
 resolved health.bar.pendingDamage.colorMode = "school"
 resolved health.bar.pendingDamage.dividerColor = {0,0,0,0.85}
+resolved health.bar.pendingDamage.dividerThickness = 1
 resolved health.bar.pendingDamage.dividers = true
 resolved health.bar.pendingDamage.edge = true
 resolved health.bar.pendingDamage.edgeColor = {1,1,1,0.9}
+resolved health.bar.pendingDamage.edgeThickness = 2
 resolved health.bar.pendingDamage.enabled = false
 resolved health.bar.pendingDamage.lethalIcon = true
 resolved health.bar.pendingDamage.lethalIconGap = 2
@@ -17813,8 +17849,10 @@ option bar.pendingDamage.patternColor type="color" label="Pattern colour" defaul
 option bar.pendingDamage.patternOpacity type="range" label="Stripe opacity" default=0.35 min=0 max=1 step=0.05 hidden
 option bar.pendingDamage.dividers type="toggle" label="Dividers between DoTs" default=true hidden
 option bar.pendingDamage.dividerColor type="color" label="Divider colour" default={0,0,0,0.85} hidden
+option bar.pendingDamage.dividerThickness type="range" label="Divider thickness" default=1 min=1 max=10 step=1 hidden
 option bar.pendingDamage.edge type="toggle" label="Line where health will end" default=true hidden
 option bar.pendingDamage.edgeColor type="color" label="Health end line colour" default={1,1,1,0.9} hidden
+option bar.pendingDamage.edgeThickness type="range" label="Health end line thickness" default=2 min=1 max=10 step=1 hidden
 option bar.pendingDamage.waitMode type="select" label="Wait for a DoT's first tick" default="off" values=#739bfea6 tooltip=#194a2bcc hidden
 option bar.pendingDamage.lethalTint type="toggle" label="Tint the bar when lethal" default=false hidden
 option bar.pendingDamage.lethalTintColor type="color" label="Lethal tint" default={1,0.1,0.1,0.35} hidden
@@ -18064,9 +18102,11 @@ default bar.overheal.levels = 3
 default bar.pendingDamage.color = {0.7,0.3,1,0.75}
 default bar.pendingDamage.colorMode = "school"
 default bar.pendingDamage.dividerColor = {0,0,0,0.85}
+default bar.pendingDamage.dividerThickness = 1
 default bar.pendingDamage.dividers = true
 default bar.pendingDamage.edge = true
 default bar.pendingDamage.edgeColor = {1,1,1,0.9}
+default bar.pendingDamage.edgeThickness = 2
 default bar.pendingDamage.enabled = false
 default bar.pendingDamage.lethalIcon = true
 default bar.pendingDamage.lethalIconGap = 2
@@ -18295,9 +18335,11 @@ resolved bar.overheal.levels = 3
 resolved bar.pendingDamage.color = {0.7,0.3,1,0.75}
 resolved bar.pendingDamage.colorMode = "school"
 resolved bar.pendingDamage.dividerColor = {0,0,0,0.85}
+resolved bar.pendingDamage.dividerThickness = 1
 resolved bar.pendingDamage.dividers = true
 resolved bar.pendingDamage.edge = true
 resolved bar.pendingDamage.edgeColor = {1,1,1,0.9}
+resolved bar.pendingDamage.edgeThickness = 2
 resolved bar.pendingDamage.enabled = false
 resolved bar.pendingDamage.lethalIcon = true
 resolved bar.pendingDamage.lethalIconGap = 2
@@ -19976,8 +20018,10 @@ option health.bar.pendingDamage.patternColor type="color" label="Pattern colour"
 option health.bar.pendingDamage.patternOpacity type="range" label="Stripe opacity" default=0.35 min=0 max=1 step=0.05 hidden
 option health.bar.pendingDamage.dividers type="toggle" label="Dividers between DoTs" default=true hidden
 option health.bar.pendingDamage.dividerColor type="color" label="Divider colour" default={0,0,0,0.85} hidden
+option health.bar.pendingDamage.dividerThickness type="range" label="Divider thickness" default=1 min=1 max=10 step=1 hidden
 option health.bar.pendingDamage.edge type="toggle" label="Line where health will end" default=true hidden
 option health.bar.pendingDamage.edgeColor type="color" label="Health end line colour" default={1,1,1,0.9} hidden
+option health.bar.pendingDamage.edgeThickness type="range" label="Health end line thickness" default=2 min=1 max=10 step=1 hidden
 option health.bar.pendingDamage.waitMode type="select" label="Wait for a DoT's first tick" default="off" values=#739bfea6 tooltip=#194a2bcc hidden
 option health.bar.pendingDamage.lethalTint type="toggle" label="Tint the bar when lethal" default=false hidden
 option health.bar.pendingDamage.lethalTintColor type="color" label="Lethal tint" default={1,0.1,0.1,0.35} hidden
@@ -20947,9 +20991,11 @@ default health.bar.overheal.levels = 3
 default health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
 default health.bar.pendingDamage.colorMode = "school"
 default health.bar.pendingDamage.dividerColor = {0,0,0,0.85}
+default health.bar.pendingDamage.dividerThickness = 1
 default health.bar.pendingDamage.dividers = true
 default health.bar.pendingDamage.edge = true
 default health.bar.pendingDamage.edgeColor = {1,1,1,0.9}
+default health.bar.pendingDamage.edgeThickness = 2
 default health.bar.pendingDamage.enabled = false
 default health.bar.pendingDamage.lethalIcon = true
 default health.bar.pendingDamage.lethalIconGap = 2
@@ -21676,9 +21722,11 @@ resolved health.bar.overheal.levels = 3
 resolved health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
 resolved health.bar.pendingDamage.colorMode = "school"
 resolved health.bar.pendingDamage.dividerColor = {0,0,0,0.85}
+resolved health.bar.pendingDamage.dividerThickness = 1
 resolved health.bar.pendingDamage.dividers = true
 resolved health.bar.pendingDamage.edge = true
 resolved health.bar.pendingDamage.edgeColor = {1,1,1,0.9}
+resolved health.bar.pendingDamage.edgeThickness = 2
 resolved health.bar.pendingDamage.enabled = false
 resolved health.bar.pendingDamage.lethalIcon = true
 resolved health.bar.pendingDamage.lethalIconGap = 2
@@ -22360,8 +22408,10 @@ option health.bar.pendingDamage.patternColor type="color" label="Pattern colour"
 option health.bar.pendingDamage.patternOpacity type="range" label="Stripe opacity" default=0.35 min=0 max=1 step=0.05 hidden
 option health.bar.pendingDamage.dividers type="toggle" label="Dividers between DoTs" default=true hidden
 option health.bar.pendingDamage.dividerColor type="color" label="Divider colour" default={0,0,0,0.85} hidden
+option health.bar.pendingDamage.dividerThickness type="range" label="Divider thickness" default=1 min=1 max=10 step=1 hidden
 option health.bar.pendingDamage.edge type="toggle" label="Line where health will end" default=true hidden
 option health.bar.pendingDamage.edgeColor type="color" label="Health end line colour" default={1,1,1,0.9} hidden
+option health.bar.pendingDamage.edgeThickness type="range" label="Health end line thickness" default=2 min=1 max=10 step=1 hidden
 option health.bar.pendingDamage.waitMode type="select" label="Wait for a DoT's first tick" default="off" values=#739bfea6 tooltip=#194a2bcc hidden
 option health.bar.pendingDamage.lethalTint type="toggle" label="Tint the bar when lethal" default=false hidden
 option health.bar.pendingDamage.lethalTintColor type="color" label="Lethal tint" default={1,0.1,0.1,0.35} hidden
@@ -23331,9 +23381,11 @@ default health.bar.overheal.levels = 3
 default health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
 default health.bar.pendingDamage.colorMode = "school"
 default health.bar.pendingDamage.dividerColor = {0,0,0,0.85}
+default health.bar.pendingDamage.dividerThickness = 1
 default health.bar.pendingDamage.dividers = true
 default health.bar.pendingDamage.edge = true
 default health.bar.pendingDamage.edgeColor = {1,1,1,0.9}
+default health.bar.pendingDamage.edgeThickness = 2
 default health.bar.pendingDamage.enabled = false
 default health.bar.pendingDamage.lethalIcon = true
 default health.bar.pendingDamage.lethalIconGap = 2
@@ -24055,9 +24107,11 @@ resolved health.bar.overheal.levels = 3
 resolved health.bar.pendingDamage.color = {0.7,0.3,1,0.75}
 resolved health.bar.pendingDamage.colorMode = "school"
 resolved health.bar.pendingDamage.dividerColor = {0,0,0,0.85}
+resolved health.bar.pendingDamage.dividerThickness = 1
 resolved health.bar.pendingDamage.dividers = true
 resolved health.bar.pendingDamage.edge = true
 resolved health.bar.pendingDamage.edgeColor = {1,1,1,0.9}
+resolved health.bar.pendingDamage.edgeThickness = 2
 resolved health.bar.pendingDamage.enabled = false
 resolved health.bar.pendingDamage.lethalIcon = true
 resolved health.bar.pendingDamage.lethalIconGap = 2

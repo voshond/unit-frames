@@ -88,8 +88,12 @@ PendingDamage.schema = {
 	{ key = "dividers", type = "toggle", label = "Dividers between DoTs", default = true, hidden = Single },
 	{ key = "dividerColor", type = "color", label = "Divider colour", hasAlpha = true, default = { 0, 0, 0, 0.85 },
 		hidden = NoDividers },
+	{ key = "dividerThickness", type = "range", label = "Divider thickness", min = 1, max = 10, step = 1, default = 1,
+		hidden = NoDividers },
 	{ key = "edge", type = "toggle", label = "Line where health will end", default = true, hidden = Off },
 	{ key = "edgeColor", type = "color", label = "Health end line colour", hasAlpha = true, default = { 1, 1, 1, 0.9 },
+		hidden = NoEdge },
+	{ key = "edgeThickness", type = "range", label = "Health end line thickness", min = 1, max = 10, step = 1, default = 2,
 		hidden = NoEdge },
 	{ key = "waitMode", type = "select", label = "Wait for a DoT's first tick", values = ns.DotTracker.WAIT_MODES,
 		default = "off", hidden = Off,
@@ -228,7 +232,7 @@ function PendingDamage:Apply(cfg, orientation, reverseFill, layout)
 		statusBar:SetOrientation(orientation)
 		statusBar:SetReverseFill(not reverseFill)
 		previous = statusBar:GetStatusBarTexture()
-		AtFarEdge(segment.divider, previous, self.chain, 1, self.horizontal)
+		AtFarEdge(segment.divider, previous, self.chain, cfg.dividerThickness, self.horizontal)
 		segment.divider:SetColorTexture(Util.UnpackColor(cfg.dividerColor))
 		-- Over the fill, not as it: a plain texture repeats; a stretched fill would smear the hatch.
 		segment.pattern:ClearAllPoints()
@@ -304,7 +308,7 @@ function PendingDamage:Draw()
 		segment.divider:SetShown(cfg.dividers and not single and index < used)
 	end
 	if used > 0 and cfg.edge then
-		AtFarEdge(self.edge, self.segments[used].bar:GetStatusBarTexture(), self.chain, 2, self.horizontal)
+		AtFarEdge(self.edge, self.segments[used].bar:GetStatusBarTexture(), self.chain, cfg.edgeThickness, self.horizontal)
 		self.edge:Show()
 	else
 		self.edge:Hide()
