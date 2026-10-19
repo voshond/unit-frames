@@ -111,6 +111,9 @@ local function Placed(key, label, name, position, order, tooltip, size)
 end
 
 local readySchema = UF.Components.ReadyCheckIcon.schema
+-- Cells are short: their glows default to sharp corners.
+local CELL_GLOW_SCHEMA = UF.Schema.Override(UF.Glow.UNDER_SCHEMA, "corners", { default = "sharp" })
+
 CG.IndicatorSchema = UF.Schema.Concat(
 	Placed("role", "Group role", "Role icon", "NAME", 2,
 		"An ordinary unassigned role (including solo) takes no space. Opaque roles keep their slot."),
@@ -130,7 +133,7 @@ CG.IndicatorSchema = UF.Schema.Concat(
 			values = { { "highlight", "Cell highlight" }, { "glow", "Soft glow" } },
 			hidden = function(c) return not c.threat end,
 			tooltip = "Cell highlight outlines the cell with Blizzard's raid frame aggro highlight. Soft glow draws a soft halo around the cell instead." },
-		{ key = "threatGlow", type = "group", label = "Threat glow", schema = UF.Glow.UNDER_SCHEMA,
+		{ key = "threatGlow", type = "group", label = "Threat glow", schema = CELL_GLOW_SCHEMA,
 			hidden = function(c) return not (c.threat and c.threatStyle == "glow") end },
 		{ key = "dispel", type = "toggle", label = "Dispellable debuff glow", default = false,
 			tooltip = "A glow around the cell while the member has a debuff that can be dispelled, in Blizzard's debuff type colour. Works in combat." },
@@ -138,7 +141,7 @@ CG.IndicatorSchema = UF.Schema.Concat(
 			values = { { "HARMFUL|RAID", "Me" }, { "HARMFUL|RAID_PLAYER_DISPELLABLE", "Anyone in the group" } },
 			hidden = function(c) return not c.dispel end,
 			tooltip = "Me: debuffs you can dispel, like Blizzard's raid frames. Anyone in the group can light up debuffs you cannot remove yourself." },
-		{ key = "dispelGlow", type = "group", label = "Dispellable glow", schema = UF.Glow.UNDER_SCHEMA,
+		{ key = "dispelGlow", type = "group", label = "Dispellable glow", schema = CELL_GLOW_SCHEMA,
 			hidden = function(c) return not c.dispel end },
 		{ key = "hover", type = "toggle", label = "Mouseover highlight", default = true,
 			tooltip = "Lightens the cell under the mouse, so you can see which member your clicks and mouseover casts will reach." },

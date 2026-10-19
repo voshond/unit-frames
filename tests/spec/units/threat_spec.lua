@@ -29,7 +29,7 @@ describe("Threat glow #threat", function()
 			assert.is_true(resolved.enabled, unit)
 			assert.equals("percent", resolved.colorBy, unit)
 			assert.equals("medium", resolved.showFrom, unit)
-			assert.equals("round", resolved.corners, unit)
+			assert.equals("soft", resolved.corners, unit)
 			assert.is_true(ns.Units.frames[unit]:IsElementEnabled("UF_Threat"), unit)
 		end
 		for _, unit in ipairs({ "targettarget", "focustarget" }) do
@@ -132,7 +132,7 @@ describe("Threat glow #threat", function()
 		ns.Config:SetUnitValue("target", "threat.size", 20)
 		assert.equals(0.6, uf.threatGlow:GetAlpha())
 		local halo = uf.threatGlow.Halo
-		assert.equals("Interface\\AddOns\\UnitFrames\\Media\\GlowFrameRound", halo:GetTexture())
+		assert.equals("Interface\\AddOns\\UnitFrames\\Media\\GlowFrameSoft", halo:GetTexture())
 		-- One level under the frame, so its backdrop and bars cover the inner edge.
 		assert.equals(uf.frame:GetFrameLevel() - 1, uf.threatGlow:GetFrameLevel())
 		assert.equals(uf.frame, uf.threatGlow:GetParent())

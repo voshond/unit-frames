@@ -224,10 +224,11 @@ describe("ClickGrid status indicators", function()
 		-- Drawn like the unit frames' glows: under the cell, which sits on top.
 		assert.equals(threat, threat.Glow:GetParent())
 		assert.equals(member:GetFrameLevel() - 1, threat.Glow:GetFrameLevel())
-		assert.equals("Interface\\AddOns\\UnitFrames\\Media\\GlowFrameRound", halo:GetTexture())
-		CG.Config:Set("indicators.threatGlow.corners", "sharp")
+		-- Cells default to sharp corners.
 		assert.equals("Interface\\AddOns\\UnitFrames\\Media\\GlowFrame", halo:GetTexture())
-		assert.equals(UF.Glow.FRAME_SHAPES.sharp.margin, halo:GetTextureSliceMargins())
+		CG.Config:Set("indicators.threatGlow.corners", "round")
+		assert.equals("Interface\\AddOns\\UnitFrames\\Media\\GlowFrameRound", halo:GetTexture())
+		assert.equals(UF.Glow.FRAME_SHAPES.round.margin, halo:GetTextureSliceMargins())
 		-- Re-levelling the cell re-levels its children (the status overlay):
 		-- the glow keeps its fixed level below the cell, and follows it on apply.
 		local level = member:GetFrameLevel()
@@ -311,7 +312,7 @@ describe("ClickGrid status indicators", function()
 		assert.equals(slot, glow:GetParent())
 		assert.equals(member, select(2, glow:GetPoint(1)))
 		assert.equals(member:GetFrameLevel() - 1, glow:GetFrameLevel())
-		assert.equals("Interface\\AddOns\\UnitFrames\\Media\\GlowFrameRound", glow.Halo:GetTexture())
+		assert.equals("Interface\\AddOns\\UnitFrames\\Media\\GlowFrame", glow.Halo:GetTexture(), "sharp by default")
 		member:SetFrameLevel(member:GetFrameLevel() + 5)
 		assert.is_true(glow:GetFrameLevel() < member:GetFrameLevel(), "re-levelling the cell leaves the glow under it")
 		assert.equals(1, #glow.textures)

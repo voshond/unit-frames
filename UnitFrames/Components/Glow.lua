@@ -26,7 +26,7 @@ Glow.schema = {
 }
 
 -- Corner shapes of glows drawn under a frame (Create with `under`).
-Glow.CORNERS_OPTION = { key = "corners", type = "select", label = "Glow corners", default = "round", values = {
+Glow.CORNERS_OPTION = { key = "corners", type = "select", label = "Glow corners", default = "soft", values = {
 	{ "sharp", "Sharp" }, { "soft", "Slightly rounded" }, { "round", "Rounded" },
 }, tooltip = "Rounded corners soften the glow around the frame's corners. They grow with the glow size." }
 
