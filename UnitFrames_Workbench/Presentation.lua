@@ -30,6 +30,9 @@ function Presentation.Prerequisite(path, entryId)
 	if path:match("%.levelColor$") then
 		return { path = path:gsub("levelColor$", "format"), message = "Choose a text that shows the level to colour it by difficulty." }
 	end
+	if path:match("%.threatColor$") then
+		return { path = path:gsub("threatColor$", "format"), message = "Choose a text that shows Threat % to colour it by stage." }
+	end
 	local background = path:match("^(.-%.background)%.")
 	if background and path:match("%.color$") then
 		return { path = background .. ".useBarColor", message = "Turn off Tint with bar colour to choose a separate background colour." }

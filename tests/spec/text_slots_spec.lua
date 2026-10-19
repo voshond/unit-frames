@@ -96,7 +96,7 @@ describe("Text presets", function()
 		for _, format in ipairs(ns.Formats.list) do
 			ids[format.id] = true
 			assert.is_true(GOLDEN.events[format.id] ~= nil or format.id:find("^bar:") ~= nil
-				or format.id == "fullname", "new format id " .. format.id)
+				or format.id == "fullname" or format.id == "threat", "new format id " .. format.id)
 		end
 		for id in pairs(GOLDEN.events) do assert.is_true(ids[id], "lost format id " .. id) end
 	end)

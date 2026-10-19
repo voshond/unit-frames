@@ -220,7 +220,25 @@ describe("ClickGrid status indicators", function()
 		assert.equals(0.6, threat.Glow:GetAlpha())
 		assert.equals(1, #threat.Glow.textures)
 		local halo = threat.Glow.Halo
-		assert.equals(12, math.floor(halo:GetScale() * halo:GetTextureSliceMargins() + 0.5))
+		assert.equals(12, math.floor(halo:GetScale() * 31 + 0.5), "reaches the configured size outside the cell")
+		-- Drawn like the unit frames' glows: under the cell, which sits on top.
+		assert.equals(threat, threat.Glow:GetParent())
+		assert.equals(member:GetFrameLevel() - 1, threat.Glow:GetFrameLevel())
+		-- Cells default to sharp corners.
+		assert.equals("Interface\\AddOns\\UnitFrames\\Media\\GlowFrame", halo:GetTexture())
+		CG.Config:Set("indicators.threatGlow.corners", "round")
+		assert.equals("Interface\\AddOns\\UnitFrames\\Media\\GlowFrameRound", halo:GetTexture())
+		assert.equals(UF.Glow.FRAME_SHAPES.round.margin, halo:GetTextureSliceMargins())
+		-- Re-levelling the cell re-levels its children (the status overlay):
+		-- the glow keeps its fixed level below the cell, and follows it on apply.
+		local level = member:GetFrameLevel()
+		member:SetFrameLevel(level + 5)
+		assert.is_true(status.frame:GetFrameLevel() > member:GetFrameLevel(), "the overlay followed the cell")
+		assert.is_true(threat.Glow:GetFrameLevel() < member:GetFrameLevel(), "the glow stayed under it")
+		member:SetFrameLevel(level + 2)
+		CG.Config:Set("indicators.threatGlow.opacity", 0.7)
+		assert.equals(member:GetFrameLevel() - 1, threat.Glow:GetFrameLevel())
+		CG.Config:Set("indicators.threatGlow.opacity", 0.6)
 
 		member.__unit = "raid1"
 		local previous = UnitThreatSituation
@@ -229,6 +247,11 @@ describe("ClickGrid status indicators", function()
 		UnitThreatSituation = previous
 		assert.is_true(threat:IsShown())
 		assert.same(threat.Highlight.__state.vertexColor, threat.Glow.textures[1].__state.vertexColor)
+		-- The unit frames' threat glow shares this curve (threat_spec).
+		UnitThreatSituation = function() return 1 end
+		threat.Override(member)
+		UnitThreatSituation = previous
+		assert.same({ UF.Colors.ThreatCurve():Evaluate(1):GetRGBA() }, threat.Glow.textures[1].__state.vertexColor)
 
 		status:ShowSample(1)
 		for _, texture in ipairs(threat.Glow.textures) do assert.same({ 1, 0, 0, 1 }, texture.__state.vertexColor) end
@@ -284,9 +307,14 @@ describe("ClickGrid status indicators", function()
 		UF.oUF.elements.UFCG_DispelGlow.update(member)
 		assert.equals("raid3", container:GetUnit())
 
-		-- Owned by the engine-shown slot button, anchored around the whole cell.
+		-- Owned by the engine-shown slot button, covering the whole cell one
+		-- level below it, like the unit frames' glows.
 		assert.equals(slot, glow:GetParent())
 		assert.equals(member, select(2, glow:GetPoint(1)))
+		assert.equals(member:GetFrameLevel() - 1, glow:GetFrameLevel())
+		assert.equals("Interface\\AddOns\\UnitFrames\\Media\\GlowFrame", glow.Halo:GetTexture(), "sharp by default")
+		member:SetFrameLevel(member:GetFrameLevel() + 5)
+		assert.is_true(glow:GetFrameLevel() < member:GetFrameLevel(), "re-levelling the cell leaves the glow under it")
 		assert.equals(1, #glow.textures)
 		for _, texture in ipairs(glow.textures) do
 			local options = slot.__state.dispelTextures[texture]
@@ -309,6 +337,8 @@ describe("ClickGrid status indicators", function()
 		Mock.inCombat = false
 		Mock.FireEvent("PLAYER_REGEN_ENABLED")
 		assert.equals(0.4, glow:GetAlpha())
+		CG.Config:Set("indicators.dispelGlow.corners", "soft")
+		assert.equals("Interface\\AddOns\\UnitFrames\\Media\\GlowFrameSoft", glow.Halo:GetTexture())
 
 		CG.Config:Set("indicators.dispel", false)
 		assert.is_false(container:IsEnabled())

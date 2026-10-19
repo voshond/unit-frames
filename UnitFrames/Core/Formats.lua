@@ -14,7 +14,7 @@ Each format has
   events          oUF tag update events.
   sharedEvents    set of unitless events among them.
 
-Sample values: { name, lastname, level, className, pvp, health, healthMax, power, powerMax, xp, xpMax, rested }
+Sample values: { name, lastname, level, className, pvp, health, healthMax, power, powerMax, xp, xpMax, rested, threat }
 ]]
 local Formats = { list = {}, byId = {} }
 ns.Formats = Formats
@@ -144,6 +144,7 @@ Formats.Register("smartlevel", { label = "Level (with elite/rare marker)", piece
 Formats.Register("level:info", { label = "Level + class or creature type",
 	pieces = { Source("smartlevel"), SPACE, Source("info"), PVP } })
 Formats.Register("cast:name", { label = "Spell name while casting", pieces = { Source("cast.spell") } })
+Formats.Register("threat", { label = "Threat %", pieces = { Source("threat") } })
 
 -- Kept as ids so saved settings resolve; a later step offers "while casting"
 -- as a slot option instead of separate presets.
@@ -199,6 +200,6 @@ local function List(...)
 end
 
 local IDENTITY = { "none", "name", "fullname", "level", "smartlevel", "level:name", "class", "level:class", "level:info", "resting" }
-Formats.HEALTH = List(IDENTITY, HEALTH_VALUES, BAR_VALUES, { "cast:name", "level:class:cast", "level:info:cast" })
-Formats.POWER = List(IDENTITY, POWER_VALUES, BAR_VALUES)
+Formats.HEALTH = List(IDENTITY, HEALTH_VALUES, BAR_VALUES, { "cast:name", "level:class:cast", "level:info:cast", "threat" })
+Formats.POWER = List(IDENTITY, POWER_VALUES, BAR_VALUES, { "threat" })
 Formats.EXPERIENCE = List({ "none", "level", "resting" }, XP_VALUES, { "xp:rested" }, BAR_VALUES)

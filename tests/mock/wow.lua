@@ -66,6 +66,10 @@ local function NewObject(objectType, parent, name)
 		},
 	}, ObjectMT)
 	registry[#registry + 1] = obj
+	if parent and parent.__state then
+		parent.__state.kids = parent.__state.kids or {}
+		parent.__state.kids[obj] = true
+	end
 	if name then
 		_G[name] = obj
 	end
@@ -239,6 +243,12 @@ end
 
 function Methods:SetParent(parent)
 	CheckLayoutAspect(self, parent, "SetParent")
+	local previous = self.__state.parent
+	if previous and previous.__state and previous.__state.kids then previous.__state.kids[self] = nil end
+	if parent and parent.__state then
+		parent.__state.kids = parent.__state.kids or {}
+		parent.__state.kids[self] = true
+	end
 	self.__state.parent = parent
 end
 function Methods:GetParent() return self.__state.parent end
@@ -315,7 +325,22 @@ function Methods:GetAnchor(point)
 	end
 end
 
-function Methods:SetFrameLevel(level) self.__state.level = level end
+-- Like the client, a changed level re-levels the frame's children above it,
+-- except frames with a fixed level (and what they hold).
+local function RelevelChildren(frame)
+	for child in pairs(frame.__state.kids or {}) do
+		if not child.__state.fixedLevel and child.__state.parent == frame then
+			child.__state.level = frame.__state.level + 1
+			RelevelChildren(child)
+		end
+	end
+end
+function Methods:SetFrameLevel(level)
+	local changed = self.__state.level ~= level
+	self.__state.level = level
+	if changed then RelevelChildren(self) end
+end
+function Methods:SetFixedFrameLevel(fixed) self.__state.fixedLevel = fixed == true end
 function Methods:IsProtected() return self.__state.protected == true end
 function Methods:SetAttribute(name, value) self.__state.attributes = self.__state.attributes or {}; self.__state.attributes[name] = value end
 function Methods:GetAttribute(name) return self.__state.attributes and self.__state.attributes[name] end
@@ -1330,7 +1355,17 @@ function Mock.Install()
 			if Mock.IsSecret(value) then
 				return Mock.Secret("truncated")
 			end
-			return value == 0 and "" or tostring(value)
+			-- An integer, rounded down; empty when that is zero.
+			local integer = math.floor(value)
+			return integer == 0 and "" or tostring(integer)
+		end,
+	}
+	_G.C_ColorUtil = {
+		-- ARGB hex with alpha forced to ff.
+		GenerateTextColorCode = function(color)
+			if AnySecret(color.r, color.g, color.b) then return Mock.Secret("colorcode") end
+			local function Byte(value) return math.floor(value * 255 + 0.5) end
+			return string.format("ff%02x%02x%02x", Byte(color.r), Byte(color.g), Byte(color.b))
 		end,
 	}
 	_G.C_EncodingUtil = Mock.NewEncodingUtil()
@@ -1445,6 +1480,9 @@ function Mock.InstallUI()
 	_G.UnitEffectiveLevel = function() return 30 end
 	_G.UnitQuestTrivialLevelRange = function() return 8 end
 	_G.UnitCanAttack = function(_, unit) return Mock.attackable[unit] or false end
+	-- Not on any threat list unless a spec says otherwise.
+	_G.UnitThreatSituation = function() return nil end
+	_G.UnitDetailedThreatSituation = function() end
 	_G.C_PlayerInfo = {
 		GetContentDifficultyCreatureForPlayer = function(unit)
 			return Mock.difficulties[unit] or Enum.RelativeContentDifficulty.Fair

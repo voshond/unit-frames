@@ -137,11 +137,12 @@ local function SourceValues(context)
 	end
 end
 
--- Whether `pieces` show a level, which the slot can colour by difficulty.
-local function ShowsLevel(pieces)
+-- Whether `pieces` show a source marked `flag` (a level, threat), which
+-- the slot can tint (TextSources.TINTS).
+local function Shows(pieces, flag)
 	for _, piece in ipairs(pieces) do
 		local source = piece.source and ns.TextSources.Get(piece.source)
-		if source and source.difficulty then return true end
+		if source and source[flag] then return true end
 	end
 	return false
 end
@@ -152,9 +153,9 @@ local function CustomPieces(cfg)
 	return pieces
 end
 
-local function SlotShowsLevel(cfg)
-	if cfg.format == Text.CUSTOM then return ShowsLevel(CustomPieces(cfg)) end
-	return ShowsLevel(ns.Formats.Get(cfg.format).pieces)
+local function SlotShows(cfg, flag)
+	if cfg.format == Text.CUSTOM then return Shows(CustomPieces(cfg), flag) end
+	return Shows(ns.Formats.Get(cfg.format).pieces, flag)
 end
 
 -- Writes `presetId` (on a host with `context`) into a slot's override
@@ -238,8 +239,11 @@ local function SlotSchema(spec)
 			default = "status", hidden = NotCustom,
 			tooltip = "Health and power values make way for Dead or Offline: the first health value shows the word, other values and their separators disappear. Texts showing the Offline / dead source keep their values." },
 		{ key = "levelColor", type = "toggle", label = "Colour level by difficulty", default = false,
-			hidden = function(cfg) return not SlotShowsLevel(cfg) end,
+			hidden = function(cfg) return not SlotShows(cfg, "difficulty") end,
 			tooltip = "Colours only the level, in the game's difficulty colours, for units you can attack. Other units and the rest of the text keep the text colour." },
+		{ key = "threatColor", type = "toggle", label = "Colour threat by stage", default = false,
+			hidden = function(cfg) return not SlotShows(cfg, "threatStage") end,
+			tooltip = "Colours only the threat %, in the theme's threat colours: low below 50%, medium from 50%, high from 80% and aggro at 100%. The rest of the text keeps the text colour. Works in combat." },
 		-- Distinguishes retained custom edits (even an empty slot) from none yet.
 		{ key = "customInitialized", type = "toggle", label = "Custom text set up", default = false,
 			internal = "Records whether the slot has retained custom text pieces",
@@ -300,15 +304,17 @@ function Text:CompileTemplate(cfg)
 	local format = self.spec.formats and cfg.format or "none"
 	if format == Text.CUSTOM then
 		return ns.TextTemplate.Get({ pieces = CustomPieces(cfg), whileCasting = cfg.whileCasting,
-			whileStatus = cfg.whileStatus, levelColor = cfg.levelColor }, self.spec.context)
+			whileStatus = cfg.whileStatus, levelColor = cfg.levelColor, threatColor = cfg.threatColor }, self.spec.context)
 	end
 	local preset = Formats.Get(format)
-	local levelColor = cfg.levelColor and ShowsLevel(preset.pieces)
-	if not levelColor and not preset.relative and Formats.Availability(preset.id, self.spec.context) == "all" then
+	local levelColor = cfg.levelColor and Shows(preset.pieces, "difficulty")
+	local threatColor = cfg.threatColor and Shows(preset.pieces, "threatStage")
+	if not levelColor and not threatColor and not preset.relative
+		and Formats.Availability(preset.id, self.spec.context) == "all" then
 		return preset.template
 	end
-	return ns.TextTemplate.Get({ pieces = preset.pieces, whileCasting = preset.whileCasting, levelColor = levelColor },
-		self.spec.context)
+	return ns.TextTemplate.Get({ pieces = preset.pieces, whileCasting = preset.whileCasting, levelColor = levelColor,
+		threatColor = threatColor }, self.spec.context)
 end
 
 function Text:GetTemplate()

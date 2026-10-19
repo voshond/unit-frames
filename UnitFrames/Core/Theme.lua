@@ -63,5 +63,9 @@ Theme.schema = {
 		{ "nonInterruptible", "Not interruptible", 0.7, 0.7, 0.7 },
 		{ "castFailed", "Cast failed", 1, 0, 0 },
 		{ "castSuccess", "Cast succeeded", 0, 1, 0 },
+		{ "threatLow", "Threat: low", 0.25, 0.75, 0.25 },
+		{ "threatMedium", "Threat: medium", 1, 0.82, 0 },
+		{ "threatHigh", "Threat: high", 1, 0.5, 0 },
+		{ "threatAggro", "Threat: aggro", 1, 0.1, 0.1 },
 	}) },
 }

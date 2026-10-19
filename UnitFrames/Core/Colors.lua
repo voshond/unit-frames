@@ -115,3 +115,50 @@ function Colors.PercentCurve()
 	end
 	return percentCurve
 end
+
+--[[
+Threat stages: low, medium, high and aggro, in the theme's threat colours.
+`by` is what decides the stage, natively for secret values:
+  "percent"  the scaled threat % (UnitDetailedThreatSituation): from 0, 50,
+             80 and 100 (aggro)
+  "status"   the threat situation (UnitThreatSituation): 0, 1, 2 and 3
+Stages before `showFrom` are transparent (glows); nil shows every stage.
+Rebuilt after theme changes.
+]]
+Colors.THREAT_STAGES = { "low", "medium", "high", "aggro" }
+local THREAT_STAGE_COLORS = { low = "threatLow", medium = "threatMedium", high = "threatHigh", aggro = "threatAggro" }
+local THREAT_STAGE_FROM = { percent = { 0, 50, 80, 100 }, status = { 0, 1, 2, 3 } }
+
+local threatStageCurves, threatStageRevision = {}, nil
+function Colors.ThreatStageCurve(by, showFrom)
+	if threatStageRevision ~= ns.Config.themeRevision then
+		threatStageRevision, threatStageCurves = ns.Config.themeRevision, {}
+	end
+	local key = by .. ":" .. tostring(showFrom)
+	local curve = threatStageCurves[key]
+	if curve then return curve end
+	curve = C_CurveUtil.CreateColorCurve()
+	curve:SetType(Enum.LuaCurveType.Step)
+	local shown = showFrom == nil
+	for i, stage in ipairs(Colors.THREAT_STAGES) do
+		shown = shown or stage == showFrom
+		local r, g, b = Colors.Theme(THREAT_STAGE_COLORS[stage])
+		curve:AddPoint(THREAT_STAGE_FROM[by][i], CreateColor(r, g, b, shown and 1 or 0))
+	end
+	threatStageCurves[key] = curve
+	return curve
+end
+
+-- Threat status (UnitThreatSituation, 0..3, may be secret) as a colour:
+-- transparent without threat, orange to red towards secure tanking.
+local threatCurve
+function Colors.ThreatCurve()
+	if not threatCurve then
+		threatCurve = C_CurveUtil.CreateColorCurve()
+		threatCurve:AddPoint(0, CreateColor(1, 0, 0, 0))
+		threatCurve:AddPoint(1, CreateColor(1, 0.6, 0, 0.4))
+		threatCurve:AddPoint(2, CreateColor(1, 0.3, 0, 0.8))
+		threatCurve:AddPoint(3, CreateColor(1, 0, 0, 1))
+	end
+	return threatCurve
+end

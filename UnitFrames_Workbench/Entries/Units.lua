@@ -83,6 +83,12 @@ local function Values(unit, d, healthPct, time)
 	v.outOfRange = d.outOfRange
 	v.resting = unit == "player" and d.resting
 	v.restingAnimated = time ~= nil
+	-- Animated: threat climbs to aggro over ten seconds, then starts again.
+	if d.threatStatus then
+		v.threat = time and math.min(100, time * 11 % 110) or d.threat
+		v.threatStatus = time and (v.threat >= 100 and 3 or v.threat >= 80 and 1 or 0) or d.threatStatus
+		if not time and d.threatStatus == "off" then v.threat, v.threatStatus = nil, nil end
+	end
 	v.readyCheck = d.readyCheck ~= "off" and d.readyCheck or nil
 	v.readyCheckTime = time
 	v.animateAuras = time ~= nil
@@ -175,6 +181,14 @@ local function RegisterUnit(unit)
 			values = { { "normal", "Normal" }, { "elite", "Elite" }, { "rare", "Rare" }, { "rareelite", "Rare elite" }, { "worldboss", "Boss" } },
 			hidden = function(d) return not d.npc end,
 			tooltip = "Sample NPC classification for the elite / rare icon and the level marker texts." }
+	end
+	if def.threat then
+		schema[#schema + 1] = { key = "threatStatus", type = "select", label = "Threat status",
+			default = sample.threatStatus or "off", values = {
+				{ "off", "Not on the threat list" }, { 0, "Below the tank" }, { 1, "About to pull aggro" },
+				{ 2, "Tanking, insecure" }, { 3, "Tanking" },
+			}, tooltip = "Preview the saved threat glow and threat text colour with this status and Threat %. Animated climbs from no threat to aggro and starts again." }
+		schema[#schema + 1] = Range("threat", "Threat %", sample.threat or 0)
 	end
 	if def.comboPoints then
 		schema[#schema + 1] = { key = "comboPoints", type = "range", label = "Combo points", min = 0,
