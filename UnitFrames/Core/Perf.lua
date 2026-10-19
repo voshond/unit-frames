@@ -8,8 +8,8 @@ local ADDONS = { "UnitFrames", "UnitFrames_ClickGrid", "UnitFrames_Workbench", "
 local THRESHOLDS = { "CountTimeOver1Ms", "CountTimeOver5Ms", "CountTimeOver10Ms", "CountTimeOver50Ms",
 	"CountTimeOver100Ms", "CountTimeOver500Ms", "CountTimeOver1000Ms" }
 
-function Perf:Count(key)
-	if self.counters then self.counters[key] = (self.counters[key] or 0) + 1 end
+function Perf:Count(key, amount)
+	if self.counters then self.counters[key] = (self.counters[key] or 0) + (amount or 1) end
 end
 
 -- Phase markers for an active measurement only; elsewhere they are no-ops.
@@ -64,13 +64,13 @@ end
 
 -- Separates consecutive reports in the chat frame.
 local DIVIDER = string.rep("=", 12)
-local function Divider(title)
+function Perf:Divider(title)
 	ns:Print(string.format("|cff808080%s|r %s |cff808080%s|r", DIVIDER, title, DIVIDER))
 end
 
 -- `untitled`: the caller has already started the report with its divider.
 function Perf:Report(snapshot, baseline, untitled)
-	if not untitled then Divider("snapshot") end
+	if not untitled then self:Divider("snapshot") end
 	ns:Print("performance snapshot; profiler", snapshot.profiler and "enabled" or "unavailable/disabled")
 	for _, name in ipairs(ADDONS) do
 		local addon, before = snapshot.addons[name], baseline and baseline.addons[name]
@@ -101,6 +101,16 @@ local function ReportCounters(counters)
 	for _, key in ipairs(keys) do ns:Print(key, counters[key], "calls") end
 end
 
+function Perf:ReportCacheReuse(counters, label)
+	for _, keys in ipairs({ { "resolveCall", "resolveBuild", "resolution" }, { "childConfigCall", "childConfigBuild", "child config" } }) do
+		local calls = counters[keys[1]]
+		if calls then
+			local builds = counters[keys[2]] or 0
+			ns:Print(label or "", string.format("%s: %d calls, %d builds, %d shared hits", keys[3], calls, builds, calls - builds))
+		end
+	end
+end
+
 function Perf:Cancel()
 	if self.suite then self:FinishSuite("cancelled"); return end
 	if self.driver then
@@ -116,6 +126,7 @@ end
 -- Observe exactly the next combat. Native metrics are sampled only at the
 -- endpoints; counters run only between the two events, with no per-frame work.
 function Perf:Combat()
+	self:Divider("combat observation")
 	if InCombatLockdown() then ns:Print("arm the next combat outside combat"); return end
 	self:Cancel()
 	self.combatArmed = true
@@ -130,7 +141,7 @@ function Perf:Combat()
 		else
 			local counters, baseline, duration = self.counters, self.baseline, GetTime() - self.startedAt
 			self:Cancel()
-			Divider(string.format("combat %.2f s", duration))
+			self:Divider(string.format("combat %.2f s", duration))
 			self:Report(self:Snapshot(), baseline, true)
 			ReportCounters(counters)
 		end
@@ -139,6 +150,7 @@ function Perf:Combat()
 end
 
 function Perf:Watch(seconds)
+	self:Divider("watch observation")
 	seconds = tonumber(seconds) or 60
 	if seconds ~= seconds or seconds < 1 or seconds > 300 then
 		ns:Print("watch duration must be 1–300 seconds")
@@ -155,50 +167,12 @@ function Perf:Watch(seconds)
 		if self.elapsed < self.seconds then return end
 		local counters, baseline, duration = self.counters, self.baseline, self.elapsed
 		self:Cancel()
-		Divider(string.format("watch %g s", seconds))
+		self:Divider(string.format("watch %g s", seconds))
 		ns:Print(string.format("passive observation %.2f seconds", duration))
 		self:Report(self:Snapshot(), baseline, true)
 		ReportCounters(counters)
 	end)
 	ns:Print("observing for", seconds, "seconds; /uf perf cancel stops the window")
-end
-
--- Exclusive time and allocation per phase: each interval between markers
--- belongs to the innermost open phase (outside any phase: "unmarked").
-local function Phases(results)
-	local phases, stack, ms, bytes = {}, {}, 0, 0
-	local function Add(name, toMS, toBytes)
-		local phase = phases[name] or { name = name, ms = 0, bytes = 0, calls = 0 }
-		phases[name] = phase
-		phase.ms, phase.bytes = phase.ms + toMS - ms, phase.bytes + toBytes - bytes
-		ms, bytes = toMS, toBytes
-		return phase
-	end
-	for _, event in ipairs(results.events or {}) do
-		Add(stack[#stack] or "unmarked", event.elapsedMilliseconds, event.allocatedBytes)
-		local kind, name = event.name:sub(1, 1), event.name:sub(2)
-		if kind == ">" then
-			stack[#stack + 1] = name
-			local phase = phases[name] or { name = name, ms = 0, bytes = 0, calls = 0 }
-			phases[name], phase.calls = phase, phase.calls + 1
-		elseif kind == "<" then
-			stack[#stack] = nil
-		end
-	end
-	Add("unmarked", results.elapsedMilliseconds, results.allocatedBytes)
-	local list = {}
-	for _, phase in pairs(phases) do list[#list + 1] = phase end
-	table.sort(list, function(a, b) return a.bytes > b.bytes end)
-	return list
-end
-Perf.Phases = Phases
-
-local function ReportPhases(results)
-	for index, phase in ipairs(Phases(results)) do
-		if index > 15 then break end
-		ns:Print(string.format("  %s: %.3f ms, %.1f KB allocated, %d calls (exclusive)",
-			phase.name, phase.ms, phase.bytes / 1024, phase.calls))
-	end
 end
 
 local operations = {
@@ -248,40 +222,62 @@ function Perf:CaptureOperation(operation)
 	return Capture(self, assert(operations[operation], "Invalid performance operation"))
 end
 
--- Runs fn(...) inside an active measurement and reports it under `title`.
--- Returns whether it succeeded and the error otherwise.
-local function Run(self, title, fn, ...)
-	local ok, result, counters = Capture(self, fn, ...)
-	Divider(title)
-	if not ok then
-		ns.Logs:Error(title, result)
-		ns:Print("measurement failed:", result)
-		return false, result
-	end
+function Perf:ReportMeasurement(title, result, counters)
 	local summary = string.format("active %s: %.3f ms; allocated %s bytes; deallocated %s bytes", title,
 		result.elapsedMilliseconds, tostring(result.allocatedBytes), tostring(result.deallocatedBytes))
 	ns.Logs:Info(title, summary)
 	ns:Print(summary)
 	ReportCounters(counters)
-	ReportPhases(result)
+	self:ReportCacheReuse(counters)
+	local phases = self.Phases(result)
+	self:ReportPhases(phases)
+	local global = ns.Config.db.global
+	global.perfMeasurements = global.perfMeasurements or {}
+	global.perfMeasurements[title] = { format = 2, timestamp = GetServerTime(), context = self:SuiteContext(),
+		ms = result.elapsedMilliseconds, allocatedBytes = result.allocatedBytes,
+		deallocatedBytes = result.deallocatedBytes, counters = counters, phases = phases }
+	ns:Print("structured measurement: UnitFramesDB.global.perfMeasurements[" .. string.format("%q", title) .. "]; /reload writes it to SavedVariables")
+end
+
+function Perf:Run(title, fn, ...)
+	local ok, result, counters = Capture(self, fn, ...)
+	if not ok then
+		ns.Logs:Error(title, result)
+		ns:Print("measurement failed:", result)
+		return false, result
+	end
+	self:ReportMeasurement(title, result, counters)
+	return true
+end
+
+local function Refuse(reason)
+	ns.Logs:Info("active measurement refused", reason)
+	ns:Print(reason)
+	return false
+end
+
+function Perf:CanMeasure()
+	if InCombatLockdown() then return Refuse("active measurements must wait until combat ends") end
+	if not ProfilerEnabled() then return Refuse("native addon profiler unavailable/disabled") end
+	if self.counters or self.combatArmed or self.suite then return Refuse("cancel the observation window before an active measurement") end
 	return true
 end
 
 function Perf:Measure(operation)
+	self:Divider("measure " .. operation)
 	local run = operations[operation]
 	if not run then ns:Print("measure operations: auras, units, clickgrid, preview, create, schema"); return end
-	if InCombatLockdown() then ns:Print("active measurements must wait until combat ends"); return end
-	if not ProfilerEnabled() then ns:Print("native addon profiler unavailable/disabled"); return end
-	if self.counters or self.combatArmed or self.suite then ns:Print("cancel the observation window before an active measurement"); return end
-	Run(self, "measure " .. operation, run)
+	if not self:CanMeasure() then return end
+	self:Run("measure " .. operation, run)
 end
 
 -- Startup measurement. "/uf perf startup" arms it for the next load only;
 -- there each Perf:Startup call (unit frame spawning, the ClickGrid panel)
 -- runs inside an active measurement. Otherwise it simply calls fn(...).
 function Perf:ArmStartup()
+	self:Divider("arm startup measurement")
 	ns.Config.db.global.measureStartup = true
-	ns:Print("startup will be measured once after the next /reload")
+	ns:Print("startup and cold ClickGrid preview creation will be measured once after the next /reload")
 end
 
 function Perf:Startup(label, fn, ...)
@@ -293,30 +289,45 @@ function Perf:Startup(label, fn, ...)
 	if not self.startupArmed or self.counters or self.suite or InCombatLockdown() or not ProfilerEnabled() then
 		return fn(...)
 	end
-	local ok, err = Run(self, "startup " .. label, fn, ...)
+	self:Divider("startup " .. label)
+	local ok, err = self:Run("startup " .. label, fn, ...)
 	-- Fail as an unmeasured startup would.
 	if not ok then error(err, 0) end
+	if label == "clickgrid" and ns.ClickGrid and ns.ClickGrid.started then self:Measure("create") end
 end
 
 function Perf:Command(arguments)
 	local command, value = arguments:match("^(%S+)%s*(.-)$")
 	if command == "watch" then
-		if value ~= "" and not tonumber(value) then ns:Print("watch duration must be numeric"); return end
+		if value ~= "" and not tonumber(value) then
+			self:Divider("watch observation")
+			ns:Print("watch duration must be numeric")
+			return
+		end
 		self:Watch(value ~= "" and value or nil)
-	elseif command == "cancel" then self:Cancel(); ns:Print("performance observation cancelled")
+	elseif command == "cancel" then
+		self:Divider("cancel performance observation")
+		self:Cancel()
+		ns:Print("performance observation cancelled")
 	elseif command == "measure" then self:Measure(value)
+	elseif command == "edit" then self:MeasureEdit(value)
 	elseif command == "startup" then self:ArmStartup()
 	elseif command == "combat" then self:Combat()
 	elseif command == "suite" then self:SuiteCommand(value)
+	elseif command == "capture" then self:StartSuite(true)
 	elseif not command then self:Report(self:Snapshot())
 	else
+		self:Divider("performance help")
 		ns:Print("/uf perf - performance snapshot")
 		ns:Print("/uf perf watch <seconds> - observe a bounded window")
 		ns:Print("/uf perf combat - observe the next complete combat")
 		ns:Print("/uf perf cancel - cancel performance observation")
 		ns:Print("/uf perf measure <operation> - actively measure an operation")
-		ns:Print("/uf perf startup - measure startup after the next /reload")
+		ns:Print("/uf perf edit <operation> - measure a ClickGrid settings edit, then restore its overrides")
+		ns:Print("/uf perf startup - measure startup and cold preview creation after the next /reload")
 		ns:Print("/uf perf suite baseline - run the out-of-combat baseline suite")
 		ns:Print("/uf perf suite report - show the last saved suite report")
+		ns:Print("/uf perf suite save | saved - preserve or show a comparison baseline")
+		ns:Print("/uf perf capture - run the baseline, detailed refresh reports and ClickGrid edit probes together")
 	end
 end

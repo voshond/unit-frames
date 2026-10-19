@@ -244,7 +244,7 @@ end
 function Units:GetSchema(unit)
 	self.schemas = self.schemas or {}
 	if not self.schemas[unit] then
-		self.schemas[unit] = ns.Components.UnitFrame.BuildSchema(self:GetSpec(self.definitions[unit]))
+		self.schemas[unit] = ns.Schema.Build(ns.Components.UnitFrame.BuildSchema, self:GetSpec(self.definitions[unit]))
 	end
 	return self.schemas[unit]
 end

@@ -57,7 +57,7 @@ end
 
 -- Offered where the owner can lend the row's space to its health bar.
 function AuraBar.BuildSchema(spec)
-	local out = ns.Util.Copy(AuraBar.schema)
+	local out = ns.Schema.Concat(AuraBar.schema)
 	if not (spec and spec.collapsible) then return out end
 	return ns.Schema.Insert(out, "position", {
 		{ key = "collapse", type = "toggle", label = "Collapse into health when empty", default = true,
@@ -132,7 +132,7 @@ end
 function AuraBar:CreateContainers()
 	if not Auras.CreateContainers(self) then return false end
 	if self.spec.collapsible then
-		ns.Perf:Begin("aura containers")
+		ns.Perf:Begin("aura presence")
 		-- At most one artless button per category, mirroring the row's
 		-- filters and capacity: its flow extent is one cell exactly while
 		-- the row would show any icon, else Blizzard's 1-unit minimum.
@@ -149,16 +149,23 @@ function AuraBar:CreateContainers()
 		presence:SetEnabled(false)
 		if self.unit then presence:SetUnit(self.unit) end
 		self.presence = presence
-		ns.Perf:End("aura containers")
+		ns.Perf:End("aura presence")
 	end
 	return true
 end
 
+local function ArtworkConfig(cfg)
+	ns.Perf:Count("auraArtConfigBuild")
+	local art = ns.Util.Copy(cfg)
+	if cfg.durationPosition == "below" then art.durationPosition = "BOTTOM" end
+	return art
+end
+
 function AuraBar:OnApply(cfg)
 	ns.Perf:Begin("aura art config")
-	self.artConfig = ns.Util.Copy(cfg)
-	if cfg.durationPosition == "below" then self.artConfig.durationPosition = "BOTTOM" end
+	self.artConfig = ns.Schema.Memo(ArtworkConfig, cfg)
 	self.dispelColors = ns.AuraIcon.DispelColors(cfg, self.dispelColors)
+	self:UpdateStyleToken()
 	if cfg.enabled then self:CreateContainers() end
 	if self.presence then
 		for _, kind in ipairs(KINDS) do

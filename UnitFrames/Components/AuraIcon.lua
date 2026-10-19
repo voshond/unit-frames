@@ -39,10 +39,7 @@ AuraIcon.GLOW_STYLES = { { "halo", "Soft halo" }, { "proc", "Proc flash" } }
 
 -- The proc flash follows the icon size; only the halo has geometry.
 local function IsProc(cfg) return cfg.style == "proc" end
-local glowSchema = Glow.schema
-for _, key in ipairs({ "size", "offset" }) do
-	glowSchema = ns.Schema.Override(glowSchema, key, { hidden = IsProc })
-end
+local glowSchema = ns.Schema.Override(Glow.schema, "size", { hidden = IsProc })
 
 AuraIcon.schema = {
 	{ key = "showDuration", type = "toggle", label = "Show time left", default = true },
@@ -55,12 +52,12 @@ AuraIcon.schema = {
 	{ key = "dispelBorder", type = "toggle", label = "Colour debuff border by type", default = true,
 		tooltip = "Tint the entire icon frame using Debuff border colours. Disable to use Icon frame > Border colour for every icon. Works in combat." },
 	{ key = "dispelColors", type = "group", label = "Debuff border colours", schema = dispelColorSchema },
-	{ key = "dispelGlow", type = "group", label = "Debuff glow", defaults = { size = 10, offset = 6 },
+	{ key = "dispelGlow", type = "group", label = "Debuff glow", defaults = { size = 8 },
 		schema = ns.Schema.Concat({
 			{ key = "enabled", type = "toggle", label = "Glow by debuff type", default = false,
 				tooltip = "A soft glow around debuffs that have a dispel type, in its Debuff border colour. Debuffs without a type stay unlit. Works in combat." },
 			{ key = "style", type = "select", label = "Glow style", values = AuraIcon.GLOW_STYLES, default = "halo",
-				tooltip = "Soft halo: Blizzard's glow border around the icon. Proc flash: Blizzard's animated action button proc glow, tinted by debuff type." },
+				tooltip = "Soft halo: a soft glow just outside the icon. Proc flash: Blizzard's animated action button proc glow, tinted by debuff type." },
 		}, glowSchema) },
 	{ key = "border", type = "group", label = "Icon frame", schema = Backdrop.auraSchema,
 		defaults = { size = 8, inset = 1, padding = 2, background = "None" } },
@@ -139,8 +136,10 @@ function AuraIcon.Create(button, kind, preview, opts)
 	-- A separate themed border lets the engine own the complete edge's
 	-- colour/shown state. Hide the holder to toggle type colouring, and
 	-- make the base edge transparent so no neutral border shows through.
+	ns.Perf:Begin("aura dispel border frame")
 	button.ufBorder = CreateFrame("Frame", nil, cover, "BackdropTemplate")
 	button.ufBorder:SetAllPoints(iconFrame)
+	ns.Perf:End("aura dispel border frame")
 	button.ufDispelTextures = {}
 	if preview then
 		button:EnableMouse(false)
@@ -169,13 +168,18 @@ function AuraIcon.ApplySwipe(button, swipe, showSwipeEdge)
 	button.ufCooldown:SetReverse(swipe == "reverse")
 end
 
+-- The icon artwork's inset inside its frame border. Keep a drawable centre
+-- even at the smallest icon size.
+local function ArtPadding(cfg, size)
+	return cfg.border.enabled and math.min(cfg.border.padding, (size - 2) / 2) or 0
+end
+
 function AuraIcon.Apply(button, cfg, size, dispelColors, swipe, showSwipeEdge)
 	AuraIcon.ApplySwipe(button, swipe, showSwipeEdge)
 	button:SetSize(size, size + AuraIcon.TextRoom(cfg))
 	button.ufIconFrame:SetSize(size, size)
 	Backdrop.ApplyToFixedSize(button.ufIconFrame, cfg.border, size, size, false)
-	-- Keep a drawable centre even at the smallest icon size.
-	local pad = cfg.border.enabled and math.min(cfg.border.padding, (size - 2) / 2) or 0
+	local pad = ArtPadding(cfg, size)
 	for _, region in ipairs({ button.ufIcon, button.ufCooldown }) do
 		region:ClearAllPoints()
 		region:SetPoint("TOPLEFT", button.ufIconFrame, "TOPLEFT", pad, -pad)
@@ -291,7 +295,13 @@ function AuraIcon.ApplyDispelGlow(button, cfg, size, dispelColors)
 	if style == "proc" then
 		Glow.ApplyProc(active, glow, size)
 	elseif active then
-		Glow.Apply(active, glow, size, size)
+		-- From the artwork's edge: border art draws its line anywhere within
+		-- the edge, so the halo starts under the border to leave no gap.
+		local pad = ArtPadding(cfg, size)
+		active:ClearAllPoints()
+		active:SetPoint("TOPLEFT", button.ufIconFrame, "TOPLEFT", pad, -pad)
+		active:SetPoint("BOTTOMRIGHT", button.ufIconFrame, "BOTTOMRIGHT", -pad, pad)
+		Glow.Apply(active, glow)
 	end
 	local state = dispelGlows[button]
 	if not (state or active) then return end

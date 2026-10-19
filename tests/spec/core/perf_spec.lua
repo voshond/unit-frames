@@ -72,6 +72,21 @@ describe("Opt-in performance diagnostics", function()
 		end
 	end)
 
+	it("separates every performance command including acknowledgements, help and rejected requests", function()
+		for _, command in ipairs({ "", "help", "watch invalid", "watch 0", "watch 1", "cancel", "combat", "startup",
+			"suite baseline", "suite report", "suite saved", "suite save", "suite", "measure", "measure units", "edit", "edit titles" }) do
+			UF.Perf:Cancel()
+			messages = {}
+			UF.Perf:Command(command)
+			assert.is_not_nil(messages[1][1]:find("============", 1, true), command)
+			local dividers = 0
+			for _, message in ipairs(messages) do
+				if tostring(message[1]):find("=|r", 1, true) then dividers = dividers + 1 end
+			end
+			assert.equals(1, dividers, command)
+		end
+	end)
+
 	it("observes only the next combat and retires its events after reporting", function()
 		Mock.profilerEnabled = true
 		local metric = Enum.AddOnProfilerMetric.CountTimeOver1Ms
@@ -150,6 +165,28 @@ describe("Opt-in performance diagnostics", function()
 		assert.is_not_nil(messages[1][1]:find("=|r startup clickgrid |c", 1, true), "every startup of that load")
 		assert.is_nil(UF.Perf.counters)
 		assert.has_error(function() UF.Perf:Startup("clickgrid", function() error("boom") end) end)
+		assert.is_nil(UF.Perf.counters)
+	end)
+
+	it("measures cold preview creation once after an armed ClickGrid startup", function()
+		local _, CG = Helpers.LoadClickGrid()
+		UF = CG.UF
+		UF.Print = function(_, ...) messages[#messages + 1] = { ... } end
+		Mock.profilerEnabled = true
+		local creates = 0
+		local new = CG.Preview.New
+		CG.Preview.New = function(...) creates = creates + 1; return new(...) end
+		UF.Perf:Startup("clickgrid", function() end)
+		assert.equals(0, creates, "unarmed: no creation")
+		UF.Perf:Command("startup")
+		UF.Perf:Startup("units", function() end)
+		assert.equals(0, creates, "unit startup does not create previews")
+		UF.Perf:Startup("clickgrid", function() end)
+		assert.equals(1, creates)
+		local saved = UF.Config.db.global.perfMeasurements
+		assert.is_not_nil(saved["startup clickgrid"])
+		assert.is_true(saved["measure create"].counters.componentCreate > 0)
+		assert.is_nil(next(CG.previews))
 		assert.is_nil(UF.Perf.counters)
 	end)
 
@@ -243,7 +280,7 @@ describe("Opt-in performance diagnostics", function()
 			opened[label] = (opened[label] or 0) + (kind == ">" and 1 or -1)
 			assert.is_true(#name < 48)
 		end
-		for _, label in ipairs({ "UnitFrame", "resolve", "bind", "oUF elements", "oUF tags" }) do
+		for _, label in ipairs({ "UnitFrame", "resolve", "bind", "bind drivers", "bind tags", "bind decorations", "oUF elements", "oUF tags" }) do
 			assert.is_not_nil(opened[label], label)
 		end
 		for label, open in pairs(opened) do assert.equals(0, open, label .. " is balanced") end

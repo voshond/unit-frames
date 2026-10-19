@@ -52,10 +52,10 @@ function Preview:ShowLive(uf, unit, cell)
 	return true
 end
 
-function Preview:Apply()
+function Preview:Apply(changes)
 	if self.released then return end
 	if InCombatLockdown() then
-		CG.pending = true
+		CG:RequestRefresh()
 		if not self.notice then
 			self.notice = self.frame:CreateFontString(nil, "OVERLAY")
 			self.notice:SetFontObject(UF.Media:GetFontObject(UF.Config:GetTheme().font, 12))
@@ -69,8 +69,13 @@ function Preview:Apply()
 	if self.notice then self.notice:Hide() end
 	local cfg = CG.Config:Resolved()
 	self.cfg = cfg
-	CG.Layout.Backdrop(self.background, self.frame, cfg.titles, cfg.border)
-	for _, cell in ipairs(self.cells) do cell.styled = false end
+	if not changes or changes.full or changes.layout then
+		CG.Layout.Backdrop(self.background, self.frame, cfg.titles, cfg.border)
+	end
+	for _, cell in ipairs(self.cells) do
+		if not changes or changes.full then cell.styled, cell.changes = false, nil
+		else cell.changes = CG.MergeChanges(cell.changes or {}, changes) end
+	end
 	self:ShowData(self.data or { source = "static", count = 5 })
 end
 
@@ -89,18 +94,22 @@ function Preview:ChangeSource(source)
 	end
 end
 
-function Preview:StyleCell(cell)
+function Preview:StyleCell(cell, changes)
 	local cfg = self.cfg.panel
-	cell.member:Apply(CG.Config:GetStyle("member"))
-	cell.member:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", 0, 0)
-	cell.target:SetFillHeight(self.layout.cellHeight)
-	cell.target:Apply(CG.Config:GetStyle("target"))
-	cell.target:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", CG.metrics.member.width + cfg.targetGap, 0)
-	cell.target:GetFrame():SetShown(CG.metrics.target.shown)
-	if not CG.metrics.target.shown then EnableAuras(cell.target, false) end
-	cell.slots:Apply(CG:SlotConfig(cell.member))
-	cell.status:Apply(CG.Config:Get().indicators)
-	cell.styled = true
+	local force = not cell.styled
+	CG:ApplyUnitStyle(cell.member, "member", changes, self.layout, force)
+	local targetStyled = CG:ApplyUnitStyle(cell.target, "target", changes, self.layout, force)
+	local layoutChanged = force or not changes or changes.full or changes.layout
+	if layoutChanged then
+		cell.member:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", 0, 0)
+		cell.target:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", CG.metrics.member.width + cfg.targetGap, 0)
+	end
+	if layoutChanged or targetStyled then
+		cell.target:GetFrame():SetShown(CG.metrics.target.shown)
+		if not CG.metrics.target.shown then EnableAuras(cell.target, false) end
+	end
+	CG:ApplyExtras(cell.member, cell, changes, force)
+	cell.styled, cell.changes = true, nil
 end
 
 function Preview:FeedCell(cell, index, live, unit)
@@ -204,7 +213,7 @@ end
 
 function Preview:ShowData(data)
 	self.data = data
-	if InCombatLockdown() then CG.pending = true; return end
+	if InCombatLockdown() then CG:RequestRefresh(); return end
 	if self.released then return end
 	self:ChangeSource(data.source)
 	local count = data.count or 5
@@ -251,7 +260,7 @@ function Preview:ShowData(data)
 			cell.frame:SetPoint("TOPLEFT", self.frame, "TOPLEFT", section.x + x, -(section.y + y))
 			cell.frame:SetSize(layout.cellWidth, layout.cellHeight)
 			cell.frame:Show()
-			if not cell.styled then self:StyleCell(cell) end
+			if not cell.styled or cell.changes then self:StyleCell(cell, cell.changes) end
 			local source = live and CG.headers[key] and CG.headers[key]:GetAttribute("child" .. localIndex)
 			local unit = source and source.Member.__unit
 			if live and not raid and localIndex == 1 and not IsInGroup() then unit = "player" end
@@ -293,7 +302,7 @@ function Preview:Release()
 	if InCombatLockdown() then
 		CG.retiredPreviews = CG.retiredPreviews or {}
 		CG.retiredPreviews[self] = true
-		CG.pending = true
+		CG:RequestRefresh()
 		return
 	end
 	self:ReleaseComponents()

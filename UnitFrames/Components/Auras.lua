@@ -97,7 +97,11 @@ function Auras:CreateContainers()
 			maxFrameCount = 16,
 			sortMethod = AuraContainerSortMethod.ExpirationOnly,
 			sortDirection = AuraContainerSortDirection.Normal,
-			initializeFrame = function(button) self:InitButton(button, kind) end,
+			initializeFrame = function(button)
+				ns.Perf:Begin("aura button init")
+				self:InitButton(button, kind)
+				ns.Perf:End("aura button init")
+			end,
 		})
 		if self.unit then container:SetUnit(self.unit) end
 	end
@@ -135,8 +139,10 @@ function Auras:InitButton(button, kind, preview)
 	AuraIcon.Create(button, kind, preview, { harmful = kind == "debuffs",
 		cancelBuffs = self.spec.cancelBuffs, clickThrough = self.spec.clickThrough })
 	if self.resolved then
+		ns.Perf:Begin("aura button style")
 		self:StyleButton(button)
 		button.ufStyleToken = self.styleToken
+		ns.Perf:End("aura button style")
 	end
 end
 
@@ -157,6 +163,12 @@ local function StyleToken(auras, previous)
 		return previous
 	end
 	return token
+end
+
+-- Before containers are created: their new buttons take this token, so the
+-- following restyle skips them.
+function Auras:UpdateStyleToken()
+	self.styleToken = StyleToken(self, self.styleToken)
 end
 
 function Auras:StyleButton(button)
@@ -217,6 +229,7 @@ function Auras:OnApply(cfg)
 	local Perf = ns.Perf
 	Perf:Begin("aura groups")
 	self.dispelColors = AuraIcon.DispelColors(cfg, self.dispelColors)
+	self:UpdateStyleToken()
 	if cfg.enabled then self:CreateContainers() end
 	for _, kind in ipairs(self.containers.buffs and KINDS or {}) do
 		local container, group = self.containers[kind], cfg[kind]
@@ -228,7 +241,6 @@ function Auras:OnApply(cfg)
 			or group.sort == "unitDebuff" and AuraContainerSortMethod.UnitFrameDebuff or AuraContainerSortMethod.ExpirationOnly
 		Auras.ApplyGroupSort(container, kind, sort, AuraContainerSortDirection.Normal)
 	end
-	self.styleToken = StyleToken(self, self.styleToken)
 	Perf:End("aura groups")
 	Perf:Begin("aura layout")
 	self:Layout()

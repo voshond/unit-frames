@@ -34,6 +34,11 @@ function Component:Extend(className)
 	return class
 end
 
+-- Components created during another component's OnCreate join its
+-- construction: the outermost first Apply reaches them through ApplyChild,
+-- and any it did not reach are applied before New returns.
+local constructing
+
 function Component:New(parent, config, spec)
 	local instance = setmetatable({}, self)
 	instance.spec = spec or {}
@@ -42,11 +47,20 @@ function Component:New(parent, config, spec)
 	instance.enabled = true
 	local Perf = ns.Perf
 	Perf:Count("componentCreate")
+	local outer = constructing
+	local created = outer or {}
+	created[#created + 1] = instance
+	constructing = created
 	Perf:Begin("create")
-	instance:OnCreate(parent, instance.spec)
+	local ok, err = pcall(instance.OnCreate, instance, parent, instance.spec)
 	Perf:End("create")
+	constructing = outer
+	if not ok then error(err, 0) end
 	live[instance] = true
-	instance:Apply()
+	if outer then return instance end
+	for _, component in ipairs(created) do
+		if not component.resolved and not component.released then component:Apply() end
+	end
 	return instance
 end
 
@@ -60,16 +74,29 @@ function Component:GetSchema()
 		elseif owner then
 			local cache = schemas[class]
 			if not cache then cache = setmetatable({}, { __mode = "k" }); schemas[class] = cache end
-			if not cache[owner] then cache[owner] = self.BuildSchema(self.spec) end
+			if not cache[owner] then cache[owner] = Schema.Build(self.BuildSchema, self.spec) end
 			self.schemaCache = cache[owner]
 		else
-			self.schemaCache = self.BuildSchema(self.spec)
+			self.schemaCache = Schema.Build(self.BuildSchema, self.spec)
 		end
 	end
 	return self.schemaCache
 end
 
-function Component:Apply(config)
+local function Apply(self, resolved)
+	local Perf = ns.Perf
+	Perf:Count(self.componentOwner and "childApply" or "rootApply")
+	Perf:Begin(self.className)
+	self.resolved = resolved or Schema.Resolve(self:GetSchema(), self.config, ns.Config:GetTheme())
+	Perf:Count("presentationApply")
+	self:OnApply(self.resolved)
+	if self.resolved.enabled ~= nil then
+		self:SetEnabled(self.resolved.enabled)
+	end
+	Perf:End(self.className)
+end
+
+function Component:Apply(config, resolved)
 	assert(not self.released, "Cannot apply a released component")
 	if config then
 		self.config = config
@@ -80,18 +107,7 @@ function Component:Apply(config)
 		return
 	end
 	ns.AfterCombat:Cancel(self, "apply")
-	local Perf = ns.Perf
-	Perf:Count(self.componentOwner and "childApply" or "rootApply")
-	Perf:Begin(self.className)
-	Perf:Begin("resolve")
-	self.resolved = Schema.Resolve(self:GetSchema(), self.config, ns.Config:GetTheme())
-	Perf:End("resolve")
-	Perf:Count("presentationApply")
-	self:OnApply(self.resolved)
-	if self.resolved.enabled ~= nil then
-		self:SetEnabled(self.resolved.enabled)
-	end
-	Perf:End(self.className)
+	Schema.Shared(Apply, self, resolved)
 end
 
 function Component:SetCombatDeferred(deferred)
@@ -129,15 +145,19 @@ local function BuildChildConfig(schema, config, key)
 end
 
 function Component:ChildConfig(key)
+	local schema = self:GetSchema()
+	ns.Perf:Count("childConfigCall")
 	ns.Perf:Begin("child config")
-	local config = Schema.Memo(BuildChildConfig, self:GetSchema(), self.config, key)
+	local config = Schema.Memo(BuildChildConfig, schema, self.config, key)
 	ns.Perf:End("child config")
 	return config
 end
 
 -- Applies the `key` group of this component's config to a child component.
-function Component:ApplyChild(child, key)
-	child:Apply(self:ChildConfig(key))
+function Component:ApplyChild(child, key, resolved)
+	local config = self:ChildConfig(key)
+	local effective = Schema.ReuseGroup(self:GetSchema(), key, child:GetSchema(), resolved)
+	child:Apply(config, effective)
 end
 
 function Component:SetEnabled(enabled)

@@ -129,7 +129,7 @@ end
 
 function Bar.BuildSchema(spec)
 	spec = spec or {}
-	local schema = Util.Copy(Bar.schema)
+	local schema = ns.Schema.Concat(Bar.schema)
 	if spec.colorInherit then
 		schema = ns.Schema.Override(schema, "color", { inherit = spec.colorInherit })
 	end
@@ -306,7 +306,7 @@ end
 
 function Bar:SetSparkActive(active)
 	self.sparkActive = active
-	self.spark:SetShown(self.resolved.spark and active ~= false)
+	if self.resolved then self.spark:SetShown(self.resolved.spark and active ~= false) end
 end
 
 -- Native-layout bars: the row size the owner laid out, in plain numbers.

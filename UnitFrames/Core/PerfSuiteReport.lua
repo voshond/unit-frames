@@ -22,6 +22,7 @@ function Perf:SuiteContext()
 	local wb, cg = ns.Workbench, ns.ClickGrid
 	local context = { client = { version = version, build = build, date = buildDate, interface = interface },
 		version = ns.version, commit = ns.commit, profile = ns.Config.db:GetCurrentProfile(),
+		buildIdentified = ns.commit ~= nil and ns.commit ~= "" and ns.commit ~= "unknown",
 		groupSize = GetNumGroupMembers(), raid = IsInRaid(), profiler = true,
 		workbenchShown = wb and wb.window and wb.window:IsShown() or false,
 		entry = wb and wb.entry and wb.entry.id, loadedAddons = {},
@@ -38,19 +39,34 @@ function Perf:SuiteContext()
 		context.config.clickgrid = ns.Util.Copy(cg.Config:Resolved())
 		context.config.member = ns.Util.Copy(cg.Config:GetStyle("member"))
 		context.config.target = ns.Util.Copy(cg.Config:GetStyle("target"))
+		context.clickgrid = { mode = context.config.clickgrid.panel.mode,
+			targetsShown = cg:TargetsShown(), preparedFrames = #cg.frames, activeFrames = 0, previews = 0 }
+		for _, frame in ipairs(cg.frames) do
+			if not cg:GetGridButton(frame).inactive then
+				context.clickgrid.activeFrames = context.clickgrid.activeFrames + 1
+			end
+		end
+		for _ in pairs(cg.previews) do context.clickgrid.previews = context.clickgrid.previews + 1 end
 	end
 	return context
 end
 
-function Perf:ReportSuite(report)
+function Perf:ReportSuite(report, title)
+	self:Divider(title or "baseline suite")
 	if not report then ns:Print("no saved baseline suite report"); return end
 	ns:Print("baseline suite", report.status, report.reason or "", "timestamp", report.timestamp)
 	local context = report.context
 	ns:Print("client", context.client.version, context.client.build, "addon", context.version,
 		"commit", context.commit or "unavailable", "profile", context.profile)
+	if context.buildIdentified == false then ns:Print("build revision unavailable; record the installed revision for comparisons") end
 	ns:Print("group", context.groupSize, "raid", context.raid, "Workbench", context.workbenchShown,
 		context.entry or "none")
 	ns:Print("loaded addons:", table.concat(context.loadedAddons, ", "))
+	if context.clickgrid then
+		local cg = context.clickgrid
+		ns:Print("ClickGrid", cg.mode, "targets", cg.targetsShown, "prepared frames", cg.preparedFrames,
+			"active frames", cg.activeFrames, "previews", cg.previews)
+	end
 	for _, operation in ipairs(report.operations) do
 		if operation.timeMS then
 			ns:Print(string.format("%s: %d runs; median %.3f ms; slowest %.3f ms; allocated median %.1f KB, max %.1f KB",
@@ -60,9 +76,12 @@ function Perf:ReportSuite(report)
 			for key in pairs(operation.counters) do keys[#keys + 1] = key end
 			table.sort(keys)
 			for _, key in ipairs(keys) do ns:Print(" ", operation.name, key, operation.counters[key], "total calls") end
+			self:ReportCacheReuse(operation.counters, operation.name .. " totals")
 		else ns:Print(operation.name, "no recorded runs") end
 	end
 	for _, name in ipairs(report.skipped) do ns:Print("skipped", name, "not loaded/prepared") end
+	if report.edits then ns:Print("edit probes:", #report.edits > 0 and table.concat(report.edits, ", ") or "none") end
+	if report.capture then ns:Print("combined capture", report.status, "; /reload saves the reports for direct file reading") end
 	ns:Print("active refresh costs; excludes deferred rendering and combat; memory deltas depend on GC/cache state")
 	ns:Print("structured report: UnitFramesDB.global.perfSuiteReport; /reload writes it to SavedVariables")
 end

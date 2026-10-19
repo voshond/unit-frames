@@ -1,81 +1,52 @@
 local _, ns = ...
 
--- A soft halo around a frame from Blizzard's own glow border artwork: the
--- additive eight-piece box Blizzard_HelpPlate tints and draws around
--- highlighted areas. The art has a black, not transparent, background, so it
--- is always drawn additively. Pieces anchor to the holder, so no dimensions are read;
--- owners pass known configured sizes to keep the corners from overlapping.
+-- A soft halo just outside a frame: one nine-sliced texture of our own
+-- artwork (scripts/generate-glow.lua), drawn additively, brightest at the
+-- frame's edge. Scaling the texture sets the drawn slice width, the glow's
+-- reach; its anchor offsets are in the scaled texture's units. No dimensions
+-- are read.
 local Glow = {}
 ns.Glow = Glow
 
-local CORNER = [[Interface\Common\GlowBorder-Corner]]
-local TOP = [[Interface\Common\GlowBorder-Top]]
-local LEFT = [[Interface\Common\GlowBorder-Left]]
-
--- { key, file, texture coordinates } as in Blizzard_HelpPlate.xml.
-local PIECES = {
-	{ "TopLeft", CORNER, 0, 1, 0, 1 },
-	{ "TopRight", CORNER, 1, 0, 0, 1 },
-	{ "BottomLeft", CORNER, 0, 1, 1, 0 },
-	{ "BottomRight", CORNER, 1, 0, 1, 0 },
-	{ "Top", TOP, 0, 1, 0, 1 },
-	{ "Bottom", TOP, 0, 1, 1, 0 },
-	{ "Left", LEFT, 0, 1, 0, 1 },
-	{ "Right", LEFT, 1, 0, 0, 1 },
-}
-
--- Edges stretch between the corners: { piece, first corner, its point, second corner, its point }.
-local EDGES = {
-	{ "Top", "TopLeft", "TOPRIGHT", "TopRight", "BOTTOMLEFT" },
-	{ "Bottom", "BottomLeft", "TOPRIGHT", "BottomRight", "BOTTOMLEFT" },
-	{ "Left", "TopLeft", "BOTTOMLEFT", "BottomLeft", "TOPRIGHT" },
-	{ "Right", "TopRight", "BOTTOMLEFT", "BottomRight", "TOPRIGHT" },
-}
+local TEXTURE = "Interface\\AddOns\\" .. ns.name .. "\\Media\\Glow"
+-- The artwork's slice margin in texels.
+local MARGIN = 31
 
 Glow.schema = {
-	{ key = "size", type = "range", label = "Glow size", min = 4, max = 32, step = 1, default = 16,
-		tooltip = "Width of the glow's corners and edges." },
-	{ key = "offset", type = "range", label = "Glow spread", min = 0, max = 32, step = 1, default = 8,
-		tooltip = "How far the glow reaches outside the frame. The rest of its size lies inside." },
+	{ key = "size", type = "range", label = "Glow size", min = 4, max = 32, step = 1, default = 12,
+		tooltip = "How far the glow reaches outside the frame. It never covers the frame itself." },
 	{ key = "opacity", type = "range", label = "Glow opacity", min = 0.1, max = 1, step = 0.05, default = 1 },
 }
 
--- A hidden holder; toggle it rather than its pieces.
+-- A hidden holder; toggle it rather than its texture.
 function Glow.Create(parent)
 	local holder = CreateFrame("Frame", nil, parent)
 	holder:SetAllPoints(parent)
-	holder.textures = {}
-	for _, piece in ipairs(PIECES) do
-		local texture = holder:CreateTexture(nil, "OVERLAY")
-		texture:SetTexture(piece[2])
-		texture:SetTexCoord(piece[3], piece[4], piece[5], piece[6])
-		texture:SetBlendMode("ADD")
-		holder[piece[1]] = texture
-		holder.textures[#holder.textures + 1] = texture
-	end
-	for _, edge in ipairs(EDGES) do
-		local texture = holder[edge[1]]
-		texture:SetPoint("TOPLEFT", holder[edge[2]], edge[3])
-		texture:SetPoint("BOTTOMRIGHT", holder[edge[4]], edge[5])
-	end
+	local halo = holder:CreateTexture(nil, "OVERLAY")
+	halo:SetTexture(TEXTURE)
+	halo:SetTextureSliceMargins(MARGIN, MARGIN, MARGIN, MARGIN)
+	halo:SetTextureSliceMode(Enum.UITextureSliceMode.Stretched)
+	halo:SetBlendMode("ADD")
+	holder.Halo, holder.textures = halo, { halo }
 	holder:Hide()
 	return holder
 end
 
--- width/height: the holder's known configured size, when the owner has one.
-function Glow.Apply(holder, cfg, width, height)
-	local offset = math.min(cfg.offset, cfg.size)
-	local size = cfg.size
-	if width and height then size = math.min(size, offset + math.floor(math.min(width, height) / 2)) end
-	for _, key in ipairs({ "TopLeft", "TopRight", "BottomLeft", "BottomRight" }) do
-		holder[key]:SetSize(size, size)
-		holder[key]:ClearAllPoints()
-	end
-	holder.TopLeft:SetPoint("TOPLEFT", holder, "TOPLEFT", -offset, offset)
-	holder.TopRight:SetPoint("TOPRIGHT", holder, "TOPRIGHT", offset, offset)
-	holder.BottomLeft:SetPoint("BOTTOMLEFT", holder, "BOTTOMLEFT", -offset, -offset)
-	holder.BottomRight:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", offset, -offset)
+local applied = setmetatable({}, { __mode = "k" })
+
+-- The slices' inner edge meets the holder's edge: in the scaled texture's
+-- units the anchor offset is the margin itself.
+function Glow.Apply(holder, cfg)
+	local previous = applied[holder]
+	if previous and previous.size == cfg.size and previous.opacity == cfg.opacity then return end
+	local halo = holder.Halo
+	halo:SetScale(cfg.size / MARGIN)
+	halo:ClearAllPoints()
+	halo:SetPoint("TOPLEFT", holder, "TOPLEFT", -MARGIN, MARGIN)
+	halo:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", MARGIN, -MARGIN)
 	holder:SetAlpha(cfg.opacity)
+	applied[holder] = { size = cfg.size, opacity = cfg.opacity }
+	ns.Perf:Count("glowLayoutWrite")
 end
 
 -- Blizzard's action button spell alert (ActionButtonSpellAlerts.xml): a burst

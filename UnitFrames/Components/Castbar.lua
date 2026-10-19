@@ -2,6 +2,8 @@ local _, ns = ...
 local Util = ns.Util
 local Bar, Text, Backdrop = ns.Components.Bar, ns.Components.Text, ns.Components.Backdrop
 local CastExtras = ns.CastExtras
+-- Every cast bar's bar and texts have the same structure: one schema each.
+local BAR_SCHEMA_OWNER, TEXT_SCHEMA_OWNER = {}, {}
 
 --[[
 Cast bar: one bordered frame holding the spell icon (left or right) and the
@@ -45,7 +47,7 @@ function Castbar.BuildSchema(spec)
 			{ "bar", "Bar only" }, { "split", "Icon / bar side by side" }, { "stack", "Icon / bar top and bottom" },
 		}, hidden = function() return true end, -- UnitFrame supplies hosting visibility.
 			tooltip = "Used when replacing the portrait. Split layouts give half the space to each part; Icon > Enabled can hide the icon." },
-		{ key = "border", type = "group", label = "Border", schema = ns.Util.Copy(Backdrop.schema),
+		{ key = "border", type = "group", label = "Border", schema = Backdrop.schema,
 			defaults = { enabled = true, padding = 3 } },
 		{ key = "icon", type = "group", label = "Icon", schema = {
 			{ key = "enabled", type = "toggle", label = "Enabled", default = true },
@@ -100,10 +102,11 @@ function Castbar:OnCreate(parent)
 	self.icon:SetPoint("CENTER", self.iconFrame, "CENTER")
 	self.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
-	self.bar = self:Own(Bar:New(self.frame, self:ChildConfig("bar"), { colorInherit = "colors.cast" }))
+	self.bar = self:Own(Bar:New(self.frame, self:ChildConfig("bar"),
+		{ colorInherit = "colors.cast", schemaOwner = BAR_SCHEMA_OWNER }))
 	local textParent = self.bar:GetTextParent()
-	self.nameText = self:Own(Text:New(textParent, self:ChildConfig("name")))
-	self.timeText = self:Own(Text:New(textParent, self:ChildConfig("time")))
+	self.nameText = self:Own(Text:New(textParent, self:ChildConfig("name"), { schemaOwner = TEXT_SCHEMA_OWNER }))
+	self.timeText = self:Own(Text:New(textParent, self:ChildConfig("time"), { schemaOwner = TEXT_SCHEMA_OWNER }))
 	if self.spec.playerCast then
 		self.latency = CastExtras.Latency:New(self.bar)
 		self.gcd = CastExtras.GCD:New(parent, self.bar:GetStatusBar(), self.spec.nativeLayout)
@@ -144,9 +147,9 @@ end
 function Castbar:OnApply(cfg)
 	self:ApplyBorder()
 	self:UpdateBacking()
-	self:ApplyChild(self.bar, "bar")
-	self:ApplyChild(self.nameText, "name")
-	self:ApplyChild(self.timeText, "time")
+	self:ApplyChild(self.bar, "bar", cfg)
+	self:ApplyChild(self.nameText, "name", cfg)
+	self:ApplyChild(self.timeText, "time", cfg)
 	if self.latency then
 		self.latency:Apply(cfg.latency, self.bar.resolved)
 		self.gcd:Apply(cfg.gcd, self.bar.resolved)

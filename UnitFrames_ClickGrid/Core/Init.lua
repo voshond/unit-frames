@@ -21,23 +21,26 @@ function CG:Print(...)
 end
 
 -- All protected changes are coalesced; secure roster updates remain native.
-function CG:RequestRefresh()
+function CG:RequestRefresh(kind, path)
 	if not self.started then return end
-	if InCombatLockdown() then
-		self.pending = true
-		return
-	end
-	self.pending, self.pendingBindings = nil, nil
+	self.pendingChanges = self.MergeChanges(self.pendingChanges or {}, self:RefreshChanges(kind, path))
+	self.pending = true
+	if InCombatLockdown() then return end
+	self:FlushRefresh()
+end
+
+function CG:FlushRefresh()
+	if not self.started or InCombatLockdown() then return end
+	local changes = self.pendingChanges or { full = true }
+	if self.pendingBindings then changes.bindings = true end
+	self.pending, self.pendingChanges, self.pendingBindings = nil, nil, nil
 	for preview in pairs(self.retiredPreviews or {}) do
 		preview:ReleaseComponents()
 		self.retiredPreviews[preview] = nil
 	end
-	self:Refresh()
+	self:Refresh(changes)
 end
 
--- Binding edits and spell/macro updates only touch click attributes: no
--- restyle, element update or header relayout. Combat defers to the full
--- refresh on PLAYER_REGEN_ENABLED only when a style change is also pending.
 function CG:RequestBindings(notify)
 	if not self.started then return end
 	if InCombatLockdown() then
@@ -65,7 +68,7 @@ events:SetScript("OnEvent", function(_, event, name)
 		CG:Start()
 	elseif event == "PLAYER_REGEN_ENABLED" then
 		if not CG.started then CG:Start()
-		elseif CG.pending then CG:RequestRefresh()
+		elseif CG.pending then CG:FlushRefresh()
 		elseif CG.pendingBindings then CG:RequestBindings(true) end
 	elseif event ~= "PLAYER_SPECIALIZATION_CHANGED" or name == "player" then
 		-- Spells, macros, talents and specialization select bindings, not styles.

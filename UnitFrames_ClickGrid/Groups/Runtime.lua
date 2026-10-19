@@ -98,149 +98,43 @@ local Refresh
 
 -- Members and targets share one style each, so a refresh resolves each
 -- style once (Schema.Shared) instead of per frame.
-function CG:Refresh()
-	UF.Schema.Shared(Refresh, self)
+function CG:Refresh(changes)
+	UF.Schema.Shared(Refresh, self, changes)
 end
 
-function Refresh(self)
+function Refresh(self, changes)
 	UF.Perf:Count("clickgridRefresh")
 	assert(not InCombatLockdown(), "Healing panel changes must wait until combat ends")
-	self:Measure()
-	local cfg = self.Config:Resolved()
-	self:UpdateBlizzardFrames()
-	self:EnsureHeaders(cfg.panel)
-	local layout = self.Layout.Compute(cfg.panel, self.metrics.member, self.metrics.target, cfg.titles, cfg.border)
-	self.layout = layout
-	local activeHeaders = {}
-	self.panel:SetScale(cfg.panel.scale)
-	for _, state in ipairs({ "party", "raid", "solo" }) do
-		self.panel:SetAttribute(state .. "-width", layout[state].width)
-		self.panel:SetAttribute(state .. "-height", layout[state].height)
-	end
-	-- Precompute each party size outside combat. The secure driver selects
-	-- bounds as members join/leave, while the header retains all five cells.
-	for count = 2, 5 do
-		self.panel:SetAttribute("party" .. count .. "-width", layout.partySizes[count].width)
-		self.panel:SetAttribute("party" .. count .. "-height", layout.partySizes[count].height)
-	end
-	local size = IsInRaid() and layout.raid or IsInGroup()
-		and layout.partySizes[math.max(2, math.min(5, GetNumGroupMembers()))] or layout.solo
-	self.panel:SetSize(size.width, size.height)
-	RegisterStateDriver(self.panel, "roster", "[group:raid] raid; [@party4,exists] party5; [@party3,exists] party4; [@party2,exists] party3; [group:party] party2; solo")
-	RegisterAttributeDriver(self.panel, "state-visibility", not cfg.panel.enabled and "hide"
-		or cfg.panel.showSolo and "show" or "[group] show; hide")
-	self.Layout.Backdrop(self.background, self.panel, cfg.titles, cfg.border)
-	for key, header in pairs(self.headers) do
-		local section = layout.sections[key]
-		local visible = section ~= nil
-		activeHeaders[header] = visible
-		-- Layouts absent from this selection cannot acquire combat members.
-		if key ~= "party" and not visible then header:SetAttribute("showRaid", false) end
-		local titles = headerTitles[header]
-		for _, label in ipairs(titles.columns) do label:Hide() end
-		if section then
-			if key == "raid" then
-				titles.label:Hide()
-				for column = 1, section.grid.columns do
-					local label = titles.columns[column]
-					if not label then
-						label = header:CreateFontString(nil, "OVERLAY")
-						titles.columns[column] = label
-					end
-					self.Layout.TitleOnHeader(label, header, "group" .. column,
-						{ grid = { width = layout.cellWidth } }, cfg.titles, layout.titlePadding,
-						(column - 1) * (layout.cellWidth + cfg.panel.spacingX))
-				end
-			else self.Layout.TitleOnHeader(titles.label, header, key, section, cfg.titles, layout.titlePadding) end
-			header:ClearAllPoints()
-			header:SetPoint("TOPLEFT", self.panel, "TOPLEFT", section.x, -section.y)
-			header:SetAttribute("_ignore", true)
-			for attribute, value in pairs(self.Layout.Attributes(section.grid, cfg.panel)) do header:SetAttribute(attribute, value) end
-			header:SetAttribute("_ignore", nil)
-		else titles.label:Hide() end
-		if key == "party" then
-			header:SetAttribute("showSolo", cfg.panel.showSolo)
-			header:SetVisibility("custom [group:raid] hide; " .. (cfg.panel.showSolo and "show" or "[group:party] show; hide"))
-		else header:SetVisibility(visible and "custom [group:raid] show; hide" or "custom hide") end
-	end
+	local full = not changes or changes.full or not self.layout
+	if full then changes = nil end
+	UF.Perf:Count(full and "clickgridFullRefresh" or "clickgridTargetedRefresh")
+	local layoutChanged = full or changes.layout
+	if full or changes.blizzard then self:UpdateBlizzardFrames() end
+	if layoutChanged then self:LayoutPanel() end
+	local bindings = full or changes.bindings
 	for _, frame in ipairs(self.frames) do
-		local button = self:GetGridButton(frame)
-		local kind = button.kind
 		local cell = frame:GetParent()
-		if not activeHeaders[cell:GetParent()] then
-			if not button.inactive then
-				frame:Disable()
-				RegisterAttributeDriver(frame, "state-visibility", "hide")
-				frame:PauseAllElements()
-				for _, key in ipairs({ "auras", "auraBar" }) do
-					local auras = frame.uf:GetPart(key)
-					if auras then auras:SetEnabled(false) end
-				end
-				if button.slots then button.slots:SetEnabled(false) end
-				if frame.uf:GetReadyCheck() then frame.uf:GetReadyCheck():Set(nil) end
-				for _, row in frame.uf:Rows() do
-					for _, text in pairs(row.texts) do
-						UF.TextTags.Unbind(text:GetFrame())
-						frame:Untag(text:GetFrame())
-					end
-				end
-				button.inactive = true
-			end
+		if not self.activeHeaders[cell:GetParent()] then
+			self:DeactivateFrame(frame)
 		else
-			if button.inactive then
-				button.inactive = nil
-				UnregisterAttributeDriver(frame, "state-visibility")
-				frame:SetAttribute("statehidden", nil)
-				frame:ResumeAllElements()
-				frame:Enable()
-			end
-			if kind == "target" then frame.uf:SetFillHeight(layout.cellHeight) end
-			frame.uf:Apply(self.Config:GetStyle(kind))
-			UF.Units:Bind(frame)
-			if button.status then button.status:Apply(self.Config:Get().indicators) end
-			if button.slots then button.slots:Apply(self:SlotConfig(frame.uf)) end
-			frame:ClearAllPoints()
-			if kind == "target" then
-				frame:SetPoint("TOPLEFT", cell, "TOPLEFT", self.metrics.member.width + cfg.panel.targetGap, 0)
-				if self.metrics.target.shown then
-					UnregisterAttributeDriver(frame, "state-visibility")
-					frame:SetAttribute("statehidden", nil)
-					frame:ResumeAllElements()
-					frame:Enable()
-				else
-					frame:Disable()
-					RegisterAttributeDriver(frame, "state-visibility", "hide")
-					frame:PauseAllElements()
-					-- Native aura containers own subscriptions independent of oUF.
-					for _, key in ipairs({ "auras", "auraBar" }) do
-						local auras = frame.uf:GetPart(key)
-						if auras then auras:SetEnabled(false) end
-					end
-				end
-			else frame:SetPoint("TOPLEFT", cell, "TOPLEFT", 0, 0) end
-			cell:SetSize(layout.cellWidth, layout.cellHeight)
-			if kind ~= "target" or self.metrics.target.shown then
-				UF.Units:UpdateFrame(frame, "UnitFramesClickGridRefresh")
-			end
+			local activated = self:RefreshFrame(frame, changes, self.layout)
+			bindings = bindings or activated
 		end
 	end
-	UF.Perf:Begin("bindings")
-	self:ApplyBindings(true)
-	UF.Perf:End("bindings")
-	-- _ignore itself does not trigger a native header refresh. Recalculate
-	-- after all cell sizes and layout attributes have been applied.
-	self.revision = (self.revision or 0) + 1
-	for key, header in pairs(self.headers) do
-		if key ~= "party" and activeHeaders[header] then header:SetAttribute("showRaid", true) end
-		header:SetAttribute("ufcg-refresh", self.revision)
+	if bindings then
+		UF.Perf:Begin("bindings")
+		self:ApplyBindings(true)
+		UF.Perf:End("bindings")
 	end
-	for preview in pairs(self.previews) do preview:Apply() end
+	if layoutChanged then self:CommitLayout() end
+	for preview in pairs(self.previews) do preview:Apply(changes) end
 end
 
 -- Compiles the current specialization's bindings and writes the changed
 -- attributes to every frame. `notify` announces the result to the binding
 -- grid when no config change does (spell, macro and spec updates).
 function CG:ApplyBindings(notify)
+	UF.Perf:Count("clickgridBindingsCompile")
 	local plan, errors = self.Bindings:Compile(self.Config:GetBindings())
 	self.bindingErrors = errors
 	if not self.Bindings:IsExternal() then

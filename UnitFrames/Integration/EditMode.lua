@@ -210,10 +210,9 @@ local PART_SETTINGS = {
 
 -- A quick setting built from the unit's schema descriptor at `path`. Its value
 -- lives in the unit config; setting it back to the default removes the change.
-local function UnitSetting(unit, path, name)
-	local schema = ns.Units:GetSchema(unit)
-	local opt = ns.Schema.Find(schema, path)
-	local setting = { name = name, default = ns.Util.GetPath(ns.Schema.Defaults(schema), path) }
+local function UnitSetting(unit, defaults, path, name)
+	local opt = ns.Schema.Find(ns.Units:GetSchema(unit), path)
+	local setting = { name = name, default = ns.Util.GetPath(defaults, path) }
 	if opt.type == "range" then
 		setting.kind, setting.minValue, setting.maxValue, setting.valueStep = LEM.SettingType.Slider, opt.min, opt.max, opt.step
 	elseif opt.type == "toggle" then
@@ -238,12 +237,13 @@ end
 
 local function UnitSettings(unit)
 	local def = ns.Units.definitions[unit]
-	local settings = { UnitSetting(unit, "width", "Width") }
+	local defaults = ns.Schema.Defaults(ns.Units:GetSchema(unit))
+	local settings = { UnitSetting(unit, defaults, "width", "Width") }
 	for _, row in ipairs(def.rows) do
-		settings[#settings + 1] = UnitSetting(unit, row.key .. ".enabled", "Show " .. row.label:lower())
+		settings[#settings + 1] = UnitSetting(unit, defaults, row.key .. ".enabled", "Show " .. row.label:lower())
 	end
 	for _, entry in ipairs(PART_SETTINGS) do
-		if def[entry[1]] then settings[#settings + 1] = UnitSetting(unit, entry[2], entry[3]) end
+		if def[entry[1]] then settings[#settings + 1] = UnitSetting(unit, defaults, entry[2], entry[3]) end
 	end
 	return settings
 end

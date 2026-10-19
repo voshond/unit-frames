@@ -24,4 +24,19 @@ describe("Immutable definition schemas", function()
 		assert.is_nil(UF.Schema.Find(custom:GetSchema(), "portrait"))
 		assert.is_not_nil(UF.Schema.Find(c:GetSchema(), "portrait"))
 	end)
+
+	it("builds schemas from shared module descriptors without changing them", function()
+		local UF = Helpers.LoadAddon(true)
+		local C = UF.Components
+		local modules = { C.Bar.schema, C.Backdrop.schema, C.Text.schema, C.AuraBar.schema }
+		local before = UF.Util.Copy(modules)
+		UF.Config:SetUnitValue("player", "castbar.bar.color", { 1, 0, 0, 1 })
+		local uf = UF.Units:CreateFrame("player", UIParent)
+		assert.equals(C.Backdrop.schema, UF.Schema.Find(uf:GetSchema(), "border").schema)
+		assert.equals(C.Backdrop.schema, UF.Schema.Find(uf:GetPart("castbar"):GetSchema(), "border").schema)
+		uf.resolved.border.color[1] = 0.25
+		uf:GetPart("castbar").bar.resolved.color[2] = 0.75
+		uf:GetRow("health").bar.resolved.color[3] = 0.5
+		assert.same(before, modules)
+	end)
 end)

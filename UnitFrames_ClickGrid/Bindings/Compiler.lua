@@ -159,8 +159,9 @@ function B:Compile(config)
 end
 
 -- What each frame was last given, kept off the secure frames. A plan sets
--- several hundred attributes; after the first apply only changed ones are
--- written, so one edit does not rewrite every binding on every frame.
+-- several hundred attributes, most of them removals; only changed ones are
+-- written, so one edit does not rewrite every binding on every frame. A
+-- removal the frame has never had is recorded without a write.
 local applied = setmetatable({}, { __mode = "k" })
 local NIL = {}
 
@@ -175,7 +176,10 @@ function B:Apply(frame, plan)
 	for _, attribute in ipairs(plan) do
 		local value = attribute.value
 		if value == nil then value = NIL end
-		if last[attribute.key] ~= value then
+		local previous = last[attribute.key]
+		if previous == nil and value == NIL and frame:GetAttribute(attribute.key) == nil then
+			last[attribute.key] = NIL
+		elseif previous ~= value then
 			frame:SetAttribute(attribute.key, attribute.value)
 			last[attribute.key] = value
 		end

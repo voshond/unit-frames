@@ -54,4 +54,5 @@ Read("UnitFrames_Media/Fonts/RobotoCondensed-OFL.txt")
 for _, weight in ipairs({ "Light", "Regular", "Medium", "Bold" }) do
 	Read("UnitFrames_Media/Fonts/RobotoCondensed-" .. weight .. ".ttf")
 end
-print("Release bundle references, versions, fonts and licenses verified.")
+Read("UnitFrames/Media/Glow.tga")
+print("Release bundle references, versions, fonts, media and licenses verified.")
