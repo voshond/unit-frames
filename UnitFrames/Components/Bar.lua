@@ -105,6 +105,8 @@ Bar.LAYOUT = LAYOUT
 local SPARK_TEXTURE = [[Interface\CastingBar\UI-CastingBar-Spark]]
 Bar.SPARK_TEXTURE = SPARK_TEXTURE
 local NATIVE_LAYOUT_TEMPLATE = "BackdropTemplate,DisableUntrustedLayoutScriptsTemplate"
+local POWER_MODEL_SCALE = 2.4
+local POWER_MODEL_OFFSET = 0.6
 
 -- Puts a spark texture at the end of a StatusBar fill texture.
 -- Fill geometry can be secret. Native anchors follow its cross-axis
@@ -177,15 +179,18 @@ function Bar:OnCreate(parent, spec)
 		self.powerViewport:SetAllPoints(self.bar)
 		self.powerViewport:SetClipsChildren(true)
 		self.powerViewport:SetFrameLevel(self.frame:GetFrameLevel() + 1)
+		self.powerBackdrop = self.powerViewport:CreateTexture(nil, "BACKGROUND")
+		self.powerBackdrop:SetAllPoints(self.powerViewport)
+		self.powerBackdrop:SetColorTexture(0, 0, 0, 1)
+		self.powerBackdrop:Hide()
 		self.powerBackground = CreateFrame("PlayerModel", nil, self.powerViewport)
-		self.powerBackground:SetPoint("CENTER", self.powerViewport, "CENTER")
-		self.powerBackground:SetFrameLevel(self.powerViewport:GetFrameLevel())
-		self.bar:SetFrameLevel(self.frame:GetFrameLevel() + 2)
+		self.powerBackground:SetFrameLevel(self.powerViewport:GetFrameLevel() + 1)
+		self.bar:SetFrameLevel(self.frame:GetFrameLevel() + 3)
 		self.powerBackground:Hide()
 		self.powerBackground:SetKeepModelOnHide(true)
 		self.powerBackground:SetScript("OnModelLoaded", function(model)
 			model:SetPortraitZoom(0)
-			model:SetCamDistanceScale(1.3)
+			model:SetCamDistanceScale(0.9)
 			model:SetPosition(0, 0, 0)
 			model:SetModelAlpha(0.22)
 		end)
@@ -338,6 +343,7 @@ function Bar:SetPowerBackground(token)
 	self.powerType = token
 	local mana = token == "MANA"
 	self.powerBackground:SetShown(mana)
+	self.powerBackdrop:SetShown(mana)
 	self.bg:SetShown(self.resolved.background.enabled)
 	local fill = self.bar:GetStatusBarTexture()
 	fill:SetBlendMode(mana and "ADD" or "BLEND")
@@ -380,8 +386,10 @@ function Bar:SizeParts(width, height)
 		return
 	end
 	if self.powerBackground and not Util.IsSecret(width) and not Util.IsSecret(height) then
-		local size = math.max(width, height)
+		local size = math.max(width, height) * POWER_MODEL_SCALE
 		self.powerBackground:SetSize(size, size)
+		self.powerBackground:ClearAllPoints()
+		self.powerBackground:SetPoint("CENTER", self.powerViewport, "CENTER", width * POWER_MODEL_OFFSET, 0)
 	end
 	local horizontal = self.resolved.orientation == "HORIZONTAL"
 	if Util.IsSecret(horizontal and width or height) then
