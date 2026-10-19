@@ -126,6 +126,37 @@ describe("Workbench search navigation", function()
 		assert.is_nil(wb:GetDB().searchQuery)
 	end)
 
+	it("groups results under highlighted location headers that stick while scrolling", function()
+		local _, wb = Helpers.LoadWorkbench()
+		wb:Open("unit.player")
+		wb.searchFilter:Select("frame")
+		wb.search.input:SetText("glow size")
+		wb.search.input:RunScript("OnTextChanged", true)
+		local function Plain(text) return (text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")) end
+		local layout = {}
+		for _, item in ipairs(wb.resultList.items) do
+			layout[#layout + 1] = (item.sticky and "# " or item.header and "= " or "") .. Plain(item.text)
+		end
+		assert.same({ "# Unit Frames > Player > Buffs & Debuffs > External Icons > Debuff Glow", "Glow size",
+			"# Unit Frames > Player > Buffs & Debuffs > Embedded Row > Debuff Glow", "Glow size" }, layout)
+		assert.equals("|cff4fa3ffGlow|r |cff4fa3ffsize|r", wb.resultList.items[2].text)
+		assert.is_not_nil(wb.resultList.items[1].text:find("|cff4fa3ffGlow|r", 1, true))
+		local sticky = wb.resultList.sticky
+		assert.is_true(sticky:IsShown())
+		assert.equals(wb.resultList.items[1].text, sticky.text:GetText())
+		wb.resultList.box:ScrollToOffset(28)
+		assert.equals(wb.resultList.items[1].text, sticky.text:GetText())
+		local _, _, _, _, push = sticky:GetPoint(1)
+		assert.equals(6, push)
+		wb.resultList.box:ScrollToOffset(48)
+		assert.equals(wb.resultList.items[3].text, sticky.text:GetText())
+		local model = wb:GetCatalogue().models["unit.player"]
+		assert.equals("Unit Frames > Player > Cast Bar > Bar > Spell Name", model.owners["style|castbar.name.size"].breadcrumb)
+		assert.equals("Unit Frames > Player > Health & Shields > DoT Damage",
+			model.owners["style|health.bar.pendingDamage.lethalIconSize"].breadcrumb)
+		assert.equals("Unit Frames > Player > Health & Shields > Left Text", model.owners["style|health.left.size"].breadcrumb)
+	end)
+
 	it("groups preview results without including headings in keyboard selection or result counts", function()
 		local _, wb = Helpers.LoadWorkbench()
 		wb:Open("unit.player")
@@ -134,8 +165,8 @@ describe("Workbench search navigation", function()
 		wb.search.input:RunScript("OnTextChanged", true)
 		local headings, records = {}, 0
 		for _, item in ipairs(wb.resultList.items) do
-			if item.header then headings[#headings + 1] = item.text
-			else records = records + 1; assert.equals(records, item.id) end
+			if item.header and not item.sticky then headings[#headings + 1] = item.text
+			elseif not item.header then records = records + 1; assert.equals(records, item.id) end
 		end
 		assert.same({ "Settings", "Preview Only — Simulation" }, headings)
 		assert.equals(records .. " results", wb.resultCount:GetText())

@@ -117,17 +117,21 @@ function Pages.Build(entry, targets)
 				if opt.key == "placement" then label = "Shield placement" end
 				if opt.key == "color" then label = "Shield colour" end
 			end
+			local groups = {}
+			for index = 2, #labels - 1 do
+				if labels[index]:lower() == sectionLabel:lower() then groups = {}
+				elseif labels[index]:lower() ~= pageLabel:lower() then groups[#groups + 1] = labels[index] end
+			end
 			local record = { entryId = entry.id, targetId = target.id, path = path, pageId = pageId, sectionId = sectionId,
 				label = label, scope = target.scope or entry.scope or entry.name, opt = opt,
-				breadcrumb = table.concat({ entry.category, entry.name, pageLabel, sectionLabel }, " > "),
 				ancestry = table.concat(labels, " ") }
 			record.storeId = target.storeId or entry.id
 			if entry.id == "theme" then
-				record.breadcrumb = "Global Settings > " .. wb.Presentation.NavLabel(pageLabel)
+				record.breadcrumb = "Global Settings > " .. wb.Presentation.NavLabel(table.concat({ pageLabel, unpack(groups) }, " > "))
 				record.aliases = "shared appearance theme defaults"
 			else
 				record.breadcrumb = wb.Presentation.CategoryLabel(entry.category) .. " > "
-					.. wb.Presentation.NavLabel(table.concat({ entry.name, pageLabel, sectionLabel }, " > "))
+					.. wb.Presentation.NavLabel(table.concat({ entry.name, pageLabel, sectionLabel, unpack(groups) }, " > "))
 			end
 			record.prerequisite = opt.prerequisite or wb.Presentation.Prerequisite(path, entry.id)
 			if path:match("^slots%.") then

@@ -20,6 +20,8 @@ describe("ClickGrid empty target state #targets", function()
 	it("follows the target bar's border and fits the text to the row height", function()
 		CG.Config:SetStyle("target", "shown", true)
 		local empty = CG:GetGridButton(CG.headers.party:GetAttribute("child1").Target).empty
+		assert.is_nil(empty.frame:GetBackdrop())
+		CG.Config:SetStyle("target", "border.enabled", true)
 		assert.is_not_nil(empty.frame:GetBackdrop())
 		CG.Config:SetStyle("target", "border.enabled", false)
 		assert.is_nil(empty.frame:GetBackdrop())

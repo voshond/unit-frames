@@ -3,19 +3,19 @@ local Skin = ns.Skin
 
 --[[
 Single-line text input with a label. Commits on Enter or when focus is lost.
-opts: label, tooltip, onChange(text)
+opts: label, tooltip, height (input), onChange(text)
 ]]
 local EditBox = ns.Widget:Extend("EditBox")
 
 function EditBox:OnCreate(parent, opts)
 	local frame = CreateFrame("Frame", nil, parent)
 	self.frame = frame
-	frame:SetHeight(38)
+	frame:SetHeight((opts.height or 20) + 18)
 
 	self:CreateLabel(frame, opts.label):SetPoint("TOPLEFT")
 
 	local input = CreateFrame("EditBox", nil, frame, "BackdropTemplate")
-	input:SetHeight(20)
+	input:SetHeight(opts.height or 20)
 	input:SetPoint("BOTTOMLEFT")
 	input:SetPoint("BOTTOMRIGHT")
 	input:SetAutoFocus(false)
