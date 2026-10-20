@@ -7,7 +7,7 @@ It provides party/raid healing groups with modifier click spells.
 ## Use
 
 Enable this addon alongside UnitFrames. Open `/ufcg` for **Panel layout, auras & states**,
-**Member frames**, **Member targets**, and **Click spells** under **Party & raid (ClickGrid)**.
+**Member frames**, **Member targets**, **Pets**, and **Click spells** under **Party & raid (ClickGrid)**.
 Member **Buffs & debuffs** and **Indicators & states** links open their canonical
 panel pages. Section scope labels distinguish member style from panel settings;
 member targets keep their own independent aura and indicator controls.
@@ -21,6 +21,25 @@ client after adding it. For local builds and incremental updates, see the
 
 ## Implemented
 
+- **Member role order** offers all six tank/DPS/healer orders, or the existing roster order.
+  Sorting follows the fill direction, within each subgroup or across a flat raid;
+  unassigned members come last and each role retains roster-index order.
+- **Pets** offers Off (default), Separate group, or Inside member. Pets have an
+  independent regular UnitFrame style. The separate section packs existing pets
+  once each in owner roster order. Empty section space is reclaimed outside combat;
+  combat additions retain secure capacity and bounds are corrected after combat.
+  Inside-member pets overlay either edge, fit within the owner, and reserve no
+  extra cell space. **Allow pet interaction** enables ClickGrid/Clique clicks and
+  mouseover casts on the visible pet frame, with a distinct configurable pet hover
+  colour and the pet's tooltip. Off keeps pet artwork mouse-transparent.
+- Shared **Arrange bars > Columns** places health/power bars side by side, using
+  **Column width** per bar and a shared **Column height**. Fill orientation and
+  reverse fill remain independent. Portraits add a column beside the full bar
+  block; their row-span/width-inclusion settings apply only to Rows. Auxiliary
+  castbars, combo points and aura rows stay above/below; aura collapse is off in
+  Columns. Text slots support 0°/-90°/+90° rotation. Member targets expose
+  **No target text** for label, visibility, font, colour, placement and rotation;
+  disable **Fit font to bar height** for an explicit font size.
 - Secure party header (including the player) and forty-member raid capacity.
   Party panel bounds follow the current member count, including roster changes
   during combat; unused party rows do not reserve background space.
@@ -176,6 +195,10 @@ Before relying on the panel for healing, verify on the actual Forever client:
    queued combat changes and repeated toggles.
 5. Workbench static/animated/live sources, entry switching and deferred cleanup;
    Edit Mode moving/snapping, panel dimensions and per-layout persistence.
+6. Role ordering and role changes; pet summon/dismiss/death/replacement in combat,
+   party growth with a pet section, owner reassignment and vehicles. Pet interaction
+   versus owner click-through, Clique and distinct hover feedback. Rotated text
+   direction/bounds and column layouts with shields, portraits, castbars and auras.
 
 Run `luajit tests/run.lua`, `luajit tests/run.lua shields`,
 `luajit tests/run.lua workbench`, and `luajit tests/run.lua clickgrid` from the
