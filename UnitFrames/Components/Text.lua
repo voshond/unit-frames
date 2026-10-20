@@ -294,6 +294,7 @@ function Text:OnApply(cfg)
 	end
 	self:ApplyColor()
 	fs:SetJustifyH(cfg.justifyH)
+	fs:SetJustifyV("MIDDLE")
 	fs:SetWordWrap(false)
 	if (self.appliedRotation or 0) ~= cfg.rotation then fs:SetRotation(math.rad(cfg.rotation)) end
 	self.appliedRotation = cfg.rotation
@@ -365,15 +366,18 @@ function Text:Layout()
 			local offset = cfg.vertical == "auto" and (self.autoOffset or 0) or 0
 			if vertical == "top" then offset = (height - textHeight) / 2
 			elseif vertical == "bottom" then offset = -(height - textHeight) / 2 end
-			local x = cfg.offsetX + (cfg.rotation == 90 and -offset or offset)
+			local direction = cfg.rotation == 90 and 1 or -1
+			local pivot = cfg.justifyH == "LEFT" and width / 2 or cfg.justifyH == "RIGHT" and -width / 2 or 0
+			local x = cfg.offsetX - direction * offset + pivot
+			local y = cfg.offsetY - direction * pivot
 			local layout = self.textLayout
 			if layout and layout.rotation == cfg.rotation and layout.width == width and layout.height == height
-				and layout.x == x and layout.y == cfg.offsetY and layout.textHeight == textHeight then return end
+				and layout.x == x and layout.y == y and layout.textHeight == textHeight and layout.justifyH == cfg.justifyH then return end
 			fs:ClearAllPoints()
-			fs:SetPoint("CENTER", host, "CENTER", x, cfg.offsetY)
+			fs:SetPoint("CENTER", host, "CENTER", x, y)
 			fs:SetSize(width, textHeight)
 			self.textLayout = { rotation = cfg.rotation, width = width, height = height,
-				x = x, y = cfg.offsetY, textHeight = textHeight }
+				x = x, y = y, textHeight = textHeight, justifyH = cfg.justifyH }
 			ns.Perf:Count("textLayoutWrite")
 			return
 		end

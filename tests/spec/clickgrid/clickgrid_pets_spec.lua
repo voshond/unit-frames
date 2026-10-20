@@ -258,4 +258,22 @@ describe("ClickGrid pets #workbench", function()
 		assert.is_true(wb.handle.cells[1].pet.uf:GetFrame():IsShown())
 		assert.is_nil(CG.PetUnit("vehicle"))
 	end)
+
+	it("keeps rotated left text anchored identically on runtime and sample pet bars", function()
+		CG.Config:SetStyle("pet", "display", "inline")
+		CG.Config:SetStyle("pet", "health.left", {
+			enabled = true, format = "name", justifyH = "LEFT", vertical = "middle", rotation = 90, size = 8,
+		})
+		local runtime = CG.headers.party:GetAttribute("child1").Pet.uf:GetRow("health"):GetText("left")
+		local sample = wb.handle.cells[1].pet.uf:GetRow("health"):GetText("left")
+		for _, rotation in ipairs({ 90, -90, 90 }) do
+			CG.Config:SetStyle("pet", "health.left.rotation", rotation)
+			runtime:SetText(Mock.Secret("Pet name"))
+			local liveAnchor, sampleAnchor = runtime.frame:GetAnchor("CENTER"), sample.frame:GetAnchor("CENTER")
+			assert.equals(liveAnchor[4], sampleAnchor[4])
+			assert.equals(liveAnchor[5], sampleAnchor[5])
+			assert.equals(runtime.hostHeight, sample.hostHeight)
+			assert.equals((runtime.hostHeight - runtime.resolved.inset * 2) / 2, liveAnchor[4])
+		end
+	end)
 end)

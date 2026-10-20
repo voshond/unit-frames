@@ -101,4 +101,41 @@ describe("Shared rotated text", function()
 		UF.Perf.counters = nil
 		assert.is_nil(counters.textLayoutWrite)
 	end)
+
+	it("keeps native justification pivots on the rotated bar axis in both directions", function()
+		local cases = {
+			{ rotation = 90, alignment = "LEFT", x = 46, y = -46 },
+			{ rotation = -90, alignment = "LEFT", x = 46, y = 46 },
+			{ rotation = 90, alignment = "RIGHT", x = -46, y = 46 },
+			{ rotation = -90, alignment = "RIGHT", x = -46, y = -46 },
+			{ rotation = 90, alignment = "CENTER", x = 0, y = 0 },
+			{ rotation = -90, alignment = "CENTER", x = 0, y = 0 },
+		}
+		local text = row:GetText("left")
+		for _, case in ipairs(cases) do
+			row:Apply({ left = { rotation = case.rotation, justifyH = case.alignment, vertical = "middle", size = 10 } })
+			assert.same({ "CENTER", row:GetBar():GetTextParent(), "CENTER", case.x, case.y }, text.frame:GetAnchor("CENTER"))
+		end
+	end)
+
+	it("invalidates placement when only justification changes and restores the centre", function()
+		local text = row:GetText("left")
+		for _, alignment in ipairs({ "LEFT", "RIGHT", "CENTER", "LEFT" }) do
+			row:Apply({ left = { rotation = -90, justifyH = alignment, vertical = "middle", size = 10 } })
+			local anchor = text.frame:GetAnchor("CENTER")
+			local expected = alignment == "LEFT" and 46 or alignment == "RIGHT" and -46 or 0
+			assert.equals(expected, anchor[4])
+			assert.equals(expected, anchor[5])
+		end
+	end)
+
+	it("keeps offsets in screen axes and relayouts secret text using configured dimensions", function()
+		local text = row:GetText("left")
+		row:Apply({ left = { rotation = 90, justifyH = "LEFT", vertical = "top", size = 10, offsetX = 2, offsetY = 3 } })
+		text:SetText(Mock.Secret("A secret name"))
+		Mock.SetEngineSize(row:GetBar():GetTextParent(), Mock.Secret(20), Mock.Secret(100))
+		assert.same({ "CENTER", row:GetBar():GetTextParent(), "CENTER", 44, -43 }, text.frame:GetAnchor("CENTER"))
+		row:SetKnownSize(20, 80)
+		assert.same({ "CENTER", row:GetBar():GetTextParent(), "CENTER", 34, -33 }, text.frame:GetAnchor("CENTER"))
+	end)
 end)
