@@ -39,10 +39,35 @@ Auras.SAMPLE_FILTER_FLAGS = {
 	BIG_DEFENSIVE = "isBigDefensive", EXTERNAL_DEFENSIVE = "isExternalDefensive", IMPORTANT = "isImportant",
 }
 
+local CLASSIFIED_FILTERS = { BIG_DEFENSIVE = true, EXTERNAL_DEFENSIVE = true, IMPORTANT = true }
+local ALL_FILTERS = { buffs = "HELPFUL", debuffs = "HARMFUL" }
+
+function Auras.FilterSupported(filter)
+	if ns.Caps.auraClassification then return true end
+	for component in filter:gmatch("[^|]+") do
+		if CLASSIFIED_FILTERS[component] then return false end
+	end
+	return true
+end
+
+function Auras.GroupFilter(kind, filter)
+	return Auras.FilterSupported(filter) and filter or ALL_FILTERS[kind]
+end
+
+local function SupportedFilters(filters)
+	return function()
+		local out = {}
+		for _, entry in ipairs(filters) do
+			if Auras.FilterSupported(entry[1]) then out[#out + 1] = entry end
+		end
+		return out
+	end
+end
+
 local function GroupSchema(label, filters, size, position)
 	return {
 		{ key = "enabled", type = "toggle", label = "Show " .. label, default = true },
-		{ key = "filter", type = "select", label = "Which", values = filters, default = filters[1][1] },
+		{ key = "filter", type = "select", label = "Which", values = SupportedFilters(filters), default = filters[1][1] },
 		{ key = "max", type = "range", label = "Maximum shown", min = 1, max = 40, step = 1, default = 16 },
 		{ key = "maxDuration", type = "range", label = "Maximum total duration", min = 0, max = 7200, step = 1, default = 0,
 			tooltip = "0 = unrestricted. A limit excludes permanent effects and compares total duration, not time left." },
@@ -234,7 +259,7 @@ function Auras:OnApply(cfg)
 	for _, kind in ipairs(self.containers.buffs and KINDS or {}) do
 		local container, group = self.containers[kind], cfg[kind]
 		container:SetAuraGroupEnabled(kind, group.enabled)
-		container:SetAuraGroupFilterString(kind, group.filter)
+		container:SetAuraGroupFilterString(kind, Auras.GroupFilter(kind, group.filter))
 		container:SetAuraGroupMaxFrameCount(kind, group.max)
 		Auras.ApplyGroupCandidates(container, kind, group)
 		local sort = group.sort == "default" and AuraContainerSortMethod.Default
@@ -431,7 +456,7 @@ function Auras:RenderSamples()
 		if cfg.enabled then
 			for _, aura in ipairs(self:GetSampleOrder(kind)) do
 				if #elements >= self:GetSampleLimit(kind) then break end
-				if Auras.MatchesSampleFilter(aura, cfg.filter, cfg.maxDuration) then
+				if Auras.MatchesSampleFilter(aura, Auras.GroupFilter(kind, cfg.filter), cfg.maxDuration) then
 					local index = #elements + 1
 					local button = container.ufButtons[index]
 					if not button then

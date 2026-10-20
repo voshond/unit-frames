@@ -3463,10 +3463,10 @@ option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 m
 option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
 option categoryAuras.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
 option categoryAuras.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
-option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true
-option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true
-option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true
-option categoryAuras.important type="toggle" label="Important buffs" default=false
+option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true hidden
+option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true hidden
+option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true hidden
+option categoryAuras.important type="toggle" label="Important buffs" default=false tooltip=#86e161cd hidden
 option categoryAuras.categoryBorder type="toggle" label="Colour border by category" default=true tooltip=#679c1cc6
 option categoryAuras.crowdControlColor type="color" label="Crowd control colour" default={1,0.25,0.25,1} hidden
 option categoryAuras.bigDefensiveColor type="color" label="Big defensives colour" default={1,0.82,0,1} hidden
@@ -6443,10 +6443,10 @@ option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 m
 option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
 option categoryAuras.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
 option categoryAuras.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
-option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true
-option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true
-option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true
-option categoryAuras.important type="toggle" label="Important buffs" default=false
+option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true hidden
+option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true hidden
+option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true hidden
+option categoryAuras.important type="toggle" label="Important buffs" default=false tooltip=#86e161cd hidden
 option categoryAuras.categoryBorder type="toggle" label="Colour border by category" default=true tooltip=#679c1cc6
 option categoryAuras.crowdControlColor type="color" label="Crowd control colour" default={1,0.25,0.25,1} hidden
 option categoryAuras.bigDefensiveColor type="color" label="Big defensives colour" default={1,0.82,0,1} hidden
@@ -8964,10 +8964,10 @@ option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 m
 option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
 option categoryAuras.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
 option categoryAuras.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
-option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true
-option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true
-option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true
-option categoryAuras.important type="toggle" label="Important buffs" default=false
+option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true hidden
+option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true hidden
+option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true hidden
+option categoryAuras.important type="toggle" label="Important buffs" default=false tooltip=#86e161cd hidden
 option categoryAuras.categoryBorder type="toggle" label="Colour border by category" default=true tooltip=#679c1cc6
 option categoryAuras.crowdControlColor type="color" label="Crowd control colour" default={1,0.25,0.25,1} hidden
 option categoryAuras.bigDefensiveColor type="color" label="Big defensives colour" default={1,0.82,0,1} hidden
@@ -11509,10 +11509,10 @@ option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 m
 option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
 option categoryAuras.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
 option categoryAuras.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
-option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true
-option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true
-option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true
-option categoryAuras.important type="toggle" label="Important buffs" default=false
+option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true hidden
+option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true hidden
+option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true hidden
+option categoryAuras.important type="toggle" label="Important buffs" default=false tooltip=#86e161cd hidden
 option categoryAuras.categoryBorder type="toggle" label="Colour border by category" default=true tooltip=#679c1cc6
 option categoryAuras.crowdControlColor type="color" label="Crowd control colour" default={1,0.25,0.25,1} hidden
 option categoryAuras.bigDefensiveColor type="color" label="Big defensives colour" default={1,0.82,0,1} hidden
@@ -14004,10 +14004,10 @@ option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 m
 option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
 option categoryAuras.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
 option categoryAuras.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
-option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true
-option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true
-option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true
-option categoryAuras.important type="toggle" label="Important buffs" default=false
+option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true hidden
+option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true hidden
+option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true hidden
+option categoryAuras.important type="toggle" label="Important buffs" default=false tooltip=#86e161cd hidden
 option categoryAuras.categoryBorder type="toggle" label="Colour border by category" default=true tooltip=#679c1cc6
 option categoryAuras.crowdControlColor type="color" label="Crowd control colour" default={1,0.25,0.25,1} hidden
 option categoryAuras.bigDefensiveColor type="color" label="Big defensives colour" default={1,0.82,0,1} hidden
@@ -16489,10 +16489,10 @@ option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 m
 option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
 option categoryAuras.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
 option categoryAuras.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
-option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true
-option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true
-option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true
-option categoryAuras.important type="toggle" label="Important buffs" default=false
+option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true hidden
+option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true hidden
+option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true hidden
+option categoryAuras.important type="toggle" label="Important buffs" default=false tooltip=#86e161cd hidden
 option categoryAuras.categoryBorder type="toggle" label="Colour border by category" default=true tooltip=#679c1cc6
 option categoryAuras.crowdControlColor type="color" label="Crowd control colour" default={1,0.25,0.25,1} hidden
 option categoryAuras.bigDefensiveColor type="color" label="Big defensives colour" default={1,0.82,0,1} hidden
@@ -21082,10 +21082,10 @@ option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 m
 option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
 option categoryAuras.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
 option categoryAuras.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
-option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true
-option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true
-option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true
-option categoryAuras.important type="toggle" label="Important buffs" default=false
+option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true hidden
+option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true hidden
+option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true hidden
+option categoryAuras.important type="toggle" label="Important buffs" default=false tooltip=#86e161cd hidden
 option categoryAuras.categoryBorder type="toggle" label="Colour border by category" default=true tooltip=#679c1cc6
 option categoryAuras.crowdControlColor type="color" label="Crowd control colour" default={1,0.25,0.25,1} hidden
 option categoryAuras.bigDefensiveColor type="color" label="Big defensives colour" default={1,0.82,0,1} hidden
@@ -23502,10 +23502,10 @@ option categoryAuras.gap type="range" label="Gap to next icon" default=2 min=0 m
 option categoryAuras.size type="range" label="Size" default=22 min=8 max=64 step=1 tooltip=#d4c36bb1 hidden
 option categoryAuras.offsetX type="range" label="Horizontal offset" default=0 min=-100 max=100 step=1 tooltip=#da0475ba hidden
 option categoryAuras.offsetY type="range" label="Vertical offset" default=0 min=-100 max=100 step=1 tooltip=#9988884e hidden
-option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true
-option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true
-option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true
-option categoryAuras.important type="toggle" label="Important buffs" default=false
+option categoryAuras.crowdControl type="toggle" label="Crowd control" default=true hidden
+option categoryAuras.bigDefensive type="toggle" label="Big defensives" default=true hidden
+option categoryAuras.externalDefensive type="toggle" label="External defensives" default=true hidden
+option categoryAuras.important type="toggle" label="Important buffs" default=false tooltip=#86e161cd hidden
 option categoryAuras.categoryBorder type="toggle" label="Colour border by category" default=true tooltip=#679c1cc6
 option categoryAuras.crowdControlColor type="color" label="Crowd control colour" default={1,0.25,0.25,1} hidden
 option categoryAuras.bigDefensiveColor type="color" label="Big defensives colour" default={1,0.82,0,1} hidden

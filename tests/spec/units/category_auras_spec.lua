@@ -239,3 +239,67 @@ describe("Category aura Workbench previews", function()
 			"the Style tab edits the live frame too")
 	end)
 end)
+
+describe("Category auras without buff classification #classification", function()
+	local UNSUPPORTED = { "bigDefensive", "externalDefensive", "important" }
+
+	local function WithoutClassification(load)
+		local install = Mock.Install
+		Mock.Install = function()
+			install()
+			Mock.bigDefensives = {}
+		end
+		local ok, ns, wb = pcall(load)
+		Mock.Install = install
+		assert(ok, ns)
+		return ns, wb
+	end
+
+	it("keeps unclassified slots off and their settings hidden while keeping the saved choices", function()
+		local ns = WithoutClassification(function() return Helpers.LoadAddon(true, true) end)
+		Mock.InstallUI()
+		assert.is_false(ns.Caps.auraClassification)
+		local uf = ns.Units.frames.target.uf
+		local icons = uf:GetPart("categoryAuras")
+		local function Option(path) return ns.Schema.Find(uf:GetSchema(), "categoryAuras." .. path) end
+		ns.Config:SetUnitValue("target", "categoryAuras.important", true)
+		assert.is_true(icons.container.__state.slots.crowdControl.enabled)
+		assert.is_false(Option("crowdControl").hidden(icons.resolved))
+		assert.is_false(Option("crowdControlColor").hidden(icons.resolved))
+		for _, key in ipairs(UNSUPPORTED) do
+			assert.is_false(icons.container.__state.slots[key].enabled, key)
+			assert.is_true(icons.resolved[key], key .. " stays saved")
+			assert.is_true(Option(key).hidden(icons.resolved), key)
+			assert.is_true(Option(key .. "Color").hidden(icons.resolved), key)
+		end
+		local preview = ns.Units:CreateFrame("target", CreateFrame("Frame"))
+		local part = preview:GetPart("categoryAuras")
+		preview:Apply({ categoryAuras = { important = true } })
+		local values = ns.Units:GetSample("target")
+		values.categoryAuras = ns.Util.Copy(ns.Units.CATEGORY_SAMPLES)
+		ns.Units:ShowSample(preview, values)
+		assert.is_true(part.samples.crowdControl:IsShown())
+		for _, key in ipairs(UNSUPPORTED) do assert.is_false(part.samples[key]:IsShown(), key) end
+		preview:Release()
+	end)
+
+	it("offers and cycles only supported categories in Workbench previews", function()
+		local ns, wb = WithoutClassification(Helpers.LoadWorkbench)
+		wb:Toggle()
+		wb:Select("unit.target")
+		local choices = {}
+		for _, entry in ipairs(ns.Schema.GetValues(ns.Schema.Find(wb.dataTarget.schema, "categoryAuras"))) do
+			choices[#choices + 1] = entry[1]
+		end
+		assert.same({ "off", "crowdControl", "all", "cycle" }, choices)
+		local part = wb.handle.parts.uf:GetPart("categoryAuras")
+		wb.dataTarget.set("source", "animated")
+		wb.dataTarget.set("categoryAuras", "cycle")
+		local seen = {}
+		for _ = 1, 4 do
+			for key, button in pairs(part.samples) do if button:IsShown() then seen[key] = true end end
+			wb:OnUpdate(2)
+		end
+		assert.same({ crowdControl = true }, seen)
+	end)
+end)

@@ -169,7 +169,7 @@ function AuraBar:OnApply(cfg)
 	if cfg.enabled then self:CreateContainers() end
 	if self.presence then
 		for _, kind in ipairs(KINDS) do
-			self.presence:SetAuraGroupFilterString(kind, cfg[kind].filter)
+			self.presence:SetAuraGroupFilterString(kind, Auras.GroupFilter(kind, cfg[kind].filter))
 			Auras.ApplyGroupCandidates(self.presence, kind, cfg[kind])
 		end
 	end

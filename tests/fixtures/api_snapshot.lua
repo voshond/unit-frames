@@ -64,6 +64,7 @@ return {
 		["C_Timer.NewTimer"] = { args = { "seconds:number", "callback:TickerCallback" }, returns = { "cbObject:TickerCallback" }, secretArguments = "AllowedWhenUntainted", system = "UITimer" },
 		["C_UIFileAsset.IsKnownFile"] = { args = { "asset:FileAsset" }, returns = { "isValid:bool" }, secretArguments = "AllowedWhenUntainted", system = "UIFileAssetAPI" },
 		["C_UnitAuras.AddPrivateAuraAnchor"] = { args = { "args:AddPrivateAuraAnchorArgs" }, returns = { "anchorID:number?" }, secretArguments = "AllowedWhenUntainted", system = "UnitAuras" },
+		["C_UnitAuras.AuraIsBigDefensive"] = { args = { "spellID:SpellIdentifier" }, returns = { "isBigDefensive:bool" }, secretArguments = "AllowedWhenTainted", system = "UnitAuras" },
 		["C_UnitAuras.GetPlayerAuraBySpellID"] = { args = { "spellID:SpellIdentifier" }, returns = { "aura:AuraData?" }, secretArguments = "AllowedWhenTainted", secretWhen = { "UnitAuraRestricted" }, system = "UnitAuras" },
 		["C_UnitAuras.RemovePrivateAuraAnchor"] = { args = { "anchorID:number" }, secretArguments = "AllowedWhenUntainted", system = "UnitAuras" },
 		ClearCursor = { system = "GameCursor" },
