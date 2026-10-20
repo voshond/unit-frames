@@ -17,15 +17,30 @@ CategoryAuras.CATEGORIES = {
 	{ key = "crowdControl", label = "Crowd control", filter = "HARMFUL|CROWD_CONTROL", color = { 1, 0.25, 0.25, 1 } },
 	{ key = "bigDefensive", label = "Big defensives", filter = "HELPFUL|BIG_DEFENSIVE", color = { 1, 0.82, 0, 1 } },
 	{ key = "externalDefensive", label = "External defensives", filter = "HELPFUL|EXTERNAL_DEFENSIVE", color = { 0.3, 0.75, 1, 1 } },
-	{ key = "important", label = "Important buffs", filter = "HELPFUL|IMPORTANT", color = { 0.75, 0.45, 1, 1 }, enabled = false },
+	{ key = "important", label = "Important buffs", filter = "HELPFUL|IMPORTANT", color = { 0.75, 0.45, 1, 1 }, enabled = false,
+		tooltip = "Buffs the game flags as important, such as those shown on enemy nameplates." },
 }
 
 -- Frame levels per slot: an aura button and its artwork frames fit in one band.
 local LEVEL_BAND = 6
 CategoryAuras.LEVELS = #CategoryAuras.CATEGORIES * LEVEL_BAND + 1
 
-local PRIORITY = {}
-for index, category in ipairs(CategoryAuras.CATEGORIES) do PRIORITY[category.key] = index end
+local PRIORITY, BY_KEY = {}, {}
+for index, category in ipairs(CategoryAuras.CATEGORIES) do
+	PRIORITY[category.key], BY_KEY[category.key] = index, category
+end
+
+function CategoryAuras.IsSupported(key)
+	return ns.Components.Auras.FilterSupported(BY_KEY[key].filter)
+end
+
+function CategoryAuras.SupportedCategories()
+	local out = {}
+	for _, category in ipairs(CategoryAuras.CATEGORIES) do
+		if CategoryAuras.IsSupported(category.key) then out[#out + 1] = category end
+	end
+	return out
+end
 
 local ANCHORS = { { "PORTRAIT", "Cover the portrait" } }
 for _, anchor in ipairs(ns.DecorationStack.ANCHORS) do ANCHORS[#ANCHORS + 1] = ns.Util.Copy(anchor) end
@@ -35,13 +50,16 @@ local function Covering(cfg) return cfg.anchor == "PORTRAIT" end
 local categories = {}
 for _, category in ipairs(CategoryAuras.CATEGORIES) do
 	categories[#categories + 1] = { key = category.key, type = "toggle", label = category.label,
-		default = category.enabled ~= false }
+		default = category.enabled ~= false, tooltip = category.tooltip,
+		hidden = function() return not CategoryAuras.IsSupported(category.key) end }
 end
 categories[#categories + 1] = { key = "categoryBorder", type = "toggle", label = "Colour border by category", default = true,
 	tooltip = "Tint the icon frame with the category's colour. Disable to use Icon frame > Border colour." }
 for _, category in ipairs(CategoryAuras.CATEGORIES) do
 	categories[#categories + 1] = { key = category.key .. "Color", type = "color", label = category.label .. " colour",
-		default = category.color, hidden = function(cfg) return not cfg.categoryBorder or not cfg[category.key] end }
+		default = category.color, hidden = function(cfg)
+			return not cfg.categoryBorder or not cfg[category.key] or not CategoryAuras.IsSupported(category.key)
+		end }
 end
 
 local art = ns.Schema.Without(ns.Util.Copy(AuraIcon.schema), { dispelBorder = true, dispelColors = true, dispelGlow = true })
@@ -109,7 +127,7 @@ function CategoryAuras:ApplySlots()
 	ns.Perf:Begin("category slots")
 	self.appliedSlots = self.appliedSlots or {}
 	for _, category in ipairs(CategoryAuras.CATEGORIES) do
-		local enabled = self.resolved[category.key]
+		local enabled = self.resolved[category.key] and CategoryAuras.IsSupported(category.key)
 		if self.appliedSlots[category.key] ~= enabled then
 			self.container:SetAuraSlotEnabled(category.key, enabled)
 			self.appliedSlots[category.key] = enabled
@@ -255,7 +273,7 @@ function CategoryAuras:ShowSample(values)
 	ns.AfterCombat:Cancel(self, "restyle")
 	local active = values.categoryAuras or {}
 	for key, button in pairs(self.samples) do
-		local aura = self.resolved[key] and active[key] or nil
+		local aura = self.resolved[key] and CategoryAuras.IsSupported(key) and active[key] or nil
 		if aura then AuraIcon.DrawSample(button, aura) end
 		button:SetShown(aura ~= nil)
 	end

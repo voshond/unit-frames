@@ -58,6 +58,21 @@ local function PendingDamage(total, time)
 end
 
 -- Sample values from the Data tab percentages.
+local CATEGORY_SAMPLE_LABELS = {
+	crowdControl = "Crowd control", bigDefensive = "Big defensive",
+	externalDefensive = "External defensive", important = "Important buff",
+}
+
+local function CategorySampleChoices()
+	local choices = { { "off", "None" } }
+	for _, category in ipairs(UF.Components.CategoryAuras.SupportedCategories()) do
+		choices[#choices + 1] = { category.key, CATEGORY_SAMPLE_LABELS[category.key] }
+	end
+	choices[#choices + 1] = { "all", "All (highest on top)" }
+	choices[#choices + 1] = { "cycle", "Cycle" }
+	return choices
+end
+
 local function Values(unit, d, healthPct, time)
 	local v = UF.Units:GetSample(unit)
 	v.class = d.class
@@ -96,7 +111,7 @@ local function Values(unit, d, healthPct, time)
 	-- Animated: one global cooldown every 1.5 seconds.
 	if time then v.gcdProgress = time % 1.5 / 1.5 end
 	-- Animated cycling: each category for two seconds, then none.
-	local categories = UF.Components.CategoryAuras.CATEGORIES
+	local categories = UF.Components.CategoryAuras.SupportedCategories()
 	local cycled = time and categories[math.floor(time / 2) % (#categories + 1) + 1]
 	v.categoryAuras = {}
 	for key, aura in pairs(UF.Units.CATEGORY_SAMPLES) do
@@ -160,11 +175,8 @@ local function RegisterUnit(unit)
 			tooltip = "The Buffs style's filter and Maximum shown still apply." },
 		{ key = "debuffsCount", type = "range", label = "Sample debuffs", min = 0, max = 40, step = 1, default = 5,
 			tooltip = "The Debuffs style's filter and Maximum shown still apply." },
-		{ key = "categoryAuras", type = "select", label = "Crowd control & defensives", default = "off", values = {
-			{ "off", "None" }, { "crowdControl", "Crowd control" }, { "bigDefensive", "Big defensive" },
-			{ "externalDefensive", "External defensive" }, { "important", "Important buff" }, { "all", "All (highest on top)" },
-			{ "cycle", "Cycle" },
-		}, tooltip = "Sample auras for the Crowd control & defensives icons. All stacks every sample; the highest enabled category covers the others. Cycle shows each category in turn in Animated previews, then none; Static shows them all." },
+		{ key = "categoryAuras", type = "select", label = "Crowd control & defensives", default = "off", values = CategorySampleChoices,
+			tooltip = "Sample auras for the Crowd control & defensives icons. All stacks every sample; the highest enabled category covers the others. Cycle shows each category in turn in Animated previews, then none; Static shows them all." },
 	}
 	if unit == "player" then
 		schema[#schema + 1] = { key = "resting", type = "toggle", label = "Resting", default = false,

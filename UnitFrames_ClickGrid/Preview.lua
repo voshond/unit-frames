@@ -202,7 +202,7 @@ function Preview:Values(index, value)
 	end
 	-- Mixed category samples: one category or none per member; Animated
 	-- moves them along every two seconds.
-	local categories = UF.Components.CategoryAuras.CATEGORIES
+	local categories = UF.Components.CategoryAuras.SupportedCategories()
 	local step = index + (self.data.source == "animated" and math.floor(self.time / 2) or 0)
 	local category = self.data.categoryAuras ~= false and categories[step % (#categories + 2) + 1]
 	value.categoryAuras = {}

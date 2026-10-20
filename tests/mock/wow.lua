@@ -1087,6 +1087,9 @@ function Mock.Install()
 	Mock.latency = { 40, 80 }
 	_G.GetNetStats = function() return 0, 0, Mock.latency[1], Mock.latency[2] end
 	_G.C_SpellBook = { IsSpellKnown = function(id) return not Mock.unknownSpells[id] end }
+	-- Mock.bigDefensives[spellID]: the client's buff classification; Forever ships none.
+	Mock.bigDefensives = { [642] = true }
+	_G.C_UnitAuras = { AuraIsBigDefensive = function(id) return Mock.bigDefensives[id] == true end }
 	-- Mock.cursorInfo holds GetCursorInfo's returns, e.g. { "spell", slot, bank, spellID }.
 	Mock.cursorInfo, Mock.spellBookOpened = nil, 0
 	_G.GetCursorInfo = function() if Mock.cursorInfo then return unpack(Mock.cursorInfo) end end
