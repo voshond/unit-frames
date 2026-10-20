@@ -97,6 +97,7 @@ function Preview:ChangeSource(source)
 end
 
 function Preview:StyleCell(cell, changes)
+	cell.memberWidth = nil
 	local force = not cell.styled
 	CG:ApplyUnitStyle(cell.member, "member", changes, self.layout, force)
 	local targetStyled = CG:ApplyUnitStyle(cell.target, "target", changes, self.layout, force)

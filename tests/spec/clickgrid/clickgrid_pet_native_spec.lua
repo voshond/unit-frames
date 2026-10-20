@@ -62,5 +62,23 @@ describe("ClickGrid native pet assignment", function()
 		end
 		assert.equals(count, #CG.frames)
 		assert.equals(UF.oUF, CG.UF.oUF)
+		local driverSource = Read("examples/wow-ui-source-forever/Interface/AddOns/Blizzard_RestrictedAddOnEnvironment/SecureStateDriver.lua")
+		local driverPrefix = assert(driverSource:match("^(.-)local function resolveDriver"))
+		local driver = assert(loadstring(driverPrefix .. "\nreturn SecureStateDriverManager_UpdateUnitWatch, unitExistsCache"))
+		local present = false
+		environment.UnitExists = function(unit)
+			assert.equals("playerpet", unit)
+			return present
+		end
+		environment.UnitIsVisible = function() return false end
+		setfenv(driver, environment)
+		local watch, cache = driver()
+		for _, exists in ipairs({ false, true, false }) do
+			present = exists
+			wipe(cache)
+			Mock.RunUntainted(watch, pet, false)
+			assert.equals(exists, pet:IsShown())
+			assert.equals(CG.metrics.member.width + (exists and 0 or CG.metrics.pet.width + CG.metrics.pet.gap), cell.Member:GetWidth())
+		end
 	end)
 end)

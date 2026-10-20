@@ -1,6 +1,19 @@
 local _, CG = ...
 local UF, oUF = CG.UF, CG.UF.oUF
 
+local layoutSnippet = [[
+	local present = ...
+	local member = self:GetFrameRef("inline-member")
+	local extra = self:GetAttribute("inline-extra") or 0
+	local x = present and self:GetAttribute("inline-member-x") or 0
+	local width = self:GetAttribute("inline-member-width")
+	if present then extra = 0 end
+	member:ClearAllPoints()
+	member:SetPoint("TOPLEFT", self, "TOPLEFT", x, 0)
+	member:SetWidth(width + extra)
+	member:SetAttribute("ufcg-width-extra", extra)
+]]
+
 CG.PetSchema = {
 	{ key = "display", type = "select", label = "Pet display", default = "off",
 		values = { { "off", "Off" }, { "group", "Separate group" }, { "inline", "Inside member" } } },
@@ -59,6 +72,8 @@ function CG:EnsureInlinePets(panel)
 					frame:SetAttribute("unit", nil)
 					frame.isChild = true
 					cell.Pet = frame
+					SecureHandlerSetFrameRef(cell, "inline-pet", frame)
+					self:PrepareInlinePet(cell)
 				end
 				index = index + 1
 				cell = header:GetAttribute("child" .. index)
@@ -95,6 +110,9 @@ function CG:RefreshPet(frame, changes, layout)
 	if not active or not self.activeHeaders[cell:GetParent()] then
 		self:DeactivateFrame(frame)
 		button.hover:Hide()
+		if not separate and self.activeHeaders[cell:GetParent()] and (not changes or changes.full or changes.layout) then
+			self:LayoutInlinePet(cell, layout)
+		end
 		return false
 	end
 	local activated = button.inactive or not button.refreshed
@@ -129,6 +147,43 @@ function CG:RefreshPet(frame, changes, layout)
 		button.hover:Hide()
 	end
 	if styled or activated then UF.Units:UpdateFrame(frame, "UnitFramesClickGridRefresh") end
+	if not separate and (styled or layoutChanged) then self:LayoutInlinePet(cell, layout) end
 	button.refreshed = true
 	return activated
+end
+
+function CG:AdjustMemberWidth(uf)
+	for _, item in ipairs(uf.layout.rows) do
+		local row = uf:GetRow(item.key)
+		if row then
+			local bar = row:GetBar()
+			bar:SetWidthAdjustment(not item.rightAligned and uf:GetFrame() or nil, "ufcg-width-extra")
+			row:SetKnownSize(bar.knownWidth, bar.knownHeight)
+		end
+	end
+end
+
+function CG:PrepareInlinePet(cell)
+	SecureHandlerSetFrameRef(cell, "inline-member", cell.Member)
+	cell:SetAttribute("inline-extra", 0)
+	cell:SetAttribute("inline-member-x", 0)
+	cell:SetAttribute("inline-member-width", self.metrics.member.width)
+	cell:SetAttribute("inline-layout", layoutSnippet)
+	SecureHandlerWrapScript(cell.Pet, "OnShow", cell, [[control:RunAttribute("inline-layout", true)]])
+	SecureHandlerWrapScript(cell.Pet, "OnHide", cell, [[control:RunAttribute("inline-layout", false)]])
+	cell.Member:HookScript("OnAttributeChanged", function(_, name)
+		if name ~= "ufcg-width-extra" then return end
+		self:AdjustMemberWidth(cell.Member.uf)
+	end)
+	self:AdjustMemberWidth(cell.Member.uf)
+end
+
+function CG:LayoutInlinePet(cell, layout)
+	local inline = self.metrics.pet.mode == "inline"
+	local extra = inline and self.metrics.pet.width + self.metrics.pet.gap or 0
+	cell:SetAttribute("inline-extra", extra)
+	cell:SetAttribute("inline-member-x", layout.memberX)
+	cell:SetAttribute("inline-member-width", self.metrics.member.width)
+	SecureHandlerExecute(cell, [[self:RunAttribute("inline-layout", self:GetFrameRef("inline-pet"):IsShown())]])
+	self:AdjustMemberWidth(cell.Member.uf)
 end

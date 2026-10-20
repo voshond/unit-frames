@@ -52,6 +52,7 @@ end
 function Preview:FeedInlinePet(cell, index, live, unit)
 	if CG.metrics.pet.mode ~= "inline" then
 		if cell.pet then self:FeedPet(cell.pet, index, live, nil, false) end
+		self:LayoutPetMember(cell, false)
 		return
 	end
 	cell.pet = cell.pet or self:CreatePet(cell.frame)
@@ -59,6 +60,22 @@ function Preview:FeedInlinePet(cell, index, live, unit)
 	local petUnit = live and (cell.petUnit or CG.PetUnit(unit))
 	local present = live and petUnit and UnitExists(petUnit) or not live and index % 3 == 1
 	self:FeedPet(cell.pet, index, live, petUnit, present == true)
+	self:LayoutPetMember(cell, present == true)
+end
+
+function Preview:LayoutPetMember(cell, present)
+	local inline = CG.metrics.pet.mode == "inline"
+	local extra = inline and not present and CG.metrics.pet.width + CG.metrics.pet.gap or 0
+	local x = inline and present and self.layout.memberX or 0
+	local width = CG.metrics.member.width + extra
+	if cell.memberWidth == width and cell.memberX == x then return end
+	cell.memberWidth, cell.memberX = width, x
+	local frame = cell.member:GetFrame()
+	frame:SetAttribute("ufcg-width-extra", extra)
+	frame:ClearAllPoints()
+	frame:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", x, 0)
+	frame:SetWidth(width)
+	CG:AdjustMemberWidth(cell.member)
 end
 
 function Preview:PetRoster(live, count)

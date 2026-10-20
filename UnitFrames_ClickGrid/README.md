@@ -31,8 +31,9 @@ client after adding it. For local builds and incremental updates, see the
   Inside-member cells contain separate member and pet frames, with a configurable
   **Gap to member** and **Pet side**. The member defines the height; pet columns
   span that height at their configured width, without scaling or overlapping the
-  member. Cells reserve the pet width and gap while this mode is enabled, including
-  for members currently without a pet. **Allow pet interaction** enables ClickGrid/Clique clicks and
+  member. Members without a pet fill the whole member/pet area, with no empty
+  column or gap. Secure pet visibility updates this split during combat without
+  changing the outer grid or target positions. **Allow pet interaction** enables ClickGrid/Clique clicks and
   mouseover casts on the visible pet frame, with a distinct configurable pet hover
   colour and the pet's tooltip. Off keeps pet artwork mouse-transparent.
 - Shared **Arrange bars > Columns** places health/power bars side by side, using

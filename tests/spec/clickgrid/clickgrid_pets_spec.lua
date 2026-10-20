@@ -59,6 +59,7 @@ describe("ClickGrid pets", function()
 	it("lays out either side and member targets with a configurable gap without rebinding units", function()
 		CG.Config:SetStyle("pet", "display", "inline")
 		CG.Config:SetStyle("target", "shown", true)
+		Cell().Pet:Show()
 		local count = #CG.frames
 		UF.Perf.counters = {}
 		CG.Config:SetStyle("pet", "gap", 7)
@@ -76,6 +77,70 @@ describe("ClickGrid pets", function()
 		assert.equals(count, #CG.frames)
 		CG.Config:SetStyle("pet", "gap", 0)
 		assert.equals(CG.metrics.pet.width, select(4, member:GetPoint()))
+	end)
+
+	it("fills the member area when a pet disappears in combat without moving targets or rebuilding", function()
+		CG.Config:SetStyle("pet", "display", "inline")
+		CG.Config:SetStyle("target", "shown", true)
+		CG.headers.party:Assign(1, "player")
+		local cell = Cell()
+		local target = cell.Target:GetAnchor("TOPLEFT")
+		local count = #CG.frames
+		local bar = cell.Member.uf:GetRow("health"):GetBar()
+		Mock.inCombat = true
+		UF.Perf.counters = {}
+		for _, present in ipairs({ true, false, true, false }) do
+			UnitExists = function(unit) return unit == "player" or present and unit == "pet" end
+			UnitIsVisible = function() return false end
+			Mock.RunUntainted(Mock.TickUnitVisibility, cell.Pet)
+			local width = CG.metrics.member.width + (present and 0 or CG.metrics.pet.width + CG.metrics.pet.gap)
+			assert.equals(present, cell.Pet:IsShown())
+			assert.equals(width, cell.Member:GetWidth())
+			assert.equals(width, bar:GetKnownSize())
+			assert.equals(width, bar.bar:GetWidth())
+			assert.equals(width, cell.Member.uf:GetRow("health").textWidth)
+			for _, segment in ipairs(bar.segments) do assert.equals(width, segment.bar:GetWidth()) end
+			assert.same(target, cell.Target:GetAnchor("TOPLEFT"))
+		end
+		local counters = UF.Perf.counters
+		UF.Perf.counters = nil
+		assert.is_nil(counters.componentCreate)
+		assert.is_nil(counters.clickgridPanelLayout)
+		assert.is_nil(counters.unitBind)
+		assert.is_nil(counters.rootApply)
+		assert.equals(count, #CG.frames)
+	end)
+
+	it("removes the left-hand gap for absent pets and restores the configured split", function()
+		CG.Config:SetStyle("pet", "display", "inline")
+		CG.Config:SetStyle("pet", "side", "LEFT")
+		local cell = Cell()
+		cell.Pet:Hide()
+		assert.equals(0, select(4, cell.Member:GetPoint()))
+		assert.equals(CG.layout.cellWidth, cell.Member:GetWidth())
+		cell.Pet:Show()
+		assert.equals(CG.layout.memberX, select(4, cell.Member:GetPoint()))
+		assert.equals(CG.metrics.member.width, cell.Member:GetWidth())
+		CG.Config:SetStyle("pet", "display", "off")
+		assert.equals(CG.metrics.member.width, cell.Member:GetWidth())
+		assert.equals(0, select(4, cell.Member:GetPoint()))
+	end)
+
+	it("keeps secondary member columns at their configured width when reclaiming pet space", function()
+		CG.Config:SetStyle("member", "barLayout", "columns")
+		CG.Config:SetStyle("member", "power.enabled", true)
+		CG.Config:SetStyle("member", "health.columnWidth", 20)
+		CG.Config:SetStyle("member", "power.columnWidth", 5)
+		CG.Config:SetStyle("pet", "display", "inline")
+		local cell = Cell()
+		cell.Pet:Hide()
+		local health, power = cell.Member.uf:GetRow("health"), cell.Member.uf:GetRow("power")
+		assert.equals(20 + CG.metrics.pet.width + CG.metrics.pet.gap, health:GetBar():GetKnownSize())
+		assert.equals(5, power:GetBar():GetKnownSize())
+		assert.equals("TOPRIGHT", power:GetFrame():GetAnchor("TOPLEFT")[3])
+		cell.Pet:Show()
+		assert.equals(20, health:GetBar():GetKnownSize())
+		assert.equals(5, power:GetBar():GetKnownSize())
 	end)
 
 	it("routes pet interactions explicitly and shows a distinct hover", function()
@@ -217,6 +282,9 @@ describe("ClickGrid pets #workbench", function()
 		local preview = wb.handle
 		assert.is_true(preview.cells[1].pet.uf:GetFrame():IsShown())
 		assert.is_false(preview.cells[2].pet.uf:GetFrame():IsShown())
+		assert.equals(CG.metrics.member.width, preview.cells[1].member:GetFrame():GetWidth())
+		assert.equals(preview.layout.cellWidth, preview.cells[2].member:GetFrame():GetWidth())
+		assert.equals(preview.layout.cellWidth, preview.cells[2].member:GetRow("health").textWidth)
 		local first = preview.cells[1].pet.uf
 		assert.equals(CG.layout.cellWidth, preview.layout.cellWidth)
 		assert.equals(CG.metrics.member.height, first.layout.height)
@@ -231,6 +299,30 @@ describe("ClickGrid pets #workbench", function()
 		assert.is_nil(counters.componentCreate)
 		preview:Release()
 		assert.is_true(first.released)
+	end)
+
+	it("expands a dead live member with no pet and restores the split on pet replacement", function()
+		CG.Config:SetStyle("pet", "display", "inline")
+		CG.Config:SetStyle("pet", "side", "LEFT")
+		CG.headers.party:Assign(1, "player")
+		local hasPet = false
+		UnitExists = function(unit) return unit == "player" or hasPet and unit == "pet" end
+		UnitIsDeadOrGhost = function(unit) return unit == "player" end
+		local preview = wb.handle
+		preview:ShowData({ source = "live", count = 5 })
+		local cell = preview.cells[1]
+		assert.is_false(cell.pet.uf:GetFrame():IsShown())
+		assert.equals(preview.layout.cellWidth, cell.member:GetFrame():GetWidth())
+		assert.equals(0, select(4, cell.member:GetFrame():GetPoint()))
+		hasPet = true
+		preview:Tick(0.2)
+		assert.is_true(cell.pet.uf:GetFrame():IsShown())
+		assert.equals(CG.metrics.member.width, cell.member:GetFrame():GetWidth())
+		assert.equals(preview.layout.memberX, select(4, cell.member:GetFrame():GetPoint()))
+		hasPet = false
+		preview:Tick(0.2)
+		assert.is_false(cell.pet.uf:GetFrame():IsShown())
+		assert.equals(preview.layout.cellWidth, cell.member:GetFrame():GetWidth())
 	end)
 
 	it("switches between packed pet samples and inline pets without retaining feeds", function()

@@ -56,7 +56,8 @@ function Columns.Compute(spec, cfg, fillHeight)
 	end
 	Append(before)
 	if portrait then portrait.y = -y end
-	for _, item in ipairs(columns) do
+	for index, item in ipairs(columns) do
+		item.rightAligned = index > 1 or nil
 		item.left = left + item.x + (portrait and portrait.side == "LEFT" and portraitWidth or 0)
 		item.right = totalWidth - item.left - item.width
 		item.y, item.height = -y, height

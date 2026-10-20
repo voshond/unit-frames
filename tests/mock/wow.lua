@@ -88,6 +88,15 @@ function Mock.RunUntainted(fn, ...)
 	return unpack(results, 2, table.maxn(results))
 end
 
+function Mock.RunTainted(fn, ...)
+	local previous = untainted
+	untainted = 0
+	local results = { pcall(fn, ...) }
+	untainted = previous
+	if not results[1] then error(results[2], 0) end
+	return unpack(results, 2, table.maxn(results))
+end
+
 -- Like CreateSecureDelegate: `fn` runs untainted for every caller.
 function Mock.SecureDelegate(fn)
 	return function(...) return Mock.RunUntainted(fn, ...) end
@@ -204,18 +213,30 @@ function Methods:HookScript(name, fn)
 	end
 end
 function Methods:RunScript(name, ...)
+	local wrapper = self.__state.secureWrappers and self.__state.secureWrappers[name]
+	if wrapper then Mock.RunRestrictedSnippet(wrapper.header, wrapper.body, self, ...) end
 	local fn = self.__state.scripts[name]
 	if fn then
-		return fn(self, ...)
+		return Mock.RunTainted(fn, self, ...)
 	end
 end
 
-function Methods:Show() self.__state.shown = true end
-function Methods:Hide() self.__state.shown = false end
+function Methods:Show()
+	local changed = not self.__state.shown
+	self.__state.shown = true
+	if changed and self.__state.secureWrappers then self:RunScript("OnShow") end
+end
+function Methods:Hide()
+	local changed = self.__state.shown
+	self.__state.shown = false
+	if changed and self.__state.secureWrappers then self:RunScript("OnHide") end
+end
 -- A secret argument gives the region a secret shown state (the Shown
 -- secret aspect): IsShown and IsVisible then return secrets too.
 function Methods:SetShown(shown)
-	if Mock.IsSecret(shown) then self.__state.shown = shown else self.__state.shown = shown and true or false end
+	if Mock.IsSecret(shown) then self.__state.shown = shown
+	elseif shown then self:Show()
+	else self:Hide() end
 end
 function Methods:IsShown() return self.__state.shown end
 local function RolesetFiltered(self)
@@ -352,7 +373,12 @@ function Methods:SetFrameLevel(level)
 end
 function Methods:SetFixedFrameLevel(fixed) self.__state.fixedLevel = fixed == true end
 function Methods:IsProtected() return self.__state.protected == true end
-function Methods:SetAttribute(name, value) self.__state.attributes = self.__state.attributes or {}; self.__state.attributes[name] = value end
+function Methods:SetAttribute(name, value)
+	self.__state.attributes = self.__state.attributes or {}
+	local previous = self.__state.attributes[name]
+	self.__state.attributes[name] = value
+	if previous ~= value then self:RunScript("OnAttributeChanged", name, value) end
+end
 function Methods:GetAttribute(name) return self.__state.attributes and self.__state.attributes[name] end
 function Methods:RegisterForClicks(...) Record(self, "RegisterForClicks", ...) end
 function Methods:GetChildren()
@@ -1146,8 +1172,45 @@ function Mock.Install()
 	_G.RegisterStateDriver = _G.RegisterAttributeDriver
 	_G.SecureHandlerSetFrameRef = function(frame, label, reference)
 		assert(not InCombatLockdown(), "Secure frame references cannot change in combat")
+		assert(not Mock.HasLayoutAspect(frame) and not Mock.HasLayoutAspect(reference), "Secure frame references cannot use forbidden frames")
 		frame.__state.frameRefs = frame.__state.frameRefs or {}
 		frame.__state.frameRefs[label] = reference
+	end
+	Mock.RunRestrictedSnippet = function(header, body, frame, ...)
+		local handles, frames = {}, {}
+		local function Handle(object)
+			if not object then return nil end
+			if handles[object] then return handles[object] end
+			local handle = setmetatable({}, { __index = function(_, key)
+				if key == "GetFrameRef" then return function(_, label) return Handle(Methods.GetFrameRef(object, label)) end end
+				if key == "RunAttribute" then
+					return function(_, name, ...)
+						return Mock.RunRestrictedSnippet(object, object:GetAttribute(name), object, ...)
+					end
+				end
+				return function(_, ...)
+					local args = { ... }
+					for index = 1, select("#", ...) do args[index] = frames[args[index]] or args[index] end
+					return object[key](object, unpack(args, 1, select("#", ...)))
+				end
+			end })
+			handles[object], frames[handle] = handle, object
+			return handle
+		end
+		local chunk = assert(loadstring(body))
+		setfenv(chunk, setmetatable({ self = Handle(frame), control = Handle(header) }, { __index = _G }))
+		return Mock.RunUntainted(chunk, ...)
+	end
+	_G.SecureHandlerWrapScript = function(frame, script, header, body)
+		assert(not InCombatLockdown(), "Secure wrappers cannot change in combat")
+		assert(not Mock.HasLayoutAspect(frame) and not Mock.HasLayoutAspect(header), "Secure wrappers cannot use forbidden frames")
+		assert(header:IsProtected(), "Secure wrapper headers must be protected")
+		frame.__state.secureWrappers = frame.__state.secureWrappers or {}
+		frame.__state.secureWrappers[script] = { header = header, body = body }
+	end
+	_G.SecureHandlerExecute = function(header, body)
+		assert(not InCombatLockdown(), "Secure snippets cannot execute from addon code in combat")
+		return Mock.RunRestrictedSnippet(header, body, header)
 	end
 	_G.RegisterUnitWatch = function(frame)
 		frame.__state.unitWatched = true

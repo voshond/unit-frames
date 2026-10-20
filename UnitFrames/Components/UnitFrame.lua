@@ -613,9 +613,11 @@ function UnitFrame:Layout()
 	if auraBar then auraBar:SetCollapse(layout.auraBarCollapses and self.resolved.spacing or nil) end
 	for _, item in ipairs(layout.rows) do
 		local component = self.partsByKey[item.key] or self.rowsByKey[item.key]
-		if not self.rowsByKey[item.key] or not ns.Util.Equals(placements[item.key], item) then
+		if not self.rowsByKey[item.key] or not ns.Util.Equals(placements[item.key], item)
+			or previous and previous.width ~= layout.width then
 			component:ClearAllPoints()
-			component:SetPoint("TOPLEFT", self.frame, "TOPLEFT", item.left, item.y)
+			component:SetPoint("TOPLEFT", self.frame, item.rightAligned and "TOPRIGHT" or "TOPLEFT",
+				item.rightAligned and item.left - layout.width or item.left, item.y)
 			component:SetPoint("TOPRIGHT", self.frame, "TOPRIGHT", -item.right, item.y)
 			component:GetFrame():SetHeight(item.height)
 			if self.rowsByKey[item.key] then component:SetKnownSize(layout.width - item.left - item.right, item.height) end
