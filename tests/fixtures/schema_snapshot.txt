@@ -1866,6 +1866,8 @@ option border.background type="background" label="Background" inherit="backgroun
 option border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#422ec0b7 hidden
+option stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b hidden
 option buffs type="group" label="Buffs"
 option buffs.enabled type="toggle" label="Show buffs" default=true
 option buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
@@ -1881,7 +1883,7 @@ option buffs.growth type="select" label="Grow direction" default="forward" value
 option buffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
 option buffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
 option debuffs type="group" label="Debuffs"
 option debuffs.enabled type="toggle" label="Show debuffs" default=true
 option debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
@@ -1897,7 +1899,7 @@ option debuffs.growth type="select" label="Grow direction" default="forward" val
 option debuffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
 option debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
 default border.background = "None"
 default border.enabled = true
 default border.inset = 1
@@ -1948,9 +1950,11 @@ default durationPosition = "below"
 default durationSize = 10
 default enabled = true
 default fontOutline = "OUTLINE"
+default sharedSide = "combined"
 default showCount = true
 default showDuration = true
 default spacing = 2
+default stackFirst = "buffs"
 resolved border.background = "None"
 resolved border.backgroundColor = {0,0,0,0.75}
 resolved border.border = "Blizzard Tooltip"
@@ -2005,9 +2009,11 @@ resolved durationSize = 10
 resolved enabled = true
 resolved font = "Friz Quadrata TT"
 resolved fontOutline = "OUTLINE"
+resolved sharedSide = "combined"
 resolved showCount = true
 resolved showDuration = true
 resolved spacing = 2
+resolved stackFirst = "buffs"
 ## auraBar
 option enabled type="toggle" label="Enabled" default=false
 option position type="select" label="Row position" default="bottom" values=#4dfc7251
@@ -3315,6 +3321,8 @@ option auras.border.background type="background" label="Background" inherit="bac
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#422ec0b7 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
 option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
@@ -3330,7 +3338,7 @@ option auras.buffs.growth type="select" label="Grow direction" default="forward"
 option auras.buffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
 option auras.buffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
 option auras.debuffs type="group" label="Debuffs"
 option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
 option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
@@ -3346,7 +3354,7 @@ option auras.debuffs.growth type="select" label="Grow direction" default="forwar
 option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
 option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
@@ -3592,9 +3600,11 @@ default auras.durationPosition = "below"
 default auras.durationSize = 10
 default auras.enabled = true
 default auras.fontOutline = "OUTLINE"
+default auras.sharedSide = "combined"
 default auras.showCount = true
 default auras.showDuration = true
 default auras.spacing = 2
+default auras.stackFirst = "buffs"
 default blizzardAuras.hideBuffs = false
 default blizzardAuras.hideDebuffs = false
 default border.enabled = true
@@ -4564,9 +4574,11 @@ resolved auras.durationSize = 10
 resolved auras.enabled = true
 resolved auras.font = "Friz Quadrata TT"
 resolved auras.fontOutline = "OUTLINE"
+resolved auras.sharedSide = "combined"
 resolved auras.showCount = true
 resolved auras.showDuration = true
 resolved auras.spacing = 2
+resolved auras.stackFirst = "buffs"
 resolved blizzardAuras.hideBuffs = false
 resolved blizzardAuras.hideDebuffs = false
 resolved border.background = "Solid"
@@ -6303,6 +6315,8 @@ option auras.border.background type="background" label="Background" inherit="bac
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#422ec0b7 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
 option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
@@ -6318,7 +6332,7 @@ option auras.buffs.growth type="select" label="Grow direction" default="forward"
 option auras.buffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
 option auras.buffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
 option auras.debuffs type="group" label="Debuffs"
 option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
 option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
@@ -6334,7 +6348,7 @@ option auras.debuffs.growth type="select" label="Grow direction" default="forwar
 option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
 option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
@@ -6572,9 +6586,11 @@ default auras.durationPosition = "CENTER"
 default auras.durationSize = 9
 default auras.enabled = true
 default auras.fontOutline = "OUTLINE"
+default auras.sharedSide = "combined"
 default auras.showCount = true
 default auras.showDuration = true
 default auras.spacing = 2
+default auras.stackFirst = "buffs"
 default border.enabled = true
 default border.inset = 3
 default border.insetBottom = 3
@@ -7300,9 +7316,11 @@ resolved auras.durationSize = 9
 resolved auras.enabled = true
 resolved auras.font = "Friz Quadrata TT"
 resolved auras.fontOutline = "OUTLINE"
+resolved auras.sharedSide = "combined"
 resolved auras.showCount = true
 resolved auras.showDuration = true
 resolved auras.spacing = 2
+resolved auras.stackFirst = "buffs"
 resolved border.background = "Solid"
 resolved border.backgroundColor = {0,0,0,0.75}
 resolved border.border = "Blizzard Tooltip"
@@ -8824,6 +8842,8 @@ option auras.border.background type="background" label="Background" inherit="bac
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#422ec0b7 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
 option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
@@ -8839,7 +8859,7 @@ option auras.buffs.growth type="select" label="Grow direction" default="forward"
 option auras.buffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
 option auras.buffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
 option auras.debuffs type="group" label="Debuffs"
 option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
 option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
@@ -8855,7 +8875,7 @@ option auras.debuffs.growth type="select" label="Grow direction" default="forwar
 option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
 option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
@@ -9093,9 +9113,11 @@ default auras.durationPosition = "below"
 default auras.durationSize = 10
 default auras.enabled = true
 default auras.fontOutline = "OUTLINE"
+default auras.sharedSide = "combined"
 default auras.showCount = true
 default auras.showDuration = true
 default auras.spacing = 2
+default auras.stackFirst = "buffs"
 default border.enabled = true
 default border.inset = 3
 default border.insetBottom = 3
@@ -9848,9 +9870,11 @@ resolved auras.durationSize = 10
 resolved auras.enabled = true
 resolved auras.font = "Friz Quadrata TT"
 resolved auras.fontOutline = "OUTLINE"
+resolved auras.sharedSide = "combined"
 resolved auras.showCount = true
 resolved auras.showDuration = true
 resolved auras.spacing = 2
+resolved auras.stackFirst = "buffs"
 resolved border.background = "Solid"
 resolved border.backgroundColor = {0,0,0,0.75}
 resolved border.border = "Blizzard Tooltip"
@@ -11369,6 +11393,8 @@ option auras.border.background type="background" label="Background" inherit="bac
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#422ec0b7 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
 option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
@@ -11384,7 +11410,7 @@ option auras.buffs.growth type="select" label="Grow direction" default="forward"
 option auras.buffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
 option auras.buffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
 option auras.debuffs type="group" label="Debuffs"
 option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
 option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
@@ -11400,7 +11426,7 @@ option auras.debuffs.growth type="select" label="Grow direction" default="forwar
 option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
 option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
@@ -11638,9 +11664,11 @@ default auras.durationPosition = "CENTER"
 default auras.durationSize = 9
 default auras.enabled = false
 default auras.fontOutline = "OUTLINE"
+default auras.sharedSide = "combined"
 default auras.showCount = true
 default auras.showDuration = true
 default auras.spacing = 2
+default auras.stackFirst = "buffs"
 default border.enabled = true
 default border.inset = 3
 default border.insetBottom = 3
@@ -12372,9 +12400,11 @@ resolved auras.durationSize = 9
 resolved auras.enabled = false
 resolved auras.font = "Friz Quadrata TT"
 resolved auras.fontOutline = "OUTLINE"
+resolved auras.sharedSide = "combined"
 resolved auras.showCount = true
 resolved auras.showDuration = true
 resolved auras.spacing = 2
+resolved auras.stackFirst = "buffs"
 resolved border.background = "Solid"
 resolved border.backgroundColor = {0,0,0,0.75}
 resolved border.border = "Blizzard Tooltip"
@@ -13864,6 +13894,8 @@ option auras.border.background type="background" label="Background" inherit="bac
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#422ec0b7 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
 option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
@@ -13879,7 +13911,7 @@ option auras.buffs.growth type="select" label="Grow direction" default="forward"
 option auras.buffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
 option auras.buffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
 option auras.debuffs type="group" label="Debuffs"
 option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
 option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
@@ -13895,7 +13927,7 @@ option auras.debuffs.growth type="select" label="Grow direction" default="forwar
 option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
 option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
@@ -14133,9 +14165,11 @@ default auras.durationPosition = "below"
 default auras.durationSize = 10
 default auras.enabled = true
 default auras.fontOutline = "OUTLINE"
+default auras.sharedSide = "combined"
 default auras.showCount = true
 default auras.showDuration = true
 default auras.spacing = 2
+default auras.stackFirst = "buffs"
 default border.enabled = true
 default border.inset = 3
 default border.insetBottom = 3
@@ -14865,9 +14899,11 @@ resolved auras.durationSize = 10
 resolved auras.enabled = true
 resolved auras.font = "Friz Quadrata TT"
 resolved auras.fontOutline = "OUTLINE"
+resolved auras.sharedSide = "combined"
 resolved auras.showCount = true
 resolved auras.showDuration = true
 resolved auras.spacing = 2
+resolved auras.stackFirst = "buffs"
 resolved border.background = "Solid"
 resolved border.backgroundColor = {0,0,0,0.75}
 resolved border.border = "Blizzard Tooltip"
@@ -16349,6 +16385,8 @@ option auras.border.background type="background" label="Background" inherit="bac
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#422ec0b7 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
 option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
@@ -16364,7 +16402,7 @@ option auras.buffs.growth type="select" label="Grow direction" default="forward"
 option auras.buffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
 option auras.buffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
 option auras.debuffs type="group" label="Debuffs"
 option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
 option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
@@ -16380,7 +16418,7 @@ option auras.debuffs.growth type="select" label="Grow direction" default="forwar
 option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
 option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
@@ -16618,9 +16656,11 @@ default auras.durationPosition = "CENTER"
 default auras.durationSize = 9
 default auras.enabled = false
 default auras.fontOutline = "OUTLINE"
+default auras.sharedSide = "combined"
 default auras.showCount = true
 default auras.showDuration = true
 default auras.spacing = 2
+default auras.stackFirst = "buffs"
 default border.enabled = true
 default border.inset = 3
 default border.insetBottom = 3
@@ -17352,9 +17392,11 @@ resolved auras.durationSize = 9
 resolved auras.enabled = false
 resolved auras.font = "Friz Quadrata TT"
 resolved auras.fontOutline = "OUTLINE"
+resolved auras.sharedSide = "combined"
 resolved auras.showCount = true
 resolved auras.showDuration = true
 resolved auras.spacing = 2
+resolved auras.stackFirst = "buffs"
 resolved border.background = "Solid"
 resolved border.backgroundColor = {0,0,0,0.75}
 resolved border.border = "Blizzard Tooltip"
@@ -20967,6 +21009,8 @@ option auras.border.background type="background" label="Background" inherit="bac
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#422ec0b7 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
 option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
@@ -20982,7 +21026,7 @@ option auras.buffs.growth type="select" label="Grow direction" default="forward"
 option auras.buffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
 option auras.buffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
 option auras.debuffs type="group" label="Debuffs"
 option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
 option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
@@ -20998,7 +21042,7 @@ option auras.debuffs.growth type="select" label="Grow direction" default="forwar
 option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
 option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
@@ -21211,9 +21255,11 @@ default auras.durationPosition = "CENTER"
 default auras.durationSize = 8
 default auras.enabled = true
 default auras.fontOutline = "OUTLINE"
+default auras.sharedSide = "combined"
 default auras.showCount = true
 default auras.showDuration = true
 default auras.spacing = 2
+default auras.stackFirst = "buffs"
 default border.enabled = false
 default border.inset = 3
 default border.insetBottom = 3
@@ -21917,9 +21963,11 @@ resolved auras.durationSize = 8
 resolved auras.enabled = true
 resolved auras.font = "Friz Quadrata TT"
 resolved auras.fontOutline = "OUTLINE"
+resolved auras.sharedSide = "combined"
 resolved auras.showCount = true
 resolved auras.showDuration = true
 resolved auras.spacing = 2
+resolved auras.stackFirst = "buffs"
 resolved border.background = "Solid"
 resolved border.backgroundColor = {0,0,0,0.75}
 resolved border.border = "Blizzard Tooltip"
@@ -23387,6 +23435,8 @@ option auras.border.background type="background" label="Background" inherit="bac
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#422ec0b7 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
 option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
@@ -23402,7 +23452,7 @@ option auras.buffs.growth type="select" label="Grow direction" default="forward"
 option auras.buffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
 option auras.buffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
 option auras.debuffs type="group" label="Debuffs"
 option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
 option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
@@ -23418,7 +23468,7 @@ option auras.debuffs.growth type="select" label="Grow direction" default="forwar
 option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
 option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
 option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#2b168587
+option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
@@ -23631,9 +23681,11 @@ default auras.durationPosition = "CENTER"
 default auras.durationSize = 9
 default auras.enabled = false
 default auras.fontOutline = "OUTLINE"
+default auras.sharedSide = "combined"
 default auras.showCount = true
 default auras.showDuration = true
 default auras.spacing = 2
+default auras.stackFirst = "buffs"
 default border.enabled = false
 default border.inset = 3
 default border.insetBottom = 3
@@ -24332,9 +24384,11 @@ resolved auras.durationSize = 9
 resolved auras.enabled = false
 resolved auras.font = "Friz Quadrata TT"
 resolved auras.fontOutline = "OUTLINE"
+resolved auras.sharedSide = "combined"
 resolved auras.showCount = true
 resolved auras.showDuration = true
 resolved auras.spacing = 2
+resolved auras.stackFirst = "buffs"
 resolved border.background = "Solid"
 resolved border.backgroundColor = {0,0,0,0.75}
 resolved border.border = "Blizzard Tooltip"

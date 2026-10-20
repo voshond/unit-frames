@@ -21,6 +21,14 @@ Auras.GROWTH = {
 
 Auras.DURATION_POSITIONS = AuraIcon.DURATION_POSITIONS
 
+Auras.SHARED_SIDE = {
+	{ "combined", "Combined" }, { "stacked", "Stacked" },
+}
+
+Auras.STACK_FIRST = {
+	{ "buffs", "Buffs" }, { "debuffs", "Debuffs" },
+}
+
 Auras.BUFF_FILTERS = {
 	{ "HELPFUL", "All buffs" }, { "HELPFUL|PLAYER", "Cast by me" }, { "HELPFUL|RAID", "Raid buffs" },
 	{ "HELPFUL|PLAYER|RAID_IN_COMBAT", "My heals over time" },
@@ -89,7 +97,7 @@ local function GroupSchema(label, filters, size, position)
 		{ key = "offsetX", type = "range", label = "Offset X", min = -200, max = 200, step = 1, default = 0 },
 		{ key = "offsetY", type = "range", label = "Offset Y", min = -200, max = 200, step = 1, default = 0 },
 		{ key = "lineSize", type = "range", label = "Row / column length", min = 0, max = 600, step = 1, default = 0,
-			tooltip = "0 follows the frame width (top/bottom) or height (left/right). Use offsets to separate buffs and debuffs placed on the same side." },
+			tooltip = "0 follows the frame width (top/bottom) or height (left/right). Stack buffs and debuffs placed on the same side, or separate them with offsets." },
 	}
 end
 
@@ -97,6 +105,11 @@ end
 Auras.schema = ns.Schema.Insert({
 	{ key = "enabled", type = "toggle", label = "Enabled", default = true },
 	{ key = "spacing", type = "range", label = "Icon spacing", min = 0, max = 10, step = 1, default = 2 },
+	{ key = "sharedSide", type = "select", label = "Buffs and debuffs on one side", values = Auras.SHARED_SIDE, default = "combined",
+		hidden = function(cfg) return cfg.buffs.position ~= cfg.debuffs.position end,
+		tooltip = "Combined places both blocks at the same edge. Stacked moves the outer block past the full capacity of the inner one (its maximum shown), so they never overlap." },
+	{ key = "stackFirst", type = "select", label = "Closest to the frame", values = Auras.STACK_FIRST, default = "buffs",
+		hidden = function(cfg) return cfg.buffs.position ~= cfg.debuffs.position or cfg.sharedSide ~= "stacked" end },
 	{ key = "buffs", type = "group", label = "Buffs", schema = GroupSchema("buffs", Auras.BUFF_FILTERS, 20, "top") },
 	{ key = "debuffs", type = "group", label = "Debuffs", schema = GroupSchema("debuffs", Auras.DEBUFF_FILTERS, 26, "bottom") },
 }, "spacing", ns.Util.Copy(AuraIcon.schema))
@@ -275,11 +288,46 @@ function Auras:OnApply(cfg)
 	Perf:End("aura restyle")
 end
 
+local function VerticalSide(group)
+	return group.position == "left" or group.position == "right"
+end
+
+function Auras:LineLength(group)
+	local vertical = VerticalSide(group)
+	local length = group.lineSize > 0 and group.lineSize or vertical and self.hostHeight or self.hostWidth
+	return math.max(length, group.size + (vertical and AuraIcon.TextRoom(self:GetArtworkConfig()) or 0))
+end
+
+-- The kind placed past the other on a shared, stacked side (nil = none).
+function Auras:StackedOuterKind()
+	local cfg = self.resolved
+	if cfg.sharedSide ~= "stacked" or not (cfg.buffs.enabled and cfg.debuffs.enabled)
+		or cfg.buffs.position ~= cfg.debuffs.position then return nil end
+	return cfg.stackFirst == "debuffs" and "buffs" or "debuffs"
+end
+
+-- Distance from the frame past the inner block, from plain configuration:
+-- its full capacity, since the native container's size may be secret.
+function Auras:StackDepth(group)
+	local vertical = VerticalSide(group)
+	local textRoom = AuraIcon.TextRoom(self:GetArtworkConfig())
+	local spacing = self.resolved.spacing
+	local along = group.size + (vertical and textRoom or 0)
+	local across = group.size + (vertical and 0 or textRoom)
+	local perLine = math.max(1, math.floor((self:LineLength(group) + spacing) / (along + spacing)))
+	local lines = math.ceil(group.max / perLine)
+	local side = group.position
+	local outward = side == "top" and group.offsetY or side == "bottom" and -group.offsetY
+		or side == "right" and group.offsetX or -group.offsetX
+	return group.gap + outward + lines * across + (lines - 1) * spacing
+end
+
 -- Only the container's anchor refers to our ordinary host. We never read
 -- secret sizes, install OnSizeChanged on it, or anchor another frame to it.
 function Auras:Layout(width, height)
 	self.hostWidth = width or self.hostWidth or self.frame:GetParent():GetWidth()
 	self.hostHeight = height or self.hostHeight or self.frame:GetParent():GetHeight()
+	local outerKind = self:StackedOuterKind()
 	for _, kind in ipairs(KINDS) do
 		local group = self.resolved[kind]
 		if self.containers[kind] then
@@ -289,7 +337,9 @@ function Auras:Layout(width, height)
 		local container = self.previewData and self.previewContainers[kind] or self.containers[kind]
 		if not container then break end
 		local side = group.position
-		local vertical = side == "left" or side == "right"
+		local vertical = VerticalSide(group)
+		local gap = group.gap
+		if kind == outerKind then gap = gap + self:StackDepth(self.resolved[kind == "buffs" and "debuffs" or "buffs"]) end
 		local reverse = group.growth == "reverse"
 		local align = group.alignment
 		local x, y = group.offsetX, group.offsetY
@@ -298,13 +348,13 @@ function Auras:Layout(width, height)
 			local edge = align == "center" and "" or align == "end" and "BOTTOM" or "TOP"
 			point = edge .. (side == "left" and "RIGHT" or "LEFT")
 			framePoint = edge .. side:upper()
-			x = x + (side == "left" and -group.gap or group.gap)
+			x = x + (side == "left" and -gap or gap)
 			horizontal, upward = side == "right", reverse
 		else
 			local edge = align == "center" and "" or align == "end" and "RIGHT" or "LEFT"
 			point = (side == "top" and "BOTTOM" or "TOP") .. edge
 			framePoint = side:upper() .. edge
-			y = y + (side == "top" and group.gap or -group.gap)
+			y = y + (side == "top" and gap or -gap)
 			horizontal, upward = not reverse, side == "top"
 		end
 		container:ClearAllPoints()
@@ -313,9 +363,7 @@ function Auras:Layout(width, height)
 		local anchor = (upward and "BOTTOM" or "TOP") .. (horizontal and "LEFT" or "RIGHT")
 		local directionX = horizontal and AnchorUtil.FlowDirection.Right or AnchorUtil.FlowDirection.Left
 		local directionY = upward and AnchorUtil.FlowDirection.Up or AnchorUtil.FlowDirection.Down
-		local length = group.lineSize > 0 and group.lineSize or vertical and self.hostHeight or self.hostWidth
-		local minimum = group.size + (vertical and AuraIcon.TextRoom(self.resolved) or 0)
-		length = math.max(length, minimum)
+		local length = self:LineLength(group)
 		if self.previewData then
 			local flow = container.ufFlow
 			flow:SetLayoutAxis(axis)
