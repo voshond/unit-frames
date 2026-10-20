@@ -18,11 +18,15 @@ function Columns.Compute(spec, cfg, fillHeight)
 	if Layout.PointBarShown(spec, cfg) then
 		Extra(cfg.comboPoints.position == "top" and before or after, "comboPoints", cfg.comboPoints.height)
 	end
-	local width = 0
+	local width, naturalHeight = 0, 0
 	for _, row in ipairs(spec.rows) do
 		local config = cfg[row.key]
 		if config.enabled then
-			if #columns > 0 then width = width + cfg.spacing end
+			if #columns > 0 then
+				width = width + cfg.spacing
+				naturalHeight = naturalHeight + cfg.spacing
+			end
+			naturalHeight = naturalHeight + config.height
 			columns[#columns + 1] = { key = row.key, x = width, width = config.columnWidth }
 			width = width + config.columnWidth
 		end
@@ -32,7 +36,7 @@ function Columns.Compute(spec, cfg, fillHeight)
 	for _, list in ipairs({ before, after }) do
 		for _, item in ipairs(list) do extraHeight = extraHeight + item.height + cfg.spacing end
 	end
-	local height = math.max(cfg.columnHeight, (fillHeight or 0) - top - bottom - extraHeight)
+	local height = fillHeight and math.max(1, fillHeight - top - bottom - extraHeight) or naturalHeight
 	local portrait
 	local portraitWidth = 0
 	if spec.portrait and cfg.portrait.enabled and #columns > 0 then

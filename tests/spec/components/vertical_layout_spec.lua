@@ -6,11 +6,13 @@ describe("Shared column layout #shields", function()
 	before_each(function()
 		UF = Helpers.LoadAddon(true)
 		uf = UF.Units:CreateFromDefinition(UF.Units.definitions.pet, CreateFrame("Frame"), {
-			barLayout = "columns", columnHeight = 90, spacing = 2,
+			barLayout = "columns", spacing = 2,
 			border = { enabled = false, padding = 0 },
 			health = { columnWidth = 16, bar = { orientation = "VERTICAL" } },
 			power = { columnWidth = 5, bar = { orientation = "VERTICAL", reverseFill = true } },
 		})
+		uf:SetFillHeight(90)
+		uf:Layout()
 	end)
 
 	it("uses explicit column widths while preserving independent fill directions", function()
@@ -36,17 +38,31 @@ describe("Shared column layout #shields", function()
 		cfg.auraBar = { enabled = true, collapse = true, height = 18, position = "bottom" }
 		uf:Apply(cfg)
 		assert.is_false(uf.layout.auraBarCollapses)
-		assert.equals(126, uf.layout.height)
+		assert.equals(90, uf.layout.height)
+		assert.equals(54, uf:GetRow("health"):GetBar().knownHeight)
 		assert.equals(23, uf:GetPart("castbar").knownWidth)
 		assert.equals(14, uf:GetPart("castbar").knownHeight)
 		assert.equals(-16, uf.layout.rows[2].y)
 	end)
 
 	it("retains row sizing when returning to the default arrangement", function()
+		uf:SetFillHeight(nil)
 		uf:Apply({ width = 160, border = { padding = 0 }, health = { height = 24 }, power = { height = 5 }, spacing = 1 })
 		assert.equals(160, uf.layout.width)
 		assert.equals(30, uf.layout.height)
 		assert.equals(160, uf:GetRow("health"):GetBar().knownWidth)
+	end)
+
+	it("fills a shorter host and uses natural frame height without a separate column-height option", function()
+		assert.is_nil(UF.Schema.Find(uf:GetSchema(), "columnHeight"))
+		uf:SetFillHeight(14)
+		uf:Layout()
+		assert.equals(14, uf.layout.height)
+		assert.equals(14, uf:GetRow("health"):GetBar().knownHeight)
+		assert.equals(14, uf:GetRow("power"):GetBar().knownHeight)
+		uf:SetFillHeight(nil)
+		uf:Layout()
+		assert.equals(34, uf.layout.height)
 	end)
 end)
 

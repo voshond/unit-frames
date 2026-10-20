@@ -39,7 +39,7 @@ function CG:LayoutPanel()
 	local roster = self:Roster()
 	roster.pets = self:PetCount()
 	local layout = self.Layout.Compute(cfg.panel, self.metrics.member, self.metrics.target, cfg.titles, cfg.border,
-		roster.count, nil, roster.groups)
+		roster.count, nil, roster.groups, self.metrics.pet)
 	self.PetLayout(layout, cfg.panel, self.metrics.pet, roster.pets, IsInRaid(), roster.count, cfg.titles, cfg.border)
 	self.layout, self.activeHeaders, self.panelConfig, self.roster = layout, {}, cfg.panel, roster
 	for state, y in pairs(layout.petOffsets or {}) do self.panel:SetAttribute(state .. "-pets-y", y) end

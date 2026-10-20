@@ -323,9 +323,7 @@ function UnitFrame.BuildSchema(spec)
 	local schema = {
 		{ key = "barLayout", type = "select", label = "Arrange bars", default = spec.barLayout or "rows",
 			values = { { "rows", "Rows" }, { "columns", "Columns" } },
-			tooltip = "Columns use each bar's Column width and the shared Column height. Fill orientation is configured separately per bar. Portraits span all columns; extra castbars and icon/point rows stay above or below. Aura rows do not collapse in column mode." },
-		{ key = "columnHeight", type = "range", label = "Column height", min = 10, max = 600, step = 1, default = spec.columnHeight or 100,
-			hidden = function(cfg) return cfg.barLayout ~= "columns" end },
+			tooltip = "Columns use each bar's Column width and span the available frame height. Without a containing frame, the row heights determine the natural frame height. Fill orientation is configured separately per bar. Portraits span all columns; extra castbars and icon/point rows stay above or below. Aura rows do not collapse in column mode." },
 		{ key = "width", type = "range", label = "Width", min = 60, max = 600, step = 1, default = spec.width or 230,
 			hidden = function(cfg) return cfg.barLayout == "columns" end },
 		{ key = "spacing", type = "range", label = "Bar spacing", min = 0, max = 20, step = 1, default = 1 },

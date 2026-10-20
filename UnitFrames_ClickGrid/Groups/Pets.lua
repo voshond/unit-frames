@@ -5,10 +5,10 @@ CG.PetSchema = {
 	{ key = "display", type = "select", label = "Pet display", default = "off",
 		values = { { "off", "Off" }, { "group", "Separate group" }, { "inline", "Inside member" } } },
 	{ key = "interactive", type = "toggle", label = "Allow pet interaction", default = false,
-		tooltip = "Pet bars receive click spells and mouseover casts. Off: pet bars are mouse-transparent; inside a member, clicks reach the owner. Changes apply after combat." },
-	{ key = "side", type = "select", label = "Inside edge", default = "RIGHT",
+		tooltip = "Pet bars receive click spells and mouseover casts. Off: pet bars are mouse-transparent. Changes apply after combat." },
+	{ key = "side", type = "select", label = "Pet side", default = "RIGHT",
 		values = { { "LEFT", "Left" }, { "RIGHT", "Right" } }, hidden = function(cfg) return cfg.display ~= "inline" end },
-	{ key = "inset", type = "range", label = "Inside inset", min = 0, max = 20, step = 1, default = 1,
+	{ key = "gap", type = "range", label = "Gap to member", min = 0, max = 30, step = 1, default = 2,
 		hidden = function(cfg) return cfg.display ~= "inline" end },
 	{ key = "hover", type = "toggle", label = "Pet mouseover highlight", default = true },
 	{ key = "hoverColor", type = "color", label = "Pet mouseover colour", default = { 0.2, 0.8, 1, 0.35 }, hasAlpha = true },
@@ -113,16 +113,13 @@ function CG:RefreshPet(frame, changes, layout)
 	end
 	if styled or layoutChanged then
 		frame:ClearAllPoints()
+		frame:SetScale(1)
 		if separate then
-			frame:SetScale(1)
 			frame:SetPoint("TOPLEFT", cell, "TOPLEFT", 0, 0)
 			cell:SetSize(self.metrics.pet.width, self.metrics.pet.height)
 		else
-			local width, height = frame.uf.layout.width, frame.uf.layout.height
-			frame:SetScale(math.min(1, math.max(1, self.metrics.member.height - cfg.inset * 2) / height,
-				math.max(1, self.metrics.member.width - cfg.inset * 2) / width))
-			frame:SetPoint("TOP" .. cfg.side, cell.Member, "TOP" .. cfg.side, cfg.side == "LEFT" and cfg.inset or -cfg.inset, -cfg.inset)
-			frame:SetFrameLevel(cell.Member:GetFrameLevel() + 40)
+			frame:SetPoint("TOPLEFT", cell, "TOPLEFT", layout.petX, 0)
+			frame:SetFrameLevel(cell.Member:GetFrameLevel())
 		end
 	end
 	if styled or layoutChanged or changes and changes.petInteraction then

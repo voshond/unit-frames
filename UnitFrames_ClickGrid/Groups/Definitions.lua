@@ -53,7 +53,7 @@ for _, def in pairs(CG.definitions) do
 end
 CG.definitions.target.readyCheck, CG.definitions.target.threat = nil, nil
 CG.definitions.pet.readyCheck, CG.definitions.pet.threat = nil, nil
-CG.definitions.pet.barLayout, CG.definitions.pet.columnHeight = "columns", 28
+CG.definitions.pet.barLayout = "columns"
 
 CG.LayoutSchema = {
 	{ key = "enabled", type = "toggle", label = "Show healing panel", default = true },

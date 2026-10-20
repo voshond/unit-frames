@@ -2332,8 +2332,7 @@ resolved fontOutline = "OUTLINE"
 resolved showCount = true
 resolved showDuration = true
 ## unit.player
-option barLayout type="select" label="Arrange bars" default="rows" values=#3f6311d9 tooltip=#6ad45959
-option columnHeight type="range" label="Column height" default=100 min=10 max=600 step=1 hidden
+option barLayout type="select" label="Arrange bars" default="rows" values=#3f6311d9 tooltip=#99609fd4
 option width type="range" label="Width" default=230 min=60 max=600 step=1 hidden
 option spacing type="range" label="Bar spacing" default=1 min=0 max=20 step=1
 option border type="group" label="Frame border" defaults={enabled=true}
@@ -3813,7 +3812,6 @@ default classification.offsetX = 0
 default classification.offsetY = 0
 default classification.order = 1
 default classification.size = 18
-default columnHeight = 100
 default comboPoints.background.alpha = 0.25
 default comboPoints.background.color = {0,0,0,0.5}
 default comboPoints.background.enabled = true
@@ -4838,7 +4836,6 @@ resolved classification.offsetX = 0
 resolved classification.offsetY = 0
 resolved classification.order = 1
 resolved classification.size = 18
-resolved columnHeight = 100
 resolved comboPoints.background.alpha = 0.25
 resolved comboPoints.background.color = {0,0,0,0.5}
 resolved comboPoints.background.enabled = true
@@ -5699,8 +5696,7 @@ definition restingIcon.defaults = {}
 definition rows = {{defaults={height=26},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast","threat"},overheal=true,pendingDamage=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:class"},left="name",right="health:value"},valueKind="health"}},{defaults={height=12,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","threat"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}},{defaults={center={size=8},enabled=false,height=10},key="experience",label="Experience",spec={colorInherit="colors.experience",formats={"none","level","resting","xp:current","xp:value","xp:percent","xp:current:percent","xp:value:percent","xp:missing","xp:rested","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.rested",key="rested",label="Rested",mode="append"}},textDefaults={center="xp:value:percent"},valueKind="xp"}}}
 definition width = 230
 ## unit.pet
-option barLayout type="select" label="Arrange bars" default="rows" values=#3f6311d9 tooltip=#6ad45959
-option columnHeight type="range" label="Column height" default=100 min=10 max=600 step=1 hidden
+option barLayout type="select" label="Arrange bars" default="rows" values=#3f6311d9 tooltip=#99609fd4
 option width type="range" label="Width" default=170 min=60 max=600 step=1 hidden
 option spacing type="range" label="Bar spacing" default=1 min=0 max=20 step=1
 option border type="group" label="Frame border" defaults={enabled=true}
@@ -6847,7 +6843,6 @@ default classification.offsetX = 0
 default classification.offsetY = 0
 default classification.order = 1
 default classification.size = 18
-default columnHeight = 100
 default dead.bars = true
 default dead.border = true
 default dead.color = {0.55,0.85,0.94,1}
@@ -7622,7 +7617,6 @@ resolved classification.offsetX = 0
 resolved classification.offsetY = 0
 resolved classification.order = 1
 resolved classification.size = 18
-resolved columnHeight = 100
 resolved dead.bars = true
 resolved dead.border = true
 resolved dead.color = {0.55,0.85,0.94,1}
@@ -8236,8 +8230,7 @@ definition sample.spell = "Bite"
 definition sample.spellIcon = "Interface\\Icons\\Ability_Druid_FerociousBite"
 definition width = 170
 ## unit.target
-option barLayout type="select" label="Arrange bars" default="rows" values=#3f6311d9 tooltip=#6ad45959
-option columnHeight type="range" label="Column height" default=100 min=10 max=600 step=1 hidden
+option barLayout type="select" label="Arrange bars" default="rows" values=#3f6311d9 tooltip=#99609fd4
 option width type="range" label="Width" default=230 min=60 max=600 step=1 hidden
 option spacing type="range" label="Bar spacing" default=1 min=0 max=20 step=1
 option border type="group" label="Frame border" defaults={enabled=true}
@@ -9422,7 +9415,6 @@ default classification.offsetX = 0
 default classification.offsetY = 0
 default classification.order = 1
 default classification.size = 18
-default columnHeight = 100
 default comboPoints.background.alpha = 0.25
 default comboPoints.background.color = {0,0,0,0.5}
 default comboPoints.background.enabled = true
@@ -10224,7 +10216,6 @@ resolved classification.offsetX = 0
 resolved classification.offsetY = 0
 resolved classification.order = 1
 resolved classification.size = 18
-resolved columnHeight = 100
 resolved comboPoints.background.alpha = 0.25
 resolved comboPoints.background.color = {0,0,0,0.5}
 resolved comboPoints.background.enabled = true
@@ -10866,8 +10857,7 @@ definition sample.threatStatus = 3
 definition threat.defaults = {}
 definition width = 230
 ## unit.targettarget
-option barLayout type="select" label="Arrange bars" default="rows" values=#3f6311d9 tooltip=#6ad45959
-option columnHeight type="range" label="Column height" default=100 min=10 max=600 step=1 hidden
+option barLayout type="select" label="Arrange bars" default="rows" values=#3f6311d9 tooltip=#99609fd4
 option width type="range" label="Width" default=140 min=60 max=600 step=1 hidden
 option spacing type="range" label="Bar spacing" default=1 min=0 max=20 step=1
 option border type="group" label="Frame border" defaults={enabled=true}
@@ -12021,7 +12011,6 @@ default classification.offsetX = 0
 default classification.offsetY = 0
 default classification.order = 1
 default classification.size = 18
-default columnHeight = 100
 default dead.bars = true
 default dead.border = true
 default dead.color = {0.55,0.85,0.94,1}
@@ -12802,7 +12791,6 @@ resolved classification.offsetX = 0
 resolved classification.offsetY = 0
 resolved classification.order = 1
 resolved classification.size = 18
-resolved columnHeight = 100
 resolved dead.bars = true
 resolved dead.border = true
 resolved dead.color = {0.55,0.85,0.94,1}
@@ -13415,8 +13403,7 @@ definition sample.powerType = "RAGE"
 definition threat.defaults.enabled = false
 definition width = 140
 ## unit.focus
-option barLayout type="select" label="Arrange bars" default="rows" values=#3f6311d9 tooltip=#6ad45959
-option columnHeight type="range" label="Column height" default=100 min=10 max=600 step=1 hidden
+option barLayout type="select" label="Arrange bars" default="rows" values=#3f6311d9 tooltip=#99609fd4
 option width type="range" label="Width" default=200 min=60 max=600 step=1 hidden
 option spacing type="range" label="Bar spacing" default=1 min=0 max=20 step=1
 option border type="group" label="Frame border" defaults={enabled=true}
@@ -14570,7 +14557,6 @@ default classification.offsetX = 0
 default classification.offsetY = 0
 default classification.order = 1
 default classification.size = 18
-default columnHeight = 100
 default dead.bars = true
 default dead.border = true
 default dead.color = {0.55,0.85,0.94,1}
@@ -15349,7 +15335,6 @@ resolved classification.offsetX = 0
 resolved classification.offsetY = 0
 resolved classification.order = 1
 resolved classification.size = 18
-resolved columnHeight = 100
 resolved dead.bars = true
 resolved dead.border = true
 resolved dead.color = {0.55,0.85,0.94,1}
@@ -15954,8 +15939,7 @@ definition sample.spellIcon = "Interface\\Icons\\Spell_Frost_FrostBolt02"
 definition threat.defaults = {}
 definition width = 200
 ## unit.focustarget
-option barLayout type="select" label="Arrange bars" default="rows" values=#3f6311d9 tooltip=#6ad45959
-option columnHeight type="range" label="Column height" default=100 min=10 max=600 step=1 hidden
+option barLayout type="select" label="Arrange bars" default="rows" values=#3f6311d9 tooltip=#99609fd4
 option width type="range" label="Width" default=140 min=60 max=600 step=1 hidden
 option spacing type="range" label="Bar spacing" default=1 min=0 max=20 step=1
 option border type="group" label="Frame border" defaults={enabled=true}
@@ -17109,7 +17093,6 @@ default classification.offsetX = 0
 default classification.offsetY = 0
 default classification.order = 1
 default classification.size = 18
-default columnHeight = 100
 default dead.bars = true
 default dead.border = true
 default dead.color = {0.55,0.85,0.94,1}
@@ -17890,7 +17873,6 @@ resolved classification.offsetX = 0
 resolved classification.offsetY = 0
 resolved classification.order = 1
 resolved classification.size = 18
-resolved columnHeight = 100
 resolved dead.bars = true
 resolved dead.border = true
 resolved dead.color = {0.55,0.85,0.94,1}
@@ -20678,8 +20660,7 @@ resolved right.whileCasting = "keep"
 resolved right.whileStatus = "status"
 resolved textLayout = "edges"
 ## clickgrid.member
-option barLayout type="select" label="Arrange bars" default="rows" values=#3f6311d9 tooltip=#6ad45959
-option columnHeight type="range" label="Column height" default=100 min=10 max=600 step=1 hidden
+option barLayout type="select" label="Arrange bars" default="rows" values=#3f6311d9 tooltip=#99609fd4
 option width type="range" label="Width" default=150 min=60 max=600 step=1 hidden
 option spacing type="range" label="Bar spacing" default=1 min=0 max=20 step=1
 option border type="group" label="Frame border" defaults={enabled=false}
@@ -21794,7 +21775,6 @@ default categoryAuras.showDuration = true
 default categoryAuras.showSwipeEdge = true
 default categoryAuras.size = 18
 default categoryAuras.swipe = "normal"
-default columnHeight = 100
 default dead.bars = true
 default dead.border = true
 default dead.color = {0.55,0.85,0.94,1}
@@ -22547,7 +22527,6 @@ resolved categoryAuras.showDuration = true
 resolved categoryAuras.showSwipeEdge = true
 resolved categoryAuras.size = 18
 resolved categoryAuras.swipe = "normal"
-resolved columnHeight = 100
 resolved dead.bars = true
 resolved dead.border = true
 resolved dead.color = {0.55,0.85,0.94,1}
@@ -23159,8 +23138,7 @@ definition sample.spellIcon = "Interface\\Icons\\Ability_Druid_FerociousBite"
 definition width = 150
 ## clickgrid.target
 option shown type="toggle" label="Show member targets" default=false tooltip=#04184f2b
-option barLayout type="select" label="Arrange bars" default="rows" values=#3f6311d9 tooltip=#6ad45959
-option columnHeight type="range" label="Column height" default=100 min=10 max=600 step=1 hidden
+option barLayout type="select" label="Arrange bars" default="rows" values=#3f6311d9 tooltip=#99609fd4
 option width type="range" label="Width" default=85 min=20 max=600 step=1 hidden
 option spacing type="range" label="Bar spacing" default=1 min=0 max=20 step=1
 option border type="group" label="Frame border" defaults={enabled=false}
@@ -24284,7 +24262,6 @@ default categoryAuras.showDuration = true
 default categoryAuras.showSwipeEdge = true
 default categoryAuras.size = 22
 default categoryAuras.swipe = "normal"
-default columnHeight = 100
 default dead.bars = true
 default dead.border = true
 default dead.color = {0.55,0.85,0.94,1}
@@ -25044,7 +25021,6 @@ resolved categoryAuras.showDuration = true
 resolved categoryAuras.showSwipeEdge = true
 resolved categoryAuras.size = 22
 resolved categoryAuras.swipe = "normal"
-resolved columnHeight = 100
 resolved dead.bars = true
 resolved dead.border = true
 resolved dead.color = {0.55,0.85,0.94,1}
@@ -25646,13 +25622,12 @@ definition sample.powerType = "RAGE"
 definition width = 85
 ## clickgrid.pet
 option display type="select" label="Pet display" default="off" values=#d071a0d1
-option interactive type="toggle" label="Allow pet interaction" default=false tooltip=#9c0a9643
-option side type="select" label="Inside edge" default="RIGHT" values=#11c04b33 hidden
-option inset type="range" label="Inside inset" default=1 min=0 max=20 step=1 hidden
+option interactive type="toggle" label="Allow pet interaction" default=false tooltip=#082ba01f
+option side type="select" label="Pet side" default="RIGHT" values=#11c04b33 hidden
+option gap type="range" label="Gap to member" default=2 min=0 max=30 step=1 hidden
 option hover type="toggle" label="Pet mouseover highlight" default=true
 option hoverColor type="color" label="Pet mouseover colour" default={0.2,0.8,1,0.35}
-option barLayout type="select" label="Arrange bars" default="columns" values=#3f6311d9 tooltip=#6ad45959
-option columnHeight type="range" label="Column height" default=28 min=10 max=600 step=1 hidden
+option barLayout type="select" label="Arrange bars" default="columns" values=#3f6311d9 tooltip=#99609fd4
 option width type="range" label="Width" default=85 min=60 max=600 step=1 hidden
 option spacing type="range" label="Bar spacing" default=1 min=0 max=20 step=1
 option border type="group" label="Frame border" defaults={enabled=false}
@@ -26760,7 +26735,6 @@ default categoryAuras.showDuration = true
 default categoryAuras.showSwipeEdge = true
 default categoryAuras.size = 22
 default categoryAuras.swipe = "normal"
-default columnHeight = 28
 default dead.bars = true
 default dead.border = true
 default dead.color = {0.55,0.85,0.94,1}
@@ -26769,6 +26743,7 @@ default dead.portrait = true
 default dead.strength = 0.85
 default dead.texts = true
 default display = "off"
+default gap = 2
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -27013,7 +26988,6 @@ default health.right.whileStatus = "status"
 default health.textLayout = "edges"
 default hover = true
 default hoverColor = {0.2,0.8,1,0.35}
-default inset = 1
 default interactive = false
 default offline.bars = true
 default offline.border = true
@@ -27513,7 +27487,6 @@ resolved categoryAuras.showDuration = true
 resolved categoryAuras.showSwipeEdge = true
 resolved categoryAuras.size = 22
 resolved categoryAuras.swipe = "normal"
-resolved columnHeight = 28
 resolved dead.bars = true
 resolved dead.border = true
 resolved dead.color = {0.55,0.85,0.94,1}
@@ -27522,6 +27495,7 @@ resolved dead.portrait = true
 resolved dead.strength = 0.85
 resolved dead.texts = true
 resolved display = "off"
+resolved gap = 2
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -27788,7 +27762,6 @@ resolved health.right.whileStatus = "status"
 resolved health.textLayout = "edges"
 resolved hover = true
 resolved hoverColor = {0.2,0.8,1,0.35}
-resolved inset = 1
 resolved interactive = false
 resolved offline.bars = true
 resolved offline.border = true
@@ -28086,7 +28059,6 @@ definition castbar.defaults.placement = "bottom"
 definition castbar.defaults.time.size = 9
 definition categoryAuras.defaults.enabled = false
 definition categoryAuras.noMouse = true
-definition columnHeight = 28
 definition defaultPosition.point = "CENTER"
 definition defaultPosition.x = -90
 definition defaultPosition.y = -235

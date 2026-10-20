@@ -16,19 +16,16 @@ function Preview:CreatePet(host)
 end
 
 function Preview:StylePet(pet, host, inline)
-	local cfg = CG.Config.styles.pet:Resolved()
-	pet.uf:Apply(CG.Config:GetStyle("pet"))
+	CG:ApplyUnitStyle(pet.uf, "pet", nil, self.layout, true)
 	local frame = pet.uf:GetFrame()
 	frame:ClearAllPoints()
 	if inline then
-		frame:SetPoint("TOP" .. cfg.side, host, "TOP" .. cfg.side, cfg.side == "LEFT" and cfg.inset or -cfg.inset, -cfg.inset)
-		frame:SetScale(math.min(1, math.max(1, CG.metrics.member.height - cfg.inset * 2) / pet.uf.layout.height,
-			math.max(1, CG.metrics.member.width - cfg.inset * 2) / pet.uf.layout.width))
-		frame:SetFrameLevel(host:GetFrameLevel() + 40)
+		frame:SetPoint("TOPLEFT", host:GetParent(), "TOPLEFT", self.layout.petX, 0)
+		frame:SetFrameLevel(host:GetFrameLevel())
 	else
 		frame:SetPoint("TOPLEFT", host, "TOPLEFT", 0, 0)
-		frame:SetScale(1)
 	end
+	frame:SetScale(1)
 	pet.dirty = nil
 end
 

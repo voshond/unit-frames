@@ -16,14 +16,17 @@ describe("ClickGrid pets", function()
 		assert.equals(count, #CG.frames)
 	end)
 
-	it("reuses inline frames without changing cell geometry or owner binding", function()
+	it("composes member and pet frames with a gap and reuses owner bindings", function()
 		local width, height = CG.layout.cellWidth, CG.layout.cellHeight
 		CG.Config:SetStyle("pet", "display", "inline")
 		local pet, count = Cell().Pet, #CG.frames
 		assert.is_not_nil(pet)
 		assert.equals("pet", CG:GetGridButton(pet).kind)
-		assert.equals(width, CG.layout.cellWidth)
+		assert.equals(width + CG.metrics.pet.width + CG.metrics.pet.gap, CG.layout.cellWidth)
 		assert.equals(height, CG.layout.cellHeight)
+		assert.same({ "TOPLEFT", Cell(), "TOPLEFT", width + CG.metrics.pet.gap, 0 }, pet:GetAnchor("TOPLEFT"))
+		assert.equals(Cell().Member.uf.layout.height, pet.uf.layout.height)
+		assert.equals(1, pet:GetScale())
 		assert.equals("pet", pet:GetAttribute("unitsuffix"))
 		assert.is_false(pet:GetAttribute("toggleForVehicle"))
 		assert.is_true(pet.isChild)
@@ -36,6 +39,43 @@ describe("ClickGrid pets", function()
 		assert.equals(count, #CG.frames)
 		assert.is_true(pet:IsEnabled())
 		assert.is_false(pet:IsElementPaused("Health"))
+	end)
+
+	it("stretches all pet columns to member height without scaling when the member shrinks", function()
+		CG.Config:SetStyle("pet", "display", "inline")
+		CG.Config:SetStyle("pet", "power.enabled", true)
+		CG.Config:SetStyle("pet", "health.height", 90)
+		CG.Config:SetStyle("pet", "health.columnWidth", 12)
+		CG.Config:SetStyle("member", "health.height", 14)
+		local pet = Cell().Pet
+		assert.equals(14, pet.uf.layout.height)
+		assert.equals(14, pet.uf:GetRow("health"):GetBar().knownHeight)
+		assert.equals(14, pet.uf:GetRow("power"):GetBar().knownHeight)
+		assert.equals(12, pet.uf:GetRow("health"):GetBar().knownWidth)
+		assert.equals(1, pet:GetScale())
+		assert.equals(14, CG.metrics.pet.height)
+	end)
+
+	it("lays out either side and member targets with a configurable gap without rebinding units", function()
+		CG.Config:SetStyle("pet", "display", "inline")
+		CG.Config:SetStyle("target", "shown", true)
+		local count = #CG.frames
+		UF.Perf.counters = {}
+		CG.Config:SetStyle("pet", "gap", 7)
+		local counters = UF.Perf.counters
+		UF.Perf.counters = nil
+		assert.is_nil(counters.unitBind)
+		assert.is_nil(counters.componentCreate)
+		assert.is_nil(counters.clickgridBindingsCompile)
+		local member, pet, target = Cell().Member, Cell().Pet, Cell().Target
+		assert.equals(157, select(4, pet:GetPoint()))
+		assert.equals(157 + CG.metrics.pet.width + CG.panelConfig.targetGap, select(4, target:GetPoint()))
+		CG.Config:SetStyle("pet", "side", "LEFT")
+		assert.equals(0, select(4, pet:GetPoint()))
+		assert.equals(CG.metrics.pet.width + 7, select(4, member:GetPoint()))
+		assert.equals(count, #CG.frames)
+		CG.Config:SetStyle("pet", "gap", 0)
+		assert.equals(CG.metrics.pet.width, select(4, member:GetPoint()))
 	end)
 
 	it("routes pet interactions explicitly and shows a distinct hover", function()
@@ -172,12 +212,16 @@ describe("ClickGrid pets #workbench", function()
 	local UF, CG, wb
 	before_each(function() UF, CG, wb = Helpers.LoadClickGrid(true); wb:Open("clickgrid.pet") end)
 
-	it("previews mixed owners without empty slots and releases pets", function()
+	it("previews separate member and pet frames with matching live geometry and releases pets", function()
 		CG.Config:SetStyle("pet", "display", "inline")
 		local preview = wb.handle
 		assert.is_true(preview.cells[1].pet.uf:GetFrame():IsShown())
 		assert.is_false(preview.cells[2].pet.uf:GetFrame():IsShown())
 		local first = preview.cells[1].pet.uf
+		assert.equals(CG.layout.cellWidth, preview.layout.cellWidth)
+		assert.equals(CG.metrics.member.height, first.layout.height)
+		assert.equals(1, first:GetFrame():GetScale())
+		assert.equals(preview.layout.petX, select(4, first:GetFrame():GetPoint()))
 		UF.Perf.counters = {}
 		preview:ShowData({ source = "animated", count = 5 })
 		preview:Tick(0.2)

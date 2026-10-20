@@ -20,6 +20,7 @@ function CG:RefreshChanges(kind, path)
 		if kind == "pet" and (path == "interactive" or path == "hover" or path == "hoverColor") then
 			return { petInteraction = true }
 		end
+		if kind == "pet" and (path == "gap" or path == "side") then return { layout = true } end
 		if kind == "target" and (path == "emptyText" or path:match("^emptyText%.")) then return { emptyText = true } end
 		local changes = { layout = true, [kind] = true }
 		if kind == "member" then
@@ -39,9 +40,10 @@ end
 
 function CG:ApplyUnitStyle(uf, kind, changes, layout, force)
 	local full = not changes or changes.full
-	local fillChanged = kind == "target" and uf.fillHeight ~= layout.cellHeight
+	local fillHeight = kind == "target" and layout.cellHeight or kind == "pet" and self.metrics.member.height or nil
+	local fillChanged = uf.fillHeight ~= fillHeight
 	if not full and not force and not changes[kind] and not fillChanged then return false end
-	if kind == "target" then uf:SetFillHeight(layout.cellHeight) end
+	uf:SetFillHeight(fillHeight)
 	uf:Apply(self.Config:GetStyle(kind))
 	return true
 end
@@ -98,8 +100,8 @@ local function RefreshFrame(self, frame, changes, layout)
 	if layoutChanged then
 		frame:ClearAllPoints()
 		if kind == "target" then
-			frame:SetPoint("TOPLEFT", cell, "TOPLEFT", self.metrics.member.width + self.panelConfig.targetGap, 0)
-		else frame:SetPoint("TOPLEFT", cell, "TOPLEFT", 0, 0) end
+			frame:SetPoint("TOPLEFT", cell, "TOPLEFT", layout.targetX, 0)
+		else frame:SetPoint("TOPLEFT", cell, "TOPLEFT", layout.memberX, 0) end
 		cell:SetSize(layout.cellWidth, layout.cellHeight)
 	end
 	if kind == "target" and (styled or layoutChanged or changes and changes.emptyText) then

@@ -97,14 +97,15 @@ function Preview:ChangeSource(source)
 end
 
 function Preview:StyleCell(cell, changes)
-	local cfg = self.cfg.panel
 	local force = not cell.styled
 	CG:ApplyUnitStyle(cell.member, "member", changes, self.layout, force)
 	local targetStyled = CG:ApplyUnitStyle(cell.target, "target", changes, self.layout, force)
 	local layoutChanged = force or not changes or changes.full or changes.layout
 	if layoutChanged then
-		cell.member:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", 0, 0)
-		cell.target:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", CG.metrics.member.width + cfg.targetGap, 0)
+		cell.member:ClearAllPoints()
+		cell.target:ClearAllPoints()
+		cell.member:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", self.layout.memberX, 0)
+		cell.target:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", self.layout.targetX, 0)
 	end
 	if layoutChanged or targetStyled or changes and changes.emptyText then
 		cell.target:GetFrame():SetShown(CG.metrics.target.shown)
@@ -233,7 +234,7 @@ function Preview:ShowData(data)
 	local raid = live and IsInRaid() or count > 5
 	local cfg = self.cfg.panel
 	local layout = CG.Layout.Compute(cfg, CG.metrics.member, CG.metrics.target, self.cfg.titles, self.cfg.border,
-		count, count, roster and roster.groups)
+		count, count, roster and roster.groups, CG.metrics.pet)
 	local petCount = self:PetRoster(live, count)
 	CG.PetLayout(layout, cfg, CG.metrics.pet, petCount, raid, count, self.cfg.titles, self.cfg.border)
 	self.layout = layout
