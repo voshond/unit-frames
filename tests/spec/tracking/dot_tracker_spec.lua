@@ -346,13 +346,55 @@ describe("DoT tracker #dots", function()
 			assert.equals("0 dmg", MarkerOn("A"))
 		end)
 
+		it("does not count off-target ticks as missed when returning before housekeeping", function()
+			Learn(1, 10); Target("A"); Cast(1); Target("B")
+			Mock.time = Mock.time + 7
+			Target("A"); Advance(0.01)
+			assert.equals("20 dmg from 1 DoT(s)", Marker())
+			assert.is_false(Logged("DROP"))
+			Advance(1.99); Hit(10, 32)
+			assert.equals("10 dmg from 1 DoT(s)", Marker())
+		end)
+
+		it("does not count a tick missed before retargeting within its late window", function()
+			Learn(1, 10); Target("A"); Cast(1); Target("B")
+			Advance(3.1); Target("A"); Advance(0.4)
+			Advance(3)
+			assert.equals("20 dmg from 1 DoT(s)", Marker())
+			Advance(3)
+			assert.is_true(Logged("DROP Corruption"))
+		end)
+
+		it("does not count off-focus ticks as missed when acquiring focus", function()
+			Learn(1, 10); Target("A"); Cast(1); Target("B")
+			Mock.time = Mock.time + 7
+			Mock.guids.focus = "A"
+			Mock.FireEvent("PLAYER_FOCUS_CHANGED")
+			Advance(0.01)
+			assert.equals("20 dmg", MarkerOn("A"))
+			assert.is_false(Logged("DROP"))
+			Advance(1.99); Hit(10, 32, "", "focus")
+			assert.equals("10 dmg", MarkerOn("A"))
+		end)
+
 		it("drops a DoT that never ticks on a focused mob, and counts ticks seen on the focus", function()
-			Learn(1, 10); Target("A"); Cast(1); Target("B"); Mock.guids.focus = "A"; Advance(7)
+			Learn(1, 10); Target("A"); Cast(1); Target("B"); Mock.guids.focus = "A"
+			Mock.FireEvent("PLAYER_FOCUS_CHANGED"); Advance(7)
 			assert.is_true(Logged("DROP Corruption"))
 			tracker:Release("spec"); tracker:Acquire("spec")
 			Learn(1, 10); Target("A"); Cast(1); Target("B")
 			Advance(3); Hit(10, 32, "", "focus")
 			assert.equals("30 dmg", MarkerOn("A"))
+		end)
+
+		it("keeps observing through focus while the target switches away and back", function()
+			Learn(1, 10); Target("A"); Mock.guids.focus = "A"
+			Mock.FireEvent("PLAYER_FOCUS_CHANGED"); Cast(1)
+			Advance(3.5); Target("B")
+			Mock.time = Mock.time + 3
+			Target("A"); Advance(0.01)
+			assert.equals("0 dmg from 0 DoT(s)", Marker())
+			assert.is_true(Logged("DROP Corruption"))
 		end)
 
 		it("counts a hit reported for both target and focus once", function()
@@ -436,6 +478,7 @@ describe("DoT tracker #dots", function()
 			assert.is_false(tracker.events:IsEventRegistered("UNIT_COMBAT"))
 			assert.is_nil(tracker.driver:GetScript("OnUpdate"))
 			assert.same({}, tracker.dots)
+			assert.same({}, tracker.observableSince)
 			assert.equals(10, tracker.ticks[1])
 		end)
 

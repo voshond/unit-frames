@@ -110,6 +110,30 @@ describe("Pending DoT damage on health bars #dots", function()
 		assert.same({ 0, 0, 0, 0, 0, 0 }, Values(pending), "no longer listening")
 	end)
 
+	it("restores pending damage after off-target ticks and keeps it through housekeeping", function()
+		local frame, pending = ns.Units.frames.target, Pending("target")
+		element.enable(frame)
+		ns.DotTracker.ticks[1] = 10
+		Cast(1)
+		assert.same({ 40, 0, 0, 0, 0, 0 }, Values(pending))
+		Mock.guids.target = "other"
+		Mock.FireEvent("PLAYER_TARGET_CHANGED")
+		element.update(frame, "UnitFramesRefresh")
+		assert.same({ 0, 0, 0, 0, 0, 0 }, Values(pending))
+
+		Mock.time = Mock.time + 7
+		Mock.guids.target = "mob"
+		Mock.FireEvent("PLAYER_TARGET_CHANGED")
+		element.update(frame, "UnitFramesRefresh")
+		ns.DotTracker.driver:RunScript("OnUpdate", 7)
+		assert.same({ 20, 0, 0, 0, 0, 0 }, Values(pending))
+		assert.is_true(pending.edge:IsShown())
+
+		Mock.time = Mock.time + 2
+		Mock.FireEvent("UNIT_COMBAT", "target", "WOUND", "", 10, 32)
+		assert.same({ 10, 0, 0, 0, 0, 0 }, Values(pending))
+	end)
+
 	it("takes the secret health scale and current health from the health update without reading them", function()
 		local frame, pending = ns.Units.frames.target, Pending("target")
 		element.enable(frame, "target")

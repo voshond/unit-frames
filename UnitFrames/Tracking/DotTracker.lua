@@ -56,6 +56,7 @@ end
 
 function DotTracker:Init()
 	self.owners, self.dots, self.sentTargets, self.lastCombat = {}, {}, {}, {}
+	self.observableSince = {}
 	self.ticks, self.deadline = {}, 0
 	self:ResetCombat()
 	self.events = CreateFrame("Frame")
@@ -100,6 +101,7 @@ function DotTracker:Start()
 	self.ticks = self:LearnedTicks()
 	local events = self.events
 	events:RegisterEvent("PLAYER_TARGET_CHANGED")
+	events:RegisterEvent("PLAYER_FOCUS_CHANGED")
 	events:RegisterUnitEvent("UNIT_SPELLCAST_SENT", "player")
 	events:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "player")
 	events:RegisterUnitEvent("UNIT_COMBAT", "target", "focus")
@@ -107,6 +109,7 @@ function DotTracker:Start()
 	if not issecretvalue(class) and ns.Units.COMBO_POINT_CLASSES[class] then
 		events:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 	end
+	self:RefreshObservability(GetTime())
 	return true
 end
 
@@ -115,6 +118,7 @@ function DotTracker:Stop()
 	self.driver:SetScript("OnUpdate", nil)
 	wipe(self.dots)
 	wipe(self.sentTargets)
+	wipe(self.observableSince)
 	self:ResetCombat()
 end
 
@@ -144,8 +148,13 @@ function DotTracker:KeyFor(unit)
 	return guid
 end
 
-function DotTracker:IsObservable(key)
-	return self:KeyFor("target") == key or self:KeyFor("focus") == key
+function DotTracker:RefreshObservability(now)
+	local target, focus = self:KeyFor("target"), self:KeyFor("focus")
+	for key in pairs(self.observableSince) do
+		if key ~= target and key ~= focus then self.observableSince[key] = nil end
+	end
+	if target and not self.observableSince[target] then self.observableSince[target] = now end
+	if focus and not self.observableSince[focus] then self.observableSince[focus] = now end
 end
 
 function DotTracker:Changed(key)
@@ -410,6 +419,7 @@ function DotTracker:OnCastSent(spellID, castGUID)
 end
 
 function DotTracker:OnCast(spellID, castGUID)
+	self:RefreshObservability(GetTime())
 	local key = self:CastTargetKey(castGUID)
 	if not C_SpellBook.IsSpellKnown(spellID) then return end
 	local name = C_Spell.GetSpellName(spellID)
@@ -519,18 +529,22 @@ end
 -- Only a tick that could have been seen counts as missed: a mob that is
 -- neither target nor focus keeps its DoTs until they expire.
 function DotTracker:Housekeep(now)
+	self:RefreshObservability(now)
 	local deadline
 	for key, dots in pairs(self.dots) do
-		local changed, observable = false, nil
+		local changed, observableSince = false, self.observableSince[key]
 		for name, dot in pairs(dots) do
 			local late = (dot.ticksSeen == 0 and dot.travel) or 0
 			while dot.nextTickAt < now - TICK_MATCH_WINDOW - late and dot.nextTickAt <= dot.expiresAt do
+				if dot.ticksSeen == 0 then
+					if observableSince and dot.nextTickAt >= observableSince then
+						dot.missed = dot.missed + 1
+					else
+						dot.missed = 0
+					end
+				end
 				dot.nextTickAt = dot.nextTickAt + dot.interval
 				changed = true
-				if dot.ticksSeen == 0 then
-					if observable == nil then observable = self:IsObservable(key) end
-					if observable then dot.missed = dot.missed + 1 end
-				end
 			end
 			if now > dot.expiresAt + TICK_MATCH_WINDOW then
 				dots[name], changed = nil, true
@@ -587,12 +601,18 @@ end
 -- Events -------------------------------------------------------------------------
 
 function DotTracker:PLAYER_TARGET_CHANGED()
+	self.observableSince.target = nil
+	self:RefreshObservability(GetTime())
 	if self.dots.target then
 		self.dots.target = nil
 		ns.Events:Fire("DotsChanged", "target")
 	end
 	self.countedPoints, self.lastBuilder = 0, nil
 	Trace(self, "TARGET changed to %s", tostring(self:KeyFor("target")))
+end
+
+function DotTracker:PLAYER_FOCUS_CHANGED()
+	self:RefreshObservability(GetTime())
 end
 
 -- Payloads are secret when spellcasts are restricted.
