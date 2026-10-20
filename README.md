@@ -30,6 +30,8 @@ each change.
   Blizzard's action buttons.
 - Filter buffs and debuffs by crowd control, big or external defensives,
   important buffs, or your own heals over time.
+- Hide Blizzard's own player buff and debuff sections, each on its own toggle.
+  Changes wait until combat ends.
 - Show crowd control and defensives over the portrait or on a frame edge, with
   crowd control on top.
 - Add raid markers, PvP flags, elite and rare icons, the resting zZz, and ready

@@ -36,6 +36,7 @@ Units.definitions.player = {
 	-- Its unit is always the player: player-only texts (XP, resting) apply.
 	playerFrame = true,
 	resting = true,
+	blizzardAuras = true,
 	width = 230,
 	defaultPosition = { point = "CENTER", x = -280, y = -160 },
 	rows = { HEALTH_ROW, POWER_ROW, EXPERIENCE_ROW },
@@ -244,7 +245,7 @@ end
 
 function Units:GetSpec(def, frame)
 	local spec = { frame = frame, rows = def.rows, width = def.width, resting = def.resting, readyCheck = def.readyCheck,
-		playerFrame = def.playerFrame, borderDefaults = def.borderDefaults, threat = def.threat }
+		playerFrame = def.playerFrame, borderDefaults = def.borderDefaults, threat = def.threat, blizzardAuras = def.blizzardAuras }
 	for _, part in ipairs(ns.Components.UnitFrame.PARTS) do spec[part.key] = def[part.key] end
 	-- The class is fixed for the session: other classes' frames leave the row out.
 	if spec.comboPoints then

@@ -104,6 +104,7 @@ Units\Style.lua
 Units\Preview.lua
 
 Integration\EditMode.lua
+Integration\BlizzardAuras.lua
 Timers\Runtime.lua
 
 Core\Commands.lua

@@ -8,7 +8,8 @@ local FEATURES = {
 	{ "castbar", "Cast bar" }, { "portrait", "Portrait" }, { "auras", "Buffs & debuffs" },
 	{ "states", "Indicators & states" }, { "comboPoints", "Combo points" }, { "experience", "Experience" },
 }
-local AURAS = { auras = "External icons", auraBar = "Embedded row", categoryAuras = "Priority icons", slots = "Tracked friendly buffs", privateAuras = "Private auras" }
+local AURAS = { auras = "External icons", auraBar = "Embedded row", categoryAuras = "Priority icons", slots = "Tracked friendly buffs", privateAuras = "Private auras",
+	blizzardAuras = "Blizzard buffs & debuffs" }
 local STATES = { range = true, dead = true, offline = true, resting = true, restingIcon = true, readyCheck = true, readyCheckIcon = true,
 	raidTarget = true, pvp = true, classification = true, indicators = true }
 local LABELS = { spark = "Fill-edge highlight", range = "Fade out-of-range frames", segments = "Shields and healing overlays",

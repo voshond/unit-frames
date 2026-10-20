@@ -2290,6 +2290,9 @@ option resting type="group" label="Resting border"
 option resting.enabled type="toggle" label="Enabled" default=true
 option resting.color type="color" label="Resting colour" default={1,0.753,0.157,1}
 option resting.period type="range" label="Pulse duration (seconds)" default=4 min=2 max=10 step=0.5 tooltip=#5fabb16e
+option blizzardAuras type="group" label="Blizzard buffs & debuffs"
+option blizzardAuras.hideBuffs type="toggle" label="Hide Blizzard buffs" default=false tooltip=#e079c0ee
+option blizzardAuras.hideDebuffs type="toggle" label="Hide Blizzard debuffs" default=false tooltip=#87a9536f
 option readyCheck type="group" label="Ready check"
 option readyCheck.enabled type="toggle" label="Tint bars" default=true tooltip=#f63d91dc
 option readyCheck.waitingColor type="color" label="Waiting colour" default={0.5,0.5,0.5,1}
@@ -3592,6 +3595,8 @@ default auras.fontOutline = "OUTLINE"
 default auras.showCount = true
 default auras.showDuration = true
 default auras.spacing = 2
+default blizzardAuras.hideBuffs = false
+default blizzardAuras.hideDebuffs = false
 default border.enabled = true
 default border.inset = 3
 default border.insetBottom = 3
@@ -4562,6 +4567,8 @@ resolved auras.fontOutline = "OUTLINE"
 resolved auras.showCount = true
 resolved auras.showDuration = true
 resolved auras.spacing = 2
+resolved blizzardAuras.hideBuffs = false
+resolved blizzardAuras.hideDebuffs = false
 resolved border.background = "Solid"
 resolved border.backgroundColor = {0,0,0,0.75}
 resolved border.border = "Blizzard Tooltip"
@@ -5522,6 +5529,7 @@ definition auraBar.collapsible = true
 definition auraBar.defaults = {}
 definition auras.cancelBuffs = true
 definition auras.defaults = {}
+definition blizzardAuras = true
 definition castbar.defaults.border.enabled = false
 definition castbar.defaults.enabled = false
 definition castbar.defaults.height = 18

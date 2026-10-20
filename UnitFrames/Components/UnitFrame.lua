@@ -303,6 +303,13 @@ UnitFrame.THREAT_SCHEMA = GroupSchema(ns.Glow.UNDER_SCHEMA, {
 		tooltip = "The first stage that shows the glow. Earlier stages show nothing." },
 })
 
+UnitFrame.BLIZZARD_AURAS_SCHEMA = {
+	{ key = "hideBuffs", type = "toggle", label = "Hide Blizzard buffs", default = false,
+		tooltip = "Hide Blizzard's player buff section, including temporary weapon enchants. Changes wait until combat ends. Turning this off restores Blizzard's visibility rules." },
+	{ key = "hideDebuffs", type = "toggle", label = "Hide Blizzard debuffs", default = false,
+		tooltip = "Hide Blizzard's player debuff section, including the private aura warnings it anchors. Changes wait until combat ends. Turning this off restores Blizzard's visibility rules." },
+}
+
 UnitFrame.UNIT_STATES = {
 	{ key = "dead", label = "Dead & ghost", schema = UnitStateSchema(
 		"While the unit is dead or a ghost, turn this frame greyscale and tint it with the ghost colour. Bar fills take one uniform colour; the health bar shows it across its whole length instead of an empty or 1 health fill.",
@@ -337,6 +344,9 @@ function UnitFrame.BuildSchema(spec)
 			{ key = "period", type = "range", label = "Pulse duration (seconds)", min = 2, max = 10, step = 0.5, default = 4,
 				tooltip = "Time for one slow fade to the resting colour and back. Requires a visible frame border." },
 		} }
+	end
+	if spec.blizzardAuras then
+		schema[#schema + 1] = { key = "blizzardAuras", type = "group", label = "Blizzard buffs & debuffs", schema = UnitFrame.BLIZZARD_AURAS_SCHEMA }
 	end
 	if spec.threat then
 		schema[#schema + 1] = { key = "threat", type = "group", label = "Threat glow", schema = UnitFrame.THREAT_SCHEMA,
