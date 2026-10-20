@@ -100,7 +100,7 @@ local function Subjects()
 	for _, row in ipairs({ "health", "power", "experience" }) do
 		Add("row." .. row, C.TextBar.BuildSchema(UF.UnitRows.Spec(row)))
 	end
-	for _, kind in ipairs({ "member", "target" }) do
+	for _, kind in ipairs({ "member", "target", "pet" }) do
 		Add("clickgrid." .. kind, CG:StyleSchema(kind), CG.definitions[kind])
 	end
 	Add("clickgrid.settings", CG.Config.schema)

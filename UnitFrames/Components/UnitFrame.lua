@@ -321,8 +321,14 @@ UnitFrame.UNIT_STATES = {
 
 function UnitFrame.BuildSchema(spec)
 	local schema = {
-		{ key = "width", type = "range", label = "Width", min = 60, max = 600, step = 1, default = spec.width or 230 },
-		{ key = "spacing", type = "range", label = "Row spacing", min = 0, max = 20, step = 1, default = 1 },
+		{ key = "barLayout", type = "select", label = "Arrange bars", default = spec.barLayout or "rows",
+			values = { { "rows", "Rows" }, { "columns", "Columns" } },
+			tooltip = "Columns use each bar's Column width and the shared Column height. Fill orientation is configured separately per bar. Portraits span all columns; extra castbars and icon/point rows stay above or below. Aura rows do not collapse in column mode." },
+		{ key = "columnHeight", type = "range", label = "Column height", min = 10, max = 600, step = 1, default = spec.columnHeight or 100,
+			hidden = function(cfg) return cfg.barLayout ~= "columns" end },
+		{ key = "width", type = "range", label = "Width", min = 60, max = 600, step = 1, default = spec.width or 230,
+			hidden = function(cfg) return cfg.barLayout == "columns" end },
+		{ key = "spacing", type = "range", label = "Bar spacing", min = 0, max = 20, step = 1, default = 1 },
 		{ key = "border", type = "group", label = "Frame border", schema = Backdrop.schema,
 			defaults = ns.Util.Merge({ enabled = true }, spec.borderDefaults or {}) },
 		{ key = "range", type = "group", label = "Out-of-range opacity", schema = {
@@ -369,7 +375,8 @@ function UnitFrame.BuildSchema(spec)
 	end
 	AddParts(true)
 	for _, row in ipairs(spec.rows) do
-		local extra = { HeightOption() }
+		local extra = { HeightOption(),
+			{ key = "columnWidth", type = "range", label = "Column width", min = 2, max = 200, step = 1, default = 20 } }
 		for _, opt in ipairs(row.options or {}) do
 			extra[#extra + 1] = opt
 		end
@@ -613,6 +620,7 @@ function UnitFrame:Layout()
 			component:SetPoint("TOPLEFT", self.frame, "TOPLEFT", item.left, item.y)
 			component:SetPoint("TOPRIGHT", self.frame, "TOPRIGHT", -item.right, item.y)
 			component:GetFrame():SetHeight(item.height)
+			if self.rowsByKey[item.key] then component:SetKnownSize(layout.width - item.left - item.right, item.height) end
 			placements[item.key] = item
 			ns.Perf:Count("rowLayoutWrite")
 		end
@@ -722,7 +730,7 @@ function UnitFrame:GetLeadingName()
 	local row = self.rowsByKey.health
 	if row and row:IsEnabled() then
 		for _, text in row:EnabledTexts() do
-			if text.resolved.justifyH == "LEFT" and text:LeadsWithName() then
+			if text.resolved.rotation == 0 and text.resolved.justifyH == "LEFT" and text:LeadsWithName() then
 				return text
 			end
 		end

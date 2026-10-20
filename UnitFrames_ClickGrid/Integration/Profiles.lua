@@ -8,11 +8,11 @@ string without them leaves ClickGrid as it is. Click bindings are saved per
 character and specialization, and their spells per class, so they have a
 string of their own that replaces the current specialization's bindings.
 ]]
-local STYLE_PARTS = { "settings", "member", "target" }
+local STYLE_PARTS = { "settings", "member", "target", "pet" }
 
 local function Stores()
 	local config = CG.Config
-	return { settings = config.settings, member = config.styles.member, target = config.styles.target }
+	return { settings = config.settings, member = config.styles.member, target = config.styles.target, pet = config.styles.pet }
 end
 
 -- Sanitized and fully validated replacements for every store, or nil and a reason.
@@ -22,7 +22,7 @@ local function Prepare(stores, data, parts)
 	for _, part in ipairs(parts) do
 		local store = stores[part]
 		local config = UF.Util.Copy(data[part])
-		if part == "member" or part == "target" then config = UF.Units:MigrateConfig(config) end
+		if part ~= "settings" and part ~= "bindings" then config = UF.Units:MigrateConfig(config) end
 		if part == "settings" then config = CG.Config:MigrateSettings(config) end
 		clean[part] = UF.Schema.Sanitize(store:GetSchema(), config, part .. ".", dropped)
 		local ok, reason = store:Check(clean[part])

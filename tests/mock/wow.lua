@@ -181,6 +181,16 @@ end
 function Methods:GetObjectType() return self.__type end
 function Methods:IsObjectType(t) return self.__type == t end
 function Methods:GetName() return self.__state.name end
+function Methods:SetMouseClickEnabled(enabled)
+	self.__state.mouseClickEnabled = enabled
+	self.__calls[#self.__calls + 1] = { "SetMouseClickEnabled", enabled }
+end
+function Methods:SetMouseMotionEnabled(enabled)
+	self.__state.mouseMotionEnabled = enabled
+	self.__calls[#self.__calls + 1] = { "SetMouseMotionEnabled", enabled }
+end
+function Methods:SetRotation(radians) self.__state.rotation = radians end
+function Methods:GetFrameRef(label) return self.__state.frameRefs and self.__state.frameRefs[label] end
 
 function Methods:SetScript(name, fn) self.__state.scripts[name] = fn end
 function Methods:GetScript(name) return self.__state.scripts[name] end
@@ -1134,6 +1144,11 @@ function Mock.Install()
 		if frame.__state.drivers then frame.__state.drivers[name] = nil end
 	end
 	_G.RegisterStateDriver = _G.RegisterAttributeDriver
+	_G.SecureHandlerSetFrameRef = function(frame, label, reference)
+		assert(not InCombatLockdown(), "Secure frame references cannot change in combat")
+		frame.__state.frameRefs = frame.__state.frameRefs or {}
+		frame.__state.frameRefs[label] = reference
+	end
 	_G.RegisterUnitWatch = function(frame)
 		frame.__state.unitWatched = true
 	end

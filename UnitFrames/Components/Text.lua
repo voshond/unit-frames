@@ -87,6 +87,8 @@ Text.schema = {
 	{ key = "shadow", type = "toggle", label = "Shadow", default = true },
 	{ key = "color", type = "color", label = "Colour", default = { 1, 1, 1, 1 } },
 	{ key = "justifyH", type = "select", label = "Alignment", values = Text.JUSTIFY, default = "CENTER" },
+	{ key = "rotation", type = "select", label = "Rotation", default = 0,
+		values = { { 0, "Horizontal" }, { -90, "Clockwise 90°" }, { 90, "Counterclockwise 90°" } } },
 }
 
 Text.VERTICAL = {
@@ -293,6 +295,8 @@ function Text:OnApply(cfg)
 	self:ApplyColor()
 	fs:SetJustifyH(cfg.justifyH)
 	fs:SetWordWrap(false)
+	if (self.appliedRotation or 0) ~= cfg.rotation then fs:SetRotation(math.rad(cfg.rotation)) end
+	self.appliedRotation = cfg.rotation
 	self:Layout()
 	self.template = self:CompileTemplate(cfg)
 end
@@ -353,6 +357,26 @@ function Text:Layout()
 	if not cfg then return end
 	local host = self.spec.host
 	if host then
+		if cfg.rotation ~= 0 then
+			local width = math.max(1, (self.hostHeight or cfg.size) - cfg.inset * 2 - (self.leadingSpace or 0))
+			local height = self.hostWidth or cfg.size
+			local textHeight = (cfg.size + 2) * (self.lineCount or 1)
+			local vertical = cfg.vertical == "auto" and (self.autoVertical or "middle") or cfg.vertical
+			local offset = cfg.vertical == "auto" and (self.autoOffset or 0) or 0
+			if vertical == "top" then offset = (height - textHeight) / 2
+			elseif vertical == "bottom" then offset = -(height - textHeight) / 2 end
+			local x = cfg.offsetX + (cfg.rotation == 90 and -offset or offset)
+			local layout = self.textLayout
+			if layout and layout.rotation == cfg.rotation and layout.width == width and layout.height == height
+				and layout.x == x and layout.y == cfg.offsetY and layout.textHeight == textHeight then return end
+			fs:ClearAllPoints()
+			fs:SetPoint("CENTER", host, "CENTER", x, cfg.offsetY)
+			fs:SetSize(width, textHeight)
+			self.textLayout = { rotation = cfg.rotation, width = width, height = height,
+				x = x, y = cfg.offsetY, textHeight = textHeight }
+			ns.Perf:Count("textLayoutWrite")
+			return
+		end
 		local vertical = cfg.vertical
 		if vertical == "auto" then
 			vertical = self.autoVertical or "middle"
@@ -371,11 +395,24 @@ function Text:Layout()
 		local layout = self.textLayout
 		if layout and layout.edge == edge and layout.left == left and layout.right == right and layout.y == y then return end
 		fs:ClearAllPoints()
+		fs:SetSize(0, 0)
 		fs:SetPoint(edge .. "LEFT", host, edge .. "LEFT", left, y)
 		fs:SetPoint(edge .. "RIGHT", host, edge .. "RIGHT", right, y)
 		self.textLayout = { edge = edge, left = left, right = right, y = y }
 		ns.Perf:Count("textLayoutWrite")
 	end
+end
+
+function Text:SetHostSize(width, height)
+	if self.hostWidth == width and self.hostHeight == height then return end
+	self.hostWidth, self.hostHeight = width, height
+	self:Layout()
+end
+
+function Text:SetLineCount(count)
+	if self.lineCount == count then return end
+	self.lineCount = count
+	self:Layout()
 end
 
 -- Where "auto" vertical position goes ("middle", "top", "bottom"), plus a

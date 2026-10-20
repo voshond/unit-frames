@@ -15,8 +15,12 @@ end
 function CG:RefreshChanges(kind, path)
 	if kind == "roster" then return { roster = true } end
 	if not path then return { full = true } end
-	if kind == "member" or kind == "target" then
+	if kind == "member" or kind == "target" or kind == "pet" then
 		if not UF.Schema.Find(self:StyleSchema(kind), path) then return { full = true } end
+		if kind == "pet" and (path == "interactive" or path == "hover" or path == "hoverColor") then
+			return { petInteraction = true }
+		end
+		if kind == "target" and (path == "emptyText" or path:match("^emptyText%.")) then return { emptyText = true } end
 		local changes = { layout = true, [kind] = true }
 		if kind == "member" then
 			changes.indicators = true
@@ -98,8 +102,10 @@ local function RefreshFrame(self, frame, changes, layout)
 		else frame:SetPoint("TOPLEFT", cell, "TOPLEFT", 0, 0) end
 		cell:SetSize(layout.cellWidth, layout.cellHeight)
 	end
-	if kind == "target" and (styled or layoutChanged) then
+	if kind == "target" and (styled or layoutChanged or changes and changes.emptyText) then
 		button.empty:Apply(frame.uf, layout.cellHeight, self.metrics.target.shown)
+	end
+	if kind == "target" and (styled or layoutChanged) then
 		if self.metrics.target.shown then
 			UnregisterAttributeDriver(frame, "state-visibility")
 			frame:SetAttribute("statehidden", nil)
@@ -120,6 +126,7 @@ local function RefreshFrame(self, frame, changes, layout)
 end
 
 function CG:RefreshFrame(frame, changes, layout)
+	if self:GetGridButton(frame).kind == "pet" then return self:RefreshPet(frame, changes, layout) end
 	return frame.uf:GetDecorations():Batch(RefreshFrame, self, frame, changes, layout)
 end
 

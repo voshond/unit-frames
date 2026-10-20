@@ -53,7 +53,7 @@ end
 -- styles and the current specialization's click bindings.
 function Config:Initialize()
 	self.db = UF.Config.db:RegisterNamespace("ClickGrid", {
-		profile = { version = 1, settings = {}, member = {}, target = {} },
+		profile = { version = 1, settings = {}, member = {}, target = {}, pet = {} },
 		char = { loadouts = {} },
 	})
 	local db = self.db
@@ -67,7 +67,7 @@ function Config:Initialize()
 		write = function(settings) db.profile.settings = settings end,
 	})
 	self.styles = {}
-	for _, kind in ipairs({ "member", "target" }) do
+	for _, kind in ipairs({ "member", "target", "pet" }) do
 		self.styles[kind] = UF.Store:New({
 			schema = function() return CG:StyleSchema(kind) end, theme = true, validate = true,
 			read = function()

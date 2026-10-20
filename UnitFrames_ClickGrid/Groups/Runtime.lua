@@ -9,12 +9,12 @@ function CG:GetHeaderTitles(header)
 	return headerTitles[header]
 end
 
-function CG:CreateHeader(key, capacity, filter, role)
+function CG:CreateHeader(key, capacity, filter, role, pet)
 	UF.Perf:Count("headerCreate")
 	-- SpawnHeader hides Blizzard party frames only if showParty is supplied
 	-- here. Configure it later through normal header attributes instead.
-	local header = oUF:SpawnHeader("UnitFramesClickGrid" .. key, "SecureGroupHeaderTemplate", {
-		template = "UnitFramesClickGridCellTemplate", showRaid = true, showPlayer = true,
+	local header = oUF:SpawnHeader("UnitFramesClickGrid" .. key, pet and "SecureGroupPetHeaderTemplate" or "SecureGroupHeaderTemplate", {
+		template = pet and "UnitFramesClickGridPetCellTemplate" or "UnitFramesClickGridCellTemplate", showRaid = true, showPlayer = true,
 		showSolo = true, groupFilter = filter, roleFilter = role,
 		unitsPerColumn = capacity, maxColumns = 1, startingIndex = -capacity,
 		["oUF-initialConfigFunction"] = [[
@@ -22,21 +22,22 @@ function CG:CreateHeader(key, capacity, filter, role)
 			if not self:GetAttribute("oUF-onlyProcessChildren") then
 				header = header:GetParent()
 				self:SetAttribute("useparent-unit", true)
-				self:SetAttribute("toggleForVehicle", not self:GetAttribute("ufcg-target"))
+				self:SetAttribute("toggleForVehicle", not self:GetAttribute("ufcg-target") and not self:GetAttribute("ufcg-pet"))
 			end
 			self:SetWidth(header:GetAttribute("member-width"))
 			self:SetHeight(header:GetAttribute("cell-height"))
 		]],
 	})
-	header:SetAttribute("member-width", self.metrics.member.width)
-	header:SetAttribute("cell-height", self.metrics.member.height)
+	local metrics = pet and self.metrics.pet or self.metrics.member
+	header:SetAttribute("member-width", metrics.width)
+	header:SetAttribute("cell-height", metrics.height)
 	-- The native header's negative starting index requests capacity dummy
 	-- children. They are fully styled before any combat roster assignment.
 	header:Show()
 	for i = 1, capacity do
 		local cell = header:GetAttribute("child" .. i)
 		assert(cell, "Secure header did not prepare its full capacity")
-		cell:SetSize(self.metrics.member.width, self.metrics.member.height)
+		cell:SetSize(metrics.width, metrics.height)
 	end
 	header:Hide()
 	header:SetParent(self.panel)
@@ -66,6 +67,17 @@ function Start(self)
 	self.panel:SetAttribute("_onstate-roster", [[
 		self:SetWidth(self:GetAttribute(newstate.."-width"))
 		self:SetHeight(self:GetAttribute(newstate.."-height"))
+		local pets = self:GetFrameRef("pets")
+		local y = self:GetAttribute(newstate.."-pets-y")
+		if pets and y then
+			pets:ClearAllPoints()
+			local raid = newstate == "raid" and self:GetAttribute("pets-flat") and self:GetFrameRef("pets-raid")
+			if raid then
+				pets:SetPoint("TOPLEFT", raid, "BOTTOMLEFT", 0, -self:GetAttribute("pets-gap"))
+			else
+				pets:SetPoint("TOPLEFT", self, "TOPLEFT", self:GetAttribute("pets-x"), -y)
+			end
+		end
 	]])
 	local previous = oUF:GetActiveStyle()
 	oUF:SetActiveStyle(self.STYLE)
@@ -91,6 +103,12 @@ function CG:EnsureHeaders(panel)
 		end
 	end
 	if panel.tanks and not self.headers.tanks then self:CreateHeader("tanks", 40, nil, "TANK") end
+	if self.metrics.pet.mode == "group" and not self.headers.pets then
+		local header = self:CreateHeader("pets", 40, nil, nil, true)
+		header:SetAttribute("showParty", true)
+		SecureHandlerSetFrameRef(self.panel, "pets", header)
+	end
+	if self.metrics.pet.mode == "inline" then self:EnsureInlinePets(panel) end
 	oUF:SetActiveStyle(previous)
 end
 

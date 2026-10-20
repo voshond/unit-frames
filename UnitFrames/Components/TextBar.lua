@@ -109,6 +109,7 @@ function TextBar:OnApply(cfg)
 		end
 		self:ApplyChild(text, slot.key, cfg)
 	end
+	self:LayoutTextBounds()
 end
 
 -- The key of the small slot below `key`, if any.
@@ -144,6 +145,15 @@ end
 
 function TextBar:SetKnownSize(width, height)
 	self.bar:SetKnownSize(width, height)
+	self:LayoutTextBounds()
+end
+
+function TextBar:LayoutTextBounds()
+	if not self.bar.knownWidth then return end
+	local width, height = self.bar:GetKnownInnerSize()
+	if self.textWidth == width and self.textHeight == height then return end
+	self.textWidth, self.textHeight = width, height
+	for _, text in pairs(self.texts) do text:SetHostSize(width, height) end
 end
 
 function TextBar:GetText(key)

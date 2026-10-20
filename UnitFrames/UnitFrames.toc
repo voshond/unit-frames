@@ -67,6 +67,7 @@ Components\Classification.lua
 Components\RestingIcon.lua
 Components\ReadyCheckIcon.lua
 Components\CategoryAuras.lua
+Components\UnitFrameColumns.lua
 Components\UnitFrameLayout.lua
 Components\ReadyCheck.lua
 Components\UnitFrame.lua

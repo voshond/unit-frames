@@ -10,18 +10,22 @@
 
 Core\Init.lua
 Groups\Definitions.lua
+Groups\Ordering.lua
 Core\Config.lua
 Bindings\Compiler.lua
 Auras\Slots.lua
 Indicators\Status.lua
 Groups\Targets.xml
 Groups\Layout.lua
+Groups\PetLayout.lua
 Groups\EmptyTarget.lua
+Groups\Pets.lua
 Groups\Style.lua
 Groups\Refresh.lua
 Groups\Panel.lua
 Integration\BlizzardFrames.lua
 Groups\Runtime.lua
 Preview.lua
+PetPreview.lua
 Integration\Workbench.lua
 Integration\Profiles.lua

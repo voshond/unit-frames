@@ -25,7 +25,17 @@ function CG:StyleSchema(kind)
 	self.styleSchemas = self.styleSchemas or {}
 	if not self.styleSchemas[kind] then
 		local schema = UF.Schema.Build(UF.Components.UnitFrame.BuildSchema, UF.Units:GetSpec(self.definitions[kind]))
+		if kind == "pet" then
+			schema = UF.Schema.Concat(CG.PetSchema, schema)
+		end
 		if kind == "target" then
+			schema = UF.Schema.Concat(schema, {
+				{ key = "emptyText", type = "group", label = "No target text",
+					schema = UF.Schema.Concat(UF.Components.Text.BuildSchema({ host = true }), {
+						{ key = "label", type = "text", label = "Text", default = "No\nTarget" },
+						{ key = "fit", type = "toggle", label = "Fit font to bar height", default = true },
+					}), defaults = { color = { 0.6, 0.6, 0.6, 1 }, shadow = false } },
+			})
 			-- Narrow strips are useful beside a member bar.
 			schema = UF.Schema.Override(schema, "width", { min = 20 })
 			table.insert(schema, 1, { key = "shown", type = "toggle", label = "Show member targets", default = false,
@@ -43,6 +53,9 @@ function CG:Measure()
 		self.metrics[kind] = { width = layout.width, height = layout.height }
 	end
 	self.metrics.target.shown = self:TargetsShown()
+	local pet = self.Config.styles.pet:Resolved()
+	local layout = UF.UnitFrameLayout.Compute(UF.Units:GetSpec(self.definitions.pet), pet)
+	self.metrics.pet = { width = layout.width, height = layout.height, mode = pet.display }
 end
 
 function CG:TargetsShown()
@@ -58,9 +71,9 @@ function CG:GetGridButton(frame)
 	return buttons[frame]
 end
 
-oUF:RegisterStyle(CG.STYLE, function(frame)
+function CG:StyleFrame(frame, kind)
 	local target = frame:GetAttribute("ufcg-target")
-	local kind = target and "target" or "member"
+	kind = kind or (frame:GetAttribute("ufcg-pet") and "pet" or target and "target" or "member")
 	local button = { kind = kind }
 	buttons[frame] = button
 	frame.uf = UF.Units:CreateFromDefinition(CG.definitions[kind], frame, CG.Config:GetStyle(kind), frame)
@@ -71,9 +84,13 @@ oUF:RegisterStyle(CG.STYLE, function(frame)
 	frame:HookScript("OnLeave", UF.Units.HideTooltip)
 	UF.Units:Bind(frame)
 	if target then button.empty = CG.EmptyTarget:New(frame:GetParent(), frame)
-	else
+	elseif kind == "member" then
 		button.status, button.slots = CG:AddMemberExtras(frame.uf, frame, true)
 		UF.Units.SetElement(frame, "UFCG_Slots", button.slots)
 	end
 	CG.frames[#CG.frames + 1] = frame
-end)
+	if kind == "pet" then self:CreatePetHover(frame) end
+end
+
+oUF:RegisterStyle(CG.STYLE, function(frame) CG:StyleFrame(frame) end)
+oUF:RegisterStyle(CG.STYLE .. "Pet", function(frame) CG:StyleFrame(frame, "pet") end)

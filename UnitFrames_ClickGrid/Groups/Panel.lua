@@ -18,14 +18,16 @@ function CG:Roster()
 end
 
 function CG:RosterKey(roster, mode)
-	if mode == "flat" then return tostring(roster.count) end
-	return table.concat(roster.groups, ",")
+	local key = mode == "flat" and tostring(roster.count) or table.concat(roster.groups, ",")
+	return key .. ":" .. tostring(roster.pets or 0)
 end
 
 function CG:RequestRoster()
 	if not self.started or not self.roster then return end
 	local mode = self.panelConfig.mode
-	if self:RosterKey(self:Roster(), mode) == self:RosterKey(self.roster, mode) then return end
+	local roster = self:Roster()
+	roster.pets = self:PetCount()
+	if self:RosterKey(roster, mode) == self:RosterKey(self.roster, mode) then return end
 	self:RequestRefresh("roster")
 end
 
@@ -35,9 +37,16 @@ function CG:LayoutPanel()
 	local cfg = self.Config:Resolved()
 	self:EnsureHeaders(cfg.panel)
 	local roster = self:Roster()
+	roster.pets = self:PetCount()
 	local layout = self.Layout.Compute(cfg.panel, self.metrics.member, self.metrics.target, cfg.titles, cfg.border,
 		roster.count, nil, roster.groups)
+	self.PetLayout(layout, cfg.panel, self.metrics.pet, roster.pets, IsInRaid(), roster.count, cfg.titles, cfg.border)
 	self.layout, self.activeHeaders, self.panelConfig, self.roster = layout, {}, cfg.panel, roster
+	for state, y in pairs(layout.petOffsets or {}) do self.panel:SetAttribute(state .. "-pets-y", y) end
+	if layout.sections.pets then self.panel:SetAttribute("pets-x", layout.sections.pets.x) end
+	self.panel:SetAttribute("pets-flat", cfg.panel.mode == "flat")
+	self.panel:SetAttribute("pets-gap", cfg.panel.sectionGap + self.Layout.TitleHeight(cfg.titles))
+	if self.headers.raid then SecureHandlerSetFrameRef(self.panel, "pets-raid", self.headers.raid) end
 	self.panel:SetScale(cfg.panel.scale)
 	for _, state in ipairs({ "party", "raid", "solo" }) do
 		self.panel:SetAttribute(state .. "-width", layout[state].width)
@@ -62,6 +71,11 @@ function CG:LayoutPanel()
 		local titles = self:GetHeaderTitles(header)
 		for _, label in ipairs(titles.columns) do label:Hide() end
 		if section then
+			header:SetAttribute("_ignore", true)
+			header:SetAttribute("groupBy", key ~= "pets" and cfg.panel.roleOrder ~= "roster" and "ASSIGNEDROLE" or nil)
+			header:SetAttribute("groupingOrder", key ~= "pets" and cfg.panel.roleOrder ~= "roster" and cfg.panel.roleOrder or nil)
+			header:SetAttribute("sortMethod", "INDEX")
+			header:SetAttribute("sortDir", "ASC")
 			if key == "raid" then
 				titles.label:Hide()
 				for column = 1, section.grid.columns do
@@ -77,12 +91,16 @@ function CG:LayoutPanel()
 			elseif section.parked then titles.label:Hide()
 			else self.Layout.TitleOnHeader(titles.label, header, key, section, cfg.titles, layout.titlePadding) end
 			header:ClearAllPoints()
-			header:SetPoint("TOPLEFT", self.panel, "TOPLEFT", section.x, -section.y)
-			header:SetAttribute("_ignore", true)
+			if key == "pets" and cfg.panel.mode == "flat" and IsInRaid() then
+				header:SetPoint("TOPLEFT", self.headers.raid, "BOTTOMLEFT", 0, -self.panel:GetAttribute("pets-gap"))
+			else header:SetPoint("TOPLEFT", self.panel, "TOPLEFT", section.x, -section.y) end
 			for attribute, value in pairs(self.Layout.Attributes(section.capacity or section.grid, cfg.panel)) do header:SetAttribute(attribute, value) end
 			header:SetAttribute("_ignore", nil)
 		else titles.label:Hide() end
-		if key == "party" then
+		if key == "pets" then
+			header:SetAttribute("showSolo", cfg.panel.showSolo)
+			header:SetVisibility(visible and (cfg.panel.showSolo and "custom show" or "custom [group] show; hide") or "custom hide")
+		elseif key == "party" then
 			header:SetAttribute("showSolo", cfg.panel.showSolo)
 			header:SetVisibility("custom [group:raid] hide; " .. (cfg.panel.showSolo and "show" or "[group:party] show; hide"))
 		else header:SetVisibility(visible and "custom [group:raid] show; hide" or "custom hide") end

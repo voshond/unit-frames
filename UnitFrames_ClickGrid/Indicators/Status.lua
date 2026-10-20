@@ -434,7 +434,7 @@ function Status:ShowSample(index, ready, values)
 	local cfg = self.resolved
 	self.GroupRoleIndicator:SetAtlas(index == 1 and "UI-LFG-RoleIcon-Tank-Micro-Raid"
 		or index == 2 and "UI-LFG-RoleIcon-Healer-Micro-Raid" or "UI-LFG-RoleIcon-DPS-Micro-Raid")
-	self.GroupRoleIndicator:SetShown(cfg.role)
+	self.GroupRoleIndicator:SetShown(cfg.role and CG.Ordering.SampleRole(index) ~= "NONE")
 	self.LeaderIndicator:SetAtlas("UI-HUD-UnitFrame-Player-Group-LeaderIcon")
 	self.LeaderIndicator:SetShown(cfg.leader and index == 1)
 	self.AssistantIndicator:SetTexture([[Interface\GroupFrame\UI-Group-AssistantIcon]])

@@ -18,4 +18,17 @@
 			</Button>
 		</Frames>
 	</Button>
+	<Button name="UnitFramesClickGridPetCellTemplate" inherits="SecureUnitButtonTemplate,SecureHandlerStateTemplate,SecureHandlerEnterLeaveTemplate" virtual="true">
+		<Attributes>
+			<Attribute name="oUF-onlyProcessChildren" type="boolean" value="true"/>
+		</Attributes>
+		<Frames>
+			<Button parentKey="Pet" inherits="SecureUnitButtonTemplate,SecureHandlerStateTemplate,SecureHandlerEnterLeaveTemplate,PingableUnitFrameTemplate">
+				<Attributes>
+					<Attribute name="useparent-unit" type="boolean" value="true"/>
+					<Attribute name="ufcg-pet" type="boolean" value="true"/>
+				</Attributes>
+			</Button>
+		</Frames>
+	</Button>
 </Ui>
