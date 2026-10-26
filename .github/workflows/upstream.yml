@@ -40,6 +40,8 @@ jobs:
           token: ${{ secrets.UPSTREAM_TOKEN }}
       - name: Install tools
         run: sudo apt-get update && sudo apt-get install -y luajit python3 curl
+      - name: Fetch pinned libraries
+        run: bash scripts/setup-test-libs.sh
       - name: Compare pins with upstream
         id: check
         run: bash scripts/check-upstream.sh
