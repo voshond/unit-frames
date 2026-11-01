@@ -178,21 +178,23 @@ describe("Embedded oUF pet lifecycle", function()
 		present = true
 		RegisterUnitWatch(pet) -- simulate the engine's secure existence driver
 		assert.is_true(pet:IsShown())
+		assert.same({ "OnShow", "pet" }, updates[1])
 		pet.UNIT_PET(pet, "UNIT_PET", "player")
-		assert.same({ "UNIT_PET", "pet" }, updates[1])
+		assert.same({ "UNIT_PET", "pet" }, updates[2])
 		pet.UNIT_PET(pet, "UNIT_PET", "player") -- replacement while still visible
-		assert.equals(2, #updates)
+		assert.equals(3, #updates)
 		pet.UNIT_PET(pet, "UNIT_PET", "party1")
 		pet.UNIT_PET(pet, "UNIT_PET", "target")
-		assert.equals(2, #updates)
+		assert.equals(3, #updates)
 		present = false
 		RegisterUnitWatch(pet)
 		pet.UNIT_PET(pet, "UNIT_PET", "player")
 		assert.is_false(pet:IsShown())
-		assert.equals(2, #updates)
+		assert.equals(3, #updates)
 		present = true
 		RegisterUnitWatch(pet)
+		assert.same({ "OnShow", "pet" }, updates[4])
 		pet.PLAYER_ENTERING_WORLD(pet, "PLAYER_ENTERING_WORLD")
-		assert.same({ "PLAYER_ENTERING_WORLD", "pet" }, updates[3])
+		assert.same({ "PLAYER_ENTERING_WORLD", "pet" }, updates[5])
 	end)
 end)

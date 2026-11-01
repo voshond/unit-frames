@@ -15,13 +15,14 @@ function Preview:CreatePet(host)
 	return { uf = pet, dirty = true }
 end
 
-function Preview:StylePet(pet, host, inline)
+function Preview:StylePet(pet, host, member)
 	CG:ApplyUnitStyle(pet.uf, "pet", nil, self.layout, true)
 	local frame = pet.uf:GetFrame()
 	frame:ClearAllPoints()
-	if inline then
-		frame:SetPoint("TOPLEFT", host:GetParent(), "TOPLEFT", self.layout.petX, 0)
-		frame:SetFrameLevel(host:GetFrameLevel())
+	if member then
+		local point, x, y = member:GetReserveAnchor()
+		frame:SetPoint(point, host, point, x, y)
+		frame:SetFrameLevel(host:GetFrameLevel() + 1)
 	else
 		frame:SetPoint("TOPLEFT", host, "TOPLEFT", 0, 0)
 	end
@@ -56,26 +57,15 @@ function Preview:FeedInlinePet(cell, index, live, unit)
 		return
 	end
 	cell.pet = cell.pet or self:CreatePet(cell.frame)
-	if cell.pet.dirty then self:StylePet(cell.pet, cell.member:GetFrame(), true) end
 	local petUnit = live and (cell.petUnit or CG.PetUnit(unit))
 	local present = live and petUnit and UnitExists(petUnit) or not live and index % 3 == 1
-	self:FeedPet(cell.pet, index, live, petUnit, present == true)
 	self:LayoutPetMember(cell, present == true)
+	if cell.pet.dirty then self:StylePet(cell.pet, cell.member:GetFrame(), cell.member) end
+	self:FeedPet(cell.pet, index, live, petUnit, present == true)
 end
 
 function Preview:LayoutPetMember(cell, present)
-	local inline = CG.metrics.pet.mode == "inline"
-	local extra = inline and not present and CG.metrics.pet.width + CG.metrics.pet.gap or 0
-	local x = inline and present and self.layout.memberX or 0
-	local width = CG.metrics.member.width + extra
-	if cell.memberWidth == width and cell.memberX == x then return end
-	cell.memberWidth, cell.memberX = width, x
-	local frame = cell.member:GetFrame()
-	frame:SetAttribute("ufcg-width-extra", extra)
-	frame:ClearAllPoints()
-	frame:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", x, 0)
-	frame:SetWidth(width)
-	CG:AdjustMemberWidth(cell.member)
+	CG:ReserveMember(cell.member, CG.metrics.pet.mode == "inline", present)
 end
 
 function Preview:PetRoster(live, count)

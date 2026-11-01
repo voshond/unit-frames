@@ -322,19 +322,13 @@ end
 function Bar:SetKnownSize(width, height)
 	self.knownWidth, self.knownHeight = width, height
 	if self.resolved then
-		width, height = self:GetKnownSize()
 		Backdrop.ApplyToFixedSize(self.frame, self.resolved.border, width, height)
 		self:SizeParts(self:GetKnownInnerSize())
 	end
 end
 
-function Bar:SetWidthAdjustment(frame, attribute)
-	self.widthAdjustmentFrame, self.widthAdjustmentAttribute = frame, attribute
-end
-
 function Bar:GetKnownSize()
-	local extra = self.widthAdjustmentFrame and self.widthAdjustmentFrame:GetAttribute(self.widthAdjustmentAttribute) or 0
-	return (self.knownWidth or 1) + extra, self.knownHeight or 1
+	return self.knownWidth or 1, self.knownHeight or 1
 end
 
 -- The StatusBar's share of the known size, inside the border padding.

@@ -28,12 +28,13 @@ client after adding it. For local builds and incremental updates, see the
   independent regular UnitFrame style. The separate section packs existing pets
   once each in owner roster order. Empty section space is reclaimed outside combat;
   combat additions retain secure capacity and bounds are corrected after combat.
-  Inside-member cells contain separate member and pet frames, with a configurable
-  **Gap to member** and **Pet side**. The member defines the height; pet columns
-  span that height at their configured width, without scaling or overlapping the
-  member. Members without a pet fill the whole member/pet area, with no empty
-  column or gap. Secure pet visibility updates this split during combat without
-  changing the outer grid or target positions. **Allow pet interaction** enables ClickGrid/Clique clicks and
+  Inside member places the pet frame inside the member frame's border and
+  padding, with a configurable **Gap to member** and **Pet side**. The member
+  frame spans member and pet; **Width includes pet** keeps the configured member
+  width (and cell and target positions) and takes the pet's space from it; pet columns span its inner height at their
+  configured width, without scaling. Members without a pet stretch their bars
+  over the pet's space, with no empty column or gap. Pet visibility updates
+  this split during combat without resizing protected frames or moving targets. **Allow pet interaction** enables ClickGrid/Clique clicks and
   mouseover casts on the visible pet frame, with a distinct configurable pet hover
   colour and the pet's tooltip. Off keeps pet artwork mouse-transparent.
 - Shared **Arrange bars > Columns** places health/power bars side by side, using

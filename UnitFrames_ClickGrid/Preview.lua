@@ -97,7 +97,6 @@ function Preview:ChangeSource(source)
 end
 
 function Preview:StyleCell(cell, changes)
-	cell.memberWidth = nil
 	local force = not cell.styled
 	CG:ApplyUnitStyle(cell.member, "member", changes, self.layout, force)
 	local targetStyled = CG:ApplyUnitStyle(cell.target, "target", changes, self.layout, force)
@@ -105,7 +104,7 @@ function Preview:StyleCell(cell, changes)
 	if layoutChanged then
 		cell.member:ClearAllPoints()
 		cell.target:ClearAllPoints()
-		cell.member:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", self.layout.memberX, 0)
+		cell.member:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", 0, 0)
 		cell.target:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", self.layout.targetX, 0)
 	end
 	if layoutChanged or targetStyled or changes and changes.emptyText then

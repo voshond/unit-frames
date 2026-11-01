@@ -224,12 +224,12 @@ end
 function Methods:Show()
 	local changed = not self.__state.shown
 	self.__state.shown = true
-	if changed and self.__state.secureWrappers then self:RunScript("OnShow") end
+	if changed then self:RunScript("OnShow") end
 end
 function Methods:Hide()
 	local changed = self.__state.shown
 	self.__state.shown = false
-	if changed and self.__state.secureWrappers then self:RunScript("OnHide") end
+	if changed then self:RunScript("OnHide") end
 end
 -- A secret argument gives the region a secret shown state (the Shown
 -- secret aspect): IsShown and IsVisible then return secrets too.

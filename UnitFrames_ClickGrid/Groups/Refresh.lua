@@ -20,7 +20,7 @@ function CG:RefreshChanges(kind, path)
 		if kind == "pet" and (path == "interactive" or path == "hover" or path == "hoverColor") then
 			return { petInteraction = true }
 		end
-		if kind == "pet" and (path == "gap" or path == "side") then return { layout = true } end
+		if kind == "pet" and (path == "gap" or path == "side" or path == "includeInWidth") then return { layout = true } end
 		if kind == "target" and (path == "emptyText" or path:match("^emptyText%.")) then return { emptyText = true } end
 		local changes = { layout = true, [kind] = true }
 		if kind == "member" then
@@ -40,7 +40,7 @@ end
 
 function CG:ApplyUnitStyle(uf, kind, changes, layout, force)
 	local full = not changes or changes.full
-	local fillHeight = kind == "target" and layout.cellHeight or kind == "pet" and self.metrics.member.height or nil
+	local fillHeight = kind == "target" and layout.cellHeight or kind == "pet" and self.metrics.pet.fillHeight or nil
 	local fillChanged = uf.fillHeight ~= fillHeight
 	if not full and not force and not changes[kind] and not fillChanged then return false end
 	uf:SetFillHeight(fillHeight)
@@ -93,6 +93,7 @@ local function RefreshFrame(self, frame, changes, layout)
 		frame:ResumeAllElements()
 		frame:Enable()
 	end
+	if kind == "member" then self:ReserveMember(frame.uf, cell.Pet ~= nil, cell.Pet ~= nil and cell.Pet:IsShown()) end
 	local styled = self:ApplyUnitStyle(frame.uf, kind, changes, layout, activated)
 	if styled then UF.Units:Bind(frame) end
 	local extrasChanged = self:ApplyExtras(frame.uf, button, changes, activated)
@@ -101,7 +102,7 @@ local function RefreshFrame(self, frame, changes, layout)
 		frame:ClearAllPoints()
 		if kind == "target" then
 			frame:SetPoint("TOPLEFT", cell, "TOPLEFT", layout.targetX, 0)
-		else frame:SetPoint("TOPLEFT", cell, "TOPLEFT", layout.memberX, 0) end
+		else frame:SetPoint("TOPLEFT", cell, "TOPLEFT", 0, 0) end
 		cell:SetSize(layout.cellWidth, layout.cellHeight)
 	end
 	if kind == "target" and (styled or layoutChanged or changes and changes.emptyText) then

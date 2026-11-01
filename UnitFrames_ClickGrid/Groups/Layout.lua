@@ -46,15 +46,13 @@ function Layout.Compute(cfg, member, target, titles, border, raidCount, partyCou
 	local below = titles and titles.position == "below"
 	local leading, trailing = below and 0 or titleHeight, below and titleHeight or 0
 	local inline = pet and pet.mode == "inline"
-	local petWidth = inline and pet.width + pet.gap or 0
-	local memberX = inline and pet.side == "LEFT" and petWidth or 0
-	local petX = inline and pet.side == "RIGHT" and member.width + pet.gap or 0
+	local petWidth = inline and not pet.included and pet.width + pet.gap or 0
 	local targetX = member.width + petWidth + cfg.targetGap
 	local cellWidth = member.width + petWidth + (target.shown and target.width + cfg.targetGap or 0)
 	local cellHeight = math.max(member.height, target.shown and target.height or 0)
 	local cols = cfg.mode == "subgroups" and math.min(8, cfg.columns) or cfg.columns
 	local result = { cellWidth = cellWidth, cellHeight = cellHeight, sections = {}, partySizes = {},
-		memberX = memberX, petX = petX, targetX = targetX,
+		targetX = targetX,
 		titlePadding = below and bottom or top }
 	for count = 1, 5 do
 		local grid = Layout.Grid(1, count, cellWidth, cellHeight, cfg.spacingX, cfg.spacingY)

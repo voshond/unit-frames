@@ -54,8 +54,13 @@ function CG:Measure()
 	end
 	self.metrics.target.shown = self:TargetsShown()
 	local pet = self.Config.styles.pet:Resolved()
-	local layout = UF.UnitFrameLayout.Compute(UF.Units:GetSpec(self.definitions.pet), pet, self.metrics.member.height)
-	self.metrics.pet = { width = layout.width, height = layout.height, mode = pet.display, gap = pet.gap, side = pet.side }
+	local fillHeight = self.metrics.member.height
+	if pet.display == "inline" then
+		fillHeight = UF.Components.UnitFrame.InnerHeight(self.Config.styles.member:Resolved(), fillHeight)
+	end
+	local layout = UF.UnitFrameLayout.Compute(UF.Units:GetSpec(self.definitions.pet), pet, fillHeight)
+	self.metrics.pet = { width = layout.width, height = layout.height, mode = pet.display, gap = pet.gap, side = pet.side,
+		included = pet.includeInWidth, fillHeight = fillHeight }
 end
 
 function CG:TargetsShown()

@@ -25625,6 +25625,7 @@ option display type="select" label="Pet display" default="off" values=#d071a0d1
 option interactive type="toggle" label="Allow pet interaction" default=false tooltip=#082ba01f
 option side type="select" label="Pet side" default="RIGHT" values=#11c04b33 hidden
 option gap type="range" label="Gap to member" default=2 min=0 max=30 step=1 hidden
+option includeInWidth type="toggle" label="Width includes pet" default=false tooltip=#75cdc399 hidden
 option hover type="toggle" label="Pet mouseover highlight" default=true
 option hoverColor type="color" label="Pet mouseover colour" default={0.2,0.8,1,0.35}
 option barLayout type="select" label="Arrange bars" default="columns" values=#3f6311d9 tooltip=#99609fd4
@@ -26988,6 +26989,7 @@ default health.right.whileStatus = "status"
 default health.textLayout = "edges"
 default hover = true
 default hoverColor = {0.2,0.8,1,0.35}
+default includeInWidth = false
 default interactive = false
 default offline.bars = true
 default offline.border = true
@@ -27762,6 +27764,7 @@ resolved health.right.whileStatus = "status"
 resolved health.textLayout = "edges"
 resolved hover = true
 resolved hoverColor = {0.2,0.8,1,0.35}
+resolved includeInWidth = false
 resolved interactive = false
 resolved offline.bars = true
 resolved offline.border = true
