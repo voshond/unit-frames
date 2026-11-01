@@ -382,6 +382,7 @@ function UnitFrame.BuildSchema(spec)
 			schema = GroupSchema(TextBar.BuildSchema(UnitFrame.RowSpec(spec, row)), extra), defaults = row.defaults }
 	end
 	AddParts(false)
+	for index, opt in ipairs(spec.options or {}) do table.insert(schema, index, opt) end
 	return schema
 end
 

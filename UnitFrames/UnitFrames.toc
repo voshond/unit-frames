@@ -103,6 +103,7 @@ Units\Elements.lua
 Units\TextTags.lua
 Units\Style.lua
 Units\Preview.lua
+Units\PetDock.lua
 
 Integration\EditMode.lua
 Integration\BlizzardAuras.lua

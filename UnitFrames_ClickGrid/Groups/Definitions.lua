@@ -49,7 +49,7 @@ CG.definitions = {
 for _, def in pairs(CG.definitions) do
 	def.borderDefaults = { enabled = false }
 	def.portrait.lazyBackends = true
-	def.pvp, def.classification, def.readyCheckIcon = nil, nil, nil
+	def.pvp, def.classification, def.readyCheckIcon, def.options = nil, nil, nil, nil
 end
 CG.definitions.target.readyCheck, CG.definitions.target.threat = nil, nil
 CG.definitions.pet.readyCheck, CG.definitions.pet.threat = nil, nil

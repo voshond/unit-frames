@@ -5696,6 +5696,11 @@ definition restingIcon.defaults = {}
 definition rows = {{defaults={height=26},key="health",label="Health",options={{default="class",key="colorMode",label="Bar colour",type="select",values={{"class","Class / reaction colour"},{"gradient","Health gradient"},{"theme","Theme colour"}}}},spec={formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","health:current","health:value","health:percent","health:current:percent","health:value:percent","health:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","cast:name","level:class:cast","level:info:cast","threat"},overheal=true,pendingDamage=true,segments={{colorInherit="colors.heal",key="heal",label="Incoming heals",mode="append"},{appendToFill=true,colorInherit="colors.absorb",configurablePlacement=true,key="absorb",label="Absorb shields",mode="overlay"},{colorInherit="colors.healAbsorb",key="healAbsorb",label="Heal absorbs",mode="inset"}},textDefaults={belowLeft={enabled=false,format="level:class"},left="name",right="health:value"},valueKind="health"}},{defaults={height=12,right={size=9}},key="power",label="Power",spec={colorInherit="colors.mana",formats={"none","name","fullname","level","smartlevel","level:name","class","level:class","level:info","resting","power:current","power:value","power:percent","power:current:percent","power:value:percent","power:missing","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing","threat"},segments={{colorInherit="colors.powerCost",key="cost",label="Spell cost",mode="inset"}},textDefaults={right="power:value"},valueKind="power"}},{defaults={center={size=8},enabled=false,height=10},key="experience",label="Experience",spec={colorInherit="colors.experience",formats={"none","level","resting","xp:current","xp:value","xp:percent","xp:current:percent","xp:value:percent","xp:missing","xp:rested","bar:current","bar:value","bar:percent","bar:current:percent","bar:value:percent","bar:missing"},segments={{colorInherit="colors.rested",key="rested",label="Rested",mode="append"}},textDefaults={center="xp:value:percent"},valueKind="xp"}}}
 definition width = 230
 ## unit.pet
+option dock type="group" label="Player frame integration"
+option dock.enabled type="toggle" label="Show inside player frame" default=false tooltip=#a0c777a0
+option dock.side type="select" label="Pet side" default="RIGHT" values=#11c04b33 hidden
+option dock.gap type="range" label="Gap to player" default=2 min=0 max=30 step=1 hidden
+option dock.includeInWidth type="toggle" label="Width includes pet" default=false tooltip=#4b5c120f hidden
 option barLayout type="select" label="Arrange bars" default="rows" values=#3f6311d9 tooltip=#99609fd4
 option width type="range" label="Width" default=170 min=60 max=600 step=1 hidden
 option spacing type="range" label="Bar spacing" default=1 min=0 max=20 step=1
@@ -6850,6 +6855,10 @@ default dead.enabled = true
 default dead.portrait = true
 default dead.strength = 0.85
 default dead.texts = true
+default dock.enabled = false
+default dock.gap = 2
+default dock.includeInWidth = false
+default dock.side = "RIGHT"
 default health.bar.background.alpha = 0.25
 default health.bar.background.color = {0,0,0,0.5}
 default health.bar.background.enabled = true
@@ -7624,6 +7633,10 @@ resolved dead.enabled = true
 resolved dead.portrait = true
 resolved dead.strength = 0.85
 resolved dead.texts = true
+resolved dock.enabled = false
+resolved dock.gap = 2
+resolved dock.includeInWidth = false
+resolved dock.side = "RIGHT"
 resolved health.bar.background.alpha = 0.25
 resolved health.bar.background.color = {0,0,0,0.5}
 resolved health.bar.background.enabled = true
@@ -8203,6 +8216,7 @@ definition defaultPosition.point = "CENTER"
 definition defaultPosition.x = -90
 definition defaultPosition.y = -235
 definition label = "Player pet"
+definition options = {{key="dock",label="Player frame integration",schema={{default=false,key="enabled",label="Show inside player frame",tooltip="The pet frame sits beside the player frame and spans its height. Without a pet, the player frame fills the pet's space. Edit Mode moves both together from the player frame. Changes apply after combat.",type="toggle"},{default="RIGHT",hidden=<function>,key="side",label="Pet side",type="select",values={{"LEFT","Left"},{"RIGHT","Right"}}},{default=2,hidden=<function>,key="gap",label="Gap to player",max=30,min=0,step=1,type="range"},{default=false,hidden=<function>,key="includeInWidth",label="Width includes pet",tooltip="On: the player frame keeps its configured width and the pet and gap take their space from it. Off: the player frame grows by the pet's width and gap.",type="toggle"}},type="group"}}
 definition portrait.defaults.enabled = false
 definition pvp.defaults = {}
 definition raidTarget.defaults = {}

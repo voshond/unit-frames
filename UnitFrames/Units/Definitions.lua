@@ -77,6 +77,19 @@ Units.definitions.pet = {
 	-- Below/right of the player, clear of the existing focus position.
 	defaultPosition = { point = "CENTER", x = -90, y = -235 },
 	rows = { HealthRow(22, true), PowerRow(10, true) },
+	options = {
+		{ key = "dock", type = "group", label = "Player frame integration", schema = {
+			{ key = "enabled", type = "toggle", label = "Show inside player frame", default = false,
+				tooltip = "The pet frame sits beside the player frame and spans its height. Without a pet, the player frame fills the pet's space. Edit Mode moves both together from the player frame. Changes apply after combat." },
+			{ key = "side", type = "select", label = "Pet side", default = "RIGHT",
+				values = { { "LEFT", "Left" }, { "RIGHT", "Right" } }, hidden = function(cfg) return not cfg.enabled end },
+			{ key = "gap", type = "range", label = "Gap to player", min = 0, max = 30, step = 1, default = 2,
+				hidden = function(cfg) return not cfg.enabled end },
+			{ key = "includeInWidth", type = "toggle", label = "Width includes pet", default = false,
+				tooltip = "On: the player frame keeps its configured width and the pet and gap take their space from it. Off: the player frame grows by the pet's width and gap.",
+				hidden = function(cfg) return not cfg.enabled end },
+		} },
+	},
 	portrait = { defaults = { enabled = false } },
 	castbar = { defaults = { enabled = false, placement = "bottom", height = 14, border = { enabled = false },
 		name = { size = 9 }, time = { size = 9 } } },
@@ -245,7 +258,7 @@ end
 
 function Units:GetSpec(def, frame)
 	local spec = { frame = frame, rows = def.rows, width = def.width, resting = def.resting, readyCheck = def.readyCheck,
-		barLayout = def.barLayout,
+		barLayout = def.barLayout, options = def.options,
 		playerFrame = def.playerFrame, borderDefaults = def.borderDefaults, threat = def.threat, blizzardAuras = def.blizzardAuras }
 	for _, part in ipairs(ns.Components.UnitFrame.PARTS) do spec[part.key] = def[part.key] end
 	-- The class is fixed for the session: other classes' frames leave the row out.

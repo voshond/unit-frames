@@ -21,9 +21,28 @@ function EditMode:ApplyPosition(key)
 		ns.AfterCombat:Queue("position", key, function() EditMode:ApplyPosition(key) end)
 		return
 	end
-	local pos = ns.Config:GetPosition(self.layout, key) or entry.default
+	local pos = self:GetPosition(key)
+	if entry.placement then
+		entry.placement.Apply(pos)
+		return
+	end
 	entry.frame:ClearAllPoints()
 	entry.frame:SetPoint(pos.point, UIParent, pos.point, pos.x, pos.y)
+end
+
+function EditMode:GetPosition(key)
+	return ns.Config:GetPosition(self.layout, key) or self.frames[key].default
+end
+
+function EditMode:SetPlacement(key, placement)
+	self.frames[key].placement = placement
+end
+
+function EditMode:SavePosition(layout, key, point, x, y)
+	local placement = self.frames[key].placement
+	if placement then point, x, y = placement.Save(point, x, y) end
+	if point then ns.Config:SetPosition(layout, key, point, x, y) end
+	if placement then self:ApplyPosition(key) end
 end
 
 -- Read-only geometry adapters let Blizzard choose the same grid, edge and
@@ -133,7 +152,7 @@ function EditMode:SnapFrame(key)
 	local frame = self.frames[key].frame
 	frame:ClearAllPoints()
 	frame:SetPoint("CENTER", UIParent, "CENTER", x, y)
-	ns.Config:SetPosition(LEM:GetActiveLayoutName(), key, "CENTER", x, y)
+	self:SavePosition(LEM:GetActiveLayoutName(), key, "CENTER", x, y)
 	if LEM.RefreshFrameSettings then LEM:RefreshFrameSettings(frame) end
 	return true
 end
@@ -256,7 +275,7 @@ function EditMode:Register(frame, key, name, default, entryId)
 		return
 	end
 	LEM:AddFrame(frame, function(_, layout, point, x, y)
-		ns.Config:SetPosition(layout, key, point, x, y)
+		self:SavePosition(layout, key, point, x, y)
 	end, default, name)
 	self:HookSnapping(frame, key)
 	if ns.Units.definitions[key] then

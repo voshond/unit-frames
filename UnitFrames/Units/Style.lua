@@ -154,6 +154,7 @@ end
 
 -- Re-applies config to a live frame and refreshes everything shown on it.
 local function Refresh(self, frame, unit)
+	frame.uf:SetFillHeight(ns.PetDock:FillHeight(unit))
 	frame.uf:Apply(ns.Config:GetUnitConfig(unit))
 	self:Bind(frame)
 	self:UpdateFrame(frame, "UnitFramesRefresh")
@@ -163,6 +164,7 @@ function Units:Refresh(unit)
 	local frame = self.frames[unit]
 	if not frame then return end
 	frame.uf:GetDecorations():Batch(Refresh, self, frame, unit)
+	ns.PetDock:Refreshed(unit)
 end
 
 -- Copy effective settings, not just overrides: the units have different
@@ -214,6 +216,7 @@ function Units:CopyPlayerSettings(unit)
 	copy.comboPoints = ns.Util.Copy(ns.Config:GetUnitConfig(unit).comboPoints)
 	-- The player frame has no threat glow: each frame keeps its own.
 	copy.threat = ns.Util.Copy(ns.Config:GetUnitConfig(unit).threat)
+	copy.dock = ns.Util.Copy(ns.Config:GetUnitConfig(unit).dock)
 	return ns.Config:UnitStore(unit):Replace(copy)
 end
 

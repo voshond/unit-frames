@@ -8,6 +8,11 @@ each change.
 
 - Style your player, pet, target, target's target, focus and focus target
   separately, or copy your player style to another frame.
+- Show your pet inside the player frame (**Player frame integration** on the
+  pet frame), on either side with a configurable gap. The pet sits inside the
+  player frame's border and padding at its full inner height; without a pet
+  the player's bars fill its space, even in combat. Edit Mode moves both
+  together. Turn off the pet's own frame border for a seamless look.
 - Choose fonts, colours, borders, bar sizes and portraits.
 - Show health, power, absorb shields, cast bars, buffs and debuffs.
 - Light the end of a health bar while incoming heals go past full health

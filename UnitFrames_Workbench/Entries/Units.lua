@@ -9,9 +9,16 @@ the preview and on the live frame at the same time.
 ]]
 
 local function UnitHandle(stage, unit)
-	return Workbench.ComponentHandle("uf", UF.Units:CreateFrame(unit, stage), function()
+	local uf = UF.Units:CreateFrame(unit, stage)
+	local handle = Workbench.ComponentHandle("uf", uf, function()
 		return UF.Config:GetUnitConfig(unit)
 	end)
+	local apply = handle.Apply
+	handle.Apply = function()
+		uf:SetFillHeight(UF.PetDock:FillHeight(unit))
+		apply()
+	end
+	return handle
 end
 
 local function UnitSchema(unit)
@@ -210,7 +217,7 @@ local function RegisterUnit(unit)
 	end
 	Workbench:Register({
 		id = "unit." .. unit,
-		refreshOn = { { "UnitConfigChanged", unit } },
+		refreshOn = { unit == "pet" and "UnitConfigChanged" or { "UnitConfigChanged", unit } },
 		category = "Unit frames",
 		name = def.label,
 		scope = def.label,
