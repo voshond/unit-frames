@@ -24,7 +24,7 @@ fetch_tree() {
 }
 
 # Match the versions recorded in the existing local Libs/VERSIONS.md.
-fetch_tree WoWUIDev/Ace3 40f4cc1356ae7fcc0cf71fc0a19dc7d50d6ae6c2 "$test_libs_tmp/ace3"
+fetch_tree WoWUIDev/Ace3 ac3d1225037e0dc74e025a72342c0f7824aae147 "$test_libs_tmp/ace3"
 fetch_tree oUF-wow/oUF a1f9df774263d00e0feedca40200065f06e14eda "$test_libs_tmp/oUF"
 fetch_tree p3lim-wow/LibEditMode 550a52e7a0a56649d962c3fa2ceccaf50c3c77ed "$test_libs_tmp/LibEditMode"
 rm -f -- "$test_libs_tmp/oUF/oUF.toc" "$test_libs_tmp/LibEditMode/LibEditMode.toc"
