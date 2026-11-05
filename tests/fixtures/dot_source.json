@@ -1,5 +1,5 @@
 {
-  "build": "1.60.1.70707",
+  "build": "1.60.1.70790",
   "interface": 16001,
   "tables": {
     "SkillLineAbility": [
@@ -405,7 +405,7 @@
         "Effect": "6",
         "EffectAura": "3",
         "EffectAuraPeriod": "3000",
-        "EffectBasePointsF": "2",
+        "EffectBasePointsF": "3",
         "EffectBonusCoefficient": "0",
         "EffectMiscValue_0": "0",
         "EffectPointsPerResource": "0",
@@ -439,7 +439,7 @@
         "Effect": "31",
         "EffectAura": "0",
         "EffectAuraPeriod": "0",
-        "EffectBasePointsF": "110",
+        "EffectBasePointsF": "140",
         "EffectBonusCoefficient": "0",
         "EffectMiscValue_0": "0",
         "EffectPointsPerResource": "0",
@@ -575,10 +575,10 @@
         "Effect": "6",
         "EffectAura": "3",
         "EffectAuraPeriod": "2000",
-        "EffectBasePointsF": "3",
+        "EffectBasePointsF": "4",
         "EffectBonusCoefficient": "0",
         "EffectMiscValue_0": "0",
-        "EffectPointsPerResource": "4.40000009537",
+        "EffectPointsPerResource": "5.5",
         "EffectRealPointsPerLevel": "0",
         "EffectTriggerSpell": "0",
         "ID": "685878",
@@ -1318,5 +1318,5 @@
       }
     ]
   },
-  "uiCommit": "aff0d8cd53bf4d9ef1c1dd2786b94461a276fb16"
+  "uiCommit": "eac30af597e5aaa43a60f6675ef5fdcea100375f"
 }
