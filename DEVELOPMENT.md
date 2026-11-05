@@ -2,7 +2,7 @@
 
 UnitFrames targets **WoW Forever**, currently TOC Interface `16001`, with
 Lua 5.1-compatible code. Forever uses modern Retail/Midnight UI APIs and
-secret-value restrictions, despite the client's `_classic_beta_` directory name.
+secret-value restrictions, despite its classic beta origins.
 
 For the player-facing introduction, see [README.md](README.md).
 Detailed in-game options are in [USER_GUIDE.md](USER_GUIDE.md).
@@ -368,7 +368,7 @@ running the packaging tests.
 Validate the actual target directory first. The default client's AddOns path is:
 
 ```text
-/mnt/data02/Games/Faugus/battlenet/drive_c/Program Files (x86)/World of Warcraft/_classic_beta_/Interface/AddOns/
+/mnt/data02/Games/Faugus/battlenet/drive_c/Program Files (x86)/World of Warcraft/_forever_/Interface/AddOns/
 ```
 
 Check symlink targets before copying. For incremental updates, use
