@@ -1,5 +1,5 @@
 {
-  "build": "1.60.1.70532",
+  "build": "1.60.1.70790",
   "interface": 16001,
   "tables": {
     "SkillLineAbility": [
@@ -405,7 +405,7 @@
         "Effect": "6",
         "EffectAura": "3",
         "EffectAuraPeriod": "3000",
-        "EffectBasePointsF": "2",
+        "EffectBasePointsF": "3",
         "EffectBonusCoefficient": "0",
         "EffectMiscValue_0": "0",
         "EffectPointsPerResource": "0",
@@ -439,7 +439,7 @@
         "Effect": "31",
         "EffectAura": "0",
         "EffectAuraPeriod": "0",
-        "EffectBasePointsF": "110",
+        "EffectBasePointsF": "140",
         "EffectBonusCoefficient": "0",
         "EffectMiscValue_0": "0",
         "EffectPointsPerResource": "0",
@@ -575,10 +575,10 @@
         "Effect": "6",
         "EffectAura": "3",
         "EffectAuraPeriod": "2000",
-        "EffectBasePointsF": "3",
+        "EffectBasePointsF": "4",
         "EffectBonusCoefficient": "0",
         "EffectMiscValue_0": "0",
-        "EffectPointsPerResource": "4.40000009537",
+        "EffectPointsPerResource": "5.5",
         "EffectRealPointsPerLevel": "0",
         "EffectTriggerSpell": "0",
         "ID": "685878",
@@ -609,7 +609,7 @@
         "Effect": "2",
         "EffectAura": "0",
         "EffectAuraPeriod": "0",
-        "EffectBasePointsF": "58",
+        "EffectBasePointsF": "54",
         "EffectBonusCoefficient": "0.75",
         "EffectMiscValue_0": "0",
         "EffectPointsPerResource": "0",
@@ -789,6 +789,74 @@
         "ImplicitTarget_0": "1",
         "ImplicitTarget_1": "0",
         "SpellID": "755"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "271",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "0",
+        "EffectBonusCoefficient": "0",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "1365366",
+        "ImplicitTarget_0": "6",
+        "ImplicitTarget_1": "0",
+        "SpellID": "980"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "271",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "0",
+        "EffectBonusCoefficient": "0",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "1365370",
+        "ImplicitTarget_0": "6",
+        "ImplicitTarget_1": "0",
+        "SpellID": "1014"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "4",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "0",
+        "EffectBonusCoefficient": "0",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "1366638",
+        "ImplicitTarget_0": "6",
+        "ImplicitTarget_1": "0",
+        "SpellID": "980"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "4",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "0",
+        "EffectBonusCoefficient": "0",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "1366639",
+        "ImplicitTarget_0": "6",
+        "ImplicitTarget_1": "0",
+        "SpellID": "1014"
       }
     ],
     "SpellInterrupts": [
@@ -1250,5 +1318,5 @@
       }
     ]
   },
-  "uiCommit": "ca8368f2f2380cbe696854f7f2646387c278a61b"
+  "uiCommit": "eac30af597e5aaa43a60f6675ef5fdcea100375f"
 }

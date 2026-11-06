@@ -32,7 +32,7 @@ describe("Generated DoT spell metadata #dots", function()
 
 	it("computes finisher damage and duration from resource coefficients", function()
 		local rip = spells.Describe(9896, 5)
-		assert.equals(855, rip.total)
+		assert.equals(1071, math.floor(rip.total + 0.5))
 		assert.equals(12, rip.duration)
 		assert.equals(8, spells.Describe(1943, 1).duration)
 		assert.equals(16, spells.Describe(1943, 5).duration)

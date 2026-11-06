@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Install / reinstall the addons into the WoW Forever beta client.
+# Install / reinstall the addons into the WoW Forever client.
 #
 # Every top-level folder <Name>/ that contains <Name>.toc is an addon
 # (UnitFrames, UnitFrames_Workbench, ...).
@@ -12,7 +12,7 @@
 # Without addon names, all addons in the repo are handled.
 #
 # Environment overrides:
-#   WOW_DIR     WoW client dir (default: Forever beta under Faugus/battlenet)
+#   WOW_DIR     WoW client dir (default: Forever under Faugus/battlenet)
 
 set -euo pipefail
 

@@ -2,7 +2,7 @@
 
 ## Scope and sources of truth
 
-- This is **UnitFrames for WoW Forever**, currently targeting TOC Interface `16001`. Use Lua 5.1-compatible code. Forever uses modern Retail/Midnight UI APIs and secret-value restrictions; do not assume Classic-era APIs work because the client directory is `_classic_beta_`.
+- This is **UnitFrames for WoW Forever**, currently targeting TOC Interface `16001`. Use Lua 5.1-compatible code. Forever uses modern Retail/Midnight UI APIs and secret-value restrictions; do not assume Classic-era APIs work because the client was a classic beta.
 - Read the relevant implementation and tests before changing it. `README.md` describes current features. `docs/01-investigation-api-and-libraries.md`, `docs/02-architecture-plan.md`, and `docs/03-reference-nurfed-forever.md` explain the design and API findings, but contain dated research and unimplemented plans. Current code wins when they disagree.
 - `docs/WoW unit frames addon libraries.md` is the long conversation history, not a specification to implement wholesale. Search specific topics rather than loading the entire file.
 - Verify unfamiliar or changing APIs against the actual client or Blizzard UI/API documentation, preferably the `forever` branch of `Gethe/wow-ui-source` cloned into `examples/wow-ui-source-forever` for local access. Never invent API signatures or texture paths.
@@ -98,7 +98,7 @@ luajit tests/run.lua workbench -t "preview"
 
 ## Local installation
 
-- Default client AddOns directory: `/mnt/data02/Games/Faugus/battlenet/drive_c/Program Files (x86)/World of Warcraft/_classic_beta_/Interface/AddOns/`. `scripts/install.sh` supports `WOW_DIR` overrides; validate the actual target before deploying.
+- Default client AddOns directory: `/mnt/data02/Games/Faugus/battlenet/drive_c/Program Files (x86)/World of Warcraft/_forever_/Interface/AddOns/`. `scripts/install.sh` supports `WOW_DIR` overrides; validate the actual target before deploying.
 - For authorized deployments, use `scripts/install.sh` by default, passing the changed addon names when appropriate (for example, `scripts/install.sh UnitFrames_Workbench`). Do not substitute manual `rsync` deployments unless specifically requested.
 - The install script replaces the targeted addon directories before copying/linking; this replacement is expected and authorized as part of a requested installation. SavedVariables under `WTF/` are retained. `--uninstall` is a separate removal operation and requires an explicit uninstall request.
 - Request the required filesystem approval when installing outside the workspace. Never edit SavedVariables or unrelated installed addons as part of routine deployment.
