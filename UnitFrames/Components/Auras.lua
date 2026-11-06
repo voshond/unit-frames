@@ -6,6 +6,7 @@ local AuraIcon = ns.AuraIcon
 -- Our ordinary root frame never depends on a container's secret dimensions.
 local Auras = ns.Component:Extend("Auras")
 local KINDS = { "buffs", "debuffs" }
+local OWN_GROUPS = { buffs = { "buffs" }, debuffs = { "debuffs" } }
 Auras.POSITIONS = {
 	{ "top", "Top" }, { "bottom", "Bottom" },
 	{ "left", "Left" }, { "right", "Right" },
@@ -107,9 +108,10 @@ Auras.schema = ns.Schema.Insert({
 	{ key = "spacing", type = "range", label = "Icon spacing", min = 0, max = 10, step = 1, default = 2 },
 	{ key = "sharedSide", type = "select", label = "Buffs and debuffs on one side", values = Auras.SHARED_SIDE, default = "combined",
 		hidden = function(cfg) return cfg.buffs.position ~= cfg.debuffs.position end,
-		tooltip = "Combined places both blocks at the same edge. Stacked moves the outer block past the full capacity of the inner one (its maximum shown), so they never overlap." },
+		tooltip = "Combined flows both blocks together as one, placed by the block closest to the frame. Stacked moves the outer block past the full capacity of the inner one (its maximum shown), so they never overlap." },
 	{ key = "stackFirst", type = "select", label = "Closest to the frame", values = Auras.STACK_FIRST, default = "buffs",
-		hidden = function(cfg) return cfg.buffs.position ~= cfg.debuffs.position or cfg.sharedSide ~= "stacked" end },
+		hidden = function(cfg) return cfg.buffs.position ~= cfg.debuffs.position end,
+		tooltip = "Combined: the block leading the shared rows, whose side settings place both. Stacked: the block nearest the frame." },
 	{ key = "buffs", type = "group", label = "Buffs", schema = GroupSchema("buffs", Auras.BUFF_FILTERS, 20, "top") },
 	{ key = "debuffs", type = "group", label = "Debuffs", schema = GroupSchema("debuffs", Auras.DEBUFF_FILTERS, 26, "bottom") },
 }, "spacing", ns.Util.Copy(AuraIcon.schema))
@@ -131,20 +133,35 @@ function Auras:CreateContainers()
 	for _, kind in ipairs(KINDS) do
 		local container = CreateFrame("AuraContainer", nil, self:GetContainerParent(kind), "CustomAuraContainerTemplate")
 		self.containers[kind] = container
-		container:AddAuraGroup(kind, kind == "buffs" and "HELPFUL" or "HARMFUL", {
-			maxFrameCount = 16,
-			sortMethod = AuraContainerSortMethod.ExpirationOnly,
-			sortDirection = AuraContainerSortDirection.Normal,
-			initializeFrame = function(button)
-				ns.Perf:Begin("aura button init")
-				self:InitButton(button, kind)
-				ns.Perf:End("aura button init")
-			end,
-		})
+		self:AddGroup(container, kind)
 		if self.unit then container:SetUnit(self.unit) end
 	end
 	ns.Perf:End("aura containers")
 	return true
+end
+
+function Auras:AddGroup(container, kind)
+	container:AddAuraGroup(kind, kind == "buffs" and "HELPFUL" or "HARMFUL", {
+		maxFrameCount = 16,
+		sortMethod = AuraContainerSortMethod.ExpirationOnly,
+		sortDirection = AuraContainerSortDirection.Normal,
+		initializeFrame = function(button)
+			ns.Perf:Begin("aura button init")
+			self:InitButton(button, kind)
+			ns.Perf:End("aura button init")
+		end,
+	})
+end
+
+function Auras:EnsureCombinedGroup()
+	if self.combinedGroup or not self.containers.buffs then return end
+	self.combinedGroup = true
+	self:AddGroup(self.containers.buffs, "debuffs")
+end
+
+function Auras:ContainerGroups(containerKind)
+	if containerKind == "buffs" and self.combinedGroup then return KINDS end
+	return OWN_GROUPS[containerKind]
 end
 
 function Auras:GetContainerParent(kind)
@@ -253,13 +270,15 @@ function Auras.ApplyGroupSort(container, kind, method, direction)
 	container:SetAuraGroupSortMethod(kind, method, direction)
 end
 
-function Auras.ApplyGroupLayout(container, kind, width, height, spacing, lineSpacing)
+function Auras.ApplyGroupLayout(container, kind, width, height, spacing, lineSpacing, layoutIndex)
 	local applied = Applied(container, kind)
 	if applied.width == width and applied.height == height and applied.spacing == spacing
-		and applied.lineSpacing == lineSpacing then return end
+		and applied.lineSpacing == lineSpacing and applied.layoutIndex == layoutIndex then return end
 	applied.width, applied.height, applied.spacing, applied.lineSpacing = width, height, spacing, lineSpacing
+	applied.layoutIndex = layoutIndex
 	container:SetAuraGroupLayout(kind, {
 		elementWidth = width, elementHeight = height, elementSpacing = spacing, lineSpacing = lineSpacing,
+		layoutIndex = layoutIndex,
 	})
 end
 
@@ -269,15 +288,19 @@ function Auras:OnApply(cfg)
 	self.dispelColors = AuraIcon.DispelColors(cfg, self.dispelColors)
 	self:UpdateStyleToken()
 	if cfg.enabled then self:CreateContainers() end
-	for _, kind in ipairs(self.containers.buffs and KINDS or {}) do
-		local container, group = self.containers[kind], cfg[kind]
-		container:SetAuraGroupEnabled(kind, group.enabled)
-		container:SetAuraGroupFilterString(kind, Auras.GroupFilter(kind, group.filter))
-		container:SetAuraGroupMaxFrameCount(kind, group.max)
-		Auras.ApplyGroupCandidates(container, kind, group)
-		local sort = group.sort == "default" and AuraContainerSortMethod.Default
-			or group.sort == "unitDebuff" and AuraContainerSortMethod.UnitFrameDebuff or AuraContainerSortMethod.ExpirationOnly
-		Auras.ApplyGroupSort(container, kind, sort, AuraContainerSortDirection.Normal)
+	if self:CombinedFirstKind() then self:EnsureCombinedGroup() end
+	for _, containerKind in ipairs(self.containers.buffs and KINDS or {}) do
+		local container = self.containers[containerKind]
+		for _, kind in ipairs(self:ContainerGroups(containerKind)) do
+			local group = cfg[kind]
+			container:SetAuraGroupEnabled(kind, group.enabled and self:GroupHost(kind) == containerKind)
+			container:SetAuraGroupFilterString(kind, Auras.GroupFilter(kind, group.filter))
+			container:SetAuraGroupMaxFrameCount(kind, group.max)
+			Auras.ApplyGroupCandidates(container, kind, group)
+			local sort = group.sort == "default" and AuraContainerSortMethod.Default
+				or group.sort == "unitDebuff" and AuraContainerSortMethod.UnitFrameDebuff or AuraContainerSortMethod.ExpirationOnly
+			Auras.ApplyGroupSort(container, kind, sort, AuraContainerSortDirection.Normal)
+		end
 	end
 	Perf:End("aura groups")
 	Perf:Begin("aura layout")
@@ -298,12 +321,36 @@ function Auras:LineLength(group)
 	return math.max(length, group.size + (vertical and AuraIcon.TextRoom(self:GetArtworkConfig()) or 0))
 end
 
+local function OtherKind(kind)
+	return kind == "buffs" and "debuffs" or "buffs"
+end
+
+function Auras:SharedSideMode()
+	local cfg = self.resolved
+	if not cfg.sharedSide or not (cfg.buffs.enabled and cfg.debuffs.enabled)
+		or cfg.buffs.position ~= cfg.debuffs.position then return nil end
+	return cfg.sharedSide
+end
+
 -- The kind placed past the other on a shared, stacked side (nil = none).
 function Auras:StackedOuterKind()
-	local cfg = self.resolved
-	if cfg.sharedSide ~= "stacked" or not (cfg.buffs.enabled and cfg.debuffs.enabled)
-		or cfg.buffs.position ~= cfg.debuffs.position then return nil end
-	return cfg.stackFirst == "debuffs" and "buffs" or "debuffs"
+	if self:SharedSideMode() ~= "stacked" then return nil end
+	return OtherKind(self.resolved.stackFirst)
+end
+
+function Auras:CombinedFirstKind()
+	if self:SharedSideMode() ~= "combined" then return nil end
+	return self.resolved.stackFirst
+end
+
+function Auras:GroupHost(kind)
+	return self:CombinedFirstKind() and "buffs" or kind
+end
+
+function Auras:FlowKinds(containerKind)
+	local firstKind = self:CombinedFirstKind()
+	if not firstKind then return OWN_GROUPS[containerKind] end
+	return { firstKind, OtherKind(firstKind) }
 end
 
 -- Distance from the frame past the inner block, from plain configuration:
@@ -328,69 +375,84 @@ function Auras:Layout(width, height)
 	self.hostWidth = width or self.hostWidth or self.frame:GetParent():GetWidth()
 	self.hostHeight = height or self.hostHeight or self.frame:GetParent():GetHeight()
 	local outerKind = self:StackedOuterKind()
-	for _, kind in ipairs(KINDS) do
-		local group = self.resolved[kind]
-		if self.containers[kind] then
-			Auras.ApplyGroupLayout(self.containers[kind], kind, group.size,
-				group.size + AuraIcon.TextRoom(self:GetArtworkConfig()), self.resolved.spacing, self.resolved.spacing)
+	local firstKind = self:CombinedFirstKind()
+	for _, containerKind in ipairs(self.containers.buffs and KINDS or {}) do
+		for _, kind in ipairs(self:ContainerGroups(containerKind)) do
+			local size = self.resolved[kind].size
+			Auras.ApplyGroupLayout(self.containers[containerKind], kind, size,
+				size + AuraIcon.TextRoom(self:GetArtworkConfig()), self.resolved.spacing, self.resolved.spacing,
+				firstKind and kind ~= firstKind and 2 or 1)
 		end
+	end
+	for _, kind in ipairs(KINDS) do
 		local container = self.previewData and self.previewContainers[kind] or self.containers[kind]
 		if not container then break end
-		local side = group.position
-		local vertical = VerticalSide(group)
-		local gap = group.gap
-		if kind == outerKind then gap = gap + self:StackDepth(self.resolved[kind == "buffs" and "debuffs" or "buffs"]) end
-		local reverse = group.growth == "reverse"
-		local align = group.alignment
-		local x, y = group.offsetX, group.offsetY
-		local point, framePoint, horizontal, upward
-		if vertical then
-			local edge = align == "center" and "" or align == "end" and "BOTTOM" or "TOP"
-			point = edge .. (side == "left" and "RIGHT" or "LEFT")
-			framePoint = edge .. side:upper()
-			x = x + (side == "left" and -gap or gap)
-			horizontal, upward = side == "right", reverse
-		else
-			local edge = align == "center" and "" or align == "end" and "RIGHT" or "LEFT"
-			point = (side == "top" and "BOTTOM" or "TOP") .. edge
-			framePoint = side:upper() .. edge
-			y = y + (side == "top" and gap or -gap)
-			horizontal, upward = not reverse, side == "top"
+		if self:GroupHost(kind) == kind then self:PlaceContainer(container, kind, outerKind, firstKind) end
+	end
+end
+
+function Auras:PlaceContainer(container, kind, outerKind, firstKind)
+	local group = self.resolved[firstKind or kind]
+	local side = group.position
+	local vertical = VerticalSide(group)
+	local gap = group.gap
+	if kind == outerKind then gap = gap + self:StackDepth(self.resolved[OtherKind(kind)]) end
+	local reverse = group.growth == "reverse"
+	local align = group.alignment
+	local x, y = group.offsetX, group.offsetY
+	local point, framePoint, horizontal, upward
+	if vertical then
+		local edge = align == "center" and "" or align == "end" and "BOTTOM" or "TOP"
+		point = edge .. (side == "left" and "RIGHT" or "LEFT")
+		framePoint = edge .. side:upper()
+		x = x + (side == "left" and -gap or gap)
+		horizontal, upward = side == "right", reverse
+	else
+		local edge = align == "center" and "" or align == "end" and "RIGHT" or "LEFT"
+		point = (side == "top" and "BOTTOM" or "TOP") .. edge
+		framePoint = side:upper() .. edge
+		y = y + (side == "top" and gap or -gap)
+		horizontal, upward = not reverse, side == "top"
+	end
+	container:ClearAllPoints()
+	container:SetPoint(point, self.frame:GetParent(), framePoint, x, y)
+	local axis = vertical and AnchorUtil.FlowLayoutAxis.Vertical or AnchorUtil.FlowLayoutAxis.Horizontal
+	local anchor = (upward and "BOTTOM" or "TOP") .. (horizontal and "LEFT" or "RIGHT")
+	local directionX = horizontal and AnchorUtil.FlowDirection.Right or AnchorUtil.FlowDirection.Left
+	local directionY = upward and AnchorUtil.FlowDirection.Up or AnchorUtil.FlowDirection.Down
+	local length = self:LineLength(group)
+	if self.previewData then
+		local flow = container.ufFlow
+		flow:SetLayoutAxis(axis)
+		flow:SetAnchorPoint(anchor)
+		flow:SetGrowthDirection(directionX, directionY)
+		flow:SetMaximumLineSize(length)
+		local groups = {}
+		for index, flowKind in ipairs(self:FlowKinds(kind)) do
+			groups[index] = { elements = self.previewContainers[flowKind].ufElements,
+				elementSpacing = self.resolved.spacing, lineSpacing = self.resolved.spacing }
 		end
-		container:ClearAllPoints()
-		container:SetPoint(point, self.frame:GetParent(), framePoint, x, y)
-		local axis = vertical and AnchorUtil.FlowLayoutAxis.Vertical or AnchorUtil.FlowLayoutAxis.Horizontal
-		local anchor = (upward and "BOTTOM" or "TOP") .. (horizontal and "LEFT" or "RIGHT")
-		local directionX = horizontal and AnchorUtil.FlowDirection.Right or AnchorUtil.FlowDirection.Left
-		local directionY = upward and AnchorUtil.FlowDirection.Up or AnchorUtil.FlowDirection.Down
-		local length = self:LineLength(group)
-		if self.previewData then
-			local flow = container.ufFlow
-			flow:SetLayoutAxis(axis)
-			flow:SetAnchorPoint(anchor)
-			flow:SetGrowthDirection(directionX, directionY)
-			flow:SetMaximumLineSize(length)
-			flow:Apply(container, { { elements = container.ufElements,
-				elementSpacing = self.resolved.spacing, lineSpacing = self.resolved.spacing } })
-		else
-			container:SetFlowLayoutAxis(axis)
-			container:SetFlowLayoutAnchorPoint(anchor)
-			container:SetFlowLayoutGrowthDirection(directionX, directionY)
-			container:SetFlowLayoutMaximumLineSize(length)
-		end
+		flow:Apply(container, groups)
+	else
+		container:SetFlowLayoutAxis(axis)
+		container:SetFlowLayoutAnchorPoint(anchor)
+		container:SetFlowLayoutGrowthDirection(directionX, directionY)
+		container:SetFlowLayoutMaximumLineSize(length)
 	end
 end
 
 -- Access to existing buttons (including enumeration) may be denied while
 -- aura data is secret. Reapply at the next combat end in that case.
 local function Restyle(auras)
-	for _, kind in ipairs(auras.containers.buffs and KINDS or {}) do
-		local container = auras.containers[kind]
-		for index = 1, container:GetAuraGroupFrameCount(kind) do
-			local button = container:GetAuraGroupFrame(kind, index)
-			if button.ufStyleToken ~= auras.styleToken then
-				auras:StyleButton(button)
-				button.ufStyleToken = auras.styleToken
+	for _, containerKind in ipairs(auras.containers.buffs and KINDS or {}) do
+		local container = auras.containers[containerKind]
+		for _, kind in ipairs(auras:ContainerGroups(containerKind)) do
+			for index = 1, container:GetAuraGroupFrameCount(kind) do
+				local button = container:GetAuraGroupFrame(kind, index)
+				if button.ufStyleToken ~= auras.styleToken then
+					auras:StyleButton(button)
+					button.ufStyleToken = auras.styleToken
+				end
 			end
 		end
 	end
@@ -429,8 +491,9 @@ function Auras:SetEnabled(enabled)
 	for _, kind in ipairs(KINDS) do
 		local enabledGroup = self.enabled and self.resolved[kind].enabled
 		if self.containers[kind] then
-			self.containers[kind]:SetShown(enabledGroup and not self.previewData)
-			self.containers[kind]:SetEnabled(enabledGroup and not self.previewData)
+			local live = enabledGroup and self:GroupHost(kind) == kind and not self.previewData
+			self.containers[kind]:SetShown(live)
+			self.containers[kind]:SetEnabled(live)
 		end
 		if self.previewContainers then
 			self.previewContainers[kind]:SetShown(enabledGroup and self.previewData ~= nil)

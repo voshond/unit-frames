@@ -1932,8 +1932,8 @@ option border.background type="background" label="Background" inherit="backgroun
 option border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
-option sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#422ec0b7 hidden
-option stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b hidden
+option sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
+option stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option buffs type="group" label="Buffs"
 option buffs.enabled type="toggle" label="Show buffs" default=true
 option buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
@@ -3408,8 +3408,8 @@ option auras.border.background type="background" label="Background" inherit="bac
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
-option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#422ec0b7 hidden
-option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b hidden
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
 option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
@@ -6459,8 +6459,8 @@ option auras.border.background type="background" label="Background" inherit="bac
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
-option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#422ec0b7 hidden
-option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b hidden
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
 option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
@@ -9031,8 +9031,8 @@ option auras.border.background type="background" label="Background" inherit="bac
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
-option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#422ec0b7 hidden
-option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b hidden
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
 option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
@@ -11627,8 +11627,8 @@ option auras.border.background type="background" label="Background" inherit="bac
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
-option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#422ec0b7 hidden
-option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b hidden
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
 option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
@@ -14173,8 +14173,8 @@ option auras.border.background type="background" label="Background" inherit="bac
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
-option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#422ec0b7 hidden
-option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b hidden
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
 option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
@@ -16709,8 +16709,8 @@ option auras.border.background type="background" label="Background" inherit="bac
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
-option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#422ec0b7 hidden
-option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b hidden
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
 option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
@@ -21423,8 +21423,8 @@ option auras.border.background type="background" label="Background" inherit="bac
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
-option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#422ec0b7 hidden
-option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b hidden
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
 option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
@@ -23894,8 +23894,8 @@ option auras.border.background type="background" label="Background" inherit="bac
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
-option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#422ec0b7 hidden
-option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b hidden
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
 option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb
@@ -26384,8 +26384,8 @@ option auras.border.background type="background" label="Background" inherit="bac
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
-option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#422ec0b7 hidden
-option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b hidden
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
 option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#5dbbd1fb

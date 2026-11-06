@@ -1254,26 +1254,56 @@ function Mock.Install()
 			function flow:SetAnchorPoint(anchor) self.anchor = anchor end
 			function flow:SetGrowthDirection(x, y) self.x, self.y = x, y end
 			function flow:SetMaximumLineSize(size) self.lineSize = size end
-			-- Sample grids have one group of equally sized cells. Model the
-			-- resulting bounds and anchors, including wrapping and empty grids.
+			-- Blizzard_SharedXMLBase AnchorUtil.ApplyFlowLayout without padding:
+			-- groups share lines, cells keep their own sizes, and a line is as
+			-- deep as its largest cell.
 			function flow:Apply(container, groups)
-				local group = groups[1]
-				local elements = group.elements
-				if #elements == 0 then container:SetSize(1, 1); return end
 				local vertical = self.axis == 1
-				local width, height = elements[1]:GetSize()
-				local primary = vertical and height or width
-				local cross = vertical and width or height
-				local spacing, lineSpacing = group.elementSpacing, group.lineSpacing
-				local perLine = math.max(1, math.floor((self.lineSize + spacing) / (primary + spacing)))
-				for i, button in ipairs(elements) do
-					local p, c = (i - 1) % perLine * (primary + spacing), math.floor((i - 1) / perLine) * (cross + lineSpacing)
-					button:ClearAllPoints()
-					button:SetPoint(self.anchor, container, self.anchor, (vertical and c or p) * self.x, (vertical and p or c) * self.y)
+				local primaryDirection, crossDirection = vertical and self.y or self.x, vertical and self.x or self.y
+				local cursorPrimary, cursorCross, linePrimary, lineCross = 0, 0, 0, 0
+				local layoutPrimary, layoutCross, placed = 0, 0, false
+				local function NextLine(gap)
+					cursorPrimary = 0
+					cursorCross = cursorCross + (lineCross + gap) * crossDirection
+					linePrimary, lineCross = 0, 0
 				end
-				local p = math.min(perLine, #elements) * (primary + spacing) - spacing
-				local c = math.ceil(#elements / perLine) * (cross + lineSpacing) - lineSpacing
-				container:SetSize(vertical and c or p, vertical and p or c)
+				for _, group in ipairs(groups) do
+					local elements = type(group.elements) == "function" and group.elements() or group.elements
+					local spacing, lineSpacing = group.elementSpacing or 0, group.lineSpacing or 0
+					local groupSpacing, groupLineSpacing = group.groupSpacing or 0, group.groupLineSpacing or lineSpacing
+					if placed and #elements > 0 then
+						if group.forceNewLine then
+							NextLine(groupLineSpacing)
+						elseif groupSpacing > 0 then
+							if linePrimary > 0 and linePrimary + groupSpacing > self.lineSize then
+								NextLine(groupLineSpacing)
+							else
+								cursorPrimary = cursorPrimary + groupSpacing * primaryDirection
+								linePrimary = linePrimary + groupSpacing
+							end
+						end
+					end
+					for _, element in ipairs(elements) do
+						local width, height = element:GetSize()
+						local primary, cross = vertical and height or width, vertical and width or height
+						local nextPrimary = linePrimary > 0 and linePrimary + primary or primary
+						if linePrimary > 0 and nextPrimary > self.lineSize then
+							NextLine(lineSpacing)
+							nextPrimary = primary
+						end
+						element:ClearAllPoints()
+						element:SetPoint(self.anchor, container, self.anchor,
+							vertical and cursorCross or cursorPrimary, vertical and cursorPrimary or cursorCross)
+						cursorPrimary = cursorPrimary + (primary + spacing) * primaryDirection
+						linePrimary = nextPrimary + spacing
+						lineCross = math.max(lineCross, cross)
+						layoutPrimary = math.max(layoutPrimary, linePrimary - spacing)
+						layoutCross = math.max(layoutCross, math.abs(cursorCross) + cross)
+						placed = true
+					end
+				end
+				container:SetSize(math.max(vertical and layoutCross or layoutPrimary, 1),
+					math.max(vertical and layoutPrimary or layoutCross, 1))
 			end
 			return flow
 		end,
