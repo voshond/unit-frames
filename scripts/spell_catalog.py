@@ -225,6 +225,7 @@ def compile_catalog(tables, pin):
             excluded.append({**record, "reason": reason})
             continue
         effect = periodic[0]
+        direct = sum(float(row["EffectBasePointsF"]) for row in rows if int(row["Effect"]) == 2 and int(row["ImplicitTarget_0"]) == 6)
         class_mask = 0
         for ability in abilities[spell_id]:
             class_mask |= int(ability["ClassMask"])
@@ -237,6 +238,7 @@ def compile_catalog(tables, pin):
             "spellPowerCoefficient": float(effect["EffectBonusCoefficient"]),
             "attackPowerCoefficient": float(effect["BonusCoefficientFromAP"]),
             "pointsPerLevel": float(effect["EffectRealPointsPerLevel"]),
+            "directPoints": direct,
             "projectile": float(info["Speed"]) > 0 or float(info["LaunchDelay"]) > 0,
             "supercedes": sorted({int(row["SupercedesSpell"]) for row in abilities[spell_id]} - {0})})
     if not included:
@@ -261,7 +263,7 @@ def lua_catalog(report):
         f'\tinterface = {report["interface"]},', f'\tuiCommit = "{report["uiCommit"]}",', "\tspells = {"]
     for spell in report["included"]:
         fields = []
-        for key in ("family", "school", "classMask", "durationMs", "maxDurationMs", "durationPerResourceMs", "periodMs", "aura", "basePoints", "pointsPerResource", "spellPowerCoefficient", "attackPowerCoefficient", "pointsPerLevel"):
+        for key in ("family", "school", "classMask", "durationMs", "maxDurationMs", "durationPerResourceMs", "periodMs", "aura", "basePoints", "pointsPerResource", "spellPowerCoefficient", "attackPowerCoefficient", "pointsPerLevel", "directPoints"):
             fields.append(f"{key} = {spell[key]:.12g}")
         fields.append("projectile = " + ("true" if spell["projectile"] else "false"))
         fields.append("supercedes = { " + ", ".join(map(str, spell["supercedes"])) + " }")

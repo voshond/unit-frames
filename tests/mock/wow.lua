@@ -1126,6 +1126,17 @@ function Mock.Install()
 	-- Mock.bigDefensives[spellID]: the client's buff classification; Forever ships none.
 	Mock.bigDefensives = { [642] = true }
 	_G.C_UnitAuras = { AuraIsBigDefensive = function(id) return Mock.bigDefensives[id] == true end }
+	Mock.damageMeter, Mock.damageMeterSecret = {}, false
+	_G.C_DamageMeter = {
+		GetCombatSessionSourceFromType = function()
+			local restricted = Mock.inCombat or Mock.damageMeterSecret
+			local spells = {}
+			for spellID, total in pairs(Mock.damageMeter) do
+				spells[#spells + 1] = { spellID = spellID, totalAmount = restricted and Secret(total) or total }
+			end
+			return { combatSpells = spells, maxAmount = 0, totalAmount = 0 }
+		end,
+	}
 	-- Mock.cursorInfo holds GetCursorInfo's returns, e.g. { "spell", slot, bank, spellID }.
 	Mock.cursorInfo, Mock.spellBookOpened = nil, 0
 	_G.GetCursorInfo = function() if Mock.cursorInfo then return unpack(Mock.cursorInfo) end end
@@ -1334,7 +1345,8 @@ function Mock.Install()
 		"UnitDamageAbsorbClampMode", "UnitMaximumHealthMode", "UnitIncomingHealClampMode", "StatusBarTimerDirection",
 		"SecondsFormatterAbbreviation", "SecondsFormatterInterval", "SecondsFormatterRounding",
 		"SecondsFormatterIntervalWhitespace", "AddOnProfilerMetric", "PowerType", "CompressionMethod",
-		"CompressionLevel", "LuaCurveType", "PlayerSwingType", "RelativeContentDifficulty", "UITextureSliceMode" }) do
+		"CompressionLevel", "LuaCurveType", "PlayerSwingType", "RelativeContentDifficulty", "UITextureSliceMode",
+		"DamageMeterSessionType", "DamageMeterType" }) do
 		local values = assert(API.Snapshot().enums[name], "Enum." .. name .. " is not a client enum")
 		_G.Enum[name] = {}
 		for field, value in pairs(values) do _G.Enum[name][field] = value end
