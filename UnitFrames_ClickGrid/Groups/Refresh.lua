@@ -15,8 +15,13 @@ end
 function CG:RefreshChanges(kind, path)
 	if kind == "roster" then return { roster = true } end
 	if not path then return { full = true } end
-	if kind == "member" or kind == "target" then
+	if kind == "member" or kind == "target" or kind == "pet" then
 		if not UF.Schema.Find(self:StyleSchema(kind), path) then return { full = true } end
+		if kind == "pet" and (path == "interactive" or path == "hover" or path == "hoverColor") then
+			return { petInteraction = true }
+		end
+		if kind == "pet" and (path == "gap" or path == "side" or path == "includeInWidth") then return { layout = true } end
+		if kind == "target" and (path == "emptyText" or path:match("^emptyText%.")) then return { emptyText = true } end
 		local changes = { layout = true, [kind] = true }
 		if kind == "member" then
 			changes.indicators = true
@@ -35,9 +40,10 @@ end
 
 function CG:ApplyUnitStyle(uf, kind, changes, layout, force)
 	local full = not changes or changes.full
-	local fillChanged = kind == "target" and uf.fillHeight ~= layout.cellHeight
+	local fillHeight = kind == "target" and layout.cellHeight or kind == "pet" and self.metrics.pet.fillHeight or nil
+	local fillChanged = uf.fillHeight ~= fillHeight
 	if not full and not force and not changes[kind] and not fillChanged then return false end
-	if kind == "target" then uf:SetFillHeight(layout.cellHeight) end
+	uf:SetFillHeight(fillHeight)
 	uf:Apply(self.Config:GetStyle(kind))
 	return true
 end
@@ -87,6 +93,7 @@ local function RefreshFrame(self, frame, changes, layout)
 		frame:ResumeAllElements()
 		frame:Enable()
 	end
+	if kind == "member" then self:ReserveMember(frame.uf, cell.Pet ~= nil, cell.Pet ~= nil and cell.Pet:IsShown()) end
 	local styled = self:ApplyUnitStyle(frame.uf, kind, changes, layout, activated)
 	if styled then UF.Units:Bind(frame) end
 	local extrasChanged = self:ApplyExtras(frame.uf, button, changes, activated)
@@ -94,12 +101,14 @@ local function RefreshFrame(self, frame, changes, layout)
 	if layoutChanged then
 		frame:ClearAllPoints()
 		if kind == "target" then
-			frame:SetPoint("TOPLEFT", cell, "TOPLEFT", self.metrics.member.width + self.panelConfig.targetGap, 0)
+			frame:SetPoint("TOPLEFT", cell, "TOPLEFT", layout.targetX, 0)
 		else frame:SetPoint("TOPLEFT", cell, "TOPLEFT", 0, 0) end
 		cell:SetSize(layout.cellWidth, layout.cellHeight)
 	end
-	if kind == "target" and (styled or layoutChanged) then
+	if kind == "target" and (styled or layoutChanged or changes and changes.emptyText) then
 		button.empty:Apply(frame.uf, layout.cellHeight, self.metrics.target.shown)
+	end
+	if kind == "target" and (styled or layoutChanged) then
 		if self.metrics.target.shown then
 			UnregisterAttributeDriver(frame, "state-visibility")
 			frame:SetAttribute("statehidden", nil)
@@ -120,6 +129,7 @@ local function RefreshFrame(self, frame, changes, layout)
 end
 
 function CG:RefreshFrame(frame, changes, layout)
+	if self:GetGridButton(frame).kind == "pet" then return self:RefreshPet(frame, changes, layout) end
 	return frame.uf:GetDecorations():Batch(RefreshFrame, self, frame, changes, layout)
 end
 

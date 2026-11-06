@@ -245,6 +245,7 @@ end
 
 function Units:GetSpec(def, frame)
 	local spec = { frame = frame, rows = def.rows, width = def.width, resting = def.resting, readyCheck = def.readyCheck,
+		barLayout = def.barLayout,
 		playerFrame = def.playerFrame, borderDefaults = def.borderDefaults, threat = def.threat, blizzardAuras = def.blizzardAuras }
 	for _, part in ipairs(ns.Components.UnitFrame.PARTS) do spec[part.key] = def[part.key] end
 	-- The class is fixed for the session: other classes' frames leave the row out.

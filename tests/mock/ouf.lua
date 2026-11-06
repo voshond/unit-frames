@@ -132,12 +132,18 @@ return function(Mock)
 				local capacity = self:GetAttribute("unitsPerColumn") * self:GetAttribute("maxColumns")
 				for i = 1, capacity do
 					local cell = Mock.NewObject("Button", self, name .. "UnitButton" .. i)
+					cell.__strict = true
 					cell.__state.protected = true
 					cell:SetAttribute("oUF-onlyProcessChildren", true)
 					self:SetAttribute("child" .. i, cell)
-					cell.Member = CreateUnit("raid", cell:GetName() .. "Member", cell, { ["useparent-unit"] = true }, self.style)
-					cell.Target = CreateUnit("raidtarget", cell:GetName() .. "Target", cell,
-						{ ["useparent-unit"] = true, unitsuffix = "target", ["ufcg-target"] = true }, self.style)
+					if template == "SecureGroupPetHeaderTemplate" then
+						cell.Pet = CreateUnit("raidpet", cell:GetName() .. "Pet", cell,
+							{ ["useparent-unit"] = true, ["ufcg-pet"] = true }, self.style)
+					else
+						cell.Member = CreateUnit("raid", cell:GetName() .. "Member", cell, { ["useparent-unit"] = true }, self.style)
+						cell.Target = CreateUnit("raidtarget", cell:GetName() .. "Target", cell,
+							{ ["useparent-unit"] = true, unitsuffix = "target", ["ufcg-target"] = true }, self.style)
+					end
 				end
 			end
 		end
@@ -145,7 +151,12 @@ return function(Mock)
 		function header:Assign(index, unit)
 			local cell = self:GetAttribute("child" .. index)
 			cell:SetAttribute("unit", unit)
-			cell.Member.__unit, cell.Target.__unit = unit, unit and unit .. "target" or nil
+			if cell.Member then cell.Member.__unit = unit end
+			if cell.Target then cell.Target.__unit = unit and unit .. "target" or nil end
+			if cell.Pet then
+				cell.Pet.__unit = template == "SecureGroupPetHeaderTemplate" and unit
+					or unit and (unit == "player" and "pet" or unit:gsub("^(%a+)(%d+)$", "%1pet%2")) or nil
+			end
 		end
 		header:Hide()
 		self.headers[#self.headers + 1] = header

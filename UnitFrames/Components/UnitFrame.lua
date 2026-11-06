@@ -321,8 +321,12 @@ UnitFrame.UNIT_STATES = {
 
 function UnitFrame.BuildSchema(spec)
 	local schema = {
-		{ key = "width", type = "range", label = "Width", min = 60, max = 600, step = 1, default = spec.width or 230 },
-		{ key = "spacing", type = "range", label = "Row spacing", min = 0, max = 20, step = 1, default = 1 },
+		{ key = "barLayout", type = "select", label = "Arrange bars", default = spec.barLayout or "rows",
+			values = { { "rows", "Rows" }, { "columns", "Columns" } },
+			tooltip = "Columns use each bar's Column width and span the available frame height. Without a containing frame, the row heights determine the natural frame height. Fill orientation is configured separately per bar. Portraits span all columns; extra castbars and icon/point rows stay above or below. Aura rows do not collapse in column mode." },
+		{ key = "width", type = "range", label = "Width", min = 60, max = 600, step = 1, default = spec.width or 230,
+			hidden = function(cfg) return cfg.barLayout == "columns" end },
+		{ key = "spacing", type = "range", label = "Bar spacing", min = 0, max = 20, step = 1, default = 1 },
 		{ key = "border", type = "group", label = "Frame border", schema = Backdrop.schema,
 			defaults = ns.Util.Merge({ enabled = true }, spec.borderDefaults or {}) },
 		{ key = "range", type = "group", label = "Out-of-range opacity", schema = {
@@ -369,7 +373,8 @@ function UnitFrame.BuildSchema(spec)
 	end
 	AddParts(true)
 	for _, row in ipairs(spec.rows) do
-		local extra = { HeightOption() }
+		local extra = { HeightOption(),
+			{ key = "columnWidth", type = "range", label = "Column width", min = 2, max = 200, step = 1, default = 20 } }
 		for _, opt in ipairs(row.options or {}) do
 			extra[#extra + 1] = opt
 		end
@@ -577,10 +582,32 @@ function UnitFrame:SetFillHeight(height)
 	self.fillHeight = height
 end
 
+local function ReserveLayout(base, reserve, active)
+	if not reserve then return base end
+	local inset = active and reserve.width or 0
+	local leftInset = reserve.side == "LEFT" and inset or 0
+	local rightInset = reserve.side == "RIGHT" and inset or 0
+	local grow = reserve.included and 0 or reserve.width
+	local layout = ns.Util.Copy(base)
+	layout.width = base.width + grow
+	for _, item in ipairs(layout.rows) do
+		if item.rightAligned then
+			item.left = item.left + grow - rightInset
+		else
+			item.left = item.left + leftInset
+		end
+		item.right = item.right + rightInset
+	end
+	local portrait = layout.portrait
+	if portrait and portrait.side == reserve.side then portrait.x = portrait.x + leftInset - rightInset end
+	return layout
+end
+
 function UnitFrame:Layout()
 	ns.Perf:Count("unitLayout")
 	ns.Perf:Begin("unit layout")
-	local layout = ns.UnitFrameLayout.Compute(self.spec, self.resolved, self.fillHeight)
+	self.baseLayout = ns.UnitFrameLayout.Compute(self.spec, self.resolved, self.fillHeight)
+	local layout = ReserveLayout(self.baseLayout, self.reserve, self.reserveActive)
 	local previous = self.layout
 	self.layout = layout
 	local placements = self.rowPlacements or {}
@@ -592,39 +619,11 @@ function UnitFrame:Layout()
 			placements[key] = nil
 		end
 	end
-	local portrait = self.partsByKey.portrait
-	if portrait then
-		local bounds = layout.portrait
-		if not previous or not ns.Util.Equals(previous.portrait, bounds) then
-			portrait:ClearAllPoints()
-			if bounds then
-				portrait:SetSize(bounds.width, bounds.height)
-				portrait:SetPoint("TOP" .. bounds.side, self.frame, "TOP" .. bounds.side, bounds.x, bounds.y)
-			end
-		end
-	end
-
-	local auraBar = self.partsByKey.auraBar
-	if auraBar then auraBar:SetCollapse(layout.auraBarCollapses and self.resolved.spacing or nil) end
-	for _, item in ipairs(layout.rows) do
-		local component = self.partsByKey[item.key] or self.rowsByKey[item.key]
-		if not self.rowsByKey[item.key] or not ns.Util.Equals(placements[item.key], item) then
-			component:ClearAllPoints()
-			component:SetPoint("TOPLEFT", self.frame, "TOPLEFT", item.left, item.y)
-			component:SetPoint("TOPRIGHT", self.frame, "TOPRIGHT", -item.right, item.y)
-			component:GetFrame():SetHeight(item.height)
-			placements[item.key] = item
-			ns.Perf:Count("rowLayoutWrite")
-		end
-		if item.key == "auraBar" or item.key == "comboPoints" then
-			component:Layout(layout.width - item.left - item.right)
-		end
-	end
-	if auraBar and auraBar.spec.collapsible then self:LayoutCollapse(layout) end
-	self:LayoutCastbar(layout)
+	self:PlaceContent(layout, previous)
 
 	self:Resize(layout.width, layout.height)
 	local bounds = layout.portrait
+	local portrait = self.partsByKey.portrait
 	self.layoutContext = { root = self.frame, portrait = bounds and {
 		frame = portrait:GetFrame(), width = bounds.width, height = bounds.height,
 	} or nil, name = self:GetLeadingName(), decorations = self.decorations }
@@ -643,6 +642,73 @@ function UnitFrame:Layout()
 	self.decorations:Reflow()
 	Backdrop.SetBorderLevel(self.border, self.frame:GetFrameLevel() + Backdrop.LEVELS.frame)
 	ns.Perf:End("unit layout")
+end
+
+function UnitFrame:PlaceContent(layout, previous)
+	local placements = self.rowPlacements
+	local portrait = self.partsByKey.portrait
+	if portrait then
+		local bounds = layout.portrait
+		if not previous or not ns.Util.Equals(previous.portrait, bounds) then
+			portrait:ClearAllPoints()
+			if bounds then
+				portrait:SetSize(bounds.width, bounds.height)
+				portrait:SetPoint("TOP" .. bounds.side, self.frame, "TOP" .. bounds.side, bounds.x, bounds.y)
+			end
+		end
+	end
+
+	local auraBar = self.partsByKey.auraBar
+	if auraBar then auraBar:SetCollapse(layout.auraBarCollapses and self.resolved.spacing or nil) end
+	for _, item in ipairs(layout.rows) do
+		local component = self.partsByKey[item.key] or self.rowsByKey[item.key]
+		if not self.rowsByKey[item.key] or not ns.Util.Equals(placements[item.key], item)
+			or previous and previous.width ~= layout.width then
+			component:ClearAllPoints()
+			component:SetPoint("TOPLEFT", self.frame, item.rightAligned and "TOPRIGHT" or "TOPLEFT",
+				item.rightAligned and item.left - layout.width or item.left, item.y)
+			component:SetPoint("TOPRIGHT", self.frame, "TOPRIGHT", -item.right, item.y)
+			component:GetFrame():SetHeight(item.height)
+			if self.rowsByKey[item.key] then component:SetKnownSize(layout.width - item.left - item.right, item.height) end
+			placements[item.key] = item
+			ns.Perf:Count("rowLayoutWrite")
+		end
+		if item.key == "auraBar" or item.key == "comboPoints" then
+			component:Layout(layout.width - item.left - item.right)
+		end
+	end
+	if auraBar and auraBar.spec.collapsible then self:LayoutCollapse(layout) end
+	self:LayoutCastbar(layout)
+end
+
+function UnitFrame:SetReserve(side, width, included)
+	local reserve = self.reserve
+	if not reserve and not side then return end
+	if reserve and reserve.side == side and reserve.width == width and reserve.included == included then return end
+	self.reserve = side and { side = side, width = width, included = included } or nil
+	if self.baseLayout then self:Layout() end
+end
+
+function UnitFrame:SetReserveActive(active)
+	active = active == true
+	if self.reserveActive == active then return end
+	self.reserveActive = active
+	if not self.reserve or not self.baseLayout then return end
+	local previous = self.layout
+	self.layout = ReserveLayout(self.baseLayout, self.reserve, active)
+	self:PlaceContent(self.layout, previous)
+	self.decorations:Reflow()
+end
+
+function UnitFrame:GetReserveAnchor()
+	local left, right, top = Backdrop.Padding(self.resolved.border)
+	if self.reserve.side == "LEFT" then return "TOPLEFT", left, -top end
+	return "TOPRIGHT", -right, -top
+end
+
+function UnitFrame.InnerHeight(cfg, height)
+	local _, _, top, bottom = Backdrop.Padding(cfg.border)
+	return math.max(1, height - top - bottom)
 end
 
 -- A collapsible icon row lends its space to the health bar: the bar's edge
@@ -722,7 +788,7 @@ function UnitFrame:GetLeadingName()
 	local row = self.rowsByKey.health
 	if row and row:IsEnabled() then
 		for _, text in row:EnabledTexts() do
-			if text.resolved.justifyH == "LEFT" and text:LeadsWithName() then
+			if text.resolved.rotation == 0 and text.resolved.justifyH == "LEFT" and text:LeadsWithName() then
 				return text
 			end
 		end

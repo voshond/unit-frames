@@ -29,6 +29,22 @@ describe("ClickGrid empty target state #targets", function()
 		local _, size = empty.text:GetFont()
 		assert.is_true(size * 2 <= CG.layout.cellHeight)
 	end)
+
+	it("uses shared text presentation and rotates a configurable single-line label", function()
+		CG.Config:SetStyle("target", "shown", true)
+		CG.Config:SetStyle("target", "emptyText", { label = "Missing", rotation = 90, fit = false,
+			size = 9, color = { 1, 0.2, 0.3, 1 }, offsetX = 2 })
+		local empty = CG:GetGridButton(CG.headers.party:GetAttribute("child1").Target).empty
+		assert.equals("Missing", empty.text:GetText())
+		assert.equals(math.pi / 2, empty.text.__state.rotation)
+		assert.equals(CG.layout.cellHeight - 8, empty.text:GetWidth())
+		assert.equals(9, empty.presenter.resolved.size)
+		CG.Config:SetStyle("target", "emptyText.enabled", false)
+		assert.is_false(empty.text:IsShown())
+		CG.Config.styles.target:Reset()
+		assert.equals("No\nTarget", empty.text:GetText())
+		assert.equals(0, empty.text.__state.rotation)
+	end)
 end)
 
 describe("ClickGrid empty target state #targets #workbench", function()

@@ -70,6 +70,7 @@ function Preview:Apply(changes)
 	if self.notice then self.notice:Hide() end
 	local cfg = CG.Config:Resolved()
 	self.cfg = cfg
+	self:DirtyPets(changes)
 	if not changes or changes.full or changes.layout then
 		CG.Layout.Backdrop(self.background, self.frame, cfg.titles, cfg.border)
 	end
@@ -96,16 +97,17 @@ function Preview:ChangeSource(source)
 end
 
 function Preview:StyleCell(cell, changes)
-	local cfg = self.cfg.panel
 	local force = not cell.styled
 	CG:ApplyUnitStyle(cell.member, "member", changes, self.layout, force)
 	local targetStyled = CG:ApplyUnitStyle(cell.target, "target", changes, self.layout, force)
 	local layoutChanged = force or not changes or changes.full or changes.layout
 	if layoutChanged then
+		cell.member:ClearAllPoints()
+		cell.target:ClearAllPoints()
 		cell.member:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", 0, 0)
-		cell.target:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", CG.metrics.member.width + cfg.targetGap, 0)
+		cell.target:SetPoint("TOPLEFT", cell.frame, "TOPLEFT", self.layout.targetX, 0)
 	end
-	if layoutChanged or targetStyled then
+	if layoutChanged or targetStyled or changes and changes.emptyText then
 		cell.target:GetFrame():SetShown(CG.metrics.target.shown)
 		cell.empty:Apply(cell.target, self.layout.cellHeight, CG.metrics.target.shown)
 		if not CG.metrics.target.shown then EnableAuras(cell.target, false) end
@@ -151,12 +153,14 @@ function Preview:FeedCell(cell, index, live, unit)
 			UF.Units:ShowSample(cell.target, targetValues)
 		end
 	end
+	self:FeedInlinePet(cell, index, live, unit)
 end
 
 function Preview:HideCell(cell)
 	cell.frame:Hide()
 	EnableAuras(cell.member, false)
 	EnableAuras(cell.target, false)
+	if cell.pet then self:FeedPet(cell.pet, 0, false, nil, false) end
 	cell.slots:SetEnabled(false)
 end
 
@@ -230,7 +234,9 @@ function Preview:ShowData(data)
 	local raid = live and IsInRaid() or count > 5
 	local cfg = self.cfg.panel
 	local layout = CG.Layout.Compute(cfg, CG.metrics.member, CG.metrics.target, self.cfg.titles, self.cfg.border,
-		count, count, roster and roster.groups)
+		count, count, roster and roster.groups, CG.metrics.pet)
+	local petCount = self:PetRoster(live, count)
+	CG.PetLayout(layout, cfg, CG.metrics.pet, petCount, raid, count, self.cfg.titles, self.cfg.border)
 	self.layout = layout
 	local size = raid and layout.raid or count == 1 and layout.solo or layout.party
 	self.frame:SetSize(size.width, size.height)
@@ -262,6 +268,12 @@ function Preview:ShowData(data)
 		for localIndex = 1, amount do
 			visible = visible + 1
 			local index = first + localIndex - 1
+			if not live and cfg.roleOrder ~= "roster" and key ~= "tanks" then
+				if self.orderKey ~= cfg.roleOrder then self.orderKey, self.orders = cfg.roleOrder, {} end
+				local cacheKey = first .. ":" .. amount
+				self.orders[cacheKey] = self.orders[cacheKey] or CG.Ordering.Sample(first, amount, cfg.roleOrder)
+				index = self.orders[cacheKey][localIndex]
+			end
 			local cell = self.cells[visible] or self:CreateCell()
 			local x, y = CG.Layout.Cell(localIndex, section.grid.columns, section.grid.rows, cfg.flow,
 				layout.cellWidth, layout.cellHeight, cfg.spacingX, cfg.spacingY)
@@ -272,6 +284,7 @@ function Preview:ShowData(data)
 			if not cell.styled or cell.changes then self:StyleCell(cell, cell.changes) end
 			local source = live and CG.headers[key] and CG.headers[key]:GetAttribute("child" .. localIndex)
 			local unit = source and source.Member.__unit
+			cell.petUnit = source and source:GetAttribute("unit") and source.Pet and source.Pet.__unit or nil
 			if live and not raid and localIndex == 1 and not IsInGroup() then unit = "player" end
 			self:FeedCell(cell, index, live, unit)
 		end
@@ -289,6 +302,7 @@ function Preview:ShowData(data)
 		end
 	end
 	for i = visible + 1, #self.cells do self:HideCell(self.cells[i]) end
+	self:ShowPetGroup(live, petCount)
 end
 
 function Preview:Tick(elapsed)
@@ -317,9 +331,11 @@ function Preview:Release()
 end
 
 function Preview:ReleaseComponents()
+	self:ReleasePets()
 	for _, cell in ipairs(self.cells) do
 		cell.member:Release() -- with its status indicators and slots
 		cell.target:Release()
+		cell.empty:Release()
 		cell.memberValues, cell.targetValues = nil, nil
 		cell.frame:Hide()
 	end

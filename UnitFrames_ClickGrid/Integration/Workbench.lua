@@ -50,11 +50,13 @@ function CG:RegisterWorkbench()
 		styleTarget = function() return CG.Config.settings:Target(Report) end,
 		reset = function() CG.Config.settings:Reset() end,
 	})
-	for _, kind in ipairs({ "member", "target" }) do
+	local names = { member = "Member frames", target = "Member targets", pet = "Pets" }
+	local scopes = { member = "All ClickGrid members", target = "Each ClickGrid member's target", pet = "Group pets" }
+	for _, kind in ipairs({ "member", "target", "pet" }) do
 		local styleKind = kind
-		wb:Register({ id = "clickgrid." .. styleKind, name = styleKind == "member" and "Member frames" or "Member targets",
+		wb:Register({ id = "clickgrid." .. styleKind, name = names[styleKind],
 			category = "Party & raid (ClickGrid)", autoSize = true, fitToStage = true, size = { 500, 500 }, create = Create, data = data,
-			scope = styleKind == "member" and "All ClickGrid members" or "Each ClickGrid member's target",
+			scope = scopes[styleKind],
 			settingsTargets = function() return { { id = "style", schema = CG:StyleSchema(styleKind),
 				include = function(path) return styleKind ~= "member" or not SharedMemberPath(path) end } } end,
 			links = styleKind == "member" and {

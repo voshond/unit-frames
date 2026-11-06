@@ -23,6 +23,18 @@ member.auras.defaults = {
 }
 CG.definitions = {
 	member = member,
+	pet = UF.Units:Derive("pet", {
+		label = "Group pet", width = 85,
+		rows = {
+			health = { defaults = { height = 20, columnWidth = 8, bar = { orientation = "VERTICAL" } },
+				spec = { textDefaults = { left = { enabled = false }, right = { enabled = false }, belowLeft = { enabled = false } } } },
+			power = { defaults = { enabled = false, columnWidth = 3, bar = { orientation = "VERTICAL" } } },
+		},
+		portrait = { defaults = { enabled = false } },
+		castbar = { defaults = { enabled = false } },
+		auras = { clickThrough = true, defaults = { buffs = { enabled = false }, debuffs = { enabled = false } } },
+		categoryAuras = { noMouse = true, defaults = { enabled = false } },
+	}),
 	target = UF.Units:Derive("targettarget", {
 		width = 85,
 		rows = { health = { defaults = { height = 28 } }, power = { defaults = { enabled = false } } },
@@ -40,12 +52,23 @@ for _, def in pairs(CG.definitions) do
 	def.pvp, def.classification, def.readyCheckIcon = nil, nil, nil
 end
 CG.definitions.target.readyCheck, CG.definitions.target.threat = nil, nil
+CG.definitions.pet.readyCheck, CG.definitions.pet.threat = nil, nil
+CG.definitions.pet.barLayout = "columns"
 
 CG.LayoutSchema = {
 	{ key = "enabled", type = "toggle", label = "Show healing panel", default = true },
 	{ key = "hideBlizzardFrames", type = "toggle", label = "Hide Blizzard party and raid frames", default = false,
 		tooltip = "Hide Blizzard's party frames, raid frames and raid manager while ClickGrid is enabled. Changes wait until combat ends. Turning this off or disabling ClickGrid restores Blizzard's visibility rules." },
 	{ key = "showSolo", type = "toggle", label = "Show when solo", default = false },
+	{ key = "roleOrder", type = "select", label = "Member role order", default = "roster",
+		values = { { "roster", "Roster order" },
+			{ "TANK,DAMAGER,HEALER,NONE", "Tanks, DPS, healers" },
+			{ "TANK,HEALER,DAMAGER,NONE", "Tanks, healers, DPS" },
+			{ "DAMAGER,TANK,HEALER,NONE", "DPS, tanks, healers" },
+			{ "DAMAGER,HEALER,TANK,NONE", "DPS, healers, tanks" },
+			{ "HEALER,TANK,DAMAGER,NONE", "Healers, tanks, DPS" },
+			{ "HEALER,DAMAGER,TANK,NONE", "Healers, DPS, tanks" } },
+		tooltip = "Orders members within each subgroup, or across a flat raid. First follows the fill direction. Unassigned members come last; each role keeps roster order." },
 	{ key = "mode", type = "select", label = "Raid layout", default = "subgroups",
 		values = { { "subgroups", "Keep raid subgroups" }, { "flat", "Flat grid" } } },
 	{ key = "columns", type = "range", label = "Columns / subgroup columns", min = 1, max = 10, step = 1, default = 4,
@@ -80,6 +103,7 @@ CG.TitleSchema = {
 	{ key = "color", type = "color", label = "Colour", default = { 1, 1, 1, 1 } },
 	{ key = "party", type = "text", label = "Party title", default = "Party" },
 	{ key = "tanks", type = "text", label = "Tank section title", default = "Tanks" },
+	{ key = "pets", type = "text", label = "Pet section title", default = "Pets" },
 }
 for group = 1, 8 do
 	CG.TitleSchema[#CG.TitleSchema + 1] = { key = "group" .. group, type = "text", label = "Group / column " .. group .. " title", default = "Group " .. group }

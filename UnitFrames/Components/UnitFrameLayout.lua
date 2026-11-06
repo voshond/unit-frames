@@ -14,7 +14,7 @@ end
 -- Whether the icon row lends its space (and the gap) to the health bar
 -- while no icon is shown. The unit must offer it and show both rows.
 function Layout.AuraBarCollapses(spec, cfg)
-	return spec.auraBar ~= nil and spec.auraBar.collapsible == true and cfg.auraBar.enabled
+	return cfg.barLayout ~= "columns" and spec.auraBar ~= nil and spec.auraBar.collapsible == true and cfg.auraBar.enabled
 		and cfg.auraBar.collapse == true and cfg.health ~= nil and cfg.health.enabled
 end
 
@@ -36,6 +36,7 @@ end
 
 -- `fillHeight` stretches the health row so the frame is at least that tall.
 function Layout.Compute(spec, cfg, fillHeight)
+	if cfg.barLayout == "columns" then return ns.UnitFrameColumns.Compute(spec, cfg, fillHeight) end
 	local padLeft, padRight, padTop, padBottom = ns.Components.Backdrop.Padding(cfg.border)
 	local placement = Layout.CastbarPlacement(spec, cfg)
 	local items = {}

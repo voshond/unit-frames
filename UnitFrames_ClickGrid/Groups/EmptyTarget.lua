@@ -10,17 +10,28 @@ function EmptyTarget:Init(parent, bar)
 	self.frame = CreateFrame("Frame", nil, parent, "BackdropTemplate")
 	self.frame:SetAllPoints(bar)
 	self.frame:SetFrameLevel(parent:GetFrameLevel())
-	self.text = self.frame:CreateFontString(nil, "OVERLAY")
-	self.text:SetPoint("CENTER")
-	self.text:SetJustifyH("CENTER")
-	self.text:SetWordWrap(false)
+	self.presenter = UF.Components.Text:New(self.frame, {}, { host = self.frame })
+	self.text = self.presenter:GetFrame()
 end
 
 function EmptyTarget:Apply(uf, height, shown)
-	local theme = UF.Config:GetTheme()
+	if not self.presenter.componentOwner then uf:Own(self.presenter) end
 	UF.Components.Backdrop.ApplyTo(self.frame, uf.resolved.border)
-	UF.Media:ApplyFont(self.text, theme.font, math.max(6, math.min(theme.fontSize, math.floor(height / 2) - 2)), theme.fontOutline)
-	self.text:SetTextColor(0.6, 0.6, 0.6, 1)
-	self.text:SetText(self.TEXT)
+	local cfg = CG.Config.styles.target:Resolved().emptyText
+	local presentation = UF.Util.Copy(cfg)
+	local lines = select(2, cfg.label:gsub("\n", "")) + 1
+	if cfg.fit then
+		local extent = cfg.rotation == 0 and height or uf.layout.width
+		presentation.size = math.max(6, math.min(cfg.size, math.floor(extent / lines) - 2))
+	end
+	self.presenter:SetLineCount(lines)
+	self.presenter:SetHostSize(uf.layout.width, height)
+	self.presenter:Apply(presentation)
+	self.presenter:SetText(cfg.label)
 	self.frame:SetShown(shown)
+end
+
+function EmptyTarget:Release()
+	self.presenter:Release()
+	self.frame:Hide()
 end
