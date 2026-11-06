@@ -33,6 +33,7 @@ function DotSpells.Describe(spellID, comboPoints)
 	return {
 		family = spell.family,
 		total = tick * ticks,
+		direct = spell.directPoints or 0,
 		school = spell.school,
 		duration = duration,
 		interval = interval,

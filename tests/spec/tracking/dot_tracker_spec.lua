@@ -418,16 +418,189 @@ describe("DoT tracker #dots", function()
 			assert.same({ "target" }, changes)
 		end)
 
-		it("ignores secret spellcast payloads and combat values", function()
+		it("ignores secret spellcast payloads and secret actions or schools", function()
 			Learn(1, 10)
 			Mock.FireEvent("UNIT_SPELLCAST_SUCCEEDED", "player", "cast-x", Mock.Secret(1))
 			Mock.FireEvent("UNIT_SPELLCAST_SENT", "player", "", Mock.Secret("cast-y"), 1)
 			assert.equals("0 dmg from 0 DoT(s)", Marker())
 			Cast(1); Advance(3)
-			Hit(Mock.Secret(10), 32)
 			Hit(10, Mock.Secret(32))
 			Mock.FireEvent("UNIT_COMBAT", "target", Mock.Secret("WOUND"), "", 10, 32)
 			assert.equals("40 dmg from 1 DoT(s)", Marker())
+		end)
+	end)
+
+	describe("hidden amounts and the damage meter", function()
+		local function HiddenHit(school, unit) Hit(Mock.Secret(10), school, "", unit) end
+		local function EndCombat()
+			Mock.inCombat = false
+			Mock.FireEvent("PLAYER_REGEN_ENABLED")
+			for _ = 1, 8 do
+				Mock.time = Mock.time + 0.5
+				tracker.meterDriver:RunScript("OnUpdate", 0.5)
+			end
+		end
+
+		before_each(function()
+			ns.DotCatalog.spells[8] = { family = 8, school = 4, basePoints = 3, directPoints = 8, durationMs = 15000,
+				maxDurationMs = 15000, durationPerResourceMs = 0, pointsPerResource = 0, periodMs = 3000 }
+			ns.DotCatalog.spells[9] = { family = 9, school = 4, basePoints = 1, directPoints = 18, durationMs = 6000,
+				maxDurationMs = 6000, durationPerResourceMs = 0, pointsPerResource = 0, periodMs = 2000 }
+			ns.DotCatalog.spells[10] = { family = 10, school = 32, basePoints = 10, durationMs = 12000,
+				maxDurationMs = 12000, durationPerResourceMs = 0, pointsPerResource = 0, periodMs = 3000 }
+			Mock.spells[8], Mock.spells[9], Mock.spells[10] = { name = "Immolate" }, { name = "Fireball" }, { name = "Siphon Life" }
+			Mock.inCombat = true
+		end)
+
+		it("keeps a DoT whose tick amounts are secret and counts it down on rhythm", function()
+			Cast(1)
+			for _ = 1, 3 do Advance(3); HiddenHit(32) end
+			assert.equals("10 dmg from 1 DoT(s)", Marker())
+			assert.is_false(Logged("DROP Corruption"))
+			assert.equals(3, Count("TICK Corruption (amount hidden)"))
+			assert.is_nil(tracker.ticks[1])
+		end)
+
+		it("shows an unsure DoT on its first hidden tick without learning a size", function()
+			waitMode = "unsure"
+			Learn(1, 12); tracker.ticks[1] = nil
+			Cast(1)
+			assert.equals("0 dmg from 0 DoT(s)", Marker())
+			Advance(3); HiddenHit(32)
+			assert.equals("30 dmg from 1 DoT(s)", Marker())
+		end)
+
+		it("matches hidden hits by school and rhythm only", function()
+			Cast(1); Advance(1.5); HiddenHit(32); Advance(1.5); HiddenHit(4)
+			assert.is_true(Logged("HIT (amount hidden) school 32 on target not matched"))
+			assert.is_true(Logged("HIT (amount hidden) school 4 on target not matched"))
+			Advance(5); assert.is_true(Logged("DROP Corruption"))
+		end)
+
+		it("counts a hidden hit reported for both target and focus once", function()
+			Mock.guids.focus = "mob"; Cast(1)
+			Advance(3); HiddenHit(32); HiddenHit(32, "focus")
+			assert.equals(1, Count("TICK Corruption"))
+		end)
+
+		it("feeds two same-school DoTs ticking in the same instant from one token", function()
+			Learn(1, 10); Learn(10, 10); Mock.guids.focus = "mob"; Cast(1); Cast(10)
+			Advance(3); HiddenHit(32); HiddenHit(32); HiddenHit(32, "focus")
+			assert.equals(1, Count("TICK Corruption"))
+			assert.equals(1, Count("TICK Siphon Life"))
+			assert.equals(0, Count("HIT (amount hidden)"))
+			Advance(3); Hit(10, 32); Hit(10, 32); Hit(10, 32, "", "focus")
+			assert.equals(2, Count("TICK Corruption"))
+			assert.equals(2, Count("TICK Siphon Life"))
+			assert.equals("40 dmg from 2 DoT(s)", Marker())
+		end)
+
+		it("keeps the rhythm through a fully absorbed tick without learning zero", function()
+			Learn(1, 10); Cast(1)
+			Advance(3); Mock.FireEvent("UNIT_COMBAT", "target", "ABSORB", "", 0, 32)
+			assert.equals("30 dmg from 1 DoT(s)", Marker())
+			assert.equals(10, tracker.ticks[1])
+			Advance(3); Hit(10, 32)
+			assert.equals("20 dmg from 1 DoT(s)", Marker())
+		end)
+
+		it("learns the real tick from the damage meter after combat", function()
+			Cast(1)
+			for _ = 1, 4 do Advance(3); HiddenHit(32) end
+			Mock.damageMeter[1] = 60
+			EndCombat()
+			assert.equals(15, tracker.ticks[1])
+			assert.equals(4, tracker.tickWeights[1])
+			Mock.inCombat = true
+			Cast(1)
+			assert.equals("60 dmg from 1 DoT(s)", Marker())
+		end)
+
+		it("blends later fights into the learned tick by tick count", function()
+			Cast(1)
+			for _ = 1, 4 do Advance(3); HiddenHit(32) end
+			Mock.damageMeter[1] = 40
+			EndCombat()
+			Mock.inCombat = true; Advance(1); Cast(1)
+			for _ = 1, 4 do Advance(3); HiddenHit(32) end
+			Mock.damageMeter[1] = 80
+			EndCombat()
+			assert.equals(15, tracker.ticks[1])
+			assert.equals(8, tracker.tickWeights[1])
+		end)
+
+		it("retries while the meter is still secret", function()
+			Cast(1)
+			for _ = 1, 4 do Advance(3); HiddenHit(32) end
+			Mock.damageMeter[1], Mock.damageMeterSecret = 60, true
+			Mock.inCombat = false
+			Mock.FireEvent("PLAYER_REGEN_ENABLED")
+			for _ = 1, 3 do
+				Mock.time = Mock.time + 0.5
+				tracker.meterDriver:RunScript("OnUpdate", 0.5)
+			end
+			assert.is_nil(tracker.ticks[1])
+			Mock.damageMeterSecret = false
+			Mock.time = Mock.time + 0.5
+			tracker.meterDriver:RunScript("OnUpdate", 0.5)
+			assert.equals(15, tracker.ticks[1])
+		end)
+
+		it("splits a spell's upfront hit off the meter total", function()
+			Cast(8)
+			for _ = 1, 5 do Advance(3); HiddenHit(4) end
+			Mock.damageMeter[8] = (8 + 15) * 1.5
+			EndCombat()
+			assert.equals(4.5, tracker.ticks[8])
+		end)
+
+		it("does not learn when the upfront hit outweighs the ticks", function()
+			Cast(9)
+			for _ = 1, 3 do Advance(2); HiddenHit(4) end
+			Mock.damageMeter[9] = 40
+			EndCombat()
+			assert.is_nil(tracker.ticks[9])
+			assert.is_true(Logged("LEARN Fireball skipped: its upfront hit outweighs its ticks"))
+		end)
+
+		it("does not learn from a fight where some ticks were out of sight", function()
+			Target("A"); Cast(1)
+			Advance(3); HiddenHit(32); Advance(3); HiddenHit(32)
+			Target("B"); Advance(6.5)
+			Mock.damageMeter[1] = 60
+			EndCombat()
+			assert.is_nil(tracker.ticks[1])
+			assert.is_true(Logged("LEARN Corruption skipped: some ticks were out of sight"))
+		end)
+
+		it("does not learn from an avoided cast's missing upfront hit or too few ticks", function()
+			Cast(8); Advance(0.1); Avoid("RESIST", 4)
+			Mock.damageMeter[8] = 0
+			EndCombat()
+			assert.is_nil(tracker.ticks[8])
+			assert.equals(0, Count("LEARN Immolate"))
+			assert.is_nil(next(tracker.tally))
+		end)
+
+		it("rejects a meter total far off the catalogue", function()
+			Cast(1)
+			for _ = 1, 4 do Advance(3); HiddenHit(32) end
+			Mock.damageMeter[1] = 400
+			EndCombat()
+			assert.is_nil(tracker.ticks[1])
+			assert.is_true(Logged("is 10.00x the catalogue"))
+		end)
+
+		it("waits for the end of a new fight that starts before the meter is read", function()
+			Cast(1)
+			for _ = 1, 4 do Advance(3); HiddenHit(32) end
+			Mock.damageMeter[1] = 60
+			Mock.FireEvent("PLAYER_REGEN_ENABLED")
+			Mock.time = Mock.time + 0.5
+			tracker.meterDriver:RunScript("OnUpdate", 0.5)
+			assert.is_nil(tracker.ticks[1])
+			EndCombat()
+			assert.equals(15, tracker.ticks[1])
 		end)
 	end)
 

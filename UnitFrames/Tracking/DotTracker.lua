@@ -6,7 +6,10 @@ Estimates the damage the player's DoTs still have to deal per mob (ported
 from DoesItDie, MIT, Licenses/DoesItDie-MIT.txt). Target health, auras and
 combat logs are out of reach on Forever, so the pinned catalogue gives the
 first estimate and UNIT_COMBAT hits on the target or focus, matched by
-school, rhythm and size, replace it with the real tick size.
+school, rhythm and size, replace it with the real tick size. In combat the
+hit amounts are secret: those hits match on school and rhythm alone and are
+counted, and after combat the damage meter's per-spell totals over the
+counted ticks give the real average tick.
 
   Acquire(owner) / Release(owner)   events run only while someone listens
   Breakdown(key, waitMode, out)     total, count and per-DoT entries for a mob
@@ -34,6 +37,11 @@ local COMBO_CAP = 5
 local COMBO_CACHE_SECONDS = 3
 local TICKS_VERSION = 1
 local PHYSICAL = 1
+local LEARN_MIN_FACTORS = 2
+local LEARN_RATIO_MIN, LEARN_RATIO_MAX = 0.5, 2.5
+local LEARN_WEIGHT_CAP = 20
+local METER_RETRY_SECONDS = 0.5
+local METER_TRIES = 6
 
 DotTracker.WAIT_MODES = {
 	{ "off", "Never (estimate straight away)" },
@@ -55,9 +63,9 @@ local function ByApplied(a, b)
 end
 
 function DotTracker:Init()
-	self.owners, self.dots, self.sentTargets, self.lastCombat = {}, {}, {}, {}
-	self.observableSince = {}
-	self.ticks, self.deadline = {}, 0
+	self.owners, self.dots, self.sentTargets, self.hits = {}, {}, {}, {}
+	self.observableSince, self.tally = {}, {}
+	self.ticks, self.tickWeights, self.deadline = {}, {}, 0
 	self:ResetCombat()
 	self.events = CreateFrame("Frame")
 	self.events:SetScript("OnEvent", function(_, event, ...) self[event](self, ...) end)
@@ -65,6 +73,10 @@ function DotTracker:Init()
 	self.onUpdate = function()
 		local now = GetTime()
 		if now >= self.deadline then self:Housekeep(now) end
+	end
+	self.meterDriver = CreateFrame("Frame")
+	self.onMeterUpdate = function()
+		if GetTime() >= self.meterAt then self:LearnAfterCombat() end
 	end
 end
 
@@ -98,13 +110,14 @@ function DotTracker:Start()
 		end
 		return false
 	end
-	self.ticks = self:LearnedTicks()
+	self.ticks, self.tickWeights = self:LearnedTicks()
 	local events = self.events
 	events:RegisterEvent("PLAYER_TARGET_CHANGED")
 	events:RegisterEvent("PLAYER_FOCUS_CHANGED")
 	events:RegisterUnitEvent("UNIT_SPELLCAST_SENT", "player")
 	events:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "player")
 	events:RegisterUnitEvent("UNIT_COMBAT", "target", "focus")
+	events:RegisterEvent("PLAYER_REGEN_ENABLED")
 	local _, class = UnitClass("player")
 	if not issecretvalue(class) and ns.Units.COMBO_POINT_CLASSES[class] then
 		events:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
@@ -116,25 +129,30 @@ end
 function DotTracker:Stop()
 	self.events:UnregisterAllEvents()
 	self.driver:SetScript("OnUpdate", nil)
+	self:StopMeter()
 	wipe(self.dots)
 	wipe(self.sentTargets)
 	wipe(self.observableSince)
+	wipe(self.tally)
 	self:ResetCombat()
 end
 
 -- Account-wide: tick sizes belong to the character's spells, not a style.
 function DotTracker:LearnedTicks()
 	local db = ns.Config.db
-	if not db then return self.ticks end
+	if not db then return self.ticks, self.tickWeights end
 	local global = db.global
 	if global.dotTicksVersion ~= TICKS_VERSION then
-		global.dotTicks, global.dotTicksVersion = {}, TICKS_VERSION
+		global.dotTicks, global.dotTickWeights, global.dotTicksVersion = {}, {}, TICKS_VERSION
 	end
-	return global.dotTicks
+	global.dotTickWeights = global.dotTickWeights or {}
+	return global.dotTicks, global.dotTickWeights
 end
 
 function DotTracker:ResetLearned()
-	wipe(self:LearnedTicks())
+	local ticks, weights = self:LearnedTicks()
+	wipe(ticks)
+	wipe(weights)
 end
 
 function DotTracker:SetTrace(fn)
@@ -238,9 +256,56 @@ local function AnchorTick(dot, index, now)
 	return tickIndex
 end
 
+local function OpenSlot(dot, now)
+	local distance, index = DistanceToExpectedTick(dot, now)
+	local window = dot.firstTickAt and TICK_MATCH_WINDOW_ANCHORED or TICK_MATCH_WINDOW
+	if distance > window or (dot.firstTickAt and index <= dot.lastTickIndex) then return nil end
+	return distance, index
+end
+
+local function TallyFor(self, dot)
+	local tally = self.tally[dot.spellID]
+	if not tally then
+		tally = { name = dot.name, keys = {}, keyCount = 0, factors = 0, ticks = 0, direct = 0,
+			baseTick = dot.total / dot.totalTicks }
+		self.tally[dot.spellID] = tally
+	end
+	local key = dot.tickKey or false
+	if not tally.keys[key] then tally.keys[key], tally.keyCount = true, tally.keyCount + 1 end
+	return tally
+end
+
+local function TallyDirect(self, dot, times)
+	local tally = TallyFor(self, dot)
+	tally.direct = tally.direct + times * dot.direct
+end
+
+local function TallyUnseen(self, dot)
+	TallyFor(self, dot).unseen = true
+end
+
+local function TallyTick(self, dot, factor)
+	local tally = TallyFor(self, dot)
+	tally.factors, tally.ticks = tally.factors + factor, tally.ticks + 1
+end
+
+local function RecordTick(self, dot, amount, isCrit, index, now)
+	local factor = TickShape(dot, TickNumberAt(dot, now))
+	dot.ticksSeen = dot.ticksSeen + 1
+	dot.lastTickAmount, dot.lastTickShape, dot.lastTickCrit = amount, factor, isCrit
+	dot.offBeatCandidate = nil
+	if amount and not isCrit then
+		dot.tickSum = dot.tickSum + amount / factor
+		dot.normalTicks = dot.normalTicks + 1
+		SaveLearnedTick(self, dot)
+	end
+	TallyTick(self, dot, factor)
+	return AnchorTick(dot, index, now), factor
+end
+
 -- Two same-school hits in one tick slot: the one closer to the expected size is the tick.
 local function TrySwapSameSlot(self, dot, name, amount, isCrit, now)
-	if isCrit or dot.lastTickCrit or not dot.lastTickAt or now - dot.lastTickAt > SAME_SLOT_SECONDS then
+	if isCrit or dot.lastTickCrit or not dot.lastTickAmount or not dot.lastTickAt or now - dot.lastTickAt > SAME_SLOT_SECONDS then
 		return false
 	end
 	local factor = dot.lastTickShape
@@ -274,6 +339,8 @@ local function TryRelearn(self, dot, name, amount, isCrit, index, distance, now)
 	dot.ticksSeen = dot.ticksSeen + 2
 	dot.lastTickAmount, dot.lastTickShape, dot.lastTickCrit = amount, factor, false
 	SaveLearnedTick(self, dot)
+	TallyTick(self, dot, previous.amount / previous.average)
+	TallyTick(self, dot, factor)
 	if not dot.firstTickAt then
 		dot.firstTickAt, dot.lastTickIndex = previous.at, 0
 		index = 1
@@ -357,6 +424,7 @@ function DotTracker:RemoveAvoidedDot(cast, action, school)
 			return true
 		end
 	end
+	TallyDirect(self, dot, -1)
 	if cast.previous then
 		dots[cast.family] = cast.previous
 		Trace(self, "AVOID %s (school %s) right after %s recast; keeping the earlier one", action, tostring(school), cast.name)
@@ -446,6 +514,7 @@ function DotTracker:OnCast(spellID, castGUID)
 	dot.name = name
 	local previous = dots[dot.family]
 	dots[dot.family] = dot
+	TallyDirect(self, dot, 1)
 	self.lastDotCast = { key = key, name = name, family = dot.family, dot = dot, previous = previous, at = now }
 	if self.trace then
 		Trace(self, "CAST %s (id %d)%s: %d dmg over %ss, school %d, tick every %ss, per-tick %s%s", name, spellID,
@@ -463,42 +532,61 @@ end
 
 -- Ticks ------------------------------------------------------------------------
 
+function DotTracker:HitRecord(signature, unit, now)
+	if self.hitsAt ~= now then
+		wipe(self.hits)
+		self.hitsAt = now
+	end
+	local hit = self.hits[signature]
+	if not hit then
+		hit = { unit = unit, fed = {} }
+		self.hits[signature] = hit
+	elseif hit.unit ~= unit then
+		return nil
+	end
+	return hit
+end
+
 function DotTracker:OnCombat(unit, action, flag, amount, school)
 	if issecretvalue(action) then return end
-	local avoided = AVOIDED[action]
-	if not avoided and action ~= "WOUND" then return end
+	local avoided, absorbed = AVOIDED[action], action == "ABSORB"
+	if not avoided and not absorbed and action ~= "WOUND" then return end
 	local key = self:KeyFor(unit)
 	if not key then return end
 	if issecretvalue(school) then school = nil end
 	if avoided then return self:OnAvoided(key, action, school) end
 	self:OnHit(key, school)
-	if issecretvalue(amount) or type(amount) ~= "number" or not school then return end
+	if not school or not self.dots[key] then return end
+	local now = GetTime()
+	if issecretvalue(amount) then return self:OnHiddenTick(key, unit, school, now) end
+	if type(amount) ~= "number" then return end
 	local isCrit = not issecretvalue(flag) and flag == "CRITICAL"
-	local dots = self.dots[key]
-	if not dots then return end
+	local hit = self:HitRecord(key .. ":" .. amount .. ":" .. school, unit, now)
+	if not hit then return end
+	local dots, zeroAbsorb = self.dots[key], absorbed and amount == 0
 
-	-- Target and focus on the same mob report the same hit twice.
-	local now, last = GetTime(), self.lastCombat
-	if last.key == key and last.amount == amount and last.school == school and last.at == now then return end
-	last.key, last.amount, last.school, last.at = key, amount, school, now
-
-	local best, bestName, bestDistance, bestIndex
-	for name, dot in pairs(dots) do
-		if dot.school == school and PlausibleTickAmount(self, dot, amount, isCrit, TickNumberAt(dot, now)) then
-			local distance, index = DistanceToExpectedTick(dot, now)
-			local window = dot.firstTickAt and TICK_MATCH_WINDOW_ANCHORED or TICK_MATCH_WINDOW
-			local freshSlot = not dot.firstTickAt or index > dot.lastTickIndex
-			if freshSlot and distance <= window and (not bestDistance or distance < bestDistance) then
-				best, bestName, bestDistance, bestIndex = dot, dot.name, distance, index
+	local best, bestFamily, bestDistance, bestIndex
+	local candidates = 0
+	for family, dot in pairs(dots) do
+		if not hit.fed[family] and dot.school == school
+			and (zeroAbsorb or PlausibleTickAmount(self, dot, amount, isCrit, TickNumberAt(dot, now))) then
+			local distance, index = OpenSlot(dot, now)
+			if distance then
+				candidates = candidates + 1
+				if not bestDistance or distance < bestDistance then
+					best, bestFamily, bestDistance, bestIndex = dot, family, distance, index
+				end
 			end
 		end
 	end
+	if zeroAbsorb and candidates ~= 1 then return end
 	if not best then
-		for name, dot in pairs(dots) do
-			if dot.school == school then
+		for family, dot in pairs(dots) do
+			if not hit.fed[family] and dot.school == school then
 				local distance, index = DistanceToExpectedTick(dot, now)
 				if TrySwapSameSlot(self, dot, dot.name, amount, isCrit, now)
 					or TryRelearn(self, dot, dot.name, amount, isCrit, index, distance, now) then
+					hit.fed[family] = true
 					self:Changed(key)
 					return
 				end
@@ -508,19 +596,34 @@ function DotTracker:OnCombat(unit, action, flag, amount, school)
 		return
 	end
 
-	local factor = TickShape(best, TickNumberAt(best, now))
-	best.ticksSeen = best.ticksSeen + 1
-	best.lastTickAmount, best.lastTickShape, best.lastTickCrit = amount, factor, isCrit
-	best.offBeatCandidate = nil
-	-- Crits are one-offs: they never raise the expected tick.
-	if not isCrit then
-		best.tickSum = best.tickSum + amount / factor
-		best.normalTicks = best.normalTicks + 1
-		SaveLearnedTick(self, best)
+	hit.fed[bestFamily] = true
+	local tickIndex, factor = RecordTick(self, best, not zeroAbsorb and amount or nil, isCrit, bestIndex, now)
+	Trace(self, "TICK %s %d%s%s on %s (tick %d/%d, expecting %.1f for this tick)", best.name, amount,
+		isCrit and " CRIT" or "", zeroAbsorb and " ABSORBED" or "", unit, tickIndex, best.totalTicks,
+		ExpectedTick(self, best) * factor)
+	self:Changed(key)
+end
+
+function DotTracker:OnHiddenTick(key, unit, school, now)
+	local hit = self:HitRecord(key .. ":hidden:" .. school, unit, now)
+	if not hit then return end
+	local best, bestFamily, bestDistance, bestIndex
+	for family, dot in pairs(self.dots[key]) do
+		if not hit.fed[family] and dot.school == school then
+			local distance, index = OpenSlot(dot, now)
+			if distance and (not bestDistance or distance < bestDistance) then
+				best, bestFamily, bestDistance, bestIndex = dot, family, distance, index
+			end
+		end
 	end
-	local tickIndex = AnchorTick(best, bestIndex, now)
-	Trace(self, "TICK %s %d%s on %s (tick %d/%d, expecting %.1f for this tick)", bestName, amount,
-		isCrit and " CRIT" or "", unit, tickIndex, best.totalTicks, ExpectedTick(self, best) * factor)
+	if not best then
+		Trace(self, "HIT (amount hidden) school %d on %s not matched to a DoT", school, unit)
+		return
+	end
+	hit.fed[bestFamily] = true
+	local tickIndex, factor = RecordTick(self, best, nil, false, bestIndex, now)
+	Trace(self, "TICK %s (amount hidden) on %s (tick %d/%d, expecting %.1f for this tick)", best.name, unit,
+		tickIndex, best.totalTicks, ExpectedTick(self, best) * factor)
 	self:Changed(key)
 end
 
@@ -536,13 +639,9 @@ function DotTracker:Housekeep(now)
 		for name, dot in pairs(dots) do
 			local late = (dot.ticksSeen == 0 and dot.travel) or 0
 			while dot.nextTickAt < now - TICK_MATCH_WINDOW - late and dot.nextTickAt <= dot.expiresAt do
-				if dot.ticksSeen == 0 then
-					if observableSince and dot.nextTickAt >= observableSince then
-						dot.missed = dot.missed + 1
-					else
-						dot.missed = 0
-					end
-				end
+				local observable = observableSince and dot.nextTickAt >= observableSince
+				if not observable then TallyUnseen(self, dot) end
+				if dot.ticksSeen == 0 then dot.missed = observable and dot.missed + 1 or 0 end
 				dot.nextTickAt = dot.nextTickAt + dot.interval
 				changed = true
 			end
@@ -563,6 +662,83 @@ function DotTracker:Housekeep(now)
 	end
 	self.deadline = deadline or 0
 	if not deadline then self.driver:SetScript("OnUpdate", nil) end
+end
+
+-- Damage meter -------------------------------------------------------------------
+
+local function ReadMeterTotals()
+	local player = UnitGUID("player")
+	if issecretvalue(player) then return nil, "secret" end
+	local source = C_DamageMeter.GetCombatSessionSourceFromType(Enum.DamageMeterSessionType.Current,
+		Enum.DamageMeterType.DamageDone, player)
+	if issecretvalue(source) then return nil, "secret" end
+	local spells = source and source.combatSpells
+	if not spells then return nil, "empty" end
+	if issecretvalue(spells) then return nil, "secret" end
+	local totals = {}
+	for _, spell in ipairs(spells) do
+		if issecretvalue(spell.spellID) or issecretvalue(spell.totalAmount) then return nil, "secret" end
+		totals[spell.spellID] = spell.totalAmount
+	end
+	return totals
+end
+
+function DotTracker:LearnTick(key, tick, factors)
+	local old = self.ticks[key]
+	local weight = old and math.min(self.tickWeights[key] or 0, LEARN_WEIGHT_CAP) or 0
+	local blended = ((old or 0) * weight + tick * factors) / (weight + factors)
+	self.ticks[key] = math.floor(blended * 10 + 0.5) / 10
+	self.tickWeights[key] = weight + factors
+end
+
+function DotTracker:LearnFromMeter(totals)
+	for spellID, tally in pairs(self.tally) do
+		local key, total = next(tally.keys), totals[spellID]
+		local baseline = tally.baseTick * tally.factors
+		if tally.factors < LEARN_MIN_FACTORS then
+			if tally.ticks > 0 then Trace(self, "LEARN %s skipped: only %d tick(s) counted", tally.name, tally.ticks) end
+		elseif tally.keyCount ~= 1 or not key then
+			Trace(self, "LEARN %s skipped: several or unknown combo point sizes share one meter total", tally.name)
+		elseif tally.unseen then
+			Trace(self, "LEARN %s skipped: some ticks were out of sight", tally.name)
+		elseif not total then
+			Trace(self, "LEARN %s skipped: no readable damage meter total", tally.name)
+		elseif tally.direct >= baseline then
+			Trace(self, "LEARN %s skipped: its upfront hit outweighs its ticks", tally.name)
+		else
+			local ratio = total / (tally.direct + baseline)
+			if ratio < LEARN_RATIO_MIN or ratio > LEARN_RATIO_MAX then
+				Trace(self, "LEARN %s skipped: meter %d over %d tick(s) is %.2fx the catalogue", tally.name, total,
+					tally.ticks, ratio)
+			else
+				self:LearnTick(key, ratio * tally.baseTick, tally.factors)
+				Trace(self, "LEARN %s: meter %d over %d tick(s)%s, %.1f per tick (catalogue %.1f), saved %.1f",
+					tally.name, total, tally.ticks, tally.direct > 0 and " minus upfront hit" or "",
+					ratio * tally.baseTick, tally.baseTick, self.ticks[key])
+			end
+		end
+	end
+	wipe(self.tally)
+end
+
+function DotTracker:StopMeter()
+	self.meterDriver:SetScript("OnUpdate", nil)
+end
+
+function DotTracker:LearnAfterCombat()
+	if InCombatLockdown() then return self:StopMeter() end
+	local totals, reason = ReadMeterTotals()
+	if not totals and reason == "secret" and self.meterTries > 0 then
+		self.meterTries, self.meterAt = self.meterTries - 1, GetTime() + METER_RETRY_SECONDS
+		return
+	end
+	self:StopMeter()
+	if not totals then
+		Trace(self, "LEARN skipped: damage meter %s", reason)
+		wipe(self.tally)
+		return
+	end
+	self:LearnFromMeter(totals)
 end
 
 -- Reading ------------------------------------------------------------------------
@@ -604,11 +780,18 @@ function DotTracker:PLAYER_TARGET_CHANGED()
 	self.observableSince.target = nil
 	self:RefreshObservability(GetTime())
 	if self.dots.target then
+		for _, dot in pairs(self.dots.target) do TallyUnseen(self, dot) end
 		self.dots.target = nil
 		ns.Events:Fire("DotsChanged", "target")
 	end
 	self.countedPoints, self.lastBuilder = 0, nil
 	Trace(self, "TARGET changed to %s", tostring(self:KeyFor("target")))
+end
+
+function DotTracker:PLAYER_REGEN_ENABLED()
+	if not next(self.tally) then return end
+	self.meterTries, self.meterAt = METER_TRIES, GetTime() + METER_RETRY_SECONDS
+	self.meterDriver:SetScript("OnUpdate", self.onMeterUpdate)
 end
 
 function DotTracker:PLAYER_FOCUS_CHANGED()
