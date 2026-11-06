@@ -19,7 +19,7 @@ LIBS_DIR="$REPO_DIR/UnitFrames/Libs"
 ACE3_REF="${ACE3_REF:-master}"
 OUF_REF="${OUF_REF:-14.2.0}"
 LEM_REF="${LEM_REF:-18}"
-WOW_DIR="${WOW_DIR:-/mnt/data02/Games/Faugus/battlenet/drive_c/Program Files (x86)/World of Warcraft/_classic_beta_}"
+WOW_DIR="${WOW_DIR:-/mnt/data02/Games/Faugus/battlenet/drive_c/Program Files (x86)/World of Warcraft/_forever_}"
 
 die() { echo "error: $*" >&2; exit 1; }
 
