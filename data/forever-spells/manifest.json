@@ -1,56 +1,56 @@
 {
-  "build": "1.60.1.70790",
+  "build": "1.60.1.70862",
   "format": 1,
   "interface": 16001,
   "tables": {
     "SkillLineAbility": {
-      "filename": "SkillLineAbility.1.60.1.70790.csv",
-      "rows": 7852,
-      "sha256": "ba3e396415ce1cbf34df00acafbf0edc9a8d70dd4b2584ca4ddf1325fb8c9d14",
-      "url": "https://wago.tools/db2/SkillLineAbility/csv?build=1.60.1.70790&locale=enUS"
+      "filename": "SkillLineAbility.1.60.1.70862.csv",
+      "rows": 7853,
+      "sha256": "13ef58a08253125e3e9dca642a39bc480187987e90cfbe5c8be30e1ab3c8be0a",
+      "url": "https://wago.tools/db2/SkillLineAbility/csv?build=1.60.1.70862&locale=enUS"
     },
     "SpellClassOptions": {
-      "filename": "SpellClassOptions.1.60.1.70790.csv",
-      "rows": 6112,
-      "sha256": "90ca94f9683ee55c7c179634782efaacf47623cc783e526901904ebda75b6fe0",
-      "url": "https://wago.tools/db2/SpellClassOptions/csv?build=1.60.1.70790&locale=enUS"
+      "filename": "SpellClassOptions.1.60.1.70862.csv",
+      "rows": 6118,
+      "sha256": "9f45a7ce5c91e4f773466204276cdc3a129ceccc325ba55d982db5349c30ff7b",
+      "url": "https://wago.tools/db2/SpellClassOptions/csv?build=1.60.1.70862&locale=enUS"
     },
     "SpellDuration": {
-      "filename": "SpellDuration.1.60.1.70790.csv",
+      "filename": "SpellDuration.1.60.1.70862.csv",
       "rows": 134,
       "sha256": "4787f303fe8487cd67e5f9e8574fdc6fa2a03516dcfaabba23d9944f937223f5",
-      "url": "https://wago.tools/db2/SpellDuration/csv?build=1.60.1.70790&locale=enUS"
+      "url": "https://wago.tools/db2/SpellDuration/csv?build=1.60.1.70862&locale=enUS"
     },
     "SpellEffect": {
-      "filename": "SpellEffect.1.60.1.70790.csv",
-      "rows": 42970,
-      "sha256": "52724739763341c79e941a9a7b2071d138ae98cc8e4f1e88c4dfbc68408dcd8e",
-      "url": "https://wago.tools/db2/SpellEffect/csv?build=1.60.1.70790&locale=enUS"
+      "filename": "SpellEffect.1.60.1.70862.csv",
+      "rows": 43506,
+      "sha256": "cc8f167fe246b495294b560196f6c59439f703e8f937ddb6acd81157bd5f8b9c",
+      "url": "https://wago.tools/db2/SpellEffect/csv?build=1.60.1.70862&locale=enUS"
     },
     "SpellInterrupts": {
-      "filename": "SpellInterrupts.1.60.1.70790.csv",
-      "rows": 9921,
-      "sha256": "c623110885fe910ae49a4e89e2ed70237056179115d75330bca3a2fa3f8735f2",
-      "url": "https://wago.tools/db2/SpellInterrupts/csv?build=1.60.1.70790&locale=enUS"
+      "filename": "SpellInterrupts.1.60.1.70862.csv",
+      "rows": 10029,
+      "sha256": "c02057d76ddd00d739fb461c4ff3020fbbb65855ddca23d300875eb9cdc8e54d",
+      "url": "https://wago.tools/db2/SpellInterrupts/csv?build=1.60.1.70862&locale=enUS"
     },
     "SpellMisc": {
-      "filename": "SpellMisc.1.60.1.70790.csv",
-      "rows": 32067,
-      "sha256": "04496faca714b6eef1654b4493289a150a65c287e30d4033b7f7ceb5076141f4",
-      "url": "https://wago.tools/db2/SpellMisc/csv?build=1.60.1.70790&locale=enUS"
+      "filename": "SpellMisc.1.60.1.70862.csv",
+      "rows": 32461,
+      "sha256": "1188fc9a62e24ca11c682cd8ae2ecb2e8eb19f72e7f76fd8bec1ef22e2732192",
+      "url": "https://wago.tools/db2/SpellMisc/csv?build=1.60.1.70862&locale=enUS"
     },
     "SpellName": {
-      "filename": "SpellName.1.60.1.70790.csv",
-      "rows": 32087,
-      "sha256": "7c4193359dab5dd805819f5f8765439195639582511479353378cdc5e556a0d6",
-      "url": "https://wago.tools/db2/SpellName/csv?build=1.60.1.70790&locale=enUS"
+      "filename": "SpellName.1.60.1.70862.csv",
+      "rows": 32482,
+      "sha256": "4358b3d1a2a859284b2f46cf614e6a1f85320be342acc1c4b68b625f30cf47a5",
+      "url": "https://wago.tools/db2/SpellName/csv?build=1.60.1.70862&locale=enUS"
     },
     "SpellPower": {
-      "filename": "SpellPower.1.60.1.70790.csv",
-      "rows": 3475,
-      "sha256": "39d0e78afed09db8f7c220e72032103363fdd92a5febad1eb714437009cf3310",
-      "url": "https://wago.tools/db2/SpellPower/csv?build=1.60.1.70790&locale=enUS"
+      "filename": "SpellPower.1.60.1.70862.csv",
+      "rows": 3501,
+      "sha256": "bdbd6ba6b4d5236d23c9348fcb383c2e81bbc724279b22b3e2cbd0a8c5954a65",
+      "url": "https://wago.tools/db2/SpellPower/csv?build=1.60.1.70862&locale=enUS"
     }
   },
-  "uiCommit": "eac30af597e5aaa43a60f6675ef5fdcea100375f"
+  "uiCommit": "9dc84f0d3bbae1768ac3405b3716000bd93eda06"
 }
