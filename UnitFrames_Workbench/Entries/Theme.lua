@@ -24,12 +24,39 @@ local function ThemeTarget()
 	}
 end
 
+local LAUNCHER_SCHEMA = {
+	{ key = "minimapIcon", type = "toggle", label = "Show minimap icon", default = true,
+		tooltip = "Show the UnitFrames button on the minimap for every character. Right-click the button to hide it again; /uf minimap toggles it too." },
+}
+
+local function LauncherTarget()
+	local Launcher = UF.Launcher
+	return {
+		schema = LAUNCHER_SCHEMA,
+		get = function()
+			if Launcher:IsMinimapShown() then return nil end
+			return false
+		end,
+		set = function(_, value)
+			Launcher:SetMinimapShown(value ~= false)
+			return true
+		end,
+		resolved = function()
+			return { minimapIcon = Launcher:IsMinimapShown() }
+		end,
+	}
+end
+
 Workbench:Register({
 	id = "theme",
 	category = "Shared appearance",
 	name = "Shared appearance",
 	scope = "Shared appearance defaults",
-	settingsTargets = function() return { { id = "style", schema = UF.Theme.schema, scope = "Shared appearance defaults" } } end,
+	settingsTargets = function() return {
+		{ id = "style", schema = UF.Theme.schema, scope = "Shared appearance defaults" },
+		{ id = "launcher", schema = LAUNCHER_SCHEMA, scope = "All characters on this account", target = LauncherTarget },
+	} end,
+	refreshOn = { { "MinimapIconChanged", notifyOnly = true } },
 	size = { 240, 28 },
 	create = function(stage)
 		local bar = C.Bar:New(stage, {}, {

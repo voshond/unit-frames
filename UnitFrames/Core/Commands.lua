@@ -3,6 +3,7 @@ local _, ns = ...
 local HELP = {
 	"/uf help - show this list of commands",
 	"/uf wb - open settings and previews",
+	"/uf minimap - show or hide the minimap icon",
 	"/uf logs [clear] - show or clear saved diagnostic entries",
 	"/uf dots [reset] - toggle DoT tracking with its trace in chat, or forget learned tick sizes",
 	"/uf perf help - show developer performance commands",
@@ -35,6 +36,11 @@ function commands.wb()
 	ns:OpenWorkbench()
 end
 commands.workbench = commands.wb
+
+function commands.minimap()
+	ns.Launcher:ToggleMinimap()
+	ns:Print(ns.Launcher:IsMinimapShown() and "minimap icon shown" or "minimap icon hidden")
+end
 
 -- Tracking (and its trace) in chat, to check estimates before any frame shows them.
 local function DotsCommand(argument)

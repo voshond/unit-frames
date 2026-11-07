@@ -50,6 +50,11 @@ Type **`/uf wb`** in chat to open the settings window, called the **Workbench**.
 Use **`/uf`** or **`/uf help`** for the command list. The addon prints a short
 hint when it loads; developer performance commands are under `/uf perf help`.
 
+The **minimap icon** opens the Workbench too. Right-click it to hide it, or
+switch it under **Global Settings > General**. `/uf minimap` brings it back.
+The setting applies to every character on the account. Titan Panel and other
+broker displays show the same launcher.
+
 Choose a frame under **Unit frames**, then adjust its appearance. The preview
 lets you try things like low health, shields, buffs and ready checks without
 waiting for them to happen in game. Use **Static** for a still preview or

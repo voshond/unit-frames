@@ -101,7 +101,7 @@ describe("Workbench presentation pages", function()
 			end
 		end
 		assert.same({ "Unit Frames", "Cast Bar & Swing Timers", "Global Settings", "Party & Raid", "Profiles", "Developer Tools" }, headers)
-		assert.same({ "Fonts", "Bars, Borders & Backgrounds", "Colours" }, globals)
+		assert.same({ "Fonts", "Bars, Borders & Backgrounds", "Colours", "General" }, globals)
 		local playerSession = wb.session
 		wb.list:Select("theme|@artwork", true)
 		assert.equals("theme", wb.entry.id)
