@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           repository: Gethe/wow-ui-source
-          ref: eac30af597e5aaa43a60f6675ef5fdcea100375f # Forever 1.60.1.70790
+          ref: 9dc84f0d3bbae1768ac3405b3716000bd93eda06 # Forever 1.60.1.70862
           path: examples/wow-ui-source-forever
           persist-credentials: false
       - name: Verify the generated spell catalogue against pinned exports
