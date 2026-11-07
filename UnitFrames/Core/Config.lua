@@ -25,6 +25,9 @@ local function BuildDefaults()
 			-- Frame positions per Edit Mode layout name: positions[layout][frameKey] = { point, x, y }
 			positions = { ["*"] = {} },
 		},
+		global = {
+			minimap = { hide = false },
+		},
 	}
 end
 

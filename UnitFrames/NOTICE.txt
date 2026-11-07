@@ -24,6 +24,11 @@ Bundled third-party components retain their own terms:
 - oUF: MIT. See Libs/oUF/LICENSE.txt for copyright and permission notices.
 - LibEditMode: custom upstream license. See Libs/LibEditMode/LICENSE.txt.
   Shipped unmodified as part of this WoW addon.
+- LibDataBroker-1.1: by Tekkub (github.com/tekkub/libdatabroker-1-1); upstream
+  states no licence. Shipped unmodified as an embedded library.
+- LibDBIcon-1.0: by Funkeh, credits Rabbit and copystring (WowAce
+  libdbicon-1-0); upstream marks it "All Rights Reserved" and distributes it
+  for embedding in addons. Shipped unmodified as an embedded library.
 
 Blizzard icons, atlases, textures and fonts are referenced from the WoW client
 and are not bundled as asset files. No ownership or redistribution permission

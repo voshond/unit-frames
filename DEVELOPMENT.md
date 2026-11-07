@@ -26,9 +26,10 @@ a game installation:
 bash scripts/setup-test-libs.sh
 ```
 
-This downloads the existing Ace3, oUF and LibEditMode revisions and
-LibSharedMedia revision 176 (minor 12000002). It refuses to replace existing
-library folders. LibSharedMedia files are verified with SHA-256 checksums.
+This downloads the existing Ace3, oUF, LibEditMode and LibDataBroker
+revisions, LibSharedMedia revision 176 (minor 12000002) and LibDBIcon
+revision 168 (minor 57). It refuses to replace existing library folders.
+LibSharedMedia and LibDBIcon files are verified with SHA-256 checksums.
 The pins live in the script; change them only for an intentional dependency
 update. Setup requires curl, tar and sha256sum in addition to Bash.
 
@@ -39,11 +40,13 @@ scripts/fetch-libs.sh
 ```
 
 This script **replaces existing library copies**. Run it only for initial
-setup or an intentional dependency update. It fetches Ace3, oUF and
-LibEditMode, and copies LibSharedMedia from an installed addon. Set
+setup or an intentional dependency update. It fetches Ace3, oUF,
+LibEditMode, LibDataBroker and LibDBIcon, and copies LibSharedMedia from an
+installed addon. Set
 `LSM_SRC` to an existing LibSharedMedia-3.0 directory if automatic discovery
 is unavailable. `WOW_DIR` controls which client it searches.
-See the script for `ACE3_REF`, `OUF_REF` and `LEM_REF` overrides; generated
+See the script for `ACE3_REF`, `OUF_REF`, `LEM_REF`, `LDB_REF` and
+`DBICON_REV` overrides; generated
 library versions are recorded in `UnitFrames/Libs/VERSIONS.md`.
 
 Verify unfamiliar APIs against the actual client or Blizzard's UI/API

@@ -1,28 +1,64 @@
 local _, ns = ...
 
--- Broker displays provide LibDataBroker themselves. Register immediately
--- when it is available, or after a later addon supplies it.
-local loader = CreateFrame("Frame")
-local function Register()
-	local broker = LibStub("LibDataBroker-1.1", true)
-	if not broker then return end
-	ns.launcher = broker:NewDataObject(ns.name, {
-		type = "launcher",
-		label = "UnitFrames",
-		icon = [[Interface\Glues\CharacterCreate\UI-CharacterCreate-Classes]],
-		iconCoords = { 0, 0.25, 0, 0.25 }, -- warrior portrait from Blizzard's class sheet
-		OnClick = function(_, button)
-			if button == "LeftButton" then ns:OpenWorkbench() end
-		end,
-		OnTooltipShow = function(tooltip)
-			tooltip:AddLine("UnitFrames")
-			tooltip:AddLine("Left-click to toggle the Workbench (/uf wb).", 1, 1, 1)
-		end,
-	})
-	loader:UnregisterEvent("ADDON_LOADED")
-	loader:SetScript("OnEvent", nil)
+local Launcher = {}
+ns.Launcher = Launcher
+
+local DBIcon = LibStub("LibDBIcon-1.0")
+
+local function Settings()
+	return ns.Config.db and ns.Config.db.global.minimap
 end
 
-loader:RegisterEvent("ADDON_LOADED")
-loader:SetScript("OnEvent", Register)
-Register()
+function Launcher:IsMinimapShown()
+	local settings = Settings()
+	return not (settings and settings.hide)
+end
+
+function Launcher:SetMinimapShown(shown)
+	local settings = Settings()
+	if not settings then return end
+	settings.hide = not shown
+	if shown then
+		DBIcon:Show(ns.name)
+	else
+		DBIcon:Hide(ns.name)
+	end
+	ns.Events:Fire("MinimapIconChanged", shown)
+end
+
+function Launcher:ToggleMinimap()
+	self:SetMinimapShown(not self:IsMinimapShown())
+end
+
+local function BuildMenu(_, root)
+	root:CreateTitle("UnitFrames")
+	root:CreateButton("Toggle Workbench", function() ns:OpenWorkbench() end)
+	root:CreateCheckbox("Show minimap icon",
+		function() return Launcher:IsMinimapShown() end,
+		function() Launcher:ToggleMinimap() end)
+end
+
+ns.launcher = LibStub("LibDataBroker-1.1"):NewDataObject(ns.name, {
+	type = "launcher",
+	label = "UnitFrames",
+	icon = [[Interface\Glues\CharacterCreate\UI-CharacterCreate-Classes]],
+	iconCoords = { 0, 0.25, 0, 0.25 },
+	OnClick = function(owner, button)
+		if button == "LeftButton" then
+			ns:OpenWorkbench()
+			return
+		end
+		if button == "RightButton" then
+			MenuUtil.CreateContextMenu(owner, BuildMenu)
+		end
+	end,
+	OnTooltipShow = function(tooltip)
+		tooltip:AddLine("UnitFrames")
+		tooltip:AddLine("Left-click to toggle the Workbench (/uf wb).", 1, 1, 1)
+		tooltip:AddLine("Right-click for options.", 1, 1, 1)
+	end,
+})
+
+ns.Events.RegisterCallback(Launcher, "Initialized", function()
+	DBIcon:Register(ns.name, ns.launcher, Settings())
+end)

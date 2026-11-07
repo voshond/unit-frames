@@ -372,6 +372,17 @@ function Methods:SetFrameLevel(level)
 	if changed then RelevelChildren(self) end
 end
 function Methods:SetFixedFrameLevel(fixed) self.__state.fixedLevel = fixed == true end
+function Methods:SetFrameStrata(strata) self.__state.strata = strata end
+function Methods:SetFixedFrameStrata(fixed) self.__state.fixedStrata = fixed == true end
+function Methods:RegisterForDrag(...) Record(self, "RegisterForDrag", ...) end
+function Methods:SetHighlightTexture(texture) self.__state.highlightTexture = texture end
+function Methods:LockHighlight() self.__state.highlightLocked = true end
+function Methods:UnlockHighlight() self.__state.highlightLocked = false end
+function Methods:GetCenter()
+	local center = self.__state.center
+	if not center then return nil end
+	return center[1], center[2]
+end
 function Methods:IsProtected() return self.__state.protected == true end
 function Methods:SetAttribute(name, value)
 	self.__state.attributes = self.__state.attributes or {}
@@ -653,16 +664,29 @@ function Methods:GenerateMenu()
 		self.__state.menu = root
 	end
 end
-function Methods:CreateRadio(text, isSelected, setSelected, data)
+local function AddMenuElement(menu, kind, text, fields)
 	local element = NewObject("MenuElement")
-	element.__state.text = text
-	element.__state.isSelected = isSelected
-	element.__state.setSelected = setSelected
-	element.__state.data = data
-	self.__state.elements = self.__state.elements or {}
-	table.insert(self.__state.elements, element)
+	element.__state.kind, element.__state.text = kind, text
+	for key, value in pairs(fields) do element.__state[key] = value end
+	menu.__state.elements = menu.__state.elements or {}
+	table.insert(menu.__state.elements, element)
+	return element
+end
+function Methods:CreateRadio(text, isSelected, setSelected, data)
+	local element = AddMenuElement(self, "radio", text, { isSelected = isSelected, setSelected = setSelected, data = data })
 	isSelected()
 	return element
+end
+function Methods:CreateCheckbox(text, isSelected, setSelected, data)
+	local element = AddMenuElement(self, "checkbox", text, { isSelected = isSelected, setSelected = setSelected, data = data })
+	isSelected()
+	return element
+end
+function Methods:CreateButton(text, callback, data)
+	return AddMenuElement(self, "button", text, { callback = callback, data = data })
+end
+function Methods:CreateTitle(text)
+	return AddMenuElement(self, "title", text, {})
 end
 function Methods:AddInitializer(initializer)
 	self.__state.initializers = self.__state.initializers or {}
@@ -1048,6 +1072,7 @@ function Mock.Install()
 		obj.__state.template = template
 		if template and template:find("Secure", 1, true) then obj.__state.protected = true end
 		if template and template:find(LAYOUT_ASPECT_TEMPLATE, 1, true) then obj.__state.layoutAspect = true end
+		if parent and parent == rawget(_G, "Minimap") then rawset(obj, "__strict", true) end
 		if frameType == "AuraContainer" then
 			assert(not InCombatLockdown(), "Native aura containers cannot be created in combat")
 			Mock.DecorateAuraContainer(obj)
@@ -1063,6 +1088,17 @@ function Mock.Install()
 	_G.GameFontNormal = CreateFont("GameFontNormal")
 	GameFontNormal:SetFont([[Fonts\FRIZQT__.TTF]], 12, "")
 	_G.UIParent = NewObject("Frame", nil, "UIParent")
+	_G.Minimap = NewObject("Frame", UIParent, "Minimap")
+	Minimap:SetSize(140, 140)
+	Mock.contextMenu = nil
+	_G.MenuUtil = {
+		CreateContextMenu = function(owner, generator)
+			local menu = NewObject("MenuDescription")
+			generator(owner, menu)
+			Mock.contextMenu = { owner = owner, menu = menu }
+			return menu
+		end,
+	}
 	_G.UISpecialFrames = {}
 	_G.SlashCmdList = {}
 	_G.CreateColor = NewColor

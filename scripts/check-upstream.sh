@@ -6,8 +6,8 @@
 #
 # Reads the wow-ui-source pin from .github/workflows/tests.yml and the library
 # commits from scripts/setup-test-libs.sh (the tracked pins CI and releases
-# build from); asks upstream with plain git. LibSharedMedia comes from WowAce
-# SVN and is not checked.
+# build from); asks upstream with plain git. LibSharedMedia and LibDBIcon come
+# from WowAce SVN and LibDataBroker is frozen upstream; they are not checked.
 # In GitHub Actions it also writes step outputs (source_behind, source_latest,
 # libs_behind, libs_report) and the job summary. Always exits 0 on a completed check.
 set -euo pipefail
