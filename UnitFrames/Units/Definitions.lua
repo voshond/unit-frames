@@ -180,21 +180,10 @@ Units.definitions.focustarget.sample = {
 	name = "Thrall", lastname = "", level = 44, className = "Shaman", class = "SHAMAN", isPlayer = true,
 }
 
--- Frames you DoT from show the damage still to come by default.
-for _, unit in ipairs({ "target", "focus" }) do
-	for _, row in ipairs(Units.definitions[unit].rows) do
-		if row.key == "health" then
-			row.defaults.bar = ns.Util.Merge(row.defaults.bar or {}, { pendingDamage = { enabled = true } })
-		end
-	end
-end
-
--- Frames that usually show enemies colour their level by difficulty.
-for _, unit in ipairs({ "target", "targettarget", "focus" }) do
-	for _, row in ipairs(Units.definitions[unit].rows) do
-		for _, slot in ipairs(ns.Components.TextBar.SLOTS) do
-			row.defaults[slot.key] = ns.Util.Merge(row.defaults[slot.key] or {}, { levelColor = true })
-		end
+-- The target chain colours its level by difficulty in every text.
+for _, row in ipairs(Units.definitions.targettarget.rows) do
+	for _, slot in ipairs(ns.Components.TextBar.SLOTS) do
+		row.defaults[slot.key] = ns.Util.Merge(row.defaults[slot.key] or {}, { levelColor = true })
 	end
 end
 
@@ -232,6 +221,81 @@ for _, unit in ipairs(Units.order) do
 		if def[key] == nil then def[key] = ns.Util.Copy(value) end
 	end
 end
+
+-- The main frames share one look: centred health texts with the level and
+-- cast below, power value and percentage, a 3D portrait,
+-- combined auras and the icons on top. Frames you DoT from show the damage
+-- still to come.
+local MAIN_STYLE = {
+	health = {
+		textLayout = "centred",
+		center = { format = "none", levelColor = true },
+		right = { format = "health:percent" },
+		belowLeft = { enabled = true, format = "level:info:cast", levelColor = true },
+		belowRight = { enabled = true, format = "bar:value" },
+		bar = { pendingDamage = { enabled = true } },
+	},
+	power = {
+		left = { enabled = true, format = "power:value", size = 9 },
+		right = { format = "power:percent" },
+	},
+	portrait = { mode = "3D", gap = 1 },
+	auras = {
+		sharedSide = "combined", font = "Roboto Condensed", durationPosition = "CENTER", dispelGlow = { enabled = false },
+		buffs = { gap = 0 }, debuffs = { gap = 0, position = "top" },
+	},
+	classification = { anchor = "TOP" },
+	readyCheckIcon = { anchor = "TOP" },
+	pvp = { anchor = "TOP", background = false },
+}
+
+local UNIT_STYLES = {
+	player = {
+		experience = { enabled = true },
+		restingIcon = { anchor = "TOP" },
+	},
+	target = {
+		health = { bar = { pendingDamage = { lethalTint = true, lethalIconPosition = "TOP",
+			edgeThickness = 1, edgeColor = { 1, 0, 0.035, 0.9 } } } },
+		auras = { buffs = { position = "bottom" }, debuffs = { position = "bottom" } },
+	},
+	focus = {
+		width = 230,
+		health = { height = 26 },
+		power = { height = 12 },
+		portrait = { enabled = true, position = "RIGHT" },
+	},
+}
+
+-- Merges `style` (option defaults keyed by row or part) into a definition.
+local function ApplyStyle(def, style)
+	for key, defaults in pairs(style) do
+		if key == "width" then
+			def.width = defaults
+		else
+			local target = def[key]
+			for _, row in ipairs(def.rows) do
+				if row.key == key then target = row end
+			end
+			target.defaults = ns.Util.Merge(target.defaults or {}, defaults)
+		end
+	end
+end
+
+for unit, style in pairs(UNIT_STYLES) do
+	ApplyStyle(Units.definitions[unit], MAIN_STYLE)
+	ApplyStyle(Units.definitions[unit], style)
+end
+ApplyStyle(Units.definitions.targettarget, { width = 108 })
+
+-- The pet frame shows only what is turned on by hand.
+ApplyStyle(Units.definitions.pet, {
+	health = { enabled = false },
+	power = { enabled = false },
+	auras = { enabled = false },
+	raidTarget = { enabled = false },
+})
+Units.definitions.pet.borderDefaults = { enabled = false }
 
 -- Classes whose Forever UI shows combo points.
 Units.COMBO_POINT_CLASSES = { ROGUE = true, DRUID = true }

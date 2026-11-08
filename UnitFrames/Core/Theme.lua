@@ -27,7 +27,7 @@ local function Colors(list)
 end
 
 Theme.schema = {
-	{ key = "font", type = "font", label = "Font", default = "Friz Quadrata TT" },
+	{ key = "font", type = "font", label = "Font", default = "Roboto Condensed Medium" },
 	{ key = "fontSize", type = "range", label = "Font size", min = 6, max = 32, step = 1, default = 11 },
 	{ key = "fontOutline", type = "select", label = "Font outline", values = Theme.OUTLINES, default = "" },
 	{ key = "barTexture", type = "statusbar", label = "Bar texture", default = "Blizzard Raid Bar" },

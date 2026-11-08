@@ -4,6 +4,8 @@ describe("Aura blocks sharing a side #auras-stack", function()
 	local ns, frame, auras
 	before_each(function()
 		ns = Helpers.LoadAddon(true, true)
+		-- Start on separate sides: blocks sharing one are combined from creation.
+		ns.Config:SetUnitValue("player", "auras.debuffs.position", "bottom")
 		frame = ns.Units:CreateFrame("player", CreateFrame("Frame"))
 		auras = frame:GetPart("auras")
 	end)

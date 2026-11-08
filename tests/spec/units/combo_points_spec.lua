@@ -53,10 +53,10 @@ describe("Combo points", function()
 		local player = ns.Units.frames.player
 		assert.is_false(player.uf:GetPart("comboPoints"):IsEnabled())
 		assert.is_false(player:IsElementEnabled("UF_ComboPoints"))
-		assert.same({ "health", "power" }, Keys(player.uf))
+		assert.same({ "health", "power", "experience" }, Keys(player.uf))
 		ns.Config:SetUnitValue("player", "comboPoints.enabled", true)
 		assert.is_true(player:IsElementEnabled("UF_ComboPoints"))
-		assert.same({ "health", "power", "comboPoints" }, Keys(player.uf))
+		assert.same({ "health", "power", "comboPoints", "experience" }, Keys(player.uf))
 		for _, unit in ipairs({ "pet", "targettarget", "focus", "focustarget" }) do
 			assert.is_nil(ns.Units.frames[unit].uf:GetPart("comboPoints"), unit)
 			assert.is_nil(ns.Schema.Find(ns.Units.frames[unit].uf:GetSchema(), "comboPoints"), unit)

@@ -7,6 +7,9 @@ describe("Portrait row spans", function()
 		ns = Helpers.LoadAddon(true, true)
 		ns.Config:SetUnitValue("player", "experience.enabled", true)
 		ns.Config:SetUnitValue("player", "castbar.enabled", true)
+		-- Geometry baseline: the portrait beside the bars, two pixels away.
+		ns.Config:SetUnitValue("player", "portrait.includeInWidth", false)
+		ns.Config:SetUnitValue("player", "portrait.gap", 2)
 		Mock.InstallUI()
 		frame = ns.Units.frames.player
 		uf = frame.uf
@@ -150,6 +153,7 @@ describe("Portrait row span Workbench setting", function()
 			end
 			assert.is_not_nil(control)
 			wb.styleTarget.set("portrait.enabled", true)
+			if unit == "pet" then wb.styleTarget.set("health.enabled", true) end
 			control.opts.onChange(1)
 			assert.equals(1, ns.Config:GetUnitConfig(unit).portrait.rowSpan)
 			local live, preview = ns.Units.frames[unit].uf, wb.handle.parts.uf

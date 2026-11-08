@@ -26,7 +26,8 @@ describe("Frame-free unit layout", function()
 		local ns = Helpers.LoadAddon(true)
 		local spec = ns.Units:GetSpec(ns.Units.definitions.player)
 		local schema = ns.Components.UnitFrame.BuildSchema(spec)
-		local config = { width = 280, portrait = { rowSpan = 1, position = "RIGHT" }, power = { enabled = false },
+		local config = { width = 280, portrait = { rowSpan = 1, position = "RIGHT", includeInWidth = false, gap = 2 },
+			power = { enabled = false },
 			experience = { enabled = true }, castbar = { enabled = true, placement = "health" } }
 		local cfg = ns.Schema.Resolve(schema, config, ns.Config:GetTheme())
 		local measured = ns.UnitFrameLayout.Compute(spec, cfg)
@@ -47,19 +48,20 @@ describe("Frame-free unit layout", function()
 			local cfg = ns.Schema.Resolve(ns.Components.UnitFrame.BuildSchema(spec), config, ns.Config:GetTheme())
 			return ns.UnitFrameLayout.Compute(spec, cfg)
 		end
-		local short = Measure("player", { width = 230 })
-		local tall = Measure("player", { width = 230, experience = { enabled = true } })
+		local beside = { includeInWidth = false, gap = 2 }
+		local short = Measure("player", { width = 230, experience = { enabled = false }, portrait = beside })
+		local tall = Measure("player", { width = 230, portrait = beside })
 		assert.is_true(tall.portrait.width > short.portrait.width)
 		assert.equals(230 + short.portrait.width + 2, short.width)
 		assert.is_true(short.width < tall.width)
 
-		short = Measure("player", { width = 230, portrait = { includeInWidth = true } })
-		tall = Measure("player", { width = 230, experience = { enabled = true }, portrait = { includeInWidth = true } })
+		short = Measure("player", { width = 230, experience = { enabled = false }, portrait = { gap = 2 } })
+		tall = Measure("player", { width = 230, portrait = { gap = 2 } })
 		assert.equals(230, short.width)
 		assert.equals(230, tall.width)
 		assert.equals(short.rows[1].left, short.portrait.width + 2 + short.rows[1].right)
 
-		local narrow = Measure("player", { width = 60, portrait = { includeInWidth = true, size = 100 } })
+		local narrow = Measure("player", { width = 60, portrait = { size = 100, gap = 2 } })
 		local padding = narrow.rows[1].right * 2
 		assert.equals(100 + 2 + padding + ns.UnitFrameLayout.MIN_ROW_WIDTH, narrow.width)
 	end)

@@ -1,7 +1,7 @@
 local Helpers = require("helpers")
 
 describe("Optional cast and experience bars", function()
-	it("starts every unit castbar and player experience disabled in live frames and previews", function()
+	it("starts every unit castbar disabled and player experience enabled in live frames and previews", function()
 		local ns = Helpers.LoadAddon(true, true)
 		for _, unit in ipairs(ns.Units.order) do
 			local frame = ns.Units.frames[unit]
@@ -12,8 +12,8 @@ describe("Optional cast and experience bars", function()
 			assert.is_false(preview:GetPart("castbar"):IsEnabled(), unit)
 			assert.is_false(preview:GetPart("castbar"):GetFrame():IsShown(), unit)
 			if unit == "player" then
-				assert.is_false(frame:IsElementEnabled("UF_Experience"))
-				assert.is_false(preview:GetRow("experience"):IsEnabled())
+				assert.is_true(frame:IsElementEnabled("UF_Experience"))
+				assert.is_true(preview:GetRow("experience"):IsEnabled())
 			end
 			preview:Release()
 		end

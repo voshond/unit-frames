@@ -15,9 +15,9 @@ describe("Raid target icons", function()
 		for _, unit in ipairs(ns.Units.order) do
 			local live = ns.Units.frames[unit]
 			assert.is_not_nil(ns.Schema.Find(live.uf:GetSchema(), "raidTarget.anchor"))
-			assert.equals(live.uf:GetPart("raidTarget"):GetWidget(), live.RaidTargetIndicator)
-			assert.is_true(live:IsElementEnabled("RaidTargetIndicator"))
-			assert.is_false(live.RaidTargetIndicator:IsShown(), "hidden until a marker is assigned")
+			assert.equals(unit ~= "pet" and live.uf:GetPart("raidTarget"):GetWidget() or nil, live.RaidTargetIndicator, unit)
+			assert.equals(unit ~= "pet", live:IsElementEnabled("RaidTargetIndicator"), unit)
+			assert.is_false(live.uf:GetPart("raidTarget"):GetWidget():IsShown(), "hidden until a marker is assigned")
 		end
 		ns.Config:SetUnitValue("target", "raidTarget.enabled", false)
 		assert.is_false(ns.Units.frames.target:IsElementEnabled("RaidTargetIndicator"))

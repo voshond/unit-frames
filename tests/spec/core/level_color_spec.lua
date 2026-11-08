@@ -77,20 +77,24 @@ describe("Level difficulty colour", function()
 		local option = ns.Schema.Find(text:GetSchema(), "levelColor")
 		assert.is_false(option.default)
 		local cfg = text.resolved
-		assert.equals("level:info", cfg.format)
+		assert.equals("level:info:cast", cfg.format)
 		assert.is_false(option.hidden(cfg))
 		assert.is_true(option.hidden({ format = "health:value" }))
 		assert.is_false(option.hidden({ format = ns.Components.Text.CUSTOM, piece1 = { source = "level" } }))
 		assert.is_true(option.hidden({ format = ns.Components.Text.CUSTOM, piece1 = { source = "name" } }))
 	end)
 
-	it("is on by default for target, target of target and focus", function()
-		local expected = { player = false, pet = false, target = true, targettarget = true, focus = true, focustarget = false }
+	it("is on by default for the main frames' level texts and every target of target text", function()
+		local levelTexts = { ["health.center"] = true, ["health.belowLeft"] = true }
+		local expected = {
+			player = levelTexts, pet = {}, target = levelTexts, focus = levelTexts, focustarget = {}, targettarget = true,
+		}
 		for unit, on in pairs(expected) do
 			local uf = ns.Units.frames[unit].uf
 			for _, row in ipairs({ "health", "power" }) do
 				for _, slot in ipairs(ns.Components.TextBar.SLOTS) do
-					assert.equals(on, uf:GetRow(row):GetText(slot.key).resolved.levelColor, unit .. " " .. row .. "." .. slot.key)
+					local path = row .. "." .. slot.key
+					assert.equals(on == true or on[path] == true, uf:GetRow(row):GetText(slot.key).resolved.levelColor, unit .. " " .. path)
 				end
 			end
 		end

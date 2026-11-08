@@ -3,11 +3,12 @@ local Mock = Helpers.Mock
 
 describe("Live aura restyling", function()
 	local ns, uf, styled
-	local config = { portrait = { enabled = false }, castbar = { placement = "off" },
+	-- The target of target's auras inherit the theme font.
+	local config = { portrait = { enabled = false }, castbar = { placement = "off" }, auras = { enabled = true },
 		auraBar = { enabled = true, height = 12 } }
 	before_each(function()
 		ns = Helpers.LoadAddon(true, true)
-		uf = ns.Units:CreateFromDefinition(ns.Units:GetDefinition("target"), UIParent, config)
+		uf = ns.Units:CreateFromDefinition(ns.Units:GetDefinition("targettarget"), UIParent, config)
 		styled = {}
 		for _, key in ipairs({ "auras", "auraBar" }) do
 			local part = uf:GetPart(key)
@@ -33,7 +34,7 @@ describe("Live aura restyling", function()
 
 	it("restyles every owned button when a setting, theme font or late media changes", function()
 		uf:Apply({ portrait = { enabled = false }, castbar = { placement = "off" },
-			auras = { durationSize = 14 }, auraBar = { enabled = true, height = 16 } })
+			auras = { enabled = true, durationSize = 14 }, auraBar = { enabled = true, height = 16 } })
 		assert.is_true(styled.auras > 0 and styled.auraBar > 0)
 		assert.equals(16, Button("auraBar"):GetHeight())
 		assert.equals(14, Button("auras").ufTime.__state.font[2])

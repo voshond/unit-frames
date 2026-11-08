@@ -2,8 +2,10 @@ local Helpers = require("helpers")
 
 describe("Health shields #shields", function()
 	local ns
+	-- The pet starts without a health bar; shields are checked on every unit.
+	local function PetHealth() return { profiles = { Default = { units = { pet = { health = { enabled = true } } } } } } end
 	before_each(function()
-		ns = Helpers.LoadAddon(true, true)
+		ns = Helpers.LoadAddon(true, true, PetHealth())
 	end)
 
 	local function Bar(unit)
@@ -16,7 +18,7 @@ describe("Health shields #shields", function()
 			assert.is_true(bar.resolved.segments.absorb.enabled)
 			assert.equals("overlay", bar.resolved.segments.absorb.placement)
 			assert.equals(Enum.UnitDamageAbsorbClampMode.MaximumHealth, ns.Units.frames[unit].Health.damageAbsorbClampMode)
-			assert.is_nil(ns.Config:GetUnitConfig(unit).health)
+			assert.is_nil((ns.Config:GetUnitConfig(unit).health or {}).bar)
 		end
 		ns.Config:SetUnitValue("player", "health.bar.segments.absorb.enabled", false)
 		assert.is_nil(rawget(ns.Units.frames.player.Health, "DamageAbsorb"))
@@ -117,6 +119,7 @@ describe("Health shields #shields", function()
 		wb:Open()
 		for _, id in ipairs({ "bar.health", "unit.player", "unit.pet", "unit.target", "unit.targettarget", "unit.focus", "unit.focustarget" }) do
 			wb:Select(id)
+			if id == "unit.pet" then wb.styleTarget.set("health.enabled", true) end
 			wb.dataTarget.set("health", 100)
 			wb.dataTarget.set("absorb", 20)
 			local row = wb.handle.parts.row or wb.handle.parts.uf:GetRow("health")
@@ -135,6 +138,7 @@ describe("Health shields #shields", function()
 		wb:Open()
 		for _, id in ipairs({ "bar.health", "unit.player", "unit.pet", "unit.target", "unit.targettarget", "unit.focus", "unit.focustarget" }) do
 			wb:Select(id)
+			if id == "unit.pet" then wb.styleTarget.set("health.enabled", true) end
 			wb.dataTarget.set("health", 100)
 			wb.dataTarget.set("absorb", 20)
 			local row = wb.handle.parts.row or wb.handle.parts.uf:GetRow("health")

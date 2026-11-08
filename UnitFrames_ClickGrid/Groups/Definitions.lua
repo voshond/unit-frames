@@ -2,16 +2,17 @@ local _, CG = ...
 local UF, Copy = CG.UF, CG.UF.Util.Copy
 
 -- Independent copies; never change the shared pet/target-of-target definitions.
+-- The player pet's frame turns its bars off by default; group bars keep them.
 local member = UF.Units:Derive("pet", {
-	label = "Group member", width = 150,
+	label = "Group member", width = 120,
 	rows = {
-		health = { defaults = { height = 28 }, spec = { textDefaults = { belowLeft = { format = "level:class" } } } },
-		power = { defaults = { height = 6, enabled = false } },
+		health = { defaults = { enabled = true, height = 36 }, spec = { textDefaults = { belowLeft = { format = "level:class" } } } },
+		power = { defaults = { height = 6, enabled = true } },
 	},
 	portrait = { defaults = { enabled = false } },
 	castbar = { defaults = { enabled = false } },
 	auras = { clickThrough = true },
-	raidTarget = { defaults = { size = 12 } },
+	raidTarget = { defaults = { enabled = true, size = 12 } },
 	-- Mouse-transparent so hover and mouseover casts still reach the member.
 	categoryAuras = { noMouse = true, defaults = { anchor = "CENTER", size = 18 } },
 })
@@ -26,13 +27,14 @@ CG.definitions = {
 	pet = UF.Units:Derive("pet", {
 		label = "Group pet", width = 85,
 		rows = {
-			health = { defaults = { height = 20, columnWidth = 8, bar = { orientation = "VERTICAL" } },
+			health = { defaults = { enabled = true, height = 20, columnWidth = 8, bar = { orientation = "VERTICAL" } },
 				spec = { textDefaults = { left = { enabled = false }, right = { enabled = false }, belowLeft = { enabled = false } } } },
 			power = { defaults = { enabled = false, columnWidth = 3, bar = { orientation = "VERTICAL" } } },
 		},
 		portrait = { defaults = { enabled = false } },
 		castbar = { defaults = { enabled = false } },
-		auras = { clickThrough = true, defaults = { buffs = { enabled = false }, debuffs = { enabled = false } } },
+		auras = { clickThrough = true, defaults = { enabled = true, buffs = { enabled = false }, debuffs = { enabled = false } } },
+		raidTarget = { defaults = { enabled = true } },
 		categoryAuras = { noMouse = true, defaults = { enabled = false } },
 	}),
 	target = UF.Units:Derive("targettarget", {
@@ -59,7 +61,7 @@ CG.LayoutSchema = {
 	{ key = "enabled", type = "toggle", label = "Show healing panel", default = true },
 	{ key = "hideBlizzardFrames", type = "toggle", label = "Hide Blizzard party and raid frames", default = false,
 		tooltip = "Hide Blizzard's party frames, raid frames and raid manager while ClickGrid is enabled. Changes wait until combat ends. Turning this off or disabling ClickGrid restores Blizzard's visibility rules." },
-	{ key = "showSolo", type = "toggle", label = "Show when solo", default = false },
+	{ key = "showSolo", type = "toggle", label = "Show when solo", default = true },
 	{ key = "roleOrder", type = "select", label = "Member role order", default = "roster",
 		values = { { "roster", "Roster order" },
 			{ "TANK,DAMAGER,HEALER,NONE", "Tanks, DPS, healers" },
@@ -78,8 +80,8 @@ CG.LayoutSchema = {
 		tooltip = "Preferred flat-grid rows. Down-then-across keeps this wrap height; extra columns accommodate larger raids. Saved rows and columns never change each other." },
 	{ key = "flow", type = "select", label = "Fill grid", default = "down",
 		values = { { "down", "Down, then across" }, { "across", "Across, then down" } } },
-	{ key = "spacingX", type = "range", label = "Horizontal gap", min = 0, max = 50, step = 1, default = 2 },
-	{ key = "spacingY", type = "range", label = "Vertical gap", min = 0, max = 80, step = 1, default = 2,
+	{ key = "spacingX", type = "range", label = "Horizontal gap", min = 0, max = 50, step = 1, default = 1 },
+	{ key = "spacingY", type = "range", label = "Vertical gap", min = 0, max = 80, step = 1, default = 1,
 		tooltip = "Leave room for buff and debuff icons outside each bar." },
 	{ key = "sectionGap", type = "range", label = "Section gap", min = 0, max = 80, step = 1, default = 24 },
 	{ key = "scale", type = "range", label = "Panel scale", min = 0.5, max = 1.5, step = 0.05, default = 1 },

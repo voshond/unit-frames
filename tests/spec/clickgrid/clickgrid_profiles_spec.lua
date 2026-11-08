@@ -48,7 +48,7 @@ describe("ClickGrid profile strings #profiles", function()
 		assert.is_true(UF.Profiles:Switch(original))
 		CG.panel:Hide()
 		assert.is_true(UF.Profiles:Switch("Flat with tanks"))
-		assert.equals(250, #CG.frames)
+		assert.equals(375, #CG.frames)
 	end)
 
 	it("travels with the style string and is validated before anything is written", function()

@@ -2,15 +2,15 @@ local _, CG = ...
 local UF, oUF = CG.UF, CG.UF.oUF
 
 CG.PetSchema = {
-	{ key = "display", type = "select", label = "Pet display", default = "off",
+	{ key = "display", type = "select", label = "Pet display", default = "inline",
 		values = { { "off", "Off" }, { "group", "Separate group" }, { "inline", "Inside member" } } },
-	{ key = "interactive", type = "toggle", label = "Allow pet interaction", default = false,
+	{ key = "interactive", type = "toggle", label = "Allow pet interaction", default = true,
 		tooltip = "Pet bars receive click spells and mouseover casts. Off: pet bars are mouse-transparent. Changes apply after combat." },
 	{ key = "side", type = "select", label = "Pet side", default = "RIGHT",
 		values = { { "LEFT", "Left" }, { "RIGHT", "Right" } }, hidden = function(cfg) return cfg.display ~= "inline" end },
-	{ key = "gap", type = "range", label = "Gap to member", min = 0, max = 30, step = 1, default = 2,
+	{ key = "gap", type = "range", label = "Gap to member", min = 0, max = 30, step = 1, default = 1,
 		hidden = function(cfg) return cfg.display ~= "inline" end },
-	{ key = "includeInWidth", type = "toggle", label = "Width includes pet", default = false,
+	{ key = "includeInWidth", type = "toggle", label = "Width includes pet", default = true,
 		tooltip = "On: members keep their configured width and the pet and gap take their space from it. Off: members grow by the pet's width and gap.",
 		hidden = function(cfg) return cfg.display ~= "inline" end },
 	{ key = "hover", type = "toggle", label = "Pet mouseover highlight", default = true },

@@ -22,17 +22,27 @@ local function RowSchema(schema, height)
 	})
 end
 
+-- The standalone timers: a tall castbar with the global cooldown, and the
+-- ranged swing timer as text only.
+CastbarFrame.STANDALONE_DEFAULTS = {
+	width = 230,
+	castbar = { height = 30, gcd = { enabled = true }, icon = { gap = 0 }, bar = { smooth = true } },
+	ranged = { enabled = true, bar = { enabled = false } },
+}
+
 function CastbarFrame.BuildSchema(spec)
+	local defaults = spec and spec.standalone and CastbarFrame.STANDALONE_DEFAULTS or {}
 	local schema = {
-		{ key = "enabled", type = "toggle", label = "Enabled", default = not (spec and spec.standalone) },
-		{ key = "width", type = "range", label = "Width", min = 80, max = 800, step = 1, default = 280 },
+		{ key = "enabled", type = "toggle", label = "Enabled", default = true },
+		{ key = "width", type = "range", label = "Width", min = 80, max = 800, step = 1, default = defaults.width or 280 },
 		{ key = "gap", type = "range", label = "Row spacing", min = 0, max = 20, step = 1, default = 2 },
 		{ key = "castbar", type = "group", label = "Castbar",
-			schema = RowSchema(Castbar.BuildSchema({ playerCast = true }), 24) },
+			schema = RowSchema(Castbar.BuildSchema({ playerCast = true }), 24), defaults = defaults.castbar },
 	}
 	for _, row in ipairs(CastbarFrame.SWING_ROWS) do
 		schema[#schema + 1] = { key = row.key, type = "group", label = row.label,
-			schema = RowSchema(TextBar.BuildSchema(SWING_SPEC), 10), defaults = { enabled = false } }
+			schema = RowSchema(TextBar.BuildSchema(SWING_SPEC), 10),
+			defaults = ns.Util.Merge({ enabled = false }, defaults[row.key] or {}) }
 	end
 	return schema
 end

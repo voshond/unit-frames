@@ -135,11 +135,12 @@ describe("Player frame", function()
 	end)
 
 	it("tags the texts with their formats", function()
-		assert.is_nil(frame.tags[Row("health"):GetText("belowLeft"):GetFrame()], "below-name text is off by default")
-		ns.Config:SetUnitValue("player", "health.belowLeft.enabled", true)
+		assert.equals("[uf:t1]", frame.tags[Row("health"):GetText("belowLeft"):GetFrame()], "level, info and cast")
+		ns.Config:SetUnitValue("player", "health.belowLeft.format", "level:class")
+		ns.Config:SetUnitValue("player", "health.belowLeft.levelColor", false)
 		assert.equals("[uf:level:class]", frame.tags[Row("health"):GetText("belowLeft"):GetFrame()])
 		assert.equals("[uf:name]", frame.tags[Row("health"):GetText("left"):GetFrame()])
-		assert.equals("[uf:health:value]", frame.tags[Row("health"):GetText("right"):GetFrame()])
+		assert.equals("[uf:health:percent]", frame.tags[Row("health"):GetText("right"):GetFrame()])
 		assert.is_nil(frame.tags[Row("health"):GetText("center"):GetFrame()])
 		assert.equals("[uf:xp:value:percent]", frame.tags[Row("experience"):GetText("center"):GetFrame()])
 	end)
@@ -209,6 +210,9 @@ describe("Player frame portrait and castbar", function()
 		ns = Helpers.LoadAddon(true, true)
 		ns.Config:SetUnitValue("player", "experience.enabled", true)
 		ns.Config:SetUnitValue("player", "castbar.enabled", true)
+		-- Geometry baseline: the portrait beside the bars, two pixels away.
+		ns.Config:SetUnitValue("player", "portrait.includeInWidth", false)
+		ns.Config:SetUnitValue("player", "portrait.gap", 2)
 		Mock.InstallUI()
 		frame = ns.Units.frames.player
 		uf = frame.uf
@@ -328,7 +332,11 @@ end)
 describe("Player buffs and debuffs", function()
 	local ns, frame, auras
 	before_each(function()
-		ns = Helpers.LoadAddon(true, true)
+		-- Geometry baseline: buffs above and debuffs below, two pixels away,
+		-- with the time below each icon.
+		ns = Helpers.LoadAddon(true, true, { profiles = { Default = { units = { player = { auras = {
+			durationPosition = "below", buffs = { gap = 2 }, debuffs = { position = "bottom", gap = 2 },
+		} } } } } })
 		Mock.InstallUI()
 		frame = ns.Units.frames.player
 		auras = frame.uf:GetPart("auras")
@@ -452,7 +460,7 @@ describe("Player buffs and debuffs", function()
 			for _, alignment in ipairs({ "start", "center", "end" }) do
 				for _, growth in ipairs({ "forward", "reverse" }) do
 					ns.Config:SetUnitValue("player", "auras.buffs", {
-						position = side, alignment = alignment, growth = growth,
+						position = side, alignment = alignment, growth = growth, gap = 2,
 					})
 					local container = Container("buffs")
 					local vertical = expected[3]

@@ -129,9 +129,10 @@ describe("Out-of-range opacity", function()
 		end
 		frame.UnregisterEvent = function(_, event) handlers[event] = nil end
 		local driver
-		-- The shared, parentless polling frame (castbar fades also have OnUpdate).
+		-- The shared, parentless polling frame, created with the elements before
+		-- the castbar fades and the font repair driver (also with OnUpdate).
 		for _, obj in ipairs(Mock.objects) do
-			if obj.__type == "Frame" and not obj:GetParent() and obj:GetScript("OnUpdate") then driver = obj end
+			if not driver and obj.__type == "Frame" and not obj:GetParent() and obj:GetScript("OnUpdate") then driver = obj end
 		end
 		assert.is_not_nil(driver)
 		assert.is_false(driver:IsShown())
