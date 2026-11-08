@@ -54,13 +54,13 @@ describe("Derived unit definitions", function()
 	it("overrides rows by key and leaves the base definition untouched", function()
 		local ns = Helpers.LoadAddon(true)
 		local Units = ns.Units
-		local derived = Units:Derive("pet", { width = 99, rows = { power = { defaults = { enabled = false } } },
+		local derived = Units:Derive("pet", { width = 99, rows = { power = { defaults = { enabled = true } } },
 			auras = { clickThrough = true } })
 		assert.equals(99, derived.width)
-		assert.is_false(derived.rows[2].defaults.enabled)
+		assert.is_true(derived.rows[2].defaults.enabled)
 		assert.equals(10, derived.rows[2].defaults.height, "merged, not replaced")
 		assert.is_true(derived.auras.clickThrough)
-		assert.is_nil(Units.definitions.pet.rows[2].defaults.enabled)
+		assert.is_false(Units.definitions.pet.rows[2].defaults.enabled)
 		assert.is_nil(Units.definitions.pet.auras.clickThrough)
 		assert.has_error(function() Units:Derive("pet", { rows = { experience = {} } }) end)
 	end)

@@ -130,8 +130,10 @@ function Helpers.LoadWorkbench(build)
 	return ns, ns.Workbench
 end
 
-function Helpers.LoadClickGrid(workbench)
-	local ns = Helpers.LoadAddon(true, true)
+-- saved: the ClickGrid profile found at load ({ settings, member, target, pet }).
+function Helpers.LoadClickGrid(workbench, saved)
+	local db = saved and { namespaces = { ClickGrid = { profiles = { Default = saved } } } }
+	local ns = Helpers.LoadAddon(true, true, db)
 	Mock.InstallUI()
 	local cg = Helpers.LoadToc("UnitFrames_ClickGrid/UnitFrames_ClickGrid.toc", "UnitFrames_ClickGrid")
 	Mock.FireEvent("ADDON_LOADED", "UnitFrames_ClickGrid")

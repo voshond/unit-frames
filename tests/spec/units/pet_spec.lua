@@ -1,10 +1,28 @@
 local Helpers = require("helpers")
 local Mock = Helpers.Mock
 
+-- The pet frame starts bare; these specs turn its bars and border on.
+local function PetBars() return { profiles = { Default = { units = { pet = {
+	health = { enabled = true }, power = { enabled = true }, auras = { enabled = true },
+	raidTarget = { enabled = true }, border = { enabled = true },
+} } } } } end
+
+describe("Player pet defaults", function()
+	it("start without bars, border, auras or raid marker", function()
+		local ns = Helpers.LoadAddon(true, true)
+		local frame = ns.Units.frames.pet
+		for _, element in ipairs({ "Health", "Power", "UF_Auras", "RaidTargetIndicator", "Portrait", "UF_Castbar" }) do
+			assert.is_false(frame:IsElementEnabled(element), element)
+		end
+		assert.is_false(frame.uf.resolved.border.enabled)
+		assert.same({}, ns.Config:GetUnitConfig("pet"))
+	end)
+end)
+
 describe("Player pet", function()
 	local ns, frame
 	before_each(function()
-		ns = Helpers.LoadAddon(true, true)
+		ns = Helpers.LoadAddon(true, true, PetBars())
 		Mock.InstallUI()
 		frame = ns.Units.frames.pet
 	end)

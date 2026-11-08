@@ -103,7 +103,9 @@ describe("PvP flag Workbench previews", function()
 		wb:Toggle()
 		for _, unit in ipairs(ns.Units.order) do
 			wb:Select("unit." .. unit)
+			wb.styleTarget.set("health.enabled", true)
 			wb.styleTarget.set("health.belowLeft.enabled", true)
+			wb.styleTarget.set("health.belowLeft.format", "level:info")
 			local text = wb.handle.parts.uf:GetRow("health"):GetText("belowLeft"):GetFrame()
 			local plain = text:GetText()
 			for _, source in ipairs({ "static", "animated" }) do

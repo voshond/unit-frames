@@ -150,6 +150,7 @@ describe("Workbench", function()
 
 	it("offers each unit with independent settings, reset and preview data", function()
 		local samples = { pet = "Wolf", target = "Scarlet Myrmidon", targettarget = "Arthas", focus = "Jaina", focustarget = "Thrall" }
+		ns.Config:SetUnitValue("pet", "health.enabled", true)
 		for unit, name in pairs(samples) do
 			workbench:Select("unit." .. unit)
 			local uf = workbench.handle.parts.uf
@@ -162,6 +163,7 @@ describe("Workbench", function()
 			workbench.entry.reset()
 			workbench.handle:Apply()
 			assert.equals(ns.Units:GetDefinition(unit).width, uf.resolved.width)
+			if unit == "pet" then workbench.styleTarget.set("power.enabled", true) end
 			workbench.dataTarget.set("powerType", "ENERGY")
 			assert.same(ns.Config:GetTheme().colors.energy, uf:GetRow("power"):GetBar().bar.__state.color)
 		end
@@ -172,6 +174,7 @@ describe("Workbench", function()
 		workbench.dataTarget.set("npc", true)
 		workbench.styleTarget.set("health.colorMode", "class")
 		workbench.styleTarget.set("health.belowLeft.enabled", true)
+		workbench.styleTarget.set("health.belowLeft.format", "level:info")
 		workbench.dataTarget.set("classification", "elite")
 		workbench.dataTarget.set("creatureType", "Humanoid")
 		local health = workbench.handle.parts.uf:GetRow("health")

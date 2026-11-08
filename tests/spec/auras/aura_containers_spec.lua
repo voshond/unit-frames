@@ -61,7 +61,9 @@ describe("Lazy live aura containers", function()
 		AssertOnce(barCounts, bar:GetContainer("buffs"), "buffs")
 		AssertOnce(barCounts, bar:GetContainer("debuffs"), "debuffs")
 		local auraCounts = Counter(ns.Components.Auras)
-		local fresh = ns.Units:CreateFromDefinition(ns.Units:GetDefinition("target"), UIParent, config):GetPart("auras")
+		-- The target of target's auras inherit the theme font.
+		local fresh = ns.Units:CreateFromDefinition(ns.Units:GetDefinition("targettarget"), UIParent,
+			{ auras = { enabled = true } }):GetPart("auras")
 		AssertOnce(auraCounts, fresh:GetContainer("buffs"), "buffs")
 		ns.Config:SetThemeValue("font", "Arial Narrow")
 		local button = fresh:GetContainer("buffs"):GetAuraGroupFrame("buffs", 1)

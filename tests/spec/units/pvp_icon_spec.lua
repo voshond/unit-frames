@@ -7,10 +7,17 @@ local ATLASES = {
 	FFA = "UI-HUD-UnitFrame-Player-PVP-FFAIcon",
 }
 
+-- The main frames start without the background circle these specs exercise.
+local function WithBackgrounds()
+	local units = {}
+	for _, unit in ipairs({ "player", "target", "focus" }) do units[unit] = { pvp = { background = true } } end
+	return { profiles = { Default = { units = units } } }
+end
+
 describe("PvP flag icons", function()
 	local ns, frame, uf, flag
 	before_each(function()
-		ns = Helpers.LoadAddon(true, true)
+		ns = Helpers.LoadAddon(true, true, WithBackgrounds())
 		Mock.InstallUI()
 		frame = ns.Units.frames.player
 		uf = frame.uf
@@ -172,6 +179,7 @@ describe("PvP flag icon companions and previews", function()
 		wb:Toggle()
 		for _, unit in ipairs(ns.Units.order) do
 			wb:Select("unit." .. unit)
+			wb.styleTarget.set("pvp.background", true)
 			local flag = wb.handle.parts.uf:GetPart("pvp")
 			for _, source in ipairs({ "static", "animated" }) do
 				wb.dataTarget.set("source", source)

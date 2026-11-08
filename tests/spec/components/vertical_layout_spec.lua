@@ -5,11 +5,12 @@ describe("Shared column layout #shields", function()
 	local UF, uf
 	before_each(function()
 		UF = Helpers.LoadAddon(true)
+		-- The pet's compact rows, switched on (the player pet starts without them).
 		uf = UF.Units:CreateFromDefinition(UF.Units.definitions.pet, CreateFrame("Frame"), {
 			barLayout = "columns", spacing = 2,
 			border = { enabled = false, padding = 0 },
-			health = { columnWidth = 16, bar = { orientation = "VERTICAL" } },
-			power = { columnWidth = 5, bar = { orientation = "VERTICAL", reverseFill = true } },
+			health = { enabled = true, columnWidth = 16, bar = { orientation = "VERTICAL" } },
+			power = { enabled = true, columnWidth = 5, bar = { orientation = "VERTICAL", reverseFill = true } },
 		})
 		uf:SetFillHeight(90)
 		uf:Layout()
@@ -47,7 +48,8 @@ describe("Shared column layout #shields", function()
 
 	it("retains row sizing when returning to the default arrangement", function()
 		uf:SetFillHeight(nil)
-		uf:Apply({ width = 160, border = { padding = 0 }, health = { height = 24 }, power = { height = 5 }, spacing = 1 })
+		uf:Apply({ width = 160, border = { padding = 0 }, health = { enabled = true, height = 24 },
+			power = { enabled = true, height = 5 }, spacing = 1 })
 		assert.equals(160, uf.layout.width)
 		assert.equals(30, uf.layout.height)
 		assert.equals(160, uf:GetRow("health"):GetBar().knownWidth)
@@ -59,9 +61,9 @@ describe("Shared column layout #shields", function()
 		uf:Apply(config)
 		assert.equals(7, uf:GetRow("power"):GetBar():GetKnownSize())
 		assert.same({ "TOPLEFT", uf:GetFrame(), "TOPRIGHT", -7, 0 }, uf:GetRow("power"):GetFrame():GetAnchor("TOPLEFT"))
-		uf:Apply({ width = 160, border = { padding = 0 } })
+		uf:Apply({ width = 160, border = { padding = 0 }, health = { enabled = true } })
 		assert.equals(160, uf:GetRow("health"):GetBar():GetKnownSize())
-		uf:Apply({ width = 180, border = { padding = 0 } })
+		uf:Apply({ width = 180, border = { padding = 0 }, health = { enabled = true } })
 		assert.equals(180, uf:GetRow("health"):GetBar():GetKnownSize())
 	end)
 

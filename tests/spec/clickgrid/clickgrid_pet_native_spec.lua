@@ -78,7 +78,7 @@ describe("ClickGrid native pet assignment", function()
 			wipe(cache)
 			Mock.RunUntainted(watch, pet, false)
 			assert.equals(exists, pet:IsShown())
-			assert.equals(CG.metrics.member.width + (exists and 0 or CG.metrics.pet.width + CG.metrics.pet.gap),
+			assert.equals(CG.metrics.member.width - (exists and CG.metrics.pet.width + CG.metrics.pet.gap or 0),
 				cell.Member.uf:GetRow("health"):GetBar():GetKnownSize())
 		end
 	end)

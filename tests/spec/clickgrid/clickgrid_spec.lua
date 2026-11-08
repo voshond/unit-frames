@@ -12,7 +12,7 @@ describe("ClickGrid companion", function()
 			assert.is_false(key == "member" or key == "clickgrid")
 		end
 		assert.equals(9, #UF.oUF.headers)
-		assert.equals(90, #CG.frames)
+		assert.equals(135, #CG.frames)
 		for key, header in pairs(CG.headers) do
 			assert.is_not_nil(header:GetAttribute("child5"), key)
 			assert.equals(1, header:GetAttribute("startingIndex"))
@@ -32,7 +32,7 @@ describe("ClickGrid companion", function()
 		assert.is_false(button.Member.uf.resolved.border.enabled)
 		assert.is_false(button.Target.uf.resolved.border.enabled)
 		for _, key in ipairs(UF.Units.order) do
-			assert.is_true(UF.Units.frames[key].uf.resolved.border.enabled, key)
+			assert.equals(key ~= "pet", UF.Units.frames[key].uf.resolved.border.enabled, key)
 		end
 		CG.Config:SetStyle("member", "border.enabled", true)
 		assert.is_true(button.Member.uf.resolved.border.enabled)

@@ -199,7 +199,7 @@ describe("Ready check tints", function()
 		Fire("READY_CHECK")
 		assert.is_true(texture:IsShown())
 		assert.equals("UI-LFG-PendingMark-Raid", texture.__state.atlas)
-		assert.same({ "CENTER", frame, "CENTER", 0, 0 }, { icon:GetFrame():GetPoint() })
+		assert.same({ "CENTER", frame, "TOP", 0, 0 }, { icon:GetFrame():GetPoint() })
 		statuses.player = "ready"
 		Fire("READY_CHECK_CONFIRM")
 		assert.equals("UI-LFG-ReadyMark-Raid", texture.__state.atlas)

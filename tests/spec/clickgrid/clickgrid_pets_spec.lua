@@ -1,9 +1,25 @@
 local Helpers = require("helpers")
 local Mock = Helpers.Mock
 
+-- Pets start inline, interactive and inside the member width; these specs
+-- begin from separately sized, off pets.
+local function SeparatePets() return { pet = { display = "off", interactive = false, includeInWidth = false, gap = 2 } } end
+
+describe("ClickGrid pet defaults", function()
+	it("start inline, interactive, one pixel away and inside the member width", function()
+		local _, CG = Helpers.LoadClickGrid()
+		local pet = CG.Config.styles.pet:Resolved()
+		assert.equals("inline", pet.display)
+		assert.is_true(pet.interactive)
+		assert.is_true(pet.includeInWidth)
+		assert.equals(1, pet.gap)
+		assert.equals(CG.metrics.member.width, CG.headers.party:GetAttribute("child1").Member:GetWidth())
+	end)
+end)
+
 describe("ClickGrid pets", function()
 	local UF, CG
-	before_each(function() UF, CG = Helpers.LoadClickGrid() end)
+	before_each(function() UF, CG = Helpers.LoadClickGrid(false, SeparatePets()) end)
 
 	local function Cell() return CG.headers.party:GetAttribute("child1") end
 
@@ -97,6 +113,7 @@ describe("ClickGrid pets", function()
 		CG.Config:SetStyle("pet", "power.enabled", true)
 		CG.Config:SetStyle("pet", "health.height", 90)
 		CG.Config:SetStyle("pet", "health.columnWidth", 12)
+		CG.Config:SetStyle("member", "power.enabled", false)
 		CG.Config:SetStyle("member", "health.height", 14)
 		local pet = Cell().Pet
 		assert.equals(14, pet.uf.layout.height)
@@ -121,9 +138,9 @@ describe("ClickGrid pets", function()
 		assert.is_nil(counters.clickgridBindingsCompile)
 		local member, pet, target = Cell().Member, Cell().Pet, Cell().Target
 		local health = member.uf:GetRow("health"):GetFrame()
-		assert.equals(157 + CG.metrics.pet.width, member:GetWidth())
+		assert.equals(CG.metrics.member.width + 7 + CG.metrics.pet.width, member:GetWidth())
 		assert.same({ "TOPRIGHT", member, "TOPRIGHT", 0, 0 }, pet:GetAnchor("TOPRIGHT"))
-		assert.equals(157 + CG.metrics.pet.width + CG.panelConfig.targetGap, select(4, target:GetPoint()))
+		assert.equals(CG.metrics.member.width + 7 + CG.metrics.pet.width + CG.panelConfig.targetGap, select(4, target:GetPoint()))
 		CG.Config:SetStyle("pet", "side", "LEFT")
 		assert.same({ "TOPLEFT", member, "TOPLEFT", 0, 0 }, pet:GetAnchor("TOPLEFT"))
 		assert.equals(0, select(4, member:GetPoint()))
@@ -232,7 +249,7 @@ describe("ClickGrid pets", function()
 		CG.Config:SetStyle("pet", "health.columnWidth", 14)
 		assert.equals(14, CG.metrics.pet.width)
 		assert.equals(14, cell.Pet.uf.layout.width)
-		assert.equals(150, Cell().Member.uf.layout.width)
+		assert.equals(120, Cell().Member.uf.layout.width)
 		for _, position in ipairs({ "above", "below" }) do
 			CG.Config:Set("titles.position", position)
 			local layout = CG.layout
@@ -333,7 +350,7 @@ end)
 
 describe("ClickGrid pets #workbench", function()
 	local UF, CG, wb
-	before_each(function() UF, CG, wb = Helpers.LoadClickGrid(true); wb:Open("clickgrid.pet") end)
+	before_each(function() UF, CG, wb = Helpers.LoadClickGrid(true, SeparatePets()); wb:Open("clickgrid.pet") end)
 
 	it("previews separate member and pet frames with matching live geometry and releases pets", function()
 		CG.Config:SetStyle("pet", "display", "inline")
