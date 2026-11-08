@@ -1,0 +1,93 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='1280' height='800' viewBox='0 0 1280 800'>
+<defs>
+<radialGradient id='stageGlow' cx='50%' cy='45%' r='65%'>
+ <stop offset='0%' stop-color='#4fa3ff' stop-opacity='0.20'/>
+ <stop offset='55%' stop-color='#4fa3ff' stop-opacity='0.04'/>
+ <stop offset='100%' stop-color='#0d0d12' stop-opacity='0'/>
+</radialGradient>
+<linearGradient id='world' x1='0' y1='0' x2='1' y2='1'>
+ <stop offset='0%' stop-color='#1d2a24'/><stop offset='50%' stop-color='#2b2a3a'/><stop offset='100%' stop-color='#1a1f2e'/>
+</linearGradient>
+<linearGradient id='barSheen' x1='0' y1='0' x2='0' y2='1'>
+ <stop offset='0%' stop-color='#ffffff' stop-opacity='0.22'/><stop offset='50%' stop-color='#ffffff' stop-opacity='0'/>
+ <stop offset='100%' stop-color='#000000' stop-opacity='0.25'/>
+</linearGradient>
+<linearGradient id='portrait' x1='0' y1='0' x2='0' y2='1'>
+ <stop offset='0%' stop-color='#5b6b8c'/><stop offset='100%' stop-color='#1e2433'/>
+</linearGradient>
+<filter id='glow' x='-30%' y='-30%' width='160%' height='160%'>
+ <feGaussianBlur stdDeviation='6' result='b'/><feMerge><feMergeNode in='b'/><feMergeNode in='SourceGraphic'/></feMerge>
+</filter>
+<filter id='shadow' x='-20%' y='-20%' width='140%' height='140%'>
+ <feDropShadow dx='0' dy='18' stdDeviation='22' flood-color='#000' flood-opacity='0.7'/>
+</filter>
+<filter id='blur'><feGaussianBlur stdDeviation='3'/></filter>
+<pattern id='stripes' width='6' height='6' patternUnits='userSpaceOnUse' patternTransform='rotate(45)'>
+ <rect width='3' height='6' fill='#ff5544' fill-opacity='0.55'/>
+</pattern>
+</defs>
+<rect width='1280' height='800' fill='url(#world)'/>
+<rect width='1280' height='800' fill='#000' fill-opacity='0.55'/>
+<rect x='110' y='70' width='1060' height='660' rx='10' fill='#0d0d12' fill-opacity='0.97' stroke='#3d3d4a' filter='url(#shadow)'/><rect x='110' y='70' width='1060' height='2' fill='#4fa3ff' fill-opacity='0.9'/>
+<rect x='110' y='72' width='230' height='658' fill='#0a0a0e'/>
+<text x='138' y='114' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='11' font-weight='700' fill='#4fa3ff' text-anchor='start' letter-spacing='3'>UNITFRAMES</text>
+<text x='138' y='136' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='18' font-weight='600' fill='#ebebeb' text-anchor='start' >Getting started</text>
+<line x1='150' y1='184' x2='150' y2='376' stroke='#3d3d4a' stroke-width='2'/>
+<line x1='150' y1='184' x2='150' y2='312' stroke='#4fa3ff' stroke-width='2' filter='url(#glow)'/>
+<circle cx='150' cy='184' r='11' fill='#4fa3ff' stroke='#4fa3ff' stroke-width='2'/>
+<text x='150' y='188' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='11' font-weight='700' fill='#0d0d12' text-anchor='middle' >✓</text>
+<text x='172' y='189' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='14' font-weight='400' fill='#ebebeb' text-anchor='start' >Pick a look</text>
+<circle cx='150' cy='248' r='11' fill='#4fa3ff' stroke='#4fa3ff' stroke-width='2'/>
+<text x='150' y='252' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='11' font-weight='700' fill='#0d0d12' text-anchor='middle' >✓</text>
+<text x='172' y='253' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='14' font-weight='400' fill='#ebebeb' text-anchor='start' >Make it yours</text>
+<circle cx='150' cy='312' r='16' fill='#4fa3ff' fill-opacity='0.18' filter='url(#glow)'/>
+<circle cx='150' cy='312' r='11' fill='#4fa3ff' stroke='#4fa3ff' stroke-width='2'/>
+<text x='150' y='316' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='11' font-weight='700' fill='#0d0d12' text-anchor='middle' >3</text>
+<text x='172' y='317' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='14' font-weight='600' fill='#ebebeb' text-anchor='start' >Your frames</text>
+<circle cx='150' cy='376' r='11' fill='#17171c' stroke='#3d3d4a' stroke-width='2'/>
+<text x='150' y='380' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='11' font-weight='700' fill='#9494a1' text-anchor='middle' >4</text>
+<text x='172' y='381' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='14' font-weight='400' fill='#9494a1' text-anchor='start' >Ready</text>
+<text x='138' y='634' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='400' fill='#9494a1' text-anchor='start' text-decoration='underline'>Skip for now</text>
+<text x='138' y='654' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='11' font-weight='400' fill='#5c5c68' text-anchor='start' >Reopen: /uf welcome</text>
+<text x='372' y='126' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='26' font-weight='700' fill='#ebebeb' text-anchor='start' >Your frames</text>
+<text x='372' y='150' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='13' font-weight='400' fill='#9494a1' text-anchor='start' >Click a tile to switch that frame on or off. You'll drag them into place in Edit Mode at the end.</text>
+<rect x='372' y='174' width='770' height='420' rx='12' fill='#0a0a0e' stroke='#3d3d4a'/>
+<rect x='372' y='174' width='770' height='420' rx='12' fill='url(#stageGlow)'/>
+<rect x='672' y='560' width='170' height='20' rx='3' fill='#ffffff' fill-opacity='0.05' stroke='#ffffff' stroke-opacity='0.08'/>
+<text x='757' y='574' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='10' font-weight='400' fill='#5c5c68' text-anchor='middle' >action bars</text>
+<rect x='1022' y='190' width='100' height='100' rx='50' fill='#ffffff' fill-opacity='0.04' stroke='#ffffff' stroke-opacity='0.08'/>
+<text x='1072' y='244' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='10' font-weight='400' fill='#5c5c68' text-anchor='middle' >minimap</text>
+<rect x='552' y='404' width='150' height='48' rx='6' fill='#4fa3ff' fill-opacity='0.16' stroke='#4fa3ff' stroke-width='1.5'  filter="url(#glow)"/>
+<text x='627.0' y='432.0' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='600' fill='#ebebeb' text-anchor='middle' >Player</text>
+<circle cx='692' cy='414' r='5' fill='#4fa3ff'/>
+<rect x='812' y='404' width='150' height='48' rx='6' fill='#4fa3ff' fill-opacity='0.16' stroke='#4fa3ff' stroke-width='1.5'  filter="url(#glow)"/>
+<text x='887.0' y='432.0' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='600' fill='#ebebeb' text-anchor='middle' >Target</text>
+<circle cx='952' cy='414' r='5' fill='#4fa3ff'/>
+<rect x='972' y='410' width='124' height='36' rx='6' fill='#4fa3ff' fill-opacity='0.16' stroke='#4fa3ff' stroke-width='1.5'  filter="url(#glow)"/>
+<text x='1034.0' y='432.0' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='600' fill='#ebebeb' text-anchor='middle' >Target's target</text>
+<circle cx='1086' cy='420' r='5' fill='#4fa3ff'/>
+<rect x='552' y='464' width='96' height='34' rx='6' fill='#22222a' fill-opacity='0.6' stroke='#3d3d4a' stroke-width='1' stroke-dasharray="4 4" />
+<text x='600.0' y='485.0' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='400' fill='#9494a1' text-anchor='middle' >Pet</text>
+<circle cx='638' cy='474' r='5' fill='#3a3a44'/>
+<rect x='812' y='324' width='130' height='40' rx='6' fill='#4fa3ff' fill-opacity='0.16' stroke='#4fa3ff' stroke-width='1.5'  filter="url(#glow)"/>
+<text x='877.0' y='348.0' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='600' fill='#ebebeb' text-anchor='middle' >Focus</text>
+<circle cx='932' cy='334' r='5' fill='#4fa3ff'/>
+<rect x='952' y='328' width='96' height='32' rx='6' fill='#22222a' fill-opacity='0.6' stroke='#3d3d4a' stroke-width='1' stroke-dasharray="4 4" />
+<text x='1000.0' y='348.0' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='400' fill='#9494a1' text-anchor='middle' >Focus target</text>
+<circle cx='1038' cy='338' r='5' fill='#3a3a44'/>
+<rect x='672' y='510' width='170' height='26' rx='6' fill='#ffb300' fill-opacity='0.16' stroke='#ffb300' stroke-width='1.5'  filter="url(#glow)"/>
+<text x='757.0' y='527.0' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='600' fill='#ebebeb' text-anchor='middle' >Castbar &amp; GCD</text>
+<circle cx='832' cy='520' r='5' fill='#ffb300'/>
+<rect x='402' y='294' width='110' height='190' rx='6' fill='#55d68a' fill-opacity='0.16' stroke='#55d68a' stroke-width='1.5'  filter="url(#glow)"/>
+<text x='457.0' y='393.0' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='600' fill='#ebebeb' text-anchor='middle' >Party / Raid</text>
+<circle cx='502' cy='304' r='5' fill='#55d68a'/>
+<text x='457' y='504' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='10' font-weight='400' fill='#55d68a' text-anchor='middle' >ClickGrid</text>
+<rect x='388' y='190' width='310' height='56' rx='8' fill='#17171c' stroke='#3d3d4a'/>
+<text x='402' y='214' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='14' font-weight='600' fill='#ebebeb' text-anchor='start' >6 frames on · 2 off</text>
+<text x='402' y='234' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='11' font-weight='400' fill='#9494a1' text-anchor='start' >Hover a tile to see it in the preview</text>
+<rect x='372' y='672' width='92' height='34' rx='6' fill='#17171c' stroke='#3d3d4a'/>
+<text x='418' y='694' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='13' font-weight='400' fill='#9494a1' text-anchor='middle' >Back</text>
+<text x='757.0' y='694' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='400' fill='#9494a1' text-anchor='middle' >Step 3 of 4</text>
+<rect x='982' y='672' width='160' height='34' rx='6' fill='#4fa3ff' filter='url(#glow)'/>
+<text x='1062' y='694' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='14' font-weight='700' fill='#0d0d12' text-anchor='middle' >Next: finish  →</text>
+</svg>
