@@ -25,12 +25,12 @@ fetch_tree() {
 
 # Match the versions recorded in the existing local Libs/VERSIONS.md.
 fetch_tree WoWUIDev/Ace3 ac3d1225037e0dc74e025a72342c0f7824aae147 "$test_libs_tmp/ace3"
-fetch_tree oUF-wow/oUF a1f9df774263d00e0feedca40200065f06e14eda "$test_libs_tmp/oUF"
-fetch_tree p3lim-wow/LibEditMode 550a52e7a0a56649d962c3fa2ceccaf50c3c77ed "$test_libs_tmp/LibEditMode"
+fetch_tree oUF-wow/oUF c5ff6e4a09bfaf2186e205777e0fab964b5cddc1 "$test_libs_tmp/oUF"
+fetch_tree p3lim-wow/LibEditMode b4816be444fec1160eac31d9a841f74636898acc "$test_libs_tmp/LibEditMode"
 fetch_tree tekkub/libdatabroker-1-1 1a63ede0248c11aa1ee415187c1f9c9489ce3e02 "$test_libs_tmp/LibDataBroker-1.1"
 rm -f -- "$test_libs_tmp/LibDataBroker-1.1/README.textile"
 rm -f -- "$test_libs_tmp/oUF/oUF.toc" "$test_libs_tmp/LibEditMode/LibEditMode.toc"
-sed -i 's/@project-version@/14.2.0/' "$test_libs_tmp/oUF/ouf.lua"
+sed -i 's/@project-version@/14.2.1/' "$test_libs_tmp/oUF/ouf.lua"
 
 mkdir -p "$test_libs_tmp/LibSharedMedia-3.0"
 lsm_source='https://repos.curseforge.com/wow/libsharedmedia-3-0/trunk/LibSharedMedia-3.0'

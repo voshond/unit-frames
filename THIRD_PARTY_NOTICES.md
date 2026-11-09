@@ -67,7 +67,7 @@ not bundled here.
 
 Upstream sources: [Ace3 license](https://github.com/WoWUIDev/Ace3/blob/40f4cc1356ae7fcc0cf71fc0a19dc7d50d6ae6c2/LICENSE.txt),
 [LibSharedMedia](https://www.curseforge.com/wow/addons/libsharedmedia-3-0),
-[oUF](https://github.com/oUF-wow/oUF/tree/14.2.0),
-[LibEditMode](https://github.com/p3lim-wow/LibEditMode/tree/18),
+[oUF](https://github.com/oUF-wow/oUF/tree/14.2.1),
+[LibEditMode](https://github.com/p3lim-wow/LibEditMode/tree/19),
 [Roboto](https://github.com/googlefonts/roboto-3-classic),
 [LGPL 2.1](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html).

@@ -6,8 +6,8 @@
 #
 # Environment overrides:
 #   ACE3_REF   git ref of WoWUIDev/Ace3 to use (default: master, has the Forever AceDB fixes)
-#   OUF_REF    git ref of oUF-wow/oUF (default: release tag 14.2.0, supports Forever)
-#   LEM_REF    git ref of p3lim-wow/LibEditMode (default: tag 18, supports Forever)
+#   OUF_REF    git ref of oUF-wow/oUF (default: release tag 14.2.1, supports Forever)
+#   LEM_REF    git ref of p3lim-wow/LibEditMode (default: tag 19, supports Forever)
 #   LDB_REF    git ref of tekkub/libdatabroker-1-1 (default: master @ 1a63ede, minor 4)
 #   DBICON_REV WowAce SVN revision of LibDBIcon-1.0 (default: 168, minor 57, lists Interface 16001)
 #   LSM_SRC    path to a LibSharedMedia-3.0 folder to copy from. LSM lives in WowAce SVN which
@@ -19,8 +19,8 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LIBS_DIR="$REPO_DIR/UnitFrames/Libs"
 ACE3_REF="${ACE3_REF:-master}"
-OUF_REF="${OUF_REF:-14.2.0}"
-LEM_REF="${LEM_REF:-18}"
+OUF_REF="${OUF_REF:-14.2.1}"
+LEM_REF="${LEM_REF:-19}"
 LDB_REF="${LDB_REF:-1a63ede0248c11aa1ee415187c1f9c9489ce3e02}"
 DBICON_REV="${DBICON_REV:-168}"
 WOW_DIR="${WOW_DIR:-/mnt/data02/Games/Faugus/battlenet/drive_c/Program Files (x86)/World of Warcraft/_forever_}"
