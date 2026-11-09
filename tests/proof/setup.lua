@@ -7,6 +7,7 @@ local Raster = require("wowproof.raster")
 local BlizzardArt = require("wowproof.sources.wow_ui_textures")
 local ClientFiles = require("wowproof.sources.wago_casc")
 local AtlasTable = require("wowproof.sources.atlas_table")
+local RemoteDir = require("wowproof.sources.remote_dir")
 
 local Mock = Helpers.Mock
 
@@ -19,6 +20,13 @@ local ART_REF = "d23deaf8f44a7d280dc974a5c9d5321c013db59b"
 local ATLASES = dofile("tests/proof/atlases.lua")
 local ART_DIR = os.getenv("UF_PROOF_ART") or ".proof-art"
 local ART_FETCH = os.getenv("UF_PROOF_ART_FETCH") ~= "0"
+local PRESETS = { classic = true, enhanced = true }
+local PRESET = os.getenv("UF_PROOF_PRESET") or "classic"
+local PORTRAIT_REMOTE = os.getenv("UF_PROOF_PORTRAITS") or "nas:/volume1/Game/unit-frames/proof-portraits"
+local PORTRAIT_ART = "Interface\\CharacterFrame\\TemporaryPortrait-"
+local PORTRAIT_SEX = "Male"
+local PORTRAIT_CROP = { 0.14, 0.86, 0.14, 0.86 }
+local CREATURE_PORTRAITS = { Beast = "Pet", Mechanical = "Vehicle-Mechanical" }
 
 local Setup = {}
 
@@ -29,6 +37,13 @@ local blizzardArt = BlizzardArt({
 	token = os.getenv("GITHUB_TOKEN") or os.getenv("GH_TOKEN"),
 })
 local clientFiles = ClientFiles({ build = ATLASES.build, dir = ART_DIR, fetch = ART_FETCH })
+local portraitCaptures = RemoteDir({
+	remote = PORTRAIT_REMOTE,
+	dir = ART_DIR .. "/portraits",
+	fetch = ART_FETCH and os.getenv("CI") == nil,
+})
+
+if not PRESETS[PRESET] then error("UF_PROOF_PRESET must be classic or enhanced, not " .. PRESET) end
 
 local function AddonFile(path)
 	if type(path) ~= "string" or path:lower():sub(1, #ADDON_PREFIX) ~= ADDON_PREFIX then return nil end
@@ -47,6 +62,26 @@ end
 
 function Setup.Texture(path)
 	return Setup.AddonTexture(path) or blizzardArt(path) or clientFiles(path)
+end
+
+local function Plain(value)
+	if Mock.IsSecret(value) then return value.secretValue end
+	return value
+end
+
+function Setup.Model(info)
+	local unit = info.unit
+	if not unit then return nil end
+	local art
+	if Plain(UnitIsPlayer(unit)) then
+		local _, race = UnitRace(unit)
+		art = PORTRAIT_SEX .. "-" .. Plain(race)
+	else
+		art = CREATURE_PORTRAITS[Plain(UnitCreatureType(unit))] or "Monster"
+	end
+	local capture = portraitCaptures(PRESET .. "/" .. art .. ".png")
+	if capture then return { path = capture } end
+	return { file = PORTRAIT_ART .. art, texCoords = PORTRAIT_CROP }
 end
 
 function Setup.Font(path)
@@ -97,6 +132,7 @@ function Setup.Proof(options)
 		assets = {
 			textures = Setup.Texture,
 			atlases = AtlasTable(ATLASES.atlases),
+			models = Setup.Model,
 			fonts = { dirs = { FONT_DIR }, family = Setup.Font, default = FONT_FAMILY, defaultWeight = 500 },
 		},
 	})

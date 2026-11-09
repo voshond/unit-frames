@@ -283,10 +283,27 @@ python3 -B scripts/atlas_catalog.py --fetch --check # what CI runs
 Regenerate after adding a `SetAtlas` call. A name the table lacks draws as a
 placeholder.
 
+3D portraits (`PlayerModel`) can't be rendered headlessly, so `Setup.Model`
+stands in a picture for the unit the model shows, keeping the model's alpha,
+model alpha and dead/ghost desaturation. Proof renders Forever's **Classic**
+experience preset (original "SD" character models) by default;
+`UF_PROOF_PRESET=enhanced` renders the HD one. For each preset it first looks
+for an in-game capture of the default portrait,
+`<preset>/<Sex>-<Race>.png` (`Pet`/`Monster` for non-players), in the private
+folder `UF_PROOF_PORTRAITS` (default `nas:/volume1/Game/unit-frames/proof-portraits`,
+fetched over `ssh` into `.proof-art/portraits/`; also a local folder or an
+HTTPS URL; skipped when `CI` is set or `UF_PROOF_ART_FETCH=0`). Captures are
+Blizzard art: keep them in that folder, never in the repo. Without a capture
+it falls back to Blizzard's static HD portrait
+(`Interface\CharacterFrame\TemporaryPortrait-Male-<race>`) from the mirror.
+Previews always show the player's own model (the portrait driver's sample is
+`"player"`), so every sample portrait is the mocked Human. `player-dead`,
+`focus-portrait` and `pet-portrait` cover the portraits that are off by
+default.
+
 Still drawn as dashed placeholders:
 - art the mirror lacks, listed in `.proof-art/missing-<commit>.txt`
 - atlases the generated table lacks
-- portrait models
 
 ### Pull request checks
 
