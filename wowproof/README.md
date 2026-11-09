@@ -34,6 +34,12 @@ proof:Snapshot(MyFrame, "player-frame", { pad = 8, scale = 2, debug = false })
 proof:Sheet()
 ```
 
+`settle = function(layout, region)` (optional) runs after layout and before
+painting. It lets the host update state that depends on resolved sizes, such as
+backdrop texture coordinates that the real engine recomputes on
+`OnSizeChanged`. If `rsvg-convert` is installed but fails, the snapshot
+raises an error instead of writing an empty PNG.
+
 To run named scenarios and get a contact sheet with failures included, use
 `require("wowproof.runner").Run({ proof = proof, scenarios = { { name, build } }, filters = arg })`.
 
@@ -70,7 +76,8 @@ the adapter's job.
 - **Textures:**
   - colour and gradient textures
   - Blizzard's white textures, drawn as solid colour
-  - resolved image files, tinted by vertex colour, including nine-slice
+  - resolved image files, tinted by vertex colour, including nine-slice and
+    texture coordinates (crops, mirrors, rotations and tiling beyond 0–1, such as backdrop edges)
   - anything else as a dashed placeholder titled with its path
 - **Status bars and text:** status bar fills by value, and font strings with justification, outline and `|c` colour codes.
 

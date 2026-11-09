@@ -201,7 +201,10 @@ end
 function Methods:SetRotation(radians) self.__state.rotation = radians end
 function Methods:GetFrameRef(label) return self.__state.frameRefs and self.__state.frameRefs[label] end
 
-function Methods:SetScript(name, fn) self.__state.scripts[name] = fn end
+function Methods:SetScript(name, fn)
+	if name == "OnSizeChanged" then self.__state.backdropSizeScript = false end
+	self.__state.scripts[name] = fn
+end
 function Methods:GetScript(name) return self.__state.scripts[name] end
 function Methods:HookScript(name, fn)
 	local previous = self.__state.scripts[name]
@@ -288,7 +291,12 @@ local function Resize(self, width, height)
 	local s = self.__state
 	local changed = s.width ~= width or s.height ~= height
 	s.width, s.height = width, height
-	if changed and s.scripts.OnSizeChanged and not Mock.HasLayoutAspect(self) then
+	if not changed or Mock.HasLayoutAspect(self) then return end
+	if s.backdropSizeScript and s.backdrop then
+		local setup = rawget(self, "SetupTextureCoordinates") or BackdropTemplateMixin.SetupTextureCoordinates
+		setup(self)
+	end
+	if s.scripts.OnSizeChanged then
 		s.scripts.OnSizeChanged(self, width, height)
 	end
 end
@@ -586,16 +594,83 @@ function Methods:GetStringWidth() return 50 end
 -- Backdrop (BackdropTemplate)
 local borderPieces = { "TopLeftCorner", "TopRightCorner", "BottomLeftCorner", "BottomRightCorner",
 	"TopEdge", "BottomEdge", "LeftEdge", "RightEdge" }
+
+local NINE_SLICE = {
+	{ name = "TopLeftCorner", point = "TOPLEFT" },
+	{ name = "TopRightCorner", point = "TOPRIGHT" },
+	{ name = "BottomLeftCorner", point = "BOTTOMLEFT" },
+	{ name = "BottomRightCorner", point = "BOTTOMRIGHT" },
+	{ name = "TopEdge", point = "TOPLEFT", relativePoint = "TOPRIGHT", between = { "TopLeftCorner", "TopRightCorner" } },
+	{ name = "BottomEdge", point = "BOTTOMLEFT", relativePoint = "BOTTOMRIGHT", between = { "BottomLeftCorner", "BottomRightCorner" } },
+	{ name = "LeftEdge", point = "TOPLEFT", relativePoint = "BOTTOMLEFT", between = { "TopLeftCorner", "BottomLeftCorner" } },
+	{ name = "RightEdge", point = "TOPRIGHT", relativePoint = "BOTTOMRIGHT", between = { "TopRightCorner", "BottomRightCorner" } },
+	{ name = "Center" },
+}
+local BACKDROP_COORD_START = 0.0625
+local BACKDROP_COORD_END = 1 - BACKDROP_COORD_START
+local BACKDROP_UV_ORDER = { "ULx", "ULy", "LLx", "LLy", "URx", "URy", "LRx", "LRy" }
+local BACKDROP_UVS = {
+	TopLeftCorner = { ULx = 0.5078125, ULy = BACKDROP_COORD_START, LLx = 0.5078125, LLy = BACKDROP_COORD_END,
+		URx = 0.6171875, URy = BACKDROP_COORD_START, LRx = 0.6171875, LRy = BACKDROP_COORD_END },
+	TopRightCorner = { ULx = 0.6328125, ULy = BACKDROP_COORD_START, LLx = 0.6328125, LLy = BACKDROP_COORD_END,
+		URx = 0.7421875, URy = BACKDROP_COORD_START, LRx = 0.7421875, LRy = BACKDROP_COORD_END },
+	BottomLeftCorner = { ULx = 0.7578125, ULy = BACKDROP_COORD_START, LLx = 0.7578125, LLy = BACKDROP_COORD_END,
+		URx = 0.8671875, URy = BACKDROP_COORD_START, LRx = 0.8671875, LRy = BACKDROP_COORD_END },
+	BottomRightCorner = { ULx = 0.8828125, ULy = BACKDROP_COORD_START, LLx = 0.8828125, LLy = BACKDROP_COORD_END,
+		URx = 0.9921875, URy = BACKDROP_COORD_START, LRx = 0.9921875, LRy = BACKDROP_COORD_END },
+	TopEdge = { ULx = 0.2578125, ULy = "repeatX", LLx = 0.3671875, LLy = "repeatX",
+		URx = 0.2578125, URy = BACKDROP_COORD_START, LRx = 0.3671875, LRy = BACKDROP_COORD_START },
+	BottomEdge = { ULx = 0.3828125, ULy = "repeatX", LLx = 0.4921875, LLy = "repeatX",
+		URx = 0.3828125, URy = BACKDROP_COORD_START, LRx = 0.4921875, LRy = BACKDROP_COORD_START },
+	LeftEdge = { ULx = 0.0078125, ULy = BACKDROP_COORD_START, LLx = 0.0078125, LLy = "repeatY",
+		URx = 0.1171875, URy = BACKDROP_COORD_START, LRx = 0.1171875, LRy = "repeatY" },
+	RightEdge = { ULx = 0.1328125, ULy = BACKDROP_COORD_START, LLx = 0.1328125, LLy = "repeatY",
+		URx = 0.2421875, URy = BACKDROP_COORD_START, LRx = 0.2421875, LRy = "repeatY" },
+	Center = { ULx = 0, ULy = 0, LLx = 0, LLy = "repeatY", URx = "repeatX", URy = 0, LRx = "repeatX", LRy = "repeatY" },
+}
+local CORNER_SIZE = { TopLeftCorner = "both", TopRightCorner = "both", BottomLeftCorner = "both",
+	BottomRightCorner = "both", TopEdge = "height", BottomEdge = "height", LeftEdge = "width", RightEdge = "width" }
+
 function Methods:SetBackdrop(info)
 	if not info or not (info.edgeFile or info.bgFile) then self:ClearBackdrop(); return end
 	-- BackdropTemplateMixin:SetBackdrop ignores the info table it already holds.
 	if self.__state.backdrop == info then return end
 	self.__state.backdrop = info
-	for _, key in ipairs(borderPieces) do
-		local texture = rawget(self, key) or self:CreateTexture(nil, "BORDER")
-		self[key] = texture
-		texture:SetTexture(info.edgeFile)
+	local edgeSize = self:GetEdgeSize()
+	local x, y, x1, y1 = 0, 0, 0, 0
+	if info.bgFile then
+		local insets = info.insets or {}
+		x, y = -edgeSize + (insets.left or 0), edgeSize - (insets.top or 0)
+		x1, y1 = edgeSize - (insets.right or 0), -edgeSize + (insets.bottom or 0)
 	end
+	local pieces = self.__state.backdropPieces or {}
+	self.__state.backdropPieces = pieces
+	for _, setup in ipairs(NINE_SLICE) do
+		local center = setup.name == "Center"
+		local piece = rawget(self, setup.name) or self:CreateTexture(nil, center and "BACKGROUND" or "BORDER")
+		self[setup.name], pieces[setup.name] = piece, piece
+		piece:ClearAllPoints()
+		if center then
+			piece:SetPoint("TOPLEFT", pieces.TopLeftCorner, "BOTTOMRIGHT", x, y)
+			piece:SetPoint("BOTTOMRIGHT", pieces.BottomRightCorner, "TOPLEFT", x1, y1)
+			piece:SetTexture(info.bgFile)
+			piece:SetSize(0, 0)
+		else
+			if setup.between then
+				piece:SetPoint(setup.point, pieces[setup.between[1]], setup.relativePoint)
+				piece:SetPoint(setup.relativePoint, pieces[setup.between[2]], setup.point)
+			else
+				piece:SetPoint(setup.point, self, setup.point)
+			end
+			piece:SetTexture(info.edgeFile)
+			local size = CORNER_SIZE[setup.name]
+			piece:SetSize((size == "both" or size == "width") and edgeSize or 0, (size == "both" or size == "height") and edgeSize or 0)
+		end
+	end
+	self:SetBackdropColor(1, 1, 1, 1)
+	self:SetBackdropBorderColor(1, 1, 1, 1)
+	local setupTextureCoordinates = rawget(self, "SetupTextureCoordinates") or BackdropTemplateMixin.SetupTextureCoordinates
+	setupTextureCoordinates(self)
 end
 function Methods:GetBackdrop() return self.__state.backdrop end
 function Methods:GetEdgeSize()
@@ -604,12 +679,16 @@ function Methods:GetEdgeSize()
 end
 function Methods:ClearBackdrop()
 	self.__state.backdrop = nil
-	for _, key in ipairs(borderPieces) do
-		local texture = rawget(self, key)
+	for _, setup in ipairs(NINE_SLICE) do
+		local texture = rawget(self, setup.name)
 		if texture then texture:SetTexture(nil) end
 	end
 end
-function Methods:SetBackdropColor(r, g, b, a) self.__state.backdropColor = { r, g, b, a } end
+function Methods:SetBackdropColor(r, g, b, a)
+	self.__state.backdropColor = { r, g, b, a }
+	local center = rawget(self, "Center")
+	if center then center:SetVertexColor(r, g, b, a) end
+end
 function Methods:SetBackdropBorderColor(r, g, b, a)
 	self.__state.backdropBorderColor = { r, g, b, a }
 	for _, key in ipairs(borderPieces) do
@@ -1088,6 +1167,7 @@ function Mock.Install()
 		obj.__state.template = template
 		if template and template:find("Secure", 1, true) then obj.__state.protected = true end
 		if template and template:find(LAYOUT_ASPECT_TEMPLATE, 1, true) then obj.__state.layoutAspect = true end
+		if template and template:find("BackdropTemplate", 1, true) then obj.__state.backdropSizeScript = true end
 		if parent and parent == rawget(_G, "Minimap") then rawset(obj, "__strict", true) end
 		if frameType == "AuraContainer" then
 			assert(not InCombatLockdown(), "Native aura containers cannot be created in combat")
@@ -1403,10 +1483,29 @@ function Mock.Install()
 	_G.BackdropTemplateMixin = {
 		SetupTextureCoordinates = function(self)
 			local edgeSize, scale = self:GetEdgeSize(), self:GetEffectiveScale()
+			local width, height = self:GetWidth(), self:GetHeight()
 			self.__state.backdropRepeat = {
-				math.max(0, self:GetWidth() / edgeSize * scale - 2),
-				math.max(0, self:GetHeight() / edgeSize * scale - 2),
+				math.max(0, width / edgeSize * scale - 2),
+				math.max(0, height / edgeSize * scale - 2),
 			}
+			local edgeX = math.max(0, width / edgeSize * scale - 2 - BACKDROP_COORD_START)
+			local edgeY = math.max(0, height / edgeSize * scale - 2 - BACKDROP_COORD_START)
+			local info = self.__state.backdrop
+			for name, piece in pairs(self.__state.backdropPieces or {}) do
+				local repeatX, repeatY = edgeX, edgeY
+				if name == "Center" then
+					repeatX, repeatY = 1, 1
+					local divisor = info and info.tile and (info.tileSize ~= 0 and info.tileSize or edgeSize)
+					if divisor and divisor ~= 0 then repeatX, repeatY = width / divisor * scale, height / divisor * scale end
+				end
+				local coords = {}
+				for index, key in ipairs(BACKDROP_UV_ORDER) do
+					local value = BACKDROP_UVS[name][key]
+					if value == "repeatX" then value = repeatX elseif value == "repeatY" then value = repeatY end
+					coords[index] = value
+				end
+				piece:SetTexCoord(unpack(coords))
+			end
 		end,
 	}
 	_G.AuraUtil = {

@@ -210,6 +210,48 @@ local function SourceRect(coords, width, height)
 end
 Paint.SourceRect = SourceRect
 
+local function Corners(coords)
+	if #coords >= 8 then
+		return { coords[1], coords[2] }, { coords[3], coords[4] }, { coords[5], coords[6] }
+	end
+	local left, right, top, bottom = coords[1], coords[2], coords[3], coords[4]
+	return { left, top }, { left, bottom }, { right, top }
+end
+
+local function NeedsAffine(coords)
+	if not coords or #coords < 4 then return false end
+	for _, value in ipairs(coords) do
+		if value < 0 or value > 1 then return true end
+	end
+	local upperLeft, lowerLeft, upperRight = Corners(coords)
+	return upperLeft[2] ~= upperRight[2] or upperLeft[1] ~= lowerLeft[1]
+		or upperRight[1] < upperLeft[1] or lowerLeft[2] < upperLeft[2]
+end
+Paint.NeedsAffine = NeedsAffine
+
+local MAX_TILE = 8192
+
+local function AffineTransform(rect, coords, width, height)
+	local upperLeft, lowerLeft, upperRight = Corners(coords)
+	local ax, ay = upperRight[1] - upperLeft[1], upperRight[2] - upperLeft[2]
+	local bx, by = lowerLeft[1] - upperLeft[1], lowerLeft[2] - upperLeft[2]
+	local det = ax * by - bx * ay
+	if math.abs(det) < 1e-9 then return nil end
+	local w, h = rect.width, rect.height
+	local tileWidth = math.sqrt((w * by / det) ^ 2 + (h * ay / det) ^ 2)
+	local tileHeight = math.sqrt((w * bx / det) ^ 2 + (h * ax / det) ^ 2)
+	if tileWidth < 0.01 or tileHeight < 0.01 or tileWidth > MAX_TILE or tileHeight > MAX_TILE then return nil end
+	return {
+		w * by / det / width,
+		h * -ay / det / width,
+		w * -bx / det / height,
+		h * ax / det / height,
+		rect.left - w * (by * upperLeft[1] - bx * upperLeft[2]) / det,
+		rect.top - h * (ax * upperLeft[2] - ay * upperLeft[1]) / det,
+	}
+end
+Paint.AffineTransform = AffineTransform
+
 local function SliceSpans(start, length, sourceLength, low, high)
 	local scale = math.min(1, length / math.max(low + high, 1))
 	local lowTarget, highTarget = low * scale, high * scale
@@ -218,6 +260,18 @@ local function SliceSpans(start, length, sourceLength, low, high)
 		{ start + lowTarget, length - lowTarget - highTarget, low, sourceLength - low - high },
 		{ start + length - highTarget, highTarget, sourceLength - high, high },
 	}
+end
+
+function Context:DrawImageAffine(image, rect, coords)
+	if rect.width <= 0 or rect.height <= 0 then return end
+	local matrix = AffineTransform(rect, coords, image.width, image.height)
+	if not matrix then return end
+	local values = {}
+	for index, value in ipairs(matrix) do values[index] = string.format("%.6g", value) end
+	local id = self:Define(string.format(
+		'<pattern id="{id}" patternUnits="userSpaceOnUse" width="%s" height="%s" patternTransform="matrix(%s)"><use href="#%s"/></pattern>',
+		Number(image.width), Number(image.height), table.concat(values, " "), image.id))
+	self:Emit(string.format('<rect %s fill="url(#%s)"/>', RectAttributes(rect), id))
 end
 
 function Context:DrawNineSlice(image, slice, rect)
@@ -263,13 +317,15 @@ function Context:DrawTexture(region, rect, alpha)
 		self:Emit(string.format('<g opacity="%s"%s%s>', Number(Clamp(alpha)), filter, blend))
 		if texture.slice and image.width then
 			self:DrawNineSlice(image, texture.slice, rect)
+		elseif NeedsAffine(texture.texCoords) and image.width then
+			self:DrawImageAffine(image, rect, texture.texCoords)
 		else
 			self:DrawImagePiece(image, rect, SourceRect(texture.texCoords, image.width or 1, image.height or 1))
 		end
 		self:Emit("</g>")
 		return
 	end
-	if texture.vertexColor then
+	if texture.vertexColor and texture.file then
 		self:Emit(string.format('<rect %s %s%s/>', RectAttributes(rect), Fill(texture.vertexColor, alpha), blend))
 		return
 	end

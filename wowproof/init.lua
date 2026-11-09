@@ -21,6 +21,7 @@ function Proof.New(options)
 		scale = options.scale or 2,
 		png = options.png ~= false,
 		title = options.title or "UI proof",
+		settle = options.settle,
 		entries = {},
 		images = {},
 	}, Proof)
@@ -61,6 +62,7 @@ end
 function Proof:Render(region, options)
 	options = options or {}
 	local layout = Layout.New(self.adapter, self.screen)
+	if self.settle then self.settle(layout, region) end
 	return Paint.Render({
 		adapter = self.adapter,
 		layout = layout,
@@ -83,7 +85,13 @@ function Proof:Snapshot(region, name, options)
 	if self.png then
 		local fonts = self.assets.fonts and self.assets.fonts.dirs
 		self.fontConfig = self.fontConfig or Raster.FontConfig(fonts, self.cacheDir)
-		entry.png = Raster.SvgToPng(entry.svg, base .. ".png", options.scale or self.scale, self.fontConfig)
+		if Raster.Has("rsvg-convert") then
+			entry.png = Raster.SvgToPng(entry.svg, base .. ".png", options.scale or self.scale, self.fontConfig)
+			if not entry.png then
+				os.remove(base .. ".png")
+				error("wowproof: rsvg-convert could not render " .. entry.svg, 2)
+			end
+		end
 	end
 	self.entries[#self.entries + 1] = entry
 	return entry

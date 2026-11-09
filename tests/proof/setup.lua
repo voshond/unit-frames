@@ -59,12 +59,35 @@ function Setup.Adapter()
 	})
 end
 
+local function BackdropGeometry(frame, width, height)
+	return setmetatable({
+		GetWidth = function() return width end,
+		GetHeight = function() return height end,
+		GetEffectiveScale = function() return frame:GetEffectiveScale() end,
+		GetEdgeSize = function() return frame:GetEdgeSize() end,
+	}, { __index = frame })
+end
+
+function Setup.SettleBackdrops(layout)
+	for _, frame in ipairs(Mock.objects) do
+		local state = frame.__state
+		local rect = state.backdrop and state.backdropSizeScript and layout:Rect(frame)
+		if rect then
+			local scale = layout:Scale(frame)
+			local repeats = state.backdropRepeat
+			BackdropTemplateMixin.SetupTextureCoordinates(BackdropGeometry(frame, rect.width / scale, rect.height / scale))
+			state.backdropRepeat = repeats
+		end
+	end
+end
+
 function Setup.Proof(options)
 	options = options or {}
 	return Proof.New({
 		adapter = Setup.Adapter(),
 		outDir = options.outDir or os.getenv("UF_PROOF_DIR") or ".proof",
 		title = options.title or "UnitFrames UI proof",
+		settle = Setup.SettleBackdrops,
 		assets = {
 			textures = Setup.Texture,
 			fonts = { dirs = { FONT_DIR }, family = Setup.Font, default = FONT_FAMILY, defaultWeight = 500 },

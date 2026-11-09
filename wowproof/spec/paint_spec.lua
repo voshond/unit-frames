@@ -126,6 +126,22 @@ describe("wowproof paint", function()
 		assert.same({ left = 0, top = 0, width = 32, height = 16 }, Paint.SourceRect(nil, 32, 16))
 	end)
 
+	it("maps rotated and tiled texture coordinates through a pattern transform", function()
+		local coords = { 0, 2, 1, 2, 0, 0, 1, 0 }
+		assert.is_true(Paint.NeedsAffine(coords))
+		assert.is_false(Paint.NeedsAffine({ 0.1, 0.9, 0.1, 0.9 }))
+		assert.is_true(Paint.NeedsAffine({ 1, 0, 0, 1 }))
+		scene.Node("Texture", frame, { points = { { all = true } }, texture = { file = "Own\\Glow.tga", texCoords = coords } })
+		local svg = Render(nil, { image = Image })
+		assert.is_true(Has(svg, 'patternTransform="matrix(0 0.625 -1.5625 0 110 10)"'))
+		assert.is_true(Has(svg, '<rect x="10" y="10" width="100" height="20" fill="url(#d2)"/>'))
+	end)
+
+	it("skips texture coordinates that collapse the image", function()
+		assert.is_nil(Paint.AffineTransform({ left = 0, top = 0, width = 10, height = 10 }, { 0, 0, 0, 0, 0, 0, 0, 0 }, 16, 16))
+		assert.is_nil(Paint.AffineTransform({ left = 0, top = 0, width = 200, height = 10 }, { 0, 0, 0, 0.0001, 1, 0, 1, 0.0001 }, 16, 16))
+	end)
+
 	it("paints Blizzard's white texture as a tinted solid", function()
 		scene.Node("Texture", frame, {
 			points = { { all = true } }, texture = { file = "Interface\\Buttons\\WHITE8X8", vertexColor = { 0, 0, 1, 0.5 } },
