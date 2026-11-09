@@ -1,3 +1,4 @@
+dofile("tests/wut.lua")
 package.path = "./tests/?.lua;./?.lua;./?/init.lua;" .. package.path
 
 local Helpers = require("helpers")

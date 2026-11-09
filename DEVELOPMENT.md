@@ -187,8 +187,8 @@ in source is needed before tagging.
 | `UnitFrames_Onboarding/` | Load-on-demand Getting started guide: preset looks, tweaks, extras and Workbench hand-off |
 | `UnitFrames_Media/` | Additional fonts and their licences |
 | `tests/` | Mocked client, API snapshot and regression specs |
-| `wowproof/` | Standalone UI-proof renderer (no UnitFrames code; see its README) |
 | `scripts/` | Library fetching, installation and API snapshot generation |
+| `.wut/` | The fetched [wow-ui-testing](https://github.com/voshond/wow-ui-testing) library (ignored by Git) |
 
 New runtime files belong in the relevant TOC in dependency order; tests
 load those TOCs too. Preserve existing worktree changes and avoid editing
@@ -228,7 +228,26 @@ a name ending in `.lua` exactly one file. `-t` and `--tag` narrow further. A run
 that selects no tests fails. The runner always checks addon Lua syntax. No
 external busted installation is needed. To see where a spec spends its time,
 use LuaJIT's profiler: `luajit -jp=F tests/run.lua clickgrid_spec.lua`.
-The specs of the `wowproof/` package run with the suite as `wowproof/<file>`.
+
+### The wow-ui-testing library
+
+The spec runner (`wowtest`) and the UI-proof renderer (`wowproof`) come from
+the shared [wow-ui-testing](https://github.com/voshond/wow-ui-testing)
+library, which our other addons use too. `.wut-version` pins one library
+commit (full SHA, the version tag after `#`). `scripts/fetch-wut.sh` (a copy
+of the library's) downloads that commit into the ignored `.wut/` folder and
+does nothing when it is already there; `tests/run.lua`, `scripts/proof.sh`
+and CI run it for you, so a fresh checkout needs network once.
+`tests/wut.config.lua` tells the runner where specs live and which addon
+folders to syntax-check; `tests/run.lua` is a thin shim over the library's
+`wowtest/cli.lua`. The library's own specs (including wowproof's) run in its
+repository.
+
+To work on the library and this addon together, point `WUT_DIR` at a local
+checkout instead of the pin: `WUT_DIR=../wow-ui-testing luajit tests/run.lua -j`.
+To move to a new library version, put its commit SHA in `.wut-version` (and
+refresh `scripts/fetch-wut.sh` from it when that changed); the next run
+fetches it.
 
 ### UI proof
 
@@ -244,9 +263,9 @@ It writes `.proof/<scenario>.svg`, `.png` and a contact sheet `.proof/index.html
 (librsvg); our own `.tga` textures need ImageMagick. Scenarios live in
 `tests/proof/units.lua` and `tests/proof/workbench.lua`: each is a name and a
 `build` that loads the addon, feeds sample values and returns the region to
-render. `tests/proof/setup.lua` is the only coupling to the renderer: it hands
-`wowproof` an adapter for the mock and maps our fonts and textures. A spec can
-also call `Helpers.Snapshot(name, region)`, which renders only with
+render. `tests/proof/setup.lua` is the only coupling to the renderer: it loads
+`wowproof` from the library (see above), hands it an adapter for the mock and
+maps our fonts and textures. A spec can also call `Helpers.Snapshot(name, region)`, which renders only with
 `UF_PROOF=1`. CI uploads the images as the `ui-proof` artifact.
 
 For a pull request body, `bash scripts/proof-publish.sh <filters>` renders the
