@@ -6,7 +6,7 @@ release_test_tmp="$(mktemp -d)"
 trap 'rm -rf -- "$release_test_tmp"' EXIT
 fixture="$release_test_tmp/repo"
 mkdir -p "$fixture/scripts"
-for addon in UnitFrames UnitFrames_Workbench UnitFrames_Media UnitFrames_ClickGrid; do
+for addon in UnitFrames UnitFrames_Workbench UnitFrames_Media UnitFrames_ClickGrid UnitFrames_Onboarding; do
 	cp -a "$repo_dir/$addon" "$fixture/"
 done
 cp "$repo_dir/LICENSE" "$repo_dir/.gitignore" "$fixture/"
@@ -21,7 +21,7 @@ git init -q
 git config user.name 'Release test'
 git config user.email 'release-test@example.invalid'
 # Libraries are separate build inputs, as in the real repo.
-git add .gitignore LICENSE scripts tests UnitFrames UnitFrames_Workbench UnitFrames_Media UnitFrames_ClickGrid
+git add .gitignore LICENSE scripts tests UnitFrames UnitFrames_Workbench UnitFrames_Media UnitFrames_ClickGrid UnitFrames_Onboarding
 git reset -q -- UnitFrames/Libs UnitFrames_Media/Libs
 git -c core.hooksPath=/dev/null commit -qm 'Release fixture'
 git tag v0.0.0-beta.1
@@ -56,7 +56,7 @@ archive="$release_test_tmp/output/UnitFrames-v0.0.0-beta.1.zip"
 unzip -tq "$archive" >/dev/null
 mkdir -p "$release_test_tmp/unpacked"
 unzip -q "$archive" -d "$release_test_tmp/unpacked"
-[[ "$(find "$release_test_tmp/unpacked" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 4 ]]
+[[ "$(find "$release_test_tmp/unpacked" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 5 ]]
 [[ ! -e "$release_test_tmp/unpacked/UnitFrames/untracked.sh" ]]
 cmp "$release_test_tmp/unpacked/UnitFrames/Core/Init.lua" <(git show v0.0.0-beta.1:UnitFrames/Core/Init.lua)
 cp LICENSE "$release_test_tmp/unpacked/"
