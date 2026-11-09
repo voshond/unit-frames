@@ -125,7 +125,7 @@ describe("Collapsing icon row", function()
 	end)
 
 	it("matches Blizzard's flow arithmetic: one cell with any icon, nothing without", function()
-		local source = loadfile("examples/wow-ui-source-forever/Interface/AddOns/Blizzard_SharedXMLBase/AnchorUtil.lua")
+		local source = loadfile(Helpers.ClientSource .. "/Interface/AddOns/Blizzard_SharedXMLBase/AnchorUtil.lua")
 		if not source then return end
 		local env = setmetatable({
 			GenerateClosure = function(fn, value) return function(...) return fn(value, ...) end end,

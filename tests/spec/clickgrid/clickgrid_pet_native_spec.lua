@@ -11,7 +11,7 @@ end
 
 describe("ClickGrid native pet assignment", function()
 	it("uses Blizzard token normalization and oUF child updates through owner replacement in combat", function()
-		local source = Read("examples/wow-ui-source-forever/Interface/AddOns/Blizzard_FrameXML/SecureTemplates.lua")
+		local source = Read(Helpers.ClientSource .. "/Interface/AddOns/Blizzard_FrameXML/SecureTemplates.lua")
 		if not source then return end
 		local UF, CG = Helpers.LoadClickGrid()
 		CG.Config:SetStyle("pet", "display", "inline")
@@ -62,7 +62,7 @@ describe("ClickGrid native pet assignment", function()
 		end
 		assert.equals(count, #CG.frames)
 		assert.equals(UF.oUF, CG.UF.oUF)
-		local driverSource = Read("examples/wow-ui-source-forever/Interface/AddOns/Blizzard_RestrictedAddOnEnvironment/SecureStateDriver.lua")
+		local driverSource = Read(Helpers.ClientSource .. "/Interface/AddOns/Blizzard_RestrictedAddOnEnvironment/SecureStateDriver.lua")
 		local driverPrefix = assert(driverSource:match("^(.-)local function resolveDriver"))
 		local driver = assert(loadstring(driverPrefix .. "\nreturn SecureStateDriverManager_UpdateUnitWatch, unitExistsCache"))
 		local present = false

@@ -1,94 +1,24 @@
 -- Shared helpers for specs: a fresh mocked client with the addon loaded.
 local Mock = dofile("tests/mock/wow.lua")
 local NewStubOUF = dofile("tests/mock/ouf.lua")
+local Loader = require("wowmock.loader")
 
 local Helpers = { Mock = Mock }
 
+-- The wow-ui-testing library folder, and the Blizzard UI source its pin names
+-- (present after bash .wut/scripts/update-client-source.sh --sync).
+Helpers.WutDir = package.searchpath("wowmock.loader", package.path):match("^(.*)/wowmock/loader%.lua$")
+Helpers.ClientSource = Helpers.WutDir .. "/.client-source/forever"
+
 -- Libraries that need the real client; tests use stand-ins instead.
-local SKIP = {
+Loader.Skip({
 	"Libs/oUF/",         -- replaced by tests/mock/ouf.lua
 	"Libs/LibEditMode/", -- optional at runtime (LibStub(..., true))
-}
-
-local function Skipped(path)
-	for _, pattern in ipairs(SKIP) do
-		if path:find(pattern, 1, true) then
-			return true
-		end
-	end
-	return false
-end
-
--- Files are read and compiled once per run. Calling a compiled chunk again
--- runs its main body afresh (new locals and closures), like a fresh load, so
--- every addon load still starts from a clean state.
-local chunks, includes, tocs = {}, {}, {}
-
-local function Compile(path)
-	local chunk = chunks[path]
-	if not chunk then
-		chunk = assert(loadfile(path))
-		chunks[path] = chunk
-	end
-	return chunk
-end
-
--- Only <Script file="..."/> and <Include file="..."/> are followed.
-local function XmlIncludes(path)
-	local files = includes[path]
-	if not files then
-		local dir = path:match("^(.*)/[^/]+$")
-		local xml = assert(io.open(path)):read("*a")
-		files = {}
-		for file in xml:gmatch('<%a+%s+file%s*=%s*["\']([^"\']+)["\']') do
-			files[#files + 1] = dir .. "/" .. file:gsub("\\", "/")
-		end
-		includes[path] = files
-	end
-	return files
-end
-
-local function TocFiles(tocPath)
-	local files = tocs[tocPath]
-	if not files then
-		local dir = tocPath:match("^(.*)/[^/]+$")
-		files = {}
-		for line in io.lines(tocPath) do
-			line = line:gsub("\r", ""):gsub("^%s+", ""):gsub("%s+$", "")
-			if line ~= "" and not line:match("^#") then
-				files[#files + 1] = dir .. "/" .. line:gsub("\\", "/")
-			end
-		end
-		tocs[tocPath] = files
-	end
-	return files
-end
-
-local function LoadFile(path, addonName, ns)
-	if Skipped(path) then
-		return
-	end
-	if path:match("%.xml$") then
-		for _, file in ipairs(XmlIncludes(path)) do
-			LoadFile(file, addonName, ns)
-		end
-	elseif path:match("%.lua$") then
-		Compile(path)(addonName, ns)
-	else
-		error("tests can't load " .. path)
-	end
-end
+})
 
 -- Loads every file listed in a TOC, in order, passing (addonName, ns) as the
 -- chunk varargs exactly like the client does.
-function Helpers.LoadToc(tocPath, addonName, ns)
-	ns = ns or {}
-	for _, file in ipairs(TocFiles(tocPath)) do
-		LoadFile(file, addonName, ns)
-	end
-	Mock.loadedAddons[addonName] = true
-	return ns
-end
+Helpers.LoadToc = Loader.LoadToc
 
 -- Fresh mock client + freshly loaded UnitFrames (with the stub oUF as ns.oUF).
 -- initialize = true also runs the ADDON_LOADED setup (AceDB, media);
