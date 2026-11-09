@@ -299,10 +299,17 @@ it falls back to Blizzard's static HD portrait
 
 `scripts/portrait-capture` renders the Classic captures: the 1.12 character
 model through [classic-wow-model-viewer](https://github.com/JollyGrin/turtle-wow-model-viewer)
-(MIT, three.js) in Playwright's headless Chromium shell (SwiftShader), framed
-like `SetPortraitZoom(1)`, bald (hairstyle geoset 1, as the library's default
-hair leaves a scalp gap), on a transparent background matted from a black and
-a white render. It needs Node, ImageMagick and a headless shell under
+(MIT, three.js) in Playwright's headless Chromium shell (SwiftShader). It
+replicates the client's `SetPortraitZoom(1)` view rather than inventing one:
+the field of view and viewing direction come from the portrait camera (type 0)
+of the pinned build's own M2 (`--m2`, human male 119940, fetched from Wago),
+frozen at the first frame of Stand. The library's Stand pose leans the head
+forward where Forever's doesn't, so the camera aims at the posed head (skinned
+vertices) and `TURN`, `HEAD_SHARE` and `CENTER_DROP` in `capture.mjs` are
+calibrated against an in-game player frame. The model is bald (hairstyle
+geoset 1, as the library's default hair leaves a scalp gap), on a transparent
+background matted from a black and a white render. It needs Node, ImageMagick
+and a headless shell under
 `~/.cache/ms-playwright` (`npx playwright install chromium-headless-shell`,
 or `CHROME=<path>`). The model files come from the library's demo CDN
 (`--cdn` or `PORTRAIT_CDN` for another), so render once and store the result
@@ -314,6 +321,7 @@ node capture.mjs human male /tmp/Male-Human.png        # --hair N, --size 256
 ssh nas 'cat > /volume1/Game/unit-frames/proof-portraits/classic/Male-Human.png' < /tmp/Male-Human.png
 rm -rf ../../.proof-art/portraits                        # re-fetch on the next proof run
 ```
+
 Previews always show the player's own model (the portrait driver's sample is
 `"player"`), so every sample portrait is the mocked Human. `player-dead`,
 `focus-portrait` and `pet-portrait` cover the portraits that are off by

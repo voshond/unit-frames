@@ -8,22 +8,38 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const VIEWER = "classic-wow-model-viewer/dist/index.js";
 const DEFAULT_CDN = "https://jollygrin.github.io/turtle-wow-model-viewer";
+const DEFAULT_BUILD = "1.60.1.70862";
+const CASC = "https://wago.tools/api/casc";
+const MODELS = { "human-male": 119940 };
+const PORTRAIT_CAMERA = 0;
+const CAMERA_SIZE = 116;
+const NECK = 1.8;
+const HEAD_SHARE = 0.55;
+const CENTER_DROP = 0.13;
+const TURN = 10;
 const BROWSERS = path.join(homedir(), ".cache", "ms-playwright");
 const TYPES = { ".js": "text/javascript", ".html": "text/html" };
 
 const usage = () => {
-	console.error("usage: node capture.mjs <race> <male|female> <out.png> [--hair N] [--size N] [--cdn URL]");
+	console.error("usage: node capture.mjs <race> <male|female> <out.png> [--hair N] [--size N] [--turn DEG] [--m2 FileDataID] [--build B] [--cdn URL]");
 	process.exit(1);
 };
 
 const parseArgs = (argv) => {
 	const [race, gender, out, ...rest] = argv;
 	if (!race || !gender || !out) usage();
-	const options = { race, gender, out, hair: 1, size: 256, cdn: process.env.PORTRAIT_CDN ?? DEFAULT_CDN };
+	const options = {
+		race, gender, out, hair: 1, size: 256, turn: TURN, m2: MODELS[`${race}-${gender}`], build: DEFAULT_BUILD,
+		cdn: process.env.PORTRAIT_CDN ?? DEFAULT_CDN,
+	};
 	for (let index = 0; index < rest.length; index += 2) {
 		const key = rest[index].replace(/^--/, "");
 		if (!(key in options) || rest[index + 1] === undefined) usage();
-		options[key] = ["hair", "size"].includes(key) ? Number(rest[index + 1]) : rest[index + 1];
+		options[key] = ["hair", "size", "m2", "turn"].includes(key) ? Number(rest[index + 1]) : rest[index + 1];
+	}
+	if (!options.m2) {
+		console.error(`no client model known for ${race}-${gender}: pass --m2 <FileDataID>`);
+		process.exit(1);
 	}
 	return options;
 };
@@ -38,6 +54,34 @@ const findChrome = () => {
 		}
 	}
 	return undefined;
+};
+
+const portraitCamera = async (fileDataId, build) => {
+	const response = await fetch(`${CASC}/${fileDataId}?version=${build}`);
+	if (!response.ok) throw new Error(`model ${fileDataId}: HTTP ${response.status}`);
+	const file = Buffer.from(await response.arrayBuffer());
+	const header = file.indexOf("MD20");
+	if (header < 0) throw new Error(`model ${fileDataId} is not an M2`);
+	const m2 = file.subarray(header);
+	const vector = (offset) => [m2.readFloatLE(offset), m2.readFloatLE(offset + 4), m2.readFloatLE(offset + 8)];
+	const firstKey = (track) => {
+		const animations = m2.readUInt32LE(track + 12), keys = m2.readUInt32LE(track + 16);
+		if (!animations || !m2.readUInt32LE(keys)) return undefined;
+		return m2.readFloatLE(m2.readUInt32LE(keys + 4));
+	};
+	const count = m2.readUInt32LE(272), cameras = m2.readUInt32LE(276);
+	for (let index = 0; index < count; index++) {
+		const camera = cameras + index * CAMERA_SIZE;
+		if (m2.readUInt32LE(camera) !== PORTRAIT_CAMERA) continue;
+		return {
+			far: m2.readFloatLE(camera + 4),
+			near: m2.readFloatLE(camera + 8),
+			position: vector(camera + 32),
+			target: vector(camera + 64),
+			fov: firstKey(camera + 96),
+		};
+	}
+	throw new Error(`model ${fileDataId} has no portrait camera`);
 };
 
 const withHairstyle = (source, hair) => {
@@ -55,6 +99,7 @@ const serve = (page, hair) => page.route("http://capture/**", (route) => {
 });
 
 const options = parseArgs(process.argv.slice(2));
+const camera = await portraitCamera(options.m2, options.build);
 const browser = await chromium.launch({
 	executablePath: findChrome(),
 	args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"],
@@ -65,7 +110,11 @@ try {
 	const page = await browser.newPage({ viewport: { width: options.size, height: options.size } });
 	page.on("pageerror", (error) => console.error(error.message));
 	await serve(page, options.hair);
-	const query = new URLSearchParams({ cdn: options.cdn, race: options.race, gender: options.gender });
+	const framing = { turn: options.turn, neck: NECK, headShare: HEAD_SHARE, centerDrop: CENTER_DROP };
+	const query = new URLSearchParams({
+		cdn: options.cdn, race: options.race, gender: options.gender,
+		camera: JSON.stringify(camera), framing: JSON.stringify(framing),
+	});
 	await page.goto(`http://capture/page.html?${query}`);
 	await page.waitForFunction(() => window.ready, null, { timeout: 60000 });
 
