@@ -223,7 +223,7 @@ describe("Cropped aura icon row", function()
 		local env = setmetatable({ CustomAuraButtonSharedMixin = nil, AuraButtonPrivateMixin = {},
 			CreateFromMixins = function(...) local out = {}; for i = 1, select("#", ...) do
 				for k, v in pairs(select(i, ...)) do out[k] = v end end; return out end }, { __index = _G })
-		local source = loadfile("examples/wow-ui-source-forever/Interface/AddOns/Blizzard_AuraContainer/Blizzard_CustomAuraButton.lua")
+		local source = loadfile(Helpers.ClientSource .. "/Interface/AddOns/Blizzard_AuraContainer/Blizzard_CustomAuraButton.lua")
 		-- Assignment enum comes from the generated client snapshot.
 		local mode = Mock.API.Snapshot().enums.CustomAuraButtonUpdateMode
 		assert.is_not_nil(mode)

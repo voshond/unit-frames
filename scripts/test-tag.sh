@@ -14,9 +14,9 @@ for addon in UnitFrames UnitFrames_Media; do
 		cp -a "$repo_dir/$addon/Libs" "$tag_tests_tmp/$addon/Libs"
 	fi
 done
-if [[ -d "$repo_dir/examples/wow-ui-source-forever" && ! -e "$tag_tests_tmp/examples" ]]; then
-	mkdir -p "$tag_tests_tmp/examples"
-	ln -s "$repo_dir/examples/wow-ui-source-forever" "$tag_tests_tmp/examples/wow-ui-source-forever"
+# Reuse the fetched wow-ui-testing library; fetch-wut.sh replaces it if the tag pins another.
+if [[ -d "$repo_dir/.wut" && -f "$tag_tests_tmp/.wut-version" ]]; then
+	cp -a "$repo_dir/.wut" "$tag_tests_tmp/.wut"
 fi
 bash "$repo_dir/scripts/run-tests.sh" "$tag_tests_tmp"
 

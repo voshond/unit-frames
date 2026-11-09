@@ -4,6 +4,7 @@ import gzip
 import hashlib
 import io
 import json
+import os
 from pathlib import Path
 import re
 import subprocess
@@ -37,22 +38,25 @@ def canonical(value):
     return json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
 
 
-def pinned_source(root=ROOT):
-    pins = []
-    for workflow in ("tests", "release"):
-        content = (root / f".github/workflows/{workflow}.yml").read_text()
-        match = re.search(r"repository: Gethe/wow-ui-source\s+ref: ([0-9a-f]{40}) # Forever (1\.60\.\d+\.\d+)", content)
-        if not match:
-            raise ValueError(f"missing exact Forever source pin in {workflow}.yml")
-        pins.append(match.groups())
-    if pins[0] != pins[1]:
-        raise ValueError("tests and release Forever source pins disagree")
+def library_dir(root=ROOT):
+    override = os.environ.get("WUT_DIR")
+    return Path(override).resolve() if override else root / ".wut"
+
+
+def pinned_source(root=ROOT, library=None):
+    pin_file = (library or library_dir(root)) / "clientdata/forever.json"
+    if not pin_file.exists():
+        raise ValueError(f"missing {pin_file}: run bash scripts/fetch-wut.sh")
+    pin = json.loads(pin_file.read_text())
+    commit, build = pin["wowUiSource"]["commit"], pin["build"]
+    if not re.fullmatch(r"[0-9a-f]{40}", commit) or not re.fullmatch(r"1\.60\.\d+\.\d+", build):
+        raise ValueError("missing exact Forever source pin in the library's clientdata/forever.json")
     interface = re.search(r"^## Interface: (\d+)$", (root / "UnitFrames/UnitFrames.toc").read_text(), re.M)
-    major, minor, patch, _ = map(int, pins[0][1].split("."))
+    major, minor, patch, _ = map(int, build.split("."))
     expected = major * 10000 + minor * 100 + patch
-    if not interface or int(interface[1]) != expected:
+    if not interface or int(interface[1]) != expected or pin.get("interface") != expected:
         raise ValueError("TOC interface does not match the pinned Forever build")
-    return {"uiCommit": pins[0][0], "build": pins[0][1], "interface": expected}
+    return {"uiCommit": commit, "build": build, "interface": expected}
 
 
 def parse_table(name, raw):
@@ -72,7 +76,7 @@ def download(pin, source=None):
         version = (source / "version.txt").read_text().strip()
         commit = subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip()
         if version != pin["build"] or commit != pin["uiCommit"]:
-            raise ValueError("local Forever UI checkout does not match the workflow pin")
+            raise ValueError("local Forever UI checkout does not match the library pin")
     tables, records, compressed = {}, {}, {}
     for name in TABLES:
         url = f"https://wago.tools/db2/{name}/csv?build={pin['build']}&locale=enUS"
@@ -284,7 +288,7 @@ def main():
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--fetch", action="store_true")
     parser.add_argument("--check-pin", action="store_true")
-    parser.add_argument("--source", type=Path, default=ROOT / "examples/wow-ui-source-forever")
+    parser.add_argument("--source", type=Path, default=library_dir() / ".client-source/forever")
     parser.add_argument("--cache", type=Path, default=CACHE)
     args = parser.parse_args()
     CACHE = args.cache.resolve()
@@ -297,7 +301,7 @@ def main():
         version = (args.source / "version.txt").read_text().strip()
         commit = subprocess.check_output(["git", "-C", str(args.source), "rev-parse", "HEAD"], text=True).strip()
         if version != pin["build"] or commit != pin["uiCommit"]:
-            raise ValueError("local Forever UI checkout does not match the workflow pin")
+            raise ValueError("local Forever UI checkout does not match the library pin")
     if args.update:
         tables, manifest, compressed = download(pin, args.source)
     else:

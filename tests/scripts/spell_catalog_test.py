@@ -80,25 +80,28 @@ class SpellCatalogTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "did not confirm"):
             catalog.validate_download("SpellEffect", "1.60.1.70450", headers + 'HTTP/2 200\ncontent-type: text/html\n')
 
-    def test_workflow_and_toc_mismatches_are_rejected(self):
+    def test_library_pin_and_toc_mismatches_are_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            workflows = root / ".github/workflows"
-            workflows.mkdir(parents=True)
+            library = root / "lib"
+            (library / "clientdata").mkdir(parents=True)
             (root / "UnitFrames").mkdir()
             toc = root / "UnitFrames/UnitFrames.toc"
             toc.write_text("## Interface: 16001\n")
-            pin = f'repository: Gethe/wow-ui-source\nref: {self.pin["uiCommit"]} # Forever {self.pin["build"]}\n'
-            for workflow in ("tests", "release"):
-                (workflows / f"{workflow}.yml").write_text(pin)
-            self.assertEqual(self.pin, catalog.pinned_source(root))
+            pin_file = library / "clientdata/forever.json"
+            with self.assertRaisesRegex(ValueError, "fetch-wut"):
+                catalog.pinned_source(root, library)
+            pin = {"build": self.pin["build"], "interface": self.pin["interface"],
+                   "wowUiSource": {"commit": self.pin["uiCommit"]}}
+            pin_file.write_text(json.dumps(pin))
+            self.assertEqual(self.pin, catalog.pinned_source(root, library))
             toc.write_text("## Interface: 16002\n")
             with self.assertRaisesRegex(ValueError, "TOC interface"):
-                catalog.pinned_source(root)
+                catalog.pinned_source(root, library)
             toc.write_text("## Interface: 16001\n")
-            (workflows / "release.yml").write_text(pin.replace(self.pin["uiCommit"], "f" * 40))
-            with self.assertRaisesRegex(ValueError, "pins disagree"):
-                catalog.pinned_source(root)
+            pin_file.write_text(json.dumps({**pin, "wowUiSource": {"commit": "short"}}))
+            with self.assertRaisesRegex(ValueError, "exact Forever source pin"):
+                catalog.pinned_source(root, library)
 
     def test_build_mismatch_and_modified_inputs_are_rejected(self):
         with self.assertRaisesRegex(ValueError, "does not match"):

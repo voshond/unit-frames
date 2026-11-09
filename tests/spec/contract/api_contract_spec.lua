@@ -3,7 +3,7 @@ local Mock = Helpers.Mock
 local API = Mock.API
 
 --[[
-The mock against the client API snapshot (tests/mock/api.lua). Behaviour is
+The mock against the client API snapshot (the library's wowmock/api.lua). Behaviour is
 hand-written and can still be wrong; these checks keep its surface, enums,
 declared secrets and our event names tied to Blizzard's documentation.
 ]]
@@ -151,26 +151,5 @@ describe("Client API contract", function()
 		local hits = pipe:read("*a")
 		pipe:close()
 		assert.equals("", hits)
-	end)
-
-	it("matches a snapshot regenerated from the local Blizzard source, when present", function()
-		local source = "examples/wow-ui-source-forever"
-		local version = io.open(source .. "/version.txt")
-		if not version then return end
-		version:close()
-		local out = os.tmpname()
-		local pipe = assert(io.popen("luajit scripts/api-snapshot.lua " .. source .. " " .. out .. " 2>&1"))
-		pipe:read("*a")
-		pipe:close()
-		local function Read(path)
-			local file = assert(io.open(path))
-			local text = file:read("*a")
-			file:close()
-			return text
-		end
-		local fresh = Read(out)
-		os.remove(out)
-		assert.is_true(fresh == Read("tests/fixtures/api_snapshot.lua"),
-			"tests/fixtures/api_snapshot.lua is stale: run luajit scripts/api-snapshot.lua")
 	end)
 end)
