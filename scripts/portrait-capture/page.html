@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<body style="margin:0">
+<div id="viewer" style="width:100vw;height:100vh"></div>
+<script type="importmap">
+{ "imports": { "three": "/node_modules/three/build/three.module.js", "three/examples/jsm/": "/node_modules/three/examples/jsm/" } }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { ModelViewer, createCdnResolver } from "/node_modules/classic-wow-model-viewer/dist/index.js";
+
+const params = new URLSearchParams(location.search);
+const viewer = new ModelViewer({ container: document.getElementById("viewer"), assets: createCdnResolver(params.get("cdn")) });
+await viewer.loadCharacter(params.get("race"), params.get("gender"));
+
+viewer.scene.traverse((object) => {
+	for (const material of [].concat(object.material ?? [])) {
+		material.alphaTest = 0.5;
+		material.needsUpdate = true;
+	}
+});
+
+const box = new THREE.Box3().setFromObject(viewer.scene);
+const size = box.getSize(new THREE.Vector3());
+const head = new THREE.Vector3((box.min.x + box.max.x) / 2, box.max.y - size.y * 0.135, (box.min.z + box.max.z) / 2);
+const facing = viewer.camera.position.clone().sub(viewer.controls.target).normalize();
+viewer.camera.fov = 30;
+viewer.camera.position.copy(head).add(facing.multiplyScalar(size.y * 0.42)).add(new THREE.Vector3(0, -size.y * 0.06, 0));
+viewer.camera.updateProjectionMatrix();
+viewer.controls.target.copy(head);
+viewer.controls.update();
+
+window.setBackground = (color) => viewer.renderer.setClearColor(color);
+window.ready = true;
+</script>
+</body>
+</html>
