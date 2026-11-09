@@ -14,6 +14,7 @@ return {
 		["C_AddOns.GetNumAddOns"] = { returns = { "numAddOns:number" }, system = "AddOns" },
 		["C_AddOns.IsAddOnLoaded"] = { args = { "name:uiAddon" }, returns = { "loadedOrLoading:bool", "loaded:bool" }, secretArguments = "AllowedWhenUntainted", system = "AddOns" },
 		["C_AddOns.LoadAddOn"] = { args = { "name:uiAddon" }, returns = { "loaded:bool?", "value:string?" }, secretArguments = "AllowedWhenUntainted", system = "AddOns" },
+		["C_CVar.GetCVarBool"] = { args = { "name:cstring" }, returns = { "value:bool?" }, secretArguments = "NotAllowed", system = "CVarScripts" },
 		["C_CVar.SetCVar"] = { args = { "name:cstring", "value:cstring?" }, returns = { "success:bool" }, secretArguments = "NotAllowed", system = "CVarScripts" },
 		["C_CVar.SetCVarBitfield"] = { args = { "name:cstring", "index:luaIndex", "value:bool" }, returns = { "success:bool" }, secretArguments = "NotAllowed", system = "CVarScripts" },
 		["C_ClassColor.GetClassColor"] = { args = { "className:string", "tintColor:colorRGB?" }, returns = { "classColor:colorRGB" }, secretArguments = "AllowedWhenTainted", system = "ClassColor" },
