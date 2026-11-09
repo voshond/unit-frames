@@ -1942,7 +1942,9 @@ option buffs.maxDuration type="range" label="Maximum total duration" default=0 m
 option buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
 option buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1
+option buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1 tooltip=#82819ad4
+option buffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
+option buffs.height type="range" label="Icon height" default=20 min=6 max=64 step=1 hidden
 option buffs.position type="select" label="Side" default="top" values=#eef25c33
 option buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
 option buffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
@@ -1958,7 +1960,9 @@ option debuffs.maxDuration type="range" label="Maximum total duration" default=0
 option debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
 option debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1
+option debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1 tooltip=#82819ad4
+option debuffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
+option debuffs.height type="range" label="Icon height" default=26 min=6 max=64 step=1 hidden
 option debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
 option debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
 option debuffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
@@ -1976,12 +1980,14 @@ default buffs.enabled = true
 default buffs.filter = "HELPFUL"
 default buffs.gap = 2
 default buffs.growth = "forward"
+default buffs.height = 20
 default buffs.lineSize = 0
 default buffs.max = 16
 default buffs.maxDuration = 0
 default buffs.offsetX = 0
 default buffs.offsetY = 0
 default buffs.position = "top"
+default buffs.separateHeight = false
 default buffs.showSwipeEdge = true
 default buffs.size = 20
 default buffs.sort = "expiration"
@@ -1992,12 +1998,14 @@ default debuffs.enabled = true
 default debuffs.filter = "HARMFUL"
 default debuffs.gap = 2
 default debuffs.growth = "forward"
+default debuffs.height = 26
 default debuffs.lineSize = 0
 default debuffs.max = 16
 default debuffs.maxDuration = 0
 default debuffs.offsetX = 0
 default debuffs.offsetY = 0
 default debuffs.position = "bottom"
+default debuffs.separateHeight = false
 default debuffs.showSwipeEdge = true
 default debuffs.size = 26
 default debuffs.sort = "expiration"
@@ -2034,12 +2042,14 @@ resolved buffs.enabled = true
 resolved buffs.filter = "HELPFUL"
 resolved buffs.gap = 2
 resolved buffs.growth = "forward"
+resolved buffs.height = 20
 resolved buffs.lineSize = 0
 resolved buffs.max = 16
 resolved buffs.maxDuration = 0
 resolved buffs.offsetX = 0
 resolved buffs.offsetY = 0
 resolved buffs.position = "top"
+resolved buffs.separateHeight = false
 resolved buffs.showSwipeEdge = true
 resolved buffs.size = 20
 resolved buffs.sort = "expiration"
@@ -2050,12 +2060,14 @@ resolved debuffs.enabled = true
 resolved debuffs.filter = "HARMFUL"
 resolved debuffs.gap = 2
 resolved debuffs.growth = "forward"
+resolved debuffs.height = 26
 resolved debuffs.lineSize = 0
 resolved debuffs.max = 16
 resolved debuffs.maxDuration = 0
 resolved debuffs.offsetX = 0
 resolved debuffs.offsetY = 0
 resolved debuffs.position = "bottom"
+resolved debuffs.separateHeight = false
 resolved debuffs.showSwipeEdge = true
 resolved debuffs.size = 26
 resolved debuffs.sort = "expiration"
@@ -3418,7 +3430,9 @@ option auras.buffs.maxDuration type="range" label="Maximum total duration" defau
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
 option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1
+option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1 tooltip=#82819ad4
+option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
+option auras.buffs.height type="range" label="Icon height" default=20 min=6 max=64 step=1 hidden
 option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
 option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
 option auras.buffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
@@ -3434,7 +3448,9 @@ option auras.debuffs.maxDuration type="range" label="Maximum total duration" def
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
 option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1
+option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1 tooltip=#82819ad4
+option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
+option auras.debuffs.height type="range" label="Icon height" default=26 min=6 max=64 step=1 hidden
 option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
 option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
 option auras.debuffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
@@ -3647,12 +3663,14 @@ default auras.buffs.enabled = true
 default auras.buffs.filter = "HELPFUL"
 default auras.buffs.gap = 0
 default auras.buffs.growth = "forward"
+default auras.buffs.height = 20
 default auras.buffs.lineSize = 0
 default auras.buffs.max = 16
 default auras.buffs.maxDuration = 0
 default auras.buffs.offsetX = 0
 default auras.buffs.offsetY = 0
 default auras.buffs.position = "top"
+default auras.buffs.separateHeight = false
 default auras.buffs.showSwipeEdge = true
 default auras.buffs.size = 20
 default auras.buffs.sort = "expiration"
@@ -3663,12 +3681,14 @@ default auras.debuffs.enabled = true
 default auras.debuffs.filter = "HARMFUL"
 default auras.debuffs.gap = 0
 default auras.debuffs.growth = "forward"
+default auras.debuffs.height = 26
 default auras.debuffs.lineSize = 0
 default auras.debuffs.max = 16
 default auras.debuffs.maxDuration = 0
 default auras.debuffs.offsetX = 0
 default auras.debuffs.offsetY = 0
 default auras.debuffs.position = "top"
+default auras.debuffs.separateHeight = false
 default auras.debuffs.showSwipeEdge = true
 default auras.debuffs.size = 26
 default auras.debuffs.sort = "expiration"
@@ -4643,12 +4663,14 @@ resolved auras.buffs.enabled = true
 resolved auras.buffs.filter = "HELPFUL"
 resolved auras.buffs.gap = 0
 resolved auras.buffs.growth = "forward"
+resolved auras.buffs.height = 20
 resolved auras.buffs.lineSize = 0
 resolved auras.buffs.max = 16
 resolved auras.buffs.maxDuration = 0
 resolved auras.buffs.offsetX = 0
 resolved auras.buffs.offsetY = 0
 resolved auras.buffs.position = "top"
+resolved auras.buffs.separateHeight = false
 resolved auras.buffs.showSwipeEdge = true
 resolved auras.buffs.size = 20
 resolved auras.buffs.sort = "expiration"
@@ -4659,12 +4681,14 @@ resolved auras.debuffs.enabled = true
 resolved auras.debuffs.filter = "HARMFUL"
 resolved auras.debuffs.gap = 0
 resolved auras.debuffs.growth = "forward"
+resolved auras.debuffs.height = 26
 resolved auras.debuffs.lineSize = 0
 resolved auras.debuffs.max = 16
 resolved auras.debuffs.maxDuration = 0
 resolved auras.debuffs.offsetX = 0
 resolved auras.debuffs.offsetY = 0
 resolved auras.debuffs.position = "top"
+resolved auras.debuffs.separateHeight = false
 resolved auras.debuffs.showSwipeEdge = true
 resolved auras.debuffs.size = 26
 resolved auras.debuffs.sort = "expiration"
@@ -6480,7 +6504,9 @@ option auras.buffs.maxDuration type="range" label="Maximum total duration" defau
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
 option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1
+option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1 tooltip=#82819ad4
+option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
+option auras.buffs.height type="range" label="Icon height" default=20 min=6 max=64 step=1 hidden
 option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
 option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
 option auras.buffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
@@ -6496,7 +6522,9 @@ option auras.debuffs.maxDuration type="range" label="Maximum total duration" def
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
 option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1
+option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1 tooltip=#82819ad4
+option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
+option auras.debuffs.height type="range" label="Icon height" default=26 min=6 max=64 step=1 hidden
 option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
 option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
 option auras.debuffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
@@ -6701,12 +6729,14 @@ default auras.buffs.enabled = true
 default auras.buffs.filter = "HELPFUL"
 default auras.buffs.gap = 2
 default auras.buffs.growth = "forward"
+default auras.buffs.height = 20
 default auras.buffs.lineSize = 0
 default auras.buffs.max = 6
 default auras.buffs.maxDuration = 0
 default auras.buffs.offsetX = 0
 default auras.buffs.offsetY = 0
 default auras.buffs.position = "top"
+default auras.buffs.separateHeight = false
 default auras.buffs.showSwipeEdge = true
 default auras.buffs.size = 18
 default auras.buffs.sort = "expiration"
@@ -6717,12 +6747,14 @@ default auras.debuffs.enabled = true
 default auras.debuffs.filter = "HARMFUL"
 default auras.debuffs.gap = 2
 default auras.debuffs.growth = "forward"
+default auras.debuffs.height = 26
 default auras.debuffs.lineSize = 0
 default auras.debuffs.max = 6
 default auras.debuffs.maxDuration = 0
 default auras.debuffs.offsetX = 0
 default auras.debuffs.offsetY = 0
 default auras.debuffs.position = "bottom"
+default auras.debuffs.separateHeight = false
 default auras.debuffs.showSwipeEdge = true
 default auras.debuffs.size = 18
 default auras.debuffs.sort = "expiration"
@@ -7445,12 +7477,14 @@ resolved auras.buffs.enabled = true
 resolved auras.buffs.filter = "HELPFUL"
 resolved auras.buffs.gap = 2
 resolved auras.buffs.growth = "forward"
+resolved auras.buffs.height = 20
 resolved auras.buffs.lineSize = 0
 resolved auras.buffs.max = 6
 resolved auras.buffs.maxDuration = 0
 resolved auras.buffs.offsetX = 0
 resolved auras.buffs.offsetY = 0
 resolved auras.buffs.position = "top"
+resolved auras.buffs.separateHeight = false
 resolved auras.buffs.showSwipeEdge = true
 resolved auras.buffs.size = 18
 resolved auras.buffs.sort = "expiration"
@@ -7461,12 +7495,14 @@ resolved auras.debuffs.enabled = true
 resolved auras.debuffs.filter = "HARMFUL"
 resolved auras.debuffs.gap = 2
 resolved auras.debuffs.growth = "forward"
+resolved auras.debuffs.height = 26
 resolved auras.debuffs.lineSize = 0
 resolved auras.debuffs.max = 6
 resolved auras.debuffs.maxDuration = 0
 resolved auras.debuffs.offsetX = 0
 resolved auras.debuffs.offsetY = 0
 resolved auras.debuffs.position = "bottom"
+resolved auras.debuffs.separateHeight = false
 resolved auras.debuffs.showSwipeEdge = true
 resolved auras.debuffs.size = 18
 resolved auras.debuffs.sort = "expiration"
@@ -9054,7 +9090,9 @@ option auras.buffs.maxDuration type="range" label="Maximum total duration" defau
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
 option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1
+option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1 tooltip=#82819ad4
+option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
+option auras.buffs.height type="range" label="Icon height" default=20 min=6 max=64 step=1 hidden
 option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
 option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
 option auras.buffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
@@ -9070,7 +9108,9 @@ option auras.debuffs.maxDuration type="range" label="Maximum total duration" def
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
 option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1
+option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1 tooltip=#82819ad4
+option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
+option auras.debuffs.height type="range" label="Icon height" default=26 min=6 max=64 step=1 hidden
 option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
 option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
 option auras.debuffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
@@ -9275,12 +9315,14 @@ default auras.buffs.enabled = true
 default auras.buffs.filter = "HELPFUL"
 default auras.buffs.gap = 0
 default auras.buffs.growth = "forward"
+default auras.buffs.height = 20
 default auras.buffs.lineSize = 0
 default auras.buffs.max = 16
 default auras.buffs.maxDuration = 0
 default auras.buffs.offsetX = 0
 default auras.buffs.offsetY = 0
 default auras.buffs.position = "bottom"
+default auras.buffs.separateHeight = false
 default auras.buffs.showSwipeEdge = true
 default auras.buffs.size = 20
 default auras.buffs.sort = "expiration"
@@ -9291,12 +9333,14 @@ default auras.debuffs.enabled = true
 default auras.debuffs.filter = "HARMFUL"
 default auras.debuffs.gap = 0
 default auras.debuffs.growth = "forward"
+default auras.debuffs.height = 26
 default auras.debuffs.lineSize = 0
 default auras.debuffs.max = 16
 default auras.debuffs.maxDuration = 0
 default auras.debuffs.offsetX = 0
 default auras.debuffs.offsetY = 0
 default auras.debuffs.position = "bottom"
+default auras.debuffs.separateHeight = false
 default auras.debuffs.showSwipeEdge = true
 default auras.debuffs.size = 26
 default auras.debuffs.sort = "expiration"
@@ -10048,12 +10092,14 @@ resolved auras.buffs.enabled = true
 resolved auras.buffs.filter = "HELPFUL"
 resolved auras.buffs.gap = 0
 resolved auras.buffs.growth = "forward"
+resolved auras.buffs.height = 20
 resolved auras.buffs.lineSize = 0
 resolved auras.buffs.max = 16
 resolved auras.buffs.maxDuration = 0
 resolved auras.buffs.offsetX = 0
 resolved auras.buffs.offsetY = 0
 resolved auras.buffs.position = "bottom"
+resolved auras.buffs.separateHeight = false
 resolved auras.buffs.showSwipeEdge = true
 resolved auras.buffs.size = 20
 resolved auras.buffs.sort = "expiration"
@@ -10064,12 +10110,14 @@ resolved auras.debuffs.enabled = true
 resolved auras.debuffs.filter = "HARMFUL"
 resolved auras.debuffs.gap = 0
 resolved auras.debuffs.growth = "forward"
+resolved auras.debuffs.height = 26
 resolved auras.debuffs.lineSize = 0
 resolved auras.debuffs.max = 16
 resolved auras.debuffs.maxDuration = 0
 resolved auras.debuffs.offsetX = 0
 resolved auras.debuffs.offsetY = 0
 resolved auras.debuffs.position = "bottom"
+resolved auras.debuffs.separateHeight = false
 resolved auras.debuffs.showSwipeEdge = true
 resolved auras.debuffs.size = 26
 resolved auras.debuffs.sort = "expiration"
@@ -11662,7 +11710,9 @@ option auras.buffs.maxDuration type="range" label="Maximum total duration" defau
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
 option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1
+option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1 tooltip=#82819ad4
+option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
+option auras.buffs.height type="range" label="Icon height" default=20 min=6 max=64 step=1 hidden
 option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
 option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
 option auras.buffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
@@ -11678,7 +11728,9 @@ option auras.debuffs.maxDuration type="range" label="Maximum total duration" def
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
 option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1
+option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1 tooltip=#82819ad4
+option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
+option auras.debuffs.height type="range" label="Icon height" default=26 min=6 max=64 step=1 hidden
 option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
 option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
 option auras.debuffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
@@ -11883,12 +11935,14 @@ default auras.buffs.enabled = true
 default auras.buffs.filter = "HELPFUL"
 default auras.buffs.gap = 2
 default auras.buffs.growth = "forward"
+default auras.buffs.height = 20
 default auras.buffs.lineSize = 0
 default auras.buffs.max = 8
 default auras.buffs.maxDuration = 0
 default auras.buffs.offsetX = 0
 default auras.buffs.offsetY = 0
 default auras.buffs.position = "top"
+default auras.buffs.separateHeight = false
 default auras.buffs.showSwipeEdge = true
 default auras.buffs.size = 16
 default auras.buffs.sort = "expiration"
@@ -11899,12 +11953,14 @@ default auras.debuffs.enabled = true
 default auras.debuffs.filter = "HARMFUL"
 default auras.debuffs.gap = 2
 default auras.debuffs.growth = "forward"
+default auras.debuffs.height = 26
 default auras.debuffs.lineSize = 0
 default auras.debuffs.max = 8
 default auras.debuffs.maxDuration = 0
 default auras.debuffs.offsetX = 0
 default auras.debuffs.offsetY = 0
 default auras.debuffs.position = "bottom"
+default auras.debuffs.separateHeight = false
 default auras.debuffs.showSwipeEdge = true
 default auras.debuffs.size = 18
 default auras.debuffs.sort = "expiration"
@@ -12633,12 +12689,14 @@ resolved auras.buffs.enabled = true
 resolved auras.buffs.filter = "HELPFUL"
 resolved auras.buffs.gap = 2
 resolved auras.buffs.growth = "forward"
+resolved auras.buffs.height = 20
 resolved auras.buffs.lineSize = 0
 resolved auras.buffs.max = 8
 resolved auras.buffs.maxDuration = 0
 resolved auras.buffs.offsetX = 0
 resolved auras.buffs.offsetY = 0
 resolved auras.buffs.position = "top"
+resolved auras.buffs.separateHeight = false
 resolved auras.buffs.showSwipeEdge = true
 resolved auras.buffs.size = 16
 resolved auras.buffs.sort = "expiration"
@@ -12649,12 +12707,14 @@ resolved auras.debuffs.enabled = true
 resolved auras.debuffs.filter = "HARMFUL"
 resolved auras.debuffs.gap = 2
 resolved auras.debuffs.growth = "forward"
+resolved auras.debuffs.height = 26
 resolved auras.debuffs.lineSize = 0
 resolved auras.debuffs.max = 8
 resolved auras.debuffs.maxDuration = 0
 resolved auras.debuffs.offsetX = 0
 resolved auras.debuffs.offsetY = 0
 resolved auras.debuffs.position = "bottom"
+resolved auras.debuffs.separateHeight = false
 resolved auras.debuffs.showSwipeEdge = true
 resolved auras.debuffs.size = 18
 resolved auras.debuffs.sort = "expiration"
@@ -14208,7 +14268,9 @@ option auras.buffs.maxDuration type="range" label="Maximum total duration" defau
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
 option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1
+option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1 tooltip=#82819ad4
+option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
+option auras.buffs.height type="range" label="Icon height" default=20 min=6 max=64 step=1 hidden
 option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
 option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
 option auras.buffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
@@ -14224,7 +14286,9 @@ option auras.debuffs.maxDuration type="range" label="Maximum total duration" def
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
 option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1
+option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1 tooltip=#82819ad4
+option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
+option auras.debuffs.height type="range" label="Icon height" default=26 min=6 max=64 step=1 hidden
 option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
 option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
 option auras.debuffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
@@ -14429,12 +14493,14 @@ default auras.buffs.enabled = true
 default auras.buffs.filter = "HELPFUL"
 default auras.buffs.gap = 0
 default auras.buffs.growth = "forward"
+default auras.buffs.height = 20
 default auras.buffs.lineSize = 0
 default auras.buffs.max = 16
 default auras.buffs.maxDuration = 0
 default auras.buffs.offsetX = 0
 default auras.buffs.offsetY = 0
 default auras.buffs.position = "top"
+default auras.buffs.separateHeight = false
 default auras.buffs.showSwipeEdge = true
 default auras.buffs.size = 20
 default auras.buffs.sort = "expiration"
@@ -14445,12 +14511,14 @@ default auras.debuffs.enabled = true
 default auras.debuffs.filter = "HARMFUL"
 default auras.debuffs.gap = 0
 default auras.debuffs.growth = "forward"
+default auras.debuffs.height = 26
 default auras.debuffs.lineSize = 0
 default auras.debuffs.max = 16
 default auras.debuffs.maxDuration = 0
 default auras.debuffs.offsetX = 0
 default auras.debuffs.offsetY = 0
 default auras.debuffs.position = "top"
+default auras.debuffs.separateHeight = false
 default auras.debuffs.showSwipeEdge = true
 default auras.debuffs.size = 26
 default auras.debuffs.sort = "expiration"
@@ -15179,12 +15247,14 @@ resolved auras.buffs.enabled = true
 resolved auras.buffs.filter = "HELPFUL"
 resolved auras.buffs.gap = 0
 resolved auras.buffs.growth = "forward"
+resolved auras.buffs.height = 20
 resolved auras.buffs.lineSize = 0
 resolved auras.buffs.max = 16
 resolved auras.buffs.maxDuration = 0
 resolved auras.buffs.offsetX = 0
 resolved auras.buffs.offsetY = 0
 resolved auras.buffs.position = "top"
+resolved auras.buffs.separateHeight = false
 resolved auras.buffs.showSwipeEdge = true
 resolved auras.buffs.size = 20
 resolved auras.buffs.sort = "expiration"
@@ -15195,12 +15265,14 @@ resolved auras.debuffs.enabled = true
 resolved auras.debuffs.filter = "HARMFUL"
 resolved auras.debuffs.gap = 0
 resolved auras.debuffs.growth = "forward"
+resolved auras.debuffs.height = 26
 resolved auras.debuffs.lineSize = 0
 resolved auras.debuffs.max = 16
 resolved auras.debuffs.maxDuration = 0
 resolved auras.debuffs.offsetX = 0
 resolved auras.debuffs.offsetY = 0
 resolved auras.debuffs.position = "top"
+resolved auras.debuffs.separateHeight = false
 resolved auras.debuffs.showSwipeEdge = true
 resolved auras.debuffs.size = 26
 resolved auras.debuffs.sort = "expiration"
@@ -16756,7 +16828,9 @@ option auras.buffs.maxDuration type="range" label="Maximum total duration" defau
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
 option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1
+option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1 tooltip=#82819ad4
+option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
+option auras.buffs.height type="range" label="Icon height" default=20 min=6 max=64 step=1 hidden
 option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
 option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
 option auras.buffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
@@ -16772,7 +16846,9 @@ option auras.debuffs.maxDuration type="range" label="Maximum total duration" def
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
 option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1
+option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1 tooltip=#82819ad4
+option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
+option auras.debuffs.height type="range" label="Icon height" default=26 min=6 max=64 step=1 hidden
 option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
 option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
 option auras.debuffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
@@ -16977,12 +17053,14 @@ default auras.buffs.enabled = true
 default auras.buffs.filter = "HELPFUL"
 default auras.buffs.gap = 2
 default auras.buffs.growth = "forward"
+default auras.buffs.height = 20
 default auras.buffs.lineSize = 0
 default auras.buffs.max = 8
 default auras.buffs.maxDuration = 0
 default auras.buffs.offsetX = 0
 default auras.buffs.offsetY = 0
 default auras.buffs.position = "top"
+default auras.buffs.separateHeight = false
 default auras.buffs.showSwipeEdge = true
 default auras.buffs.size = 16
 default auras.buffs.sort = "expiration"
@@ -16993,12 +17071,14 @@ default auras.debuffs.enabled = true
 default auras.debuffs.filter = "HARMFUL"
 default auras.debuffs.gap = 2
 default auras.debuffs.growth = "forward"
+default auras.debuffs.height = 26
 default auras.debuffs.lineSize = 0
 default auras.debuffs.max = 8
 default auras.debuffs.maxDuration = 0
 default auras.debuffs.offsetX = 0
 default auras.debuffs.offsetY = 0
 default auras.debuffs.position = "bottom"
+default auras.debuffs.separateHeight = false
 default auras.debuffs.showSwipeEdge = true
 default auras.debuffs.size = 18
 default auras.debuffs.sort = "expiration"
@@ -17727,12 +17807,14 @@ resolved auras.buffs.enabled = true
 resolved auras.buffs.filter = "HELPFUL"
 resolved auras.buffs.gap = 2
 resolved auras.buffs.growth = "forward"
+resolved auras.buffs.height = 20
 resolved auras.buffs.lineSize = 0
 resolved auras.buffs.max = 8
 resolved auras.buffs.maxDuration = 0
 resolved auras.buffs.offsetX = 0
 resolved auras.buffs.offsetY = 0
 resolved auras.buffs.position = "top"
+resolved auras.buffs.separateHeight = false
 resolved auras.buffs.showSwipeEdge = true
 resolved auras.buffs.size = 16
 resolved auras.buffs.sort = "expiration"
@@ -17743,12 +17825,14 @@ resolved auras.debuffs.enabled = true
 resolved auras.debuffs.filter = "HARMFUL"
 resolved auras.debuffs.gap = 2
 resolved auras.debuffs.growth = "forward"
+resolved auras.debuffs.height = 26
 resolved auras.debuffs.lineSize = 0
 resolved auras.debuffs.max = 8
 resolved auras.debuffs.maxDuration = 0
 resolved auras.debuffs.offsetX = 0
 resolved auras.debuffs.offsetY = 0
 resolved auras.debuffs.position = "bottom"
+resolved auras.debuffs.separateHeight = false
 resolved auras.debuffs.showSwipeEdge = true
 resolved auras.debuffs.size = 18
 resolved auras.debuffs.sort = "expiration"
@@ -21470,7 +21554,9 @@ option auras.buffs.maxDuration type="range" label="Maximum total duration" defau
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
 option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1
+option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1 tooltip=#82819ad4
+option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
+option auras.buffs.height type="range" label="Icon height" default=20 min=6 max=64 step=1 hidden
 option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
 option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
 option auras.buffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
@@ -21486,7 +21572,9 @@ option auras.debuffs.maxDuration type="range" label="Maximum total duration" def
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
 option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1
+option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1 tooltip=#82819ad4
+option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
+option auras.debuffs.height type="range" label="Icon height" default=26 min=6 max=64 step=1 hidden
 option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
 option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
 option auras.debuffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
@@ -21666,12 +21754,14 @@ default auras.buffs.enabled = false
 default auras.buffs.filter = "HELPFUL|PLAYER|RAID_IN_COMBAT"
 default auras.buffs.gap = 1
 default auras.buffs.growth = "forward"
+default auras.buffs.height = 20
 default auras.buffs.lineSize = 0
 default auras.buffs.max = 4
 default auras.buffs.maxDuration = 120
 default auras.buffs.offsetX = 0
 default auras.buffs.offsetY = 0
 default auras.buffs.position = "top"
+default auras.buffs.separateHeight = false
 default auras.buffs.showSwipeEdge = true
 default auras.buffs.size = 14
 default auras.buffs.sort = "expiration"
@@ -21682,12 +21772,14 @@ default auras.debuffs.enabled = false
 default auras.debuffs.filter = "HARMFUL"
 default auras.debuffs.gap = 1
 default auras.debuffs.growth = "forward"
+default auras.debuffs.height = 26
 default auras.debuffs.lineSize = 0
 default auras.debuffs.max = 3
 default auras.debuffs.maxDuration = 0
 default auras.debuffs.offsetX = 0
 default auras.debuffs.offsetY = 0
 default auras.debuffs.position = "bottom"
+default auras.debuffs.separateHeight = false
 default auras.debuffs.showSwipeEdge = true
 default auras.debuffs.size = 16
 default auras.debuffs.sort = "unitDebuff"
@@ -22388,12 +22480,14 @@ resolved auras.buffs.enabled = false
 resolved auras.buffs.filter = "HELPFUL|PLAYER|RAID_IN_COMBAT"
 resolved auras.buffs.gap = 1
 resolved auras.buffs.growth = "forward"
+resolved auras.buffs.height = 20
 resolved auras.buffs.lineSize = 0
 resolved auras.buffs.max = 4
 resolved auras.buffs.maxDuration = 120
 resolved auras.buffs.offsetX = 0
 resolved auras.buffs.offsetY = 0
 resolved auras.buffs.position = "top"
+resolved auras.buffs.separateHeight = false
 resolved auras.buffs.showSwipeEdge = true
 resolved auras.buffs.size = 14
 resolved auras.buffs.sort = "expiration"
@@ -22404,12 +22498,14 @@ resolved auras.debuffs.enabled = false
 resolved auras.debuffs.filter = "HARMFUL"
 resolved auras.debuffs.gap = 1
 resolved auras.debuffs.growth = "forward"
+resolved auras.debuffs.height = 26
 resolved auras.debuffs.lineSize = 0
 resolved auras.debuffs.max = 3
 resolved auras.debuffs.maxDuration = 0
 resolved auras.debuffs.offsetX = 0
 resolved auras.debuffs.offsetY = 0
 resolved auras.debuffs.position = "bottom"
+resolved auras.debuffs.separateHeight = false
 resolved auras.debuffs.showSwipeEdge = true
 resolved auras.debuffs.size = 16
 resolved auras.debuffs.sort = "unitDebuff"
@@ -23942,7 +24038,9 @@ option auras.buffs.maxDuration type="range" label="Maximum total duration" defau
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
 option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1
+option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1 tooltip=#82819ad4
+option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
+option auras.buffs.height type="range" label="Icon height" default=20 min=6 max=64 step=1 hidden
 option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
 option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
 option auras.buffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
@@ -23958,7 +24056,9 @@ option auras.debuffs.maxDuration type="range" label="Maximum total duration" def
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
 option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1
+option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1 tooltip=#82819ad4
+option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
+option auras.debuffs.height type="range" label="Icon height" default=26 min=6 max=64 step=1 hidden
 option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
 option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
 option auras.debuffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
@@ -24154,12 +24254,14 @@ default auras.buffs.enabled = true
 default auras.buffs.filter = "HELPFUL"
 default auras.buffs.gap = 2
 default auras.buffs.growth = "forward"
+default auras.buffs.height = 20
 default auras.buffs.lineSize = 0
 default auras.buffs.max = 8
 default auras.buffs.maxDuration = 0
 default auras.buffs.offsetX = 0
 default auras.buffs.offsetY = 0
 default auras.buffs.position = "top"
+default auras.buffs.separateHeight = false
 default auras.buffs.showSwipeEdge = true
 default auras.buffs.size = 16
 default auras.buffs.sort = "expiration"
@@ -24170,12 +24272,14 @@ default auras.debuffs.enabled = true
 default auras.debuffs.filter = "HARMFUL"
 default auras.debuffs.gap = 2
 default auras.debuffs.growth = "forward"
+default auras.debuffs.height = 26
 default auras.debuffs.lineSize = 0
 default auras.debuffs.max = 8
 default auras.debuffs.maxDuration = 0
 default auras.debuffs.offsetX = 0
 default auras.debuffs.offsetY = 0
 default auras.debuffs.position = "bottom"
+default auras.debuffs.separateHeight = false
 default auras.debuffs.showSwipeEdge = true
 default auras.debuffs.size = 18
 default auras.debuffs.sort = "expiration"
@@ -24883,12 +24987,14 @@ resolved auras.buffs.enabled = true
 resolved auras.buffs.filter = "HELPFUL"
 resolved auras.buffs.gap = 2
 resolved auras.buffs.growth = "forward"
+resolved auras.buffs.height = 20
 resolved auras.buffs.lineSize = 0
 resolved auras.buffs.max = 8
 resolved auras.buffs.maxDuration = 0
 resolved auras.buffs.offsetX = 0
 resolved auras.buffs.offsetY = 0
 resolved auras.buffs.position = "top"
+resolved auras.buffs.separateHeight = false
 resolved auras.buffs.showSwipeEdge = true
 resolved auras.buffs.size = 16
 resolved auras.buffs.sort = "expiration"
@@ -24899,12 +25005,14 @@ resolved auras.debuffs.enabled = true
 resolved auras.debuffs.filter = "HARMFUL"
 resolved auras.debuffs.gap = 2
 resolved auras.debuffs.growth = "forward"
+resolved auras.debuffs.height = 26
 resolved auras.debuffs.lineSize = 0
 resolved auras.debuffs.max = 8
 resolved auras.debuffs.maxDuration = 0
 resolved auras.debuffs.offsetX = 0
 resolved auras.debuffs.offsetY = 0
 resolved auras.debuffs.position = "bottom"
+resolved auras.debuffs.separateHeight = false
 resolved auras.debuffs.showSwipeEdge = true
 resolved auras.debuffs.size = 18
 resolved auras.debuffs.sort = "expiration"
@@ -26432,7 +26540,9 @@ option auras.buffs.maxDuration type="range" label="Maximum total duration" defau
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
 option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1
+option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1 tooltip=#82819ad4
+option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
+option auras.buffs.height type="range" label="Icon height" default=20 min=6 max=64 step=1 hidden
 option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
 option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
 option auras.buffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
@@ -26448,7 +26558,9 @@ option auras.debuffs.maxDuration type="range" label="Maximum total duration" def
 option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
 option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1
+option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1 tooltip=#82819ad4
+option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
+option auras.debuffs.height type="range" label="Icon height" default=26 min=6 max=64 step=1 hidden
 option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
 option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
 option auras.debuffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
@@ -26628,12 +26740,14 @@ default auras.buffs.enabled = false
 default auras.buffs.filter = "HELPFUL"
 default auras.buffs.gap = 2
 default auras.buffs.growth = "forward"
+default auras.buffs.height = 20
 default auras.buffs.lineSize = 0
 default auras.buffs.max = 6
 default auras.buffs.maxDuration = 0
 default auras.buffs.offsetX = 0
 default auras.buffs.offsetY = 0
 default auras.buffs.position = "top"
+default auras.buffs.separateHeight = false
 default auras.buffs.showSwipeEdge = true
 default auras.buffs.size = 18
 default auras.buffs.sort = "expiration"
@@ -26644,12 +26758,14 @@ default auras.debuffs.enabled = false
 default auras.debuffs.filter = "HARMFUL"
 default auras.debuffs.gap = 2
 default auras.debuffs.growth = "forward"
+default auras.debuffs.height = 26
 default auras.debuffs.lineSize = 0
 default auras.debuffs.max = 6
 default auras.debuffs.maxDuration = 0
 default auras.debuffs.offsetX = 0
 default auras.debuffs.offsetY = 0
 default auras.debuffs.position = "bottom"
+default auras.debuffs.separateHeight = false
 default auras.debuffs.showSwipeEdge = true
 default auras.debuffs.size = 18
 default auras.debuffs.sort = "expiration"
@@ -27351,12 +27467,14 @@ resolved auras.buffs.enabled = false
 resolved auras.buffs.filter = "HELPFUL"
 resolved auras.buffs.gap = 2
 resolved auras.buffs.growth = "forward"
+resolved auras.buffs.height = 20
 resolved auras.buffs.lineSize = 0
 resolved auras.buffs.max = 6
 resolved auras.buffs.maxDuration = 0
 resolved auras.buffs.offsetX = 0
 resolved auras.buffs.offsetY = 0
 resolved auras.buffs.position = "top"
+resolved auras.buffs.separateHeight = false
 resolved auras.buffs.showSwipeEdge = true
 resolved auras.buffs.size = 18
 resolved auras.buffs.sort = "expiration"
@@ -27367,12 +27485,14 @@ resolved auras.debuffs.enabled = false
 resolved auras.debuffs.filter = "HARMFUL"
 resolved auras.debuffs.gap = 2
 resolved auras.debuffs.growth = "forward"
+resolved auras.debuffs.height = 26
 resolved auras.debuffs.lineSize = 0
 resolved auras.debuffs.max = 6
 resolved auras.debuffs.maxDuration = 0
 resolved auras.debuffs.offsetX = 0
 resolved auras.debuffs.offsetY = 0
 resolved auras.debuffs.position = "bottom"
+resolved auras.debuffs.separateHeight = false
 resolved auras.debuffs.showSwipeEdge = true
 resolved auras.debuffs.size = 18
 resolved auras.debuffs.sort = "expiration"

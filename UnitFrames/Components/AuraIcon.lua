@@ -104,13 +104,12 @@ function AuraIcon.Create(button, kind, preview, opts)
 	button.ufHarmful = opts.harmful == true
 	button.ufPreview = preview and true or false
 	-- The button includes the below-icon timer in its layout bounds. The
-	-- artwork stays square, even when the container flows upwards.
+	-- artwork keeps its configured size, even when the container flows upwards.
 	local iconFrame = CreateFrame("Frame", nil, button, "BackdropTemplate")
 	iconFrame:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
 	button.ufIconFrame = iconFrame
 
 	local icon = iconFrame:CreateTexture(nil, "ARTWORK")
-	icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 	button.ufIcon = icon
 	if not preview then button:SetIcon(icon) end
 
@@ -121,7 +120,7 @@ function AuraIcon.Create(button, kind, preview, opts)
 
 	local cover = CreateFrame("Frame", nil, iconFrame)
 	cover:SetAllPoints(iconFrame)
-	cover:SetFrameLevel(cooldown:GetFrameLevel() + 1)
+	button.ufCover = cover
 
 	-- The engine fills registered texts immediately, before OnApply.
 	button.ufCountHolder = CreateFrame("Frame", nil, cover)
@@ -170,16 +169,40 @@ end
 
 -- The icon artwork's inset inside its frame border. Keep a drawable centre
 -- even at the smallest icon size.
-local function ArtPadding(cfg, size)
-	return cfg.border.enabled and math.min(cfg.border.padding, (size - 2) / 2) or 0
+local function ArtPadding(cfg, width, height)
+	return cfg.border.enabled and math.min(cfg.border.padding, (math.min(width, height) - 2) / 2) or 0
 end
 
-function AuraIcon.Apply(button, cfg, size, dispelColors, swipe, showSwipeEdge)
+-- Trims Blizzard's baked icon edge, then crops the longer side so the
+-- artwork fills a non-square icon without stretching.
+local ICON_TRIM = 0.08
+function AuraIcon.TexCoords(width, height)
+	local cropX, cropY = ICON_TRIM, ICON_TRIM
+	if width > height then
+		cropY = 0.5 - (0.5 - ICON_TRIM) * height / width
+	elseif height > width then
+		cropX = 0.5 - (0.5 - ICON_TRIM) * width / height
+	end
+	return cropX, 1 - cropX, cropY, 1 - cropY
+end
+
+-- Stacked above the artwork and swipe: the frame's border edges, then the
+-- texts. Levels are set on every apply, since owners may relevel the button.
+local function ApplyLayers(button, backdrop)
+	local level = button.ufCooldown:GetFrameLevel()
+	if backdrop and (backdrop.edgeFile or backdrop.raidBorder) then
+		Backdrop.SetBorderLevel(button.ufIconFrame, level + 1)
+	end
+	button.ufCover:SetFrameLevel(level + 2)
+end
+
+function AuraIcon.Apply(button, cfg, width, height, dispelColors, swipe, showSwipeEdge)
 	AuraIcon.ApplySwipe(button, swipe, showSwipeEdge)
-	button:SetSize(size, size + AuraIcon.TextRoom(cfg))
-	button.ufIconFrame:SetSize(size, size)
-	Backdrop.ApplyToFixedSize(button.ufIconFrame, cfg.border, size, size, false)
-	local pad = ArtPadding(cfg, size)
+	button:SetSize(width, height + AuraIcon.TextRoom(cfg))
+	button.ufIconFrame:SetSize(width, height)
+	ApplyLayers(button, Backdrop.ApplyToFixedSize(button.ufIconFrame, cfg.border, width, height, false))
+	local pad = ArtPadding(cfg, width, height)
+	button.ufIcon:SetTexCoord(AuraIcon.TexCoords(width - 2 * pad, height - 2 * pad))
 	for _, region in ipairs({ button.ufIcon, button.ufCooldown }) do
 		region:ClearAllPoints()
 		region:SetPoint("TOPLEFT", button.ufIconFrame, "TOPLEFT", pad, -pad)
@@ -197,14 +220,14 @@ function AuraIcon.Apply(button, cfg, size, dispelColors, swipe, showSwipeEdge)
 	end
 	button.ufCountHolder:SetShown(cfg.showCount)
 	button.ufTime:SetShown(cfg.showDuration)
-	AuraIcon.ApplyDispelBorder(button, cfg, size, dispelColors)
-	AuraIcon.ApplyDispelGlow(button, cfg, size, dispelColors)
+	AuraIcon.ApplyDispelBorder(button, cfg, width, height, dispelColors)
+	AuraIcon.ApplyDispelGlow(button, cfg, width, height, dispelColors)
 end
 
 -- Per button: the reused border settings (the icon border without a
 -- background) and what the dispel textures were last registered with.
 local dispelBorders = setmetatable({}, { __mode = "k" })
-function AuraIcon.ApplyDispelBorder(button, cfg, size, dispelColors)
+function AuraIcon.ApplyDispelBorder(button, cfg, width, height, dispelColors)
 	local enabled = cfg.border.enabled and cfg.dispelBorder and button.ufHarmful or false
 	local state = dispelBorders[button]
 	if not state then
@@ -219,12 +242,13 @@ function AuraIcon.ApplyDispelBorder(button, cfg, size, dispelColors)
 	-- button redrawn per texture). Unchanged artwork, size and colours keep
 	-- the engine's tint; only the icon frame's border, which applying the
 	-- icon backdrop recoloured, is hidden again.
-	if state.applied and state.enabled == enabled and state.info == info and state.size == size
-		and state.colors == dispelColors then
+	if state.applied and state.enabled == enabled and state.info == info and state.width == width
+		and state.height == height and state.colors == dispelColors then
 		if state.registered then Backdrop.SetBorderColor(button.ufIconFrame, 0, 0, 0, 0) end
 		return
 	end
-	state.applied, state.enabled, state.info, state.size, state.colors = true, enabled, info, size, dispelColors
+	state.applied, state.enabled, state.info, state.colors = true, enabled, info, dispelColors
+	state.width, state.height = width, height
 	state.registered = false
 	-- Re-register after applying the backdrop: its setters reset vertex
 	-- colours, and inbound options are copied by the engine, not shared.
@@ -237,7 +261,7 @@ function AuraIcon.ApplyDispelBorder(button, cfg, size, dispelColors)
 		Backdrop.ApplyTo(button.ufBorder, { enabled = false })
 		return
 	end
-	local backdrop = Backdrop.ApplyToFixedSize(button.ufBorder, border, size, size, false)
+	local backdrop = Backdrop.ApplyToFixedSize(button.ufBorder, border, width, height, false)
 	if backdrop and (backdrop.edgeFile or backdrop.raidBorder) then
 		state.registered = true
 		Backdrop.SetBorderColor(button.ufIconFrame, 0, 0, 0, 0)
@@ -286,18 +310,18 @@ function AuraIcon.GetGlow(button)
 	return state and state.active
 end
 
-function AuraIcon.ApplyDispelGlow(button, cfg, size, dispelColors)
+function AuraIcon.ApplyDispelGlow(button, cfg, width, height, dispelColors)
 	local glow = cfg.dispelGlow
 	local enabled = glow and glow.enabled and button.ufHarmful or false
 	local style = enabled and (glow.style == "proc" and "proc" or "halo") or nil
 	local active = style and GlowHolder(button, style) or nil
 	for _, holder in pairs(glowHolders[button] or {}) do holder:SetShown(holder == active) end
 	if style == "proc" then
-		Glow.ApplyProc(active, glow, size)
+		Glow.ApplyProc(active, glow, width, height)
 	elseif active then
 		-- From the artwork's edge: border art draws its line anywhere within
 		-- the edge, so the halo starts under the border to leave no gap.
-		local pad = ArtPadding(cfg, size)
+		local pad = ArtPadding(cfg, width, height)
 		active:ClearAllPoints()
 		active:SetPoint("TOPLEFT", button.ufIconFrame, "TOPLEFT", pad, -pad)
 		active:SetPoint("BOTTOMRIGHT", button.ufIconFrame, "BOTTOMRIGHT", -pad, pad)

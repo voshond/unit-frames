@@ -88,7 +88,15 @@ local function GroupSchema(label, filters, size, position)
 		} },
 		{ key = "showSwipeEdge", type = "toggle", label = "Show swipe edge", default = true,
 			tooltip = "Show the spinning line along the cooldown swipe. Hidden when Cooldown swipe is None." },
-		{ key = "size", type = "range", label = "Icon size", min = 10, max = 64, step = 1, default = size },
+		{ key = "size", type = "range", label = "Icon size", min = 10, max = 64, step = 1, default = size,
+			tooltip = "With a separate icon height, this sets the icon width." },
+		{ key = "separateHeight", type = "toggle", label = "Separate icon height", default = false,
+			tooltip = "Enable to set the icon height on its own. The artwork fills the icon and is cropped to its shape.",
+			onSet = function(config, value, before)
+				if value and not before.separateHeight and config.height == nil then config.height = before.size end
+			end },
+		{ key = "height", type = "range", label = "Icon height", min = 6, max = 64, step = 1, default = size,
+			hidden = function(cfg) return not cfg.separateHeight end },
 		{ key = "position", type = "select", label = "Side", values = Auras.POSITIONS, default = position },
 		{ key = "alignment", type = "select", label = "Alignment", values = Auras.ALIGNMENTS, default = "start",
 			tooltip = "Align the whole aura block along the selected side. Centre aligns the block, including wrapped rows." },
@@ -226,10 +234,16 @@ function Auras:UpdateStyleToken()
 	self.styleToken = StyleToken(self, self.styleToken)
 end
 
+-- A group's configured icon width and height; square without a separate height.
+function Auras.IconSize(group)
+	return group.size, group.separateHeight and group.height or group.size
+end
+
 function Auras:StyleButton(button)
 	ns.Perf:Count("auraButtonStyle")
 	local group = self.resolved[button.ufKind]
-	AuraIcon.Apply(button, self:GetArtworkConfig(), group.size, self.dispelColors, group.swipe, group.showSwipeEdge)
+	local width, height = Auras.IconSize(group)
+	AuraIcon.Apply(button, self:GetArtworkConfig(), width, height, self.dispelColors, group.swipe, group.showSwipeEdge)
 end
 
 -- A group's native candidate filters (nil = none).
@@ -318,7 +332,8 @@ end
 function Auras:LineLength(group)
 	local vertical = VerticalSide(group)
 	local length = group.lineSize > 0 and group.lineSize or vertical and self.hostHeight or self.hostWidth
-	return math.max(length, group.size + (vertical and AuraIcon.TextRoom(self:GetArtworkConfig()) or 0))
+	local width, height = Auras.IconSize(group)
+	return math.max(length, vertical and height + AuraIcon.TextRoom(self:GetArtworkConfig()) or width)
 end
 
 local function OtherKind(kind)
@@ -359,8 +374,9 @@ function Auras:StackDepth(group)
 	local vertical = VerticalSide(group)
 	local textRoom = AuraIcon.TextRoom(self:GetArtworkConfig())
 	local spacing = self.resolved.spacing
-	local along = group.size + (vertical and textRoom or 0)
-	local across = group.size + (vertical and 0 or textRoom)
+	local width, height = Auras.IconSize(group)
+	local along = vertical and height + textRoom or width
+	local across = vertical and width or height + textRoom
 	local perLine = math.max(1, math.floor((self:LineLength(group) + spacing) / (along + spacing)))
 	local lines = math.ceil(group.max / perLine)
 	local side = group.position
@@ -378,9 +394,9 @@ function Auras:Layout(width, height)
 	local firstKind = self:CombinedFirstKind()
 	for _, containerKind in ipairs(self.containers.buffs and KINDS or {}) do
 		for _, kind in ipairs(self:ContainerGroups(containerKind)) do
-			local size = self.resolved[kind].size
-			Auras.ApplyGroupLayout(self.containers[containerKind], kind, size,
-				size + AuraIcon.TextRoom(self:GetArtworkConfig()), self.resolved.spacing, self.resolved.spacing,
+			local width, height = Auras.IconSize(self.resolved[kind])
+			Auras.ApplyGroupLayout(self.containers[containerKind], kind, width,
+				height + AuraIcon.TextRoom(self:GetArtworkConfig()), self.resolved.spacing, self.resolved.spacing,
 				firstKind and kind ~= firstKind and 2 or 1)
 		end
 	end

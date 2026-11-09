@@ -39,6 +39,7 @@ for _, kind in ipairs(KINDS) do
 	local source = ns.Schema.Find(Auras.schema, kind)
 	local group = ns.Schema.Without(ns.Util.Copy(source.schema), {
 		position = true, alignment = true, growth = true, gap = true, offsetX = true, offsetY = true, lineSize = true,
+		separateHeight = true, height = true,
 	})
 	group = ns.Schema.Override(group, "size", { label = "Icon width", default = 32,
 		tooltip = "Artwork stays square and centred vertically. Icons wider than their section show none." })
