@@ -50,34 +50,32 @@ See the script for `ACE3_REF`, `OUF_REF`, `LEM_REF`, `LDB_REF` and
 library versions are recorded in `UnitFrames/Libs/VERSIONS.md`.
 
 Verify unfamiliar APIs against the actual client or Blizzard's UI/API
-documentation. The optional local source checkout is
-`examples/wow-ui-source-forever`, using Gethe/wow-ui-source's `forever` branch.
+documentation. The client build, its Gethe/wow-ui-source commit and the art
+refs are pinned by the wow-ui-testing library (`.wut/clientdata/forever.json`,
+see [The wow-ui-testing library](#the-wow-ui-testing-library)). Check that
+commit out locally with `bash .wut/scripts/update-client-source.sh --sync`; it lands in the ignored
+`.wut/.client-source/forever`, where a few specs run Blizzard's own Lua against
+our frames (they skip without it).
 
 ## Forever spell catalogue
 
 `scripts/spell_catalog.py` compiles `UnitFrames/Tracking/DotCatalog.lua` from
 Blizzard client tables exported by [Wago](https://wago.tools/db2). It uses the
-exact Forever build and UI-source commit pinned in both test and release
-workflows, and verifies the addon's TOC interface against that build. Interface
-`16001` alone is insufficient to select spell data.
-
-Refresh the UI source, API snapshot and spell catalogue together with:
-
-```sh
-bash scripts/update-blizzard-source.sh
-```
-
-To refresh just the spell snapshot for the already-pinned source:
+exact Forever build and UI-source commit the wow-ui-testing library pins
+(`.wut/clientdata/forever.json`), and verifies the addon's TOC interface
+against that build. Interface `16001` alone is insufficient to select spell
+data. A new client build arrives as a `.wut-version` bump; then refresh the
+spell snapshot for it:
 
 ```sh
 python3 -B scripts/spell_catalog.py --update
 ```
 
-The downloader requires a matching local UI-source checkout and requests an
+`--update` requires the library's UI-source checkout (`bash .wut/scripts/update-client-source.sh --sync`) and requests an
 explicit build for every table. It rejects responses whose download filename
 does not confirm that build. There is no fallback to the latest build. A missing
 build, changed schema or changed classification evidence stops the update for
-review. The weekly Upstream workflow includes spell data in its source-update PR.
+review.
 
 `data/forever-spells/manifest.json` records the build, UI commit, interface,
 URLs, confirmed filenames, row counts and SHA-256 hashes of the uncompressed
@@ -186,8 +184,8 @@ in source is needed before tagging.
 | `UnitFrames_ClickGrid/` | Party/raid panel, member targets, indicators, auras and click-spell bindings |
 | `UnitFrames_Onboarding/` | Load-on-demand Getting started guide: preset looks, tweaks, extras and Workbench hand-off |
 | `UnitFrames_Media/` | Additional fonts and their licences |
-| `tests/` | Mocked client, API snapshot and regression specs |
-| `scripts/` | Library fetching, installation and API snapshot generation |
+| `tests/` | Regression specs, UnitFrames' mock extensions and UI-proof scenarios |
+| `scripts/` | Library fetching, installation, release and the spell catalogue |
 | `.wut/` | The fetched [wow-ui-testing](https://github.com/voshond/wow-ui-testing) library (ignored by Git) |
 
 New runtime files belong in the relevant TOC in dependency order; tests
@@ -231,8 +229,10 @@ use LuaJIT's profiler: `luajit -jp=F tests/run.lua clickgrid_spec.lua`.
 
 ### The wow-ui-testing library
 
-The spec runner (`wowtest`) and the UI-proof renderer (`wowproof`) come from
-the shared [wow-ui-testing](https://github.com/voshond/wow-ui-testing)
+The spec runner (`wowtest`), the mocked client and its API snapshot
+(`wowmock`), the UI-proof renderer (`wowproof`) and the Blizzard client-data
+pins (`clientdata/`: build, wow-ui-source commit, art refs, atlas exports)
+come from the shared [wow-ui-testing](https://github.com/voshond/wow-ui-testing)
 library, which our other addons use too. `.wut-version` pins one library
 commit (full SHA, the version tag after `#`). `scripts/fetch-wut.sh` (a copy
 of the library's) downloads that commit into the ignored `.wut/` folder and
@@ -277,15 +277,15 @@ The images show real anchoring, sizes, colours, bar fill, text, clipping,
 texture coordinates and paint order. Blizzard textures and icons
 (`Interface\...`) are downloaded on demand from the public
 [Gethe/wow-ui-textures](https://github.com/Gethe/wow-ui-textures) mirror,
-pinned in `tests/proof/setup.lua`, into the ignored `.proof-art/` folder. Only
+pinned by the library's `clientdata/forever.json`, into the ignored `.proof-art/` folder. Only
 the files a render uses are fetched, and the cache is reused offline. Never
 commit that art. `UF_PROOF_ART` picks another cache folder, and
 `UF_PROOF_ART_FETCH=0` stays offline. Set `GH_TOKEN` or `GITHUB_TOKEN` if
 GitHub's API rate limit bites.
 
-Atlases (`SetAtlas`) come from `tests/proof/atlases.lua`, which
+Atlases (`SetAtlas`) come from `tests/proof/atlases.lua`, which the library's
 `scripts/atlas_catalog.py` generates from Wago's `UiTextureAtlas`,
-`UiTextureAtlasMember` and `UiTextureAtlasElement` exports for the pinned
+`UiTextureAtlasMember` and `UiTextureAtlasElement` exports for its pinned
 Forever build. It keeps only the atlases the addon and oUF elements name: dashed
 string literals in files that mention atlases, plus `"prefix-" .. value`
 concatenations. Where an atlas has several members, it takes the 1x one and
@@ -294,10 +294,12 @@ Wago for the same build into `.proof-art/casc-<build>/`. Don't edit the
 generated table:
 
 ```sh
-python3 -B scripts/atlas_catalog.py --update        # fetch exports for the pinned build and regenerate
-python3 -B scripts/atlas_catalog.py                 # regenerate from the cached exports
-python3 -B scripts/atlas_catalog.py --fetch --check # what CI runs
+python3 -B .wut/scripts/atlas_catalog.py --fetch --output tests/proof/atlases.lua \
+	--scan 'UnitFrames*/*.lua' 'UnitFrames*/[!L]*/**/*.lua' 'UnitFrames/Libs/oUF/elements/*.lua'
 ```
+
+Add `--check` to verify the committed table instead of writing it. The suite
+only checks its build against the library's pin (`atlas_catalog_spec`).
 
 Regenerate after adding a `SetAtlas` call. A name the table lacks draws as a
 placeholder.
@@ -365,17 +367,16 @@ when you want feedback before opening or updating a pull request.
 
 ### API snapshot and client verification
 
-The mock API is checked against `tests/fixtures/api_snapshot.lua`. With the
-Blizzard source checkout present, the suite also checks that regeneration
-produces the committed snapshot. After adding API usage or updating that
-checkout, regenerate and review the diff:
-
-```sh
-luajit scripts/api-snapshot.lua
-```
-
-When updating the client source version, update the workflow's pinned Blizzard
-checkout commit alongside the reviewed snapshot.
+The mock is the library's `wowmock`, held to its full API snapshot of the
+pinned client build (`.wut/wowmock/snapshots/`). `tests/mock/wow.lua` only
+extends it with what UnitFrames needs (`Mock.Extend`: the globals cleared on
+every install), `tests/mock/ouf.lua` is the oUF stand-in, and
+`tests/helpers.lua` loads TOCs through the library's `wowmock.loader`. A mock
+gap or a newer client build is fixed in wow-ui-testing (try it here with
+`WUT_DIR`), then picked up with a `.wut-version` bump. The library's own CI
+regenerates the snapshot from the Blizzard source and compares it.
+`tests/spec/contract/api_contract_spec.lua` still checks our side: event names
+the addons register and no mock-only helpers in addon code.
 
 Add regression tests for fixes. Keep mocks faithful to native restrictions;
 do not weaken them to make an implementation pass. Offline tests cannot
@@ -398,8 +399,8 @@ git tag -a v0.1.0 -m 'UnitFrames 0.1.0'
 git push origin v0.1.0
 ```
 
-A tag push runs the full suite with pinned dependencies and the matching
-Blizzard source, builds `UnitFrames-v0.1.0.zip` and its SHA-256 file, and
+A tag push runs the full suite with pinned dependencies and the pinned
+wow-ui-testing library, builds `UnitFrames-v0.1.0.zip` and its SHA-256 file, and
 attaches them to a **draft** GitHub release. Review the notes and publish the
 draft when ready. Publishing a release directly also builds and attaches the
 ZIP, even if the tag was not previously pushed separately.

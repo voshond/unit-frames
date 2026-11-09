@@ -1,4 +1,4 @@
-dofile("tests/wut.lua")
+local WUT_DIR = dofile("tests/wut.lua")
 package.path = "./tests/?.lua;./?.lua;./?/init.lua;" .. package.path
 
 local Helpers = require("helpers")
@@ -17,7 +17,13 @@ local TEXTURE_EXTENSIONS = { "", ".tga", ".png" }
 local FONT_DIR = "UnitFrames_Media/Fonts"
 local FONT_FAMILY = "Roboto Condensed"
 local FONT_WEIGHTS = { Light = 300, Regular = 400, Medium = 500, Bold = 700 }
-local ART_REF = "d23deaf8f44a7d280dc974a5c9d5321c013db59b"
+-- Gethe/wow-ui-textures commit the library pins for this client build.
+local ART_REF = (function()
+	local file = assert(io.open(WUT_DIR .. "/clientdata/forever.json"))
+	local pin = file:read("*a")
+	file:close()
+	return assert(pin:match('"art"%s*:%s*{%s*"ref"%s*:%s*"(%x+)"'), "no art ref in clientdata/forever.json")
+end)()
 local ATLASES = dofile("tests/proof/atlases.lua")
 local ART_DIR = os.getenv("UF_PROOF_ART") or ".proof-art"
 local ART_FETCH = os.getenv("UF_PROOF_ART_FETCH") ~= "0"
