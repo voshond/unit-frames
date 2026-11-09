@@ -33,6 +33,7 @@ end
 local function BuildMenu(_, root)
 	root:CreateTitle("UnitFrames")
 	root:CreateButton("Toggle Workbench", function() ns:OpenWorkbench() end)
+	root:CreateButton("Getting started", function() ns:OpenOnboarding() end)
 	root:CreateCheckbox("Show minimap icon",
 		function() return Launcher:IsMinimapShown() end,
 		function() Launcher:ToggleMinimap() end)

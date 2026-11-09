@@ -1,6 +1,6 @@
 # Design: Getting started (UnitFrames_Onboarding)
 
-Status: draft; no implementation. Targets Forever Interface 16001 and Lua 5.1.
+Status: implemented (offline tests only; in-game verification pending). Targets Forever Interface 16001 and Lua 5.1.
 Mockups: `todos/09-onboarding/01-pick-a-look.svg` … `04-ready.svg` (generated, not pixel-exact).
 
 ## Goal
@@ -239,3 +239,25 @@ in the AddOns list stays silent.
   licence-clean and already shipped (AGENTS.md: no new third-party art).
 - Should existing users ever get the wizard auto-opened (for example once, after a major version)?
 - Do we want a fifth preset that's community-sourced (an import string shipped as data)?
+
+## Implementation notes (deviations from this draft)
+
+- **Step 3 is "Add the extras", not frame toggles.** Unit frames have no
+  on/off setting (oUF always spawns them), and ClickGrid's switch is the addon
+  itself. The screen map keeps Player/Target/Focus as fixed blocks and toggles
+  the extras that exist: player/target/focus castbars, experience, combo
+  points, timer bars, global cooldown and swing timer. Per-frame disabling would
+  be a core feature of its own.
+- **No Blizzard Settings panel yet.** Entry points are the first-run trigger,
+  `/uf welcome`, the minimap menu and a Workbench button. A Settings category
+  (`Settings.RegisterCanvasLayoutCategory`/`RegisterAddOnCategory`, verified in
+  the pinned source) is a small follow-up.
+- **Preview isolation** is `Config:WithTheme(theme, fn, ...)`, not a
+  per-component theme source: child components resolve through
+  `Config:GetTheme()` outside shared scopes, so the override covers them all.
+  Each scope gets a unique negative `themeRevision`, so colour-curve caches never
+  serve a preview's curve to live frames.
+- Pages fade and slide through an OnUpdate tween; only the backdrop uses an
+  Alpha AnimationGroup (the mock models no Translation animations).
+- The Edit Mode button follows Blizzard's game menu:
+  `EditModeManagerFrame:CanEnterEditMode()` then `ShowUIPanel(EditModeManagerFrame)`.

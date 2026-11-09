@@ -13,7 +13,7 @@ else
 	mkdir -p "$repo_dir/.build"
 	output_dir="$(mktemp -d "$repo_dir/.build/$build_version.XXXXXX")"
 fi
-addons=(UnitFrames UnitFrames_Workbench UnitFrames_Media UnitFrames_ClickGrid)
+addons=(UnitFrames UnitFrames_Workbench UnitFrames_Media UnitFrames_ClickGrid UnitFrames_Onboarding)
 for addon in "${addons[@]}"; do
 	cp -a "$repo_dir/$addon" "$output_dir/"
 done

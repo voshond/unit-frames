@@ -1,7 +1,7 @@
 -- Validate the staged installable bundle without loading client APIs.
 local root, version = assert(arg[1], "bundle directory required"), assert(arg[2], "version required")
 local channel, commit = arg[3] or "release", arg[4]
-local addons = { "UnitFrames", "UnitFrames_Workbench", "UnitFrames_Media", "UnitFrames_ClickGrid" }
+local addons = { "UnitFrames", "UnitFrames_Workbench", "UnitFrames_Media", "UnitFrames_ClickGrid", "UnitFrames_Onboarding" }
 local checked = {}
 
 local function Read(path)

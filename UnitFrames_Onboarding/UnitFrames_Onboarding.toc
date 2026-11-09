@@ -1,0 +1,21 @@
+## Interface: 16001
+## Title: UnitFrames |cff4fa3ffGetting started|r
+## Notes: A guided first setup with preset looks. Open with /uf welcome.
+## Author: Martin Konstantin Herrmann
+## Version: dev
+## X-Build-Channel: development
+## X-Build-Commit: unknown
+## Dependencies: UnitFrames
+## OptionalDeps: UnitFrames_Media, UnitFrames_ClickGrid
+## LoadOnDemand: 1
+
+Presets.lua
+Pending.lua
+Widgets.lua
+Preview.lua
+Shell.lua
+Steps\Look.lua
+Steps\Tweaks.lua
+Steps\Extras.lua
+Steps\Ready.lua
+Onboarding.lua

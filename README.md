@@ -71,6 +71,12 @@ Use **Global Settings** to adjust inherited defaults. Development builds also
 include a **Developer tools** component gallery for testing; those demonstrations do
 not change your unit settings.
 
+New to the addon? **Getting started** (`/uf welcome`, or the button at the
+top of the Workbench) lets you pick one of four preset looks with live
+previews, adjust font, textures, border, colours, portraits and size, and
+switch on castbars and timers. It saves the result as a new profile, so your
+previous look stays one switch away.
+
 To move frames, open the game's **Edit Mode**. If you want matching frames,
 start with your player and use **Copy player style** under **Layout & border** on the others.
 You can still customise each one afterward.
@@ -110,12 +116,15 @@ those separately. If no release is listed yet, the first bundle has not
 been published.
 
 Extract the ZIP into your Forever client's `Interface/AddOns` folder. It
-contains four addon folders: `UnitFrames`, `UnitFrames_Workbench`,
-`UnitFrames_Media` and `UnitFrames_ClickGrid`. Keep the first two for frames
-and settings. The extra fonts and ClickGrid healing panel are optional.
+contains five addon folders: `UnitFrames`, `UnitFrames_Workbench`,
+`UnitFrames_Media`, `UnitFrames_ClickGrid` and `UnitFrames_Onboarding`. Keep
+the first two for frames and settings. The extra fonts, ClickGrid healing
+panel and the Getting started guide are optional.
 
-Restart the game, enable the addons on the character selection screen,
-then type `/uf wb` to get started.
+Restart the game and enable the addons on the character selection screen.
+On your first login, **Getting started** walks you through picking a preset
+look, the options that matter most and the extras you want. Afterwards,
+`/uf wb` opens all settings and `/uf welcome` reopens the guide.
 
 Use the attached **UnitFrames-….zip**, rather than GitHub's **Source code**
 archives or **Download ZIP** button, which contain source without dependencies.

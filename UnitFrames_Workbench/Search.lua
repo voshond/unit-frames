@@ -88,6 +88,10 @@ function Workbench:BuildSearch(content)
 		self:LayoutWorkbench()
 	end })
 	self.previewToggle:SetPoint("TOPRIGHT", 0, -18)
+	self.gettingStarted = W.Button:New(content, { text = "Getting started", width = 120, height = 26,
+		tooltip = "Pick a preset look, try the most important options and find your way around. Your current style stays in its profile.",
+		onClick = function() UF:OpenOnboarding() end })
+	self.gettingStarted:SetPoint("TOPRIGHT", self.previewToggle:GetFrame(), "TOPLEFT", -8, 0)
 	self.profileLabel = Skin.FontString(content)
 	self.profileLabel:SetPoint("TOPLEFT", 0, -50)
 	self.profileLabel:SetJustifyH("LEFT")

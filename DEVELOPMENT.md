@@ -184,6 +184,7 @@ in source is needed before tagging.
 | `UnitFrames/Integration/` | Edit Mode and launcher integration |
 | `UnitFrames_Workbench/` | Load-on-demand settings, component gallery and static/animated/live previews |
 | `UnitFrames_ClickGrid/` | Party/raid panel, member targets, indicators, auras and click-spell bindings |
+| `UnitFrames_Onboarding/` | Load-on-demand Getting started guide: preset looks, tweaks, extras and Workbench hand-off |
 | `UnitFrames_Media/` | Additional fonts and their licences |
 | `tests/` | Mocked client, API snapshot and regression specs |
 | `scripts/` | Library fetching, installation and API snapshot generation |

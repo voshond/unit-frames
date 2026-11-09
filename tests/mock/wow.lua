@@ -1038,6 +1038,13 @@ function Mock.NewEncodingUtil()
 	}
 end
 
+-- Runs the pending C_Timer.After callbacks, in the order they were scheduled.
+function Mock.RunTimers()
+	local timers = Mock.timers
+	Mock.timers = {}
+	for _, timer in ipairs(timers) do timer.callback() end
+end
+
 function Mock.Install()
 	-- Client chat belongs to the mock, not the test runner's stdout.
 	Mock.messages = {}
@@ -1056,6 +1063,12 @@ function Mock.Install()
 	Mock.ranges = {}
 	Mock.spellRanges = {}
 	Mock.registeredEvents = {}
+	-- C_Timer.After callbacks wait until a spec runs them (Mock.RunTimers).
+	Mock.timers = {}
+	_G.C_Timer = { After = function(seconds, callback)
+		assert(type(seconds) == "number" and type(callback) == "function", "C_Timer.After(seconds, callback)")
+		Mock.timers[#Mock.timers + 1] = { seconds = seconds, callback = callback }
+	end }
 	_G.UnitAttackSpeed = function() return Secret(2.6), Secret(1.8), Secret(2.8) end
 	-- No cast in progress; InstallUI casts a sample spell.
 	_G.UnitCastingInfo = function() return nil end

@@ -2,7 +2,8 @@ Required Notice: Copyright (c) 2026 Martin Konstantin Herrmann.
 
 Original UnitFrames code and documentation are licensed under the PolyForm
 Noncommercial License 1.0.0; see LICENSE. This covers original work in
-UnitFrames, UnitFrames_Workbench, UnitFrames_Media and UnitFrames_ClickGrid.
+UnitFrames, UnitFrames_Workbench, UnitFrames_Media, UnitFrames_ClickGrid and
+UnitFrames_Onboarding.
 Third-party libraries, fonts, reference projects and Blizzard materials are
 excluded and retain their own terms.
 

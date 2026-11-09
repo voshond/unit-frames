@@ -70,6 +70,16 @@ local function CheckName(name)
 	return name
 end
 
+-- `base`, or "base 2", "base 3"... when that name is taken.
+function Profiles:UniqueName(base)
+	local name, index = base, 1
+	while self:Exists(name) do
+		index = index + 1
+		name = base .. " " .. index
+	end
+	return name
+end
+
 function Profiles:Switch(name)
 	if not self:Exists(name) then return false, "There is no profile named " .. tostring(name) .. "." end
 	DB():SetProfile(name)
@@ -157,6 +167,15 @@ function Profiles:Decode(text)
 		return nil, DAMAGED
 	end
 	return payload
+end
+
+-- Validates decoded data of one kind (as a string would carry it) without
+-- writing anything: an apply function and the skipped paths, or nil and a
+-- reason. Built-in presets use it to apply style tables.
+function Profiles:Prepare(kindKey, data)
+	local kind = self.kinds[kindKey]
+	assert(kind, "Profiles: unknown kind " .. tostring(kindKey))
+	return kind.prepare(data)
 end
 
 --[[

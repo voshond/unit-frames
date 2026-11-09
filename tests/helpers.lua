@@ -130,6 +130,17 @@ function Helpers.LoadWorkbench(build)
 	return ns, ns.Workbench
 end
 
+-- Core (initialized, frames spawned) + Getting started, loaded the way
+-- UF:OpenOnboarding loads it. saved: the UnitFramesDB found at load.
+-- Returns core ns, the guide and its private namespace.
+function Helpers.LoadOnboarding(saved)
+	local ns = Helpers.LoadAddon(true, true, saved)
+	Mock.InstallUI()
+	local ob = Helpers.LoadToc("UnitFrames_Onboarding/UnitFrames_Onboarding.toc", "UnitFrames_Onboarding")
+	C_AddOns.LoadAddOn = function(name) return name == "UnitFrames_Onboarding" end
+	return ns, ns.Onboarding, ob
+end
+
 -- saved: the ClickGrid profile found at load ({ settings, member, target, pet }).
 function Helpers.LoadClickGrid(workbench, saved)
 	local db = saved and { namespaces = { ClickGrid = { profiles = { Default = saved } } } }

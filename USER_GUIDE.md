@@ -4,6 +4,32 @@ A detailed reference for the settings available in game. For a quick
 introduction, see the [main README](README.md). For setup and implementation,
 see the [developer guide](DEVELOPMENT.md).
 
+## Getting started
+
+On a first install, the **Getting started** guide opens shortly after you log
+in (never during combat). Reopen it any time with `/uf welcome`, the
+**Getting started** button at the top of the Workbench or the minimap icon's
+right-click menu. It is its own optional addon, **UnitFrames Getting
+started**: turn it off in the AddOns list and nothing of it loads.
+
+1. **Pick a look**: Default, Minimal, Classic or Healer, each with a live
+   preview of your player and target frames.
+2. **Make it yours**: font, bar texture, border, health colour, portraits and
+   size, shown on the preview as you click.
+3. **Add the extras**: castbars on your player, target and focus frames,
+   experience, combo points, and the standalone timer bars with global
+   cooldown and swing timer. **Save as a new profile** (on by default) puts
+   the look into a new profile named after it and switches to it; your
+   previous profile is left untouched. Turn it off to replace the style of
+   the current profile instead. Frame positions always stay.
+4. **Ready**: open Edit Mode to place your frames, or jump straight to the
+   Workbench pages for buffs and debuffs, texts, timers, ClickGrid or
+   importing a shared string.
+
+Nothing is saved before **Apply and finish**. Skip, Escape or the close
+button end the guide without changes. Combat hides it with your choices kept;
+it returns when combat ends.
+
 ## Open settings
 
 In game: `/uf wb` opens the Workbench.

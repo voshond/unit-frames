@@ -27,6 +27,8 @@ local function BuildDefaults()
 		},
 		global = {
 			minimap = { hide = false },
+			-- Getting started (UnitFrames_Onboarding): finished or skipped once.
+			onboarding = { done = false },
 		},
 	}
 end
@@ -47,6 +49,8 @@ local function OwnProfile(db)
 end
 
 function Config:Initialize()
+	-- No saved variables yet: a first install, offered the Getting started guide.
+	self.freshInstall = UnitFramesDB == nil
 	self.db = LibStub("AceDB-3.0"):New("UnitFramesDB", BuildDefaults(), true)
 	OwnProfile(self.db)
 	local function OnProfile()
@@ -65,12 +69,28 @@ function Config:ProfileChanged()
 end
 
 -- Before ADDON_LOADED (and in offline tests) the static defaults are used.
+-- Inside WithTheme a preview's own theme is returned instead.
 function Config:GetTheme()
+	if self.previewTheme then return self.previewTheme end
 	if self.db then
 		return self.db.profile.theme
 	end
 	self.defaultTheme = self.defaultTheme or Schema.Defaults(ns.Theme.schema)
 	return self.defaultTheme
+end
+
+-- Runs fn with `theme` as the effective theme, for previews of a style that
+-- isn't saved (Getting started presets). Theme-derived caches see a revision
+-- of their own, so neither the preview nor the live frames reuse the other's.
+-- The previous theme is restored even when fn raises; the error still raises.
+local previewRevision = 0
+function Config:WithTheme(theme, fn, ...)
+	local previous, revision = self.previewTheme, self.themeRevision
+	previewRevision = previewRevision - 1
+	self.previewTheme, self.themeRevision = theme, previewRevision
+	local ok, err = pcall(fn, ...)
+	self.previewTheme, self.themeRevision = previous, revision
+	if not ok then error(err, 0) end
 end
 
 function Config:GetThemeDefaults()
