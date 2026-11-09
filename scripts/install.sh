@@ -8,8 +8,12 @@
 #   scripts/install.sh [addon...]              # remove old copies, copy fresh ones into AddOns/
 #   scripts/install.sh --link [addon...]       # remove old copies, symlink AddOns/<name> -> repo folder
 #   scripts/install.sh --uninstall [addon...]  # remove from AddOns/ (SavedVariables in WTF/ are kept)
+#   scripts/install.sh --host arch [addon...]  # the same on another machine over SSH (copy or --uninstall)
 #
-# Without addon names, all addons in the repo are handled.
+# Without addon names, all addons in the repo are handled. --host takes an
+# SSH destination (a host alias from your SSH config, or user@host) with
+# key-based login; WOW_DIR is then a path on that machine. --link needs the
+# repo on the client machine, so it only works locally.
 #
 # Environment overrides:
 #   WOW_DIR     WoW client dir (default: Forever under Faugus/battlenet)
@@ -22,6 +26,21 @@ ADDONS_DIR="$WOW_DIR/Interface/AddOns"
 
 die() { echo "error: $*" >&2; exit 1; }
 
+HOST=""
+
+# Runs a command here, or on $HOST over SSH with its arguments quoted.
+on_target() {
+	if [[ -n "$HOST" ]]; then
+		ssh -o BatchMode=yes "$HOST" "$(printf '%q ' "$@")"
+	else
+		"$@"
+	fi
+}
+
+where() {
+	if [[ -n "$HOST" ]]; then echo "$HOST:$1"; else echo "$1"; fi
+}
+
 repo_addons() {
 	local dir name
 	for dir in "$REPO_DIR"/*/; do
@@ -30,29 +49,45 @@ repo_addons() {
 	done
 }
 
+# Exit status: 0 removed, 1 nothing there, 2 something else is in the way.
+REMOVE_SCRIPT='
+if [[ -L "$1" ]]; then rm -- "$1"
+elif [[ -d "$1" ]]; then rm -rf -- "$1"
+elif [[ -e "$1" ]]; then exit 2
+else exit 1
+fi'
+
 remove_existing() {
-	local target="$1"
-	if [[ -L "$target" ]]; then
-		rm "$target"
-	elif [[ -d "$target" ]]; then
-		rm -rf -- "$target"
-	elif [[ -e "$target" ]]; then
-		die "$target exists but is not a directory or symlink, refusing to touch it"
-	else
-		return 1
-	fi
+	local target="$1" result=0
+	on_target bash -c "$REMOVE_SCRIPT" remove "$target" || result=$?
+	case "$result" in
+		0) return 0 ;;
+		1) return 1 ;;
+		2) die "$(where "$target") exists but is not a directory or symlink, refusing to touch it" ;;
+		*) die "could not check $(where "$target") (exit $result)" ;;
+	esac
 }
 
 mode="copy"
-case "${1:-}" in
-	--link) mode="link"; shift ;;
-	--uninstall) mode="uninstall"; shift ;;
-	-h|--help) sed -n '2,16p' "$0"; exit 0 ;;
-	-*) die "unknown option: $1 (see --help)" ;;
-esac
+while [[ $# -gt 0 ]]; do
+	case "$1" in
+		--link) mode="link"; shift ;;
+		--uninstall) mode="uninstall"; shift ;;
+		--host)
+			[[ -n "${2:-}" && "$2" != -* ]] || die "--host needs an SSH destination, e.g. --host arch"
+			HOST="$2"; shift 2 ;;
+		-h|--help) sed -n '2,22p' "$0"; exit 0 ;;
+		-*) die "unknown option: $1 (see --help)" ;;
+		*) break ;;
+	esac
+done
 
-[[ -d "$WOW_DIR" ]] || die "WoW dir not found: $WOW_DIR"
-mkdir -p "$ADDONS_DIR"
+[[ -z "$HOST" || "$mode" != "link" ]] || die "--link only works locally; use plain copies with --host"
+if [[ -n "$HOST" ]]; then
+	on_target true || die "cannot reach $HOST over SSH (key-based login is required)"
+fi
+on_target test -d "$WOW_DIR" || die "WoW dir not found: $(where "$WOW_DIR")"
+on_target mkdir -p "$ADDONS_DIR"
 
 mapfile -t available < <(repo_addons)
 [[ ${#available[@]} -gt 0 ]] || die "no addon folders (<Name>/<Name>.toc) in $REPO_DIR"
@@ -69,7 +104,7 @@ for name in "${addons[@]}"; do
 	target="$ADDONS_DIR/$name"
 
 	if remove_existing "$target"; then
-		echo "removed  $target"
+		echo "removed  $(where "$target")"
 	fi
 	case "$mode" in
 		uninstall)
@@ -80,8 +115,13 @@ for name in "${addons[@]}"; do
 			echo "linked   $target -> $source_dir"
 			;;
 		copy)
-			rsync -a "$source_dir/" "$target/"
-			echo "copied   $name"
+			if [[ -n "$HOST" ]]; then
+				# -s keeps the spaces and parentheses in the client path away from the remote shell.
+				rsync -a -s -e "ssh -o BatchMode=yes" "$source_dir/" "$HOST:$target/"
+			else
+				rsync -a "$source_dir/" "$target/"
+			fi
+			echo "copied   $name -> $(where "$target")"
 			;;
 	esac
 done

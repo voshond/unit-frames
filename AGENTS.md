@@ -100,7 +100,7 @@ luajit tests/run.lua workbench -t "preview"
 ## Local installation
 
 - Default client AddOns directory: `/mnt/data02/Games/Faugus/battlenet/drive_c/Program Files (x86)/World of Warcraft/_forever_/Interface/AddOns/`. `scripts/install.sh` supports `WOW_DIR` overrides; validate the actual target before deploying.
-- For authorized deployments, use `scripts/install.sh` by default, passing the changed addon names when appropriate (for example, `scripts/install.sh UnitFrames_Workbench`). Do not substitute manual `rsync` deployments unless specifically requested.
+- For authorized deployments, use `scripts/install.sh` by default, passing the changed addon names when appropriate (for example, `scripts/install.sh UnitFrames_Workbench`). When the client runs on another machine than the checkout, add `--host <ssh destination>` (for example `--host arch`). Do not substitute manual `rsync` deployments unless specifically requested.
 - The install script replaces the targeted addon directories before copying/linking; this replacement is expected and authorized as part of a requested installation. SavedVariables under `WTF/` are retained. `--uninstall` is a separate removal operation and requires an explicit uninstall request.
 - Request the required filesystem approval when installing outside the workspace. Never edit SavedVariables or unrelated installed addons as part of routine deployment.
 - `/reload` normally picks up changed Lua. Restart the client for new TOC-listed files or new media/font assets. State clearly whether changes were installed or only edited/tested in the repository.

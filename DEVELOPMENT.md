@@ -386,6 +386,12 @@ supports `WOW_DIR`, named addon arguments, `--link` and `--uninstall`.
 `--uninstall` removes it too.** SavedVariables under `WTF/` remain intact,
 but other files in those addon folders are replaced.
 
+`--host <ssh destination>` does the same on another machine, for a client
+that runs elsewhere than the checkout: `scripts/install.sh --host arch
+UnitFrames_Onboarding`. It needs key-based SSH login and rsync on both ends;
+`WOW_DIR` then names the path on that machine (same default). `--link` is
+local only.
+
 Use `/reload` for changed Lua in existing files. Restart the client for new
 TOC-listed files or new media/font assets. Keep repository edits and game
 installation distinct when reporting changes.
