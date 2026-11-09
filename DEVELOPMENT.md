@@ -249,9 +249,20 @@ render. `tests/proof/setup.lua` is the only coupling to the renderer: it hands
 also call `Helpers.Snapshot(name, region)`, which renders only with
 `UF_PROOF=1`. CI uploads the images as the `ui-proof` artifact.
 
-The images show real anchoring, sizes, colours, bar fill, text, clipping and
-paint order. Blizzard art is not available offline: it draws as dashed
-placeholders, and Blizzard's white texture as a solid colour.
+The images show real anchoring, sizes, colours, bar fill, text, clipping,
+texture coordinates and paint order. Blizzard textures and icons
+(`Interface\...`) are downloaded on demand from the public
+[Gethe/wow-ui-textures](https://github.com/Gethe/wow-ui-textures) mirror,
+pinned in `tests/proof/setup.lua`, into the ignored `.proof-art/` folder. Only
+the files a render uses are fetched, and the cache is reused offline. Never
+commit that art. `UF_PROOF_ART` picks another cache folder, and
+`UF_PROOF_ART_FETCH=0` stays offline. Set `GH_TOKEN` or `GITHUB_TOKEN` if
+GitHub's API rate limit bites.
+
+Still drawn as dashed placeholders:
+- art the mirror lacks, listed in `.proof-art/missing-<commit>.txt`
+- atlases (`SetAtlas`), which need Blizzard's atlas table
+- portrait models
 
 ### Pull request checks
 

@@ -1191,7 +1191,12 @@ function Mock.Install()
 	}
 	Mock.spells = {}
 	-- Blizzard_UnitFrame (always loaded): a sprite sheet cell of the raid icon sheet.
-	_G.SetRaidTargetIconTexture = function(texture, index) texture.__state.raidTargetIndex = index end
+	_G.SetRaidTargetIconTexture = function(texture, index)
+		texture.__state.raidTargetIndex = index
+		local cell = (Mock.IsSecret(index) and index.secretValue or index) - 1
+		local column, row = cell % 4, math.floor(cell / 4)
+		texture.__state.texCoords = { column / 4, (column + 1) / 4, row / 4, (row + 1) / 4 }
+	end
 	Mock.spellOverrides, Mock.unknownSpells, Mock.cooldowns, Mock.spellQueueWindow = {}, {}, {}, 400
 	-- Mock.latency = { home, world } in milliseconds.
 	Mock.latency = { 40, 80 }

@@ -26,6 +26,13 @@ return function(options)
 		return { Plain(color[1]), Plain(color[2]), Plain(color[3]), Plain(color[4]) }
 	end
 
+	local function TexCoords(coords)
+		if type(coords) ~= "table" or #coords < 4 then return nil end
+		local plain = {}
+		for index, value in ipairs(coords) do plain[index] = Plain(value) end
+		return plain
+	end
+
 	local order = setmetatable({}, { __mode = "k" })
 	local function Order(region)
 		if not order[region] then
@@ -147,6 +154,7 @@ return function(options)
 			gradient = gradient,
 			blend = state.blendMode,
 			slice = state.sliceMargins,
+			texCoords = TexCoords(state.texCoords),
 		}
 	end
 

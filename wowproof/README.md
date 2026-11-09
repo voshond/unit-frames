@@ -76,6 +76,28 @@ the adapter's job.
 
 Rendering is deterministic: the same scene gives the same SVG.
 
+## Blizzard art
+
+`wowproof.sources.wow_ui_textures` resolves `Interface\...` paths to PNGs from
+the public [Gethe/wow-ui-textures](https://github.com/Gethe/wow-ui-textures)
+mirror. It fetches only the files a render asks for, matches names
+case-insensitively and caches everything under one pinned commit. Keep the
+cache out of version control. It needs `curl` and `jq`.
+
+```lua
+local art = require("wowproof.sources.wow_ui_textures")({
+	ref = "d23deaf8f44a7d280dc974a5c9d5321c013db59b",
+	dir = ".proof-art",
+	fetch = true,
+	token = os.getenv("GITHUB_TOKEN"),
+})
+assets.textures = function(path) return ownTexture(path) or art(path) end
+```
+
+Files the commit lacks are remembered in `missing-<ref>.txt` and never
+requested again. Atlases (`SetAtlas`) still draw as placeholders: they need
+Blizzard's atlas table.
+
 ## Tests
 
 `spec/` holds busted-style specs (`describe`/`it`/`assert.*`) that need

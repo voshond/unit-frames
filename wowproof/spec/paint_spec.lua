@@ -116,6 +116,16 @@ describe("wowproof paint", function()
 		assert.is_true(Has(svg, "<title>Interface\\Missing</title>"))
 	end)
 
+	it("crops images to their texture coordinates", function()
+		scene.Node("Texture", frame, {
+			points = { { all = true } }, texture = { file = "Own\\Glow.tga", texCoords = { 0.25, 0.5, 0, 0.25 } },
+		})
+		assert.is_true(Has(Render(nil, { image = Image }), 'viewBox="8 0 8 8"'))
+		assert.same({ left = 0, top = 8, width = 32, height = 8 },
+			Paint.SourceRect({ 0, 0.25, 0, 0.5, 1, 0.25, 1, 0.5 }, 32, 32))
+		assert.same({ left = 0, top = 0, width = 32, height = 16 }, Paint.SourceRect(nil, 32, 16))
+	end)
+
 	it("paints Blizzard's white texture as a tinted solid", function()
 		scene.Node("Texture", frame, {
 			points = { { all = true } }, texture = { file = "Interface\\Buttons\\WHITE8X8", vertexColor = { 0, 0, 1, 0.5 } },

@@ -197,6 +197,19 @@ function Context:DrawImagePiece(image, target, source)
 		RectAttributes(target), Number(source.left), Number(source.top), Number(source.width), Number(source.height), image.id))
 end
 
+local function SourceRect(coords, width, height)
+	if not coords or #coords < 4 then return { left = 0, top = 0, width = width, height = height } end
+	local xs, ys = { coords[1], coords[2] }, { coords[3], coords[4] }
+	if #coords >= 8 then
+		xs = { coords[1], coords[3], coords[5], coords[7] }
+		ys = { coords[2], coords[4], coords[6], coords[8] }
+	end
+	local left, right = math.min(unpack(xs)), math.max(unpack(xs))
+	local top, bottom = math.min(unpack(ys)), math.max(unpack(ys))
+	return { left = left * width, top = top * height, width = (right - left) * width, height = (bottom - top) * height }
+end
+Paint.SourceRect = SourceRect
+
 local function SliceSpans(start, length, sourceLength, low, high)
 	local scale = math.min(1, length / math.max(low + high, 1))
 	local lowTarget, highTarget = low * scale, high * scale
@@ -251,7 +264,7 @@ function Context:DrawTexture(region, rect, alpha)
 		if texture.slice and image.width then
 			self:DrawNineSlice(image, texture.slice, rect)
 		else
-			self:DrawImagePiece(image, rect, { left = 0, top = 0, width = image.width or 1, height = image.height or 1 })
+			self:DrawImagePiece(image, rect, SourceRect(texture.texCoords, image.width or 1, image.height or 1))
 		end
 		self:Emit("</g>")
 		return
