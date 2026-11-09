@@ -77,7 +77,7 @@ describe("Native raid border previews and live frames", function()
 		UF.AuraIcon.Create(sample, "debuffs", true, { harmful = true })
 		local cfg = UF.Schema.Resolve(UF.AuraIcon.schema, { border = { border = "Blizzard Raid" } }, UF.Config:GetTheme())
 		local palette = UF.AuraIcon.DispelColors(cfg)
-		UF.AuraIcon.Apply(sample, cfg, 24, palette)
+		UF.AuraIcon.Apply(sample, cfg, 24, 24, palette)
 		UF.AuraIcon.DrawSample(sample, { icon = "sample", dispelName = "Magic" }, palette)
 		assert.equals(8, #sample.ufDispelTextures)
 		for _, texture in ipairs(sample.ufDispelTextures) do assert.same(magic, texture.__state.vertexColor) end

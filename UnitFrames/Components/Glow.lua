@@ -143,10 +143,10 @@ function Glow.CreateProc(parent)
 	return holder
 end
 
--- size: the owner's known configured square size.
-function Glow.ApplyProc(holder, cfg, size)
-	holder:SetSize(size * PROC_SCALE, size * PROC_SCALE)
-	holder.Start:SetSize(size * PROC_START_SCALE, size * PROC_START_SCALE)
+-- width, height: the owner's known configured size.
+function Glow.ApplyProc(holder, cfg, width, height)
+	holder:SetSize(width * PROC_SCALE, height * PROC_SCALE)
+	holder.Start:SetSize(width * PROC_START_SCALE, height * PROC_START_SCALE)
 	holder:SetAlpha(cfg.opacity)
 end
 

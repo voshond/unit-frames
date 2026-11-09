@@ -41,7 +41,8 @@ function Slots:InitButton(button, key, preview)
 end
 
 function Slots:StyleButton(button)
-	AuraIcon.Apply(button, self.resolved, self.resolved[button.ufKind].size)
+	local size = self.resolved[button.ufKind].size
+	AuraIcon.Apply(button, self.resolved, size, size)
 end
 
 function Slots:OnApply(cfg)

@@ -28,6 +28,18 @@ local function NoBorder(ns)
 	ns.Config:SetUnitValue("player", "border.enabled", false)
 end
 
+local function ThickAuraBorder(ns)
+	ns.Config:SetUnitValue("target", "auras.border", { enabled = true, border = "Blizzard Tooltip", size = 10, padding = 2 })
+end
+
+local function WideAuras(ns)
+	for _, kind in ipairs({ "buffs", "debuffs" }) do
+		ns.Config:SetUnitValue("target", "auras." .. kind .. ".size", 32)
+		ns.Config:SetUnitValue("target", "auras." .. kind .. ".separateHeight", true)
+		ns.Config:SetUnitValue("target", "auras." .. kind .. ".height", 18)
+	end
+end
+
 return {
 	{ name = "player", build = UnitFrame("player") },
 	{ name = "player-idle", build = UnitFrame("player", { showCast = false }) },
@@ -36,6 +48,8 @@ return {
 	{ name = "player-overheal", build = UnitFrame("player", { health = 22000, heal = 7000, showCast = false }, EnableOverheal) },
 	{ name = "target", build = UnitFrame("target") },
 	{ name = "target-35pct", build = UnitFrame("target", { health = 8400, showCast = false }) },
+	{ name = "target-aura-border", build = UnitFrame("target", { showCast = false }, ThickAuraBorder) },
+	{ name = "target-aura-wide", build = UnitFrame("target", { showCast = false }, WideAuras) },
 	{ name = "targettarget", build = UnitFrame("targettarget") },
 	{ name = "focus", build = UnitFrame("focus") },
 	{ name = "focustarget", build = UnitFrame("focustarget") },

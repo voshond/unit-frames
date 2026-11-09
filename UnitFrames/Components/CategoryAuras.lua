@@ -201,10 +201,10 @@ end
 function CategoryAuras:StyleButton(button)
 	ns.Perf:Count("categoryButtonStyle")
 	local cfg = self.resolved
-	AuraIcon.Apply(button, self.art[button.ufKind], self.size, nil, cfg.swipe, cfg.showSwipeEdge)
+	button:SetFrameLevel(self.level + 1 + (#CategoryAuras.CATEGORIES - PRIORITY[button.ufKind]) * LEVEL_BAND)
+	AuraIcon.Apply(button, self.art[button.ufKind], self.size, self.size, nil, cfg.swipe, cfg.showSwipeEdge)
 	button:ClearAllPoints()
 	button:SetPoint("CENTER", self.anchor, "CENTER", 0, 0)
-	button:SetFrameLevel(self.level + 1 + (#CategoryAuras.CATEGORIES - PRIORITY[button.ufKind]) * LEVEL_BAND)
 end
 
 -- Access to native slot buttons may be denied while aura data is secret:
