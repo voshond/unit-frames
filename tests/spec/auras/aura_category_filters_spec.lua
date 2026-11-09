@@ -57,7 +57,7 @@ describe("Category aura filters", function()
 			end
 			return out
 		end
-		assert.same({ "Spell_Holy_Renew", "Spell_Nature_LifeBloom" }, Icons("buffs", "HELPFUL|PLAYER|RAID_IN_COMBAT"))
+		assert.same({ "Spell_Holy_Renew", "INV_Misc_Herb_Felblossom" }, Icons("buffs", "HELPFUL|PLAYER|RAID_IN_COMBAT"))
 		assert.same({ "Spell_Holy_DivineIntervention" }, Icons("buffs", "HELPFUL|BIG_DEFENSIVE"))
 		assert.same({ "Spell_Holy_SealOfProtection" }, Icons("buffs", "HELPFUL|EXTERNAL_DEFENSIVE"))
 		assert.same({ "Spell_Holy_DivineIntervention" }, Icons("buffs", "HELPFUL|IMPORTANT"))

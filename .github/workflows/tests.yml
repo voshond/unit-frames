@@ -35,6 +35,8 @@ jobs:
           persist-credentials: false
       - name: Verify the generated spell catalogue against pinned exports
         run: python3 -B scripts/spell_catalog.py --fetch --check
+      - name: Verify the generated proof atlas table against pinned exports
+        run: python3 -B scripts/atlas_catalog.py --fetch --check
       - name: Run all tests and addon syntax checks
         run: bash scripts/run-tests.sh --times -j
       - name: Cache Blizzard interface art for UI proof
