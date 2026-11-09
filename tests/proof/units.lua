@@ -28,6 +28,12 @@ local function NoBorder(ns)
 	ns.Config:SetUnitValue("player", "border.enabled", false)
 end
 
+local function Enable(unit, keys)
+	return function(ns)
+		for _, key in ipairs(keys) do ns.Config:SetUnitValue(unit, key .. ".enabled", true) end
+	end
+end
+
 local function ThickAuraBorder(ns)
 	ns.Config:SetUnitValue("target", "auras.border", { enabled = true, border = "Blizzard Tooltip", size = 10, padding = 2 })
 end
@@ -45,6 +51,7 @@ return {
 	{ name = "player-idle", build = UnitFrame("player", { showCast = false }) },
 	{ name = "player-tooltip-border", build = UnitFrame("player", { showCast = false }, TooltipBorder) },
 	{ name = "player-no-border", build = UnitFrame("player", { showCast = false }, NoBorder) },
+	{ name = "player-dead", build = UnitFrame("player", { status = "dead", showCast = false }) },
 	{ name = "player-overheal", build = UnitFrame("player", { health = 22000, heal = 7000, showCast = false }, EnableOverheal) },
 	{ name = "target", build = UnitFrame("target") },
 	{ name = "target-35pct", build = UnitFrame("target", { health = 8400, showCast = false }) },
@@ -52,6 +59,8 @@ return {
 	{ name = "target-aura-wide", build = UnitFrame("target", { showCast = false }, WideAuras) },
 	{ name = "targettarget", build = UnitFrame("targettarget") },
 	{ name = "focus", build = UnitFrame("focus") },
+	{ name = "focus-portrait", build = UnitFrame("focus", { showCast = false }, Enable("focus", { "portrait" })) },
 	{ name = "focustarget", build = UnitFrame("focustarget") },
 	{ name = "pet", build = UnitFrame("pet") },
+	{ name = "pet-portrait", build = UnitFrame("pet", nil, Enable("pet", { "health", "power", "portrait" })) },
 }
