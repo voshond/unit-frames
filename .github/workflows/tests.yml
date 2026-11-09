@@ -56,7 +56,8 @@ jobs:
             .proof/*.png
             .proof/*.svg
             .proof/index.html
-          if-no-files-found: ignore
+          include-hidden-files: true
+          if-no-files-found: error
           retention-days: 14
       - name: Save spell classification audit
         if: always()
