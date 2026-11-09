@@ -1,0 +1,24 @@
+Required Notice: Copyright (c) 2026 Martin Konstantin Herrmann.
+
+Original UnitFrames code and documentation are licensed under the PolyForm
+Noncommercial License 1.0.0; see LICENSE. This covers original work in
+UnitFrames, UnitFrames_Workbench, UnitFrames_Media, UnitFrames_ClickGrid and
+UnitFrames_Onboarding.
+Third-party libraries, fonts, reference projects and Blizzard materials are
+excluded and retain their own terms.
+
+Additional permission for LGPL compatibility:
+The copyright holder additionally permits modification of the original code
+for the user's own use and reverse engineering to debug modifications to an
+LGPL-covered library. Users may modify or replace that library under its
+own terms. This permission does not grant commercial redistribution of the
+original UnitFrames code. Preserve this permission with redistributed copies.
+
+This addon uses components and libraries supplied by the required UnitFrames
+addon; see that addon's NOTICE.txt and third-party license files.
+Blizzard icons, atlases, textures and fonts are referenced from the WoW client
+and are not bundled as asset files. No ownership or redistribution permission
+for them is claimed. Media registered by other addons retains its owners' terms.
+
+The original code's noncommercial restriction does not restrict rights under
+third-party licenses. Preserve this notice when redistributing the addon.

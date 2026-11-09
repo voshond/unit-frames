@@ -3,24 +3,43 @@ local _, ns = ...
 local HELP = {
 	"/uf help - show this list of commands",
 	"/uf wb - open settings and previews",
+	"/uf welcome - walk through presets and the first setup again",
 	"/uf minimap - show or hide the minimap icon",
 	"/uf logs [clear] - show or clear saved diagnostic entries",
 	"/uf dots [reset] - toggle DoT tracking with its trace in chat, or forget learned tick sizes",
 	"/uf perf help - show developer performance commands",
 }
 
--- Loads the Workbench on demand and shows it, optionally at an entry.
-function ns:OpenWorkbench(entryId)
+-- Loads the Workbench on demand and shows it, optionally at an entry and the
+-- settings page holding `path` (e.g. "auras").
+function ns:OpenWorkbench(entryId, path)
 	local loaded, reason = C_AddOns.LoadAddOn("UnitFrames_Workbench")
 	if not loaded then
 		self:Print("could not load UnitFrames_Workbench:", reason or "unknown reason")
 		return
 	end
 	if entryId then
-		self.Workbench:Open(entryId)
+		self.Workbench:Open(entryId, path)
 	else
 		self.Workbench:Toggle()
 	end
+end
+
+-- Loads Getting started on demand and shows it. Players who turned the addon
+-- off in the AddOns list only get a hint, and none when `quiet` (first login).
+function ns:OpenOnboarding(quiet)
+	local loaded, reason = C_AddOns.LoadAddOn("UnitFrames_Onboarding")
+	if not loaded then
+		if quiet then return false end
+		if reason == "DISABLED" then
+			self:Print("Getting started is turned off. Enable UnitFrames Getting started in the AddOns list to use it.")
+		else
+			self:Print("could not load UnitFrames_Onboarding:", reason or "unknown reason")
+		end
+		return false
+	end
+	self.Onboarding:Open()
+	return true
 end
 
 local commands = {}
@@ -36,6 +55,11 @@ function commands.wb()
 	ns:OpenWorkbench()
 end
 commands.workbench = commands.wb
+
+function commands.welcome()
+	ns:OpenOnboarding()
+end
+commands.onboarding = commands.welcome
 
 function commands.minimap()
 	ns.Launcher:ToggleMinimap()

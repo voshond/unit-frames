@@ -30,7 +30,7 @@ done
 
 release_tmp="$(mktemp -d)"
 trap 'rm -rf -- "$release_tmp"' EXIT
-addons=(UnitFrames UnitFrames_Workbench UnitFrames_Media UnitFrames_ClickGrid)
+addons=(UnitFrames UnitFrames_Workbench UnitFrames_Media UnitFrames_ClickGrid UnitFrames_Onboarding)
 # Only committed addon files from this tag are shipped; no working-tree extras.
 git archive "refs/tags/$tag" LICENSE "${addons[@]}" | tar -x -C "$release_tmp"
 for addon in UnitFrames UnitFrames_Media; do

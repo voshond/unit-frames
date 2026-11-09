@@ -1,0 +1,131 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='1280' height='800' viewBox='0 0 1280 800'>
+<defs>
+<radialGradient id='stageGlow' cx='50%' cy='45%' r='65%'>
+ <stop offset='0%' stop-color='#4fa3ff' stop-opacity='0.20'/>
+ <stop offset='55%' stop-color='#4fa3ff' stop-opacity='0.04'/>
+ <stop offset='100%' stop-color='#0d0d12' stop-opacity='0'/>
+</radialGradient>
+<linearGradient id='world' x1='0' y1='0' x2='1' y2='1'>
+ <stop offset='0%' stop-color='#1d2a24'/><stop offset='50%' stop-color='#2b2a3a'/><stop offset='100%' stop-color='#1a1f2e'/>
+</linearGradient>
+<linearGradient id='barSheen' x1='0' y1='0' x2='0' y2='1'>
+ <stop offset='0%' stop-color='#ffffff' stop-opacity='0.22'/><stop offset='50%' stop-color='#ffffff' stop-opacity='0'/>
+ <stop offset='100%' stop-color='#000000' stop-opacity='0.25'/>
+</linearGradient>
+<linearGradient id='portrait' x1='0' y1='0' x2='0' y2='1'>
+ <stop offset='0%' stop-color='#5b6b8c'/><stop offset='100%' stop-color='#1e2433'/>
+</linearGradient>
+<filter id='glow' x='-30%' y='-30%' width='160%' height='160%'>
+ <feGaussianBlur stdDeviation='6' result='b'/><feMerge><feMergeNode in='b'/><feMergeNode in='SourceGraphic'/></feMerge>
+</filter>
+<filter id='shadow' x='-20%' y='-20%' width='140%' height='140%'>
+ <feDropShadow dx='0' dy='18' stdDeviation='22' flood-color='#000' flood-opacity='0.7'/>
+</filter>
+<filter id='blur'><feGaussianBlur stdDeviation='3'/></filter>
+<pattern id='stripes' width='6' height='6' patternUnits='userSpaceOnUse' patternTransform='rotate(45)'>
+ <rect width='3' height='6' fill='#ff5544' fill-opacity='0.55'/>
+</pattern>
+</defs>
+<rect width='1280' height='800' fill='url(#world)'/>
+<rect width='1280' height='800' fill='#000' fill-opacity='0.55'/>
+<rect x='110' y='70' width='1060' height='660' rx='10' fill='#0d0d12' fill-opacity='0.97' stroke='#3d3d4a' filter='url(#shadow)'/><rect x='110' y='70' width='1060' height='2' fill='#4fa3ff' fill-opacity='0.9'/>
+<rect x='110' y='72' width='230' height='658' fill='#0a0a0e'/>
+<text x='138' y='114' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='11' font-weight='700' fill='#4fa3ff' text-anchor='start' letter-spacing='3'>UNITFRAMES</text>
+<text x='138' y='136' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='18' font-weight='600' fill='#ebebeb' text-anchor='start' >Getting started</text>
+<line x1='150' y1='184' x2='150' y2='376' stroke='#3d3d4a' stroke-width='2'/>
+<line x1='150' y1='184' x2='150' y2='248' stroke='#4fa3ff' stroke-width='2' filter='url(#glow)'/>
+<circle cx='150' cy='184' r='11' fill='#4fa3ff' stroke='#4fa3ff' stroke-width='2'/>
+<text x='150' y='188' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='11' font-weight='700' fill='#0d0d12' text-anchor='middle' >✓</text>
+<text x='172' y='189' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='14' font-weight='400' fill='#ebebeb' text-anchor='start' >Pick a look</text>
+<circle cx='150' cy='248' r='16' fill='#4fa3ff' fill-opacity='0.18' filter='url(#glow)'/>
+<circle cx='150' cy='248' r='11' fill='#4fa3ff' stroke='#4fa3ff' stroke-width='2'/>
+<text x='150' y='252' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='11' font-weight='700' fill='#0d0d12' text-anchor='middle' >2</text>
+<text x='172' y='253' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='14' font-weight='600' fill='#ebebeb' text-anchor='start' >Make it yours</text>
+<circle cx='150' cy='312' r='11' fill='#17171c' stroke='#3d3d4a' stroke-width='2'/>
+<text x='150' y='316' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='11' font-weight='700' fill='#9494a1' text-anchor='middle' >3</text>
+<text x='172' y='317' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='14' font-weight='400' fill='#9494a1' text-anchor='start' >Your frames</text>
+<circle cx='150' cy='376' r='11' fill='#17171c' stroke='#3d3d4a' stroke-width='2'/>
+<text x='150' y='380' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='11' font-weight='700' fill='#9494a1' text-anchor='middle' >4</text>
+<text x='172' y='381' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='14' font-weight='400' fill='#9494a1' text-anchor='start' >Ready</text>
+<text x='138' y='634' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='400' fill='#9494a1' text-anchor='start' text-decoration='underline'>Skip for now</text>
+<text x='138' y='654' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='11' font-weight='400' fill='#5c5c68' text-anchor='start' >Reopen: /uf welcome</text>
+<text x='372' y='126' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='26' font-weight='700' fill='#ebebeb' text-anchor='start' >Make it yours</text>
+<text x='372' y='150' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='13' font-weight='400' fill='#9494a1' text-anchor='start' >Six things that change the feel most. Every option has dozens more friends in the Workbench.</text>
+<rect x='372' y='170' width='400' height='470' rx='10' fill='#0a0a0e' stroke='#3d3d4a'/>
+<rect x='372' y='170' width='400' height='470' rx='10' fill='url(#stageGlow)'/>
+<rect x='432' y='290' width='280' height='70' rx='0' fill='#000000d9' stroke='#000000' stroke-width='1'/>
+<rect x='435' y='293' width='274' height='43.52' fill='#1a1a1a'/>
+<rect x='435' y='293' width='224.67999999999998' height='43.52' fill='#c69b6d'/>
+<rect x='659.68' y='293' width='21.92' height='43.52' fill='#33a6ff' fill-opacity='0.7'/>
+<rect x='435' y='293' width='274' height='43.52' fill='url(#barSheen)'/>
+<rect x='435' y='338.52' width='274' height='18.479999999999997' fill='#101018'/>
+<rect x='435' y='338.52' width='191.79999999999998' height='18.479999999999997' fill='#0061ff'/>
+<text x='572.0' y='313.76' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='11' font-weight='600' fill='#ebebeb' text-anchor='middle' stroke='#000' stroke-width='0.6' paint-order='stroke'>Voshond</text>
+<text x='572.0' y='324.76' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='9' font-weight='400' fill='#e0e0e0' text-anchor='middle' stroke='#000' stroke-width='0.5' paint-order='stroke'>82% · 60</text>
+<rect x='432' y='366' width='280' height='16' rx='0' fill='#000000b0' stroke='#000000' stroke-width='1'/>
+<rect x='434' y='368' width='171.12' height='12' fill='#ffb300'/>
+<text x='438' y='378' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='10' font-weight='400' fill='#ebebeb' text-anchor='start' stroke='#000' stroke-width='0.5' paint-order='stroke'>Frostbolt</text>
+<text x='706' y='378' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='10' font-weight='400' fill='#ebebeb' text-anchor='end' >1.2</text>
+<rect x='432' y='440' width='280' height='70' rx='0' fill='#000000d9' stroke='#000000' stroke-width='1'/>
+<rect x='435' y='443' width='274' height='43.52' fill='#1a1a1a'/>
+<rect x='435' y='443' width='126.04' height='43.52' fill='#c69b6d'/>
+<rect x='522.6800000000001' y='443' width='38.36000000000001' height='43.52' fill='url(#stripes)'/>
+<rect x='561.04' y='443' width='21.92' height='43.52' fill='#33a6ff' fill-opacity='0.7'/>
+<rect x='435' y='443' width='274' height='43.52' fill='url(#barSheen)'/>
+<rect x='435' y='488.52' width='274' height='18.479999999999997' fill='#101018'/>
+<rect x='435' y='488.52' width='246.6' height='18.479999999999997' fill='#e61919'/>
+<text x='572.0' y='463.76' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='11' font-weight='600' fill='#ebebeb' text-anchor='middle' stroke='#000' stroke-width='0.6' paint-order='stroke'>Ragnaros</text>
+<text x='572.0' y='474.76' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='9' font-weight='400' fill='#e0e0e0' text-anchor='middle' stroke='#000' stroke-width='0.5' paint-order='stroke'>46% · ??</text>
+<text x='572' y='200' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='600' fill='#4fa3ff' text-anchor='middle' >Minimal  +  your tweaks</text>
+<circle cx='498' cy='196' r='3' fill='#4fa3ff' filter='url(#glow)'/>
+<text x='796' y='184' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='10' font-weight='700' fill='#9494a1' text-anchor='start' letter-spacing='2'>FONT</text>
+<rect x='796' y='194' width='60' height='30' rx='15' fill='#4fa3ff' fill-opacity='0.2' stroke='#4fa3ff'/>
+<text x='826.0' y='214' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='600' fill='#4fa3ff' text-anchor='middle' >Roboto</text>
+<rect x='864' y='194' width='109' height='30' rx='15' fill='#17171c' fill-opacity='1' stroke='#3d3d4a'/>
+<text x='918.5' y='214' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='400' fill='#ebebeb' text-anchor='middle' >Friz Quadrata</text>
+<rect x='981' y='194' width='88' height='30' rx='15' fill='#17171c' fill-opacity='1' stroke='#3d3d4a'/>
+<text x='1025.0' y='214' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='400' fill='#ebebeb' text-anchor='middle' >Expressway</text>
+<text x='796' y='258' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='10' font-weight='700' fill='#9494a1' text-anchor='start' letter-spacing='2'>BAR TEXTURE</text>
+<rect x='796' y='268' width='46' height='30' rx='15' fill='#4fa3ff' fill-opacity='0.2' stroke='#4fa3ff'/>
+<text x='819.0' y='288' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='600' fill='#4fa3ff' text-anchor='middle' >Flat</text>
+<rect x='850' y='268' width='74' height='30' rx='15' fill='#17171c' fill-opacity='1' stroke='#3d3d4a'/>
+<text x='887.0' y='288' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='400' fill='#ebebeb' text-anchor='middle' >Raid bar</text>
+<rect x='932' y='268' width='53' height='30' rx='15' fill='#17171c' fill-opacity='1' stroke='#3d3d4a'/>
+<text x='958.5' y='288' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='400' fill='#ebebeb' text-anchor='middle' >Gloss</text>
+<rect x='993' y='268' width='67' height='30' rx='15' fill='#17171c' fill-opacity='1' stroke='#3d3d4a'/>
+<text x='1026.5' y='288' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='400' fill='#ebebeb' text-anchor='middle' >Stripes</text>
+<text x='796' y='332' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='10' font-weight='700' fill='#9494a1' text-anchor='start' letter-spacing='2'>BORDER</text>
+<rect x='796' y='342' width='46' height='30' rx='15' fill='#17171c' fill-opacity='1' stroke='#3d3d4a'/>
+<text x='819.0' y='362' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='400' fill='#ebebeb' text-anchor='middle' >None</text>
+<rect x='850' y='342' width='53' height='30' rx='15' fill='#4fa3ff' fill-opacity='0.2' stroke='#4fa3ff'/>
+<text x='876.5' y='362' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='600' fill='#4fa3ff' text-anchor='middle' >Pixel</text>
+<rect x='911' y='342' width='67' height='30' rx='15' fill='#17171c' fill-opacity='1' stroke='#3d3d4a'/>
+<text x='944.5' y='362' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='400' fill='#ebebeb' text-anchor='middle' >Tooltip</text>
+<rect x='986' y='342' width='46' height='30' rx='15' fill='#17171c' fill-opacity='1' stroke='#3d3d4a'/>
+<text x='1009.0' y='362' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='400' fill='#ebebeb' text-anchor='middle' >Gold</text>
+<text x='796' y='406' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='10' font-weight='700' fill='#9494a1' text-anchor='start' letter-spacing='2'>HEALTH COLOUR</text>
+<rect x='796' y='416' width='53' height='30' rx='15' fill='#4fa3ff' fill-opacity='0.2' stroke='#4fa3ff'/>
+<text x='822.5' y='436' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='600' fill='#4fa3ff' text-anchor='middle' >Class</text>
+<rect x='857' y='416' width='53' height='30' rx='15' fill='#17171c' fill-opacity='1' stroke='#3d3d4a'/>
+<text x='883.5' y='436' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='400' fill='#ebebeb' text-anchor='middle' >Green</text>
+<rect x='918' y='416' width='74' height='30' rx='15' fill='#17171c' fill-opacity='1' stroke='#3d3d4a'/>
+<text x='955.0' y='436' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='400' fill='#ebebeb' text-anchor='middle' >Gradient</text>
+<text x='796' y='480' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='10' font-weight='700' fill='#9494a1' text-anchor='start' letter-spacing='2'>PORTRAITS</text>
+<rect x='796' y='490' width='32' height='30' rx='15' fill='#17171c' fill-opacity='1' stroke='#3d3d4a'/>
+<text x='812.0' y='510' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='400' fill='#ebebeb' text-anchor='middle' >3D</text>
+<rect x='836' y='490' width='88' height='30' rx='15' fill='#17171c' fill-opacity='1' stroke='#3d3d4a'/>
+<text x='880.0' y='510' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='400' fill='#ebebeb' text-anchor='middle' >Class icon</text>
+<rect x='932' y='490' width='39' height='30' rx='15' fill='#4fa3ff' fill-opacity='0.2' stroke='#4fa3ff'/>
+<text x='951.5' y='510' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='600' fill='#4fa3ff' text-anchor='middle' >Off</text>
+<text x='796' y='554' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='10' font-weight='700' fill='#9494a1' text-anchor='start' letter-spacing='2'>SIZE</text>
+<rect x='796' y='576' width='330' height='4' rx='2' fill='#3d3d4a'/>
+<rect x='796' y='576' width='190' height='4' rx='2' fill='#4fa3ff'/>
+<circle cx='986' cy='578' r='9' fill='#ebebeb' stroke='#4fa3ff' stroke-width='3'/>
+<text x='796' y='600' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='10' font-weight='400' fill='#9494a1' text-anchor='start' >Compact</text>
+<text x='1126' y='600' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='10' font-weight='400' fill='#9494a1' text-anchor='end' >Chunky</text>
+<rect x='372' y='672' width='92' height='34' rx='6' fill='#17171c' stroke='#3d3d4a'/>
+<text x='418' y='694' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='13' font-weight='400' fill='#9494a1' text-anchor='middle' >Back</text>
+<text x='757.0' y='694' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='12' font-weight='400' fill='#9494a1' text-anchor='middle' >Step 2 of 4</text>
+<rect x='982' y='672' width='160' height='34' rx='6' fill='#4fa3ff' filter='url(#glow)'/>
+<text x='1062' y='694' font-family='Roboto Condensed, Arial Narrow, sans-serif' font-size='14' font-weight='700' fill='#0d0d12' text-anchor='middle' >Next: frames  →</text>
+</svg>

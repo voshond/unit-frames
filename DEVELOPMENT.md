@@ -184,6 +184,7 @@ in source is needed before tagging.
 | `UnitFrames/Integration/` | Edit Mode and launcher integration |
 | `UnitFrames_Workbench/` | Load-on-demand settings, component gallery and static/animated/live previews |
 | `UnitFrames_ClickGrid/` | Party/raid panel, member targets, indicators, auras and click-spell bindings |
+| `UnitFrames_Onboarding/` | Load-on-demand Getting started guide: preset looks, tweaks, extras and Workbench hand-off |
 | `UnitFrames_Media/` | Additional fonts and their licences |
 | `tests/` | Mocked client, API snapshot and regression specs |
 | `scripts/` | Library fetching, installation and API snapshot generation |
@@ -384,6 +385,12 @@ supports `WOW_DIR`, named addon arguments, `--link` and `--uninstall`.
 **It removes each existing targeted addon directory before copying or linking;
 `--uninstall` removes it too.** SavedVariables under `WTF/` remain intact,
 but other files in those addon folders are replaced.
+
+`--host <ssh destination>` does the same on another machine, for a client
+that runs elsewhere than the checkout: `scripts/install.sh --host arch
+UnitFrames_Onboarding`. It needs key-based SSH login and rsync on both ends;
+`WOW_DIR` then names the path on that machine (same default). `--link` is
+local only.
 
 Use `/reload` for changed Lua in existing files. Restart the client for new
 TOC-listed files or new media/font assets. Keep repository edits and game

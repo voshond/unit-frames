@@ -112,3 +112,4 @@ Timers\Runtime.lua
 
 Core\Commands.lua
 Integration\Launcher.lua
+Integration\Onboarding.lua

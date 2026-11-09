@@ -34,7 +34,7 @@ local version = Read(sourceDir .. "/version.txt"):match("^%s*(.-)%s*$")
 -- Every identifier our code, embedded libraries, mocks and specs mention,
 -- and those the mock itself defines.
 local words, mockWords = {}, {}
-for _, path in ipairs(Lines("find UnitFrames UnitFrames_Workbench UnitFrames_ClickGrid UnitFrames_Media tests"
+for _, path in ipairs(Lines("find UnitFrames UnitFrames_Workbench UnitFrames_ClickGrid UnitFrames_Onboarding UnitFrames_Media tests"
 	.. " -name '*.lua' -not -name 'api_snapshot.lua'")) do
 	local mock = path:match("^tests/mock/") ~= nil
 	for word in Read(path):gmatch("[%a_][%w_]*") do

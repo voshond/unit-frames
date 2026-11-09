@@ -181,8 +181,9 @@ function Workbench:Toggle()
 	self.window:Toggle()
 end
 
--- Shows the Workbench at a given entry.
-function Workbench:Open(id)
+-- Shows the Workbench at a given entry, optionally at the settings page
+-- holding `path` (a schema path or its prefix, e.g. "auras").
+function Workbench:Open(id, path)
 	if not self.window then
 		self:Build()
 	end
@@ -190,6 +191,7 @@ function Workbench:Open(id)
 	if self.entries[id] then
 		self.list:Select(id)
 		self:Select(id)
+		if path and self.pageModel then self:SelectFeaturePage(path) end
 	end
 end
 
