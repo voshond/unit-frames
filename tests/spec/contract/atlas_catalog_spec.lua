@@ -1,0 +1,5 @@
+describe("Generated Forever atlas table #proof", function()
+	it("matches the pinned build without requiring the raw atlas tables", function()
+		assert.equals(0, os.execute("python3 -B scripts/atlas_catalog.py --check-pin"))
+	end)
+end)

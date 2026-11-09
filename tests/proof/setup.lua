@@ -5,6 +5,8 @@ local Proof = require("wowproof")
 local MockState = require("wowproof.adapters.mock_state")
 local Raster = require("wowproof.raster")
 local BlizzardArt = require("wowproof.sources.wow_ui_textures")
+local ClientFiles = require("wowproof.sources.wago_casc")
+local AtlasTable = require("wowproof.sources.atlas_table")
 
 local Mock = Helpers.Mock
 
@@ -14,15 +16,19 @@ local FONT_DIR = "UnitFrames_Media/Fonts"
 local FONT_FAMILY = "Roboto Condensed"
 local FONT_WEIGHTS = { Light = 300, Regular = 400, Medium = 500, Bold = 700 }
 local ART_REF = "d23deaf8f44a7d280dc974a5c9d5321c013db59b"
+local ATLASES = dofile("tests/proof/atlases.lua")
+local ART_DIR = os.getenv("UF_PROOF_ART") or ".proof-art"
+local ART_FETCH = os.getenv("UF_PROOF_ART_FETCH") ~= "0"
 
 local Setup = {}
 
 local blizzardArt = BlizzardArt({
 	ref = ART_REF,
-	dir = os.getenv("UF_PROOF_ART") or ".proof-art",
-	fetch = os.getenv("UF_PROOF_ART_FETCH") ~= "0",
+	dir = ART_DIR,
+	fetch = ART_FETCH,
 	token = os.getenv("GITHUB_TOKEN") or os.getenv("GH_TOKEN"),
 })
+local clientFiles = ClientFiles({ build = ATLASES.build, dir = ART_DIR, fetch = ART_FETCH })
 
 local function AddonFile(path)
 	if type(path) ~= "string" or path:lower():sub(1, #ADDON_PREFIX) ~= ADDON_PREFIX then return nil end
@@ -40,7 +46,7 @@ function Setup.AddonTexture(path)
 end
 
 function Setup.Texture(path)
-	return Setup.AddonTexture(path) or blizzardArt(path)
+	return Setup.AddonTexture(path) or blizzardArt(path) or clientFiles(path)
 end
 
 function Setup.Font(path)
@@ -90,6 +96,7 @@ function Setup.Proof(options)
 		settle = Setup.SettleBackdrops,
 		assets = {
 			textures = Setup.Texture,
+			atlases = AtlasTable(ATLASES.atlases),
 			fonts = { dirs = { FONT_DIR }, family = Setup.Font, default = FONT_FAMILY, defaultWeight = 500 },
 		},
 	})

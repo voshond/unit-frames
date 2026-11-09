@@ -264,9 +264,28 @@ commit that art. `UF_PROOF_ART` picks another cache folder, and
 `UF_PROOF_ART_FETCH=0` stays offline. Set `GH_TOKEN` or `GITHUB_TOKEN` if
 GitHub's API rate limit bites.
 
+Atlases (`SetAtlas`) come from `tests/proof/atlases.lua`, which
+`scripts/atlas_catalog.py` generates from Wago's `UiTextureAtlas`,
+`UiTextureAtlasMember` and `UiTextureAtlasElement` exports for the pinned
+Forever build. It keeps only the atlases the addon and oUF elements name: dashed
+string literals in files that mention atlases, plus `"prefix-" .. value`
+concatenations. Where an atlas has several members, it takes the 1x one and
+prefers Forever's `-c60` variant. The sheets are downloaded by file ID from
+Wago for the same build into `.proof-art/casc-<build>/`. Don't edit the
+generated table:
+
+```sh
+python3 -B scripts/atlas_catalog.py --update        # fetch exports for the pinned build and regenerate
+python3 -B scripts/atlas_catalog.py                 # regenerate from the cached exports
+python3 -B scripts/atlas_catalog.py --fetch --check # what CI runs
+```
+
+Regenerate after adding a `SetAtlas` call. A name the table lacks draws as a
+placeholder.
+
 Still drawn as dashed placeholders:
 - art the mirror lacks, listed in `.proof-art/missing-<commit>.txt`
-- atlases (`SetAtlas`), which need Blizzard's atlas table
+- atlases the generated table lacks
 - portrait models
 
 ### Pull request checks
