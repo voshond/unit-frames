@@ -1,0 +1,14 @@
+{
+  "name": "portrait-capture",
+  "private": true,
+  "type": "module",
+  "description": "Renders a 3D portrait stand-in for UI proof with classic-wow-model-viewer in headless Chromium",
+  "scripts": {
+    "capture": "node capture.mjs"
+  },
+  "dependencies": {
+    "classic-wow-model-viewer": "0.1.0",
+    "playwright-core": "1.65.0",
+    "three": "0.187.0"
+  }
+}

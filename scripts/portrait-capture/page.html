@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<body style="margin:0">
+<div id="viewer" style="width:100vw;height:100vh"></div>
+<script type="importmap">
+{ "imports": { "three": "/node_modules/three/build/three.module.js", "three/examples/jsm/": "/node_modules/three/examples/jsm/" } }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { ModelViewer, createCdnResolver } from "/node_modules/classic-wow-model-viewer/dist/index.js";
+
+const params = new URLSearchParams(location.search);
+const viewer = new ModelViewer({ container: document.getElementById("viewer"), assets: createCdnResolver(params.get("cdn")) });
+await viewer.loadCharacter(params.get("race"), params.get("gender"));
+
+viewer.scene.traverse((object) => {
+	for (const material of [].concat(object.material ?? [])) {
+		material.alphaTest = 0.5;
+		material.needsUpdate = true;
+	}
+});
+
+const toScene = ([x, y, z]) => new THREE.Vector3(x, z, -y);
+const camera = JSON.parse(params.get("camera"));
+const framing = JSON.parse(params.get("framing"));
+
+cancelAnimationFrame(viewer.animFrameId);
+viewer.playAnimationByName("Stand");
+viewer.animController.update(0);
+viewer.scene.updateMatrixWorld(true);
+
+const head = new THREE.Box3();
+const vertex = new THREE.Vector3();
+viewer.scene.traverse((object) => {
+	if (!object.isSkinnedMesh) return;
+	const positions = object.geometry.attributes.position;
+	for (const index of new Set(object.geometry.index.array)) {
+		const [x, y, z] = [positions.getX(index), positions.getY(index), positions.getZ(index)];
+		if (z < framing.neck || Math.abs(x) > 0.3 || Math.abs(y) > 0.25) continue;
+		head.expandByPoint(object.getVertexPosition(index, vertex).applyMatrix4(object.matrixWorld));
+	}
+});
+const size = head.getSize(new THREE.Vector3());
+const target = head.getCenter(new THREE.Vector3());
+const visible = size.y / framing.headShare;
+target.y -= visible * framing.centerDrop;
+
+const direction = toScene(camera.position).sub(toScene(camera.target)).normalize()
+	.applyAxisAngle(new THREE.Vector3(0, 1, 0), THREE.MathUtils.degToRad(framing.turn));
+viewer.camera.fov = THREE.MathUtils.radToDeg(camera.fov);
+viewer.camera.near = camera.near;
+viewer.camera.far = camera.far;
+viewer.camera.position.copy(target).add(direction.multiplyScalar(visible / 2 / Math.tan(camera.fov / 2)));
+viewer.camera.lookAt(target);
+viewer.camera.updateProjectionMatrix();
+
+window.setBackground = (color) => {
+	viewer.renderer.setClearColor(color);
+	viewer.renderer.render(viewer.scene, viewer.camera);
+};
+window.ready = true;
+</script>
+</body>
+</html>

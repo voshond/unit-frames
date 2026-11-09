@@ -6,3 +6,4 @@ UnitFrames_Media/Libs/
 /.build/
 /.proof/
 /.proof-art/
+/scripts/portrait-capture/node_modules/
