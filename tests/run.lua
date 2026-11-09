@@ -280,7 +280,17 @@ local function Quote(text)
 end
 
 local SPEC_DIR = "tests/spec/"
-package.path = "./tests/?.lua;" .. package.path
+local PACKAGE_SPECS = { { prefix = "wowproof/", dir = "wowproof/spec/" } }
+package.path = "./tests/?.lua;./?.lua;./?/init.lua;" .. package.path
+
+local function SpecPath(file)
+	for _, package in ipairs(PACKAGE_SPECS) do
+		if file:sub(1, #package.prefix) == package.prefix then
+			return package.dir .. file:sub(#package.prefix + 1)
+		end
+	end
+	return SPEC_DIR .. file
+end
 
 -- Restores the globals a spec file assigned, so a serial run isolates files
 -- like the one-process-per-file parallel run does.
@@ -300,7 +310,7 @@ local function RunFile(file)
 	for name, value in pairs(_G) do globals[name] = value end
 	root = { name = "", tests = {}, before = {}, after = {} }
 	current = root
-	local ok, err = xpcall(function() dofile(SPEC_DIR .. file) end, debug.traceback)
+	local ok, err = xpcall(function() dofile(SpecPath(file)) end, debug.traceback)
 	if ok then
 		RunBlock(root, "")
 	else
@@ -379,6 +389,14 @@ for _, path in ipairs(ListFiles("find " .. SPEC_DIR .. " -name '*_spec.lua'")) d
 		files[#files + 1] = file
 	end
 end
+for _, package in ipairs(PACKAGE_SPECS) do
+	for _, path in ipairs(ListFiles("find " .. package.dir .. " -name '*_spec.lua'")) do
+		local file = package.prefix .. path:sub(#package.dir + 1)
+		if SpecSelected(file) then
+			files[#files + 1] = file
+		end
+	end
+end
 
 if jobs == 0 then
 	jobs = tonumber(Lines("nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 1")[1]) or 1
@@ -395,7 +413,7 @@ if parallel then
 	local dir = Lines("mktemp -d")[1]
 	local order = {}
 	for index, file in ipairs(files) do
-		local handle = assert(io.open(SPEC_DIR .. file))
+		local handle = assert(io.open(SpecPath(file)))
 		order[index] = { index = index, file = file, size = handle:seek("end") }
 		handle:close()
 	end

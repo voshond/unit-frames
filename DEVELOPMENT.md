@@ -187,6 +187,7 @@ in source is needed before tagging.
 | `UnitFrames_Onboarding/` | Load-on-demand Getting started guide: preset looks, tweaks, extras and Workbench hand-off |
 | `UnitFrames_Media/` | Additional fonts and their licences |
 | `tests/` | Mocked client, API snapshot and regression specs |
+| `wowproof/` | Standalone UI-proof renderer (no UnitFrames code; see its README) |
 | `scripts/` | Library fetching, installation and API snapshot generation |
 
 New runtime files belong in the relevant TOC in dependency order; tests
@@ -227,6 +228,30 @@ a name ending in `.lua` exactly one file. `-t` and `--tag` narrow further. A run
 that selects no tests fails. The runner always checks addon Lua syntax. No
 external busted installation is needed. To see where a spec spends its time,
 use LuaJIT's profiler: `luajit -jp=F tests/run.lua clickgrid_spec.lua`.
+The specs of the `wowproof/` package run with the suite as `wowproof/<file>`.
+
+### UI proof
+
+The mocked client can render frames to images, for visual proof of a change:
+
+```sh
+bash scripts/proof.sh                 # every scenario
+bash scripts/proof.sh target clickgrid   # scenario names containing the text
+```
+
+It writes `.proof/<scenario>.svg`, `.png` and a contact sheet `.proof/index.html`
+(ignored by Git; `UF_PROOF_DIR` picks another folder). PNGs need `rsvg-convert`
+(librsvg); our own `.tga` textures need ImageMagick. Scenarios live in
+`tests/proof/units.lua` and `tests/proof/workbench.lua`: each is a name and a
+`build` that loads the addon, feeds sample values and returns the region to
+render. `tests/proof/setup.lua` is the only coupling to the renderer: it hands
+`wowproof` an adapter for the mock and maps our fonts and textures. A spec can
+also call `Helpers.Snapshot(name, region)`, which renders only with
+`UF_PROOF=1`. CI uploads the images as the `ui-proof` artifact.
+
+The images show real anchoring, sizes, colours, bar fill, text, clipping and
+paint order. Blizzard art is not available offline: it draws as dashed
+placeholders, and Blizzard's white texture as a solid colour.
 
 ### Pull request checks
 

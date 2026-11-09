@@ -156,4 +156,11 @@ function Helpers.LoadClickGrid(workbench, saved)
 	return ns, cg, ns.Workbench
 end
 
+local proof
+function Helpers.Snapshot(name, region, options)
+	if os.getenv("UF_PROOF") ~= "1" then return nil end
+	proof = proof or dofile("tests/proof/setup.lua").Proof()
+	return proof:Snapshot(region, "spec-" .. name, options)
+end
+
 return Helpers
