@@ -55,7 +55,7 @@ refs are pinned by the wow-ui-testing library (`.wut/clientdata/forever.json`,
 see [The wow-ui-testing library](#the-wow-ui-testing-library)). Check that
 commit out locally with `bash .wut/scripts/update-client-source.sh --sync`; it lands in the ignored
 `.wut/.client-source/forever`, where a few specs run Blizzard's own Lua against
-our frames (they skip without it).
+our frames (they skip without it; CI syncs it).
 
 ## Forever spell catalogue
 

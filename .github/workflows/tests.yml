@@ -35,6 +35,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: bash scripts/fetch-wut.sh
+      - name: Sync the library's pinned Blizzard UI source
+        run: bash .wut/scripts/update-client-source.sh --sync
       - name: Verify the generated spell catalogue against pinned exports
         run: python3 -B scripts/spell_catalog.py --fetch --check
       - name: Run all tests and addon syntax checks
