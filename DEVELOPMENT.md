@@ -249,6 +249,11 @@ render. `tests/proof/setup.lua` is the only coupling to the renderer: it hands
 also call `Helpers.Snapshot(name, region)`, which renders only with
 `UF_PROOF=1`. CI uploads the images as the `ui-proof` artifact.
 
+For a pull request body, `bash scripts/proof-publish.sh <filters>` renders the
+matching scenarios, commits their PNGs to the orphan `ui-proof` branch under
+`<branch>/` and prints Markdown images pinned to that commit (`--dry-run` skips
+the push, `--out DIR` keeps the files).
+
 The images show real anchoring, sizes, colours, bar fill, text, clipping,
 texture coordinates and paint order. Blizzard textures and icons
 (`Interface\...`) are downloaded on demand from the public

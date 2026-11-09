@@ -97,6 +97,18 @@ luajit tests/run.lua workbench -t "preview"
 - Offline mocks cannot prove rendering, taint safety or combat behaviour. For visual/lifecycle changes, report what still needs in-game verification: Workbench entry switching/release, repeated toggles, sample/live sources, real combat, unit disappearance/replacement, full-health shields, and Edit Mode as relevant.
 - Do not hard-code a historical passing-test count as a requirement; report the current run's result.
 
+## Visual proof for pull requests
+
+Every change that can affect what a frame, preview or Workbench panel looks like ships with UI proof rendered by `wowproof`: in the pull request and, when working in Beluga, in the chat and on the task.
+
+1. Pick the scenarios in `tests/proof/units.lua` and `tests/proof/workbench.lua` that show the change. When none does (a new setting, state or layout), add one: a name plus a `build` that configures through `Config:SetUnitValue` and feeds sample values. Prefer one scenario per state the change touches (like `player-idle` beside `player`) over one busy frame.
+2. Render and look at them with `bash scripts/proof.sh <filters>` before claiming the change works. Dashed placeholders mean missing art, an atlas or a portrait model, not a bug; mention them if they hide the change.
+3. When opening or updating the pull request, run `bash scripts/proof-publish.sh --out .beluga/scratch/proof <filters>`. It renders the scenarios, commits the PNGs to the orphan `ui-proof` branch under `<branch>/` (it never touches the working tree or the current branch) and prints a `### UI proof` Markdown section with images pinned to that commit. Paste that section into the PR body (`gh pr create --body-file` or `gh pr edit --body-file`). Re-run it after visual changes in review; old links keep showing the earlier images. `--dry-run` skips the push.
+4. In Beluga, show the same PNGs in the answer as Markdown images with their absolute paths under `.beluga/scratch/proof/`, and attach each one to the worktree's task with `task_attach_proof` (kind `image`).
+5. Proof shows mocked rendering only. Still list what needs in-game verification (see Verification above): combat, secret values, taint, Edit Mode and live unit changes.
+
+Changes with no visual effect (tracking data, tests, tooling) say so in the PR body instead of attaching proof.
+
 ## Local installation
 
 - Default client AddOns directory: `/mnt/data02/Games/Faugus/battlenet/drive_c/Program Files (x86)/World of Warcraft/_forever_/Interface/AddOns/`. `scripts/install.sh` supports `WOW_DIR` overrides; validate the actual target before deploying.
