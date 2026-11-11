@@ -19,7 +19,7 @@ local member = UF.Units:Derive("pet", {
 -- Replaces the pet's aura defaults as a whole.
 member.auras.defaults = {
 	durationPosition = "CENTER", durationSize = 8, countSize = 8,
-	buffs = { enabled = false, filter = "HELPFUL|PLAYER|RAID_IN_COMBAT", maxDuration = 120, max = 4, size = 14, position = "top", gap = 1, alignment = "end" },
+	buffs = { enabled = true, filter = UF.Components.Auras.MY_HEALS, maxDuration = 0, max = 4, size = 14, position = "top", gap = 1, alignment = "end" },
 	debuffs = { enabled = false, sort = "unitDebuff", max = 3, size = 16, position = "bottom", gap = 1 },
 }
 CG.definitions = {
@@ -184,10 +184,25 @@ CG.IndicatorSchema = UF.Schema.Concat(
 		{ key = "privateSize", type = "range", label = "Private aura size", min = 10, max = 40, step = 1, default = 18 },
 	})
 
+local function FamilyValues()
+	local values, classes = { { "", "Pick a spell" } }, LOCALIZED_CLASS_NAMES_MALE or {}
+	for _, root in ipairs(UF.BuffSpells.Roots()) do
+		local family = UF.BuffCatalog.families[root]
+		values[#values + 1] = { root, family.name .. ": all ranks (" .. (classes[family.class] or family.class) .. ")" }
+	end
+	return values
+end
+
 local slotSchema = {
 	{ key = "enabled", type = "toggle", label = "Enabled", default = false },
 	{ key = "spell", type = "text", label = "Friendly buff spell IDs", default = "",
-		tooltip = "Comma-separated numeric aura spell IDs. Exact slots are only for friendly buffs." },
+		tooltip = "Comma-separated numeric aura spell IDs. Any rank of a known spell matches all its ranks. Exact slots are only for friendly buffs." },
+	{ key = "family", type = "select", label = "Track a spell", default = "", values = FamilyValues,
+		tooltip = "Pick a spell to track every rank of it. Replaces the spell IDs above with its first rank's ID.",
+		onSet = function(group, value)
+			group.family = nil
+			if value ~= "" then group.spell = tostring(value) end
+		end },
 	{ key = "own", type = "toggle", label = "Only buffs cast by me", default = true },
 	{ key = "size", type = "range", label = "Size", min = 10, max = 32, step = 1, default = 14 },
 	{ key = "anchor", type = "select", label = "Position", default = "TOPLEFT", values = {

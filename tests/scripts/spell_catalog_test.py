@@ -146,5 +146,57 @@ class SpellCatalogTests(unittest.TestCase):
         self.assertEqual(self.report, catalog.compile_catalog(reversed_tables, self.pin))
 
 
+class BuffCatalogTests(unittest.TestCase):
+    extras = {"hot": ((408120,),), "proc": ((408514,), (401859, 401877)), "external": ((10060,),), "raid": ((14752,),)}
+
+    @classmethod
+    def setUpClass(cls):
+        cls.pin = catalog.pinned_source()
+        cls.tables = json.loads(catalog.FIXTURE.read_text())["tables"]
+        cls.buffs = catalog.compile_buffs(cls.tables, cls.pin, cls.extras)
+        cls.families = cls.buffs["families"]
+        cls.by_id = {spell_id: root for root, family in cls.families.items() for spell_id in family["ids"]}
+
+    def test_skill_line_and_raid_flagged_ranks_share_one_family(self):
+        rejuvenation = self.families[774]
+        self.assertEqual(("DRUID", "hot"), (rejuvenation["class"], rejuvenation["kind"]))
+        self.assertTrue({774, 1058, 25299, 417057, 417068} <= set(rejuvenation["ids"]))
+        self.assertEqual(436937, max(self.families[8936]["ids"]))
+        self.assertIn(425268, self.families[139]["ids"])
+        self.assertIn(417057, self.buffs["raidInCombat"])
+        self.assertNotIn(774, self.buffs["raidInCombat"])
+
+    def test_heals_and_absorbs_are_classified_from_effects(self):
+        expected = {17: "absorb", 139: "hot", 774: "hot", 8936: "hot", 408124: "hot", 408521: "hot"}
+        self.assertEqual(expected, {root: self.families[root]["kind"] for root in expected})
+        self.assertEqual(17, self.by_id[10901])
+
+    def test_shared_class_masks_split_by_school_and_aura(self):
+        self.assertNotIn(27813, self.by_id)
+        self.assertNotEqual(self.by_id[10060], self.by_id[14752])
+
+    def test_self_and_pet_absorbs_are_not_heals(self):
+        self.assertNotIn(543, self.by_id)
+        self.assertNotIn(7812, self.by_id)
+
+    def test_curated_extras_expand_from_their_roots(self):
+        self.assertEqual(("hot", [408120]), (self.families[408120]["kind"], self.families[408120]["ids"]))
+        self.assertEqual([974, 408514], self.families[408514]["ids"])
+        self.assertEqual(401859, self.by_id[401877])
+        self.assertEqual("proc", self.families[401859]["kind"])
+        with self.assertRaisesRegex(ValueError, "curated buff roots"):
+            catalog.compile_buffs(self.tables, self.pin, {"hot": ((9999999,),)})
+
+    def test_lua_output_lists_families_and_lookups(self):
+        output = catalog.lua_buffs(self.buffs)
+        self.assertIn('[774] = { name = "Rejuvenation", class = "DRUID", kind = "hot", ids = { 774, 1058, 25299, 417057', output)
+        self.assertIn("[417068] = 774,", output)
+        self.assertIn("[417057] = true,", output)
+
+    def test_buff_generation_is_independent_of_input_order(self):
+        reversed_tables = {name: list(reversed(rows)) for name, rows in self.tables.items()}
+        self.assertEqual(self.buffs, catalog.compile_buffs(reversed_tables, self.pin, self.extras))
+
+
 if __name__ == "__main__":
     unittest.main()

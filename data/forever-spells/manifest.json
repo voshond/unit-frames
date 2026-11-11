@@ -9,6 +9,12 @@
       "sha256": "13ef58a08253125e3e9dca642a39bc480187987e90cfbe5c8be30e1ab3c8be0a",
       "url": "https://wago.tools/db2/SkillLineAbility/csv?build=1.60.1.70862&locale=enUS"
     },
+    "SpellAuraVisibility": {
+      "filename": "SpellAuraVisibility.1.60.1.70862.csv",
+      "rows": 186,
+      "sha256": "5f29e07ad621fd137fc86ccc673eb065a6e0d1cc2e074db96e65556b198edaf9",
+      "url": "https://wago.tools/db2/SpellAuraVisibility/csv?build=1.60.1.70862&locale=enUS"
+    },
     "SpellClassOptions": {
       "filename": "SpellClassOptions.1.60.1.70862.csv",
       "rows": 6118,

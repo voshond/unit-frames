@@ -103,15 +103,22 @@ client after adding it. For local builds and incremental updates, see the
   combat. With Clique loaded, Clique owns clicks
   and this addon's binding editor does not control live actions.
 - Independent native buff/debuff rows, own-cast/dispel filters, timers,
-  stacks, borders, duration limits and native sorting. Both rows are off by
-  default, keeping the panel compact (2-pixel gaps); when enabled, the buff row
-  shows your own heals over time (`HELPFUL|PLAYER|RAID_IN_COMBAT`) up to two
-  minutes long, not long maintenance buffs. A saved filter choice is kept.
+  stacks, borders, duration limits and native sorting. The buff row is on by
+  default with **My heals & shields**: your own heals over time, shields and
+  heal procs (Earth Shield, Prayer of Mending), every rank, from the generated
+  buff catalogue. Classes without heals see no buffs there. The debuff row is
+  off by default. A saved filter choice is kept.
+- **Healing buffs** (Workbench): pick a named buff set (**My heals & shields**,
+  **Externals & defensives**, **Raid buffs**) and where it shows: outside the
+  cell (top or bottom), inside (one spell per corner, in the fixed slots) or in
+  the aura bar under health. Live sample cards show all three placements; the
+  set leaves the other two places when you pick one.
 - A centre icon for crowd control, big and external defensives (crowd control
   on top), mouse-transparent so hover and mouseover casts reach the member.
 - Three configurable fixed friendly-buff slots, each accepting comma-separated
-  numeric aura spell IDs, own/any caster, position and size. Multiple IDs share
-  a slot; Blizzard chooses the earliest-expiring matching effect. These are
+  numeric aura spell IDs, own/any caster, position and size. Any rank of a
+  catalogued spell matches all its ranks; **Track a spell** picks one by name.
+  Multiple IDs share a slot; Blizzard chooses the earliest-expiring matching effect. These are
   buff slots, not arbitrary friendly-debuff encounter rules.
 - Role, leader/assistant, ready check, dead/ghost, incoming resurrection,
   summon, phase, optional threat and native private-aura anchors, subject to

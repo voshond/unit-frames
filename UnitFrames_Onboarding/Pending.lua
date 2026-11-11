@@ -51,7 +51,7 @@ end
 
 function Pending:Reset()
 	self.preset = Presets.byId.default
-	self.tweaks, self.extras, self.size = {}, {}, "normal"
+	self.tweaks, self.extras, self.extraChoices, self.size = {}, {}, {}, "normal"
 	self.newProfile = true
 	self.result = nil
 	self:Changed()
@@ -76,9 +76,10 @@ function Pending:Style()
 			local value = self.tweaks[tweak.key]
 			if value ~= nil and tweak.write then tweak.write(style, value) end
 		end
+		-- An extra this look no longer offers keeps its choice but writes nothing.
 		for _, extra in ipairs(Presets.extras) do
 			local value = self.extras[extra.key]
-			if value ~= nil then extra.write(style, value) end
+			if value ~= nil and Presets.Available(extra, self) then extra.write(style, value, self:GetExtraChoice(extra.key)) end
 		end
 		Scale(style, Presets.SIZES[self.size])
 		self.style = style
@@ -101,11 +102,23 @@ function Pending:SetTweak(key, value)
 end
 
 function Pending:GetExtra(key)
-	return Presets.extrasByKey[key].read(self:Resolved())
+	return Presets.extrasByKey[key].read(self:Resolved(), self)
 end
 
 function Pending:SetExtra(key, enabled)
 	self.extras[key] = enabled
+	self:Changed()
+end
+
+function Pending:GetExtraChoice(key)
+	local extra = Presets.extrasByKey[key]
+	if not extra.choices then return nil end
+	return self.extraChoices[key] or extra.choice(self)
+end
+
+-- Picking a choice also switches its extra on.
+function Pending:SetExtraChoice(key, value)
+	self.extraChoices[key], self.extras[key] = value, true
 	self:Changed()
 end
 

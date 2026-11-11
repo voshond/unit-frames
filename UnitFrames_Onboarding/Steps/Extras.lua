@@ -16,7 +16,7 @@ local Extras = {
 }
 ob.Steps.Extras = Extras
 
-local MAP_HEIGHT, TILE_WIDTH, TILE_HEIGHT, TILE_GAP = 400, 170, 28, 6
+local MAP_HEIGHT, TILE_WIDTH, TILE_HEIGHT, TILE_GAP, CHOICE_HEIGHT = 400, 170, 28, 6, 22
 
 -- Fixed blocks (centre offsets on the map) and where each area's tiles start.
 local BLOCKS = {
@@ -49,17 +49,20 @@ function Extras:Build(page)
 	barsText:SetText("action bars")
 	for _, block in ipairs(BLOCKS) do Block(map, block) end
 
-	self.tiles = {}
+	self.tiles, self.choices = {}, {}
 	local placed = {}
 	for _, extra in ipairs(Presets.extras) do
 		local area = AREAS[extra.area]
 		local index = placed[extra.area] or 0
 		placed[extra.area] = index + 1
+		local accent = extra.accent and COLORS[extra.accent] or nil
 		local tile = ob.Widgets.Chip:New(map, { text = extra.label, width = TILE_WIDTH, height = TILE_HEIGHT, dot = true,
-			accent = extra.accent and COLORS[extra.accent] or nil, tooltip = extra.hint,
+			accent = accent, tooltip = extra.hint,
 			onClick = function() Pending:SetExtra(extra.key, not Pending:GetExtra(extra.key)) end })
-		tile:SetPoint("CENTER", area[1], area[2] - index * (TILE_HEIGHT + TILE_GAP))
+		local y = area[2] - index * (TILE_HEIGHT + TILE_GAP)
+		tile:SetPoint("CENTER", area[1], y)
 		self.tiles[extra.key] = tile
+		if extra.choices then self.choices[extra.key] = self:ChoiceRow(map, extra, accent, area[1], y - (TILE_HEIGHT + CHOICE_HEIGHT) / 2 - 4) end
 	end
 
 	self.newProfile = UF.Widgets.Checkbox:New(page, { label = "Save as a new profile",
@@ -71,12 +74,33 @@ function Extras:Build(page)
 	self.profileNote:SetWidth(ob.Shell.PAGE_WIDTH)
 end
 
+-- Small chips under a tile, one per choice, spanning the tile's width.
+function Extras:ChoiceRow(map, extra, accent, x, y)
+	local chips, count = {}, #extra.choices
+	local width = (TILE_WIDTH - (count - 1) * 4) / count
+	for index, choice in ipairs(extra.choices) do
+		local chip = ob.Widgets.Chip:New(map, { text = choice[2], width = width, height = CHOICE_HEIGHT, size = 10, accent = accent,
+			onClick = function() Pending:SetExtraChoice(extra.key, choice[1]) end })
+		chip:SetPoint("CENTER", x - TILE_WIDTH / 2 + width / 2 + (index - 1) * (width + 4), y)
+		chip.value = choice[1]
+		chips[index] = chip
+	end
+	return chips
+end
+
 function Extras:Refresh()
 	local on, count = 0, 0
 	for key, tile in pairs(self.tiles) do
-		local enabled = Pending:GetExtra(key)
+		local available = Presets.Available(Presets.extrasByKey[key], Pending)
+		local enabled = available and Pending:GetExtra(key)
+		tile:SetShown(available)
 		tile:SetSelected(enabled)
-		count = count + 1
+		local choice = Pending:GetExtraChoice(key)
+		for _, chip in ipairs(self.choices[key] or {}) do
+			chip:SetShown(available)
+			chip:SetSelected(enabled and chip.value == choice)
+		end
+		if available then count = count + 1 end
 		if enabled then on = on + 1 end
 	end
 	self.map.caption:SetText(("%d OF %d EXTRAS ON"):format(on, count))
