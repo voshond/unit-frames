@@ -3,7 +3,7 @@ local Mock = Helpers.Mock
 
 describe("Dead & ghost and offline looks", function()
 	local ns, frame, uf, element, unitIsDeadOrGhost
-	local GHOST, STRENGTH = { 0.58, 0.79, 0.85 }, 0.85
+	local GHOST, STRENGTH = { 0.48, 0.65, 0.70 }, 0.85
 
 	before_each(function()
 		ns = Helpers.LoadAddon(true, true)
