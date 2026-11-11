@@ -241,9 +241,8 @@ function UnitFrame:OnCreate(parent, spec)
 		end
 	end
 	-- Mouseover wash on a raised child: textures on the unit button itself
-	-- render below its bars.
+	-- render below its bars. Layout keeps it inside the frame border.
 	self.hoverHost = CreateFrame("Frame", nil, self.frame)
-	self.hoverHost:SetAllPoints(self.frame)
 	self.hover = self.hoverHost:CreateTexture(nil, "ARTWORK")
 	self.hover:SetAllPoints()
 	self.hover:Hide()
@@ -673,6 +672,12 @@ function UnitFrame:Layout()
 		if part.def.stack then part.component:Layout(self.layoutContext) end
 	end
 	self.decorations:Reflow()
+	-- Inside the border padding: chamfered and soft border edges are partly
+	-- transparent, so a wash under them would show past the corners.
+	local left, right, top, bottom = Backdrop.Padding(self.resolved.border)
+	self.hoverHost:ClearAllPoints()
+	self.hoverHost:SetPoint("TOPLEFT", self.frame, "TOPLEFT", left, -top)
+	self.hoverHost:SetPoint("BOTTOMRIGHT", self.frame, "BOTTOMRIGHT", -right, bottom)
 	self.hoverHost:SetFrameLevel(self.frame:GetFrameLevel() + Backdrop.LEVELS.hover)
 	Backdrop.SetBorderLevel(self.border, self.frame:GetFrameLevel() + Backdrop.LEVELS.frame)
 	ns.Perf:End("unit layout")

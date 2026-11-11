@@ -33,6 +33,26 @@ describe("Mouseover highlight", function()
 		assert.is_true(level < frame:GetFrameLevel() + ns.Components.Backdrop.LEVELS.frame)
 	end)
 
+	it("stays inside the frame border, where the bars sit", function()
+		local frame = ns.Units.frames.target
+		local host = frame.uf.hoverHost
+		local function Inset()
+			local topLeft, bottomRight = host:GetAnchor("TOPLEFT"), host:GetAnchor("BOTTOMRIGHT")
+			return topLeft[4], -topLeft[5], -bottomRight[4], bottomRight[5]
+		end
+		ns.Config:SetUnitValue("target", "border.enabled", true)
+		ns.Config:SetUnitValue("target", "border.padding", 5)
+		assert.same({ 5, 5, 5, 5 }, { Inset() })
+		ns.Config:SetUnitValue("target", "border.separatePadding", true)
+		ns.Config:SetUnitValue("target", "border.paddingLeft", 2)
+		ns.Config:SetUnitValue("target", "border.paddingBottom", 7)
+		local left, _, _, bottom = Inset()
+		assert.equals(2, left)
+		assert.equals(7, bottom)
+		ns.Config:SetUnitValue("target", "border.enabled", false)
+		assert.same({ 0, 0, 0, 0 }, { Inset() })
+	end)
+
 	it("keeps the hovered state through restyles and follows the settings, also in combat", function()
 		local frame = ns.Units.frames.player
 		local hover = frame.uf.hover
