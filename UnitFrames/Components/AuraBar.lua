@@ -213,11 +213,8 @@ function AuraBar:StyleButton(button)
 	button.ufIconFrame:ClearAllPoints()
 	button.ufIconFrame:SetPoint("TOPLEFT", button, "TOPLEFT", 0, (size - height) / 2)
 	-- Text belongs to the visible strip, while texture/cooldown/border stay square.
-	button.ufCount:ClearAllPoints()
-	button.ufCount:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -2, 2)
-	button.ufTime:ClearAllPoints()
-	local position = self.artConfig.durationPosition
-	button.ufTime:SetPoint(position, button, position, 0, position == "TOP" and -2 or position == "BOTTOM" and 2 or 0)
+	ns.AuraIcon.PlaceText(button.ufCount, button, self.artConfig.countPosition)
+	ns.AuraIcon.PlaceText(button.ufTime, button, self.artConfig.durationPosition)
 	self:ConfigureAnimation(button)
 end
 
