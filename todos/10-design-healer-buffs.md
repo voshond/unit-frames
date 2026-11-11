@@ -32,8 +32,8 @@ comes from the `SpellAuraVisibility` DB2 (Type 0 = RaidInCombat). On build
 | Riptide, Power Word: Shield, Earth Shield | **not flagged** | — |
 
 So even a user who switches the member buffs on can miss classic-rank HoTs,
-and shields never pass. Needs one in-game check of which set a druid's
-spellbook casts (see Verification).
+and shields never pass. Which set a druid's spellbook casts was settled from
+source (see the UNIT-17 source check and Verification).
 
 ### Both ID sets belong to one family
 
@@ -201,3 +201,13 @@ Its honest label is "raid-flagged buffs: not all ranks, no shields". The
 catalogue keeps both sets per family, so "My heals & shields" and the slots
 match either way and nothing else changes. If an in-game `/dump` later shows
 417057-set auras, only the relabel wording changes.
+
+## Verification
+
+The user waived the in-game run on 2026-11-11 (UNIT-22, plan decision
+`no-ingame-acceptance`). Coverage is the source check above (UNIT-17) plus
+`tests/spec/clickgrid/clickgrid_member_heals_spec.lua`: with default settings,
+ClickGrid member cells pass the druid's (Rejuvenation ranks of both ID sets,
+Regrowth, Lifebloom) and the priest's (Renew ranks of both sets, Power Word:
+Shield, Prayer of Mending) include IDs to the native buff filter, and the
+preview shows each class's own heals.
