@@ -1,7 +1,7 @@
 # Design: Healer buffs out of the box
 
 Status: in progress. §1 buff catalogue (UNIT-13), §2 rank-proof slots (UNIT-14) and §3 "My heals & shields"
-on by default (UNIT-15) are implemented; §4 presets/showcases and the Verification below (UNIT-17) are open.
+on by default (UNIT-15) are implemented; §4 presets/showcases are open. The rank-ID question (UNIT-17) is settled from source below.
 Targets Forever Interface 16001, build 1.60.1.70862.
 
 ## Problem
@@ -155,11 +155,49 @@ class) a tile "Show my heals on group frames" plus the placement choice.
 One generator, two outputs. DoT and buff families use the same family rule,
 so a later "my DoTs on target" preset reuses the catalogue API.
 
-## Verification (in game, needs a druid and a priest)
+## Source check: which rank IDs do players cast? (UNIT-17)
 
-1. Cast Rejuvenation on yourself, then
-   `/dump C_UnitAuras.GetUnitAuras("player", "HELPFUL|PLAYER")` → which spellId
-   (774-set or 417057-set)?
-2. Same with `HELPFUL|PLAYER|RAID_IN_COMBAT` → listed or not?
-3. In combat: does a catalogue-backed member group show Rejuvenation, Renew,
-   Power Word: Shield on another party member?
+Settled from source instead of an in-game `/dump`. Client data (build
+1.60.1.70862, `BuffCatalog.lua`):
+
+| Spell | Skill-line ranks (spellbook) | Second set | RaidInCombat flag |
+|---|---|---|---|
+| Rejuvenation | 774 … 25299 | 417057 … 417068, **not** skill-line | second set only |
+| Regrowth | 8936 … 9858 | 436937 … 436946, **not** skill-line | second set only |
+| Renew | 139 … 25315 | 425268 … 425277, **also** skill-line | second set only |
+| Power Word: Shield | 17 … 10901 | none | never |
+
+What each source uses:
+
+| Source | Rejuvenation | Regrowth | Renew | PW:S |
+|---|---|---|---|---|
+| HealKit (`Frames.lua`) | no IDs: `HELPFUL\|PLAYER` + `maxDuration` | same | same | spellbook IDs (excluded from its HoT corner) |
+| HealBot, Forever path (`HEALBOT_FOREVER`) | 774 **and** by name | 8936 and by name | 139 and by name | 17 |
+| EllesmereUI `ForeverCatalogue()` | 774 set only | 8936 set only | **both** sets | skill-line set |
+| LibHealComm-4.0 (`examples/ZPerl`, l. 94) | both: 417057… are ranks 1–11 next to 774… | both (436937…) | both (425268…) | — |
+| Blizzard Forever UI (`wow-ui-source-forever` 9dc84f0) | no hard-coded IDs | — | — | — |
+
+Notes:
+
+- HealKit reads the Power Word: Shield IDs from the spellbook and excludes
+  them by aura spell ID, so on Forever the shield aura carries the spellbook
+  (skill-line) ID.
+- HealBot watches the skill-line ID and, by default, the spell name, so it
+  matches either set and proves neither.
+- EllesmereUI, curated for Forever, lists 425268… for Renew ("the class's
+  second set of ranks") but leaves out 417057… and 436937…. That suggests the
+  spellbook's Rejuvenation and Regrowth land under the skill-line IDs.
+- LibHealComm maps both sets to the same rank numbers and doesn't say which
+  one gets cast.
+- Blizzard's Forever UI never filters on `RAID_IN_COMBAT` itself. AuraUtil
+  documents it as "combine with Player & Helpful to return self-cast HoTs" and
+  `ShouldDisplayBuff` reads `C_Spell.GetVisibilityInfo`. Party frames use
+  `HELPFUL|RAID` when `showCastableBuffs` is on.
+
+Conclusion: the spellbook casts the skill-line ranks. `HELPFUL|PLAYER|RAID_IN_COMBAT`
+then shows Renew only for its 425268 ranks, and most likely never shows the
+Rejuvenation or Regrowth ranks players learn. It never shows Power Word: Shield.
+Its honest label is "raid-flagged buffs: not all ranks, no shields". The
+catalogue keeps both sets per family, so "My heals & shields" and the slots
+match either way and nothing else changes. If an in-game `/dump` later shows
+417057-set auras, only the relabel wording changes.
