@@ -18,6 +18,8 @@ end
 -- Sanitized and fully validated replacements for every store, or nil and a reason.
 local function Prepare(stores, data, parts)
 	if type(data) ~= "table" then return nil, "The ClickGrid data is damaged." end
+	data = UF.Util.Copy(data)
+	CG.Config.MigrateHover(data)
 	local clean, dropped = {}, {}
 	for _, part in ipairs(parts) do
 		local store = stores[part]

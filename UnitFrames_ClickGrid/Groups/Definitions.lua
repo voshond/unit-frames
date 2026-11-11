@@ -56,6 +56,8 @@ end
 CG.definitions.target.readyCheck, CG.definitions.target.threat = nil, nil
 CG.definitions.pet.readyCheck, CG.definitions.pet.threat = nil, nil
 CG.definitions.pet.barLayout = "columns"
+-- Pets stand apart from their member under the mouse.
+CG.definitions.pet.hoverDefaults = { color = { 0.2, 0.8, 1, 0.35 } }
 
 CG.LayoutSchema = {
 	{ key = "enabled", type = "toggle", label = "Show healing panel", default = true },
@@ -169,10 +171,6 @@ CG.IndicatorSchema = UF.Schema.Concat(
 			tooltip = "Me: debuffs you can dispel, like Blizzard's raid frames. Anyone in the group can light up debuffs you cannot remove yourself." },
 		{ key = "dispelGlow", type = "group", label = "Dispellable glow", schema = CELL_GLOW_SCHEMA,
 			hidden = function(c) return not c.dispel end },
-		{ key = "hover", type = "toggle", label = "Mouseover highlight", default = true,
-			tooltip = "Lightens the cell under the mouse, so you can see which member your clicks and mouseover casts will reach." },
-		{ key = "hoverColor", type = "color", label = "Mouseover colour", hasAlpha = true, default = { 1, 1, 1, 0.12 },
-			hidden = function(c) return not c.hover end },
 		{ key = "phase", type = "toggle", label = "Different phase", default = true },
 		{ key = "size", type = "range", label = "Other status icon size", min = 8, max = 32, step = 1, default = 14 },
 		{ key = "private", type = "toggle", label = "Private encounter auras", default = true },

@@ -85,8 +85,7 @@ function CG:StyleFrame(frame, kind)
 	frame.uf:SetCombatDeferred(true)
 	frame.uf:SetThemeManaged(true)
 	frame:RegisterForClicks("AnyUp")
-	frame:HookScript("OnEnter", UF.Units.ShowTooltip)
-	frame:HookScript("OnLeave", UF.Units.HideTooltip)
+	UF.Units.HookMouse(frame)
 	UF.Units:Bind(frame)
 	if target then button.empty = CG.EmptyTarget:New(frame:GetParent(), frame)
 	elseif kind == "member" then
@@ -94,7 +93,7 @@ function CG:StyleFrame(frame, kind)
 		UF.Units.SetElement(frame, "UFCG_Slots", button.slots)
 	end
 	CG.frames[#CG.frames + 1] = frame
-	if kind == "pet" then self:CreatePetHover(frame) end
+	if kind == "pet" then self:WatchPetHover(frame) end
 end
 
 oUF:RegisterStyle(CG.STYLE, function(frame) CG:StyleFrame(frame) end)

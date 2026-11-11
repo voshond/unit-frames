@@ -127,8 +127,10 @@ client after adding it. For local builds and incremental updates, see the
   **Dispellable debuff glow** lights the whole cell in the debuff type's
   colour while the member has a debuff you (or anyone in the group) can
   dispel, gated by a hidden native aura slot so it works in combat.
-  **Mouseover highlight** (on by default, colour configurable) lightens the
-  cell under the mouse, so you can see which member you are about to cast on. Private auras sit inside the right edge by default
+  **Mouseover highlight** (on by default, colour configurable) is the unit
+  frames' own frame-wide highlight, set per bar style (member, target, pet):
+  it lightens the cell under the mouse, so you can see which member you are
+  about to cast on. Pets default to a distinct cyan. Private auras sit inside the right edge by default
   (**Private aura position**), leaving the centre to crowd control.
 - Ready check bar tints on member bars (**Indicators & states > Ready check tints & icon — Member style**): grey
   while waiting, then green or red, holding and fading after the check with

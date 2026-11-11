@@ -36,7 +36,8 @@ spec:
   frame     use this frame as the root (the oUF unit button); else one is created
   width     default width (of the rows area, including the border padding)
   borderDefaults  frame border option defaults, e.g. { enabled = false }
-  resting   offer the resting border (player)
+  hoverDefaults  mouseover highlight option defaults, e.g. { color = { 0.2, 0.8, 1, 0.35 } }
+  resting  offer the resting border (player)
   threat    { defaults } to offer the threat glow: the player's threat on the
             unit as a soft halo in the threat stage colours (SetThreat)
   playerFrame  the frame always shows the player: its texts offer player-only
@@ -62,6 +63,8 @@ GetReadyCheck() returns the ReadyCheck presenter when the spec offers one.
 SetUnitState(state) shows the dead/ghost ("dead") or offline look (bars,
 portrait, border, texts); nil restores the frame. SetThreat(status, percent)
 tints the threat glow (either may be secret; nil off the threat list).
+SetHovered(hovered) shows the mouseover highlight; owners call it from the
+unit button's mouse scripts (Units.HookMouse).
 ]]
 local UnitFrame = ns.Component:Extend("UnitFrame")
 
@@ -237,6 +240,14 @@ function UnitFrame:OnCreate(parent, spec)
 			self.partsByKey[part.key] = component
 		end
 	end
+	-- Mouseover wash on a raised child: textures on the unit button itself
+	-- render below its bars.
+	self.hoverHost = CreateFrame("Frame", nil, self.frame)
+	self.hoverHost:SetAllPoints(self.frame)
+	self.hover = self.hoverHost:CreateTexture(nil, "ARTWORK")
+	self.hover:SetAllPoints()
+	self.hover:Hide()
+	self.hovered = false
 	-- Under the frame, so its background and contents sit on top of the glow.
 	if spec.threat then self.threatGlow = ns.Glow.Create(self.frame, self.frame) end
 	if spec.readyCheck then
@@ -281,6 +292,12 @@ local function UnitStateSchema(tooltip, colorLabel, color)
 		{ key = "texts", type = "toggle", label = "Texts", default = true, hidden = StateOff },
 	}
 end
+
+UnitFrame.HOVER_SCHEMA = {
+	{ key = "enabled", type = "toggle", label = "Enabled", default = true,
+		tooltip = "Lightens the frame under the mouse, so you can see which unit your clicks and mouseover casts will reach." },
+	{ key = "color", type = "color", label = "Mouseover colour", hasAlpha = true, default = { 1, 1, 1, 0.12 }, hidden = StateOff },
+}
 
 UnitFrame.THREAT_COLOR_BY = {
 	{ "percent", "Threat %" },
@@ -340,6 +357,8 @@ function UnitFrame.BuildSchema(spec)
 				hidden = function(cfg) return cfg.mode ~= "spell" end,
 				tooltip = "Choose a spell you know that applies to this unit (a heal for allies, an attack for enemies). Unknown spells, invalid targets and spells without a range check do not fade the frame. Names must match your client language." },
 		} },
+		{ key = "hover", type = "group", label = "Mouseover highlight", schema = UnitFrame.HOVER_SCHEMA,
+			defaults = spec.hoverDefaults },
 	}
 	if spec.resting then
 		schema[#schema + 1] = { key = "resting", type = "group", label = "Resting border", schema = {
@@ -398,6 +417,7 @@ local function Apply(self, cfg)
 	self:ApplyRangeOpacity()
 	self:ApplyUnitState()
 	self:ApplyThreatGlow()
+	self:ApplyHover()
 	if self.readyCheck then self.readyCheck:Apply(cfg.readyCheck) end
 end
 
@@ -547,6 +567,19 @@ function UnitFrame:HasThreatGlow()
 	return self.threatGlow ~= nil and self.resolved.threat.enabled and ns.Caps.curves
 end
 
+-- Hover is plain mouse state, so it may change in combat: only the
+-- unprotected wash shows or hides.
+function UnitFrame:ApplyHover()
+	local cfg = self.resolved.hover
+	self.hover:SetColorTexture(ns.Util.UnpackColor(cfg.color))
+	self.hover:SetShown(self.hovered and cfg.enabled and not self.released)
+end
+
+function UnitFrame:SetHovered(hovered)
+	self.hovered = hovered and true or false
+	self:ApplyHover()
+end
+
 -- The ReadyCheck presenter (tints and icon), or nil when not offered.
 function UnitFrame:GetReadyCheck()
 	return self.readyCheck
@@ -640,6 +673,7 @@ function UnitFrame:Layout()
 		if part.def.stack then part.component:Layout(self.layoutContext) end
 	end
 	self.decorations:Reflow()
+	self.hoverHost:SetFrameLevel(self.frame:GetFrameLevel() + Backdrop.LEVELS.hover)
 	Backdrop.SetBorderLevel(self.border, self.frame:GetFrameLevel() + Backdrop.LEVELS.frame)
 	ns.Perf:End("unit layout")
 end
@@ -822,6 +856,7 @@ end
 
 function UnitFrame:OnRelease()
 	self.border:SetScript("OnUpdate", nil)
+	self.hover:Hide()
 	self.onReadyCheckChanged = nil
 	if self.readyCheck then self.readyCheck:Release() end
 	self.decorations:Release()

@@ -134,13 +134,23 @@ function Units:GetDefinition(unit)
 	return self.definitions[unit]
 end
 
--- Storage/import migration: placement used to double as the enable switch.
+-- Storage/import migrations: placement used to double as the enable switch.
 -- Only the old Off value needs translating; other placements keep their value.
+-- ClickGrid pets kept a flat hover toggle and colour before every frame
+-- offered the mouseover highlight group.
 function Units:MigrateConfig(config)
-	local castbar = type(config) == "table" and config.castbar
+	if type(config) ~= "table" then return config end
+	local castbar = config.castbar
 	if type(castbar) == "table" and castbar.placement == "off" then
 		castbar.placement = nil
 		if castbar.enabled == nil then castbar.enabled = false end
+	end
+	local hover = config.hover
+	if type(hover) == "boolean" or config.hoverColor ~= nil then
+		local group = type(hover) == "table" and hover or {}
+		if type(hover) == "boolean" then group.enabled = hover end
+		if group.color == nil then group.color = config.hoverColor end
+		config.hover, config.hoverColor = group, nil
 	end
 	return config
 end
@@ -310,7 +320,8 @@ end
 function Units:GetSpec(def, frame)
 	local spec = { frame = frame, rows = def.rows, width = def.width, resting = def.resting, readyCheck = def.readyCheck,
 		barLayout = def.barLayout,
-		playerFrame = def.playerFrame, borderDefaults = def.borderDefaults, threat = def.threat, blizzardAuras = def.blizzardAuras }
+		playerFrame = def.playerFrame, borderDefaults = def.borderDefaults, hoverDefaults = def.hoverDefaults,
+		threat = def.threat, blizzardAuras = def.blizzardAuras }
 	for _, part in ipairs(ns.Components.UnitFrame.PARTS) do spec[part.key] = def[part.key] end
 	-- The class is fixed for the session: other classes' frames leave the row out.
 	if spec.comboPoints then

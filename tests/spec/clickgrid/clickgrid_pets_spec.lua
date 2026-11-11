@@ -227,14 +227,18 @@ describe("ClickGrid pets", function()
 		assert.is_true(pet.__state.mouseClickEnabled)
 		assert.is_true(pet.__state.mouseMotionEnabled)
 		assert.equals("target", pet:GetAttribute("type-heal1"))
-		local status = CG:GetGridButton(Cell().Member).status
-		status:SetHovered(true)
+		local member = Cell().Member
+		member.uf:SetHovered(true)
 		pet.__unit = nil
 		pet:RunScript("OnEnter")
-		assert.is_true(CG:GetGridButton(pet).hover:IsShown())
-		assert.is_false(status.hover:IsShown())
+		assert.is_true(pet.uf.hover:IsShown())
+		assert.same({ 0.2, 0.8, 1, 0.35 }, pet.uf.hover.__state.colorTexture)
+		assert.is_false(member.uf.hover:IsShown())
 		pet:RunScript("OnLeave")
-		assert.is_false(CG:GetGridButton(pet).hover:IsShown())
+		assert.is_false(pet.uf.hover:IsShown())
+		pet:RunScript("OnEnter")
+		CG.Config:SetStyle("pet", "interactive", false)
+		assert.is_false(pet.uf.hover:IsShown(), "pets without interaction drop the highlight")
 	end)
 
 	it("uses a pet-only native header and preserves independent styling", function()
@@ -313,15 +317,14 @@ describe("ClickGrid pets", function()
 	it("does not recreate components or compile bindings for pet colour edits", function()
 		CG.Config:SetStyle("pet", "display", "inline")
 		UF.Perf.counters = {}
-		CG.Config:SetStyle("pet", "hoverColor", { 1, 0, 1, 0.3 })
+		CG.Config:SetStyle("pet", "hover.color", { 1, 0, 1, 0.3 })
 		local counters = UF.Perf.counters
 		UF.Perf.counters = nil
 		assert.is_nil(counters.componentCreate)
 		assert.is_nil(counters.headerCreate)
 		assert.is_nil(counters.clickgridBindingsCompile)
-		assert.is_nil(counters.rootApply)
-		assert.is_nil(counters.unitBind)
 		assert.is_nil(counters.clickgridPanelLayout)
+		assert.same({ 1, 0, 1, 0.3 }, Cell().Pet.uf.hover.__state.colorTexture)
 	end)
 
 	it("keeps parked raid subgroups beyond the pet header's full secure capacity", function()
