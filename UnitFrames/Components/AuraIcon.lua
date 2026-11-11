@@ -30,10 +30,25 @@ local function DurationFormatter()
 	return durationFormatter
 end
 
-AuraIcon.DURATION_POSITIONS = {
-	{ "below", "Below the icon" }, { "CENTER", "Inside: centre" },
-	{ "TOP", "Inside: top" }, { "BOTTOM", "Inside: bottom" },
+AuraIcon.TEXT_POSITIONS = {
+	{ "TOPLEFT", "Inside: top left" }, { "TOP", "Inside: top" }, { "TOPRIGHT", "Inside: top right" },
+	{ "LEFT", "Inside: left" }, { "CENTER", "Inside: centre" }, { "RIGHT", "Inside: right" },
+	{ "BOTTOMLEFT", "Inside: bottom left" }, { "BOTTOM", "Inside: bottom" }, { "BOTTOMRIGHT", "Inside: bottom right" },
 }
+AuraIcon.DURATION_POSITIONS = { { "below", "Below the icon" } }
+for _, position in ipairs(AuraIcon.TEXT_POSITIONS) do AuraIcon.DURATION_POSITIONS[#AuraIcon.DURATION_POSITIONS + 1] = position end
+
+-- Inside texts keep a 2px inset from the edges they sit on.
+function AuraIcon.TextOffset(point)
+	local x = point:find("LEFT") and 2 or point:find("RIGHT") and -2 or 0
+	local y = point:find("TOP") and -2 or point:find("BOTTOM") and 2 or 0
+	return x, y
+end
+
+function AuraIcon.PlaceText(text, region, point)
+	text:ClearAllPoints()
+	text:SetPoint(point, region, point, AuraIcon.TextOffset(point))
+end
 
 AuraIcon.GLOW_STYLES = { { "halo", "Soft halo" }, { "proc", "Proc flash" } }
 
@@ -46,6 +61,7 @@ AuraIcon.schema = {
 	{ key = "durationPosition", type = "select", label = "Time position", values = AuraIcon.DURATION_POSITIONS, default = "below" },
 	{ key = "durationSize", type = "range", label = "Time text size", min = 6, max = 32, step = 1, default = 10 },
 	{ key = "showCount", type = "toggle", label = "Show stacks", default = true },
+	{ key = "countPosition", type = "select", label = "Stack position", values = AuraIcon.TEXT_POSITIONS, default = "BOTTOMRIGHT" },
 	{ key = "countSize", type = "range", label = "Stack text size", min = 6, max = 32, step = 1, default = 10 },
 	{ key = "font", type = "font", label = "Font", inherit = "font" },
 	{ key = "fontOutline", type = "select", label = "Font outline", values = ns.Theme.OUTLINES, default = "OUTLINE" },
@@ -211,12 +227,12 @@ function AuraIcon.Apply(button, cfg, width, height, dispelColors, swipe, showSwi
 	for _, entry in ipairs({ { button.ufCount, cfg.countSize }, { button.ufTime, cfg.durationSize } }) do
 		Media:ApplyFont(entry[1], cfg.font, entry[2], cfg.fontOutline)
 	end
-	button.ufTime:ClearAllPoints()
+	AuraIcon.PlaceText(button.ufCount, button.ufIconFrame, cfg.countPosition)
 	if cfg.durationPosition == "below" then
+		button.ufTime:ClearAllPoints()
 		button.ufTime:SetPoint("TOP", button.ufIconFrame, "BOTTOM", 0, -1)
 	else
-		local y = cfg.durationPosition == "TOP" and -2 or cfg.durationPosition == "BOTTOM" and 2 or 0
-		button.ufTime:SetPoint(cfg.durationPosition, button.ufIconFrame, cfg.durationPosition, 0, y)
+		AuraIcon.PlaceText(button.ufTime, button.ufIconFrame, cfg.durationPosition)
 	end
 	button.ufCountHolder:SetShown(cfg.showCount)
 	button.ufTime:SetShown(cfg.showDuration)
