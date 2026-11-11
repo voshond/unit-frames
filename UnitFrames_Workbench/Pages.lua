@@ -40,6 +40,12 @@ local function Location(entry, path)
 	if entry.id == "theme" then
 		if root == "minimapIcon" then return "general", "General", "minimap", "Minimap icon" end
 		if root == "colors" then return "colours", "Colours", "colours", "Colours" end
+		if root == "auras" then
+			local group = path:match("^auras%.([^%.]+)")
+			if group == "border" then return "auraIcons", "Aura icons", "auraFrame", "Icon frame" end
+			if group:find("^dispel") then return "auraIcons", "Aura icons", "auraDispel", "Debuff colours & glow" end
+			return "auraIcons", "Aura icons", "auraText", "Time & stacks"
+		end
 		if root:find("font") then return "fonts", "Fonts", "fonts", "Fonts" end
 		return "artwork", "Bars, borders & backgrounds", "artwork", "Bars, borders & backgrounds"
 	end
@@ -150,7 +156,7 @@ function Pages.Build(entry, targets)
 	for index, feature in ipairs(FEATURES) do order["@" .. feature[1]] = index end
 	table.sort(model.pages, function(a, b)
 		if entry.id == "theme" then
-			local themeOrder = { ["@fonts"] = 1, ["@artwork"] = 2, ["@colours"] = 3, ["@general"] = 4 }
+			local themeOrder = { ["@fonts"] = 1, ["@artwork"] = 2, ["@colours"] = 3, ["@auraIcons"] = 4, ["@general"] = 5 }
 			return themeOrder[a.id] < themeOrder[b.id]
 		end
 		local left, right = order[a.id] or 50, order[b.id] or 50

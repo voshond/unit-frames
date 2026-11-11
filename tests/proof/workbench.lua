@@ -43,7 +43,29 @@ local function OnboardingGroupHeals()
 	return ob.Steps.Extras.map
 end
 
+-- The mock's ScrollBox view creates no rows, so the sidebar's items are laid
+-- out here through the list's own row code.
+local function GlobalSettingsMenu()
+	local _, workbench = Helpers.LoadWorkbench()
+	workbench:Open("theme")
+	workbench.list:Select("theme|@auraIcons", true)
+	local list = workbench.list
+	local menu = CreateFrame("Frame", nil, UIParent)
+	menu:SetPoint("TOPLEFT")
+	menu:SetSize(list:GetFrame():GetWidth(), #list.items * list.rowHeight)
+	for index, item in ipairs(list.items) do
+		local row = CreateFrame("Button", nil, menu)
+		row:SetPoint("TOPLEFT", 0, -(index - 1) * list.rowHeight)
+		row:SetPoint("TOPRIGHT", 0, -(index - 1) * list.rowHeight)
+		row:SetHeight(list.rowHeight)
+		row.text = false
+		list:InitRow(row, item)
+	end
+	return menu
+end
+
 return {
+	{ name = "workbench-global-settings-menu", build = GlobalSettingsMenu },
 	{ name = "workbench-player", build = UnitPreview("unit.player") },
 	{ name = "workbench-target", build = UnitPreview("unit.target") },
 	{ name = "clickgrid-panel", build = ClickGridPreview("clickgrid.panel") },

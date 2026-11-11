@@ -38,6 +38,54 @@ option colors.threatLow type="color" label="Threat: low" default={0.25,0.75,0.25
 option colors.threatMedium type="color" label="Threat: medium" default={1,0.82,0,1}
 option colors.threatHigh type="color" label="Threat: high" default={1,0.5,0,1}
 option colors.threatAggro type="color" label="Threat: aggro" default={1,0.1,0.1,1}
+option auras type="group" label="Aura icons"
+option auras.showDuration type="toggle" label="Show time left" default=true
+option auras.durationPosition type="select" label="Time position" default="CENTER" values=#e24d164b
+option auras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
+option auras.showCount type="toggle" label="Show stacks" default=true
+option auras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
+option auras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
+option auras.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auras.dispelColors type="group" label="Debuff border colours"
+option auras.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
+option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
+option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
+option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
+option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
+option auras.dispelGlow type="group" label="Debuff glow"
+option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
+option auras.dispelGlow.style type="select" label="Glow style" default="halo" values=#4928f4bb tooltip=#54bba73d
+option auras.dispelGlow.size type="range" label="Glow size" default=8 min=4 max=32 step=1 tooltip=#885cb368 hidden
+option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
+option auras.border type="group" label="Icon frame"
+option auras.border.enabled type="toggle" label="Enabled" default=true
+option auras.border.size type="range" label="Border size" default=8 min=1 max=32 step=1
+option auras.border.background type="background" label="Background" default="None"
+option auras.border.inset type="range" label="Background inset" default=1 min=0 max=16 step=1 tooltip=#5352a615
+option auras.border.padding type="range" label="Content padding" default=2 min=0 max=16 step=1 tooltip=#152e5e50
+default auras.border.background = "None"
+default auras.border.enabled = true
+default auras.border.inset = 1
+default auras.border.padding = 2
+default auras.border.size = 8
+default auras.countPosition = "BOTTOMRIGHT"
+default auras.countSize = 10
+default auras.dispelBorder = true
+default auras.dispelColors.Curse = {0.6,0,1,1}
+default auras.dispelColors.Disease = {0.6,0.4,0,1}
+default auras.dispelColors.Magic = {0.2,0.6,1,1}
+default auras.dispelColors.None = {0.8,0,0,1}
+default auras.dispelColors.Poison = {0,0.6,0,1}
+default auras.dispelGlow.enabled = false
+default auras.dispelGlow.opacity = 1
+default auras.dispelGlow.size = 8
+default auras.dispelGlow.style = "halo"
+default auras.durationPosition = "CENTER"
+default auras.durationSize = 10
+default auras.fontOutline = "OUTLINE"
+default auras.showCount = true
+default auras.showDuration = true
 default backgroundColor = {0,0,0,0.75}
 default backgroundTexture = "Solid"
 default barTexture = "Blizzard Raid Bar"
@@ -76,6 +124,28 @@ default colors.threatMedium = {1,0.82,0,1}
 default font = "Roboto Condensed Medium"
 default fontOutline = ""
 default fontSize = 11
+resolved auras.border.background = "None"
+resolved auras.border.enabled = true
+resolved auras.border.inset = 1
+resolved auras.border.padding = 2
+resolved auras.border.size = 8
+resolved auras.countPosition = "BOTTOMRIGHT"
+resolved auras.countSize = 10
+resolved auras.dispelBorder = true
+resolved auras.dispelColors.Curse = {0.6,0,1,1}
+resolved auras.dispelColors.Disease = {0.6,0.4,0,1}
+resolved auras.dispelColors.Magic = {0.2,0.6,1,1}
+resolved auras.dispelColors.None = {0.8,0,0,1}
+resolved auras.dispelColors.Poison = {0,0.6,0,1}
+resolved auras.dispelGlow.enabled = false
+resolved auras.dispelGlow.opacity = 1
+resolved auras.dispelGlow.size = 8
+resolved auras.dispelGlow.style = "halo"
+resolved auras.durationPosition = "CENTER"
+resolved auras.durationSize = 10
+resolved auras.fontOutline = "OUTLINE"
+resolved auras.showCount = true
+resolved auras.showDuration = true
 resolved backgroundColor = {0,0,0,0.75}
 resolved backgroundTexture = "Solid"
 resolved barTexture = "Blizzard Raid Bar"
@@ -1904,35 +1974,35 @@ resolved size = 20
 ## auras
 option enabled type="toggle" label="Enabled" default=true
 option spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
-option showDuration type="toggle" label="Show time left" default=true
-option durationPosition type="select" label="Time position" default="below" values=#e24d164b
-option durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option showCount type="toggle" label="Show stacks" default=true
-option countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option durationPosition type="select" label="Time position" default="CENTER" inherit="auras.durationPosition" values=#e24d164b
+option durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option font type="font" label="Font" inherit="font"
-option fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option dispelBorder type="toggle" label="Colour debuff border by type" default=true inherit="auras.dispelBorder" tooltip=#db787f27
 option dispelColors type="group" label="Debuff border colours"
-option dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
-option dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
-option dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
-option dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
-option dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
-option dispelGlow type="group" label="Debuff glow" defaults={size=8}
-option dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
-option dispelGlow.style type="select" label="Glow style" default="halo" values=#4928f4bb tooltip=#54bba73d
-option dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368 hidden
-option dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
-option border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option border.enabled type="toggle" label="Enabled" default=true
+option dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1} inherit="auras.dispelColors.Magic"
+option dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1} inherit="auras.dispelColors.Curse"
+option dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1} inherit="auras.dispelColors.Disease"
+option dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1} inherit="auras.dispelColors.Poison"
+option dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1} inherit="auras.dispelColors.None"
+option dispelGlow type="group" label="Debuff glow"
+option dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false inherit="auras.dispelGlow.enabled" tooltip=#25636bdd
+option dispelGlow.style type="select" label="Glow style" default="halo" inherit="auras.dispelGlow.style" values=#4928f4bb tooltip=#54bba73d
+option dispelGlow.size type="range" label="Glow size" default=8 inherit="auras.dispelGlow.size" min=4 max=32 step=1 tooltip=#885cb368 hidden
+option dispelGlow.opacity type="range" label="Glow opacity" default=1 inherit="auras.dispelGlow.opacity" min=0.1 max=1 step=0.05
+option border type="group" label="Icon frame"
+option border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option border.border type="border" label="Border" inherit="borderTexture"
-option border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option border.color type="color" label="Border colour" inherit="borderColor"
-option border.background type="background" label="Background" inherit="backgroundTexture"
+option border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 option sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
 option stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option buffs type="group" label="Buffs"
@@ -2022,7 +2092,7 @@ default dispelGlow.enabled = false
 default dispelGlow.opacity = 1
 default dispelGlow.size = 8
 default dispelGlow.style = "halo"
-default durationPosition = "below"
+default durationPosition = "CENTER"
 default durationSize = 10
 default enabled = true
 default fontOutline = "OUTLINE"
@@ -2085,7 +2155,7 @@ resolved dispelGlow.enabled = false
 resolved dispelGlow.opacity = 1
 resolved dispelGlow.size = 8
 resolved dispelGlow.style = "halo"
-resolved durationPosition = "below"
+resolved durationPosition = "CENTER"
 resolved durationSize = 10
 resolved enabled = true
 resolved font = "Roboto Condensed Medium"
@@ -2113,35 +2183,35 @@ option rowBackdrop.background type="background" label="Background" inherit="back
 option rowBackdrop.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option rowBackdrop.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
-option showDuration type="toggle" label="Show time left" default=true
-option durationPosition type="select" label="Time position" default="BOTTOM" values=#e24d164b tooltip=#d6ced160 hint=#f9e140c8
-option durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option showCount type="toggle" label="Show stacks" default=true
-option countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option durationPosition type="select" label="Time position" default="BOTTOM" inherit=false values=#e24d164b tooltip=#d6ced160 hint=#f9e140c8
+option durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option font type="font" label="Font" inherit="font"
-option fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option dispelBorder type="toggle" label="Colour debuff border by type" default=true inherit="auras.dispelBorder" tooltip=#db787f27
 option dispelColors type="group" label="Debuff border colours"
-option dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
-option dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
-option dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
-option dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
-option dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
-option dispelGlow type="group" label="Debuff glow" defaults={size=8}
-option dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
-option dispelGlow.style type="select" label="Glow style" default="halo" values=#4928f4bb tooltip=#54bba73d
-option dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368 hidden
-option dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
-option border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option border.enabled type="toggle" label="Enabled" default=true
+option dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1} inherit="auras.dispelColors.Magic"
+option dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1} inherit="auras.dispelColors.Curse"
+option dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1} inherit="auras.dispelColors.Disease"
+option dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1} inherit="auras.dispelColors.Poison"
+option dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1} inherit="auras.dispelColors.None"
+option dispelGlow type="group" label="Debuff glow"
+option dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false inherit="auras.dispelGlow.enabled" tooltip=#25636bdd
+option dispelGlow.style type="select" label="Glow style" default="halo" inherit="auras.dispelGlow.style" values=#4928f4bb tooltip=#54bba73d
+option dispelGlow.size type="range" label="Glow size" default=8 inherit="auras.dispelGlow.size" min=4 max=32 step=1 tooltip=#885cb368 hidden
+option dispelGlow.opacity type="range" label="Glow opacity" default=1 inherit="auras.dispelGlow.opacity" min=0.1 max=1 step=0.05
+option border type="group" label="Icon frame"
+option border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option border.border type="border" label="Border" inherit="borderTexture"
-option border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option border.color type="color" label="Border colour" inherit="borderColor"
-option border.background type="background" label="Background" inherit="backgroundTexture"
+option border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 option buffs type="group" label="Buffs"
 option buffs.enabled type="toggle" label="Show buffs" default=true
 option buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
@@ -2275,35 +2345,35 @@ resolved showCount = true
 resolved showDuration = true
 resolved spacing = 2
 ## auraIcon
-option showDuration type="toggle" label="Show time left" default=true
-option durationPosition type="select" label="Time position" default="below" values=#e24d164b
-option durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option showCount type="toggle" label="Show stacks" default=true
-option countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option durationPosition type="select" label="Time position" default="CENTER" inherit="auras.durationPosition" values=#e24d164b
+option durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option font type="font" label="Font" inherit="font"
-option fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option dispelBorder type="toggle" label="Colour debuff border by type" default=true inherit="auras.dispelBorder" tooltip=#db787f27
 option dispelColors type="group" label="Debuff border colours"
-option dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
-option dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
-option dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
-option dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
-option dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
-option dispelGlow type="group" label="Debuff glow" defaults={size=8}
-option dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
-option dispelGlow.style type="select" label="Glow style" default="halo" values=#4928f4bb tooltip=#54bba73d
-option dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368 hidden
-option dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
-option border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option border.enabled type="toggle" label="Enabled" default=true
+option dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1} inherit="auras.dispelColors.Magic"
+option dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1} inherit="auras.dispelColors.Curse"
+option dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1} inherit="auras.dispelColors.Disease"
+option dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1} inherit="auras.dispelColors.Poison"
+option dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1} inherit="auras.dispelColors.None"
+option dispelGlow type="group" label="Debuff glow"
+option dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false inherit="auras.dispelGlow.enabled" tooltip=#25636bdd
+option dispelGlow.style type="select" label="Glow style" default="halo" inherit="auras.dispelGlow.style" values=#4928f4bb tooltip=#54bba73d
+option dispelGlow.size type="range" label="Glow size" default=8 inherit="auras.dispelGlow.size" min=4 max=32 step=1 tooltip=#885cb368 hidden
+option dispelGlow.opacity type="range" label="Glow opacity" default=1 inherit="auras.dispelGlow.opacity" min=0.1 max=1 step=0.05
+option border type="group" label="Icon frame"
+option border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option border.border type="border" label="Border" inherit="borderTexture"
-option border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option border.color type="color" label="Border colour" inherit="borderColor"
-option border.background type="background" label="Background" inherit="backgroundTexture"
+option border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 default border.background = "None"
 default border.enabled = true
 default border.inset = 1
@@ -2321,7 +2391,7 @@ default dispelGlow.enabled = false
 default dispelGlow.opacity = 1
 default dispelGlow.size = 8
 default dispelGlow.style = "halo"
-default durationPosition = "below"
+default durationPosition = "CENTER"
 default durationSize = 10
 default fontOutline = "OUTLINE"
 default showCount = true
@@ -2346,7 +2416,7 @@ resolved dispelGlow.enabled = false
 resolved dispelGlow.opacity = 1
 resolved dispelGlow.size = 8
 resolved dispelGlow.style = "halo"
-resolved durationPosition = "below"
+resolved durationPosition = "CENTER"
 resolved durationSize = 10
 resolved font = "Roboto Condensed Medium"
 resolved fontOutline = "OUTLINE"
@@ -3398,38 +3468,38 @@ option comboPoints.border.size type="range" label="Border size" inherit="borderS
 option comboPoints.border.color type="color" label="Border colour" inherit="borderColor"
 option comboPoints.border.background type="background" label="Background" inherit="backgroundTexture"
 option comboPoints.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option auras type="group" label="Buffs & debuffs" defaults={buffs={gap=0},debuffs={gap=0,position="top"},dispelGlow={enabled=false},durationPosition="CENTER",font="Roboto Condensed",sharedSide="combined"}
+option auras type="group" label="Buffs & debuffs" defaults={buffs={gap=0},debuffs={gap=0,position="top"},font="Roboto Condensed",sharedSide="combined"}
 option auras.enabled type="toggle" label="Enabled" default=true
 option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
-option auras.showDuration type="toggle" label="Show time left" default=true
-option auras.durationPosition type="select" label="Time position" default="below" values=#e24d164b
-option auras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option auras.showCount type="toggle" label="Show stacks" default=true
-option auras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option auras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option auras.durationPosition type="select" label="Time position" default="CENTER" inherit="auras.durationPosition" values=#e24d164b
+option auras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option auras.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option auras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option auras.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option auras.font type="font" label="Font" inherit="font"
-option auras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option auras.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auras.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option auras.dispelBorder type="toggle" label="Colour debuff border by type" default=true inherit="auras.dispelBorder" tooltip=#db787f27
 option auras.dispelColors type="group" label="Debuff border colours"
-option auras.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
-option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
-option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
-option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
-option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
-option auras.dispelGlow type="group" label="Debuff glow" defaults={size=8}
-option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
-option auras.dispelGlow.style type="select" label="Glow style" default="halo" values=#4928f4bb tooltip=#54bba73d
-option auras.dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368 hidden
-option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
-option auras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option auras.border.enabled type="toggle" label="Enabled" default=true
+option auras.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1} inherit="auras.dispelColors.Magic"
+option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1} inherit="auras.dispelColors.Curse"
+option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1} inherit="auras.dispelColors.Disease"
+option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1} inherit="auras.dispelColors.Poison"
+option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1} inherit="auras.dispelColors.None"
+option auras.dispelGlow type="group" label="Debuff glow"
+option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false inherit="auras.dispelGlow.enabled" tooltip=#25636bdd
+option auras.dispelGlow.style type="select" label="Glow style" default="halo" inherit="auras.dispelGlow.style" values=#4928f4bb tooltip=#54bba73d
+option auras.dispelGlow.size type="range" label="Glow size" default=8 inherit="auras.dispelGlow.size" min=4 max=32 step=1 tooltip=#885cb368 hidden
+option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 inherit="auras.dispelGlow.opacity" min=0.1 max=1 step=0.05
+option auras.border type="group" label="Icon frame"
+option auras.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option auras.border.border type="border" label="Border" inherit="borderTexture"
-option auras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auras.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option auras.border.color type="color" label="Border colour" inherit="borderColor"
-option auras.border.background type="background" label="Background" inherit="backgroundTexture"
+option auras.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option auras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
 option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
@@ -3487,35 +3557,35 @@ option auraBar.rowBackdrop.background type="background" label="Background" inher
 option auraBar.rowBackdrop.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auraBar.rowBackdrop.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auraBar.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
-option auraBar.showDuration type="toggle" label="Show time left" default=true
-option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" values=#e24d164b tooltip=#d6ced160 hint=#f9e140c8
-option auraBar.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option auraBar.showCount type="toggle" label="Show stacks" default=true
-option auraBar.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option auraBar.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auraBar.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" inherit=false values=#e24d164b tooltip=#d6ced160 hint=#f9e140c8
+option auraBar.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option auraBar.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option auraBar.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option auraBar.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option auraBar.font type="font" label="Font" inherit="font"
-option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true inherit="auras.dispelBorder" tooltip=#db787f27
 option auraBar.dispelColors type="group" label="Debuff border colours"
-option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
-option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
-option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
-option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
-option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
-option auraBar.dispelGlow type="group" label="Debuff glow" defaults={size=8}
-option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
-option auraBar.dispelGlow.style type="select" label="Glow style" default="halo" values=#4928f4bb tooltip=#54bba73d
-option auraBar.dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368 hidden
-option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
-option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option auraBar.border.enabled type="toggle" label="Enabled" default=true
+option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1} inherit="auras.dispelColors.Magic"
+option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1} inherit="auras.dispelColors.Curse"
+option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1} inherit="auras.dispelColors.Disease"
+option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1} inherit="auras.dispelColors.Poison"
+option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1} inherit="auras.dispelColors.None"
+option auraBar.dispelGlow type="group" label="Debuff glow"
+option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false inherit="auras.dispelGlow.enabled" tooltip=#25636bdd
+option auraBar.dispelGlow.style type="select" label="Glow style" default="halo" inherit="auras.dispelGlow.style" values=#4928f4bb tooltip=#54bba73d
+option auraBar.dispelGlow.size type="range" label="Glow size" default=8 inherit="auras.dispelGlow.size" min=4 max=32 step=1 tooltip=#885cb368 hidden
+option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 inherit="auras.dispelGlow.opacity" min=0.1 max=1 step=0.05
+option auraBar.border type="group" label="Icon frame"
+option auraBar.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option auraBar.border.border type="border" label="Border" inherit="borderTexture"
-option auraBar.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option auraBar.border.color type="color" label="Border colour" inherit="borderColor"
-option auraBar.border.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option auraBar.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option auraBar.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option auraBar.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auraBar.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
 option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
@@ -3596,23 +3666,23 @@ option categoryAuras.externalDefensiveColor type="color" label="External defensi
 option categoryAuras.importantColor type="color" label="Important buffs colour" default={0.75,0.45,1,1} hidden
 option categoryAuras.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option categoryAuras.showSwipeEdge type="toggle" label="Show swipe edge" default=true
-option categoryAuras.showDuration type="toggle" label="Show time left" default=true
-option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" values=#f9f96937 tooltip=#cab5c2f4
-option categoryAuras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option categoryAuras.showCount type="toggle" label="Show stacks" default=true
-option categoryAuras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option categoryAuras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option categoryAuras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" inherit=false values=#f9f96937 tooltip=#cab5c2f4
+option categoryAuras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option categoryAuras.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option categoryAuras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option categoryAuras.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option categoryAuras.font type="font" label="Font" inherit="font"
-option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option categoryAuras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option categoryAuras.border.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option categoryAuras.border type="group" label="Icon frame"
+option categoryAuras.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option categoryAuras.border.border type="border" label="Border" inherit="borderTexture"
-option categoryAuras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option categoryAuras.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option categoryAuras.border.color type="color" label="Border colour" inherit="borderColor"
-option categoryAuras.border.background type="background" label="Background" inherit="backgroundTexture"
+option categoryAuras.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option categoryAuras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option categoryAuras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option categoryAuras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option categoryAuras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option categoryAuras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 default auraBar.border.background = "None"
 default auraBar.border.enabled = true
 default auraBar.border.inset = 1
@@ -5716,8 +5786,6 @@ definition auras.cancelBuffs = true
 definition auras.defaults.buffs.gap = 0
 definition auras.defaults.debuffs.gap = 0
 definition auras.defaults.debuffs.position = "top"
-definition auras.defaults.dispelGlow.enabled = false
-definition auras.defaults.durationPosition = "CENTER"
 definition auras.defaults.font = "Roboto Condensed"
 definition auras.defaults.sharedSide = "combined"
 definition blizzardAuras = true
@@ -6481,38 +6549,38 @@ option castbar.colors.success type="color" label="Succeeded" inherit="colors.cas
 option castbar.background type="color" label="Background" default={0,0,0,0} tooltip=#0297179c
 option castbar.holdTime type="range" label="Hold after finish (s)" default=0.4 min=0 max=2 step=0.1
 option castbar.fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
-option auras type="group" label="Buffs & debuffs" defaults={buffs={max=6,size=18},countSize=8,debuffs={max=6,size=18},durationPosition="CENTER",durationSize=9,enabled=false}
+option auras type="group" label="Buffs & debuffs" defaults={buffs={max=6,size=18},countSize=8,debuffs={max=6,size=18},durationSize=9,enabled=false}
 option auras.enabled type="toggle" label="Enabled" default=true
 option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
-option auras.showDuration type="toggle" label="Show time left" default=true
-option auras.durationPosition type="select" label="Time position" default="below" values=#e24d164b
-option auras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option auras.showCount type="toggle" label="Show stacks" default=true
-option auras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option auras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option auras.durationPosition type="select" label="Time position" default="CENTER" inherit="auras.durationPosition" values=#e24d164b
+option auras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option auras.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option auras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option auras.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option auras.font type="font" label="Font" inherit="font"
-option auras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option auras.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auras.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option auras.dispelBorder type="toggle" label="Colour debuff border by type" default=true inherit="auras.dispelBorder" tooltip=#db787f27
 option auras.dispelColors type="group" label="Debuff border colours"
-option auras.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
-option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
-option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
-option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
-option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
-option auras.dispelGlow type="group" label="Debuff glow" defaults={size=8}
-option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
-option auras.dispelGlow.style type="select" label="Glow style" default="halo" values=#4928f4bb tooltip=#54bba73d
-option auras.dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368 hidden
-option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
-option auras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option auras.border.enabled type="toggle" label="Enabled" default=true
+option auras.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1} inherit="auras.dispelColors.Magic"
+option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1} inherit="auras.dispelColors.Curse"
+option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1} inherit="auras.dispelColors.Disease"
+option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1} inherit="auras.dispelColors.Poison"
+option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1} inherit="auras.dispelColors.None"
+option auras.dispelGlow type="group" label="Debuff glow"
+option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false inherit="auras.dispelGlow.enabled" tooltip=#25636bdd
+option auras.dispelGlow.style type="select" label="Glow style" default="halo" inherit="auras.dispelGlow.style" values=#4928f4bb tooltip=#54bba73d
+option auras.dispelGlow.size type="range" label="Glow size" default=8 inherit="auras.dispelGlow.size" min=4 max=32 step=1 tooltip=#885cb368 hidden
+option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 inherit="auras.dispelGlow.opacity" min=0.1 max=1 step=0.05
+option auras.border type="group" label="Icon frame"
+option auras.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option auras.border.border type="border" label="Border" inherit="borderTexture"
-option auras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auras.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option auras.border.color type="color" label="Border colour" inherit="borderColor"
-option auras.border.background type="background" label="Background" inherit="backgroundTexture"
+option auras.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option auras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
 option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
@@ -6570,35 +6638,35 @@ option auraBar.rowBackdrop.background type="background" label="Background" inher
 option auraBar.rowBackdrop.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auraBar.rowBackdrop.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auraBar.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
-option auraBar.showDuration type="toggle" label="Show time left" default=true
-option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" values=#e24d164b tooltip=#d6ced160 hint=#f9e140c8
-option auraBar.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option auraBar.showCount type="toggle" label="Show stacks" default=true
-option auraBar.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option auraBar.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auraBar.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" inherit=false values=#e24d164b tooltip=#d6ced160 hint=#f9e140c8
+option auraBar.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option auraBar.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option auraBar.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option auraBar.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option auraBar.font type="font" label="Font" inherit="font"
-option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true inherit="auras.dispelBorder" tooltip=#db787f27
 option auraBar.dispelColors type="group" label="Debuff border colours"
-option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
-option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
-option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
-option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
-option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
-option auraBar.dispelGlow type="group" label="Debuff glow" defaults={size=8}
-option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
-option auraBar.dispelGlow.style type="select" label="Glow style" default="halo" values=#4928f4bb tooltip=#54bba73d
-option auraBar.dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368 hidden
-option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
-option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option auraBar.border.enabled type="toggle" label="Enabled" default=true
+option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1} inherit="auras.dispelColors.Magic"
+option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1} inherit="auras.dispelColors.Curse"
+option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1} inherit="auras.dispelColors.Disease"
+option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1} inherit="auras.dispelColors.Poison"
+option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1} inherit="auras.dispelColors.None"
+option auraBar.dispelGlow type="group" label="Debuff glow"
+option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false inherit="auras.dispelGlow.enabled" tooltip=#25636bdd
+option auraBar.dispelGlow.style type="select" label="Glow style" default="halo" inherit="auras.dispelGlow.style" values=#4928f4bb tooltip=#54bba73d
+option auraBar.dispelGlow.size type="range" label="Glow size" default=8 inherit="auras.dispelGlow.size" min=4 max=32 step=1 tooltip=#885cb368 hidden
+option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 inherit="auras.dispelGlow.opacity" min=0.1 max=1 step=0.05
+option auraBar.border type="group" label="Icon frame"
+option auraBar.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option auraBar.border.border type="border" label="Border" inherit="borderTexture"
-option auraBar.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option auraBar.border.color type="color" label="Border colour" inherit="borderColor"
-option auraBar.border.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option auraBar.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option auraBar.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option auraBar.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auraBar.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
 option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
@@ -6671,23 +6739,23 @@ option categoryAuras.externalDefensiveColor type="color" label="External defensi
 option categoryAuras.importantColor type="color" label="Important buffs colour" default={0.75,0.45,1,1} hidden
 option categoryAuras.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option categoryAuras.showSwipeEdge type="toggle" label="Show swipe edge" default=true
-option categoryAuras.showDuration type="toggle" label="Show time left" default=true
-option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" values=#f9f96937 tooltip=#cab5c2f4
-option categoryAuras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option categoryAuras.showCount type="toggle" label="Show stacks" default=true
-option categoryAuras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option categoryAuras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option categoryAuras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" inherit=false values=#f9f96937 tooltip=#cab5c2f4
+option categoryAuras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option categoryAuras.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option categoryAuras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option categoryAuras.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option categoryAuras.font type="font" label="Font" inherit="font"
-option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option categoryAuras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option categoryAuras.border.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option categoryAuras.border type="group" label="Icon frame"
+option categoryAuras.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option categoryAuras.border.border type="border" label="Border" inherit="borderTexture"
-option categoryAuras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option categoryAuras.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option categoryAuras.border.color type="color" label="Border colour" inherit="borderColor"
-option categoryAuras.border.background type="background" label="Background" inherit="backgroundTexture"
+option categoryAuras.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option categoryAuras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option categoryAuras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option categoryAuras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option categoryAuras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option categoryAuras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 default auraBar.border.background = "None"
 default auraBar.border.enabled = true
 default auraBar.border.inset = 1
@@ -8263,7 +8331,6 @@ definition auras.defaults.buffs.size = 18
 definition auras.defaults.countSize = 8
 definition auras.defaults.debuffs.max = 6
 definition auras.defaults.debuffs.size = 18
-definition auras.defaults.durationPosition = "CENTER"
 definition auras.defaults.durationSize = 9
 definition auras.defaults.enabled = false
 definition borderDefaults.enabled = false
@@ -9076,38 +9143,38 @@ option comboPoints.border.size type="range" label="Border size" inherit="borderS
 option comboPoints.border.color type="color" label="Border colour" inherit="borderColor"
 option comboPoints.border.background type="background" label="Background" inherit="backgroundTexture"
 option comboPoints.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option auras type="group" label="Buffs & debuffs" defaults={buffs={gap=0,position="bottom"},debuffs={gap=0,position="bottom"},dispelGlow={enabled=false},durationPosition="CENTER",font="Roboto Condensed",sharedSide="combined"}
+option auras type="group" label="Buffs & debuffs" defaults={buffs={gap=0,position="bottom"},debuffs={gap=0,position="bottom"},font="Roboto Condensed",sharedSide="combined"}
 option auras.enabled type="toggle" label="Enabled" default=true
 option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
-option auras.showDuration type="toggle" label="Show time left" default=true
-option auras.durationPosition type="select" label="Time position" default="below" values=#e24d164b
-option auras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option auras.showCount type="toggle" label="Show stacks" default=true
-option auras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option auras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option auras.durationPosition type="select" label="Time position" default="CENTER" inherit="auras.durationPosition" values=#e24d164b
+option auras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option auras.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option auras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option auras.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option auras.font type="font" label="Font" inherit="font"
-option auras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option auras.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auras.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option auras.dispelBorder type="toggle" label="Colour debuff border by type" default=true inherit="auras.dispelBorder" tooltip=#db787f27
 option auras.dispelColors type="group" label="Debuff border colours"
-option auras.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
-option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
-option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
-option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
-option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
-option auras.dispelGlow type="group" label="Debuff glow" defaults={size=8}
-option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
-option auras.dispelGlow.style type="select" label="Glow style" default="halo" values=#4928f4bb tooltip=#54bba73d
-option auras.dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368 hidden
-option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
-option auras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option auras.border.enabled type="toggle" label="Enabled" default=true
+option auras.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1} inherit="auras.dispelColors.Magic"
+option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1} inherit="auras.dispelColors.Curse"
+option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1} inherit="auras.dispelColors.Disease"
+option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1} inherit="auras.dispelColors.Poison"
+option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1} inherit="auras.dispelColors.None"
+option auras.dispelGlow type="group" label="Debuff glow"
+option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false inherit="auras.dispelGlow.enabled" tooltip=#25636bdd
+option auras.dispelGlow.style type="select" label="Glow style" default="halo" inherit="auras.dispelGlow.style" values=#4928f4bb tooltip=#54bba73d
+option auras.dispelGlow.size type="range" label="Glow size" default=8 inherit="auras.dispelGlow.size" min=4 max=32 step=1 tooltip=#885cb368 hidden
+option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 inherit="auras.dispelGlow.opacity" min=0.1 max=1 step=0.05
+option auras.border type="group" label="Icon frame"
+option auras.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option auras.border.border type="border" label="Border" inherit="borderTexture"
-option auras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auras.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option auras.border.color type="color" label="Border colour" inherit="borderColor"
-option auras.border.background type="background" label="Background" inherit="backgroundTexture"
+option auras.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option auras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
 option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
@@ -9165,35 +9232,35 @@ option auraBar.rowBackdrop.background type="background" label="Background" inher
 option auraBar.rowBackdrop.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auraBar.rowBackdrop.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auraBar.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
-option auraBar.showDuration type="toggle" label="Show time left" default=true
-option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" values=#e24d164b tooltip=#d6ced160 hint=#f9e140c8
-option auraBar.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option auraBar.showCount type="toggle" label="Show stacks" default=true
-option auraBar.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option auraBar.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auraBar.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" inherit=false values=#e24d164b tooltip=#d6ced160 hint=#f9e140c8
+option auraBar.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option auraBar.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option auraBar.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option auraBar.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option auraBar.font type="font" label="Font" inherit="font"
-option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true inherit="auras.dispelBorder" tooltip=#db787f27
 option auraBar.dispelColors type="group" label="Debuff border colours"
-option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
-option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
-option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
-option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
-option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
-option auraBar.dispelGlow type="group" label="Debuff glow" defaults={size=8}
-option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
-option auraBar.dispelGlow.style type="select" label="Glow style" default="halo" values=#4928f4bb tooltip=#54bba73d
-option auraBar.dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368 hidden
-option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
-option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option auraBar.border.enabled type="toggle" label="Enabled" default=true
+option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1} inherit="auras.dispelColors.Magic"
+option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1} inherit="auras.dispelColors.Curse"
+option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1} inherit="auras.dispelColors.Disease"
+option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1} inherit="auras.dispelColors.Poison"
+option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1} inherit="auras.dispelColors.None"
+option auraBar.dispelGlow type="group" label="Debuff glow"
+option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false inherit="auras.dispelGlow.enabled" tooltip=#25636bdd
+option auraBar.dispelGlow.style type="select" label="Glow style" default="halo" inherit="auras.dispelGlow.style" values=#4928f4bb tooltip=#54bba73d
+option auraBar.dispelGlow.size type="range" label="Glow size" default=8 inherit="auras.dispelGlow.size" min=4 max=32 step=1 tooltip=#885cb368 hidden
+option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 inherit="auras.dispelGlow.opacity" min=0.1 max=1 step=0.05
+option auraBar.border type="group" label="Icon frame"
+option auraBar.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option auraBar.border.border type="border" label="Border" inherit="borderTexture"
-option auraBar.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option auraBar.border.color type="color" label="Border colour" inherit="borderColor"
-option auraBar.border.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option auraBar.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option auraBar.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option auraBar.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auraBar.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
 option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
@@ -9266,23 +9333,23 @@ option categoryAuras.externalDefensiveColor type="color" label="External defensi
 option categoryAuras.importantColor type="color" label="Important buffs colour" default={0.75,0.45,1,1} hidden
 option categoryAuras.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option categoryAuras.showSwipeEdge type="toggle" label="Show swipe edge" default=true
-option categoryAuras.showDuration type="toggle" label="Show time left" default=true
-option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" values=#f9f96937 tooltip=#cab5c2f4
-option categoryAuras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option categoryAuras.showCount type="toggle" label="Show stacks" default=true
-option categoryAuras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option categoryAuras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option categoryAuras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" inherit=false values=#f9f96937 tooltip=#cab5c2f4
+option categoryAuras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option categoryAuras.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option categoryAuras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option categoryAuras.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option categoryAuras.font type="font" label="Font" inherit="font"
-option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option categoryAuras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option categoryAuras.border.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option categoryAuras.border type="group" label="Icon frame"
+option categoryAuras.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option categoryAuras.border.border type="border" label="Border" inherit="borderTexture"
-option categoryAuras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option categoryAuras.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option categoryAuras.border.color type="color" label="Border colour" inherit="borderColor"
-option categoryAuras.border.background type="background" label="Background" inherit="backgroundTexture"
+option categoryAuras.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option categoryAuras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option categoryAuras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option categoryAuras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option categoryAuras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option categoryAuras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 default auraBar.border.background = "None"
 default auraBar.border.enabled = true
 default auraBar.border.inset = 1
@@ -10920,8 +10987,6 @@ definition auras.defaults.buffs.gap = 0
 definition auras.defaults.buffs.position = "bottom"
 definition auras.defaults.debuffs.gap = 0
 definition auras.defaults.debuffs.position = "bottom"
-definition auras.defaults.dispelGlow.enabled = false
-definition auras.defaults.durationPosition = "CENTER"
 definition auras.defaults.font = "Roboto Condensed"
 definition auras.defaults.sharedSide = "combined"
 definition castbar.defaults.border.enabled = false
@@ -11705,38 +11770,38 @@ option castbar.colors.success type="color" label="Succeeded" inherit="colors.cas
 option castbar.background type="color" label="Background" default={0,0,0,0} tooltip=#0297179c
 option castbar.holdTime type="range" label="Hold after finish (s)" default=0.4 min=0 max=2 step=0.1
 option castbar.fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
-option auras type="group" label="Buffs & debuffs" defaults={buffs={max=8,size=16},countSize=8,debuffs={max=8,size=18},durationPosition="CENTER",durationSize=9,enabled=false}
+option auras type="group" label="Buffs & debuffs" defaults={buffs={max=8,size=16},countSize=8,debuffs={max=8,size=18},durationSize=9,enabled=false}
 option auras.enabled type="toggle" label="Enabled" default=true
 option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
-option auras.showDuration type="toggle" label="Show time left" default=true
-option auras.durationPosition type="select" label="Time position" default="below" values=#e24d164b
-option auras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option auras.showCount type="toggle" label="Show stacks" default=true
-option auras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option auras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option auras.durationPosition type="select" label="Time position" default="CENTER" inherit="auras.durationPosition" values=#e24d164b
+option auras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option auras.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option auras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option auras.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option auras.font type="font" label="Font" inherit="font"
-option auras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option auras.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auras.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option auras.dispelBorder type="toggle" label="Colour debuff border by type" default=true inherit="auras.dispelBorder" tooltip=#db787f27
 option auras.dispelColors type="group" label="Debuff border colours"
-option auras.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
-option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
-option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
-option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
-option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
-option auras.dispelGlow type="group" label="Debuff glow" defaults={size=8}
-option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
-option auras.dispelGlow.style type="select" label="Glow style" default="halo" values=#4928f4bb tooltip=#54bba73d
-option auras.dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368 hidden
-option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
-option auras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option auras.border.enabled type="toggle" label="Enabled" default=true
+option auras.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1} inherit="auras.dispelColors.Magic"
+option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1} inherit="auras.dispelColors.Curse"
+option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1} inherit="auras.dispelColors.Disease"
+option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1} inherit="auras.dispelColors.Poison"
+option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1} inherit="auras.dispelColors.None"
+option auras.dispelGlow type="group" label="Debuff glow"
+option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false inherit="auras.dispelGlow.enabled" tooltip=#25636bdd
+option auras.dispelGlow.style type="select" label="Glow style" default="halo" inherit="auras.dispelGlow.style" values=#4928f4bb tooltip=#54bba73d
+option auras.dispelGlow.size type="range" label="Glow size" default=8 inherit="auras.dispelGlow.size" min=4 max=32 step=1 tooltip=#885cb368 hidden
+option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 inherit="auras.dispelGlow.opacity" min=0.1 max=1 step=0.05
+option auras.border type="group" label="Icon frame"
+option auras.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option auras.border.border type="border" label="Border" inherit="borderTexture"
-option auras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auras.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option auras.border.color type="color" label="Border colour" inherit="borderColor"
-option auras.border.background type="background" label="Background" inherit="backgroundTexture"
+option auras.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option auras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
 option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
@@ -11794,35 +11859,35 @@ option auraBar.rowBackdrop.background type="background" label="Background" inher
 option auraBar.rowBackdrop.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auraBar.rowBackdrop.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auraBar.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
-option auraBar.showDuration type="toggle" label="Show time left" default=true
-option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" values=#e24d164b tooltip=#d6ced160 hint=#f9e140c8
-option auraBar.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option auraBar.showCount type="toggle" label="Show stacks" default=true
-option auraBar.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option auraBar.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auraBar.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" inherit=false values=#e24d164b tooltip=#d6ced160 hint=#f9e140c8
+option auraBar.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option auraBar.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option auraBar.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option auraBar.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option auraBar.font type="font" label="Font" inherit="font"
-option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true inherit="auras.dispelBorder" tooltip=#db787f27
 option auraBar.dispelColors type="group" label="Debuff border colours"
-option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
-option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
-option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
-option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
-option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
-option auraBar.dispelGlow type="group" label="Debuff glow" defaults={size=8}
-option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
-option auraBar.dispelGlow.style type="select" label="Glow style" default="halo" values=#4928f4bb tooltip=#54bba73d
-option auraBar.dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368 hidden
-option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
-option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option auraBar.border.enabled type="toggle" label="Enabled" default=true
+option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1} inherit="auras.dispelColors.Magic"
+option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1} inherit="auras.dispelColors.Curse"
+option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1} inherit="auras.dispelColors.Disease"
+option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1} inherit="auras.dispelColors.Poison"
+option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1} inherit="auras.dispelColors.None"
+option auraBar.dispelGlow type="group" label="Debuff glow"
+option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false inherit="auras.dispelGlow.enabled" tooltip=#25636bdd
+option auraBar.dispelGlow.style type="select" label="Glow style" default="halo" inherit="auras.dispelGlow.style" values=#4928f4bb tooltip=#54bba73d
+option auraBar.dispelGlow.size type="range" label="Glow size" default=8 inherit="auras.dispelGlow.size" min=4 max=32 step=1 tooltip=#885cb368 hidden
+option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 inherit="auras.dispelGlow.opacity" min=0.1 max=1 step=0.05
+option auraBar.border type="group" label="Icon frame"
+option auraBar.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option auraBar.border.border type="border" label="Border" inherit="borderTexture"
-option auraBar.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option auraBar.border.color type="color" label="Border colour" inherit="borderColor"
-option auraBar.border.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option auraBar.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option auraBar.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option auraBar.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auraBar.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
 option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
@@ -11895,23 +11960,23 @@ option categoryAuras.externalDefensiveColor type="color" label="External defensi
 option categoryAuras.importantColor type="color" label="Important buffs colour" default={0.75,0.45,1,1} hidden
 option categoryAuras.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option categoryAuras.showSwipeEdge type="toggle" label="Show swipe edge" default=true
-option categoryAuras.showDuration type="toggle" label="Show time left" default=true
-option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" values=#f9f96937 tooltip=#cab5c2f4
-option categoryAuras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option categoryAuras.showCount type="toggle" label="Show stacks" default=true
-option categoryAuras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option categoryAuras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option categoryAuras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" inherit=false values=#f9f96937 tooltip=#cab5c2f4
+option categoryAuras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option categoryAuras.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option categoryAuras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option categoryAuras.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option categoryAuras.font type="font" label="Font" inherit="font"
-option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option categoryAuras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option categoryAuras.border.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option categoryAuras.border type="group" label="Icon frame"
+option categoryAuras.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option categoryAuras.border.border type="border" label="Border" inherit="borderTexture"
-option categoryAuras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option categoryAuras.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option categoryAuras.border.color type="color" label="Border colour" inherit="borderColor"
-option categoryAuras.border.background type="background" label="Background" inherit="backgroundTexture"
+option categoryAuras.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option categoryAuras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option categoryAuras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option categoryAuras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option categoryAuras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option categoryAuras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 default auraBar.border.background = "None"
 default auraBar.border.enabled = true
 default auraBar.border.inset = 1
@@ -13499,7 +13564,6 @@ definition auras.defaults.buffs.size = 16
 definition auras.defaults.countSize = 8
 definition auras.defaults.debuffs.max = 8
 definition auras.defaults.debuffs.size = 18
-definition auras.defaults.durationPosition = "CENTER"
 definition auras.defaults.durationSize = 9
 definition auras.defaults.enabled = false
 definition castbar.defaults.border.enabled = false
@@ -14272,38 +14336,38 @@ option castbar.colors.success type="color" label="Succeeded" inherit="colors.cas
 option castbar.background type="color" label="Background" default={0,0,0,0} tooltip=#0297179c
 option castbar.holdTime type="range" label="Hold after finish (s)" default=0.4 min=0 max=2 step=0.1
 option castbar.fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
-option auras type="group" label="Buffs & debuffs" defaults={buffs={gap=0},debuffs={gap=0,position="top"},dispelGlow={enabled=false},durationPosition="CENTER",font="Roboto Condensed",sharedSide="combined"}
+option auras type="group" label="Buffs & debuffs" defaults={buffs={gap=0},debuffs={gap=0,position="top"},font="Roboto Condensed",sharedSide="combined"}
 option auras.enabled type="toggle" label="Enabled" default=true
 option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
-option auras.showDuration type="toggle" label="Show time left" default=true
-option auras.durationPosition type="select" label="Time position" default="below" values=#e24d164b
-option auras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option auras.showCount type="toggle" label="Show stacks" default=true
-option auras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option auras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option auras.durationPosition type="select" label="Time position" default="CENTER" inherit="auras.durationPosition" values=#e24d164b
+option auras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option auras.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option auras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option auras.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option auras.font type="font" label="Font" inherit="font"
-option auras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option auras.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auras.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option auras.dispelBorder type="toggle" label="Colour debuff border by type" default=true inherit="auras.dispelBorder" tooltip=#db787f27
 option auras.dispelColors type="group" label="Debuff border colours"
-option auras.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
-option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
-option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
-option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
-option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
-option auras.dispelGlow type="group" label="Debuff glow" defaults={size=8}
-option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
-option auras.dispelGlow.style type="select" label="Glow style" default="halo" values=#4928f4bb tooltip=#54bba73d
-option auras.dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368 hidden
-option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
-option auras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option auras.border.enabled type="toggle" label="Enabled" default=true
+option auras.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1} inherit="auras.dispelColors.Magic"
+option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1} inherit="auras.dispelColors.Curse"
+option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1} inherit="auras.dispelColors.Disease"
+option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1} inherit="auras.dispelColors.Poison"
+option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1} inherit="auras.dispelColors.None"
+option auras.dispelGlow type="group" label="Debuff glow"
+option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false inherit="auras.dispelGlow.enabled" tooltip=#25636bdd
+option auras.dispelGlow.style type="select" label="Glow style" default="halo" inherit="auras.dispelGlow.style" values=#4928f4bb tooltip=#54bba73d
+option auras.dispelGlow.size type="range" label="Glow size" default=8 inherit="auras.dispelGlow.size" min=4 max=32 step=1 tooltip=#885cb368 hidden
+option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 inherit="auras.dispelGlow.opacity" min=0.1 max=1 step=0.05
+option auras.border type="group" label="Icon frame"
+option auras.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option auras.border.border type="border" label="Border" inherit="borderTexture"
-option auras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auras.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option auras.border.color type="color" label="Border colour" inherit="borderColor"
-option auras.border.background type="background" label="Background" inherit="backgroundTexture"
+option auras.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option auras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
 option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
@@ -14361,35 +14425,35 @@ option auraBar.rowBackdrop.background type="background" label="Background" inher
 option auraBar.rowBackdrop.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auraBar.rowBackdrop.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auraBar.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
-option auraBar.showDuration type="toggle" label="Show time left" default=true
-option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" values=#e24d164b tooltip=#d6ced160 hint=#f9e140c8
-option auraBar.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option auraBar.showCount type="toggle" label="Show stacks" default=true
-option auraBar.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option auraBar.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auraBar.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" inherit=false values=#e24d164b tooltip=#d6ced160 hint=#f9e140c8
+option auraBar.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option auraBar.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option auraBar.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option auraBar.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option auraBar.font type="font" label="Font" inherit="font"
-option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true inherit="auras.dispelBorder" tooltip=#db787f27
 option auraBar.dispelColors type="group" label="Debuff border colours"
-option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
-option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
-option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
-option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
-option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
-option auraBar.dispelGlow type="group" label="Debuff glow" defaults={size=8}
-option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
-option auraBar.dispelGlow.style type="select" label="Glow style" default="halo" values=#4928f4bb tooltip=#54bba73d
-option auraBar.dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368 hidden
-option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
-option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option auraBar.border.enabled type="toggle" label="Enabled" default=true
+option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1} inherit="auras.dispelColors.Magic"
+option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1} inherit="auras.dispelColors.Curse"
+option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1} inherit="auras.dispelColors.Disease"
+option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1} inherit="auras.dispelColors.Poison"
+option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1} inherit="auras.dispelColors.None"
+option auraBar.dispelGlow type="group" label="Debuff glow"
+option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false inherit="auras.dispelGlow.enabled" tooltip=#25636bdd
+option auraBar.dispelGlow.style type="select" label="Glow style" default="halo" inherit="auras.dispelGlow.style" values=#4928f4bb tooltip=#54bba73d
+option auraBar.dispelGlow.size type="range" label="Glow size" default=8 inherit="auras.dispelGlow.size" min=4 max=32 step=1 tooltip=#885cb368 hidden
+option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 inherit="auras.dispelGlow.opacity" min=0.1 max=1 step=0.05
+option auraBar.border type="group" label="Icon frame"
+option auraBar.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option auraBar.border.border type="border" label="Border" inherit="borderTexture"
-option auraBar.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option auraBar.border.color type="color" label="Border colour" inherit="borderColor"
-option auraBar.border.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option auraBar.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option auraBar.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option auraBar.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auraBar.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
 option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
@@ -14462,23 +14526,23 @@ option categoryAuras.externalDefensiveColor type="color" label="External defensi
 option categoryAuras.importantColor type="color" label="Important buffs colour" default={0.75,0.45,1,1} hidden
 option categoryAuras.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option categoryAuras.showSwipeEdge type="toggle" label="Show swipe edge" default=true
-option categoryAuras.showDuration type="toggle" label="Show time left" default=true
-option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" values=#f9f96937 tooltip=#cab5c2f4
-option categoryAuras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option categoryAuras.showCount type="toggle" label="Show stacks" default=true
-option categoryAuras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option categoryAuras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option categoryAuras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" inherit=false values=#f9f96937 tooltip=#cab5c2f4
+option categoryAuras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option categoryAuras.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option categoryAuras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option categoryAuras.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option categoryAuras.font type="font" label="Font" inherit="font"
-option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option categoryAuras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option categoryAuras.border.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option categoryAuras.border type="group" label="Icon frame"
+option categoryAuras.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option categoryAuras.border.border type="border" label="Border" inherit="borderTexture"
-option categoryAuras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option categoryAuras.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option categoryAuras.border.color type="color" label="Border colour" inherit="borderColor"
-option categoryAuras.border.background type="background" label="Background" inherit="backgroundTexture"
+option categoryAuras.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option categoryAuras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option categoryAuras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option categoryAuras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option categoryAuras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option categoryAuras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 default auraBar.border.background = "None"
 default auraBar.border.enabled = true
 default auraBar.border.inset = 1
@@ -16064,8 +16128,6 @@ definition auraBar.defaults = {}
 definition auras.defaults.buffs.gap = 0
 definition auras.defaults.debuffs.gap = 0
 definition auras.defaults.debuffs.position = "top"
-definition auras.defaults.dispelGlow.enabled = false
-definition auras.defaults.durationPosition = "CENTER"
 definition auras.defaults.font = "Roboto Condensed"
 definition auras.defaults.sharedSide = "combined"
 definition castbar.defaults.border.enabled = false
@@ -16841,38 +16903,38 @@ option castbar.colors.success type="color" label="Succeeded" inherit="colors.cas
 option castbar.background type="color" label="Background" default={0,0,0,0} tooltip=#0297179c
 option castbar.holdTime type="range" label="Hold after finish (s)" default=0.4 min=0 max=2 step=0.1
 option castbar.fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
-option auras type="group" label="Buffs & debuffs" defaults={buffs={max=8,size=16},countSize=8,debuffs={max=8,size=18},durationPosition="CENTER",durationSize=9,enabled=false}
+option auras type="group" label="Buffs & debuffs" defaults={buffs={max=8,size=16},countSize=8,debuffs={max=8,size=18},durationSize=9,enabled=false}
 option auras.enabled type="toggle" label="Enabled" default=true
 option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
-option auras.showDuration type="toggle" label="Show time left" default=true
-option auras.durationPosition type="select" label="Time position" default="below" values=#e24d164b
-option auras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option auras.showCount type="toggle" label="Show stacks" default=true
-option auras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option auras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option auras.durationPosition type="select" label="Time position" default="CENTER" inherit="auras.durationPosition" values=#e24d164b
+option auras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option auras.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option auras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option auras.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option auras.font type="font" label="Font" inherit="font"
-option auras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option auras.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auras.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option auras.dispelBorder type="toggle" label="Colour debuff border by type" default=true inherit="auras.dispelBorder" tooltip=#db787f27
 option auras.dispelColors type="group" label="Debuff border colours"
-option auras.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
-option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
-option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
-option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
-option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
-option auras.dispelGlow type="group" label="Debuff glow" defaults={size=8}
-option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
-option auras.dispelGlow.style type="select" label="Glow style" default="halo" values=#4928f4bb tooltip=#54bba73d
-option auras.dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368 hidden
-option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
-option auras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option auras.border.enabled type="toggle" label="Enabled" default=true
+option auras.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1} inherit="auras.dispelColors.Magic"
+option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1} inherit="auras.dispelColors.Curse"
+option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1} inherit="auras.dispelColors.Disease"
+option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1} inherit="auras.dispelColors.Poison"
+option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1} inherit="auras.dispelColors.None"
+option auras.dispelGlow type="group" label="Debuff glow"
+option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false inherit="auras.dispelGlow.enabled" tooltip=#25636bdd
+option auras.dispelGlow.style type="select" label="Glow style" default="halo" inherit="auras.dispelGlow.style" values=#4928f4bb tooltip=#54bba73d
+option auras.dispelGlow.size type="range" label="Glow size" default=8 inherit="auras.dispelGlow.size" min=4 max=32 step=1 tooltip=#885cb368 hidden
+option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 inherit="auras.dispelGlow.opacity" min=0.1 max=1 step=0.05
+option auras.border type="group" label="Icon frame"
+option auras.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option auras.border.border type="border" label="Border" inherit="borderTexture"
-option auras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auras.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option auras.border.color type="color" label="Border colour" inherit="borderColor"
-option auras.border.background type="background" label="Background" inherit="backgroundTexture"
+option auras.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option auras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
 option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
@@ -16930,35 +16992,35 @@ option auraBar.rowBackdrop.background type="background" label="Background" inher
 option auraBar.rowBackdrop.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auraBar.rowBackdrop.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auraBar.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
-option auraBar.showDuration type="toggle" label="Show time left" default=true
-option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" values=#e24d164b tooltip=#d6ced160 hint=#f9e140c8
-option auraBar.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option auraBar.showCount type="toggle" label="Show stacks" default=true
-option auraBar.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option auraBar.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auraBar.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" inherit=false values=#e24d164b tooltip=#d6ced160 hint=#f9e140c8
+option auraBar.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option auraBar.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option auraBar.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option auraBar.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option auraBar.font type="font" label="Font" inherit="font"
-option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true inherit="auras.dispelBorder" tooltip=#db787f27
 option auraBar.dispelColors type="group" label="Debuff border colours"
-option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
-option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
-option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
-option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
-option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
-option auraBar.dispelGlow type="group" label="Debuff glow" defaults={size=8}
-option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
-option auraBar.dispelGlow.style type="select" label="Glow style" default="halo" values=#4928f4bb tooltip=#54bba73d
-option auraBar.dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368 hidden
-option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
-option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option auraBar.border.enabled type="toggle" label="Enabled" default=true
+option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1} inherit="auras.dispelColors.Magic"
+option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1} inherit="auras.dispelColors.Curse"
+option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1} inherit="auras.dispelColors.Disease"
+option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1} inherit="auras.dispelColors.Poison"
+option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1} inherit="auras.dispelColors.None"
+option auraBar.dispelGlow type="group" label="Debuff glow"
+option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false inherit="auras.dispelGlow.enabled" tooltip=#25636bdd
+option auraBar.dispelGlow.style type="select" label="Glow style" default="halo" inherit="auras.dispelGlow.style" values=#4928f4bb tooltip=#54bba73d
+option auraBar.dispelGlow.size type="range" label="Glow size" default=8 inherit="auras.dispelGlow.size" min=4 max=32 step=1 tooltip=#885cb368 hidden
+option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 inherit="auras.dispelGlow.opacity" min=0.1 max=1 step=0.05
+option auraBar.border type="group" label="Icon frame"
+option auraBar.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option auraBar.border.border type="border" label="Border" inherit="borderTexture"
-option auraBar.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option auraBar.border.color type="color" label="Border colour" inherit="borderColor"
-option auraBar.border.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option auraBar.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option auraBar.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option auraBar.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auraBar.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
 option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
@@ -17031,23 +17093,23 @@ option categoryAuras.externalDefensiveColor type="color" label="External defensi
 option categoryAuras.importantColor type="color" label="Important buffs colour" default={0.75,0.45,1,1} hidden
 option categoryAuras.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option categoryAuras.showSwipeEdge type="toggle" label="Show swipe edge" default=true
-option categoryAuras.showDuration type="toggle" label="Show time left" default=true
-option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" values=#f9f96937 tooltip=#cab5c2f4
-option categoryAuras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option categoryAuras.showCount type="toggle" label="Show stacks" default=true
-option categoryAuras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option categoryAuras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option categoryAuras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" inherit=false values=#f9f96937 tooltip=#cab5c2f4
+option categoryAuras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option categoryAuras.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option categoryAuras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option categoryAuras.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option categoryAuras.font type="font" label="Font" inherit="font"
-option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option categoryAuras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option categoryAuras.border.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option categoryAuras.border type="group" label="Icon frame"
+option categoryAuras.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option categoryAuras.border.border type="border" label="Border" inherit="borderTexture"
-option categoryAuras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option categoryAuras.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option categoryAuras.border.color type="color" label="Border colour" inherit="borderColor"
-option categoryAuras.border.background type="background" label="Background" inherit="backgroundTexture"
+option categoryAuras.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option categoryAuras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option categoryAuras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option categoryAuras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option categoryAuras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option categoryAuras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 default auraBar.border.background = "None"
 default auraBar.border.enabled = true
 default auraBar.border.inset = 1
@@ -18635,7 +18697,6 @@ definition auras.defaults.buffs.size = 16
 definition auras.defaults.countSize = 8
 definition auras.defaults.debuffs.max = 8
 definition auras.defaults.debuffs.size = 18
-definition auras.defaults.durationPosition = "CENTER"
 definition auras.defaults.durationSize = 9
 definition auras.defaults.enabled = false
 definition castbar.defaults.border.enabled = false
@@ -21576,38 +21637,38 @@ option castbar.colors.success type="color" label="Succeeded" inherit="colors.cas
 option castbar.background type="color" label="Background" default={0,0,0,0} tooltip=#0297179c
 option castbar.holdTime type="range" label="Hold after finish (s)" default=0.4 min=0 max=2 step=0.1
 option castbar.fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
-option auras type="group" label="Buffs & debuffs" defaults={buffs={alignment="end",enabled=true,filter="MY_HEALS",gap=1,max=4,maxDuration=0,position="top",size=14},countSize=8,debuffs={enabled=false,gap=1,max=3,position="bottom",size=16,sort="unitDebuff"},durationPosition="CENTER",durationSize=8}
+option auras type="group" label="Buffs & debuffs" defaults={buffs={alignment="end",enabled=true,filter="MY_HEALS",gap=1,max=4,maxDuration=0,position="top",size=14},countSize=8,debuffs={enabled=false,gap=1,max=3,position="bottom",size=16,sort="unitDebuff"},durationSize=8}
 option auras.enabled type="toggle" label="Enabled" default=true
 option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
-option auras.showDuration type="toggle" label="Show time left" default=true
-option auras.durationPosition type="select" label="Time position" default="below" values=#e24d164b
-option auras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option auras.showCount type="toggle" label="Show stacks" default=true
-option auras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option auras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option auras.durationPosition type="select" label="Time position" default="CENTER" inherit="auras.durationPosition" values=#e24d164b
+option auras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option auras.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option auras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option auras.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option auras.font type="font" label="Font" inherit="font"
-option auras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option auras.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auras.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option auras.dispelBorder type="toggle" label="Colour debuff border by type" default=true inherit="auras.dispelBorder" tooltip=#db787f27
 option auras.dispelColors type="group" label="Debuff border colours"
-option auras.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
-option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
-option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
-option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
-option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
-option auras.dispelGlow type="group" label="Debuff glow" defaults={size=8}
-option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
-option auras.dispelGlow.style type="select" label="Glow style" default="halo" values=#4928f4bb tooltip=#54bba73d
-option auras.dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368 hidden
-option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
-option auras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option auras.border.enabled type="toggle" label="Enabled" default=true
+option auras.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1} inherit="auras.dispelColors.Magic"
+option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1} inherit="auras.dispelColors.Curse"
+option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1} inherit="auras.dispelColors.Disease"
+option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1} inherit="auras.dispelColors.Poison"
+option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1} inherit="auras.dispelColors.None"
+option auras.dispelGlow type="group" label="Debuff glow"
+option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false inherit="auras.dispelGlow.enabled" tooltip=#25636bdd
+option auras.dispelGlow.style type="select" label="Glow style" default="halo" inherit="auras.dispelGlow.style" values=#4928f4bb tooltip=#54bba73d
+option auras.dispelGlow.size type="range" label="Glow size" default=8 inherit="auras.dispelGlow.size" min=4 max=32 step=1 tooltip=#885cb368 hidden
+option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 inherit="auras.dispelGlow.opacity" min=0.1 max=1 step=0.05
+option auras.border type="group" label="Icon frame"
+option auras.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option auras.border.border type="border" label="Border" inherit="borderTexture"
-option auras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auras.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option auras.border.color type="color" label="Border colour" inherit="borderColor"
-option auras.border.background type="background" label="Background" inherit="backgroundTexture"
+option auras.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option auras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
 option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
@@ -21665,35 +21726,35 @@ option auraBar.rowBackdrop.background type="background" label="Background" inher
 option auraBar.rowBackdrop.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auraBar.rowBackdrop.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auraBar.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
-option auraBar.showDuration type="toggle" label="Show time left" default=true
-option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" values=#e24d164b tooltip=#d6ced160 hint=#f9e140c8
-option auraBar.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option auraBar.showCount type="toggle" label="Show stacks" default=true
-option auraBar.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option auraBar.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auraBar.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" inherit=false values=#e24d164b tooltip=#d6ced160 hint=#f9e140c8
+option auraBar.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option auraBar.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option auraBar.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option auraBar.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option auraBar.font type="font" label="Font" inherit="font"
-option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true inherit="auras.dispelBorder" tooltip=#db787f27
 option auraBar.dispelColors type="group" label="Debuff border colours"
-option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
-option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
-option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
-option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
-option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
-option auraBar.dispelGlow type="group" label="Debuff glow" defaults={size=8}
-option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
-option auraBar.dispelGlow.style type="select" label="Glow style" default="halo" values=#4928f4bb tooltip=#54bba73d
-option auraBar.dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368 hidden
-option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
-option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option auraBar.border.enabled type="toggle" label="Enabled" default=true
+option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1} inherit="auras.dispelColors.Magic"
+option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1} inherit="auras.dispelColors.Curse"
+option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1} inherit="auras.dispelColors.Disease"
+option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1} inherit="auras.dispelColors.Poison"
+option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1} inherit="auras.dispelColors.None"
+option auraBar.dispelGlow type="group" label="Debuff glow"
+option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false inherit="auras.dispelGlow.enabled" tooltip=#25636bdd
+option auraBar.dispelGlow.style type="select" label="Glow style" default="halo" inherit="auras.dispelGlow.style" values=#4928f4bb tooltip=#54bba73d
+option auraBar.dispelGlow.size type="range" label="Glow size" default=8 inherit="auras.dispelGlow.size" min=4 max=32 step=1 tooltip=#885cb368 hidden
+option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 inherit="auras.dispelGlow.opacity" min=0.1 max=1 step=0.05
+option auraBar.border type="group" label="Icon frame"
+option auraBar.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option auraBar.border.border type="border" label="Border" inherit="borderTexture"
-option auraBar.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option auraBar.border.color type="color" label="Border colour" inherit="borderColor"
-option auraBar.border.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option auraBar.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option auraBar.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option auraBar.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auraBar.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
 option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
@@ -21741,23 +21802,23 @@ option categoryAuras.externalDefensiveColor type="color" label="External defensi
 option categoryAuras.importantColor type="color" label="Important buffs colour" default={0.75,0.45,1,1} hidden
 option categoryAuras.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option categoryAuras.showSwipeEdge type="toggle" label="Show swipe edge" default=true
-option categoryAuras.showDuration type="toggle" label="Show time left" default=true
-option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" values=#f9f96937 tooltip=#cab5c2f4
-option categoryAuras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option categoryAuras.showCount type="toggle" label="Show stacks" default=true
-option categoryAuras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option categoryAuras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option categoryAuras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" inherit=false values=#f9f96937 tooltip=#cab5c2f4
+option categoryAuras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option categoryAuras.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option categoryAuras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option categoryAuras.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option categoryAuras.font type="font" label="Font" inherit="font"
-option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option categoryAuras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option categoryAuras.border.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option categoryAuras.border type="group" label="Icon frame"
+option categoryAuras.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option categoryAuras.border.border type="border" label="Border" inherit="borderTexture"
-option categoryAuras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option categoryAuras.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option categoryAuras.border.color type="color" label="Border colour" inherit="borderColor"
-option categoryAuras.border.background type="background" label="Background" inherit="backgroundTexture"
+option categoryAuras.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option categoryAuras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option categoryAuras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option categoryAuras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option categoryAuras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option categoryAuras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 default auraBar.border.background = "None"
 default auraBar.border.enabled = true
 default auraBar.border.inset = 1
@@ -23300,7 +23361,6 @@ definition auras.defaults.debuffs.max = 3
 definition auras.defaults.debuffs.position = "bottom"
 definition auras.defaults.debuffs.size = 16
 definition auras.defaults.debuffs.sort = "unitDebuff"
-definition auras.defaults.durationPosition = "CENTER"
 definition auras.defaults.durationSize = 8
 definition borderDefaults.enabled = false
 definition castbar.defaults.border.enabled = false
@@ -24069,38 +24129,38 @@ option castbar.colors.success type="color" label="Succeeded" inherit="colors.cas
 option castbar.background type="color" label="Background" default={0,0,0,0} tooltip=#0297179c
 option castbar.holdTime type="range" label="Hold after finish (s)" default=0.4 min=0 max=2 step=0.1
 option castbar.fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
-option auras type="group" label="Buffs & debuffs" defaults={buffs={max=8,size=16},countSize=8,debuffs={max=8,size=18},durationPosition="CENTER",durationSize=9,enabled=false}
+option auras type="group" label="Buffs & debuffs" defaults={buffs={max=8,size=16},countSize=8,debuffs={max=8,size=18},durationSize=9,enabled=false}
 option auras.enabled type="toggle" label="Enabled" default=true
 option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
-option auras.showDuration type="toggle" label="Show time left" default=true
-option auras.durationPosition type="select" label="Time position" default="below" values=#e24d164b
-option auras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option auras.showCount type="toggle" label="Show stacks" default=true
-option auras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option auras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option auras.durationPosition type="select" label="Time position" default="CENTER" inherit="auras.durationPosition" values=#e24d164b
+option auras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option auras.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option auras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option auras.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option auras.font type="font" label="Font" inherit="font"
-option auras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option auras.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auras.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option auras.dispelBorder type="toggle" label="Colour debuff border by type" default=true inherit="auras.dispelBorder" tooltip=#db787f27
 option auras.dispelColors type="group" label="Debuff border colours"
-option auras.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
-option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
-option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
-option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
-option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
-option auras.dispelGlow type="group" label="Debuff glow" defaults={size=8}
-option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
-option auras.dispelGlow.style type="select" label="Glow style" default="halo" values=#4928f4bb tooltip=#54bba73d
-option auras.dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368 hidden
-option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
-option auras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option auras.border.enabled type="toggle" label="Enabled" default=true
+option auras.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1} inherit="auras.dispelColors.Magic"
+option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1} inherit="auras.dispelColors.Curse"
+option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1} inherit="auras.dispelColors.Disease"
+option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1} inherit="auras.dispelColors.Poison"
+option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1} inherit="auras.dispelColors.None"
+option auras.dispelGlow type="group" label="Debuff glow"
+option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false inherit="auras.dispelGlow.enabled" tooltip=#25636bdd
+option auras.dispelGlow.style type="select" label="Glow style" default="halo" inherit="auras.dispelGlow.style" values=#4928f4bb tooltip=#54bba73d
+option auras.dispelGlow.size type="range" label="Glow size" default=8 inherit="auras.dispelGlow.size" min=4 max=32 step=1 tooltip=#885cb368 hidden
+option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 inherit="auras.dispelGlow.opacity" min=0.1 max=1 step=0.05
+option auras.border type="group" label="Icon frame"
+option auras.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option auras.border.border type="border" label="Border" inherit="borderTexture"
-option auras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auras.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option auras.border.color type="color" label="Border colour" inherit="borderColor"
-option auras.border.background type="background" label="Background" inherit="backgroundTexture"
+option auras.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option auras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
 option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
@@ -24158,35 +24218,35 @@ option auraBar.rowBackdrop.background type="background" label="Background" inher
 option auraBar.rowBackdrop.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auraBar.rowBackdrop.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auraBar.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
-option auraBar.showDuration type="toggle" label="Show time left" default=true
-option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" values=#e24d164b tooltip=#d6ced160 hint=#f9e140c8
-option auraBar.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option auraBar.showCount type="toggle" label="Show stacks" default=true
-option auraBar.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option auraBar.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auraBar.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" inherit=false values=#e24d164b tooltip=#d6ced160 hint=#f9e140c8
+option auraBar.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option auraBar.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option auraBar.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option auraBar.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option auraBar.font type="font" label="Font" inherit="font"
-option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true inherit="auras.dispelBorder" tooltip=#db787f27
 option auraBar.dispelColors type="group" label="Debuff border colours"
-option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
-option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
-option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
-option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
-option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
-option auraBar.dispelGlow type="group" label="Debuff glow" defaults={size=8}
-option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
-option auraBar.dispelGlow.style type="select" label="Glow style" default="halo" values=#4928f4bb tooltip=#54bba73d
-option auraBar.dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368 hidden
-option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
-option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option auraBar.border.enabled type="toggle" label="Enabled" default=true
+option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1} inherit="auras.dispelColors.Magic"
+option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1} inherit="auras.dispelColors.Curse"
+option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1} inherit="auras.dispelColors.Disease"
+option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1} inherit="auras.dispelColors.Poison"
+option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1} inherit="auras.dispelColors.None"
+option auraBar.dispelGlow type="group" label="Debuff glow"
+option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false inherit="auras.dispelGlow.enabled" tooltip=#25636bdd
+option auraBar.dispelGlow.style type="select" label="Glow style" default="halo" inherit="auras.dispelGlow.style" values=#4928f4bb tooltip=#54bba73d
+option auraBar.dispelGlow.size type="range" label="Glow size" default=8 inherit="auras.dispelGlow.size" min=4 max=32 step=1 tooltip=#885cb368 hidden
+option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 inherit="auras.dispelGlow.opacity" min=0.1 max=1 step=0.05
+option auraBar.border type="group" label="Icon frame"
+option auraBar.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option auraBar.border.border type="border" label="Border" inherit="borderTexture"
-option auraBar.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option auraBar.border.color type="color" label="Border colour" inherit="borderColor"
-option auraBar.border.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option auraBar.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option auraBar.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option auraBar.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auraBar.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
 option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
@@ -24234,23 +24294,23 @@ option categoryAuras.externalDefensiveColor type="color" label="External defensi
 option categoryAuras.importantColor type="color" label="Important buffs colour" default={0.75,0.45,1,1} hidden
 option categoryAuras.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option categoryAuras.showSwipeEdge type="toggle" label="Show swipe edge" default=true
-option categoryAuras.showDuration type="toggle" label="Show time left" default=true
-option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" values=#f9f96937 tooltip=#cab5c2f4
-option categoryAuras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option categoryAuras.showCount type="toggle" label="Show stacks" default=true
-option categoryAuras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option categoryAuras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option categoryAuras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" inherit=false values=#f9f96937 tooltip=#cab5c2f4
+option categoryAuras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option categoryAuras.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option categoryAuras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option categoryAuras.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option categoryAuras.font type="font" label="Font" inherit="font"
-option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option categoryAuras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option categoryAuras.border.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option categoryAuras.border type="group" label="Icon frame"
+option categoryAuras.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option categoryAuras.border.border type="border" label="Border" inherit="borderTexture"
-option categoryAuras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option categoryAuras.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option categoryAuras.border.color type="color" label="Border colour" inherit="borderColor"
-option categoryAuras.border.background type="background" label="Background" inherit="backgroundTexture"
+option categoryAuras.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option categoryAuras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option categoryAuras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option categoryAuras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option categoryAuras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option categoryAuras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 option emptyText type="group" label="No target text" defaults={color={0.6,0.6,0.6,1},shadow=false}
 option emptyText.enabled type="toggle" label="Enabled" default=true
 option emptyText.font type="font" label="Font" inherit="font"
@@ -25816,7 +25876,6 @@ definition auras.defaults.buffs.size = 16
 definition auras.defaults.countSize = 8
 definition auras.defaults.debuffs.max = 8
 definition auras.defaults.debuffs.size = 18
-definition auras.defaults.durationPosition = "CENTER"
 definition auras.defaults.durationSize = 9
 definition auras.defaults.enabled = false
 definition borderDefaults.enabled = false
@@ -26580,38 +26639,38 @@ option castbar.colors.success type="color" label="Succeeded" inherit="colors.cas
 option castbar.background type="color" label="Background" default={0,0,0,0} tooltip=#0297179c
 option castbar.holdTime type="range" label="Hold after finish (s)" default=0.4 min=0 max=2 step=0.1
 option castbar.fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
-option auras type="group" label="Buffs & debuffs" defaults={buffs={enabled=false,max=6,size=18},countSize=8,debuffs={enabled=false,max=6,size=18},durationPosition="CENTER",durationSize=9,enabled=true}
+option auras type="group" label="Buffs & debuffs" defaults={buffs={enabled=false,max=6,size=18},countSize=8,debuffs={enabled=false,max=6,size=18},durationSize=9,enabled=true}
 option auras.enabled type="toggle" label="Enabled" default=true
 option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
-option auras.showDuration type="toggle" label="Show time left" default=true
-option auras.durationPosition type="select" label="Time position" default="below" values=#e24d164b
-option auras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option auras.showCount type="toggle" label="Show stacks" default=true
-option auras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option auras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option auras.durationPosition type="select" label="Time position" default="CENTER" inherit="auras.durationPosition" values=#e24d164b
+option auras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option auras.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option auras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option auras.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option auras.font type="font" label="Font" inherit="font"
-option auras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option auras.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auras.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option auras.dispelBorder type="toggle" label="Colour debuff border by type" default=true inherit="auras.dispelBorder" tooltip=#db787f27
 option auras.dispelColors type="group" label="Debuff border colours"
-option auras.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
-option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
-option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
-option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
-option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
-option auras.dispelGlow type="group" label="Debuff glow" defaults={size=8}
-option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
-option auras.dispelGlow.style type="select" label="Glow style" default="halo" values=#4928f4bb tooltip=#54bba73d
-option auras.dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368 hidden
-option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
-option auras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option auras.border.enabled type="toggle" label="Enabled" default=true
+option auras.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1} inherit="auras.dispelColors.Magic"
+option auras.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1} inherit="auras.dispelColors.Curse"
+option auras.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1} inherit="auras.dispelColors.Disease"
+option auras.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1} inherit="auras.dispelColors.Poison"
+option auras.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1} inherit="auras.dispelColors.None"
+option auras.dispelGlow type="group" label="Debuff glow"
+option auras.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false inherit="auras.dispelGlow.enabled" tooltip=#25636bdd
+option auras.dispelGlow.style type="select" label="Glow style" default="halo" inherit="auras.dispelGlow.style" values=#4928f4bb tooltip=#54bba73d
+option auras.dispelGlow.size type="range" label="Glow size" default=8 inherit="auras.dispelGlow.size" min=4 max=32 step=1 tooltip=#885cb368 hidden
+option auras.dispelGlow.opacity type="range" label="Glow opacity" default=1 inherit="auras.dispelGlow.opacity" min=0.1 max=1 step=0.05
+option auras.border type="group" label="Icon frame"
+option auras.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option auras.border.border type="border" label="Border" inherit="borderTexture"
-option auras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auras.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option auras.border.color type="color" label="Border colour" inherit="borderColor"
-option auras.border.background type="background" label="Background" inherit="backgroundTexture"
+option auras.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option auras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option auras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option auras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
 option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
@@ -26669,35 +26728,35 @@ option auraBar.rowBackdrop.background type="background" label="Background" inher
 option auraBar.rowBackdrop.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auraBar.rowBackdrop.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
 option auraBar.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
-option auraBar.showDuration type="toggle" label="Show time left" default=true
-option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" values=#e24d164b tooltip=#d6ced160 hint=#f9e140c8
-option auraBar.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option auraBar.showCount type="toggle" label="Show stacks" default=true
-option auraBar.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option auraBar.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option auraBar.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option auraBar.durationPosition type="select" label="Time position" default="BOTTOM" inherit=false values=#e24d164b tooltip=#d6ced160 hint=#f9e140c8
+option auraBar.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option auraBar.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option auraBar.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option auraBar.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option auraBar.font type="font" label="Font" inherit="font"
-option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option auraBar.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option auraBar.dispelBorder type="toggle" label="Colour debuff border by type" default=true inherit="auras.dispelBorder" tooltip=#db787f27
 option auraBar.dispelColors type="group" label="Debuff border colours"
-option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
-option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
-option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
-option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
-option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
-option auraBar.dispelGlow type="group" label="Debuff glow" defaults={size=8}
-option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
-option auraBar.dispelGlow.style type="select" label="Glow style" default="halo" values=#4928f4bb tooltip=#54bba73d
-option auraBar.dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368 hidden
-option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
-option auraBar.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option auraBar.border.enabled type="toggle" label="Enabled" default=true
+option auraBar.dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1} inherit="auras.dispelColors.Magic"
+option auraBar.dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1} inherit="auras.dispelColors.Curse"
+option auraBar.dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1} inherit="auras.dispelColors.Disease"
+option auraBar.dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1} inherit="auras.dispelColors.Poison"
+option auraBar.dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1} inherit="auras.dispelColors.None"
+option auraBar.dispelGlow type="group" label="Debuff glow"
+option auraBar.dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false inherit="auras.dispelGlow.enabled" tooltip=#25636bdd
+option auraBar.dispelGlow.style type="select" label="Glow style" default="halo" inherit="auras.dispelGlow.style" values=#4928f4bb tooltip=#54bba73d
+option auraBar.dispelGlow.size type="range" label="Glow size" default=8 inherit="auras.dispelGlow.size" min=4 max=32 step=1 tooltip=#885cb368 hidden
+option auraBar.dispelGlow.opacity type="range" label="Glow opacity" default=1 inherit="auras.dispelGlow.opacity" min=0.1 max=1 step=0.05
+option auraBar.border type="group" label="Icon frame"
+option auraBar.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option auraBar.border.border type="border" label="Border" inherit="borderTexture"
-option auraBar.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option auraBar.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option auraBar.border.color type="color" label="Border colour" inherit="borderColor"
-option auraBar.border.background type="background" label="Background" inherit="backgroundTexture"
+option auraBar.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option auraBar.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option auraBar.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option auraBar.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option auraBar.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option auraBar.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
 option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
@@ -26745,23 +26804,23 @@ option categoryAuras.externalDefensiveColor type="color" label="External defensi
 option categoryAuras.importantColor type="color" label="Important buffs colour" default={0.75,0.45,1,1} hidden
 option categoryAuras.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
 option categoryAuras.showSwipeEdge type="toggle" label="Show swipe edge" default=true
-option categoryAuras.showDuration type="toggle" label="Show time left" default=true
-option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" values=#f9f96937 tooltip=#cab5c2f4
-option categoryAuras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option categoryAuras.showCount type="toggle" label="Show stacks" default=true
-option categoryAuras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option categoryAuras.countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option categoryAuras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option categoryAuras.durationPosition type="select" label="Time position" default="CENTER" inherit=false values=#f9f96937 tooltip=#cab5c2f4
+option categoryAuras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option categoryAuras.showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option categoryAuras.countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option categoryAuras.countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option categoryAuras.font type="font" label="Font" inherit="font"
-option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option categoryAuras.border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option categoryAuras.border.enabled type="toggle" label="Enabled" default=true
+option categoryAuras.fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option categoryAuras.border type="group" label="Icon frame"
+option categoryAuras.border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option categoryAuras.border.border type="border" label="Border" inherit="borderTexture"
-option categoryAuras.border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option categoryAuras.border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option categoryAuras.border.color type="color" label="Border colour" inherit="borderColor"
-option categoryAuras.border.background type="background" label="Background" inherit="backgroundTexture"
+option categoryAuras.border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option categoryAuras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option categoryAuras.border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option categoryAuras.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option categoryAuras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option categoryAuras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 default auraBar.border.background = "None"
 default auraBar.border.enabled = true
 default auraBar.border.inset = 1
@@ -28298,7 +28357,6 @@ definition auras.defaults.countSize = 8
 definition auras.defaults.debuffs.enabled = false
 definition auras.defaults.debuffs.max = 6
 definition auras.defaults.debuffs.size = 18
-definition auras.defaults.durationPosition = "CENTER"
 definition auras.defaults.durationSize = 9
 definition auras.defaults.enabled = true
 definition barLayout = "columns"
@@ -28762,35 +28820,35 @@ resolved titles.size = 11
 resolved titles.tanks = "Tanks"
 ## clickgrid.slots
 option enabled type="toggle" label="Enabled" default=true
-option showDuration type="toggle" label="Show time left" default=true
-option durationPosition type="select" label="Time position" default="below" values=#e24d164b
-option durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
-option showCount type="toggle" label="Show stacks" default=true
-option countPosition type="select" label="Stack position" default="BOTTOMRIGHT" values=#f9f96937
-option countSize type="range" label="Stack text size" default=10 min=6 max=32 step=1
+option showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
+option durationPosition type="select" label="Time position" default="CENTER" inherit="auras.durationPosition" values=#e24d164b
+option durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
+option showCount type="toggle" label="Show stacks" default=true inherit="auras.showCount"
+option countPosition type="select" label="Stack position" default="BOTTOMRIGHT" inherit="auras.countPosition" values=#f9f96937
+option countSize type="range" label="Stack text size" default=10 inherit="auras.countSize" min=6 max=32 step=1
 option font type="font" label="Font" inherit="font"
-option fontOutline type="select" label="Font outline" default="OUTLINE" values=#a5c208b5
-option dispelBorder type="toggle" label="Colour debuff border by type" default=true tooltip=#db787f27
+option fontOutline type="select" label="Font outline" default="OUTLINE" inherit="auras.fontOutline" values=#a5c208b5
+option dispelBorder type="toggle" label="Colour debuff border by type" default=true inherit="auras.dispelBorder" tooltip=#db787f27
 option dispelColors type="group" label="Debuff border colours"
-option dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1}
-option dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1}
-option dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1}
-option dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1}
-option dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1}
-option dispelGlow type="group" label="Debuff glow" defaults={size=8}
-option dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false tooltip=#25636bdd
-option dispelGlow.style type="select" label="Glow style" default="halo" values=#4928f4bb tooltip=#54bba73d
-option dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368 hidden
-option dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
-option border type="group" label="Icon frame" defaults={background="None",inset=1,padding=2,size=8}
-option border.enabled type="toggle" label="Enabled" default=true
+option dispelColors.Magic type="color" label="Magic" default={0.2,0.6,1,1} inherit="auras.dispelColors.Magic"
+option dispelColors.Curse type="color" label="Curse" default={0.6,0,1,1} inherit="auras.dispelColors.Curse"
+option dispelColors.Disease type="color" label="Disease" default={0.6,0.4,0,1} inherit="auras.dispelColors.Disease"
+option dispelColors.Poison type="color" label="Poison" default={0,0.6,0,1} inherit="auras.dispelColors.Poison"
+option dispelColors.None type="color" label="No dispel type" default={0.8,0,0,1} inherit="auras.dispelColors.None"
+option dispelGlow type="group" label="Debuff glow"
+option dispelGlow.enabled type="toggle" label="Glow by debuff type" default=false inherit="auras.dispelGlow.enabled" tooltip=#25636bdd
+option dispelGlow.style type="select" label="Glow style" default="halo" inherit="auras.dispelGlow.style" values=#4928f4bb tooltip=#54bba73d
+option dispelGlow.size type="range" label="Glow size" default=8 inherit="auras.dispelGlow.size" min=4 max=32 step=1 tooltip=#885cb368 hidden
+option dispelGlow.opacity type="range" label="Glow opacity" default=1 inherit="auras.dispelGlow.opacity" min=0.1 max=1 step=0.05
+option border type="group" label="Icon frame"
+option border.enabled type="toggle" label="Enabled" default=true inherit="auras.border.enabled"
 option border.border type="border" label="Border" inherit="borderTexture"
-option border.size type="range" label="Border size" inherit="borderSize" min=1 max=32 step=1
+option border.size type="range" label="Border size" default=8 inherit="auras.border.size" min=1 max=32 step=1
 option border.color type="color" label="Border colour" inherit="borderColor"
-option border.background type="background" label="Background" inherit="backgroundTexture"
+option border.background type="background" label="Background" default="None" inherit="auras.border.background"
 option border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
-option border.inset type="range" label="Background inset" default=3 min=0 max=16 step=1 tooltip=#5352a615
-option border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
+option border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
+option border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
 option slot1 type="group" label="Friendly buff slot 1" defaults={offsetX=0}
 option slot1.enabled type="toggle" label="Enabled" default=false
 option slot1.spell type="text" label="Friendly buff spell IDs" default="" tooltip=#9ee82380
@@ -28835,7 +28893,7 @@ default dispelGlow.enabled = false
 default dispelGlow.opacity = 1
 default dispelGlow.size = 8
 default dispelGlow.style = "halo"
-default durationPosition = "below"
+default durationPosition = "CENTER"
 default durationSize = 10
 default enabled = true
 default fontOutline = "OUTLINE"
@@ -28885,7 +28943,7 @@ resolved dispelGlow.enabled = false
 resolved dispelGlow.opacity = 1
 resolved dispelGlow.size = 8
 resolved dispelGlow.style = "halo"
-resolved durationPosition = "below"
+resolved durationPosition = "CENTER"
 resolved durationSize = 10
 resolved enabled = true
 resolved font = "Roboto Condensed Medium"

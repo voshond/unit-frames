@@ -52,6 +52,14 @@ local function AuraTextAnchors(ns)
 	for _, kind in ipairs({ "buffs", "debuffs" }) do ns.Config:SetUnitValue("target", "auras." .. kind .. ".size", 30) end
 end
 
+local function GlobalAuraIcons(ns)
+	ns.Config:SetThemeValue("auras.countSize", 14)
+	ns.Config:SetThemeValue("auras.durationSize", 13)
+	ns.Config:SetThemeValue("auras.countPosition", "TOPRIGHT")
+	ns.Config:SetThemeValue("auras.border.size", 3)
+	ns.Config:SetThemeValue("auras.dispelGlow.enabled", true)
+end
+
 return {
 	{ name = "player", build = UnitFrame("player") },
 	{ name = "player-idle", build = UnitFrame("player", { showCast = false }) },
@@ -63,6 +71,7 @@ return {
 	{ name = "target-35pct", build = UnitFrame("target", { health = 8400, showCast = false }) },
 	{ name = "target-aura-border", build = UnitFrame("target", { showCast = false }, ThickAuraBorder) },
 	{ name = "target-aura-text-anchors", build = UnitFrame("target", { showCast = false }, AuraTextAnchors) },
+	{ name = "target-global-aura-icons", build = UnitFrame("target", { health = 8400, showCast = false }, GlobalAuraIcons) },
 	{ name = "target-aura-wide", build = UnitFrame("target", { showCast = false }, WideAuras) },
 	{ name = "targettarget", build = UnitFrame("targettarget") },
 	{ name = "focus", build = UnitFrame("focus") },

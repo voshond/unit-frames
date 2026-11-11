@@ -12,6 +12,7 @@ describe("Aura blocks sharing a side #auras-stack", function()
 
 	local function Apply(cfg)
 		auras:Apply(ns.Util.Merge({
+			durationPosition = "below",
 			buffs = { position = "bottom", lineSize = 100, max = 6 },
 			debuffs = { position = "bottom", lineSize = 100, max = 6 },
 		}, cfg or {}))

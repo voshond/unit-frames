@@ -40,7 +40,7 @@ In game: `/uf wb` opens the Workbench.
 The sidebar groups settings under **Unit Frames**, **Cast Bar & Swing Timers**,
 **Global Settings**, **Party & Raid** (when ClickGrid is loaded), **Profiles**,
 and **Developer Tools** (development builds). **Global Settings** directly exposes
-**Fonts**, **Bars, Borders & Backgrounds**, and **Colours**.
+**Fonts**, **Bars, Borders & Backgrounds**, **Colours** and **Aura Icons**.
 
 Choose a frame in the sidebar, then a feature such as **Health & Shields**,
 **Buffs & Debuffs** or **Indicators & States**. The **Section** selector opens
@@ -390,7 +390,11 @@ visible when enabled. Changes to existing live icons defer
 until combat ends; ClickGrid's fixed aura slots keep the default swipe.
 The parent section controls the font, separate duration/stack sizes, and
 duration placement below or inside the icon. **Icon frame** styles each
-individual icon border. Centre alignment centres the whole aura block;
+individual icon border. **Global Settings > Aura Icons** sets these icon
+options (time and stack text, debuff colours and glow, icon frame) for every
+frame and ClickGrid at once; a frame's own value still wins. The small frames
+(pet, target of target, ClickGrid) keep smaller time and stack text, and the
+icon row and priority icons keep their own time position. Centre alignment centres the whole aura block;
 use offsets to separate groups when placing both on the same side.
 **Debuff border colours** customises the full frame tint for magic, curse,
 disease, poison, and debuffs without a dispel type. Turn off **Colour debuff

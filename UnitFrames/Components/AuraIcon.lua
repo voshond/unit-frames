@@ -56,9 +56,11 @@ AuraIcon.GLOW_STYLES = { { "halo", "Soft halo" }, { "proc", "Proc flash" } }
 local function IsProc(cfg) return cfg.style == "proc" end
 local glowSchema = ns.Schema.Override(Glow.schema, "size", { hidden = IsProc })
 
-AuraIcon.schema = {
+-- Edited globally as the theme's "auras" group; every aura icon option
+-- inherits from there unless a frame sets its own value.
+local iconSchema = {
 	{ key = "showDuration", type = "toggle", label = "Show time left", default = true },
-	{ key = "durationPosition", type = "select", label = "Time position", values = AuraIcon.DURATION_POSITIONS, default = "below" },
+	{ key = "durationPosition", type = "select", label = "Time position", values = AuraIcon.DURATION_POSITIONS, default = "CENTER" },
 	{ key = "durationSize", type = "range", label = "Time text size", min = 6, max = 32, step = 1, default = 10 },
 	{ key = "showCount", type = "toggle", label = "Show stacks", default = true },
 	{ key = "countPosition", type = "select", label = "Stack position", values = AuraIcon.TEXT_POSITIONS, default = "BOTTOMRIGHT" },
@@ -78,6 +80,10 @@ AuraIcon.schema = {
 	{ key = "border", type = "group", label = "Icon frame", schema = Backdrop.auraSchema,
 		defaults = { size = 8, inset = 1, padding = 2, background = "None" } },
 }
+
+local themeSchema
+AuraIcon.schema, themeSchema = ns.Schema.Inheriting(iconSchema, "auras.")
+ns.Theme.schema[#ns.Theme.schema + 1] = { key = "auras", type = "group", label = "Aura icons", schema = themeSchema }
 
 local dispelCurves = setmetatable({}, { __mode = "k" })
 function AuraIcon.DispelColors(cfg, previous)
