@@ -16,6 +16,12 @@ function Slots.ParseIDs(text)
 	return ids, count
 end
 
+function Slots.ResolveIDs(text)
+	local ids, reason = Slots.ParseIDs(text)
+	if not ids then return nil, reason end
+	return UF.BuffSpells.Expand(ids)
+end
+
 function Slots:OnCreate(parent)
 	self.frame = CreateFrame("Frame", nil, parent)
 	self.frame:SetAllPoints(parent)
@@ -50,7 +56,7 @@ function Slots:OnApply(cfg)
 	for i = 1, 3 do
 		local key, button = "slot" .. i, self.buttons[i]
 		local slot = cfg[key]
-		local ids, reason = Slots.ParseIDs(slot.spell)
+		local ids, reason = Slots.ResolveIDs(slot.spell)
 		if not ids then self.errors[#self.errors + 1] = key .. ": " .. reason end
 		self.container:SetAuraSlotFilterString(key, slot.own and "HELPFUL|PLAYER" or "HELPFUL")
 		-- Unlike filter strings, the native candidate setter always rebuilds
@@ -127,7 +133,7 @@ function Slots:RenderSamples()
 		self:StyleButton(button)
 		button:ClearAllPoints()
 		button:SetPoint(cfg.anchor, self.frame, cfg.anchor, cfg.offsetX, cfg.offsetY)
-		local ids = Slots.ParseIDs(cfg.spell)
+		local ids = Slots.ResolveIDs(cfg.spell)
 		local found
 		for _, aura in ipairs(self.previewData.buffs or {}) do
 			if cfg.enabled and ids and ids[aura.spellId] and (not cfg.own or aura.sourceUnit == "player") then
