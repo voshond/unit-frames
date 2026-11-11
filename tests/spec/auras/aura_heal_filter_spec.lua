@@ -94,6 +94,6 @@ describe("My heals & shields buff filter #buffs", function()
 		local labels = {}
 		for _, entry in ipairs(Auras.BUFF_FILTERS) do labels[entry[1]] = entry[2] end
 		assert.equals("My heals & shields", labels[Auras.MY_HEALS])
-		assert.equals("My raid-flagged buffs (no shields)", labels["HELPFUL|PLAYER|RAID_IN_COMBAT"])
+		assert.equals("My raid-flagged buffs (not all ranks, no shields)", labels["HELPFUL|PLAYER|RAID_IN_COMBAT"])
 	end)
 end)

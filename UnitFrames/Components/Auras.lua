@@ -35,7 +35,7 @@ Auras.MY_HEALS = "MY_HEALS"
 Auras.BUFF_FILTERS = {
 	{ "HELPFUL", "All buffs" }, { "HELPFUL|PLAYER", "Cast by me" }, { "HELPFUL|RAID", "Raid buffs" },
 	{ Auras.MY_HEALS, "My heals & shields" },
-	{ "HELPFUL|PLAYER|RAID_IN_COMBAT", "My raid-flagged buffs (no shields)" },
+	{ "HELPFUL|PLAYER|RAID_IN_COMBAT", "My raid-flagged buffs (not all ranks, no shields)" },
 	{ "HELPFUL|BIG_DEFENSIVE", "Big defensives" }, { "HELPFUL|EXTERNAL_DEFENSIVE", "External defensives" },
 	{ "HELPFUL|IMPORTANT", "Important" },
 }
