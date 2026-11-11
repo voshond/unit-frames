@@ -46,6 +46,12 @@ local function WideAuras(ns)
 	end
 end
 
+local function AuraTextAnchors(ns)
+	ns.Config:SetUnitValue("target", "auras.durationPosition", "BOTTOMRIGHT")
+	ns.Config:SetUnitValue("target", "auras.countPosition", "TOPLEFT")
+	for _, kind in ipairs({ "buffs", "debuffs" }) do ns.Config:SetUnitValue("target", "auras." .. kind .. ".size", 30) end
+end
+
 return {
 	{ name = "player", build = UnitFrame("player") },
 	{ name = "player-idle", build = UnitFrame("player", { showCast = false }) },
@@ -56,6 +62,7 @@ return {
 	{ name = "target", build = UnitFrame("target") },
 	{ name = "target-35pct", build = UnitFrame("target", { health = 8400, showCast = false }) },
 	{ name = "target-aura-border", build = UnitFrame("target", { showCast = false }, ThickAuraBorder) },
+	{ name = "target-aura-text-anchors", build = UnitFrame("target", { showCast = false }, AuraTextAnchors) },
 	{ name = "target-aura-wide", build = UnitFrame("target", { showCast = false }, WideAuras) },
 	{ name = "targettarget", build = UnitFrame("targettarget") },
 	{ name = "focus", build = UnitFrame("focus") },

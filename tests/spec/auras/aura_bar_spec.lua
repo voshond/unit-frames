@@ -260,6 +260,10 @@ describe("Cropped aura icon row", function()
 		Mock.FireEvent("PLAYER_REGEN_ENABLED")
 		assert.equals(16, Native("buffs").frames[1]:GetHeight())
 		assert.same({ "TOP", Native("buffs").frames[1], "TOP", 0, -2 }, Native("buffs").frames[1].ufTime:GetAnchor("TOP"))
+		bar:Apply({ enabled = true, height = 16, durationPosition = "TOPRIGHT", countPosition = "BOTTOMLEFT" })
+		local native = Native("buffs").frames[1]
+		assert.same({ "TOPRIGHT", native, "TOPRIGHT", -2, -2 }, native.ufTime:GetAnchor("TOPRIGHT"))
+		assert.same({ "BOTTOMLEFT", native, "BOTTOMLEFT", 2, 2 }, native.ufCount:GetAnchor("BOTTOMLEFT"))
 		bar:ShowSample({ buffs = ns.Units.SAMPLE.buffs, debuffs = ns.Units.SAMPLE.debuffs, animateAuras = true })
 		local sample = Samples("buffs")[1]
 		assert.is_true(sample.ufEntryAnimation:IsPlaying())

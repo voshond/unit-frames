@@ -511,11 +511,12 @@ describe("Player buffs and debuffs", function()
 		ns.Config:SetUnitValue("player", "auras.countSize", 8)
 		ns.Config:SetUnitValue("player", "auras.font", "Arial Narrow")
 		ns.Config:SetUnitValue("player", "auras.fontOutline", "THICKOUTLINE")
-		for _, position in ipairs({ "CENTER", "TOP", "BOTTOM" }) do
+		local offsets = { CENTER = { 0, 0 }, TOP = { 0, -2 }, BOTTOM = { 0, 2 }, TOPLEFT = { 2, -2 }, RIGHT = { -2, 0 },
+			BOTTOMRIGHT = { -2, 2 } }
+		for position, offset in pairs(offsets) do
 			ns.Config:SetUnitValue("player", "auras.durationPosition", position)
 			local button = Group("buffs").frames[1]
-			local y = position == "TOP" and -2 or position == "BOTTOM" and 2 or 0
-			assert.same({ position, button.ufIconFrame, position, 0, y }, button.ufTime:GetAnchor(position))
+			assert.same({ position, button.ufIconFrame, position, offset[1], offset[2] }, button.ufTime:GetAnchor(position))
 			assert.equals(20, button:GetHeight())
 			assert.equals(20, Group("buffs").layout.elementHeight)
 			assert.same({ ns.Media:Fetch("font", "Arial Narrow"), 16, "THICKOUTLINE" }, button.ufTime.__state.font)
@@ -526,6 +527,16 @@ describe("Player buffs and debuffs", function()
 		ns.Config:SetUnitValue("player", "auras.showDuration", false)
 		assert.equals(20, Group("buffs").layout.elementHeight)
 		assert.is_false(Group("buffs").frames[1].ufTime:IsShown())
+	end)
+
+	it("moves stack text to any inside anchor", function()
+		local button = Group("buffs").frames[1]
+		assert.same({ "BOTTOMRIGHT", button.ufIconFrame, "BOTTOMRIGHT", -2, 2 }, button.ufCount:GetAnchor("BOTTOMRIGHT"))
+		ns.Config:SetUnitValue("player", "auras.countPosition", "TOPLEFT")
+		assert.same({ "TOPLEFT", button.ufIconFrame, "TOPLEFT", 2, -2 }, button.ufCount:GetAnchor("TOPLEFT"))
+		assert.is_nil(button.ufCount:GetAnchor("BOTTOMRIGHT"))
+		ns.Config:SetUnitValue("player", "auras.countPosition", "LEFT")
+		assert.same({ "LEFT", button.ufIconFrame, "LEFT", 2, 0 }, button.ufCount:GetAnchor("LEFT"))
 	end)
 
 	it("keeps stack text hidden when the engine updates its shown state", function()
