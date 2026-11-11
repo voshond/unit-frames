@@ -392,9 +392,14 @@ The parent section controls the font, separate duration/stack sizes, and
 duration placement below or inside the icon. **Icon frame** styles each
 individual icon border. **Global Settings > Aura Icons** sets these icon
 options (time and stack text, debuff colours and glow, icon frame) for every
-frame and ClickGrid at once; a frame's own value still wins. The small frames
-(pet, target of target, ClickGrid) keep smaller time and stack text, and the
-icon row and priority icons keep their own time position. Centre alignment centres the whole aura block;
+frame and ClickGrid at once, and the **Buffs**, **Debuffs** and **Spacing &
+shared side** options (which auras, how many, size, side, growth, swipe) for
+every frame's external icons; a frame's own value still wins, and only the
+on/off switch stays per frame. Its preview shows sample buffs and debuffs with
+exactly the shared values. The main frames keep their own side and gap, and the
+small frames (pet, target of target, ClickGrid) their own sizes, counts and
+smaller time and stack text; the icon row and priority icons keep their own
+layout and time position. Centre alignment centres the whole aura block;
 use offsets to separate groups when placing both on the same side.
 **Debuff border colours** customises the full frame tint for magic, curse,
 disease, poison, and debuffs without a dispel type. Turn off **Colour debuff

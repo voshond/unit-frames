@@ -42,6 +42,11 @@ local function Location(entry, path)
 		if root == "colors" then return "colours", "Colours", "colours", "Colours" end
 		if root == "auras" then
 			local group = path:match("^auras%.([^%.]+)")
+			if group == "buffs" then return "auraIcons", "Aura icons", "auraBuffs", "Buffs" end
+			if group == "debuffs" then return "auraIcons", "Aura icons", "auraDebuffs", "Debuffs" end
+			if group == "spacing" or group == "sharedSide" or group == "stackFirst" then
+				return "auraIcons", "Aura icons", "auraLayout", "Spacing & shared side"
+			end
 			if group == "border" then return "auraIcons", "Aura icons", "auraFrame", "Icon frame" end
 			if group:find("^dispel") then return "auraIcons", "Aura icons", "auraDispel", "Debuff colours & glow" end
 			return "auraIcons", "Aura icons", "auraText", "Time & stacks"

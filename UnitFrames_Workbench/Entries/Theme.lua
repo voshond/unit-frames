@@ -68,15 +68,19 @@ Workbench:Register({
 		local text = C.Text:New(bar:GetTextParent(), {})
 		text:SetPoint("CENTER", bar:GetTextParent(), "CENTER")
 		text:SetText("Theme preview")
+		-- No settings of its own: the sample icons show the shared values.
 		local auras = C.Auras:New(bar:GetFrame(), {})
 		auras:ShowSample({ buffs = UF.Units.SAMPLE.buffs, debuffs = UF.Units.SAMPLE.debuffs })
+		-- Rows follow the bar's width, which the stage sets after the first apply.
+		bar:GetFrame():HookScript("OnSizeChanged", function(_, width, height)
+			if auras.resolved then auras:Layout(width, height) end
+		end)
 		return Workbench.Composite({
 			{ key = "bar", label = "Bar", component = bar },
 			{ key = "text", label = "Text", component = text },
 			{ key = "auras", label = "Aura icons", component = auras },
 		}, bar:GetFrame())
 	end,
-	defaultConfig = { bar = { border = { enabled = true } },
-		auras = { buffs = { max = 7, size = 22 }, debuffs = { max = 5, size = 22 } } },
+	defaultConfig = { bar = { border = { enabled = true } } },
 	styleTarget = ThemeTarget,
 })

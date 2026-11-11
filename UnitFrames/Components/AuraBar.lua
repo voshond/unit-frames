@@ -14,7 +14,7 @@ local LAYOUT_TEMPLATE = "DisableUntrustedLayoutScriptsTemplate"
 -- never read in Lua: a hidden native "presence" container sizes a clipping
 -- viewport through anchors, and the neighbour anchors to that viewport.
 -- Everything depending on it opts into the forbidden layout aspect.
-local schema = ns.Schema.Without(ns.Util.Copy(Auras.schema), { buffs = true, debuffs = true, sharedSide = true, stackFirst = true })
+local schema = ns.Schema.Without(ns.Util.Copy(Auras.ownSchema), { buffs = true, debuffs = true, sharedSide = true, stackFirst = true })
 schema = ns.Schema.Override(schema, "enabled", { default = false })
 schema = ns.Schema.Override(schema, "durationPosition", { default = "BOTTOM", inherit = false,
 	tooltip = "Below the icon resolves to inside-bottom for this row. Text remains inside the visible strip.",
@@ -36,7 +36,7 @@ AuraBar.schema = ns.Schema.Insert(schema, "enabled", {
 		defaults = { enabled = false, border = "None", inset = 0 } },
 })
 for _, kind in ipairs(KINDS) do
-	local source = ns.Schema.Find(Auras.schema, kind)
+	local source = ns.Schema.Find(Auras.ownSchema, kind)
 	local group = ns.Schema.Without(ns.Util.Copy(source.schema), {
 		position = true, alignment = true, growth = true, gap = true, offsetX = true, offsetY = true, lineSize = true,
 		separateHeight = true, height = true,

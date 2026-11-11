@@ -126,7 +126,7 @@ local function GroupSchema(label, filters, size, position)
 end
 
 -- The shared artwork options sit between the spacing and the two groups.
-Auras.schema = ns.Schema.Insert({
+local ownSchema = ns.Schema.Insert({
 	{ key = "enabled", type = "toggle", label = "Enabled", default = true },
 	{ key = "spacing", type = "range", label = "Icon spacing", min = 0, max = 10, step = 1, default = 2 },
 	{ key = "sharedSide", type = "select", label = "Buffs and debuffs on one side", values = Auras.SHARED_SIDE, default = "combined",
@@ -138,6 +138,19 @@ Auras.schema = ns.Schema.Insert({
 	{ key = "buffs", type = "group", label = "Buffs", schema = GroupSchema("buffs", Auras.BUFF_FILTERS, 20, "top") },
 	{ key = "debuffs", type = "group", label = "Debuffs", schema = GroupSchema("debuffs", Auras.DEBUFF_FILTERS, 26, "bottom") },
 }, "spacing", ns.Util.Copy(AuraIcon.schema))
+
+-- Without theme inheritance, for displays deriving their own options (AuraBar).
+Auras.ownSchema = ownSchema
+
+-- Everything but the on/off switch is also edited globally: the theme's
+-- "auras" group (started by AuraIcon) gains the two groups and the layout
+-- options, and every frame inherits them unless it sets its own value.
+local LAYOUT_KEYS = { spacing = true, sharedSide = true, stackFirst = true }
+local inheriting, themeSchema = ns.Schema.Inheriting(ns.Schema.Without(ownSchema, { enabled = true }), "auras.")
+Auras.schema = ns.Schema.Concat({ ownSchema[1] }, inheriting)
+local themeGroup = ns.Schema.Find(ns.Theme.schema, "auras")
+themeGroup.schema = ns.Schema.Concat(ns.Schema.Without(themeSchema, LAYOUT_KEYS),
+	ns.Schema.Without(themeSchema, { buffs = true, debuffs = true }), themeGroup.schema)
 
 function Auras:OnCreate(parent)
 	self.frame = CreateFrame("Frame", nil, parent)

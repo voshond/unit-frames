@@ -141,7 +141,7 @@ end
 -- Saved state ---------------------------------------------------------------
 
 -- Bump when saved entry configs no longer fit the entries; old ones are dropped.
-local DB_VERSION = 2
+local DB_VERSION = 3
 
 function Workbench:GetDB()
 	UnitFramesWorkbenchDB = UnitFramesWorkbenchDB or {}
