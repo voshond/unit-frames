@@ -264,25 +264,24 @@ describe("ClickGrid status indicators", function()
 		assert.is_false(threat:IsShown())
 	end)
 
-	it("highlights the hovered cell above its bars", function()
+	it("highlights the hovered cell above its bars with the member style's frame highlight", function()
 		local member = CG.headers.party:GetAttribute("child1").Member
-		local status = CG:GetGridButton(member).status
-		local hover = status.hover
-		-- Unitless: the tooltip hook that runs first returns early.
+		local hover = member.uf.hover
+		assert.is_nil(CG:GetGridButton(member).status.hover)
+		-- Unitless: the tooltip skips, the highlight does not.
 		member.__unit = nil
 		assert.is_false(hover:IsShown())
 		member:RunScript("OnEnter")
 		assert.is_true(hover:IsShown())
 		assert.same({ 1, 1, 1, 0.12 }, hover.__state.colorTexture)
-		assert.equals(status.frame, hover:GetParent())
-		assert.is_true(status.frame:GetFrameLevel() > member:GetFrameLevel())
+		assert.is_true(hover:GetParent():GetFrameLevel() > member:GetFrameLevel())
 
-		CG.Config:Set("indicators.hoverColor", { 0.2, 0.6, 1, 0.3 })
+		CG.Config:SetStyle("member", "hover.color", { 0.2, 0.6, 1, 0.3 })
 		assert.is_true(hover:IsShown(), "restyles keep the hovered state")
 		assert.same({ 0.2, 0.6, 1, 0.3 }, hover.__state.colorTexture)
-		CG.Config:Set("indicators.hover", false)
+		CG.Config:SetStyle("member", "hover.enabled", false)
 		assert.is_false(hover:IsShown())
-		CG.Config:Set("indicators.hover", true)
+		CG.Config:SetStyle("member", "hover.enabled", true)
 		assert.is_true(hover:IsShown())
 		Mock.inCombat = true
 		member:RunScript("OnLeave")

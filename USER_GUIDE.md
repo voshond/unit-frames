@@ -361,6 +361,15 @@ the top-left border corner after the PvP flag. It is placed like the raid
 marker and leaves no gap while you are not resting. Preview it with
 **Preview only > Resting**.
 
+## Mouseover highlight
+
+Every frame's **Mouseover highlight** section (Indicators & states) lightens
+the frame under the mouse with a translucent wash above its bars, so you can
+see which unit your clicks and mouseover casts will reach. It is on by
+default in a faint white; **Mouseover colour** picks the colour and opacity.
+It works in combat and copies with **Copy player style**. ClickGrid member,
+target and pet bars use the same setting in their own bar styles.
+
 ## Range fading
 
 Each frame's **Out-of-range opacity** section offers an opt-in fade with

@@ -17,9 +17,9 @@ function CG:RefreshChanges(kind, path)
 	if not path then return { full = true } end
 	if kind == "member" or kind == "target" or kind == "pet" then
 		if not UF.Schema.Find(self:StyleSchema(kind), path) then return { full = true } end
-		if kind == "pet" and (path == "interactive" or path == "hover" or path == "hoverColor") then
-			return { petInteraction = true }
-		end
+		if kind == "pet" and path == "interactive" then return { petInteraction = true } end
+		-- The mouseover highlight restyles the bars only: nothing moves.
+		if path == "hover" or path:match("^hover%.") then return { [kind] = true } end
 		if kind == "pet" and (path == "gap" or path == "side" or path == "includeInWidth") then return { layout = true } end
 		if kind == "target" and (path == "emptyText" or path:match("^emptyText%.")) then return { emptyText = true } end
 		local changes = { layout = true, [kind] = true }
@@ -76,6 +76,7 @@ function CG:DeactivateFrame(frame)
 	RegisterAttributeDriver(frame, "state-visibility", "hide")
 	frame:PauseAllElements()
 	DisableAuras(frame.uf)
+	frame.uf:SetHovered(false)
 	if button.slots then button.slots:SetEnabled(false) end
 	if frame.uf:GetReadyCheck() then frame.uf:GetReadyCheck():Set(nil) end
 	UF.Units:ClearTags(frame)

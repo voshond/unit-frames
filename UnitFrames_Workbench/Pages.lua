@@ -10,9 +10,9 @@ local FEATURES = {
 }
 local AURAS = { auras = "External icons", auraBar = "Embedded row", categoryAuras = "Priority icons", slots = "Tracked friendly buffs", privateAuras = "Private auras",
 	blizzardAuras = "Blizzard buffs & debuffs" }
-local STATES = { range = true, dead = true, offline = true, resting = true, restingIcon = true, readyCheck = true, readyCheckIcon = true,
+local STATES = { range = true, hover = true, dead = true, offline = true, resting = true, restingIcon = true, readyCheck = true, readyCheckIcon = true,
 	raidTarget = true, pvp = true, classification = true, indicators = true }
-local LABELS = { spark = "Fill-edge highlight", range = "Fade out-of-range frames", segments = "Shields and healing overlays",
+local LABELS = { spark = "Fill-edge highlight", range = "Fade out-of-range frames", hover = "Mouseover highlight", segments = "Shields and healing overlays",
 	castbar = "Cast bar", copyPlayerSettings = "Copy player style" }
 
 function Pages.Walk(schema, visit, prefix, ancestors)
@@ -69,7 +69,7 @@ local function Location(entry, path)
 		local events = { { "ready", "readyCheck", "Ready check icon" }, { "role", "role", "Group role" },
 			{ "leader", "leader", "Leader & assistant" }, { "death", "death", "Dead & ghost" },
 			{ "resurrection", "resurrection", "Incoming resurrection" }, { "summon", "summon", "Summon" },
-			{ "threat", "threat", "Threat" }, { "dispel", "dispel", "Dispellable debuffs" }, { "hover", "hover", "Mouseover" } }
+			{ "threat", "threat", "Threat" }, { "dispel", "dispel", "Dispellable debuffs" } }
 		for _, event in ipairs(events) do
 			if key:sub(1, #event[1]) == event[1] then return "states", "Indicators & states", event[2], event[3] end
 		end
@@ -122,6 +122,7 @@ function Pages.Build(entry, targets)
 			if opt.key == "format" then label = labels[1] .. " text content — " .. (labels[#labels - 1] or "Text") end
 			if path == "castbar.enabled" then label = "Show cast bar" end
 			if path == "range.enabled" then label = "Fade out-of-range frames" end
+			if path == "hover.enabled" then label = "Mouseover highlight" end
 			if path == "auras.enabled" then label = "Show external aura icons" end
 			if path == "auraBar.enabled" then label = "Show embedded icon row" end
 			if path == "categoryAuras.enabled" then label = "Show priority icons" end

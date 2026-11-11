@@ -2563,6 +2563,9 @@ option range.enabled type="toggle" label="Enabled" default=false
 option range.outsideAlpha type="range" label="Out-of-range opacity" default=0.55 min=0 max=1 step=0.05 tooltip=#31bd172e
 option range.mode type="select" label="Range check" default="group" values=#b1e9e395 tooltip=#2c964cf0
 option range.spell type="text" label="Spell ID or name" default="" tooltip=#a735d466 hidden
+option hover type="group" label="Mouseover highlight"
+option hover.enabled type="toggle" label="Enabled" default=true tooltip=#dbbae48b
+option hover.color type="color" label="Mouseover colour" default={1,1,1,0.12} hidden
 option resting type="group" label="Resting border"
 option resting.enabled type="toggle" label="Enabled" default=true
 option resting.color type="color" label="Resting colour" default={1,0.753,0.157,1}
@@ -4508,6 +4511,8 @@ default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
 default health.right.whileStatus = "status"
 default health.textLayout = "centred"
+default hover.color = {1,1,1,0.12}
+default hover.enabled = true
 default offline.bars = true
 default offline.border = true
 default offline.color = {0.62,0.62,0.62,1}
@@ -5589,6 +5594,8 @@ resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
 resolved health.right.whileStatus = "status"
 resolved health.textLayout = "centred"
+resolved hover.color = {1,1,1,0.12}
+resolved hover.enabled = true
 resolved offline.bars = true
 resolved offline.border = true
 resolved offline.color = {0.62,0.62,0.62,1}
@@ -5957,6 +5964,9 @@ option range.enabled type="toggle" label="Enabled" default=false
 option range.outsideAlpha type="range" label="Out-of-range opacity" default=0.55 min=0 max=1 step=0.05 tooltip=#31bd172e
 option range.mode type="select" label="Range check" default="group" values=#b1e9e395 tooltip=#2c964cf0
 option range.spell type="text" label="Spell ID or name" default="" tooltip=#a735d466 hidden
+option hover type="group" label="Mouseover highlight"
+option hover.enabled type="toggle" label="Enabled" default=true tooltip=#dbbae48b
+option hover.color type="color" label="Mouseover colour" default={1,1,1,0.12} hidden
 option readyCheck type="group" label="Ready check"
 option readyCheck.enabled type="toggle" label="Tint bars" default=true tooltip=#f63d91dc
 option readyCheck.waitingColor type="color" label="Waiting colour" default={0.5,0.5,0.5,1}
@@ -7340,6 +7350,8 @@ default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
 default health.right.whileStatus = "status"
 default health.textLayout = "edges"
+default hover.color = {1,1,1,0.12}
+default hover.enabled = true
 default offline.bars = true
 default offline.border = true
 default offline.color = {0.62,0.62,0.62,1}
@@ -8143,6 +8155,8 @@ resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
 resolved health.right.whileStatus = "status"
 resolved health.textLayout = "edges"
+resolved hover.color = {1,1,1,0.12}
+resolved hover.enabled = true
 resolved offline.bars = true
 resolved offline.border = true
 resolved offline.color = {0.62,0.62,0.62,1}
@@ -8513,6 +8527,9 @@ option range.enabled type="toggle" label="Enabled" default=false
 option range.outsideAlpha type="range" label="Out-of-range opacity" default=0.55 min=0 max=1 step=0.05 tooltip=#31bd172e
 option range.mode type="select" label="Range check" default="group" values=#b1e9e395 tooltip=#2c964cf0
 option range.spell type="text" label="Spell ID or name" default="" tooltip=#a735d466 hidden
+option hover type="group" label="Mouseover highlight"
+option hover.enabled type="toggle" label="Enabled" default=true tooltip=#dbbae48b
+option hover.color type="color" label="Mouseover colour" default={1,1,1,0.12} hidden
 option threat type="group" label="Threat glow" defaults={}
 option threat.enabled type="toggle" label="Enabled" default=true tooltip=#21221959
 option threat.colorBy type="select" label="Colour by" default="percent" values=#fbabf46f tooltip=#5ec8e2f3
@@ -9956,6 +9973,8 @@ default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
 default health.right.whileStatus = "status"
 default health.textLayout = "centred"
+default hover.color = {1,1,1,0.12}
+default hover.enabled = true
 default offline.bars = true
 default offline.border = true
 default offline.color = {0.62,0.62,0.62,1}
@@ -10794,6 +10813,8 @@ resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
 resolved health.right.whileStatus = "status"
 resolved health.textLayout = "centred"
+resolved hover.color = {1,1,1,0.12}
+resolved hover.enabled = true
 resolved offline.bars = true
 resolved offline.border = true
 resolved offline.color = {0.62,0.62,0.62,1}
@@ -11171,6 +11192,9 @@ option range.enabled type="toggle" label="Enabled" default=false
 option range.outsideAlpha type="range" label="Out-of-range opacity" default=0.55 min=0 max=1 step=0.05 tooltip=#31bd172e
 option range.mode type="select" label="Range check" default="group" values=#b1e9e395 tooltip=#2c964cf0
 option range.spell type="text" label="Spell ID or name" default="" tooltip=#a735d466 hidden
+option hover type="group" label="Mouseover highlight"
+option hover.enabled type="toggle" label="Enabled" default=true tooltip=#dbbae48b
+option hover.color type="color" label="Mouseover colour" default={1,1,1,0.12} hidden
 option threat type="group" label="Threat glow" defaults={enabled=false}
 option threat.enabled type="toggle" label="Enabled" default=true tooltip=#21221959
 option threat.colorBy type="select" label="Colour by" default="percent" values=#fbabf46f tooltip=#5ec8e2f3
@@ -12561,6 +12585,8 @@ default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
 default health.right.whileStatus = "status"
 default health.textLayout = "edges"
+default hover.color = {1,1,1,0.12}
+default hover.enabled = true
 default offline.bars = true
 default offline.border = true
 default offline.color = {0.62,0.62,0.62,1}
@@ -13370,6 +13396,8 @@ resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
 resolved health.right.whileStatus = "status"
 resolved health.textLayout = "edges"
+resolved hover.color = {1,1,1,0.12}
+resolved hover.enabled = true
 resolved offline.bars = true
 resolved offline.border = true
 resolved offline.color = {0.62,0.62,0.62,1}
@@ -13737,6 +13765,9 @@ option range.enabled type="toggle" label="Enabled" default=false
 option range.outsideAlpha type="range" label="Out-of-range opacity" default=0.55 min=0 max=1 step=0.05 tooltip=#31bd172e
 option range.mode type="select" label="Range check" default="group" values=#b1e9e395 tooltip=#2c964cf0
 option range.spell type="text" label="Spell ID or name" default="" tooltip=#a735d466 hidden
+option hover type="group" label="Mouseover highlight"
+option hover.enabled type="toggle" label="Enabled" default=true tooltip=#dbbae48b
+option hover.color type="color" label="Mouseover colour" default={1,1,1,0.12} hidden
 option threat type="group" label="Threat glow" defaults={}
 option threat.enabled type="toggle" label="Enabled" default=true tooltip=#21221959
 option threat.colorBy type="select" label="Colour by" default="percent" values=#fbabf46f tooltip=#5ec8e2f3
@@ -15126,6 +15157,8 @@ default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
 default health.right.whileStatus = "status"
 default health.textLayout = "centred"
+default hover.color = {1,1,1,0.12}
+default hover.enabled = true
 default offline.bars = true
 default offline.border = true
 default offline.color = {0.62,0.62,0.62,1}
@@ -15936,6 +15969,8 @@ resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
 resolved health.right.whileStatus = "status"
 resolved health.textLayout = "centred"
+resolved hover.color = {1,1,1,0.12}
+resolved hover.enabled = true
 resolved offline.bars = true
 resolved offline.border = true
 resolved offline.color = {0.62,0.62,0.62,1}
@@ -16304,6 +16339,9 @@ option range.enabled type="toggle" label="Enabled" default=false
 option range.outsideAlpha type="range" label="Out-of-range opacity" default=0.55 min=0 max=1 step=0.05 tooltip=#31bd172e
 option range.mode type="select" label="Range check" default="group" values=#b1e9e395 tooltip=#2c964cf0
 option range.spell type="text" label="Spell ID or name" default="" tooltip=#a735d466 hidden
+option hover type="group" label="Mouseover highlight"
+option hover.enabled type="toggle" label="Enabled" default=true tooltip=#dbbae48b
+option hover.color type="color" label="Mouseover colour" default={1,1,1,0.12} hidden
 option threat type="group" label="Threat glow" defaults={enabled=false}
 option threat.enabled type="toggle" label="Enabled" default=true tooltip=#21221959
 option threat.colorBy type="select" label="Colour by" default="percent" values=#fbabf46f tooltip=#5ec8e2f3
@@ -17694,6 +17732,8 @@ default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
 default health.right.whileStatus = "status"
 default health.textLayout = "edges"
+default hover.color = {1,1,1,0.12}
+default hover.enabled = true
 default offline.bars = true
 default offline.border = true
 default offline.color = {0.62,0.62,0.62,1}
@@ -18503,6 +18543,8 @@ resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
 resolved health.right.whileStatus = "status"
 resolved health.textLayout = "edges"
+resolved hover.color = {1,1,1,0.12}
+resolved hover.enabled = true
 resolved offline.bars = true
 resolved offline.border = true
 resolved offline.color = {0.62,0.62,0.62,1}
@@ -21045,6 +21087,9 @@ option range.enabled type="toggle" label="Enabled" default=false
 option range.outsideAlpha type="range" label="Out-of-range opacity" default=0.55 min=0 max=1 step=0.05 tooltip=#31bd172e
 option range.mode type="select" label="Range check" default="group" values=#b1e9e395 tooltip=#2c964cf0
 option range.spell type="text" label="Spell ID or name" default="" tooltip=#a735d466 hidden
+option hover type="group" label="Mouseover highlight"
+option hover.enabled type="toggle" label="Enabled" default=true tooltip=#dbbae48b
+option hover.color type="color" label="Mouseover colour" default={1,1,1,0.12} hidden
 option readyCheck type="group" label="Ready check"
 option readyCheck.enabled type="toggle" label="Tint bars" default=true tooltip=#f63d91dc
 option readyCheck.waitingColor type="color" label="Waiting colour" default={0.5,0.5,0.5,1}
@@ -22396,6 +22441,8 @@ default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
 default health.right.whileStatus = "status"
 default health.textLayout = "edges"
+default hover.color = {1,1,1,0.12}
+default hover.enabled = true
 default offline.bars = true
 default offline.border = true
 default offline.color = {0.62,0.62,0.62,1}
@@ -23177,6 +23224,8 @@ resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
 resolved health.right.whileStatus = "status"
 resolved health.textLayout = "edges"
+resolved hover.color = {1,1,1,0.12}
+resolved hover.enabled = true
 resolved offline.bars = true
 resolved offline.border = true
 resolved offline.color = {0.62,0.62,0.62,1}
@@ -23544,6 +23593,9 @@ option range.enabled type="toggle" label="Enabled" default=false
 option range.outsideAlpha type="range" label="Out-of-range opacity" default=0.55 min=0 max=1 step=0.05 tooltip=#31bd172e
 option range.mode type="select" label="Range check" default="group" values=#b1e9e395 tooltip=#2c964cf0
 option range.spell type="text" label="Spell ID or name" default="" tooltip=#a735d466 hidden
+option hover type="group" label="Mouseover highlight"
+option hover.enabled type="toggle" label="Enabled" default=true tooltip=#dbbae48b
+option hover.color type="color" label="Mouseover colour" default={1,1,1,0.12} hidden
 option dead type="group" label="Dead & ghost"
 option dead.enabled type="toggle" label="Enabled" default=true tooltip=#02954430
 option dead.color type="color" label="Ghost colour" default={0.48,0.65,0.7,1} hidden
@@ -24916,6 +24968,8 @@ default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
 default health.right.whileStatus = "status"
 default health.textLayout = "edges"
+default hover.color = {1,1,1,0.12}
+default hover.enabled = true
 default offline.bars = true
 default offline.border = true
 default offline.color = {0.62,0.62,0.62,1}
@@ -25707,6 +25761,8 @@ resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
 resolved health.right.whileStatus = "status"
 resolved health.textLayout = "edges"
+resolved hover.color = {1,1,1,0.12}
+resolved hover.enabled = true
 resolved offline.bars = true
 resolved offline.border = true
 resolved offline.color = {0.62,0.62,0.62,1}
@@ -26025,8 +26081,6 @@ option interactive type="toggle" label="Allow pet interaction" default=true tool
 option side type="select" label="Pet side" default="RIGHT" values=#11c04b33 hidden
 option gap type="range" label="Gap to member" default=1 min=0 max=30 step=1 hidden
 option includeInWidth type="toggle" label="Width includes pet" default=true tooltip=#75cdc399 hidden
-option hover type="toggle" label="Pet mouseover highlight" default=true
-option hoverColor type="color" label="Pet mouseover colour" default={0.2,0.8,1,0.35}
 option barLayout type="select" label="Arrange bars" default="columns" values=#3f6311d9 tooltip=#99609fd4
 option width type="range" label="Width" default=85 min=60 max=600 step=1 hidden
 option spacing type="range" label="Bar spacing" default=1 min=0 max=20 step=1
@@ -26054,6 +26108,9 @@ option range.enabled type="toggle" label="Enabled" default=false
 option range.outsideAlpha type="range" label="Out-of-range opacity" default=0.55 min=0 max=1 step=0.05 tooltip=#31bd172e
 option range.mode type="select" label="Range check" default="group" values=#b1e9e395 tooltip=#2c964cf0
 option range.spell type="text" label="Spell ID or name" default="" tooltip=#a735d466 hidden
+option hover type="group" label="Mouseover highlight" defaults={color={0.2,0.8,1,0.35}}
+option hover.enabled type="toggle" label="Enabled" default=true tooltip=#dbbae48b
+option hover.color type="color" label="Mouseover colour" default={1,1,1,0.12} hidden
 option dead type="group" label="Dead & ghost"
 option dead.enabled type="toggle" label="Enabled" default=true tooltip=#02954430
 option dead.color type="color" label="Ghost colour" default={0.48,0.65,0.7,1} hidden
@@ -27400,8 +27457,8 @@ default health.right.vertical = "auto"
 default health.right.whileCasting = "keep"
 default health.right.whileStatus = "status"
 default health.textLayout = "edges"
-default hover = true
-default hoverColor = {0.2,0.8,1,0.35}
+default hover.color = {0.2,0.8,1,0.35}
+default hover.enabled = true
 default includeInWidth = true
 default interactive = true
 default offline.bars = true
@@ -28182,8 +28239,8 @@ resolved health.right.vertical = "auto"
 resolved health.right.whileCasting = "keep"
 resolved health.right.whileStatus = "status"
 resolved health.textLayout = "edges"
-resolved hover = true
-resolved hoverColor = {0.2,0.8,1,0.35}
+resolved hover.color = {0.2,0.8,1,0.35}
+resolved hover.enabled = true
 resolved includeInWidth = true
 resolved interactive = true
 resolved offline.bars = true
@@ -28485,6 +28542,7 @@ definition categoryAuras.noMouse = true
 definition defaultPosition.point = "CENTER"
 definition defaultPosition.x = -90
 definition defaultPosition.y = -235
+definition hoverDefaults.color = {0.2,0.8,1,0.35}
 definition label = "Group pet"
 definition portrait.defaults.enabled = false
 definition portrait.lazyBackends = true
@@ -28625,8 +28683,6 @@ option indicators.dispelGlow type="group" label="Dispellable glow" hidden
 option indicators.dispelGlow.size type="range" label="Glow size" default=12 min=4 max=32 step=1 tooltip=#885cb368
 option indicators.dispelGlow.opacity type="range" label="Glow opacity" default=1 min=0.1 max=1 step=0.05
 option indicators.dispelGlow.corners type="select" label="Glow corners" default="sharp" values=#588056eb tooltip=#2e13768c
-option indicators.hover type="toggle" label="Mouseover highlight" default=true tooltip=#a498db58
-option indicators.hoverColor type="color" label="Mouseover colour" default={1,1,1,0.12} hidden
 option indicators.phase type="toggle" label="Different phase" default=true
 option indicators.size type="range" label="Other status icon size" default=14 min=8 max=32 step=1
 option indicators.private type="toggle" label="Private encounter auras" default=true
@@ -28685,8 +28741,6 @@ default indicators.dispelFilter = "HARMFUL|RAID"
 default indicators.dispelGlow.corners = "sharp"
 default indicators.dispelGlow.opacity = 1
 default indicators.dispelGlow.size = 12
-default indicators.hover = true
-default indicators.hoverColor = {1,1,1,0.12}
 default indicators.leader = true
 default indicators.leaderGap = 2
 default indicators.leaderOffsetX = 0
@@ -28822,8 +28876,6 @@ resolved indicators.dispelFilter = "HARMFUL|RAID"
 resolved indicators.dispelGlow.corners = "sharp"
 resolved indicators.dispelGlow.opacity = 1
 resolved indicators.dispelGlow.size = 12
-resolved indicators.hover = true
-resolved indicators.hoverColor = {1,1,1,0.12}
 resolved indicators.leader = true
 resolved indicators.leaderGap = 2
 resolved indicators.leaderOffsetX = 0

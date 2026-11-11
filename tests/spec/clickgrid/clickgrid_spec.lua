@@ -78,6 +78,30 @@ describe("ClickGrid companion", function()
 		assert.is_true(CG:TargetsShown(), "an existing style choice wins")
 	end)
 
+	it("moves the old indicator mouseover highlight to the member bar style once", function()
+		local db = CG.Config.db.profile
+		db.settings.indicators = { hover = false, hoverColor = { 0, 1, 0, 0.4 } }
+		local hover = CG.Config.styles.member:Resolved().hover
+		assert.is_false(hover.enabled)
+		assert.same({ 0, 1, 0, 0.4 }, hover.color)
+		assert.is_nil(db.settings.indicators.hover)
+		assert.is_nil(db.settings.indicators.hoverColor)
+		db.settings.indicators = { hover = true }
+		assert.is_false(CG.Config.styles.member:Resolved().hover.enabled, "an existing style choice wins")
+	end)
+
+	it("migrates the old pet highlight and indicator highlight in imported profiles", function()
+		local data = { settings = { indicators = { hoverColor = { 0, 1, 0, 0.4 } } }, member = {}, target = {},
+			pet = { hover = false, hoverColor = { 1, 0, 1, 0.3 } } }
+		local apply = UF.Profiles.sections.clickgrid.prepare(data)
+		assert.equals("function", type(apply))
+		apply()
+		assert.same({ 0, 1, 0, 0.4 }, CG.Config.styles.member:Resolved().hover.color)
+		assert.same({ enabled = false, color = { 1, 0, 1, 0.3 } }, CG.Config:GetStyle("pet").hover)
+		assert.is_nil(CG.Config:Get().indicators and CG.Config:Get().indicators.hoverColor)
+		assert.is_not_nil(data.settings.indicators.hoverColor, "the import data itself is left alone")
+	end)
+
 	it("offers independent aura rows and stops their native feeds on hidden targets", function()
 		CG.Config:SetStyle("member", "auraBar.enabled", true)
 		CG.Config:SetStyle("target", "auraBar.enabled", true)

@@ -6,7 +6,7 @@ local Media, Util = ns.Media, ns.Util
 --
 -- Other components embed it as a `border` group and call Backdrop.ApplyTo.
 local Backdrop = ns.Component:Extend("Backdrop")
-Backdrop.LEVELS = { border = 20, frame = 60, panel = 100, decorations = 120 }
+Backdrop.LEVELS = { border = 20, hover = 30, frame = 60, panel = 100, decorations = 120 }
 
 local BORDER_PIECES = { "TopLeftCorner", "TopRightCorner", "BottomLeftCorner", "BottomRightCorner",
 	"TopEdge", "BottomEdge", "LeftEdge", "RightEdge" }

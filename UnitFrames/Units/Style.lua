@@ -231,12 +231,28 @@ function Units.HideTooltip()
 	GameTooltip:Hide()
 end
 
+local function OnEnter(frame)
+	frame.uf:SetHovered(true)
+	Units.ShowTooltip(frame)
+end
+
+local function OnLeave(frame)
+	frame.uf:SetHovered(false)
+	Units.HideTooltip()
+end
+
+-- The unit tooltip and mouseover highlight of an oUF frame with a UnitFrame
+-- (frame.uf). Hooks cannot be removed: the highlight checks its own state.
+function Units.HookMouse(frame)
+	frame:HookScript("OnEnter", OnEnter)
+	frame:HookScript("OnLeave", OnLeave)
+end
+
 oUF:RegisterStyle(Units.STYLE, function(frame, unit)
 	frame.uf = Units:CreateFrame(unit, UIParent, frame)
 	frame.uf:SetThemeManaged(true)
 	frame:RegisterForClicks("AnyUp")
-	frame:HookScript("OnEnter", Units.ShowTooltip)
-	frame:HookScript("OnLeave", Units.HideTooltip)
+	Units.HookMouse(frame)
 	Units:Bind(frame)
 end)
 

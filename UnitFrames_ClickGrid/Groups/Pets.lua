@@ -13,8 +13,6 @@ CG.PetSchema = {
 	{ key = "includeInWidth", type = "toggle", label = "Width includes pet", default = true,
 		tooltip = "On: members keep their configured width and the pet and gap take their space from it. Off: members grow by the pet's width and gap.",
 		hidden = function(cfg) return cfg.display ~= "inline" end },
-	{ key = "hover", type = "toggle", label = "Pet mouseover highlight", default = true },
-	{ key = "hoverColor", type = "color", label = "Pet mouseover colour", default = { 0.2, 0.8, 1, 0.35 }, hasAlpha = true },
 }
 
 function CG.PetUnit(owner)
@@ -73,23 +71,13 @@ function CG:EnsureInlinePets(panel)
 	oUF:SetActiveStyle(previous)
 end
 
-function CG:CreatePetHover(frame)
-	local overlay = CreateFrame("Frame", nil, frame)
-	overlay:SetAllPoints()
-	overlay:SetFrameLevel(frame:GetFrameLevel() + 30)
-	local hover = overlay:CreateTexture(nil, "OVERLAY")
-	hover:SetAllPoints()
-	hover:Hide()
-	self:GetGridButton(frame).hover = hover
+-- An inline pet sits over its member: entering it leaves the member.
+-- Non-interactive pets take no mouse motion, so they never highlight.
+function CG:WatchPetHover(frame)
 	frame:HookScript("OnEnter", function()
-		local cfg = self:GetGridButton(frame).petConfig
-		if not cfg then return end
-		if cfg.interactive and cfg.hover then hover:Show() end
-		local cell = frame:GetParent()
-		local owner = cell.Member and self:GetGridButton(cell.Member)
-		if owner and owner.status then owner.status:SetHovered(false) end
+		local member = frame:GetParent().Member
+		if member then member.uf:SetHovered(false) end
 	end)
-	frame:HookScript("OnLeave", function() hover:Hide() end)
 end
 
 function CG:RefreshPet(frame, changes, layout)
@@ -98,13 +86,11 @@ function CG:RefreshPet(frame, changes, layout)
 	local active = separate and self.metrics.pet.mode == "group" or not separate and self.metrics.pet.mode == "inline"
 	if not active or not self.activeHeaders[cell:GetParent()] then
 		self:DeactivateFrame(frame)
-		button.hover:Hide()
 		if not separate then self:ReserveMember(cell.Member.uf, false, false) end
 		return false
 	end
 	local activated = button.inactive or not button.refreshed
 	local cfg = self.Config.styles.pet:Resolved()
-	button.petConfig = cfg
 	local layoutChanged = activated or not changes or changes.full or changes.layout
 	local styled = self:ApplyUnitStyle(frame.uf, "pet", changes, layout, activated)
 	if styled then UF.Units:Bind(frame) end
@@ -132,8 +118,7 @@ function CG:RefreshPet(frame, changes, layout)
 	if styled or layoutChanged or changes and changes.petInteraction then
 		frame:SetMouseClickEnabled(cfg.interactive)
 		frame:SetMouseMotionEnabled(cfg.interactive)
-		button.hover:SetColorTexture(UF.Util.UnpackColor(cfg.hoverColor))
-		button.hover:Hide()
+		if not cfg.interactive then frame.uf:SetHovered(false) end
 	end
 	if styled or activated then UF.Units:UpdateFrame(frame, "UnitFramesClickGridRefresh") end
 	button.refreshed = true

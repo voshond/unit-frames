@@ -33,6 +33,25 @@ local function MigrateTargets(profile)
 	panel.targets = nil
 end
 
+-- The mouseover highlight moved from the status indicators to the member
+-- bar style (Units' frame-wide hover group). Same once-only carry-over;
+-- imports pass their style data through it too.
+function Config.MigrateHover(profile)
+	local indicators = type(profile.settings) == "table" and profile.settings.indicators
+	if type(indicators) ~= "table" or indicators.hover == nil and indicators.hoverColor == nil then return end
+	if type(profile.member) ~= "table" then profile.member = {} end
+	local hover = type(profile.member.hover) == "table" and profile.member.hover or {}
+	if hover.enabled == nil then hover.enabled = indicators.hover end
+	if hover.color == nil then hover.color = indicators.hoverColor end
+	profile.member.hover = hover
+	indicators.hover, indicators.hoverColor = nil, nil
+end
+
+local function MigrateProfile(profile)
+	MigrateTargets(profile)
+	Config.MigrateHover(profile)
+end
+
 -- Fixed slots also need parseable spell IDs, beyond the schema's types.
 local function CheckSlots(candidate)
 	for _, slot in pairs(UF.Schema.Resolve(CG.SlotSchema, candidate.slots)) do
@@ -61,7 +80,7 @@ function Config:Initialize()
 		schema = self.schema, theme = true, validate = true, check = CheckSlots,
 		changed = function(path) Changed("settings", path) end,
 		read = function()
-			MigrateTargets(db.profile)
+			MigrateProfile(db.profile)
 			return self:MigrateSettings(db.profile.settings)
 		end,
 		write = function(settings) db.profile.settings = settings end,
@@ -71,7 +90,7 @@ function Config:Initialize()
 		self.styles[kind] = UF.Store:New({
 			schema = function() return CG:StyleSchema(kind) end, theme = true, validate = true,
 			read = function()
-				MigrateTargets(db.profile)
+				MigrateProfile(db.profile)
 				return UF.Units:MigrateConfig(db.profile[kind])
 			end,
 			write = function(style) db.profile[kind] = style end,
