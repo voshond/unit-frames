@@ -19,7 +19,7 @@ local member = UF.Units:Derive("pet", {
 -- Replaces the pet's aura defaults as a whole.
 member.auras.defaults = {
 	durationPosition = "CENTER", durationSize = 8, countSize = 8,
-	buffs = { enabled = false, filter = "HELPFUL|PLAYER|RAID_IN_COMBAT", maxDuration = 120, max = 4, size = 14, position = "top", gap = 1, alignment = "end" },
+	buffs = { enabled = true, filter = UF.Components.Auras.MY_HEALS, maxDuration = 0, max = 4, size = 14, position = "top", gap = 1, alignment = "end" },
 	debuffs = { enabled = false, sort = "unitDebuff", max = 3, size = 16, position = "bottom", gap = 1 },
 }
 CG.definitions = {

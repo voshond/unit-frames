@@ -2,6 +2,9 @@ local _, ns = ...
 local BuffSpells = {}
 ns.BuffSpells = BuffSpells
 
+BuffSpells.HEAL_KINDS = { hot = true, absorb = true, proc = true }
+local healIDs = {}
+
 function BuffSpells.Family(spellID)
 	local root = ns.BuffCatalog.byId[spellID]
 	return root and ns.BuffCatalog.families[root], root
@@ -18,6 +21,24 @@ function BuffSpells.Expand(ids)
 		end
 	end
 	return expanded
+end
+
+function BuffSpells.ClassIDs(class, kinds)
+	local ids = {}
+	for _, family in pairs(ns.BuffCatalog.families) do
+		if (class == nil or family.class == class) and kinds[family.kind] then
+			for _, id in ipairs(family.ids) do ids[id] = true end
+		end
+	end
+	return ids
+end
+
+function BuffSpells.PlayerHealIDs()
+	local _, class = UnitClass("player")
+	if issecretvalue(class) then class = nil end
+	local key = class or ""
+	healIDs[key] = healIDs[key] or BuffSpells.ClassIDs(class, BuffSpells.HEAL_KINDS)
+	return healIDs[key]
 end
 
 function BuffSpells.Roots()

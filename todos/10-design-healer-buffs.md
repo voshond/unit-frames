@@ -1,6 +1,8 @@
 # Design: Healer buffs out of the box
 
-Status: in progress. §1 (buff catalogue) is implemented (UNIT-13). Targets Forever Interface 16001, build 1.60.1.70862.
+Status: in progress. §1 buff catalogue (UNIT-13), §2 rank-proof slots (UNIT-14) and §3 "My heals & shields"
+on by default (UNIT-15) are implemented; §4 presets/showcases and the Verification below (UNIT-17) are open.
+Targets Forever Interface 16001, build 1.60.1.70862.
 
 ## Problem
 

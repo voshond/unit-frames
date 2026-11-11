@@ -29,7 +29,7 @@ each change.
   type colour (**Debuff glow**): a soft halo, or the animated proc flash from
   Blizzard's action buttons.
 - Filter buffs and debuffs by crowd control, big or external defensives,
-  important buffs, or your own heals over time.
+  important buffs, or your own heals and shields.
 - Hide Blizzard's own player buff and debuff sections, each on its own toggle.
   Changes wait until combat ends.
 - Show crowd control and defensives over the portrait or on a frame edge, with

@@ -397,9 +397,11 @@ border by type** to use **Icon frame > Border colour** for every icon.
 their timers; Animated previews cycle them. Samples include stacks, a
 permanent buff, and all four debuff dispel types, using the saved aura style.
 
-**Which** also offers category filters: **My heals over time** (your own
-buffs flagged for raid frames in combat), **Big defensives**, **External
-defensives**, **Important** buffs, and **Crowd control** debuffs.
+**Which** also offers category filters: **My heals & shields** (your own heals
+over time, shields and heal procs, every rank of each spell), **My raid-flagged
+buffs** (your own buffs whose spell ID the client flags for raid frames in
+combat; shields are not flagged), **Big defensives**, **External defensives**,
+**Important** buffs, and **Crowd control** debuffs.
 
 ## Crowd control & defensives
 

@@ -18,7 +18,7 @@ describe("Category aura filters", function()
 		local known = Mock.API.Snapshot().lua.auraFilters
 		for _, list in ipairs({ Auras.BUFF_FILTERS, Auras.DEBUFF_FILTERS }) do
 			for filter in pairs(Values(list)) do
-				for component in filter:gmatch("[^|]+") do
+				for component in Auras.GroupFilter("buffs", filter):gmatch("[^|]+") do
 					assert.is_true(known[component] == true, filter)
 				end
 			end

@@ -30,9 +30,12 @@ Auras.STACK_FIRST = {
 	{ "buffs", "Buffs" }, { "debuffs", "Debuffs" },
 }
 
+Auras.MY_HEALS = "MY_HEALS"
+
 Auras.BUFF_FILTERS = {
 	{ "HELPFUL", "All buffs" }, { "HELPFUL|PLAYER", "Cast by me" }, { "HELPFUL|RAID", "Raid buffs" },
-	{ "HELPFUL|PLAYER|RAID_IN_COMBAT", "My heals over time" },
+	{ Auras.MY_HEALS, "My heals & shields" },
+	{ "HELPFUL|PLAYER|RAID_IN_COMBAT", "My raid-flagged buffs (no shields)" },
 	{ "HELPFUL|BIG_DEFENSIVE", "Big defensives" }, { "HELPFUL|EXTERNAL_DEFENSIVE", "External defensives" },
 	{ "HELPFUL|IMPORTANT", "Important" },
 }
@@ -50,6 +53,12 @@ Auras.SAMPLE_FILTER_FLAGS = {
 
 local CLASSIFIED_FILTERS = { BIG_DEFENSIVE = true, EXTERNAL_DEFENSIVE = true, IMPORTANT = true }
 local ALL_FILTERS = { buffs = "HELPFUL", debuffs = "HARMFUL" }
+local CATALOG_FILTERS = { [Auras.MY_HEALS] = { filter = "HELPFUL|PLAYER", spellIDs = ns.BuffSpells.PlayerHealIDs } }
+
+function Auras.IncludeSpellIDs(filter)
+	local catalog = CATALOG_FILTERS[filter]
+	return catalog and catalog.spellIDs() or nil
+end
 
 function Auras.FilterSupported(filter)
 	if ns.Caps.auraClassification then return true end
@@ -60,6 +69,7 @@ function Auras.FilterSupported(filter)
 end
 
 function Auras.GroupFilter(kind, filter)
+	if CATALOG_FILTERS[filter] then return CATALOG_FILTERS[filter].filter end
 	return Auras.FilterSupported(filter) and filter or ALL_FILTERS[kind]
 end
 
@@ -248,7 +258,9 @@ end
 
 -- A group's native candidate filters (nil = none).
 function Auras.CandidateFilters(group)
-	return group.maxDuration > 0 and { maxDuration = group.maxDuration } or nil
+	local include = Auras.IncludeSpellIDs(group.filter)
+	if group.maxDuration <= 0 and not include then return nil end
+	return { maxDuration = group.maxDuration > 0 and group.maxDuration or nil, includeSpellIDs = include }
 end
 
 -- Native setters that do engine work even for unchanged values: candidate
@@ -271,10 +283,10 @@ local function Applied(container, kind)
 end
 
 function Auras.ApplyGroupCandidates(container, kind, group)
-	local applied = Applied(container, kind)
-	if applied.maxDuration == group.maxDuration then return end
-	applied.maxDuration = group.maxDuration
-	container:SetAuraGroupCandidateFilters(kind, Auras.CandidateFilters(group))
+	local applied, candidates = Applied(container, kind), Auras.CandidateFilters(group)
+	if applied.hasCandidates and ns.Util.Equals(applied.candidates, candidates) then return end
+	applied.hasCandidates, applied.candidates = true, candidates
+	container:SetAuraGroupCandidateFilters(kind, candidates)
 end
 
 function Auras.ApplyGroupSort(container, kind, method, direction)
@@ -564,7 +576,8 @@ function Auras:ShowSample(values)
 	self:RenderSamples()
 end
 
-function Auras.MatchesSampleFilter(aura, filter, maxDuration)
+function Auras.MatchesSampleFilter(aura, filter, maxDuration, includeSpellIDs)
+	if includeSpellIDs and not includeSpellIDs[aura.spellId] then return false end
 	for component in filter:gmatch("[^|]+") do
 		if component == "PLAYER" and aura.sourceUnit ~= "player" then return false end
 		local flag = Auras.SAMPLE_FILTER_FLAGS[component]
@@ -583,7 +596,7 @@ function Auras:RenderSamples()
 		if cfg.enabled then
 			for _, aura in ipairs(self:GetSampleOrder(kind)) do
 				if #elements >= self:GetSampleLimit(kind) then break end
-				if Auras.MatchesSampleFilter(aura, Auras.GroupFilter(kind, cfg.filter), cfg.maxDuration) then
+				if Auras.MatchesSampleFilter(aura, Auras.GroupFilter(kind, cfg.filter), cfg.maxDuration, Auras.IncludeSpellIDs(cfg.filter)) then
 					local index = #elements + 1
 					local button = container.ufButtons[index]
 					if not button then
