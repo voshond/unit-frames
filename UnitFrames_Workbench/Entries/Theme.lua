@@ -68,11 +68,15 @@ Workbench:Register({
 		local text = C.Text:New(bar:GetTextParent(), {})
 		text:SetPoint("CENTER", bar:GetTextParent(), "CENTER")
 		text:SetText("Theme preview")
+		local auras = C.Auras:New(bar:GetFrame(), {})
+		auras:ShowSample({ buffs = UF.Units.SAMPLE.buffs, debuffs = UF.Units.SAMPLE.debuffs })
 		return Workbench.Composite({
 			{ key = "bar", label = "Bar", component = bar },
 			{ key = "text", label = "Text", component = text },
-		})
+			{ key = "auras", label = "Aura icons", component = auras },
+		}, bar:GetFrame())
 	end,
-	defaultConfig = { bar = { border = { enabled = true } } },
+	defaultConfig = { bar = { border = { enabled = true } },
+		auras = { buffs = { max = 7, size = 22 }, debuffs = { max = 5, size = 22 } } },
 	styleTarget = ThemeTarget,
 })

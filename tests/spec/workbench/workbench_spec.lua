@@ -350,6 +350,17 @@ describe("Workbench", function()
 		assert.is_not_nil(bar)
 	end)
 
+	it("previews sample aura icons that follow the global aura settings", function()
+		workbench:Select("theme")
+		local auras = workbench.handle.parts.auras
+		assert.equals(7, #auras.previewContainers.buffs.ufElements)
+		assert.equals(5, #auras.previewContainers.debuffs.ufElements)
+		assert.is_true(auras.previewContainers.debuffs.ufElements[1]:IsShown())
+		workbench.styleTarget.set("auras.countSize", 15)
+		assert.equals(15, auras.resolved.countSize)
+		workbench.styleTarget.set("auras.countSize", nil)
+	end)
+
 	it("toggles forced restrictions and resets them on close", function()
 		local cvars = {}
 		C_CVar.SetCVar = function(name, value) cvars[name] = value end
