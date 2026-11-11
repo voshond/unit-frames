@@ -28,6 +28,7 @@ function EmptyTarget:Apply(uf, height, shown)
 	self.presenter:SetHostSize(uf.layout.width, height)
 	self.presenter:Apply(presentation)
 	self.presenter:SetText(cfg.label)
+	self.frame:SetFrameLevel(self.frame:GetParent():GetFrameLevel())
 	self.frame:SetShown(shown)
 end
 
