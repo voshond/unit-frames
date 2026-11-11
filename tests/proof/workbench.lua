@@ -64,8 +64,26 @@ local function GlobalSettingsMenu()
 	return menu
 end
 
+local function GlobalAuraIcons(configure)
+	return function()
+		local ns, workbench = Helpers.LoadWorkbench()
+		if configure then configure(ns) end
+		workbench:Open("theme")
+		workbench.list:Select("theme|@auraIcons", true)
+		return workbench.handle.frame
+	end
+end
+
+local function LargeSharedDebuffs(ns)
+	ns.Config:SetThemeValue("auras.debuffs.size", 34)
+	ns.Config:SetThemeValue("auras.buffs.max", 6)
+	ns.Config:SetThemeValue("auras.spacing", 4)
+end
+
 return {
 	{ name = "workbench-global-settings-menu", build = GlobalSettingsMenu },
+	{ name = "workbench-global-aura-icons", build = GlobalAuraIcons() },
+	{ name = "workbench-global-aura-icons-changed", build = GlobalAuraIcons(LargeSharedDebuffs) },
 	{ name = "workbench-player", build = UnitPreview("unit.player") },
 	{ name = "workbench-target", build = UnitPreview("unit.target") },
 	{ name = "clickgrid-panel", build = ClickGridPreview("clickgrid.panel") },

@@ -63,6 +63,12 @@ function Presentation.Hint(pageId, section)
 		if section.id:match(":categoryAuras$") then return "Crowd control, defensive abilities and important buffs. The highest enabled priority covers overlapping icons." end
 		return "External icons, an embedded row and priority icons are independent displays and can be used together."
 	end
+	if pageId == "@auraIcons" then
+		if section.id:match(":auraBuffs$") or section.id:match(":auraDebuffs$") or section.id:match(":auraLayout$") then
+			return "Defaults for the external icons of every frame and ClickGrid. A frame's own default or custom value takes precedence."
+		end
+		return "Defaults for every aura icon. A frame's own default or custom value takes precedence."
+	end
 	if pageId == "@fonts" or pageId == "@artwork" or pageId == "@colours" then
 		return "Defaults for settings that inherit them. Frame defaults and custom overrides can take precedence."
 	end

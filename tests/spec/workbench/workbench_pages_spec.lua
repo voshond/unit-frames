@@ -118,6 +118,31 @@ describe("Workbench presentation pages", function()
 		assert.equals("@fonts", wb.state.section)
 	end)
 
+	it("offers every buff and debuff option on the global Aura Icons page", function()
+		local _, wb = Helpers.LoadWorkbench()
+		wb:Open("theme")
+		wb.list:Select("theme|@auraIcons", true)
+		local page = wb.pageModel.byId["@auraIcons"]
+		local labels = {}
+		for index, section in ipairs(page.sections) do labels[index] = section.label end
+		assert.same({ "Buffs", "Debuffs", "Spacing & shared side", "Time & stacks", "Debuff colours & glow", "Icon frame" }, labels)
+		local shared = {}
+		for _, section in ipairs(page.sections) do
+			for _, path in ipairs(section.paths) do shared[path] = true end
+		end
+		local inherited = 0
+		for _, record in ipairs(wb:GetCatalogue().models["unit.target"].records) do
+			if record.path:match("^auras%.buffs%.") or record.path:match("^auras%.debuffs%.") or record.path == "auras.spacing" then
+				assert.equals(record.path, record.opt.inherit)
+				assert.is_true(shared[record.path] == true, record.path .. " has no shared default")
+				inherited = inherited + 1
+			end
+		end
+		assert.is_true(inherited > 30)
+		wb:SelectFeaturePage("@auraIcons", "style:auraBuffs")
+		assert.is_not_nil(wb.navigationMessage:GetText():find("external icons of every frame", 1, true))
+	end)
+
 	it("only offers detailed adjustments on sections with available offset controls", function()
 		local _, wb = Helpers.LoadWorkbench()
 		wb:Open("unit.player")

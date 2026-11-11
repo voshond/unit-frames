@@ -39,6 +39,45 @@ option colors.threatMedium type="color" label="Threat: medium" default={1,0.82,0
 option colors.threatHigh type="color" label="Threat: high" default={1,0.5,0,1}
 option colors.threatAggro type="color" label="Threat: aggro" default={1,0.1,0.1,1}
 option auras type="group" label="Aura icons"
+option auras.buffs type="group" label="Buffs"
+option auras.buffs.enabled type="toggle" label="Show buffs" default=true
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
+option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
+option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
+option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
+option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
+option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
+option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1 tooltip=#82819ad4
+option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
+option auras.buffs.height type="range" label="Icon height" default=20 min=6 max=64 step=1 hidden
+option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
+option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
+option auras.buffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
+option auras.buffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
+option auras.buffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
+option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
+option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
+option auras.debuffs type="group" label="Debuffs"
+option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
+option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
+option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
+option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
+option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
+option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
+option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
+option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1 tooltip=#82819ad4
+option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
+option auras.debuffs.height type="range" label="Icon height" default=26 min=6 max=64 step=1 hidden
+option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
+option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
+option auras.debuffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
+option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
+option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
+option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
+option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
+option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.showDuration type="toggle" label="Show time left" default=true
 option auras.durationPosition type="select" label="Time position" default="CENTER" values=#e24d164b
 option auras.durationSize type="range" label="Time text size" default=10 min=6 max=32 step=1
@@ -69,8 +108,42 @@ default auras.border.enabled = true
 default auras.border.inset = 1
 default auras.border.padding = 2
 default auras.border.size = 8
+default auras.buffs.alignment = "start"
+default auras.buffs.enabled = true
+default auras.buffs.filter = "HELPFUL"
+default auras.buffs.gap = 2
+default auras.buffs.growth = "forward"
+default auras.buffs.height = 20
+default auras.buffs.lineSize = 0
+default auras.buffs.max = 16
+default auras.buffs.maxDuration = 0
+default auras.buffs.offsetX = 0
+default auras.buffs.offsetY = 0
+default auras.buffs.position = "top"
+default auras.buffs.separateHeight = false
+default auras.buffs.showSwipeEdge = true
+default auras.buffs.size = 20
+default auras.buffs.sort = "expiration"
+default auras.buffs.swipe = "normal"
 default auras.countPosition = "BOTTOMRIGHT"
 default auras.countSize = 10
+default auras.debuffs.alignment = "start"
+default auras.debuffs.enabled = true
+default auras.debuffs.filter = "HARMFUL"
+default auras.debuffs.gap = 2
+default auras.debuffs.growth = "forward"
+default auras.debuffs.height = 26
+default auras.debuffs.lineSize = 0
+default auras.debuffs.max = 16
+default auras.debuffs.maxDuration = 0
+default auras.debuffs.offsetX = 0
+default auras.debuffs.offsetY = 0
+default auras.debuffs.position = "bottom"
+default auras.debuffs.separateHeight = false
+default auras.debuffs.showSwipeEdge = true
+default auras.debuffs.size = 26
+default auras.debuffs.sort = "expiration"
+default auras.debuffs.swipe = "normal"
 default auras.dispelBorder = true
 default auras.dispelColors.Curse = {0.6,0,1,1}
 default auras.dispelColors.Disease = {0.6,0.4,0,1}
@@ -84,8 +157,11 @@ default auras.dispelGlow.style = "halo"
 default auras.durationPosition = "CENTER"
 default auras.durationSize = 10
 default auras.fontOutline = "OUTLINE"
+default auras.sharedSide = "combined"
 default auras.showCount = true
 default auras.showDuration = true
+default auras.spacing = 2
+default auras.stackFirst = "buffs"
 default backgroundColor = {0,0,0,0.75}
 default backgroundTexture = "Solid"
 default barTexture = "Blizzard Raid Bar"
@@ -129,8 +205,42 @@ resolved auras.border.enabled = true
 resolved auras.border.inset = 1
 resolved auras.border.padding = 2
 resolved auras.border.size = 8
+resolved auras.buffs.alignment = "start"
+resolved auras.buffs.enabled = true
+resolved auras.buffs.filter = "HELPFUL"
+resolved auras.buffs.gap = 2
+resolved auras.buffs.growth = "forward"
+resolved auras.buffs.height = 20
+resolved auras.buffs.lineSize = 0
+resolved auras.buffs.max = 16
+resolved auras.buffs.maxDuration = 0
+resolved auras.buffs.offsetX = 0
+resolved auras.buffs.offsetY = 0
+resolved auras.buffs.position = "top"
+resolved auras.buffs.separateHeight = false
+resolved auras.buffs.showSwipeEdge = true
+resolved auras.buffs.size = 20
+resolved auras.buffs.sort = "expiration"
+resolved auras.buffs.swipe = "normal"
 resolved auras.countPosition = "BOTTOMRIGHT"
 resolved auras.countSize = 10
+resolved auras.debuffs.alignment = "start"
+resolved auras.debuffs.enabled = true
+resolved auras.debuffs.filter = "HARMFUL"
+resolved auras.debuffs.gap = 2
+resolved auras.debuffs.growth = "forward"
+resolved auras.debuffs.height = 26
+resolved auras.debuffs.lineSize = 0
+resolved auras.debuffs.max = 16
+resolved auras.debuffs.maxDuration = 0
+resolved auras.debuffs.offsetX = 0
+resolved auras.debuffs.offsetY = 0
+resolved auras.debuffs.position = "bottom"
+resolved auras.debuffs.separateHeight = false
+resolved auras.debuffs.showSwipeEdge = true
+resolved auras.debuffs.size = 26
+resolved auras.debuffs.sort = "expiration"
+resolved auras.debuffs.swipe = "normal"
 resolved auras.dispelBorder = true
 resolved auras.dispelColors.Curse = {0.6,0,1,1}
 resolved auras.dispelColors.Disease = {0.6,0.4,0,1}
@@ -144,8 +254,11 @@ resolved auras.dispelGlow.style = "halo"
 resolved auras.durationPosition = "CENTER"
 resolved auras.durationSize = 10
 resolved auras.fontOutline = "OUTLINE"
+resolved auras.sharedSide = "combined"
 resolved auras.showCount = true
 resolved auras.showDuration = true
+resolved auras.spacing = 2
+resolved auras.stackFirst = "buffs"
 resolved backgroundColor = {0,0,0,0.75}
 resolved backgroundTexture = "Solid"
 resolved barTexture = "Blizzard Raid Bar"
@@ -1973,7 +2086,7 @@ resolved order = 1
 resolved size = 20
 ## auras
 option enabled type="toggle" label="Enabled" default=true
-option spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
+option spacing type="range" label="Icon spacing" default=2 inherit="auras.spacing" min=0 max=10 step=1
 option showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
 option durationPosition type="select" label="Time position" default="CENTER" inherit="auras.durationPosition" values=#e24d164b
 option durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
@@ -2003,44 +2116,44 @@ option border.background type="background" label="Background" default="None" inh
 option border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
 option border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
-option sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
-option stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
+option sharedSide type="select" label="Buffs and debuffs on one side" default="combined" inherit="auras.sharedSide" values=#82ba4781 tooltip=#5717be99 hidden
+option stackFirst type="select" label="Closest to the frame" default="buffs" inherit="auras.stackFirst" values=#ee43518b tooltip=#dc91071c hidden
 option buffs type="group" label="Buffs"
-option buffs.enabled type="toggle" label="Show buffs" default=true
-option buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
-option buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
-option buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
-option buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
-option buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
-option buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1 tooltip=#82819ad4
-option buffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
-option buffs.height type="range" label="Icon height" default=20 min=6 max=64 step=1 hidden
-option buffs.position type="select" label="Side" default="top" values=#eef25c33
-option buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
-option buffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
-option buffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
-option buffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
-option buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
+option buffs.enabled type="toggle" label="Show buffs" default=true inherit="auras.buffs.enabled"
+option buffs.filter type="select" label="Which" default="HELPFUL" inherit="auras.buffs.filter" values=#0c924c5f
+option buffs.max type="range" label="Maximum shown" default=16 inherit="auras.buffs.max" min=1 max=40 step=1
+option buffs.maxDuration type="range" label="Maximum total duration" default=0 inherit="auras.buffs.maxDuration" min=0 max=7200 step=1 tooltip=#b0f1445f
+option buffs.sort type="select" label="Order" default="expiration" inherit="auras.buffs.sort" values=#1cce513e
+option buffs.swipe type="select" label="Cooldown swipe" default="normal" inherit="auras.buffs.swipe" values=#f0e7db26
+option buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true inherit="auras.buffs.showSwipeEdge" tooltip=#f5996ae7
+option buffs.size type="range" label="Icon size" default=20 inherit="auras.buffs.size" min=10 max=64 step=1 tooltip=#82819ad4
+option buffs.separateHeight type="toggle" label="Separate icon height" default=false inherit="auras.buffs.separateHeight" tooltip=#5479568a
+option buffs.height type="range" label="Icon height" default=20 inherit="auras.buffs.height" min=6 max=64 step=1 hidden
+option buffs.position type="select" label="Side" default="top" inherit="auras.buffs.position" values=#eef25c33
+option buffs.alignment type="select" label="Alignment" default="start" inherit="auras.buffs.alignment" values=#1b2acdcf tooltip=#4d70b052
+option buffs.growth type="select" label="Grow direction" default="forward" inherit="auras.buffs.growth" values=#613b9896 tooltip=#a87e8370
+option buffs.gap type="range" label="Gap to the frame" default=2 inherit="auras.buffs.gap" min=0 max=30 step=1
+option buffs.offsetX type="range" label="Offset X" default=0 inherit="auras.buffs.offsetX" min=-200 max=200 step=1
+option buffs.offsetY type="range" label="Offset Y" default=0 inherit="auras.buffs.offsetY" min=-200 max=200 step=1
+option buffs.lineSize type="range" label="Row / column length" default=0 inherit="auras.buffs.lineSize" min=0 max=600 step=1 tooltip=#cc2318e4
 option debuffs type="group" label="Debuffs"
-option debuffs.enabled type="toggle" label="Show debuffs" default=true
-option debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
-option debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
-option debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
-option debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
-option debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
-option debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1 tooltip=#82819ad4
-option debuffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
-option debuffs.height type="range" label="Icon height" default=26 min=6 max=64 step=1 hidden
-option debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
-option debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
-option debuffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
-option debuffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
-option debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
-option debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
+option debuffs.enabled type="toggle" label="Show debuffs" default=true inherit="auras.debuffs.enabled"
+option debuffs.filter type="select" label="Which" default="HARMFUL" inherit="auras.debuffs.filter" values=#baa8416b
+option debuffs.max type="range" label="Maximum shown" default=16 inherit="auras.debuffs.max" min=1 max=40 step=1
+option debuffs.maxDuration type="range" label="Maximum total duration" default=0 inherit="auras.debuffs.maxDuration" min=0 max=7200 step=1 tooltip=#b0f1445f
+option debuffs.sort type="select" label="Order" default="expiration" inherit="auras.debuffs.sort" values=#1cce513e
+option debuffs.swipe type="select" label="Cooldown swipe" default="normal" inherit="auras.debuffs.swipe" values=#f0e7db26
+option debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true inherit="auras.debuffs.showSwipeEdge" tooltip=#f5996ae7
+option debuffs.size type="range" label="Icon size" default=26 inherit="auras.debuffs.size" min=10 max=64 step=1 tooltip=#82819ad4
+option debuffs.separateHeight type="toggle" label="Separate icon height" default=false inherit="auras.debuffs.separateHeight" tooltip=#5479568a
+option debuffs.height type="range" label="Icon height" default=26 inherit="auras.debuffs.height" min=6 max=64 step=1 hidden
+option debuffs.position type="select" label="Side" default="bottom" inherit="auras.debuffs.position" values=#eef25c33
+option debuffs.alignment type="select" label="Alignment" default="start" inherit="auras.debuffs.alignment" values=#1b2acdcf tooltip=#4d70b052
+option debuffs.growth type="select" label="Grow direction" default="forward" inherit="auras.debuffs.growth" values=#613b9896 tooltip=#a87e8370
+option debuffs.gap type="range" label="Gap to the frame" default=2 inherit="auras.debuffs.gap" min=0 max=30 step=1
+option debuffs.offsetX type="range" label="Offset X" default=0 inherit="auras.debuffs.offsetX" min=-200 max=200 step=1
+option debuffs.offsetY type="range" label="Offset Y" default=0 inherit="auras.debuffs.offsetY" min=-200 max=200 step=1
+option debuffs.lineSize type="range" label="Row / column length" default=0 inherit="auras.debuffs.lineSize" min=0 max=600 step=1 tooltip=#cc2318e4
 default border.background = "None"
 default border.enabled = true
 default border.inset = 1
@@ -3470,7 +3583,7 @@ option comboPoints.border.background type="background" label="Background" inheri
 option comboPoints.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras type="group" label="Buffs & debuffs" defaults={buffs={gap=0},debuffs={gap=0,position="top"},font="Roboto Condensed",sharedSide="combined"}
 option auras.enabled type="toggle" label="Enabled" default=true
-option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
+option auras.spacing type="range" label="Icon spacing" default=2 inherit="auras.spacing" min=0 max=10 step=1
 option auras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
 option auras.durationPosition type="select" label="Time position" default="CENTER" inherit="auras.durationPosition" values=#e24d164b
 option auras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
@@ -3500,44 +3613,44 @@ option auras.border.background type="background" label="Background" default="Non
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
-option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
-option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" inherit="auras.sharedSide" values=#82ba4781 tooltip=#5717be99 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" inherit="auras.stackFirst" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
-option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
-option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
-option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
-option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
-option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
-option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1 tooltip=#82819ad4
-option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
-option auras.buffs.height type="range" label="Icon height" default=20 min=6 max=64 step=1 hidden
-option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
-option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
-option auras.buffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
-option auras.buffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
-option auras.buffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
-option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
+option auras.buffs.enabled type="toggle" label="Show buffs" default=true inherit="auras.buffs.enabled"
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" inherit="auras.buffs.filter" values=#0c924c5f
+option auras.buffs.max type="range" label="Maximum shown" default=16 inherit="auras.buffs.max" min=1 max=40 step=1
+option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 inherit="auras.buffs.maxDuration" min=0 max=7200 step=1 tooltip=#b0f1445f
+option auras.buffs.sort type="select" label="Order" default="expiration" inherit="auras.buffs.sort" values=#1cce513e
+option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" inherit="auras.buffs.swipe" values=#f0e7db26
+option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true inherit="auras.buffs.showSwipeEdge" tooltip=#f5996ae7
+option auras.buffs.size type="range" label="Icon size" default=20 inherit="auras.buffs.size" min=10 max=64 step=1 tooltip=#82819ad4
+option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false inherit="auras.buffs.separateHeight" tooltip=#5479568a
+option auras.buffs.height type="range" label="Icon height" default=20 inherit="auras.buffs.height" min=6 max=64 step=1 hidden
+option auras.buffs.position type="select" label="Side" default="top" inherit="auras.buffs.position" values=#eef25c33
+option auras.buffs.alignment type="select" label="Alignment" default="start" inherit="auras.buffs.alignment" values=#1b2acdcf tooltip=#4d70b052
+option auras.buffs.growth type="select" label="Grow direction" default="forward" inherit="auras.buffs.growth" values=#613b9896 tooltip=#a87e8370
+option auras.buffs.gap type="range" label="Gap to the frame" default=2 inherit="auras.buffs.gap" min=0 max=30 step=1
+option auras.buffs.offsetX type="range" label="Offset X" default=0 inherit="auras.buffs.offsetX" min=-200 max=200 step=1
+option auras.buffs.offsetY type="range" label="Offset Y" default=0 inherit="auras.buffs.offsetY" min=-200 max=200 step=1
+option auras.buffs.lineSize type="range" label="Row / column length" default=0 inherit="auras.buffs.lineSize" min=0 max=600 step=1 tooltip=#cc2318e4
 option auras.debuffs type="group" label="Debuffs"
-option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
-option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
-option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
-option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
-option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
-option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1 tooltip=#82819ad4
-option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
-option auras.debuffs.height type="range" label="Icon height" default=26 min=6 max=64 step=1 hidden
-option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
-option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
-option auras.debuffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
-option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
-option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
-option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
+option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true inherit="auras.debuffs.enabled"
+option auras.debuffs.filter type="select" label="Which" default="HARMFUL" inherit="auras.debuffs.filter" values=#baa8416b
+option auras.debuffs.max type="range" label="Maximum shown" default=16 inherit="auras.debuffs.max" min=1 max=40 step=1
+option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 inherit="auras.debuffs.maxDuration" min=0 max=7200 step=1 tooltip=#b0f1445f
+option auras.debuffs.sort type="select" label="Order" default="expiration" inherit="auras.debuffs.sort" values=#1cce513e
+option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" inherit="auras.debuffs.swipe" values=#f0e7db26
+option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true inherit="auras.debuffs.showSwipeEdge" tooltip=#f5996ae7
+option auras.debuffs.size type="range" label="Icon size" default=26 inherit="auras.debuffs.size" min=10 max=64 step=1 tooltip=#82819ad4
+option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false inherit="auras.debuffs.separateHeight" tooltip=#5479568a
+option auras.debuffs.height type="range" label="Icon height" default=26 inherit="auras.debuffs.height" min=6 max=64 step=1 hidden
+option auras.debuffs.position type="select" label="Side" default="bottom" inherit="auras.debuffs.position" values=#eef25c33
+option auras.debuffs.alignment type="select" label="Alignment" default="start" inherit="auras.debuffs.alignment" values=#1b2acdcf tooltip=#4d70b052
+option auras.debuffs.growth type="select" label="Grow direction" default="forward" inherit="auras.debuffs.growth" values=#613b9896 tooltip=#a87e8370
+option auras.debuffs.gap type="range" label="Gap to the frame" default=2 inherit="auras.debuffs.gap" min=0 max=30 step=1
+option auras.debuffs.offsetX type="range" label="Offset X" default=0 inherit="auras.debuffs.offsetX" min=-200 max=200 step=1
+option auras.debuffs.offsetY type="range" label="Offset Y" default=0 inherit="auras.debuffs.offsetY" min=-200 max=200 step=1
+option auras.debuffs.lineSize type="range" label="Row / column length" default=0 inherit="auras.debuffs.lineSize" min=0 max=600 step=1 tooltip=#cc2318e4
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
@@ -6551,7 +6664,7 @@ option castbar.holdTime type="range" label="Hold after finish (s)" default=0.4 m
 option castbar.fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
 option auras type="group" label="Buffs & debuffs" defaults={buffs={max=6,size=18},countSize=8,debuffs={max=6,size=18},durationSize=9,enabled=false}
 option auras.enabled type="toggle" label="Enabled" default=true
-option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
+option auras.spacing type="range" label="Icon spacing" default=2 inherit="auras.spacing" min=0 max=10 step=1
 option auras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
 option auras.durationPosition type="select" label="Time position" default="CENTER" inherit="auras.durationPosition" values=#e24d164b
 option auras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
@@ -6581,44 +6694,44 @@ option auras.border.background type="background" label="Background" default="Non
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
-option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
-option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" inherit="auras.sharedSide" values=#82ba4781 tooltip=#5717be99 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" inherit="auras.stackFirst" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
-option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
-option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
-option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
-option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
-option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
-option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1 tooltip=#82819ad4
-option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
-option auras.buffs.height type="range" label="Icon height" default=20 min=6 max=64 step=1 hidden
-option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
-option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
-option auras.buffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
-option auras.buffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
-option auras.buffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
-option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
+option auras.buffs.enabled type="toggle" label="Show buffs" default=true inherit="auras.buffs.enabled"
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" inherit="auras.buffs.filter" values=#0c924c5f
+option auras.buffs.max type="range" label="Maximum shown" default=16 inherit="auras.buffs.max" min=1 max=40 step=1
+option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 inherit="auras.buffs.maxDuration" min=0 max=7200 step=1 tooltip=#b0f1445f
+option auras.buffs.sort type="select" label="Order" default="expiration" inherit="auras.buffs.sort" values=#1cce513e
+option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" inherit="auras.buffs.swipe" values=#f0e7db26
+option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true inherit="auras.buffs.showSwipeEdge" tooltip=#f5996ae7
+option auras.buffs.size type="range" label="Icon size" default=20 inherit="auras.buffs.size" min=10 max=64 step=1 tooltip=#82819ad4
+option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false inherit="auras.buffs.separateHeight" tooltip=#5479568a
+option auras.buffs.height type="range" label="Icon height" default=20 inherit="auras.buffs.height" min=6 max=64 step=1 hidden
+option auras.buffs.position type="select" label="Side" default="top" inherit="auras.buffs.position" values=#eef25c33
+option auras.buffs.alignment type="select" label="Alignment" default="start" inherit="auras.buffs.alignment" values=#1b2acdcf tooltip=#4d70b052
+option auras.buffs.growth type="select" label="Grow direction" default="forward" inherit="auras.buffs.growth" values=#613b9896 tooltip=#a87e8370
+option auras.buffs.gap type="range" label="Gap to the frame" default=2 inherit="auras.buffs.gap" min=0 max=30 step=1
+option auras.buffs.offsetX type="range" label="Offset X" default=0 inherit="auras.buffs.offsetX" min=-200 max=200 step=1
+option auras.buffs.offsetY type="range" label="Offset Y" default=0 inherit="auras.buffs.offsetY" min=-200 max=200 step=1
+option auras.buffs.lineSize type="range" label="Row / column length" default=0 inherit="auras.buffs.lineSize" min=0 max=600 step=1 tooltip=#cc2318e4
 option auras.debuffs type="group" label="Debuffs"
-option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
-option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
-option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
-option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
-option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
-option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1 tooltip=#82819ad4
-option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
-option auras.debuffs.height type="range" label="Icon height" default=26 min=6 max=64 step=1 hidden
-option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
-option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
-option auras.debuffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
-option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
-option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
-option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
+option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true inherit="auras.debuffs.enabled"
+option auras.debuffs.filter type="select" label="Which" default="HARMFUL" inherit="auras.debuffs.filter" values=#baa8416b
+option auras.debuffs.max type="range" label="Maximum shown" default=16 inherit="auras.debuffs.max" min=1 max=40 step=1
+option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 inherit="auras.debuffs.maxDuration" min=0 max=7200 step=1 tooltip=#b0f1445f
+option auras.debuffs.sort type="select" label="Order" default="expiration" inherit="auras.debuffs.sort" values=#1cce513e
+option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" inherit="auras.debuffs.swipe" values=#f0e7db26
+option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true inherit="auras.debuffs.showSwipeEdge" tooltip=#f5996ae7
+option auras.debuffs.size type="range" label="Icon size" default=26 inherit="auras.debuffs.size" min=10 max=64 step=1 tooltip=#82819ad4
+option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false inherit="auras.debuffs.separateHeight" tooltip=#5479568a
+option auras.debuffs.height type="range" label="Icon height" default=26 inherit="auras.debuffs.height" min=6 max=64 step=1 hidden
+option auras.debuffs.position type="select" label="Side" default="bottom" inherit="auras.debuffs.position" values=#eef25c33
+option auras.debuffs.alignment type="select" label="Alignment" default="start" inherit="auras.debuffs.alignment" values=#1b2acdcf tooltip=#4d70b052
+option auras.debuffs.growth type="select" label="Grow direction" default="forward" inherit="auras.debuffs.growth" values=#613b9896 tooltip=#a87e8370
+option auras.debuffs.gap type="range" label="Gap to the frame" default=2 inherit="auras.debuffs.gap" min=0 max=30 step=1
+option auras.debuffs.offsetX type="range" label="Offset X" default=0 inherit="auras.debuffs.offsetX" min=-200 max=200 step=1
+option auras.debuffs.offsetY type="range" label="Offset Y" default=0 inherit="auras.debuffs.offsetY" min=-200 max=200 step=1
+option auras.debuffs.lineSize type="range" label="Row / column length" default=0 inherit="auras.debuffs.lineSize" min=0 max=600 step=1 tooltip=#cc2318e4
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
@@ -9145,7 +9258,7 @@ option comboPoints.border.background type="background" label="Background" inheri
 option comboPoints.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras type="group" label="Buffs & debuffs" defaults={buffs={gap=0,position="bottom"},debuffs={gap=0,position="bottom"},font="Roboto Condensed",sharedSide="combined"}
 option auras.enabled type="toggle" label="Enabled" default=true
-option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
+option auras.spacing type="range" label="Icon spacing" default=2 inherit="auras.spacing" min=0 max=10 step=1
 option auras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
 option auras.durationPosition type="select" label="Time position" default="CENTER" inherit="auras.durationPosition" values=#e24d164b
 option auras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
@@ -9175,44 +9288,44 @@ option auras.border.background type="background" label="Background" default="Non
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
-option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
-option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" inherit="auras.sharedSide" values=#82ba4781 tooltip=#5717be99 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" inherit="auras.stackFirst" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
-option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
-option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
-option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
-option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
-option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
-option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1 tooltip=#82819ad4
-option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
-option auras.buffs.height type="range" label="Icon height" default=20 min=6 max=64 step=1 hidden
-option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
-option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
-option auras.buffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
-option auras.buffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
-option auras.buffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
-option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
+option auras.buffs.enabled type="toggle" label="Show buffs" default=true inherit="auras.buffs.enabled"
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" inherit="auras.buffs.filter" values=#0c924c5f
+option auras.buffs.max type="range" label="Maximum shown" default=16 inherit="auras.buffs.max" min=1 max=40 step=1
+option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 inherit="auras.buffs.maxDuration" min=0 max=7200 step=1 tooltip=#b0f1445f
+option auras.buffs.sort type="select" label="Order" default="expiration" inherit="auras.buffs.sort" values=#1cce513e
+option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" inherit="auras.buffs.swipe" values=#f0e7db26
+option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true inherit="auras.buffs.showSwipeEdge" tooltip=#f5996ae7
+option auras.buffs.size type="range" label="Icon size" default=20 inherit="auras.buffs.size" min=10 max=64 step=1 tooltip=#82819ad4
+option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false inherit="auras.buffs.separateHeight" tooltip=#5479568a
+option auras.buffs.height type="range" label="Icon height" default=20 inherit="auras.buffs.height" min=6 max=64 step=1 hidden
+option auras.buffs.position type="select" label="Side" default="top" inherit="auras.buffs.position" values=#eef25c33
+option auras.buffs.alignment type="select" label="Alignment" default="start" inherit="auras.buffs.alignment" values=#1b2acdcf tooltip=#4d70b052
+option auras.buffs.growth type="select" label="Grow direction" default="forward" inherit="auras.buffs.growth" values=#613b9896 tooltip=#a87e8370
+option auras.buffs.gap type="range" label="Gap to the frame" default=2 inherit="auras.buffs.gap" min=0 max=30 step=1
+option auras.buffs.offsetX type="range" label="Offset X" default=0 inherit="auras.buffs.offsetX" min=-200 max=200 step=1
+option auras.buffs.offsetY type="range" label="Offset Y" default=0 inherit="auras.buffs.offsetY" min=-200 max=200 step=1
+option auras.buffs.lineSize type="range" label="Row / column length" default=0 inherit="auras.buffs.lineSize" min=0 max=600 step=1 tooltip=#cc2318e4
 option auras.debuffs type="group" label="Debuffs"
-option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
-option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
-option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
-option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
-option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
-option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1 tooltip=#82819ad4
-option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
-option auras.debuffs.height type="range" label="Icon height" default=26 min=6 max=64 step=1 hidden
-option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
-option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
-option auras.debuffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
-option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
-option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
-option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
+option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true inherit="auras.debuffs.enabled"
+option auras.debuffs.filter type="select" label="Which" default="HARMFUL" inherit="auras.debuffs.filter" values=#baa8416b
+option auras.debuffs.max type="range" label="Maximum shown" default=16 inherit="auras.debuffs.max" min=1 max=40 step=1
+option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 inherit="auras.debuffs.maxDuration" min=0 max=7200 step=1 tooltip=#b0f1445f
+option auras.debuffs.sort type="select" label="Order" default="expiration" inherit="auras.debuffs.sort" values=#1cce513e
+option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" inherit="auras.debuffs.swipe" values=#f0e7db26
+option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true inherit="auras.debuffs.showSwipeEdge" tooltip=#f5996ae7
+option auras.debuffs.size type="range" label="Icon size" default=26 inherit="auras.debuffs.size" min=10 max=64 step=1 tooltip=#82819ad4
+option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false inherit="auras.debuffs.separateHeight" tooltip=#5479568a
+option auras.debuffs.height type="range" label="Icon height" default=26 inherit="auras.debuffs.height" min=6 max=64 step=1 hidden
+option auras.debuffs.position type="select" label="Side" default="bottom" inherit="auras.debuffs.position" values=#eef25c33
+option auras.debuffs.alignment type="select" label="Alignment" default="start" inherit="auras.debuffs.alignment" values=#1b2acdcf tooltip=#4d70b052
+option auras.debuffs.growth type="select" label="Grow direction" default="forward" inherit="auras.debuffs.growth" values=#613b9896 tooltip=#a87e8370
+option auras.debuffs.gap type="range" label="Gap to the frame" default=2 inherit="auras.debuffs.gap" min=0 max=30 step=1
+option auras.debuffs.offsetX type="range" label="Offset X" default=0 inherit="auras.debuffs.offsetX" min=-200 max=200 step=1
+option auras.debuffs.offsetY type="range" label="Offset Y" default=0 inherit="auras.debuffs.offsetY" min=-200 max=200 step=1
+option auras.debuffs.lineSize type="range" label="Row / column length" default=0 inherit="auras.debuffs.lineSize" min=0 max=600 step=1 tooltip=#cc2318e4
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
@@ -11772,7 +11885,7 @@ option castbar.holdTime type="range" label="Hold after finish (s)" default=0.4 m
 option castbar.fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
 option auras type="group" label="Buffs & debuffs" defaults={buffs={max=8,size=16},countSize=8,debuffs={max=8,size=18},durationSize=9,enabled=false}
 option auras.enabled type="toggle" label="Enabled" default=true
-option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
+option auras.spacing type="range" label="Icon spacing" default=2 inherit="auras.spacing" min=0 max=10 step=1
 option auras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
 option auras.durationPosition type="select" label="Time position" default="CENTER" inherit="auras.durationPosition" values=#e24d164b
 option auras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
@@ -11802,44 +11915,44 @@ option auras.border.background type="background" label="Background" default="Non
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
-option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
-option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" inherit="auras.sharedSide" values=#82ba4781 tooltip=#5717be99 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" inherit="auras.stackFirst" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
-option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
-option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
-option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
-option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
-option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
-option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1 tooltip=#82819ad4
-option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
-option auras.buffs.height type="range" label="Icon height" default=20 min=6 max=64 step=1 hidden
-option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
-option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
-option auras.buffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
-option auras.buffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
-option auras.buffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
-option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
+option auras.buffs.enabled type="toggle" label="Show buffs" default=true inherit="auras.buffs.enabled"
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" inherit="auras.buffs.filter" values=#0c924c5f
+option auras.buffs.max type="range" label="Maximum shown" default=16 inherit="auras.buffs.max" min=1 max=40 step=1
+option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 inherit="auras.buffs.maxDuration" min=0 max=7200 step=1 tooltip=#b0f1445f
+option auras.buffs.sort type="select" label="Order" default="expiration" inherit="auras.buffs.sort" values=#1cce513e
+option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" inherit="auras.buffs.swipe" values=#f0e7db26
+option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true inherit="auras.buffs.showSwipeEdge" tooltip=#f5996ae7
+option auras.buffs.size type="range" label="Icon size" default=20 inherit="auras.buffs.size" min=10 max=64 step=1 tooltip=#82819ad4
+option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false inherit="auras.buffs.separateHeight" tooltip=#5479568a
+option auras.buffs.height type="range" label="Icon height" default=20 inherit="auras.buffs.height" min=6 max=64 step=1 hidden
+option auras.buffs.position type="select" label="Side" default="top" inherit="auras.buffs.position" values=#eef25c33
+option auras.buffs.alignment type="select" label="Alignment" default="start" inherit="auras.buffs.alignment" values=#1b2acdcf tooltip=#4d70b052
+option auras.buffs.growth type="select" label="Grow direction" default="forward" inherit="auras.buffs.growth" values=#613b9896 tooltip=#a87e8370
+option auras.buffs.gap type="range" label="Gap to the frame" default=2 inherit="auras.buffs.gap" min=0 max=30 step=1
+option auras.buffs.offsetX type="range" label="Offset X" default=0 inherit="auras.buffs.offsetX" min=-200 max=200 step=1
+option auras.buffs.offsetY type="range" label="Offset Y" default=0 inherit="auras.buffs.offsetY" min=-200 max=200 step=1
+option auras.buffs.lineSize type="range" label="Row / column length" default=0 inherit="auras.buffs.lineSize" min=0 max=600 step=1 tooltip=#cc2318e4
 option auras.debuffs type="group" label="Debuffs"
-option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
-option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
-option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
-option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
-option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
-option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1 tooltip=#82819ad4
-option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
-option auras.debuffs.height type="range" label="Icon height" default=26 min=6 max=64 step=1 hidden
-option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
-option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
-option auras.debuffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
-option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
-option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
-option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
+option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true inherit="auras.debuffs.enabled"
+option auras.debuffs.filter type="select" label="Which" default="HARMFUL" inherit="auras.debuffs.filter" values=#baa8416b
+option auras.debuffs.max type="range" label="Maximum shown" default=16 inherit="auras.debuffs.max" min=1 max=40 step=1
+option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 inherit="auras.debuffs.maxDuration" min=0 max=7200 step=1 tooltip=#b0f1445f
+option auras.debuffs.sort type="select" label="Order" default="expiration" inherit="auras.debuffs.sort" values=#1cce513e
+option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" inherit="auras.debuffs.swipe" values=#f0e7db26
+option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true inherit="auras.debuffs.showSwipeEdge" tooltip=#f5996ae7
+option auras.debuffs.size type="range" label="Icon size" default=26 inherit="auras.debuffs.size" min=10 max=64 step=1 tooltip=#82819ad4
+option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false inherit="auras.debuffs.separateHeight" tooltip=#5479568a
+option auras.debuffs.height type="range" label="Icon height" default=26 inherit="auras.debuffs.height" min=6 max=64 step=1 hidden
+option auras.debuffs.position type="select" label="Side" default="bottom" inherit="auras.debuffs.position" values=#eef25c33
+option auras.debuffs.alignment type="select" label="Alignment" default="start" inherit="auras.debuffs.alignment" values=#1b2acdcf tooltip=#4d70b052
+option auras.debuffs.growth type="select" label="Grow direction" default="forward" inherit="auras.debuffs.growth" values=#613b9896 tooltip=#a87e8370
+option auras.debuffs.gap type="range" label="Gap to the frame" default=2 inherit="auras.debuffs.gap" min=0 max=30 step=1
+option auras.debuffs.offsetX type="range" label="Offset X" default=0 inherit="auras.debuffs.offsetX" min=-200 max=200 step=1
+option auras.debuffs.offsetY type="range" label="Offset Y" default=0 inherit="auras.debuffs.offsetY" min=-200 max=200 step=1
+option auras.debuffs.lineSize type="range" label="Row / column length" default=0 inherit="auras.debuffs.lineSize" min=0 max=600 step=1 tooltip=#cc2318e4
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
@@ -14338,7 +14451,7 @@ option castbar.holdTime type="range" label="Hold after finish (s)" default=0.4 m
 option castbar.fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
 option auras type="group" label="Buffs & debuffs" defaults={buffs={gap=0},debuffs={gap=0,position="top"},font="Roboto Condensed",sharedSide="combined"}
 option auras.enabled type="toggle" label="Enabled" default=true
-option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
+option auras.spacing type="range" label="Icon spacing" default=2 inherit="auras.spacing" min=0 max=10 step=1
 option auras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
 option auras.durationPosition type="select" label="Time position" default="CENTER" inherit="auras.durationPosition" values=#e24d164b
 option auras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
@@ -14368,44 +14481,44 @@ option auras.border.background type="background" label="Background" default="Non
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
-option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
-option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" inherit="auras.sharedSide" values=#82ba4781 tooltip=#5717be99 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" inherit="auras.stackFirst" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
-option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
-option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
-option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
-option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
-option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
-option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1 tooltip=#82819ad4
-option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
-option auras.buffs.height type="range" label="Icon height" default=20 min=6 max=64 step=1 hidden
-option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
-option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
-option auras.buffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
-option auras.buffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
-option auras.buffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
-option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
+option auras.buffs.enabled type="toggle" label="Show buffs" default=true inherit="auras.buffs.enabled"
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" inherit="auras.buffs.filter" values=#0c924c5f
+option auras.buffs.max type="range" label="Maximum shown" default=16 inherit="auras.buffs.max" min=1 max=40 step=1
+option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 inherit="auras.buffs.maxDuration" min=0 max=7200 step=1 tooltip=#b0f1445f
+option auras.buffs.sort type="select" label="Order" default="expiration" inherit="auras.buffs.sort" values=#1cce513e
+option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" inherit="auras.buffs.swipe" values=#f0e7db26
+option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true inherit="auras.buffs.showSwipeEdge" tooltip=#f5996ae7
+option auras.buffs.size type="range" label="Icon size" default=20 inherit="auras.buffs.size" min=10 max=64 step=1 tooltip=#82819ad4
+option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false inherit="auras.buffs.separateHeight" tooltip=#5479568a
+option auras.buffs.height type="range" label="Icon height" default=20 inherit="auras.buffs.height" min=6 max=64 step=1 hidden
+option auras.buffs.position type="select" label="Side" default="top" inherit="auras.buffs.position" values=#eef25c33
+option auras.buffs.alignment type="select" label="Alignment" default="start" inherit="auras.buffs.alignment" values=#1b2acdcf tooltip=#4d70b052
+option auras.buffs.growth type="select" label="Grow direction" default="forward" inherit="auras.buffs.growth" values=#613b9896 tooltip=#a87e8370
+option auras.buffs.gap type="range" label="Gap to the frame" default=2 inherit="auras.buffs.gap" min=0 max=30 step=1
+option auras.buffs.offsetX type="range" label="Offset X" default=0 inherit="auras.buffs.offsetX" min=-200 max=200 step=1
+option auras.buffs.offsetY type="range" label="Offset Y" default=0 inherit="auras.buffs.offsetY" min=-200 max=200 step=1
+option auras.buffs.lineSize type="range" label="Row / column length" default=0 inherit="auras.buffs.lineSize" min=0 max=600 step=1 tooltip=#cc2318e4
 option auras.debuffs type="group" label="Debuffs"
-option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
-option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
-option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
-option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
-option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
-option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1 tooltip=#82819ad4
-option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
-option auras.debuffs.height type="range" label="Icon height" default=26 min=6 max=64 step=1 hidden
-option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
-option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
-option auras.debuffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
-option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
-option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
-option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
+option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true inherit="auras.debuffs.enabled"
+option auras.debuffs.filter type="select" label="Which" default="HARMFUL" inherit="auras.debuffs.filter" values=#baa8416b
+option auras.debuffs.max type="range" label="Maximum shown" default=16 inherit="auras.debuffs.max" min=1 max=40 step=1
+option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 inherit="auras.debuffs.maxDuration" min=0 max=7200 step=1 tooltip=#b0f1445f
+option auras.debuffs.sort type="select" label="Order" default="expiration" inherit="auras.debuffs.sort" values=#1cce513e
+option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" inherit="auras.debuffs.swipe" values=#f0e7db26
+option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true inherit="auras.debuffs.showSwipeEdge" tooltip=#f5996ae7
+option auras.debuffs.size type="range" label="Icon size" default=26 inherit="auras.debuffs.size" min=10 max=64 step=1 tooltip=#82819ad4
+option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false inherit="auras.debuffs.separateHeight" tooltip=#5479568a
+option auras.debuffs.height type="range" label="Icon height" default=26 inherit="auras.debuffs.height" min=6 max=64 step=1 hidden
+option auras.debuffs.position type="select" label="Side" default="bottom" inherit="auras.debuffs.position" values=#eef25c33
+option auras.debuffs.alignment type="select" label="Alignment" default="start" inherit="auras.debuffs.alignment" values=#1b2acdcf tooltip=#4d70b052
+option auras.debuffs.growth type="select" label="Grow direction" default="forward" inherit="auras.debuffs.growth" values=#613b9896 tooltip=#a87e8370
+option auras.debuffs.gap type="range" label="Gap to the frame" default=2 inherit="auras.debuffs.gap" min=0 max=30 step=1
+option auras.debuffs.offsetX type="range" label="Offset X" default=0 inherit="auras.debuffs.offsetX" min=-200 max=200 step=1
+option auras.debuffs.offsetY type="range" label="Offset Y" default=0 inherit="auras.debuffs.offsetY" min=-200 max=200 step=1
+option auras.debuffs.lineSize type="range" label="Row / column length" default=0 inherit="auras.debuffs.lineSize" min=0 max=600 step=1 tooltip=#cc2318e4
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
@@ -16905,7 +17018,7 @@ option castbar.holdTime type="range" label="Hold after finish (s)" default=0.4 m
 option castbar.fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
 option auras type="group" label="Buffs & debuffs" defaults={buffs={max=8,size=16},countSize=8,debuffs={max=8,size=18},durationSize=9,enabled=false}
 option auras.enabled type="toggle" label="Enabled" default=true
-option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
+option auras.spacing type="range" label="Icon spacing" default=2 inherit="auras.spacing" min=0 max=10 step=1
 option auras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
 option auras.durationPosition type="select" label="Time position" default="CENTER" inherit="auras.durationPosition" values=#e24d164b
 option auras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
@@ -16935,44 +17048,44 @@ option auras.border.background type="background" label="Background" default="Non
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
-option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
-option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" inherit="auras.sharedSide" values=#82ba4781 tooltip=#5717be99 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" inherit="auras.stackFirst" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
-option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
-option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
-option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
-option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
-option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
-option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1 tooltip=#82819ad4
-option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
-option auras.buffs.height type="range" label="Icon height" default=20 min=6 max=64 step=1 hidden
-option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
-option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
-option auras.buffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
-option auras.buffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
-option auras.buffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
-option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
+option auras.buffs.enabled type="toggle" label="Show buffs" default=true inherit="auras.buffs.enabled"
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" inherit="auras.buffs.filter" values=#0c924c5f
+option auras.buffs.max type="range" label="Maximum shown" default=16 inherit="auras.buffs.max" min=1 max=40 step=1
+option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 inherit="auras.buffs.maxDuration" min=0 max=7200 step=1 tooltip=#b0f1445f
+option auras.buffs.sort type="select" label="Order" default="expiration" inherit="auras.buffs.sort" values=#1cce513e
+option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" inherit="auras.buffs.swipe" values=#f0e7db26
+option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true inherit="auras.buffs.showSwipeEdge" tooltip=#f5996ae7
+option auras.buffs.size type="range" label="Icon size" default=20 inherit="auras.buffs.size" min=10 max=64 step=1 tooltip=#82819ad4
+option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false inherit="auras.buffs.separateHeight" tooltip=#5479568a
+option auras.buffs.height type="range" label="Icon height" default=20 inherit="auras.buffs.height" min=6 max=64 step=1 hidden
+option auras.buffs.position type="select" label="Side" default="top" inherit="auras.buffs.position" values=#eef25c33
+option auras.buffs.alignment type="select" label="Alignment" default="start" inherit="auras.buffs.alignment" values=#1b2acdcf tooltip=#4d70b052
+option auras.buffs.growth type="select" label="Grow direction" default="forward" inherit="auras.buffs.growth" values=#613b9896 tooltip=#a87e8370
+option auras.buffs.gap type="range" label="Gap to the frame" default=2 inherit="auras.buffs.gap" min=0 max=30 step=1
+option auras.buffs.offsetX type="range" label="Offset X" default=0 inherit="auras.buffs.offsetX" min=-200 max=200 step=1
+option auras.buffs.offsetY type="range" label="Offset Y" default=0 inherit="auras.buffs.offsetY" min=-200 max=200 step=1
+option auras.buffs.lineSize type="range" label="Row / column length" default=0 inherit="auras.buffs.lineSize" min=0 max=600 step=1 tooltip=#cc2318e4
 option auras.debuffs type="group" label="Debuffs"
-option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
-option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
-option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
-option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
-option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
-option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1 tooltip=#82819ad4
-option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
-option auras.debuffs.height type="range" label="Icon height" default=26 min=6 max=64 step=1 hidden
-option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
-option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
-option auras.debuffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
-option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
-option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
-option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
+option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true inherit="auras.debuffs.enabled"
+option auras.debuffs.filter type="select" label="Which" default="HARMFUL" inherit="auras.debuffs.filter" values=#baa8416b
+option auras.debuffs.max type="range" label="Maximum shown" default=16 inherit="auras.debuffs.max" min=1 max=40 step=1
+option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 inherit="auras.debuffs.maxDuration" min=0 max=7200 step=1 tooltip=#b0f1445f
+option auras.debuffs.sort type="select" label="Order" default="expiration" inherit="auras.debuffs.sort" values=#1cce513e
+option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" inherit="auras.debuffs.swipe" values=#f0e7db26
+option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true inherit="auras.debuffs.showSwipeEdge" tooltip=#f5996ae7
+option auras.debuffs.size type="range" label="Icon size" default=26 inherit="auras.debuffs.size" min=10 max=64 step=1 tooltip=#82819ad4
+option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false inherit="auras.debuffs.separateHeight" tooltip=#5479568a
+option auras.debuffs.height type="range" label="Icon height" default=26 inherit="auras.debuffs.height" min=6 max=64 step=1 hidden
+option auras.debuffs.position type="select" label="Side" default="bottom" inherit="auras.debuffs.position" values=#eef25c33
+option auras.debuffs.alignment type="select" label="Alignment" default="start" inherit="auras.debuffs.alignment" values=#1b2acdcf tooltip=#4d70b052
+option auras.debuffs.growth type="select" label="Grow direction" default="forward" inherit="auras.debuffs.growth" values=#613b9896 tooltip=#a87e8370
+option auras.debuffs.gap type="range" label="Gap to the frame" default=2 inherit="auras.debuffs.gap" min=0 max=30 step=1
+option auras.debuffs.offsetX type="range" label="Offset X" default=0 inherit="auras.debuffs.offsetX" min=-200 max=200 step=1
+option auras.debuffs.offsetY type="range" label="Offset Y" default=0 inherit="auras.debuffs.offsetY" min=-200 max=200 step=1
+option auras.debuffs.lineSize type="range" label="Row / column length" default=0 inherit="auras.debuffs.lineSize" min=0 max=600 step=1 tooltip=#cc2318e4
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
@@ -21639,7 +21752,7 @@ option castbar.holdTime type="range" label="Hold after finish (s)" default=0.4 m
 option castbar.fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
 option auras type="group" label="Buffs & debuffs" defaults={buffs={alignment="end",enabled=true,filter="MY_HEALS",gap=1,max=4,maxDuration=0,position="top",size=14},countSize=8,debuffs={enabled=false,gap=1,max=3,position="bottom",size=16,sort="unitDebuff"},durationSize=8}
 option auras.enabled type="toggle" label="Enabled" default=true
-option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
+option auras.spacing type="range" label="Icon spacing" default=2 inherit="auras.spacing" min=0 max=10 step=1
 option auras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
 option auras.durationPosition type="select" label="Time position" default="CENTER" inherit="auras.durationPosition" values=#e24d164b
 option auras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
@@ -21669,44 +21782,44 @@ option auras.border.background type="background" label="Background" default="Non
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
-option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
-option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" inherit="auras.sharedSide" values=#82ba4781 tooltip=#5717be99 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" inherit="auras.stackFirst" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
-option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
-option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
-option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
-option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
-option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
-option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1 tooltip=#82819ad4
-option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
-option auras.buffs.height type="range" label="Icon height" default=20 min=6 max=64 step=1 hidden
-option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
-option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
-option auras.buffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
-option auras.buffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
-option auras.buffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
-option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
+option auras.buffs.enabled type="toggle" label="Show buffs" default=true inherit="auras.buffs.enabled"
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" inherit="auras.buffs.filter" values=#0c924c5f
+option auras.buffs.max type="range" label="Maximum shown" default=16 inherit="auras.buffs.max" min=1 max=40 step=1
+option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 inherit="auras.buffs.maxDuration" min=0 max=7200 step=1 tooltip=#b0f1445f
+option auras.buffs.sort type="select" label="Order" default="expiration" inherit="auras.buffs.sort" values=#1cce513e
+option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" inherit="auras.buffs.swipe" values=#f0e7db26
+option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true inherit="auras.buffs.showSwipeEdge" tooltip=#f5996ae7
+option auras.buffs.size type="range" label="Icon size" default=20 inherit="auras.buffs.size" min=10 max=64 step=1 tooltip=#82819ad4
+option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false inherit="auras.buffs.separateHeight" tooltip=#5479568a
+option auras.buffs.height type="range" label="Icon height" default=20 inherit="auras.buffs.height" min=6 max=64 step=1 hidden
+option auras.buffs.position type="select" label="Side" default="top" inherit="auras.buffs.position" values=#eef25c33
+option auras.buffs.alignment type="select" label="Alignment" default="start" inherit="auras.buffs.alignment" values=#1b2acdcf tooltip=#4d70b052
+option auras.buffs.growth type="select" label="Grow direction" default="forward" inherit="auras.buffs.growth" values=#613b9896 tooltip=#a87e8370
+option auras.buffs.gap type="range" label="Gap to the frame" default=2 inherit="auras.buffs.gap" min=0 max=30 step=1
+option auras.buffs.offsetX type="range" label="Offset X" default=0 inherit="auras.buffs.offsetX" min=-200 max=200 step=1
+option auras.buffs.offsetY type="range" label="Offset Y" default=0 inherit="auras.buffs.offsetY" min=-200 max=200 step=1
+option auras.buffs.lineSize type="range" label="Row / column length" default=0 inherit="auras.buffs.lineSize" min=0 max=600 step=1 tooltip=#cc2318e4
 option auras.debuffs type="group" label="Debuffs"
-option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
-option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
-option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
-option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
-option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
-option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1 tooltip=#82819ad4
-option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
-option auras.debuffs.height type="range" label="Icon height" default=26 min=6 max=64 step=1 hidden
-option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
-option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
-option auras.debuffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
-option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
-option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
-option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
+option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true inherit="auras.debuffs.enabled"
+option auras.debuffs.filter type="select" label="Which" default="HARMFUL" inherit="auras.debuffs.filter" values=#baa8416b
+option auras.debuffs.max type="range" label="Maximum shown" default=16 inherit="auras.debuffs.max" min=1 max=40 step=1
+option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 inherit="auras.debuffs.maxDuration" min=0 max=7200 step=1 tooltip=#b0f1445f
+option auras.debuffs.sort type="select" label="Order" default="expiration" inherit="auras.debuffs.sort" values=#1cce513e
+option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" inherit="auras.debuffs.swipe" values=#f0e7db26
+option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true inherit="auras.debuffs.showSwipeEdge" tooltip=#f5996ae7
+option auras.debuffs.size type="range" label="Icon size" default=26 inherit="auras.debuffs.size" min=10 max=64 step=1 tooltip=#82819ad4
+option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false inherit="auras.debuffs.separateHeight" tooltip=#5479568a
+option auras.debuffs.height type="range" label="Icon height" default=26 inherit="auras.debuffs.height" min=6 max=64 step=1 hidden
+option auras.debuffs.position type="select" label="Side" default="bottom" inherit="auras.debuffs.position" values=#eef25c33
+option auras.debuffs.alignment type="select" label="Alignment" default="start" inherit="auras.debuffs.alignment" values=#1b2acdcf tooltip=#4d70b052
+option auras.debuffs.growth type="select" label="Grow direction" default="forward" inherit="auras.debuffs.growth" values=#613b9896 tooltip=#a87e8370
+option auras.debuffs.gap type="range" label="Gap to the frame" default=2 inherit="auras.debuffs.gap" min=0 max=30 step=1
+option auras.debuffs.offsetX type="range" label="Offset X" default=0 inherit="auras.debuffs.offsetX" min=-200 max=200 step=1
+option auras.debuffs.offsetY type="range" label="Offset Y" default=0 inherit="auras.debuffs.offsetY" min=-200 max=200 step=1
+option auras.debuffs.lineSize type="range" label="Row / column length" default=0 inherit="auras.debuffs.lineSize" min=0 max=600 step=1 tooltip=#cc2318e4
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
@@ -24131,7 +24244,7 @@ option castbar.holdTime type="range" label="Hold after finish (s)" default=0.4 m
 option castbar.fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
 option auras type="group" label="Buffs & debuffs" defaults={buffs={max=8,size=16},countSize=8,debuffs={max=8,size=18},durationSize=9,enabled=false}
 option auras.enabled type="toggle" label="Enabled" default=true
-option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
+option auras.spacing type="range" label="Icon spacing" default=2 inherit="auras.spacing" min=0 max=10 step=1
 option auras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
 option auras.durationPosition type="select" label="Time position" default="CENTER" inherit="auras.durationPosition" values=#e24d164b
 option auras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
@@ -24161,44 +24274,44 @@ option auras.border.background type="background" label="Background" default="Non
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
-option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
-option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" inherit="auras.sharedSide" values=#82ba4781 tooltip=#5717be99 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" inherit="auras.stackFirst" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
-option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
-option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
-option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
-option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
-option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
-option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1 tooltip=#82819ad4
-option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
-option auras.buffs.height type="range" label="Icon height" default=20 min=6 max=64 step=1 hidden
-option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
-option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
-option auras.buffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
-option auras.buffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
-option auras.buffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
-option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
+option auras.buffs.enabled type="toggle" label="Show buffs" default=true inherit="auras.buffs.enabled"
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" inherit="auras.buffs.filter" values=#0c924c5f
+option auras.buffs.max type="range" label="Maximum shown" default=16 inherit="auras.buffs.max" min=1 max=40 step=1
+option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 inherit="auras.buffs.maxDuration" min=0 max=7200 step=1 tooltip=#b0f1445f
+option auras.buffs.sort type="select" label="Order" default="expiration" inherit="auras.buffs.sort" values=#1cce513e
+option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" inherit="auras.buffs.swipe" values=#f0e7db26
+option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true inherit="auras.buffs.showSwipeEdge" tooltip=#f5996ae7
+option auras.buffs.size type="range" label="Icon size" default=20 inherit="auras.buffs.size" min=10 max=64 step=1 tooltip=#82819ad4
+option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false inherit="auras.buffs.separateHeight" tooltip=#5479568a
+option auras.buffs.height type="range" label="Icon height" default=20 inherit="auras.buffs.height" min=6 max=64 step=1 hidden
+option auras.buffs.position type="select" label="Side" default="top" inherit="auras.buffs.position" values=#eef25c33
+option auras.buffs.alignment type="select" label="Alignment" default="start" inherit="auras.buffs.alignment" values=#1b2acdcf tooltip=#4d70b052
+option auras.buffs.growth type="select" label="Grow direction" default="forward" inherit="auras.buffs.growth" values=#613b9896 tooltip=#a87e8370
+option auras.buffs.gap type="range" label="Gap to the frame" default=2 inherit="auras.buffs.gap" min=0 max=30 step=1
+option auras.buffs.offsetX type="range" label="Offset X" default=0 inherit="auras.buffs.offsetX" min=-200 max=200 step=1
+option auras.buffs.offsetY type="range" label="Offset Y" default=0 inherit="auras.buffs.offsetY" min=-200 max=200 step=1
+option auras.buffs.lineSize type="range" label="Row / column length" default=0 inherit="auras.buffs.lineSize" min=0 max=600 step=1 tooltip=#cc2318e4
 option auras.debuffs type="group" label="Debuffs"
-option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
-option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
-option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
-option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
-option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
-option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1 tooltip=#82819ad4
-option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
-option auras.debuffs.height type="range" label="Icon height" default=26 min=6 max=64 step=1 hidden
-option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
-option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
-option auras.debuffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
-option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
-option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
-option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
+option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true inherit="auras.debuffs.enabled"
+option auras.debuffs.filter type="select" label="Which" default="HARMFUL" inherit="auras.debuffs.filter" values=#baa8416b
+option auras.debuffs.max type="range" label="Maximum shown" default=16 inherit="auras.debuffs.max" min=1 max=40 step=1
+option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 inherit="auras.debuffs.maxDuration" min=0 max=7200 step=1 tooltip=#b0f1445f
+option auras.debuffs.sort type="select" label="Order" default="expiration" inherit="auras.debuffs.sort" values=#1cce513e
+option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" inherit="auras.debuffs.swipe" values=#f0e7db26
+option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true inherit="auras.debuffs.showSwipeEdge" tooltip=#f5996ae7
+option auras.debuffs.size type="range" label="Icon size" default=26 inherit="auras.debuffs.size" min=10 max=64 step=1 tooltip=#82819ad4
+option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false inherit="auras.debuffs.separateHeight" tooltip=#5479568a
+option auras.debuffs.height type="range" label="Icon height" default=26 inherit="auras.debuffs.height" min=6 max=64 step=1 hidden
+option auras.debuffs.position type="select" label="Side" default="bottom" inherit="auras.debuffs.position" values=#eef25c33
+option auras.debuffs.alignment type="select" label="Alignment" default="start" inherit="auras.debuffs.alignment" values=#1b2acdcf tooltip=#4d70b052
+option auras.debuffs.growth type="select" label="Grow direction" default="forward" inherit="auras.debuffs.growth" values=#613b9896 tooltip=#a87e8370
+option auras.debuffs.gap type="range" label="Gap to the frame" default=2 inherit="auras.debuffs.gap" min=0 max=30 step=1
+option auras.debuffs.offsetX type="range" label="Offset X" default=0 inherit="auras.debuffs.offsetX" min=-200 max=200 step=1
+option auras.debuffs.offsetY type="range" label="Offset Y" default=0 inherit="auras.debuffs.offsetY" min=-200 max=200 step=1
+option auras.debuffs.lineSize type="range" label="Row / column length" default=0 inherit="auras.debuffs.lineSize" min=0 max=600 step=1 tooltip=#cc2318e4
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
@@ -26641,7 +26754,7 @@ option castbar.holdTime type="range" label="Hold after finish (s)" default=0.4 m
 option castbar.fadeTime type="range" label="Fade out (s)" default=0.3 min=0 max=2 step=0.1
 option auras type="group" label="Buffs & debuffs" defaults={buffs={enabled=false,max=6,size=18},countSize=8,debuffs={enabled=false,max=6,size=18},durationSize=9,enabled=true}
 option auras.enabled type="toggle" label="Enabled" default=true
-option auras.spacing type="range" label="Icon spacing" default=2 min=0 max=10 step=1
+option auras.spacing type="range" label="Icon spacing" default=2 inherit="auras.spacing" min=0 max=10 step=1
 option auras.showDuration type="toggle" label="Show time left" default=true inherit="auras.showDuration"
 option auras.durationPosition type="select" label="Time position" default="CENTER" inherit="auras.durationPosition" values=#e24d164b
 option auras.durationSize type="range" label="Time text size" default=10 inherit="auras.durationSize" min=6 max=32 step=1
@@ -26671,44 +26784,44 @@ option auras.border.background type="background" label="Background" default="Non
 option auras.border.backgroundColor type="color" label="Background colour" inherit="backgroundColor"
 option auras.border.inset type="range" label="Background inset" default=1 inherit="auras.border.inset" min=0 max=16 step=1 tooltip=#5352a615
 option auras.border.padding type="range" label="Content padding" default=2 inherit="auras.border.padding" min=0 max=16 step=1 tooltip=#152e5e50
-option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" values=#82ba4781 tooltip=#5717be99 hidden
-option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
+option auras.sharedSide type="select" label="Buffs and debuffs on one side" default="combined" inherit="auras.sharedSide" values=#82ba4781 tooltip=#5717be99 hidden
+option auras.stackFirst type="select" label="Closest to the frame" default="buffs" inherit="auras.stackFirst" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
-option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
-option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
-option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
-option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
-option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
-option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.buffs.size type="range" label="Icon size" default=20 min=10 max=64 step=1 tooltip=#82819ad4
-option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
-option auras.buffs.height type="range" label="Icon height" default=20 min=6 max=64 step=1 hidden
-option auras.buffs.position type="select" label="Side" default="top" values=#eef25c33
-option auras.buffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
-option auras.buffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
-option auras.buffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
-option auras.buffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
-option auras.buffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.buffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
+option auras.buffs.enabled type="toggle" label="Show buffs" default=true inherit="auras.buffs.enabled"
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" inherit="auras.buffs.filter" values=#0c924c5f
+option auras.buffs.max type="range" label="Maximum shown" default=16 inherit="auras.buffs.max" min=1 max=40 step=1
+option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 inherit="auras.buffs.maxDuration" min=0 max=7200 step=1 tooltip=#b0f1445f
+option auras.buffs.sort type="select" label="Order" default="expiration" inherit="auras.buffs.sort" values=#1cce513e
+option auras.buffs.swipe type="select" label="Cooldown swipe" default="normal" inherit="auras.buffs.swipe" values=#f0e7db26
+option auras.buffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true inherit="auras.buffs.showSwipeEdge" tooltip=#f5996ae7
+option auras.buffs.size type="range" label="Icon size" default=20 inherit="auras.buffs.size" min=10 max=64 step=1 tooltip=#82819ad4
+option auras.buffs.separateHeight type="toggle" label="Separate icon height" default=false inherit="auras.buffs.separateHeight" tooltip=#5479568a
+option auras.buffs.height type="range" label="Icon height" default=20 inherit="auras.buffs.height" min=6 max=64 step=1 hidden
+option auras.buffs.position type="select" label="Side" default="top" inherit="auras.buffs.position" values=#eef25c33
+option auras.buffs.alignment type="select" label="Alignment" default="start" inherit="auras.buffs.alignment" values=#1b2acdcf tooltip=#4d70b052
+option auras.buffs.growth type="select" label="Grow direction" default="forward" inherit="auras.buffs.growth" values=#613b9896 tooltip=#a87e8370
+option auras.buffs.gap type="range" label="Gap to the frame" default=2 inherit="auras.buffs.gap" min=0 max=30 step=1
+option auras.buffs.offsetX type="range" label="Offset X" default=0 inherit="auras.buffs.offsetX" min=-200 max=200 step=1
+option auras.buffs.offsetY type="range" label="Offset Y" default=0 inherit="auras.buffs.offsetY" min=-200 max=200 step=1
+option auras.buffs.lineSize type="range" label="Row / column length" default=0 inherit="auras.buffs.lineSize" min=0 max=600 step=1 tooltip=#cc2318e4
 option auras.debuffs type="group" label="Debuffs"
-option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true
-option auras.debuffs.filter type="select" label="Which" default="HARMFUL" values=#baa8416b
-option auras.debuffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
-option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
-option auras.debuffs.sort type="select" label="Order" default="expiration" values=#1cce513e
-option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" values=#f0e7db26
-option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true tooltip=#f5996ae7
-option auras.debuffs.size type="range" label="Icon size" default=26 min=10 max=64 step=1 tooltip=#82819ad4
-option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false tooltip=#5479568a
-option auras.debuffs.height type="range" label="Icon height" default=26 min=6 max=64 step=1 hidden
-option auras.debuffs.position type="select" label="Side" default="bottom" values=#eef25c33
-option auras.debuffs.alignment type="select" label="Alignment" default="start" values=#1b2acdcf tooltip=#4d70b052
-option auras.debuffs.growth type="select" label="Grow direction" default="forward" values=#613b9896 tooltip=#a87e8370
-option auras.debuffs.gap type="range" label="Gap to the frame" default=2 min=0 max=30 step=1
-option auras.debuffs.offsetX type="range" label="Offset X" default=0 min=-200 max=200 step=1
-option auras.debuffs.offsetY type="range" label="Offset Y" default=0 min=-200 max=200 step=1
-option auras.debuffs.lineSize type="range" label="Row / column length" default=0 min=0 max=600 step=1 tooltip=#cc2318e4
+option auras.debuffs.enabled type="toggle" label="Show debuffs" default=true inherit="auras.debuffs.enabled"
+option auras.debuffs.filter type="select" label="Which" default="HARMFUL" inherit="auras.debuffs.filter" values=#baa8416b
+option auras.debuffs.max type="range" label="Maximum shown" default=16 inherit="auras.debuffs.max" min=1 max=40 step=1
+option auras.debuffs.maxDuration type="range" label="Maximum total duration" default=0 inherit="auras.debuffs.maxDuration" min=0 max=7200 step=1 tooltip=#b0f1445f
+option auras.debuffs.sort type="select" label="Order" default="expiration" inherit="auras.debuffs.sort" values=#1cce513e
+option auras.debuffs.swipe type="select" label="Cooldown swipe" default="normal" inherit="auras.debuffs.swipe" values=#f0e7db26
+option auras.debuffs.showSwipeEdge type="toggle" label="Show swipe edge" default=true inherit="auras.debuffs.showSwipeEdge" tooltip=#f5996ae7
+option auras.debuffs.size type="range" label="Icon size" default=26 inherit="auras.debuffs.size" min=10 max=64 step=1 tooltip=#82819ad4
+option auras.debuffs.separateHeight type="toggle" label="Separate icon height" default=false inherit="auras.debuffs.separateHeight" tooltip=#5479568a
+option auras.debuffs.height type="range" label="Icon height" default=26 inherit="auras.debuffs.height" min=6 max=64 step=1 hidden
+option auras.debuffs.position type="select" label="Side" default="bottom" inherit="auras.debuffs.position" values=#eef25c33
+option auras.debuffs.alignment type="select" label="Alignment" default="start" inherit="auras.debuffs.alignment" values=#1b2acdcf tooltip=#4d70b052
+option auras.debuffs.growth type="select" label="Grow direction" default="forward" inherit="auras.debuffs.growth" values=#613b9896 tooltip=#a87e8370
+option auras.debuffs.gap type="range" label="Gap to the frame" default=2 inherit="auras.debuffs.gap" min=0 max=30 step=1
+option auras.debuffs.offsetX type="range" label="Offset X" default=0 inherit="auras.debuffs.offsetX" min=-200 max=200 step=1
+option auras.debuffs.offsetY type="range" label="Offset Y" default=0 inherit="auras.debuffs.offsetY" min=-200 max=200 step=1
+option auras.debuffs.lineSize type="range" label="Row / column length" default=0 inherit="auras.debuffs.lineSize" min=0 max=600 step=1 tooltip=#cc2318e4
 option auraBar type="group" label="Buff & debuff icon row" defaults={}
 option auraBar.enabled type="toggle" label="Enabled" default=false
 option auraBar.position type="select" label="Row position" default="bottom" values=#4dfc7251
