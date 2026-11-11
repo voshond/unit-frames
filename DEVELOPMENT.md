@@ -59,8 +59,8 @@ our frames (they skip without it; CI syncs it).
 
 ## Forever spell catalogue
 
-`scripts/spell_catalog.py` compiles `UnitFrames/Tracking/DotCatalog.lua` from
-Blizzard client tables exported by [Wago](https://wago.tools/db2). It uses the
+`scripts/spell_catalog.py` compiles `UnitFrames/Tracking/DotCatalog.lua` and
+`UnitFrames/Tracking/BuffCatalog.lua` from Blizzard client tables exported by [Wago](https://wago.tools/db2). It uses the
 exact Forever build and UI-source commit the wow-ui-testing library pins
 (`.wut/clientdata/forever.json`), and verifies the addon's TOC interface
 against that build. Interface `16001` alone is insufficient to select spell

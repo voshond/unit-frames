@@ -17,7 +17,20 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data/forever-spells"
 CACHE = ROOT / "examples/forever-spells"
 OUTPUT = ROOT / "UnitFrames/Tracking/DotCatalog.lua"
+BUFF_OUTPUT = ROOT / "UnitFrames/Tracking/BuffCatalog.lua"
 FIXTURE = ROOT / "tests/fixtures/dot_source.json"
+CLASS_MASKS = {1: "WARRIOR", 2: "PALADIN", 4: "HUNTER", 8: "ROGUE", 16: "PRIEST", 64: "SHAMAN", 128: "MAGE", 256: "WARLOCK", 1024: "DRUID"}
+CLASS_SETS = {3: "MAGE", 4: "WARRIOR", 5: "WARLOCK", 6: "PRIEST", 7: "DRUID", 8: "ROGUE", 9: "HUNTER", 10: "PALADIN", 11: "SHAMAN"}
+BUFF_AURAS = {8: "hot", 69: "absorb"}
+SELF_TARGETS = {1, 5, 27}
+BUFF_EXTRAS = {
+    "hot": ((408120,), (400735,), (401417,)),
+    "proc": ((408514,), (401859, 401877), (412019, 412018)),
+    "external": ((1022,), (6940,), (1044,), (10060,), (29166,), (6346,), (402004,)),
+    "defensive": ((642,), (498,), (871,), (22812,), (5277,), (11958,), (22842,), (19263,), (425294,)),
+    "raid": ((1243,), (21562,), (1459,), (23028,), (1126,), (21849,), (14752,), (27681,), (976,), (27683,),
+        (19740,), (19742,), (20217,), (25782,), (25894,), (25898,), (467,), (6673,), (19506,)),
+}
 TABLES = {
     "SpellEffect": {"ID", "SpellID", "DifficultyID", "Effect", "EffectAura", "EffectAuraPeriod", "EffectBasePointsF", "EffectTriggerSpell", "ImplicitTarget_0", "ImplicitTarget_1", "EffectPointsPerResource", "EffectBonusCoefficient", "BonusCoefficientFromAP", "EffectRealPointsPerLevel", "EffectMiscValue_0"},
     "SpellMisc": {"ID", "SpellID", "DifficultyID", "Attributes_0", "Attributes_1", "DurationIndex", "SchoolMask", "Speed", "LaunchDelay"},
@@ -27,6 +40,7 @@ TABLES = {
     "SpellName": {"ID", "Name_lang"},
     "SpellClassOptions": {"ID", "SpellID", "SpellClassSet", "SpellClassMask_0", "SpellClassMask_1", "SpellClassMask_2", "SpellClassMask_3"},
     "SpellPower": {"ID", "SpellID", "PowerType", "ManaCost", "OptionalCost"},
+    "SpellAuraVisibility": {"ID", "SpellID", "Type", "Flags"},
 }
 
 
@@ -141,7 +155,9 @@ def write_cache(pin, compressed):
 
 
 def fixture_data(tables, pin):
-    spells = {589, 2944, 14914, 15407, 755, 10, 172, 6222, 980, 1014, 1082, 2098, 1079, 1943, 1978, 139}
+    spells = {589, 2944, 14914, 15407, 755, 10, 172, 6222, 980, 1014, 1082, 2098, 1079, 1943, 1978, 139,
+        774, 1058, 25299, 417057, 417068, 27813, 425268, 17, 10901, 8936, 436937, 408120, 408124, 408521,
+        408514, 974, 401859, 401877, 543, 7812, 10060, 14752}
     selected = {}
     for name, rows in tables.items():
         if name == "SpellDuration":
@@ -262,6 +278,87 @@ def compile_catalog(tables, pin):
     return {**pin, "included": included, "excluded": excluded, "builders": builders, "finishers": finishers}
 
 
+def compile_buffs(tables, pin, extras=BUFF_EXTRAS):
+    misc = default_rows(tables["SpellMisc"], "SpellID")
+    names = {int(row["ID"]): row["Name_lang"] for row in tables["SpellName"]}
+    classes = default_rows(tables["SpellClassOptions"], "SpellID")
+    abilities = defaultdict(list)
+    for row in tables["SkillLineAbility"]:
+        abilities[int(row["Spell"])].append(row)
+    effects = defaultdict(list)
+    for row in tables["SpellEffect"]:
+        if int(row["DifficultyID"]) == 0:
+            effects[int(row["SpellID"])].append(row)
+    groups, keys, kinds = defaultdict(list), {}, {}
+    for spell_id, rows in sorted(effects.items()):
+        info = misc.get(spell_id)
+        if not info or int(info["Attributes_0"]) & 0x40:
+            continue
+        auras = [row for row in sorted(rows, key=lambda row: int(row["ID"])) if int(row["Effect"]) == 6]
+        healing = [row for row in auras if int(row["EffectAura"]) in BUFF_AURAS and int(row["ImplicitTarget_0"]) not in SELF_TARGETS]
+        primary = healing or auras
+        aura = int(primary[0]["EffectAura"]) if primary else 0
+        row = classes.get(spell_id, {})
+        masks = tuple(int(row.get(f"SpellClassMask_{index}", 0)) for index in range(4))
+        key = (int(row.get("SpellClassSet", 0)), *masks, int(info["SchoolMask"]), aura) if any(masks) else (spell_id,)
+        keys[spell_id] = key
+        groups[key].append(spell_id)
+        if healing and spell_id in abilities:
+            kinds[key] = BUFF_AURAS[aura]
+
+    def owner(members):
+        mask = 0
+        for spell_id in members:
+            for ability in abilities[spell_id]:
+                mask |= int(ability["ClassMask"])
+        found = {token for bit, token in CLASS_MASKS.items() if mask & bit}
+        if not found:
+            found = {CLASS_SETS[int(classes[spell_id]["SpellClassSet"])] for spell_id in members
+                if spell_id in classes and int(classes[spell_id]["SpellClassSet"]) in CLASS_SETS}
+        return found.pop() if len(found) == 1 else None
+
+    chosen = {(key,): kind for key, kind in kinds.items() if owner(groups[key])}
+    for kind, entries in extras.items():
+        for roots in entries:
+            missing = [root for root in roots if root not in keys]
+            if missing:
+                raise ValueError(f"curated buff roots {missing} are missing from the client data; review BUFF_EXTRAS")
+            family = tuple(dict.fromkeys(keys[root] for root in roots))
+            for key in family:
+                for existing in [existing for existing in chosen if key in existing]:
+                    del chosen[existing]
+            chosen[family] = kind
+    families, by_id = {}, {}
+    for family, kind in chosen.items():
+        members = sorted({spell_id for key in family for spell_id in groups[key]})
+        skill = [spell_id for spell_id in members if spell_id in abilities]
+        root = min(skill or members)
+        cls = owner(members)
+        if not cls:
+            raise ValueError(f"buff family {root} has no single owning class; review BUFF_EXTRAS")
+        families[root] = {"name": names.get(root, ""), "class": cls, "kind": kind, "ids": members}
+        for spell_id in members:
+            if spell_id in by_id:
+                raise ValueError(f"spell {spell_id} belongs to buff families {by_id[spell_id]} and {root}")
+            by_id[spell_id] = root
+    flagged = {int(row["SpellID"]) for row in tables["SpellAuraVisibility"] if int(row["Type"]) == 0}
+    return {**pin, "families": dict(sorted(families.items())), "raidInCombat": sorted(flagged & set(by_id))}
+
+
+def lua_buffs(report):
+    lines = ["local _, ns = ...", "", "ns.BuffCatalog = {", f'\tbuild = "{report["build"]}",',
+        f'\tinterface = {report["interface"]},', f'\tuiCommit = "{report["uiCommit"]}",', "\tfamilies = {"]
+    for root, family in report["families"].items():
+        lines.append(f'\t\t[{root}] = {{ name = {json.dumps(family["name"], ensure_ascii=False)}, class = "{family["class"]}", '
+            f'kind = "{family["kind"]}", ids = {{ ' + ", ".join(map(str, family["ids"])) + " } },")
+    lines.extend(["\t},", "\tbyId = {"])
+    for root, family in report["families"].items():
+        lines.extend(f"\t\t[{spell_id}] = {root}," for spell_id in family["ids"])
+    lines.extend(["\t},", "\traidInCombat = {"])
+    lines.extend(f"\t\t[{spell_id}] = true," for spell_id in report["raidInCombat"])
+    return "\n".join(lines + ["\t},", "}", ""])
+
+
 def lua_catalog(report):
     lines = ["local _, ns = ...", "", "ns.DotCatalog = {", f'\tbuild = "{report["build"]}",',
         f'\tinterface = {report["interface"]},', f'\tuiCommit = "{report["uiCommit"]}",', "\tspells = {"]
@@ -307,11 +404,12 @@ def main():
     else:
         manifest = read_manifest(pin)
         if args.check_pin:
-            output = OUTPUT.read_text()
-            for key, value in pin.items():
-                expected = f'{key} = "{value}"' if isinstance(value, str) else f"{key} = {value}"
-                if expected not in output:
-                    raise ValueError(f"generated catalogue {key} does not match the source pin")
+            for path in (OUTPUT, BUFF_OUTPUT):
+                output = path.read_text()
+                for key, value in pin.items():
+                    expected = f'{key} = "{value}"' if isinstance(value, str) else f"{key} = {value}"
+                    if expected not in output:
+                        raise ValueError(f"generated {path.name} {key} does not match the source pin")
             fixture = json.loads(FIXTURE.read_text())
             if any(fixture[key] != value for key, value in pin.items()):
                 raise ValueError("spell fixtures do not match the source pin")
@@ -326,8 +424,9 @@ def main():
             tables, manifest = read_snapshot(pin)
     validate_evidence(tables)
     report = compile_catalog(tables, pin)
+    buffs = compile_buffs(tables, pin)
     audit = CACHE / pin["build"] / "catalog.json"
-    artifacts = {OUTPUT: lua_catalog(report), FIXTURE: canonical(fixture_data(tables, pin))}
+    artifacts = {OUTPUT: lua_catalog(report), BUFF_OUTPUT: lua_buffs(buffs), FIXTURE: canonical(fixture_data(tables, pin))}
     if args.check:
         for path, expected in artifacts.items():
             if not path.exists() or path.read_text() != expected:
@@ -339,8 +438,8 @@ def main():
             (DATA / "manifest.json").write_text(canonical(manifest))
         for path, content in artifacts.items():
             path.write_text(content)
-    audit.write_text(canonical(report))
-    print(f'Forever {pin["build"]}: {len(report["included"])} DoT ranks, {len(report["excluded"])} exclusions')
+    audit.write_text(canonical({**report, "buffs": buffs["families"]}))
+    print(f'Forever {pin["build"]}: {len(report["included"])} DoT ranks, {len(report["excluded"])} exclusions, {len(buffs["families"])} buff families')
 
 
 if __name__ == "__main__":

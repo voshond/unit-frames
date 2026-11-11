@@ -17,6 +17,12 @@
       },
       {
         "ClassMask": "128",
+        "ID": "2976",
+        "Spell": "543",
+        "SupercedesSpell": "0"
+      },
+      {
+        "ClassMask": "128",
         "ID": "3592",
         "Spell": "10",
         "SupercedesSpell": "0"
@@ -46,9 +52,33 @@
         "SupercedesSpell": "0"
       },
       {
+        "ClassMask": "0",
+        "ID": "4380",
+        "Spell": "7812",
+        "SupercedesSpell": "0"
+      },
+      {
         "ClassMask": "1024",
         "ID": "5129",
         "Spell": "1079",
+        "SupercedesSpell": "0"
+      },
+      {
+        "ClassMask": "1024",
+        "ID": "6278",
+        "Spell": "774",
+        "SupercedesSpell": "0"
+      },
+      {
+        "ClassMask": "1024",
+        "ID": "6279",
+        "Spell": "1058",
+        "SupercedesSpell": "0"
+      },
+      {
+        "ClassMask": "1024",
+        "ID": "6296",
+        "Spell": "8936",
         "SupercedesSpell": "0"
       },
       {
@@ -61,6 +91,24 @@
         "ClassMask": "4",
         "ID": "7281",
         "Spell": "1978",
+        "SupercedesSpell": "0"
+      },
+      {
+        "ClassMask": "16",
+        "ID": "7928",
+        "Spell": "17",
+        "SupercedesSpell": "0"
+      },
+      {
+        "ClassMask": "16",
+        "ID": "7929",
+        "Spell": "10901",
+        "SupercedesSpell": "0"
+      },
+      {
+        "ClassMask": "16",
+        "ID": "7956",
+        "Spell": "14752",
         "SupercedesSpell": "0"
       },
       {
@@ -98,9 +146,164 @@
         "ID": "10628",
         "Spell": "1014",
         "SupercedesSpell": "0"
+      },
+      {
+        "ClassMask": "1024",
+        "ID": "13236",
+        "Spell": "25299",
+        "SupercedesSpell": "0"
+      },
+      {
+        "ClassMask": "16",
+        "ID": "13831",
+        "Spell": "10060",
+        "SupercedesSpell": "0"
+      },
+      {
+        "ClassMask": "16",
+        "ID": "13833",
+        "Spell": "27813",
+        "SupercedesSpell": "0"
+      },
+      {
+        "ClassMask": "16",
+        "ID": "49420",
+        "Spell": "425268",
+        "SupercedesSpell": "0"
+      },
+      {
+        "ClassMask": "1024",
+        "ID": "49512",
+        "Spell": "408124",
+        "SupercedesSpell": "0"
+      },
+      {
+        "ClassMask": "1024",
+        "ID": "49515",
+        "Spell": "408120",
+        "SupercedesSpell": "0"
+      },
+      {
+        "ClassMask": "64",
+        "ID": "49562",
+        "Spell": "408521",
+        "SupercedesSpell": "0"
+      },
+      {
+        "ClassMask": "64",
+        "ID": "49563",
+        "Spell": "408514",
+        "SupercedesSpell": "0"
+      },
+      {
+        "ClassMask": "16",
+        "ID": "59288",
+        "Spell": "401859",
+        "SupercedesSpell": "0"
+      }
+    ],
+    "SpellAuraVisibility": [
+      {
+        "Flags": "2",
+        "ID": "4437",
+        "SpellID": "14752",
+        "Type": "0"
+      },
+      {
+        "Flags": "1",
+        "ID": "5209",
+        "SpellID": "401877",
+        "Type": "0"
+      },
+      {
+        "Flags": "1",
+        "ID": "5210",
+        "SpellID": "401877",
+        "Type": "1"
+      },
+      {
+        "Flags": "1",
+        "ID": "5374",
+        "SpellID": "408124",
+        "Type": "0"
+      },
+      {
+        "Flags": "1",
+        "ID": "5375",
+        "SpellID": "408124",
+        "Type": "1"
+      },
+      {
+        "Flags": "1",
+        "ID": "5405",
+        "SpellID": "408120",
+        "Type": "0"
+      },
+      {
+        "Flags": "1",
+        "ID": "5406",
+        "SpellID": "408120",
+        "Type": "1"
+      },
+      {
+        "Flags": "1",
+        "ID": "5435",
+        "SpellID": "436937",
+        "Type": "0"
+      },
+      {
+        "Flags": "1",
+        "ID": "5436",
+        "SpellID": "436937",
+        "Type": "1"
+      },
+      {
+        "Flags": "1",
+        "ID": "5455",
+        "SpellID": "417057",
+        "Type": "0"
+      },
+      {
+        "Flags": "1",
+        "ID": "5456",
+        "SpellID": "417057",
+        "Type": "1"
+      },
+      {
+        "Flags": "1",
+        "ID": "5473",
+        "SpellID": "417068",
+        "Type": "0"
+      },
+      {
+        "Flags": "1",
+        "ID": "5474",
+        "SpellID": "417068",
+        "Type": "1"
+      },
+      {
+        "Flags": "1",
+        "ID": "5522",
+        "SpellID": "425268",
+        "Type": "0"
+      },
+      {
+        "Flags": "1",
+        "ID": "5523",
+        "SpellID": "425268",
+        "Type": "1"
       }
     ],
     "SpellClassOptions": [
+      {
+        "ID": "43436",
+        "SpellClassMask_0": "8",
+        "SpellClassMask_1": "0",
+        "SpellClassMask_2": "0",
+        "SpellClassMask_3": "0",
+        "SpellClassSet": "3",
+        "SpellID": "543"
+      },
       {
         "ID": "43438",
         "SpellClassMask_0": "2",
@@ -156,6 +359,15 @@
         "SpellID": "1978"
       },
       {
+        "ID": "43582",
+        "SpellClassMask_0": "16",
+        "SpellClassMask_1": "0",
+        "SpellClassMask_2": "0",
+        "SpellClassMask_3": "0",
+        "SpellClassSet": "7",
+        "SpellID": "774"
+      },
+      {
         "ID": "43583",
         "SpellClassMask_0": "4096",
         "SpellClassMask_1": "0",
@@ -181,6 +393,15 @@
         "SpellClassMask_3": "0",
         "SpellClassSet": "5",
         "SpellID": "1014"
+      },
+      {
+        "ID": "43641",
+        "SpellClassMask_0": "16",
+        "SpellClassMask_1": "0",
+        "SpellClassMask_2": "0",
+        "SpellClassMask_3": "0",
+        "SpellClassSet": "7",
+        "SpellID": "1058"
       },
       {
         "ID": "43662",
@@ -228,6 +449,15 @@
         "SpellID": "980"
       },
       {
+        "ID": "44135",
+        "SpellClassMask_0": "64",
+        "SpellClassMask_1": "0",
+        "SpellClassMask_2": "0",
+        "SpellClassMask_3": "0",
+        "SpellClassSet": "7",
+        "SpellID": "8936"
+      },
+      {
         "ID": "44151",
         "SpellClassMask_0": "1048576",
         "SpellClassMask_1": "0",
@@ -237,6 +467,51 @@
         "SpellID": "14914"
       },
       {
+        "ID": "44217",
+        "SpellClassMask_0": "1",
+        "SpellClassMask_1": "0",
+        "SpellClassMask_2": "0",
+        "SpellClassMask_3": "0",
+        "SpellClassSet": "6",
+        "SpellID": "17"
+      },
+      {
+        "ID": "44360",
+        "SpellClassMask_0": "1",
+        "SpellClassMask_1": "0",
+        "SpellClassMask_2": "0",
+        "SpellClassMask_3": "0",
+        "SpellClassSet": "6",
+        "SpellID": "10901"
+      },
+      {
+        "ID": "44362",
+        "SpellClassMask_0": "-2147483648",
+        "SpellClassMask_1": "0",
+        "SpellClassMask_2": "0",
+        "SpellClassMask_3": "0",
+        "SpellClassSet": "6",
+        "SpellID": "10060"
+      },
+      {
+        "ID": "45234",
+        "SpellClassMask_0": "33554432",
+        "SpellClassMask_1": "0",
+        "SpellClassMask_2": "0",
+        "SpellClassMask_3": "0",
+        "SpellClassSet": "5",
+        "SpellID": "7812"
+      },
+      {
+        "ID": "45288",
+        "SpellClassMask_0": "-2147483648",
+        "SpellClassMask_1": "0",
+        "SpellClassMask_2": "0",
+        "SpellClassMask_3": "0",
+        "SpellClassSet": "6",
+        "SpellID": "14752"
+      },
+      {
         "ID": "45484",
         "SpellClassMask_0": "8388608",
         "SpellClassMask_1": "0",
@@ -244,6 +519,123 @@
         "SpellClassMask_3": "0",
         "SpellClassSet": "6",
         "SpellID": "15407"
+      },
+      {
+        "ID": "47047",
+        "SpellClassMask_0": "16",
+        "SpellClassMask_1": "0",
+        "SpellClassMask_2": "0",
+        "SpellClassMask_3": "0",
+        "SpellClassSet": "7",
+        "SpellID": "25299"
+      },
+      {
+        "ID": "47301",
+        "SpellClassMask_0": "16",
+        "SpellClassMask_1": "0",
+        "SpellClassMask_2": "0",
+        "SpellClassMask_3": "0",
+        "SpellClassSet": "7",
+        "SpellID": "27813"
+      },
+      {
+        "ID": "70398",
+        "SpellClassMask_0": "0",
+        "SpellClassMask_1": "32",
+        "SpellClassMask_2": "1024",
+        "SpellClassMask_3": "0",
+        "SpellClassSet": "6",
+        "SpellID": "401859"
+      },
+      {
+        "ID": "70400",
+        "SpellClassMask_0": "0",
+        "SpellClassMask_1": "0",
+        "SpellClassMask_2": "1024",
+        "SpellClassMask_3": "0",
+        "SpellClassSet": "6",
+        "SpellID": "401877"
+      },
+      {
+        "ID": "71078",
+        "SpellClassMask_0": "0",
+        "SpellClassMask_1": "67108864",
+        "SpellClassMask_2": "0",
+        "SpellClassMask_3": "0",
+        "SpellClassSet": "7",
+        "SpellID": "408120"
+      },
+      {
+        "ID": "71081",
+        "SpellClassMask_0": "0",
+        "SpellClassMask_1": "16",
+        "SpellClassMask_2": "0",
+        "SpellClassMask_3": "0",
+        "SpellClassSet": "7",
+        "SpellID": "408124"
+      },
+      {
+        "ID": "71166",
+        "SpellClassMask_0": "0",
+        "SpellClassMask_1": "1024",
+        "SpellClassMask_2": "0",
+        "SpellClassMask_3": "0",
+        "SpellClassSet": "11",
+        "SpellID": "408514"
+      },
+      {
+        "ID": "71170",
+        "SpellClassMask_0": "0",
+        "SpellClassMask_1": "0",
+        "SpellClassMask_2": "16",
+        "SpellClassMask_3": "0",
+        "SpellClassSet": "11",
+        "SpellID": "408521"
+      },
+      {
+        "ID": "72212",
+        "SpellClassMask_0": "16",
+        "SpellClassMask_1": "0",
+        "SpellClassMask_2": "0",
+        "SpellClassMask_3": "0",
+        "SpellClassSet": "7",
+        "SpellID": "417057"
+      },
+      {
+        "ID": "72222",
+        "SpellClassMask_0": "16",
+        "SpellClassMask_1": "0",
+        "SpellClassMask_2": "0",
+        "SpellClassMask_3": "0",
+        "SpellClassSet": "7",
+        "SpellID": "417068"
+      },
+      {
+        "ID": "72777",
+        "SpellClassMask_0": "64",
+        "SpellClassMask_1": "0",
+        "SpellClassMask_2": "0",
+        "SpellClassMask_3": "0",
+        "SpellClassSet": "6",
+        "SpellID": "425268"
+      },
+      {
+        "ID": "73074",
+        "SpellClassMask_0": "0",
+        "SpellClassMask_1": "1024",
+        "SpellClassMask_2": "0",
+        "SpellClassMask_3": "0",
+        "SpellClassSet": "11",
+        "SpellID": "974"
+      },
+      {
+        "ID": "74795",
+        "SpellClassMask_0": "64",
+        "SpellClassMask_1": "0",
+        "SpellClassMask_2": "0",
+        "SpellClassMask_3": "0",
+        "SpellClassSet": "7",
+        "SpellID": "436937"
       }
     ],
     "SpellDuration": [
@@ -254,10 +646,22 @@
         "MaxDuration": "10000"
       },
       {
+        "Duration": "600000",
+        "DurationPerResource": "0",
+        "ID": "6",
+        "MaxDuration": "600000"
+      },
+      {
         "Duration": "15000",
         "DurationPerResource": "0",
         "ID": "8",
         "MaxDuration": "15000"
+      },
+      {
+        "Duration": "30000",
+        "DurationPerResource": "0",
+        "ID": "9",
+        "MaxDuration": "30000"
       },
       {
         "Duration": "3000",
@@ -278,16 +682,40 @@
         "MaxDuration": "8000"
       },
       {
+        "Duration": "6000",
+        "DurationPerResource": "0",
+        "ID": "32",
+        "MaxDuration": "6000"
+      },
+      {
+        "Duration": "3600000",
+        "DurationPerResource": "0",
+        "ID": "42",
+        "MaxDuration": "3600000"
+      },
+      {
         "Duration": "18000",
         "DurationPerResource": "0",
         "ID": "85",
         "MaxDuration": "18000"
       },
       {
+        "Duration": "21000",
+        "DurationPerResource": "0",
+        "ID": "86",
+        "MaxDuration": "21000"
+      },
+      {
         "Duration": "24000",
         "DurationPerResource": "0",
         "ID": "106",
         "MaxDuration": "24000"
+      },
+      {
+        "Duration": "7000",
+        "DurationPerResource": "0",
+        "ID": "165",
+        "MaxDuration": "7000"
       },
       {
         "Duration": "6000",
@@ -297,6 +725,40 @@
       }
     ],
     "SpellEffect": [
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "69",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "162",
+        "EffectBonusCoefficient": "0",
+        "EffectMiscValue_0": "4",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "678894",
+        "ImplicitTarget_0": "1",
+        "ImplicitTarget_1": "0",
+        "SpellID": "543"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "74",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "0",
+        "EffectBonusCoefficient": "0",
+        "EffectMiscValue_0": "4",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "678895",
+        "ImplicitTarget_0": "1",
+        "ImplicitTarget_1": "0",
+        "SpellID": "543"
+      },
       {
         "BonusCoefficientFromAP": "0",
         "DifficultyID": "0",
@@ -419,6 +881,23 @@
       {
         "BonusCoefficientFromAP": "0",
         "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "8",
+        "EffectAuraPeriod": "3000",
+        "EffectBasePointsF": "8",
+        "EffectBonusCoefficient": "0.20000000298",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "679789",
+        "ImplicitTarget_0": "21",
+        "ImplicitTarget_1": "0",
+        "SpellID": "774"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
         "Effect": "58",
         "EffectAura": "0",
         "EffectAuraPeriod": "0",
@@ -500,6 +979,40 @@
         "ImplicitTarget_0": "6",
         "ImplicitTarget_1": "0",
         "SpellID": "1014"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "4",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "150",
+        "EffectBonusCoefficient": "1",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "680168",
+        "ImplicitTarget_0": "21",
+        "ImplicitTarget_1": "0",
+        "SpellID": "974"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "8",
+        "EffectAuraPeriod": "3000",
+        "EffectBasePointsF": "12",
+        "EffectBonusCoefficient": "0.20000000298",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "680350",
+        "ImplicitTarget_0": "21",
+        "ImplicitTarget_1": "0",
+        "SpellID": "1058"
       },
       {
         "BonusCoefficientFromAP": "0",
@@ -606,6 +1119,40 @@
       {
         "BonusCoefficientFromAP": "0",
         "DifficultyID": "0",
+        "Effect": "10",
+        "EffectAura": "0",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "87",
+        "EffectBonusCoefficient": "0.28600001335",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "1.79999995232",
+        "EffectTriggerSpell": "0",
+        "ID": "686949",
+        "ImplicitTarget_0": "21",
+        "ImplicitTarget_1": "0",
+        "SpellID": "8936"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "8",
+        "EffectAuraPeriod": "3000",
+        "EffectBasePointsF": "13",
+        "EffectBonusCoefficient": "0.07100000232",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "686950",
+        "ImplicitTarget_0": "21",
+        "ImplicitTarget_1": "0",
+        "SpellID": "8936"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
         "Effect": "2",
         "EffectAura": "0",
         "EffectAuraPeriod": "0",
@@ -641,6 +1188,125 @@
         "BonusCoefficientFromAP": "0",
         "DifficultyID": "0",
         "Effect": "6",
+        "EffectAura": "69",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "44",
+        "EffectBonusCoefficient": "0.10000000149",
+        "EffectMiscValue_0": "127",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0.80000001192",
+        "EffectTriggerSpell": "0",
+        "ID": "687563",
+        "ImplicitTarget_0": "57",
+        "ImplicitTarget_1": "0",
+        "SpellID": "17"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "69",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "928",
+        "EffectBonusCoefficient": "0.10000000149",
+        "EffectMiscValue_0": "127",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "4.30000019073",
+        "EffectTriggerSpell": "0",
+        "ID": "688352",
+        "ImplicitTarget_0": "57",
+        "ImplicitTarget_1": "0",
+        "SpellID": "10901"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "136",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "20",
+        "EffectBonusCoefficient": "1",
+        "EffectMiscValue_0": "126",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "688356",
+        "ImplicitTarget_0": "21",
+        "ImplicitTarget_1": "0",
+        "SpellID": "10060"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "79",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "20",
+        "EffectBonusCoefficient": "1",
+        "EffectMiscValue_0": "126",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "688357",
+        "ImplicitTarget_0": "21",
+        "ImplicitTarget_1": "0",
+        "SpellID": "10060"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "69",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "305",
+        "EffectBonusCoefficient": "0",
+        "EffectMiscValue_0": "127",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "2.29999995232",
+        "EffectTriggerSpell": "0",
+        "ID": "692541",
+        "ImplicitTarget_0": "27",
+        "ImplicitTarget_1": "0",
+        "SpellID": "7812"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "1",
+        "EffectAura": "0",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "0",
+        "EffectBonusCoefficient": "0",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "692542",
+        "ImplicitTarget_0": "1",
+        "ImplicitTarget_1": "0",
+        "SpellID": "7812"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "29",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "17",
+        "EffectBonusCoefficient": "0",
+        "EffectMiscValue_0": "4",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "692824",
+        "ImplicitTarget_0": "21",
+        "ImplicitTarget_1": "0",
+        "SpellID": "14752"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
         "EffectAura": "3",
         "EffectAuraPeriod": "1000",
         "EffectBasePointsF": "21",
@@ -670,6 +1336,363 @@
         "ImplicitTarget_0": "6",
         "ImplicitTarget_1": "0",
         "SpellID": "15407"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "8",
+        "EffectAuraPeriod": "3000",
+        "EffectBasePointsF": "194",
+        "EffectBonusCoefficient": "0.20000000298",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "702232",
+        "ImplicitTarget_0": "21",
+        "ImplicitTarget_1": "0",
+        "SpellID": "25299"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "226",
+        "EffectAuraPeriod": "2000",
+        "EffectBasePointsF": "1",
+        "EffectBonusCoefficient": "0",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "704159",
+        "ImplicitTarget_0": "1",
+        "ImplicitTarget_1": "0",
+        "SpellID": "27813"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "3",
+        "EffectAura": "0",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "172",
+        "EffectBonusCoefficient": "0.42899999022",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "1047961",
+        "ImplicitTarget_0": "57",
+        "ImplicitTarget_1": "0",
+        "SpellID": "401859"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "3",
+        "EffectAura": "0",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "5",
+        "EffectBonusCoefficient": "0",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "1047962",
+        "ImplicitTarget_0": "57",
+        "ImplicitTarget_1": "0",
+        "SpellID": "401859"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "4",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "0",
+        "EffectBonusCoefficient": "0",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "1047993",
+        "ImplicitTarget_0": "57",
+        "ImplicitTarget_1": "0",
+        "SpellID": "401877"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "8",
+        "EffectAuraPeriod": "1000",
+        "EffectBasePointsF": "40",
+        "EffectBonusCoefficient": "0.03299999982",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "1",
+        "EffectTriggerSpell": "0",
+        "ID": "1072065",
+        "ImplicitTarget_0": "132",
+        "ImplicitTarget_1": "31",
+        "SpellID": "408120"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "8",
+        "EffectAuraPeriod": "1000",
+        "EffectBasePointsF": "4",
+        "EffectBonusCoefficient": "0",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "1072071",
+        "ImplicitTarget_0": "21",
+        "ImplicitTarget_1": "0",
+        "SpellID": "408124"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "4",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "57",
+        "EffectBonusCoefficient": "0.27399998903",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "1072072",
+        "ImplicitTarget_0": "21",
+        "ImplicitTarget_1": "0",
+        "SpellID": "408124"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "4",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "28",
+        "EffectBonusCoefficient": "0",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "1072692",
+        "ImplicitTarget_0": "21",
+        "ImplicitTarget_1": "0",
+        "SpellID": "408514"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "149",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "30",
+        "EffectBonusCoefficient": "0",
+        "EffectMiscValue_0": "126",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "1072693",
+        "ImplicitTarget_0": "21",
+        "ImplicitTarget_1": "0",
+        "SpellID": "408514"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "3",
+        "EffectAura": "0",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "0",
+        "EffectBonusCoefficient": "0.21400000155",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "3.70000004768",
+        "EffectTriggerSpell": "0",
+        "ID": "1072707",
+        "ImplicitTarget_0": "21",
+        "ImplicitTarget_1": "0",
+        "SpellID": "408521"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "8",
+        "EffectAuraPeriod": "3000",
+        "EffectBasePointsF": "89",
+        "EffectBonusCoefficient": "0.10000000149",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "1072708",
+        "ImplicitTarget_0": "21",
+        "ImplicitTarget_1": "0",
+        "SpellID": "408521"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "4",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "25",
+        "EffectBonusCoefficient": "0",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "1072709",
+        "ImplicitTarget_0": "21",
+        "ImplicitTarget_1": "0",
+        "SpellID": "408521"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "4",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "5",
+        "EffectBonusCoefficient": "0",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "1075729",
+        "ImplicitTarget_0": "132",
+        "ImplicitTarget_1": "31",
+        "SpellID": "408120"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "8",
+        "EffectAuraPeriod": "3000",
+        "EffectBasePointsF": "8",
+        "EffectBonusCoefficient": "0.07999999821",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "1088371",
+        "ImplicitTarget_0": "21",
+        "ImplicitTarget_1": "0",
+        "SpellID": "417057"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "8",
+        "EffectAuraPeriod": "3000",
+        "EffectBasePointsF": "222",
+        "EffectBonusCoefficient": "0.20000000298",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "1088382",
+        "ImplicitTarget_0": "21",
+        "ImplicitTarget_1": "0",
+        "SpellID": "417068"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "8",
+        "EffectAuraPeriod": "3000",
+        "EffectBasePointsF": "9",
+        "EffectBonusCoefficient": "0.12649999559",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "1102958",
+        "ImplicitTarget_0": "21",
+        "ImplicitTarget_1": "0",
+        "SpellID": "425268"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "149",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "30",
+        "EffectBonusCoefficient": "0",
+        "EffectMiscValue_0": "126",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "1108155",
+        "ImplicitTarget_0": "21",
+        "ImplicitTarget_1": "0",
+        "SpellID": "974"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "10",
+        "EffectAura": "0",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "91",
+        "EffectBonusCoefficient": "0.20000000298",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "1.79999995232",
+        "EffectTriggerSpell": "0",
+        "ID": "1128562",
+        "ImplicitTarget_0": "21",
+        "ImplicitTarget_1": "0",
+        "SpellID": "436937"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "8",
+        "EffectAuraPeriod": "3000",
+        "EffectBasePointsF": "14",
+        "EffectBonusCoefficient": "0.05000000075",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "1128563",
+        "ImplicitTarget_0": "21",
+        "ImplicitTarget_1": "0",
+        "SpellID": "436937"
+      },
+      {
+        "BonusCoefficientFromAP": "0",
+        "DifficultyID": "0",
+        "Effect": "6",
+        "EffectAura": "4",
+        "EffectAuraPeriod": "0",
+        "EffectBasePointsF": "1",
+        "EffectBonusCoefficient": "0",
+        "EffectMiscValue_0": "0",
+        "EffectPointsPerResource": "0",
+        "EffectRealPointsPerLevel": "0",
+        "EffectTriggerSpell": "0",
+        "ID": "1139161",
+        "ImplicitTarget_0": "21",
+        "ImplicitTarget_1": "0",
+        "SpellID": "408514"
       },
       {
         "BonusCoefficientFromAP": "0",
@@ -864,6 +1887,13 @@
         "ChannelInterruptFlags_0": "0",
         "ChannelInterruptFlags_1": "0",
         "DifficultyID": "0",
+        "ID": "123485",
+        "SpellID": "543"
+      },
+      {
+        "ChannelInterruptFlags_0": "0",
+        "ChannelInterruptFlags_1": "0",
+        "DifficultyID": "0",
         "ID": "123500",
         "SpellID": "172"
       },
@@ -899,8 +1929,22 @@
         "ChannelInterruptFlags_0": "0",
         "ChannelInterruptFlags_1": "0",
         "DifficultyID": "0",
+        "ID": "123889",
+        "SpellID": "774"
+      },
+      {
+        "ChannelInterruptFlags_0": "0",
+        "ChannelInterruptFlags_1": "0",
+        "DifficultyID": "0",
         "ID": "123940",
         "SpellID": "1014"
+      },
+      {
+        "ChannelInterruptFlags_0": "0",
+        "ChannelInterruptFlags_1": "0",
+        "DifficultyID": "0",
+        "ID": "124037",
+        "SpellID": "1058"
       },
       {
         "ChannelInterruptFlags_0": "0",
@@ -927,8 +1971,29 @@
         "ChannelInterruptFlags_0": "0",
         "ChannelInterruptFlags_1": "0",
         "DifficultyID": "0",
+        "ID": "125763",
+        "SpellID": "8936"
+      },
+      {
+        "ChannelInterruptFlags_0": "0",
+        "ChannelInterruptFlags_1": "0",
+        "DifficultyID": "0",
         "ID": "125817",
         "SpellID": "14914"
+      },
+      {
+        "ChannelInterruptFlags_0": "0",
+        "ChannelInterruptFlags_1": "0",
+        "DifficultyID": "0",
+        "ID": "125973",
+        "SpellID": "17"
+      },
+      {
+        "ChannelInterruptFlags_0": "0",
+        "ChannelInterruptFlags_1": "0",
+        "DifficultyID": "0",
+        "ID": "126213",
+        "SpellID": "10901"
       },
       {
         "ChannelInterruptFlags_0": "31756",
@@ -936,9 +2001,90 @@
         "DifficultyID": "0",
         "ID": "127538",
         "SpellID": "15407"
+      },
+      {
+        "ChannelInterruptFlags_0": "0",
+        "ChannelInterruptFlags_1": "0",
+        "DifficultyID": "0",
+        "ID": "129497",
+        "SpellID": "25299"
+      },
+      {
+        "ChannelInterruptFlags_0": "0",
+        "ChannelInterruptFlags_1": "0",
+        "DifficultyID": "0",
+        "ID": "193451",
+        "SpellID": "401877"
+      },
+      {
+        "ChannelInterruptFlags_0": "0",
+        "ChannelInterruptFlags_1": "0",
+        "DifficultyID": "0",
+        "ID": "195631",
+        "SpellID": "408120"
+      },
+      {
+        "ChannelInterruptFlags_0": "0",
+        "ChannelInterruptFlags_1": "0",
+        "DifficultyID": "0",
+        "ID": "195634",
+        "SpellID": "408124"
+      },
+      {
+        "ChannelInterruptFlags_0": "0",
+        "ChannelInterruptFlags_1": "0",
+        "DifficultyID": "0",
+        "ID": "195812",
+        "SpellID": "408521"
+      },
+      {
+        "ChannelInterruptFlags_0": "0",
+        "ChannelInterruptFlags_1": "0",
+        "DifficultyID": "0",
+        "ID": "198483",
+        "SpellID": "417057"
+      },
+      {
+        "ChannelInterruptFlags_0": "0",
+        "ChannelInterruptFlags_1": "0",
+        "DifficultyID": "0",
+        "ID": "198493",
+        "SpellID": "417068"
+      },
+      {
+        "ChannelInterruptFlags_0": "0",
+        "ChannelInterruptFlags_1": "0",
+        "DifficultyID": "0",
+        "ID": "200788",
+        "SpellID": "425268"
+      },
+      {
+        "ChannelInterruptFlags_0": "0",
+        "ChannelInterruptFlags_1": "0",
+        "DifficultyID": "0",
+        "ID": "201681",
+        "SpellID": "974"
+      },
+      {
+        "ChannelInterruptFlags_0": "0",
+        "ChannelInterruptFlags_1": "0",
+        "DifficultyID": "0",
+        "ID": "204619",
+        "SpellID": "436937"
       }
     ],
     "SpellMisc": [
+      {
+        "Attributes_0": "65536",
+        "Attributes_1": "0",
+        "DifficultyID": "0",
+        "DurationIndex": "9",
+        "ID": "314056",
+        "LaunchDelay": "0",
+        "SchoolMask": "4",
+        "Speed": "0",
+        "SpellID": "543"
+      },
       {
         "Attributes_0": "65536",
         "Attributes_1": "0",
@@ -1006,6 +2152,17 @@
         "SpellID": "1978"
       },
       {
+        "Attributes_0": "65536",
+        "Attributes_1": "0",
+        "DifficultyID": "0",
+        "DurationIndex": "29",
+        "ID": "314827",
+        "LaunchDelay": "0",
+        "SchoolMask": "8",
+        "Speed": "0",
+        "SpellID": "774"
+      },
+      {
         "Attributes_0": "262160",
         "Attributes_1": "201327104",
         "DifficultyID": "0",
@@ -1037,6 +2194,28 @@
         "SchoolMask": "32",
         "Speed": "0",
         "SpellID": "1014"
+      },
+      {
+        "Attributes_0": "327680",
+        "Attributes_1": "0",
+        "DifficultyID": "0",
+        "DurationIndex": "6",
+        "ID": "315165",
+        "LaunchDelay": "0",
+        "SchoolMask": "8",
+        "Speed": "0",
+        "SpellID": "974"
+      },
+      {
+        "Attributes_0": "65536",
+        "Attributes_1": "0",
+        "DifficultyID": "0",
+        "DurationIndex": "29",
+        "ID": "315323",
+        "LaunchDelay": "0",
+        "SchoolMask": "8",
+        "Speed": "0",
+        "SpellID": "1058"
       },
       {
         "Attributes_0": "65536",
@@ -1097,12 +2276,78 @@
         "Attributes_0": "65536",
         "Attributes_1": "0",
         "DifficultyID": "0",
+        "DurationIndex": "86",
+        "ID": "321073",
+        "LaunchDelay": "0",
+        "SchoolMask": "8",
+        "Speed": "0",
+        "SpellID": "8936"
+      },
+      {
+        "Attributes_0": "65536",
+        "Attributes_1": "0",
+        "DifficultyID": "0",
         "DurationIndex": "1",
         "ID": "321204",
         "LaunchDelay": "0",
         "SchoolMask": "2",
         "Speed": "0",
         "SpellID": "14914"
+      },
+      {
+        "Attributes_0": "329728",
+        "Attributes_1": "0",
+        "DifficultyID": "0",
+        "DurationIndex": "9",
+        "ID": "321562",
+        "LaunchDelay": "0",
+        "SchoolMask": "2",
+        "Speed": "0",
+        "SpellID": "17"
+      },
+      {
+        "Attributes_0": "327680",
+        "Attributes_1": "0",
+        "DifficultyID": "0",
+        "DurationIndex": "9",
+        "ID": "322200",
+        "LaunchDelay": "0",
+        "SchoolMask": "2",
+        "Speed": "0",
+        "SpellID": "10901"
+      },
+      {
+        "Attributes_0": "327680",
+        "Attributes_1": "0",
+        "DifficultyID": "0",
+        "DurationIndex": "8",
+        "ID": "322204",
+        "LaunchDelay": "0",
+        "SchoolMask": "2",
+        "Speed": "0",
+        "SpellID": "10060"
+      },
+      {
+        "Attributes_0": "0",
+        "Attributes_1": "131072",
+        "DifficultyID": "0",
+        "DurationIndex": "9",
+        "ID": "325733",
+        "LaunchDelay": "0",
+        "SchoolMask": "32",
+        "Speed": "0",
+        "SpellID": "7812"
+      },
+      {
+        "Attributes_0": "65536",
+        "Attributes_1": "0",
+        "DifficultyID": "0",
+        "DurationIndex": "42",
+        "ID": "325964",
+        "LaunchDelay": "0",
+        "SchoolMask": "2",
+        "Speed": "0",
+        "SpellID": "14752"
       },
       {
         "Attributes_0": "65536",
@@ -1114,12 +2359,148 @@
         "SchoolMask": "32",
         "Speed": "0",
         "SpellID": "15407"
+      },
+      {
+        "Attributes_0": "65536",
+        "Attributes_1": "0",
+        "DifficultyID": "0",
+        "DurationIndex": "29",
+        "ID": "333475",
+        "LaunchDelay": "0",
+        "SchoolMask": "8",
+        "Speed": "0",
+        "SpellID": "25299"
+      },
+      {
+        "Attributes_0": "65536",
+        "Attributes_1": "0",
+        "DifficultyID": "0",
+        "DurationIndex": "32",
+        "ID": "335014",
+        "LaunchDelay": "0",
+        "SchoolMask": "2",
+        "Speed": "0",
+        "SpellID": "27813"
+      },
+      {
+        "Attributes_0": "65536",
+        "Attributes_1": "0",
+        "DifficultyID": "0",
+        "DurationIndex": "0",
+        "ID": "660764",
+        "LaunchDelay": "0",
+        "SchoolMask": "2",
+        "Speed": "40",
+        "SpellID": "401859"
+      },
+      {
+        "Attributes_0": "134217728",
+        "Attributes_1": "1024",
+        "DifficultyID": "0",
+        "DurationIndex": "9",
+        "ID": "660783",
+        "LaunchDelay": "0",
+        "SchoolMask": "2",
+        "Speed": "0",
+        "SpellID": "401877"
+      },
+      {
+        "Attributes_0": "65536",
+        "Attributes_1": "0",
+        "DifficultyID": "0",
+        "DurationIndex": "165",
+        "ID": "698363",
+        "LaunchDelay": "0",
+        "SchoolMask": "8",
+        "Speed": "0",
+        "SpellID": "408120"
+      },
+      {
+        "Attributes_0": "65536",
+        "Attributes_1": "0",
+        "DifficultyID": "0",
+        "DurationIndex": "165",
+        "ID": "698367",
+        "LaunchDelay": "0",
+        "SchoolMask": "8",
+        "Speed": "0",
+        "SpellID": "408124"
+      },
+      {
+        "Attributes_0": "327680",
+        "Attributes_1": "0",
+        "DifficultyID": "0",
+        "DurationIndex": "6",
+        "ID": "698753",
+        "LaunchDelay": "0",
+        "SchoolMask": "8",
+        "Speed": "0",
+        "SpellID": "408514"
+      },
+      {
+        "Attributes_0": "65536",
+        "Attributes_1": "0",
+        "DifficultyID": "0",
+        "DurationIndex": "8",
+        "ID": "698760",
+        "LaunchDelay": "0",
+        "SchoolMask": "8",
+        "Speed": "0",
+        "SpellID": "408521"
+      },
+      {
+        "Attributes_0": "65536",
+        "Attributes_1": "0",
+        "DifficultyID": "0",
+        "DurationIndex": "29",
+        "ID": "707394",
+        "LaunchDelay": "0",
+        "SchoolMask": "8",
+        "Speed": "0",
+        "SpellID": "417057"
+      },
+      {
+        "Attributes_0": "65536",
+        "Attributes_1": "0",
+        "DifficultyID": "0",
+        "DurationIndex": "29",
+        "ID": "707405",
+        "LaunchDelay": "0",
+        "SchoolMask": "8",
+        "Speed": "0",
+        "SpellID": "417068"
+      },
+      {
+        "Attributes_0": "65536",
+        "Attributes_1": "0",
+        "DifficultyID": "0",
+        "DurationIndex": "8",
+        "ID": "715751",
+        "LaunchDelay": "0",
+        "SchoolMask": "2",
+        "Speed": "0",
+        "SpellID": "425268"
+      },
+      {
+        "Attributes_0": "65536",
+        "Attributes_1": "0",
+        "DifficultyID": "0",
+        "DurationIndex": "86",
+        "ID": "729240",
+        "LaunchDelay": "0",
+        "SchoolMask": "8",
+        "Speed": "0",
+        "SpellID": "436937"
       }
     ],
     "SpellName": [
       {
         "ID": "10",
         "Name_lang": "Blizzard"
+      },
+      {
+        "ID": "17",
+        "Name_lang": "Power Word: Shield"
       },
       {
         "ID": "139",
@@ -1130,6 +2511,10 @@
         "Name_lang": "Corruption"
       },
       {
+        "ID": "543",
+        "Name_lang": "Fire Ward"
+      },
+      {
         "ID": "589",
         "Name_lang": "Shadow Word: Pain"
       },
@@ -1138,12 +2523,24 @@
         "Name_lang": "Health Funnel"
       },
       {
+        "ID": "774",
+        "Name_lang": "Rejuvenation"
+      },
+      {
+        "ID": "974",
+        "Name_lang": "Earth Shield"
+      },
+      {
         "ID": "980",
         "Name_lang": "Bane of Agony"
       },
       {
         "ID": "1014",
         "Name_lang": "Bane of Agony"
+      },
+      {
+        "ID": "1058",
+        "Name_lang": "Rejuvenation"
       },
       {
         "ID": "1079",
@@ -1174,15 +2571,90 @@
         "Name_lang": "Corruption"
       },
       {
+        "ID": "7812",
+        "Name_lang": "Sacrifice"
+      },
+      {
+        "ID": "8936",
+        "Name_lang": "Regrowth"
+      },
+      {
+        "ID": "10060",
+        "Name_lang": "Power Infusion"
+      },
+      {
+        "ID": "10901",
+        "Name_lang": "Power Word: Shield"
+      },
+      {
+        "ID": "14752",
+        "Name_lang": "Divine Spirit"
+      },
+      {
         "ID": "14914",
         "Name_lang": "Holy Fire"
       },
       {
         "ID": "15407",
         "Name_lang": "Mind Flay"
+      },
+      {
+        "ID": "25299",
+        "Name_lang": "Rejuvenation"
+      },
+      {
+        "ID": "27813",
+        "Name_lang": "Blessed Recovery"
+      },
+      {
+        "ID": "401859",
+        "Name_lang": "Prayer of Mending"
+      },
+      {
+        "ID": "401877",
+        "Name_lang": "Prayer of Mending"
+      },
+      {
+        "ID": "408120",
+        "Name_lang": "Wild Growth"
+      },
+      {
+        "ID": "408124",
+        "Name_lang": "Lifebloom"
+      },
+      {
+        "ID": "408514",
+        "Name_lang": "Earth Shield"
+      },
+      {
+        "ID": "408521",
+        "Name_lang": "Riptide"
+      },
+      {
+        "ID": "417057",
+        "Name_lang": "Rejuvenation"
+      },
+      {
+        "ID": "417068",
+        "Name_lang": "Rejuvenation"
+      },
+      {
+        "ID": "425268",
+        "Name_lang": "Renew"
+      },
+      {
+        "ID": "436937",
+        "Name_lang": "Regrowth"
       }
     ],
     "SpellPower": [
+      {
+        "ID": "169111",
+        "ManaCost": "85",
+        "OptionalCost": "0",
+        "PowerType": "0",
+        "SpellID": "543"
+      },
       {
         "ID": "169130",
         "ManaCost": "35",
@@ -1226,6 +2698,13 @@
         "SpellID": "1978"
       },
       {
+        "ID": "169882",
+        "ManaCost": "25",
+        "OptionalCost": "0",
+        "PowerType": "0",
+        "SpellID": "774"
+      },
+      {
         "ID": "169889",
         "ManaCost": "45",
         "OptionalCost": "0",
@@ -1245,6 +2724,20 @@
         "OptionalCost": "0",
         "PowerType": "0",
         "SpellID": "1014"
+      },
+      {
+        "ID": "170220",
+        "ManaCost": "0",
+        "OptionalCost": "0",
+        "PowerType": "0",
+        "SpellID": "974"
+      },
+      {
+        "ID": "170378",
+        "ManaCost": "40",
+        "OptionalCost": "0",
+        "PowerType": "0",
+        "SpellID": "1058"
       },
       {
         "ID": "170600",
@@ -1282,6 +2775,13 @@
         "SpellID": "980"
       },
       {
+        "ID": "176128",
+        "ManaCost": "70",
+        "OptionalCost": "0",
+        "PowerType": "0",
+        "SpellID": "8936"
+      },
+      {
         "ID": "176259",
         "ManaCost": "85",
         "OptionalCost": "0",
@@ -1289,11 +2789,109 @@
         "SpellID": "14914"
       },
       {
+        "ID": "176617",
+        "ManaCost": "45",
+        "OptionalCost": "0",
+        "PowerType": "0",
+        "SpellID": "17"
+      },
+      {
+        "ID": "177255",
+        "ManaCost": "500",
+        "OptionalCost": "0",
+        "PowerType": "0",
+        "SpellID": "10901"
+      },
+      {
+        "ID": "177259",
+        "ManaCost": "0",
+        "OptionalCost": "0",
+        "PowerType": "0",
+        "SpellID": "10060"
+      },
+      {
+        "ID": "181019",
+        "ManaCost": "285",
+        "OptionalCost": "0",
+        "PowerType": "0",
+        "SpellID": "14752"
+      },
+      {
         "ID": "181765",
         "ManaCost": "45",
         "OptionalCost": "0",
         "PowerType": "0",
         "SpellID": "15407"
+      },
+      {
+        "ID": "188530",
+        "ManaCost": "360",
+        "OptionalCost": "0",
+        "PowerType": "0",
+        "SpellID": "25299"
+      },
+      {
+        "ID": "265826",
+        "ManaCost": "210",
+        "OptionalCost": "0",
+        "PowerType": "0",
+        "SpellID": "401859"
+      },
+      {
+        "ID": "304779",
+        "ManaCost": "550",
+        "OptionalCost": "0",
+        "PowerType": "0",
+        "SpellID": "408120"
+      },
+      {
+        "ID": "304780",
+        "ManaCost": "0",
+        "OptionalCost": "0",
+        "PowerType": "0",
+        "SpellID": "408124"
+      },
+      {
+        "ID": "304803",
+        "ManaCost": "0",
+        "OptionalCost": "0",
+        "PowerType": "0",
+        "SpellID": "408514"
+      },
+      {
+        "ID": "304804",
+        "ManaCost": "150",
+        "OptionalCost": "0",
+        "PowerType": "0",
+        "SpellID": "408521"
+      },
+      {
+        "ID": "305217",
+        "ManaCost": "25",
+        "OptionalCost": "0",
+        "PowerType": "0",
+        "SpellID": "417057"
+      },
+      {
+        "ID": "305227",
+        "ManaCost": "360",
+        "OptionalCost": "0",
+        "PowerType": "0",
+        "SpellID": "417068"
+      },
+      {
+        "ID": "305559",
+        "ManaCost": "30",
+        "OptionalCost": "0",
+        "PowerType": "0",
+        "SpellID": "425268"
+      },
+      {
+        "ID": "306168",
+        "ManaCost": "120",
+        "OptionalCost": "0",
+        "PowerType": "0",
+        "SpellID": "436937"
       },
       {
         "ID": "310621",

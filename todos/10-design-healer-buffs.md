@@ -1,6 +1,6 @@
 # Design: Healer buffs out of the box
 
-Status: proposal (research done, nothing implemented). Targets Forever Interface 16001, build 1.60.1.70862.
+Status: in progress. §1 (buff catalogue) is implemented (UNIT-13). Targets Forever Interface 16001, build 1.60.1.70862.
 
 ## Problem
 
@@ -96,6 +96,25 @@ Family key = lowest skill-line rank. A short curated table in the script adds
 proc buffs (Earth Shield, Prayer of Mending) and the EllesmereUI-style
 categories (externals, defensives) by family root only — ranks always come
 from the data.
+
+As built (`compile_buffs`, 51 families on 1.60.1.70862):
+
+- Grouping uses the DoT rule exactly: class set, the four masks, school and the
+  primary aura. School and aura matter: Blessed Recovery shares Rejuvenation's
+  set 7 / mask 16, and Power Infusion shares Divine Spirit's set and mask.
+- A group is a `hot` (aura 8) or `absorb` (aura 69) family only when one of its
+  **skill-line** ranks lands on someone other than the caster, pet or master
+  (`ImplicitTarget_0` not 1, 5, 27). This keeps out Ice Barrier, Fire/Frost Ward
+  (self-only skill ranks, ally-targeted rune variants) and the Voidwalker's
+  Sacrifice, so Warrior, Rogue, Hunter and Warlock get no heal families.
+- Heal families exist for Druid, Priest, Shaman, Paladin and Mage (Season of
+  Discovery arcane healing: Mass Regeneration, curated Regeneration and
+  Temporal Beacon).
+- `BUFF_EXTRAS` holds roots only. Several roots make one family: Prayer of
+  Mending is the cast (401859 …) plus the buff (401877 …); Sacred Shield is
+  412019 plus its absorb 412018. Kinds: `hot`, `proc`, `external`, `defensive`,
+  `raid`. A missing root stops generation for review.
+- `raidInCombat` lists catalogue IDs with `SpellAuraVisibility` Type 0.
 
 ### 2. Rank-proof slots (fixes the reported bug)
 
