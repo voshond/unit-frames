@@ -1,9 +1,9 @@
 local _, ns = ...
 
 ns.DotCatalog = {
-	build = "1.60.1.70862",
+	build = "1.60.1.70888",
 	interface = 16001,
-	uiCommit = "9dc84f0d3bbae1768ac3405b3716000bd93eda06",
+	uiCommit = "4cd0ab752a77164f654ccbca9d0c1fe8dafceebe",
 	spells = {
 		[133] = { family = 133, school = 4, classMask = 128, durationMs = 4000, maxDurationMs = 4000, durationPerResourceMs = 0, periodMs = 2000, aura = 3, basePoints = 1, pointsPerResource = 0, spellPowerCoefficient = 0, attackPowerCoefficient = 0, pointsPerLevel = 0, directPoints = 18, projectile = true, supercedes = {  } },
 		[143] = { family = 133, school = 4, classMask = 128, durationMs = 6000, maxDurationMs = 6000, durationPerResourceMs = 0, periodMs = 2000, aura = 3, basePoints = 1, pointsPerResource = 0, spellPowerCoefficient = 0, attackPowerCoefficient = 0, pointsPerLevel = 0, directPoints = 32, projectile = true, supercedes = {  } },
@@ -67,8 +67,8 @@ ns.DotCatalog = {
 		[9492] = { family = 1079, school = 1, classMask = 1024, durationMs = 12000, maxDurationMs = 12000, durationPerResourceMs = 0, periodMs = 2000, aura = 3, basePoints = 5, pointsPerResource = 9, spellPowerCoefficient = 0, attackPowerCoefficient = 0, pointsPerLevel = 0, directPoints = 0, projectile = false, supercedes = { 1079 } },
 		[9493] = { family = 1079, school = 1, classMask = 1024, durationMs = 12000, maxDurationMs = 12000, durationPerResourceMs = 0, periodMs = 2000, aura = 3, basePoints = 8, pointsPerResource = 10.5, spellPowerCoefficient = 0, attackPowerCoefficient = 0, pointsPerLevel = 0, directPoints = 0, projectile = false, supercedes = { 9492 } },
 		[9752] = { family = 1079, school = 1, classMask = 1024, durationMs = 12000, maxDurationMs = 12000, durationPerResourceMs = 0, periodMs = 2000, aura = 3, basePoints = 10, pointsPerResource = 15.8000001907, spellPowerCoefficient = 0, attackPowerCoefficient = 0, pointsPerLevel = 0, directPoints = 0, projectile = false, supercedes = { 9493 } },
-		[9824] = { family = 9824, school = 1, classMask = 1024, durationMs = 18000, maxDurationMs = 18000, durationPerResourceMs = 0, periodMs = 3000, aura = 3, basePoints = 25, pointsPerResource = 0, spellPowerCoefficient = 0, attackPowerCoefficient = 0, pointsPerLevel = 0, directPoints = 0, projectile = false, supercedes = { 9007 } },
-		[9826] = { family = 9826, school = 1, classMask = 1024, durationMs = 18000, maxDurationMs = 18000, durationPerResourceMs = 0, periodMs = 3000, aura = 3, basePoints = 31, pointsPerResource = 0, spellPowerCoefficient = 0, attackPowerCoefficient = 0, pointsPerLevel = 0, directPoints = 0, projectile = false, supercedes = { 9824 } },
+		[9824] = { family = 9007, school = 1, classMask = 1024, durationMs = 18000, maxDurationMs = 18000, durationPerResourceMs = 0, periodMs = 3000, aura = 3, basePoints = 25, pointsPerResource = 0, spellPowerCoefficient = 0, attackPowerCoefficient = 0, pointsPerLevel = 0, directPoints = 0, projectile = false, supercedes = { 9007 } },
+		[9826] = { family = 9007, school = 1, classMask = 1024, durationMs = 18000, maxDurationMs = 18000, durationPerResourceMs = 0, periodMs = 3000, aura = 3, basePoints = 31, pointsPerResource = 0, spellPowerCoefficient = 0, attackPowerCoefficient = 0, pointsPerLevel = 0, directPoints = 0, projectile = false, supercedes = { 9824 } },
 		[9833] = { family = 8921, school = 64, classMask = 1024, durationMs = 12000, maxDurationMs = 12000, durationPerResourceMs = 0, periodMs = 3000, aura = 3, basePoints = 39, pointsPerResource = 0, spellPowerCoefficient = 0.12999999523, attackPowerCoefficient = 0, pointsPerLevel = 0, directPoints = 91, projectile = false, supercedes = {  } },
 		[9834] = { family = 8921, school = 64, classMask = 1024, durationMs = 12000, maxDurationMs = 12000, durationPerResourceMs = 0, periodMs = 3000, aura = 3, basePoints = 49, pointsPerResource = 0, spellPowerCoefficient = 0.12999999523, attackPowerCoefficient = 0, pointsPerLevel = 0, directPoints = 111, projectile = false, supercedes = {  } },
 		[9835] = { family = 8921, school = 64, classMask = 1024, durationMs = 12000, maxDurationMs = 12000, durationPerResourceMs = 0, periodMs = 3000, aura = 3, basePoints = 60, pointsPerResource = 0, spellPowerCoefficient = 0.12999999523, attackPowerCoefficient = 0, pointsPerLevel = 0, directPoints = 135, projectile = false, supercedes = {  } },

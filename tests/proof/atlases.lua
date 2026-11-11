@@ -1,5 +1,5 @@
 return {
-	build = "1.60.1.70862",
+	build = "1.60.1.70888",
 	atlases = {
 		["classicon-deathknight"] = { file = 1662186, width = 128, height = 128, left = 0.00048828125, right = 0.06298828125, top = 0.0009765625, bottom = 0.1259765625, tilesH = false, tilesV = false },
 		["classicon-demonhunter"] = { file = 1662186, width = 128, height = 128, left = 0.00048828125, right = 0.06298828125, top = 0.1279296875, bottom = 0.2529296875, tilesH = false, tilesV = false },
