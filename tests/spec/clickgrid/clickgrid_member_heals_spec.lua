@@ -47,6 +47,15 @@ describe("ClickGrid member heals by default #buffs", function()
 		assert.is_nil(include[17])
 	end)
 
+	it("passes a priest's Renew ranks and shields to member cells", function()
+		UF, CG = Helpers.LoadClickGrid()
+		UnitClass = function() return "Priest", "PRIEST", 5 end
+		CG:Refresh()
+		local include = Native().candidateFilters.includeSpellIDs
+		for _, id in ipairs({ 139, 25315, 425268, 17, 10901, 401859 }) do assert.is_true(include[id], id) end
+		assert.is_nil(include[774])
+	end)
+
 	it("previews the player's own class heals on member cells", function()
 		local wb
 		UF, CG, wb = Helpers.LoadClickGrid(true)

@@ -18,7 +18,10 @@ started**: turn it off in the AddOns list and nothing of it loads.
    size, shown on the preview as you click.
 3. **Add the extras**: castbars on your player, target and focus frames,
    experience, combo points, and the standalone timer bars with global
-   cooldown and swing timer. **Save as a new profile** (on by default) puts
+   cooldown and swing timer. With ClickGrid loaded, the Healer look or a
+   druid, priest, paladin or shaman also gets **Heals on group frames**: your
+   own HoTs and shields on ClickGrid cells, outside the cell, in its corners
+   or in an aura bar. **Save as a new profile** (on by default) puts
    the look into a new profile named after it and switches to it; your
    previous profile is left untouched. Turn it off to replace the style of
    the current profile instead. Frame positions always stay.
@@ -400,7 +403,8 @@ permanent buff, and all four debuff dispel types, using the saved aura style.
 **Which** also offers category filters: **My heals & shields** (your own heals
 over time, shields and heal procs, every rank of each spell), **My raid-flagged
 buffs** (your own buffs whose spell ID the client flags for raid frames in
-combat; it misses some ranks of Rejuvenation, Regrowth and Renew and every shield), **Big defensives**, **External defensives**,
+combat; it misses some ranks of Rejuvenation, Regrowth and Renew and every shield), **Externals & defensives**
+(anyone's, every rank), **Raid buffs of every class** (every rank), **Big defensives**, **External defensives**,
 **Important** buffs, and **Crowd control** debuffs.
 
 ## Crowd control & defensives

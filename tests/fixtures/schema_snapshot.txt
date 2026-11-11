@@ -1937,7 +1937,7 @@ option sharedSide type="select" label="Buffs and debuffs on one side" default="c
 option stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option buffs type="group" label="Buffs"
 option buffs.enabled type="toggle" label="Show buffs" default=true
-option buffs.filter type="select" label="Which" default="HELPFUL" values=#12742c0e
+option buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
 option buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -2144,7 +2144,7 @@ option border.inset type="range" label="Background inset" default=3 min=0 max=16
 option border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
 option buffs type="group" label="Buffs"
 option buffs.enabled type="toggle" label="Show buffs" default=true
-option buffs.filter type="select" label="Which" default="HELPFUL" values=#12742c0e
+option buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
 option buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -3434,7 +3434,7 @@ option auras.sharedSide type="select" label="Buffs and debuffs on one side" defa
 option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#12742c0e
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -3518,7 +3518,7 @@ option auraBar.border.inset type="range" label="Background inset" default=3 min=
 option auraBar.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
-option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#12742c0e
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -6517,7 +6517,7 @@ option auras.sharedSide type="select" label="Buffs and debuffs on one side" defa
 option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#12742c0e
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -6601,7 +6601,7 @@ option auraBar.border.inset type="range" label="Background inset" default=3 min=
 option auraBar.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
-option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#12742c0e
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -9112,7 +9112,7 @@ option auras.sharedSide type="select" label="Buffs and debuffs on one side" defa
 option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#12742c0e
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -9196,7 +9196,7 @@ option auraBar.border.inset type="range" label="Background inset" default=3 min=
 option auraBar.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
-option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#12742c0e
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -11741,7 +11741,7 @@ option auras.sharedSide type="select" label="Buffs and debuffs on one side" defa
 option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#12742c0e
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -11825,7 +11825,7 @@ option auraBar.border.inset type="range" label="Background inset" default=3 min=
 option auraBar.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
-option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#12742c0e
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -14308,7 +14308,7 @@ option auras.sharedSide type="select" label="Buffs and debuffs on one side" defa
 option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#12742c0e
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -14392,7 +14392,7 @@ option auraBar.border.inset type="range" label="Background inset" default=3 min=
 option auraBar.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
-option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#12742c0e
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -16877,7 +16877,7 @@ option auras.sharedSide type="select" label="Buffs and debuffs on one side" defa
 option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#12742c0e
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -16961,7 +16961,7 @@ option auraBar.border.inset type="range" label="Background inset" default=3 min=
 option auraBar.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
-option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#12742c0e
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -21612,7 +21612,7 @@ option auras.sharedSide type="select" label="Buffs and debuffs on one side" defa
 option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#12742c0e
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -21696,7 +21696,7 @@ option auraBar.border.inset type="range" label="Background inset" default=3 min=
 option auraBar.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
-option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#12742c0e
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -24105,7 +24105,7 @@ option auras.sharedSide type="select" label="Buffs and debuffs on one side" defa
 option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#12742c0e
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -24189,7 +24189,7 @@ option auraBar.border.inset type="range" label="Background inset" default=3 min=
 option auraBar.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
-option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#12742c0e
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
@@ -26616,7 +26616,7 @@ option auras.sharedSide type="select" label="Buffs and debuffs on one side" defa
 option auras.stackFirst type="select" label="Closest to the frame" default="buffs" values=#ee43518b tooltip=#dc91071c hidden
 option auras.buffs type="group" label="Buffs"
 option auras.buffs.enabled type="toggle" label="Show buffs" default=true
-option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#12742c0e
+option auras.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
 option auras.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auras.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auras.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e
@@ -26700,7 +26700,7 @@ option auraBar.border.inset type="range" label="Background inset" default=3 min=
 option auraBar.border.padding type="range" label="Content padding" default=3 min=0 max=16 step=1 tooltip=#152e5e50
 option auraBar.buffs type="group" label="Buffs"
 option auraBar.buffs.enabled type="toggle" label="Show buffs" default=true
-option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#12742c0e
+option auraBar.buffs.filter type="select" label="Which" default="HELPFUL" values=#0c924c5f
 option auraBar.buffs.max type="range" label="Maximum shown" default=16 min=1 max=40 step=1
 option auraBar.buffs.maxDuration type="range" label="Maximum total duration" default=0 min=0 max=7200 step=1 tooltip=#b0f1445f
 option auraBar.buffs.sort type="select" label="Order" default="expiration" values=#1cce513e hint=#dfe0f3e8
