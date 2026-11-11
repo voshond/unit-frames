@@ -32,6 +32,17 @@ local function BuffShowcase(index)
 	end
 end
 
+local function OnboardingGroupHeals()
+	local ns = Helpers.LoadClickGrid()
+	local ob = Helpers.LoadToc("UnitFrames_Onboarding/UnitFrames_Onboarding.toc", "UnitFrames_Onboarding")
+	UnitClass = function() return "Druid", "DRUID", 11 end
+	ns.Onboarding:Open()
+	ob.Pending:SelectPreset("healer")
+	ns.Onboarding:Next()
+	ns.Onboarding:Next()
+	return ob.Steps.Extras.map
+end
+
 return {
 	{ name = "workbench-player", build = UnitPreview("unit.player") },
 	{ name = "workbench-target", build = UnitPreview("unit.target") },
@@ -40,4 +51,5 @@ return {
 	{ name = "clickgrid-buffs-outside", build = BuffShowcase(1) },
 	{ name = "clickgrid-buffs-inside", build = BuffShowcase(2) },
 	{ name = "clickgrid-buffs-bar", build = BuffShowcase(3) },
+	{ name = "onboarding-group-heals", build = OnboardingGroupHeals },
 }

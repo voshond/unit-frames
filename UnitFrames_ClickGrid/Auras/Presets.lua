@@ -17,6 +17,7 @@ Presets.PLACEMENTS = {
 	{ "bar", "Aura bar under health" },
 }
 Presets.SIDES = { { "top", "Top" }, { "bottom", "Bottom" } }
+Presets.OFF = "off"
 Presets.DEFAULT = { preset = "heals", placement = "outside", side = "top" }
 -- Bottom left keeps clear of the member's level and class text.
 Presets.CORNERS = { "TOPLEFT", "TOPRIGHT", "BOTTOMRIGHT" }
@@ -80,23 +81,27 @@ end
 
 -- Writes a placement into member style overrides. The set shows in one
 -- placement: the aura block and the aura bar drop their buffs otherwise.
+-- OFF only drops them where they show this same set.
 function Presets.EditStyle(style, resolved, id, placement, side)
 	local filter = byId[id].filter
-	local outside, bar = placement == "outside", placement == "bar"
-	Util.SetPath(style, "auras.buffs.enabled", outside)
-	if outside then
+	local function Leaves(group) return placement ~= Presets.OFF or group.filter == filter end
+	if placement == "outside" then
+		Util.SetPath(style, "auras.buffs.enabled", true)
 		Util.SetPath(style, "auras.buffs.filter", filter)
 		Util.SetPath(style, "auras.buffs.position", side or Presets.DEFAULT.side)
+	elseif Leaves(resolved.auras.buffs) then
+		Util.SetPath(style, "auras.buffs.enabled", false)
 	end
 	-- Corner slots share the aura block's on/off state.
-	if outside or placement == "inside" then Util.SetPath(style, "auras.enabled", true) end
-	Util.SetPath(style, "auraBar.buffs.enabled", bar)
-	if bar then
+	if placement == "outside" or placement == "inside" then Util.SetPath(style, "auras.enabled", true) end
+	if placement == "bar" then
 		if not resolved.auraBar.enabled then Util.SetPath(style, "auraBar.debuffs.enabled", false) end
 		Util.SetPath(style, "auraBar.enabled", true)
+		Util.SetPath(style, "auraBar.buffs.enabled", true)
 		Util.SetPath(style, "auraBar.buffs.filter", filter)
-	elseif resolved.auraBar.enabled and not resolved.auraBar.debuffs.enabled then
-		Util.SetPath(style, "auraBar.enabled", false)
+	elseif Leaves(resolved.auraBar.buffs) then
+		Util.SetPath(style, "auraBar.buffs.enabled", false)
+		if resolved.auraBar.enabled and not resolved.auraBar.debuffs.enabled then Util.SetPath(style, "auraBar.enabled", false) end
 	end
 end
 
@@ -125,6 +130,16 @@ function Presets.Apply(id, placement, side)
 	return CG.Config.settings:Edit("slots", function(slots, resolved)
 		Presets.EditSlots(slots, resolved, id, placement, class)
 	end)
+end
+
+-- A style string's ClickGrid section (Integration/Profiles.lua) with the set
+-- placed: it replaces every store, so it carries all of them as saved.
+function Presets.StyleSection(id, placement, side)
+	local data = UF.Profiles.sections.clickgrid.export()
+	Presets.EditStyle(data.member, CG.Config.styles.member:Resolved(), id, placement, side)
+	data.settings.slots = data.settings.slots or {}
+	Presets.EditSlots(data.settings.slots, CG.Config:Resolved().slots, id, placement, BuffSpells.PlayerClass())
+	return data
 end
 
 -- The set and placement the saved settings show, or nil for a custom setup.

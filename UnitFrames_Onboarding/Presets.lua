@@ -8,8 +8,10 @@ through the same validation as an import. Missing parts mean defaults: every
 preset replaces the theme, all unit frames and the timers.
 
 Tweaks (step 2) and extras (step 3) change a composed copy of a preset:
-  write(style, value)            change the style table
-  read(resolved) -> value        the current choice, from Pending:Resolved()
+  write(style, value, choice)    change the style table
+  read(resolved, pending) -> value  the current choice, from Pending:Resolved()
+An extra may also offer `choices` (a placement, read by `choice(pending)`)
+and be `available(pending)` only for some looks or classes.
 ]]
 local Presets = { byId = {}, tweaksByKey = {}, extrasByKey = {} }
 ob.Presets = Presets
@@ -105,6 +107,43 @@ local function TimerExtra(path, extra)
 	return extra
 end
 
+-- ClickGrid's buff presets, once ClickGrid has started.
+local function GroupBuffs()
+	local clickGrid = UF.ClickGrid
+	return clickGrid and clickGrid.started and clickGrid.BuffPresets or nil
+end
+
+local HEALING_CLASSES = { DRUID = true, PRIEST = true, PALADIN = true, SHAMAN = true }
+
+-- Where ClickGrid shows the player's heals now, or nil.
+local function HealsPlacement()
+	local buffs = GroupBuffs()
+	if not buffs then return nil end
+	local config = UF.ClickGrid.Config
+	local found = buffs.Detect(config.styles.member:Resolved(), config:Resolved().slots)
+	return found and found.preset == "heals" and found.placement or nil
+end
+
+-- The player's own heals on ClickGrid cells, in one of three placements. It
+-- writes a ClickGrid section only when chosen, so ClickGrid stays as it is
+-- otherwise; off drops only the heals set.
+local groupHeals = { key = "groupHeals", label = "Heals on group frames", area = "player", accent = "group",
+	hint = "Show my heals on group frames: your own HoTs and shields, every rank, on ClickGrid party and raid cells."
+		.. " Pick where they sit below.",
+	choices = { { "outside", "Outside" }, { "inside", "Corners" }, { "bar", "Aura bar" } },
+	available = function(pending)
+		return GroupBuffs() ~= nil and (pending.preset.id == "healer" or HEALING_CLASSES[UF.BuffSpells.PlayerClass() or ""] == true)
+	end,
+	write = function(style, enabled, choice)
+		local buffs = GroupBuffs()
+		style.clickgrid = buffs.StyleSection("heals", enabled and choice or buffs.OFF)
+	end,
+	read = function(_, pending)
+		if pending.extras.groupHeals ~= nil then return pending.extras.groupHeals end
+		return HealsPlacement() ~= nil
+	end,
+	choice = function() return HealsPlacement() or "outside" end }
+
 -- Step 3 tiles; `area` places them on the screen map (Steps/Extras.lua).
 Presets.extras = {
 	UnitExtra("player", "castbar.enabled", { key = "playerCast", label = "Player castbar", area = "player",
@@ -123,7 +162,13 @@ Presets.extras = {
 		hint = "A thin global cooldown sweep under the timer castbar." }),
 	TimerExtra("mainHand.enabled", { key = "swing", label = "Swing timer",
 		hint = "Main-hand swings, for melee classes." }),
+	groupHeals,
 }
+
+-- Extras without `available` are always offered.
+function Presets.Available(extra, pending)
+	return not extra.available or extra.available(pending)
+end
 
 for _, preset in ipairs(Presets.list) do Presets.byId[preset.id] = preset end
 for _, tweak in ipairs(Presets.tweaks) do Presets.tweaksByKey[tweak.key] = tweak end
