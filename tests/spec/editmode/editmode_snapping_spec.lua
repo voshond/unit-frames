@@ -48,6 +48,8 @@ describe("Edit Mode snapping", function()
 		for _, unit in ipairs(ns.Units.order) do
 			if unit ~= "player" then ns.Units.frames[unit]:Hide() end
 		end
+		-- The standalone castbar is a real candidate in Edit Mode; these cases place their own.
+		ns.EditMode.frames.timers = nil
 	end)
 
 	after_each(function()

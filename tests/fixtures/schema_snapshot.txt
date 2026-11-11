@@ -28636,7 +28636,7 @@ option slots type="group" label="Fixed friendly buff slots"
 option slots.slot1 type="group" label="Friendly buff slot 1" defaults={offsetX=0}
 option slots.slot1.enabled type="toggle" label="Enabled" default=false
 option slots.slot1.spell type="text" label="Friendly buff spell IDs" default="" tooltip=#9ee82380
-option slots.slot1.family type="select" label="Track a spell" default="" values=#a2c826ce tooltip=#ebd0a18e
+option slots.slot1.family type="select" label="Track a spell" default="" values=#30f6742e tooltip=#ebd0a18e
 option slots.slot1.own type="toggle" label="Only buffs cast by me" default=true
 option slots.slot1.size type="range" label="Size" default=14 min=10 max=32 step=1
 option slots.slot1.anchor type="select" label="Position" default="TOPLEFT" values=#a082508f
@@ -28645,7 +28645,7 @@ option slots.slot1.offsetY type="range" label="Offset Y" default=0 min=-100 max=
 option slots.slot2 type="group" label="Friendly buff slot 2" defaults={offsetX=16}
 option slots.slot2.enabled type="toggle" label="Enabled" default=false
 option slots.slot2.spell type="text" label="Friendly buff spell IDs" default="" tooltip=#9ee82380
-option slots.slot2.family type="select" label="Track a spell" default="" values=#a2c826ce tooltip=#ebd0a18e
+option slots.slot2.family type="select" label="Track a spell" default="" values=#30f6742e tooltip=#ebd0a18e
 option slots.slot2.own type="toggle" label="Only buffs cast by me" default=true
 option slots.slot2.size type="range" label="Size" default=14 min=10 max=32 step=1
 option slots.slot2.anchor type="select" label="Position" default="TOPLEFT" values=#a082508f
@@ -28654,7 +28654,7 @@ option slots.slot2.offsetY type="range" label="Offset Y" default=0 min=-100 max=
 option slots.slot3 type="group" label="Friendly buff slot 3" defaults={offsetX=32}
 option slots.slot3.enabled type="toggle" label="Enabled" default=false
 option slots.slot3.spell type="text" label="Friendly buff spell IDs" default="" tooltip=#9ee82380
-option slots.slot3.family type="select" label="Track a spell" default="" values=#a2c826ce tooltip=#ebd0a18e
+option slots.slot3.family type="select" label="Track a spell" default="" values=#30f6742e tooltip=#ebd0a18e
 option slots.slot3.own type="toggle" label="Only buffs cast by me" default=true
 option slots.slot3.size type="range" label="Size" default=14 min=10 max=32 step=1
 option slots.slot3.anchor type="select" label="Position" default="TOPLEFT" values=#a082508f
@@ -28965,7 +28965,7 @@ option border.padding type="range" label="Content padding" default=2 inherit="au
 option slot1 type="group" label="Friendly buff slot 1" defaults={offsetX=0}
 option slot1.enabled type="toggle" label="Enabled" default=false
 option slot1.spell type="text" label="Friendly buff spell IDs" default="" tooltip=#9ee82380
-option slot1.family type="select" label="Track a spell" default="" values=#a2c826ce tooltip=#ebd0a18e
+option slot1.family type="select" label="Track a spell" default="" values=#30f6742e tooltip=#ebd0a18e
 option slot1.own type="toggle" label="Only buffs cast by me" default=true
 option slot1.size type="range" label="Size" default=14 min=10 max=32 step=1
 option slot1.anchor type="select" label="Position" default="TOPLEFT" values=#a082508f
@@ -28974,7 +28974,7 @@ option slot1.offsetY type="range" label="Offset Y" default=0 min=-100 max=100 st
 option slot2 type="group" label="Friendly buff slot 2" defaults={offsetX=16}
 option slot2.enabled type="toggle" label="Enabled" default=false
 option slot2.spell type="text" label="Friendly buff spell IDs" default="" tooltip=#9ee82380
-option slot2.family type="select" label="Track a spell" default="" values=#a2c826ce tooltip=#ebd0a18e
+option slot2.family type="select" label="Track a spell" default="" values=#30f6742e tooltip=#ebd0a18e
 option slot2.own type="toggle" label="Only buffs cast by me" default=true
 option slot2.size type="range" label="Size" default=14 min=10 max=32 step=1
 option slot2.anchor type="select" label="Position" default="TOPLEFT" values=#a082508f
@@ -28983,7 +28983,7 @@ option slot2.offsetY type="range" label="Offset Y" default=0 min=-100 max=100 st
 option slot3 type="group" label="Friendly buff slot 3" defaults={offsetX=32}
 option slot3.enabled type="toggle" label="Enabled" default=false
 option slot3.spell type="text" label="Friendly buff spell IDs" default="" tooltip=#9ee82380
-option slot3.family type="select" label="Track a spell" default="" values=#a2c826ce tooltip=#ebd0a18e
+option slot3.family type="select" label="Track a spell" default="" values=#30f6742e tooltip=#ebd0a18e
 option slot3.own type="toggle" label="Only buffs cast by me" default=true
 option slot3.size type="range" label="Size" default=14 min=10 max=32 step=1
 option slot3.anchor type="select" label="Position" default="TOPLEFT" values=#a082508f

@@ -1,5 +1,5 @@
 {
-  "build": "1.60.1.70862",
+  "build": "1.60.1.70888",
   "interface": 16001,
   "tables": {
     "SkillLineAbility": [
@@ -2916,5 +2916,5 @@
       }
     ]
   },
-  "uiCommit": "9dc84f0d3bbae1768ac3405b3716000bd93eda06"
+  "uiCommit": "4cd0ab752a77164f654ccbca9d0c1fe8dafceebe"
 }

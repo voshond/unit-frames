@@ -1,9 +1,9 @@
 local _, ns = ...
 
 ns.BuffCatalog = {
-	build = "1.60.1.70862",
+	build = "1.60.1.70888",
 	interface = 16001,
-	uiCommit = "9dc84f0d3bbae1768ac3405b3716000bd93eda06",
+	uiCommit = "4cd0ab752a77164f654ccbca9d0c1fe8dafceebe",
 	families = {
 		[17] = { name = "Power Word: Shield", class = "PRIEST", kind = "absorb", ids = { 17, 592, 600, 3747, 6065, 6066, 10898, 10899, 10900, 10901, 27607, 27779, 1236154 } },
 		[139] = { name = "Renew", class = "PRIEST", kind = "hot", ids = { 139, 6074, 6075, 6076, 6077, 6078, 10927, 10928, 10929, 25315, 27606, 425268, 425269, 425270, 425271, 425272, 425273, 425274, 425275, 425276, 425277, 1236151 } },
