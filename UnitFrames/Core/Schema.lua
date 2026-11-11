@@ -363,6 +363,37 @@ function Schema.Override(schema, key, fields)
 	return out
 end
 
+--[[
+Splits `schema` for editing in the theme at `prefix` ("auras."). Returns a
+copy whose options inherit the theme value at prefix plus their path, and the
+schema the theme stores there. Group `defaults` fold into the option defaults,
+since a group default would otherwise win over the inherited value. Options
+that already inherit another theme value keep it and stay out of the theme
+schema, unless a group default replaced it.
+]]
+function Schema.Inheriting(schema, prefix, overrides)
+	local inheriting, shared = {}, {}
+	for _, opt in ipairs(schema) do
+		local override = overrides and overrides[opt.key]
+		local copy, themed = Util.Copy(opt), Util.Copy(opt)
+		if opt.type == "group" then
+			local groupOverrides = Util.Merge(Util.Copy(opt.defaults or {}), type(override) == "table" and override or {})
+			copy.schema, themed.schema = Schema.Inheriting(opt.schema, prefix .. opt.key .. ".", groupOverrides)
+			copy.defaults, themed.defaults = nil, nil
+			inheriting[#inheriting + 1] = copy
+			if #themed.schema > 0 then shared[#shared + 1] = themed end
+		elseif opt.inherit and override == nil then
+			inheriting[#inheriting + 1] = copy
+		else
+			copy.default, copy.inherit = Util.Copy(DefaultFor(opt, overrides)), prefix .. opt.key
+			themed.default, themed.inherit = Util.Copy(copy.default), nil
+			inheriting[#inheriting + 1] = copy
+			shared[#shared + 1] = themed
+		end
+	end
+	return inheriting, shared
+end
+
 function Schema.GetValues(opt)
 	if type(opt.values) == "function" then
 		return opt.values()

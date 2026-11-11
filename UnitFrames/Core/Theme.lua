@@ -1,7 +1,8 @@
 local _, ns = ...
 
 -- Global look shared by every component. Component options with `inherit`
--- read from here unless the component overrides them.
+-- read from here unless the component overrides them. AuraIcon appends the
+-- "auras" group.
 local Theme = {}
 ns.Theme = Theme
 

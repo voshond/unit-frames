@@ -16,7 +16,7 @@ local LAYOUT_TEMPLATE = "DisableUntrustedLayoutScriptsTemplate"
 -- Everything depending on it opts into the forbidden layout aspect.
 local schema = ns.Schema.Without(ns.Util.Copy(Auras.schema), { buffs = true, debuffs = true, sharedSide = true, stackFirst = true })
 schema = ns.Schema.Override(schema, "enabled", { default = false })
-schema = ns.Schema.Override(schema, "durationPosition", { default = "BOTTOM",
+schema = ns.Schema.Override(schema, "durationPosition", { default = "BOTTOM", inherit = false,
 	tooltip = "Below the icon resolves to inside-bottom for this row. Text remains inside the visible strip.",
 	hint = "Below the icon is shown inside-bottom in this row; the saved choice is retained." })
 AuraBar.schema = ns.Schema.Insert(schema, "enabled", {

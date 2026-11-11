@@ -67,7 +67,7 @@ local insidePositions = {}
 for _, position in ipairs(AuraIcon.DURATION_POSITIONS) do
 	if position[1] ~= "below" then insidePositions[#insidePositions + 1] = ns.Util.Copy(position) end
 end
-art = ns.Schema.Override(art, "durationPosition", { values = insidePositions, default = "CENTER",
+art = ns.Schema.Override(art, "durationPosition", { values = insidePositions, default = "CENTER", inherit = false,
 	tooltip = "Inside the icon: a lower category's text must not show past a covering icon." })
 
 CategoryAuras.schema = ns.Schema.Concat(
