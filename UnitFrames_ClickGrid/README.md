@@ -108,6 +108,11 @@ client after adding it. For local builds and incremental updates, see the
   heal procs (Earth Shield, Prayer of Mending), every rank, from the generated
   buff catalogue. Classes without heals see no buffs there. The debuff row is
   off by default. A saved filter choice is kept.
+- **Healing buffs** (Workbench): pick a named buff set (**My heals & shields**,
+  **Externals & defensives**, **Raid buffs**) and where it shows: outside the
+  cell (top or bottom), inside (one spell per corner, in the fixed slots) or in
+  the aura bar under health. Live sample cards show all three placements; the
+  set leaves the other two places when you pick one.
 - A centre icon for crowd control, big and external defensives (crowd control
   on top), mouse-transparent so hover and mouseover casts reach the member.
 - Three configurable fixed friendly-buff slots, each accepting comma-separated

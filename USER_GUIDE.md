@@ -400,7 +400,8 @@ permanent buff, and all four debuff dispel types, using the saved aura style.
 **Which** also offers category filters: **My heals & shields** (your own heals
 over time, shields and heal procs, every rank of each spell), **My raid-flagged
 buffs** (your own buffs whose spell ID the client flags for raid frames in
-combat; it misses some ranks of Rejuvenation, Regrowth and Renew and every shield), **Big defensives**, **External defensives**,
+combat; it misses some ranks of Rejuvenation, Regrowth and Renew and every shield), **Externals & defensives**
+(anyone's, every rank), **Raid buffs of every class** (every rank), **Big defensives**, **External defensives**,
 **Important** buffs, and **Crowd control** debuffs.
 
 ## Crowd control & defensives

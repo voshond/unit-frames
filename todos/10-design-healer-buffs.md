@@ -1,7 +1,7 @@
 # Design: Healer buffs out of the box
 
 Status: in progress. §1 buff catalogue (UNIT-13), §2 rank-proof slots (UNIT-14) and §3 "My heals & shields"
-on by default (UNIT-15) are implemented; §4 presets/showcases are open. The rank-ID question (UNIT-17) is settled from source below.
+on by default (UNIT-15) are implemented; §4 presets and the Workbench page (UNIT-16) are implemented, the onboarding tile (UNIT-18) is open. The rank-ID question (UNIT-17) is settled from source below.
 Targets Forever Interface 16001, build 1.60.1.70862.
 
 ## Problem

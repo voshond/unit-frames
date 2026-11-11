@@ -30,11 +30,13 @@ Auras.STACK_FIRST = {
 	{ "buffs", "Buffs" }, { "debuffs", "Debuffs" },
 }
 
-Auras.MY_HEALS = "MY_HEALS"
+Auras.MY_HEALS, Auras.EXTERNALS, Auras.RAID_BUFFS = "MY_HEALS", "EXTERNALS", "RAID_BUFFS"
 
 Auras.BUFF_FILTERS = {
 	{ "HELPFUL", "All buffs" }, { "HELPFUL|PLAYER", "Cast by me" }, { "HELPFUL|RAID", "Raid buffs" },
 	{ Auras.MY_HEALS, "My heals & shields" },
+	{ Auras.EXTERNALS, "Externals & defensives (anyone's, all ranks)" },
+	{ Auras.RAID_BUFFS, "Raid buffs of every class (all ranks)" },
 	{ "HELPFUL|PLAYER|RAID_IN_COMBAT", "My raid-flagged buffs (not all ranks, no shields)" },
 	{ "HELPFUL|BIG_DEFENSIVE", "Big defensives" }, { "HELPFUL|EXTERNAL_DEFENSIVE", "External defensives" },
 	{ "HELPFUL|IMPORTANT", "Important" },
@@ -53,7 +55,10 @@ Auras.SAMPLE_FILTER_FLAGS = {
 
 local CLASSIFIED_FILTERS = { BIG_DEFENSIVE = true, EXTERNAL_DEFENSIVE = true, IMPORTANT = true }
 local ALL_FILTERS = { buffs = "HELPFUL", debuffs = "HARMFUL" }
-local CATALOG_FILTERS = { [Auras.MY_HEALS] = { filter = "HELPFUL|PLAYER", spellIDs = ns.BuffSpells.PlayerHealIDs } }
+local CATALOG_FILTERS = {}
+for name, set in pairs(ns.BuffSpells.SETS) do
+	CATALOG_FILTERS[name] = { filter = set.filter, spellIDs = function() return ns.BuffSpells.SetIDs(name) end }
+end
 
 function Auras.IncludeSpellIDs(filter)
 	local catalog = CATALOG_FILTERS[filter]

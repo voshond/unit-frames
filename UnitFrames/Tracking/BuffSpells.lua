@@ -3,7 +3,14 @@ local BuffSpells = {}
 ns.BuffSpells = BuffSpells
 
 BuffSpells.HEAL_KINDS = { hot = true, absorb = true, proc = true }
-local healIDs = {}
+-- Named sets of catalogue families. Own sets keep to the player's class and
+-- their own casts; the others match any caster.
+BuffSpells.SETS = {
+	MY_HEALS = { kinds = BuffSpells.HEAL_KINDS, own = true, filter = "HELPFUL|PLAYER" },
+	EXTERNALS = { kinds = { external = true, defensive = true }, filter = "HELPFUL" },
+	RAID_BUFFS = { kinds = { raid = true }, filter = "HELPFUL" },
+}
+local setIDs = {}
 
 function BuffSpells.Family(spellID)
 	local root = ns.BuffCatalog.byId[spellID]
@@ -33,12 +40,22 @@ function BuffSpells.ClassIDs(class, kinds)
 	return ids
 end
 
-function BuffSpells.PlayerHealIDs()
+function BuffSpells.PlayerClass()
 	local _, class = UnitClass("player")
-	if issecretvalue(class) then class = nil end
-	local key = class or ""
-	healIDs[key] = healIDs[key] or BuffSpells.ClassIDs(class, BuffSpells.HEAL_KINDS)
-	return healIDs[key]
+	if issecretvalue(class) then return nil end
+	return class
+end
+
+function BuffSpells.SetIDs(name)
+	local set = BuffSpells.SETS[name]
+	local class = set.own and BuffSpells.PlayerClass() or nil
+	local key = name .. ":" .. (class or "")
+	setIDs[key] = setIDs[key] or BuffSpells.ClassIDs(class, set.kinds)
+	return setIDs[key]
+end
+
+function BuffSpells.PlayerHealIDs()
+	return BuffSpells.SetIDs("MY_HEALS")
 end
 
 function BuffSpells.Roots()

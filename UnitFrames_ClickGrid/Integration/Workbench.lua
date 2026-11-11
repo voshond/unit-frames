@@ -68,8 +68,58 @@ function CG:RegisterWorkbench()
 			reset = function() CG.Config.styles[styleKind]:Reset() end,
 		})
 	end
+	self:RegisterBuffPresetEntry(wb)
 	self:RegisterBindingEntry(wb)
 	wb:EndRegistration()
+end
+
+-- Named buff sets instead of spell IDs: the choice is written straight into
+-- the member style and the fixed slots; the cards show all three placements.
+function CG:RegisterBuffPresetEntry(wb)
+	local Presets = self.BuffPresets
+	local selection
+	local function Current()
+		selection = selection or Presets.Current()
+		return selection
+	end
+	local schema = {
+		{ key = "preset", type = "select", label = "Buff set", default = Presets.DEFAULT.preset, values = Presets.Values(),
+			tooltip = "My heals & shields: your own HoTs, shields and heal procs, every rank. Externals & defensives and"
+				.. " raid buffs: anyone's. Spells come from the buff catalogue, so no spell IDs are needed." },
+		{ key = "placement", type = "select", label = "Placement", default = Presets.DEFAULT.placement, values = Presets.PLACEMENTS,
+			tooltip = "Where the set shows on every member. The set leaves the other two places." },
+		{ key = "side", type = "select", label = "Side", default = Presets.DEFAULT.side, values = Presets.SIDES,
+			hidden = function(c) return c.placement ~= "outside" end },
+	}
+	wb:Register({ id = "clickgrid.buffs", name = "Healing buffs", category = "Party & raid (ClickGrid)",
+		autoSize = true, fitToStage = true, size = { 540, 160 },
+		scope = "All ClickGrid members: buff set and placement",
+		refreshOn = { "ClickGridConfigChanged", "ThemeChanged" },
+		settingsTargets = function() return { { id = "style", schema = schema } } end,
+		create = function(stage)
+			selection = nil
+			local handle = CG.BuffShowcase:New(stage)
+			handle.selection = Current()
+			return handle
+		end,
+		styleTarget = function(handle)
+			return { schema = schema,
+				get = function(path) return Current()[path] end,
+				set = function(path, value)
+					local current = Current()
+					current[path] = value or Presets.DEFAULT[path]
+					local ok, reason = Presets.Apply(current.preset, current.placement, current.side)
+					if not ok then Report(reason) end
+					handle:Apply()
+					return ok, reason
+				end,
+				resolved = function() return UF.Util.Copy(Current()) end }
+		end,
+		reset = function()
+			selection = UF.Util.Copy(Presets.DEFAULT)
+			Presets.Apply(selection.preset, selection.placement, selection.side)
+		end,
+	})
 end
 
 function CG:RegisterBindingEntry(wb)
