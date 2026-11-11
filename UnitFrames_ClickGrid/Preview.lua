@@ -213,8 +213,10 @@ function Preview:Values(index, value)
 	if category then value.categoryAuras[category.key] = UF.Util.Copy(UF.Units.CATEGORY_SAMPLES[category.key]) end
 	-- A few plain examples for the artwork already in UnitFrames; unrelated
 	-- sample icons must not match a fixed slot by a made-up default ID.
+	local mine = UF.BuffSpells.PlayerHealIDs()
 	for i, aura in ipairs(value.buffs) do
 		aura.spellId = sampleBuffIDs[i]
+		if mine[aura.spellId] then aura.sourceUnit = "player" end
 		local remaining = UF.Units.SAMPLE.buffs[i].remaining
 		aura.remaining = self.data.source == "animated" and aura.duration > 0
 			and (remaining - self.time - index) % aura.duration + 1 or remaining
