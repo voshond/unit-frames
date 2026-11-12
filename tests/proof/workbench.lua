@@ -80,7 +80,22 @@ local function LargeSharedDebuffs(ns)
 	ns.Config:SetThemeValue("auras.spacing", 4)
 end
 
+local function HiddenPetLayout()
+	local ns, workbench = Helpers.LoadWorkbench()
+	ns.Config:SetUnitValue("pet", "shown", false)
+	workbench:Open("unit.pet")
+	workbench:SelectSection("layout")
+	local content = workbench.inspector.scroll:GetContent()
+	content:SetParent(UIParent)
+	content:ClearAllPoints()
+	content:SetPoint("TOPLEFT")
+	content:SetSize(420, 330)
+	workbench.inspector:Refresh()
+	return content
+end
+
 return {
+	{ name = "workbench-pet-hidden", build = HiddenPetLayout },
 	{ name = "workbench-global-settings-menu", build = GlobalSettingsMenu },
 	{ name = "workbench-global-aura-icons", build = GlobalAuraIcons() },
 	{ name = "workbench-global-aura-icons-changed", build = GlobalAuraIcons(LargeSharedDebuffs) },

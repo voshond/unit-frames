@@ -330,11 +330,19 @@ function Units:GetSpec(def, frame)
 	return spec
 end
 
+-- Whether the unit button is spawned visible at all (Style.lua ApplyShown).
+-- Unit-level: the UnitFrame component and its previews never read it.
+Units.SHOWN_OPTION = { key = "shown", type = "toggle", label = "Show frame", default = true,
+	tooltip = "Turn off to hide this frame entirely. Changes made in combat apply when combat ends." }
+
 -- Frame-free style schema of a unit (cached; schemas are not mutated).
 function Units:GetSchema(unit)
 	self.schemas = self.schemas or {}
 	if not self.schemas[unit] then
-		self.schemas[unit] = ns.Schema.Build(ns.Components.UnitFrame.BuildSchema, self:GetSpec(self.definitions[unit]))
+		local schema = { Units.SHOWN_OPTION }
+		local style = ns.Schema.Build(ns.Components.UnitFrame.BuildSchema, self:GetSpec(self.definitions[unit]))
+		for _, opt in ipairs(style) do schema[#schema + 1] = opt end
+		self.schemas[unit] = schema
 	end
 	return self.schemas[unit]
 end

@@ -214,6 +214,8 @@ function Units:CopyPlayerSettings(unit)
 	copy.comboPoints = ns.Util.Copy(ns.Config:GetUnitConfig(unit).comboPoints)
 	-- The player frame has no threat glow: each frame keeps its own.
 	copy.threat = ns.Util.Copy(ns.Config:GetUnitConfig(unit).threat)
+	-- Hiding a frame is per frame, not part of its style.
+	copy.shown = ns.Config:GetUnitConfig(unit).shown
 	return ns.Config:UnitStore(unit):Replace(copy)
 end
 
@@ -256,6 +258,22 @@ oUF:RegisterStyle(Units.STYLE, function(frame, unit)
 	Units:Bind(frame)
 end)
 
+-- Visibility ------------------------------------------------------------------
+
+-- A hidden frame drops oUF's unit watch, so the game no longer shows it. The
+-- watch is protected: changes made in combat wait for it to end.
+function Units:ApplyShown(unit)
+	local frame = self.frames[unit]
+	if not frame then return end
+	local shown = ns.Config:UnitStore(unit):Resolved().shown
+	if not shown == not frame:IsEnabled() then return end
+	if InCombatLockdown() then
+		ns.AfterCombat:Queue("layout", frame, function() self:ApplyShown(unit) end)
+		return
+	end
+	if shown then frame:Enable() else frame:Disable() end
+end
+
 -- Spawning --------------------------------------------------------------------
 
 local function Spawn(factory, unit)
@@ -264,6 +282,7 @@ local function Spawn(factory, unit)
 	local name = "UnitFrames" .. unit:gsub("^%l", string.upper)
 	local frame = factory:Spawn(unit, name)
 	Units.frames[unit] = frame
+	Units:ApplyShown(unit)
 	ns.Perf:End("unit spawn")
 	ns.Perf:Begin("edit mode registration")
 	ns.EditMode:Register(frame, unit, "UnitFrames: " .. def.label, def.defaultPosition)
@@ -280,6 +299,7 @@ end)
 
 ns.Events.RegisterCallback(Units, "UnitConfigChanged", function(_, unit)
 	Units:Refresh(unit)
+	Units:ApplyShown(unit)
 end)
 
 -- Colours come from the theme too (power colours, health gradient).
