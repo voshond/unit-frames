@@ -47,6 +47,7 @@ Theme.schema = {
 		{ "friendly", "Friendly NPC", 0.2, 0.75, 0.2 },
 		{ "tapped", "Tapped by others", 0.55, 0.55, 0.55 },
 		{ "disconnected", "Disconnected", 0.45, 0.45, 0.45 },
+		{ "dead", "Dead & ghost", 0.48, 0.65, 0.70 },
 		{ "heal", "Incoming heals", 0.2, 1, 0.3, 0.5 },
 		{ "absorb", "Absorb shields", 0.2, 0.65, 1, 0.75 },
 		{ "healAbsorb", "Heal absorbs", 0.6, 0, 0, 0.6 },
