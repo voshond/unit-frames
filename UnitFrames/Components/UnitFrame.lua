@@ -278,11 +278,12 @@ end
 
 local function StateOff(cfg) return not cfg.enabled end
 
--- A unit state's look: greyscale, blended towards `color`.
-local function UnitStateSchema(tooltip, colorLabel, color)
+-- A unit state's look: greyscale, blended towards `color` (or the theme
+-- colour at `inherit`).
+local function UnitStateSchema(tooltip, colorLabel, color, inherit)
 	return {
 		{ key = "enabled", type = "toggle", label = "Enabled", default = true, tooltip = tooltip },
-		{ key = "color", type = "color", label = colorLabel, default = color, hidden = StateOff },
+		{ key = "color", type = "color", label = colorLabel, default = color, inherit = inherit, hidden = StateOff },
 		{ key = "strength", type = "range", label = "Strength", min = 0, max = 1, step = 0.05, default = 0.85, hidden = StateOff,
 			tooltip = "How far bars, portrait artwork, border and texts blend towards the colour. 3D portraits only turn greyscale." },
 		{ key = "bars", type = "toggle", label = "Bars", default = true, hidden = StateOff },
@@ -329,7 +330,7 @@ UnitFrame.BLIZZARD_AURAS_SCHEMA = {
 UnitFrame.UNIT_STATES = {
 	{ key = "dead", label = "Dead & ghost", schema = UnitStateSchema(
 		"While the unit is dead or a ghost, turn this frame greyscale and tint it with the ghost colour. Bar fills take one uniform colour; the health bar shows it across its whole length instead of an empty or 1 health fill.",
-		"Ghost colour", { 0.48, 0.65, 0.70, 1 }) },
+		"Ghost colour", { 0.48, 0.65, 0.70, 1 }, "colors.dead") },
 	{ key = "offline", label = "Offline", schema = UnitStateSchema(
 		"While the unit is offline, turn this frame greyscale. Bar fills take one uniform grey; the health bar shows it across its whole length.",
 		"Offline colour", { 0.62, 0.62, 0.62, 1 }) },

@@ -17,6 +17,7 @@ option colors.neutral type="color" label="Neutral NPC" default={0.95,0.8,0.15,1}
 option colors.friendly type="color" label="Friendly NPC" default={0.2,0.75,0.2,1}
 option colors.tapped type="color" label="Tapped by others" default={0.55,0.55,0.55,1}
 option colors.disconnected type="color" label="Disconnected" default={0.45,0.45,0.45,1}
+option colors.dead type="color" label="Dead & ghost" default={0.48,0.65,0.7,1}
 option colors.heal type="color" label="Incoming heals" default={0.2,1,0.3,0.5}
 option colors.absorb type="color" label="Absorb shields" default={0.2,0.65,1,0.75}
 option colors.healAbsorb type="color" label="Heal absorbs" default={0.6,0,0,0.6}
@@ -174,6 +175,7 @@ default colors.castFailed = {1,0,0,1}
 default colors.castSuccess = {0,1,0,1}
 default colors.channel = {0,1,0,1}
 default colors.comboPoints = {1,0.96,0.41,1}
+default colors.dead = {0.48,0.65,0.7,1}
 default colors.disconnected = {0.45,0.45,0.45,1}
 default colors.energy = {1,0.85,0.1,1}
 default colors.experience = {0.58,0,0.55,1}
@@ -271,6 +273,7 @@ resolved colors.castFailed = {1,0,0,1}
 resolved colors.castSuccess = {0,1,0,1}
 resolved colors.channel = {0,1,0,1}
 resolved colors.comboPoints = {1,0.96,0.41,1}
+resolved colors.dead = {0.48,0.65,0.7,1}
 resolved colors.disconnected = {0.45,0.45,0.45,1}
 resolved colors.energy = {1,0.85,0.1,1}
 resolved colors.experience = {0.58,0,0.55,1}
@@ -2582,7 +2585,7 @@ option readyCheck.hold type="range" label="Hold after the check (seconds)" defau
 option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
 option dead type="group" label="Dead & ghost"
 option dead.enabled type="toggle" label="Enabled" default=true tooltip=#02954430
-option dead.color type="color" label="Ghost colour" default={0.48,0.65,0.7,1} hidden
+option dead.color type="color" label="Ghost colour" default={0.48,0.65,0.7,1} inherit="colors.dead" hidden
 option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
 option dead.bars type="toggle" label="Bars" default=true hidden
 option dead.portrait type="toggle" label="Portrait" default=true hidden
@@ -5976,7 +5979,7 @@ option readyCheck.hold type="range" label="Hold after the check (seconds)" defau
 option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
 option dead type="group" label="Dead & ghost"
 option dead.enabled type="toggle" label="Enabled" default=true tooltip=#02954430
-option dead.color type="color" label="Ghost colour" default={0.48,0.65,0.7,1} hidden
+option dead.color type="color" label="Ghost colour" default={0.48,0.65,0.7,1} inherit="colors.dead" hidden
 option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
 option dead.bars type="toggle" label="Bars" default=true hidden
 option dead.portrait type="toggle" label="Portrait" default=true hidden
@@ -8546,7 +8549,7 @@ option readyCheck.hold type="range" label="Hold after the check (seconds)" defau
 option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
 option dead type="group" label="Dead & ghost"
 option dead.enabled type="toggle" label="Enabled" default=true tooltip=#02954430
-option dead.color type="color" label="Ghost colour" default={0.48,0.65,0.7,1} hidden
+option dead.color type="color" label="Ghost colour" default={0.48,0.65,0.7,1} inherit="colors.dead" hidden
 option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
 option dead.bars type="toggle" label="Bars" default=true hidden
 option dead.portrait type="toggle" label="Portrait" default=true hidden
@@ -11211,7 +11214,7 @@ option readyCheck.hold type="range" label="Hold after the check (seconds)" defau
 option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
 option dead type="group" label="Dead & ghost"
 option dead.enabled type="toggle" label="Enabled" default=true tooltip=#02954430
-option dead.color type="color" label="Ghost colour" default={0.48,0.65,0.7,1} hidden
+option dead.color type="color" label="Ghost colour" default={0.48,0.65,0.7,1} inherit="colors.dead" hidden
 option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
 option dead.bars type="toggle" label="Bars" default=true hidden
 option dead.portrait type="toggle" label="Portrait" default=true hidden
@@ -13784,7 +13787,7 @@ option readyCheck.hold type="range" label="Hold after the check (seconds)" defau
 option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
 option dead type="group" label="Dead & ghost"
 option dead.enabled type="toggle" label="Enabled" default=true tooltip=#02954430
-option dead.color type="color" label="Ghost colour" default={0.48,0.65,0.7,1} hidden
+option dead.color type="color" label="Ghost colour" default={0.48,0.65,0.7,1} inherit="colors.dead" hidden
 option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
 option dead.bars type="toggle" label="Bars" default=true hidden
 option dead.portrait type="toggle" label="Portrait" default=true hidden
@@ -16358,7 +16361,7 @@ option readyCheck.hold type="range" label="Hold after the check (seconds)" defau
 option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
 option dead type="group" label="Dead & ghost"
 option dead.enabled type="toggle" label="Enabled" default=true tooltip=#02954430
-option dead.color type="color" label="Ghost colour" default={0.48,0.65,0.7,1} hidden
+option dead.color type="color" label="Ghost colour" default={0.48,0.65,0.7,1} inherit="colors.dead" hidden
 option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
 option dead.bars type="toggle" label="Bars" default=true hidden
 option dead.portrait type="toggle" label="Portrait" default=true hidden
@@ -21099,7 +21102,7 @@ option readyCheck.hold type="range" label="Hold after the check (seconds)" defau
 option readyCheck.fade type="range" label="Fade duration (seconds)" default=1.5 min=0 max=5 step=0.25 tooltip=#ded41b0c
 option dead type="group" label="Dead & ghost"
 option dead.enabled type="toggle" label="Enabled" default=true tooltip=#02954430
-option dead.color type="color" label="Ghost colour" default={0.48,0.65,0.7,1} hidden
+option dead.color type="color" label="Ghost colour" default={0.48,0.65,0.7,1} inherit="colors.dead" hidden
 option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
 option dead.bars type="toggle" label="Bars" default=true hidden
 option dead.portrait type="toggle" label="Portrait" default=true hidden
@@ -23598,7 +23601,7 @@ option hover.enabled type="toggle" label="Enabled" default=true tooltip=#dbbae48
 option hover.color type="color" label="Mouseover colour" default={1,1,1,0.12} hidden
 option dead type="group" label="Dead & ghost"
 option dead.enabled type="toggle" label="Enabled" default=true tooltip=#02954430
-option dead.color type="color" label="Ghost colour" default={0.48,0.65,0.7,1} hidden
+option dead.color type="color" label="Ghost colour" default={0.48,0.65,0.7,1} inherit="colors.dead" hidden
 option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
 option dead.bars type="toggle" label="Bars" default=true hidden
 option dead.portrait type="toggle" label="Portrait" default=true hidden
@@ -26113,7 +26116,7 @@ option hover.enabled type="toggle" label="Enabled" default=true tooltip=#dbbae48
 option hover.color type="color" label="Mouseover colour" default={1,1,1,0.12} hidden
 option dead type="group" label="Dead & ghost"
 option dead.enabled type="toggle" label="Enabled" default=true tooltip=#02954430
-option dead.color type="color" label="Ghost colour" default={0.48,0.65,0.7,1} hidden
+option dead.color type="color" label="Ghost colour" default={0.48,0.65,0.7,1} inherit="colors.dead" hidden
 option dead.strength type="range" label="Strength" default=0.85 min=0 max=1 step=0.05 tooltip=#2553aeb7 hidden
 option dead.bars type="toggle" label="Bars" default=true hidden
 option dead.portrait type="toggle" label="Portrait" default=true hidden

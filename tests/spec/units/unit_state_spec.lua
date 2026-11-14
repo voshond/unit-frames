@@ -159,6 +159,21 @@ describe("Dead & ghost and offline looks", function()
 		AssertGhost("enabled again")
 	end)
 
+	it("takes the ghost colour from the theme unless the frame sets its own", function()
+		Mock.dead.player = true
+		Update()
+		ns.Config:SetThemeValue("colors.dead", { 0.9, 0.1, 0.5, 1 })
+		for _, unit in ipairs(ns.Units.order) do
+			assert.same({ 0.9, 0.1, 0.5, 1 }, ns.Units.frames[unit].uf.resolved.dead.color, unit)
+		end
+		assert.same({ 0.9, 0.1, 0.5, STRENGTH }, { Health():GetTint() })
+		Set("dead.color", { 0.2, 0.2, 0.9, 1 })
+		assert.same({ 0.2, 0.2, 0.9, STRENGTH }, { Health():GetTint() }, "the frame's own colour wins")
+		Set("dead.color", nil)
+		ns.Config:SetThemeValue("colors.dead", nil)
+		AssertGhost("back to the default")
+	end)
+
 	it("survives restyling", function()
 		Mock.dead.player = true
 		Update()
