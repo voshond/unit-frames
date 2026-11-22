@@ -1,5 +1,5 @@
 {
-  "build": "1.60.1.70888",
+  "build": "1.60.1.71037",
   "interface": 16001,
   "tables": {
     "SkillLineAbility": [
@@ -505,7 +505,7 @@
       {
         "ID": "45288",
         "SpellClassMask_0": "-2147483648",
-        "SpellClassMask_1": "0",
+        "SpellClassMask_1": "4194304",
         "SpellClassMask_2": "0",
         "SpellClassMask_3": "0",
         "SpellClassSet": "6",
@@ -1429,7 +1429,7 @@
         "EffectAura": "8",
         "EffectAuraPeriod": "1000",
         "EffectBasePointsF": "40",
-        "EffectBonusCoefficient": "0.03299999982",
+        "EffectBonusCoefficient": "0.06599999964",
         "EffectMiscValue_0": "0",
         "EffectPointsPerResource": "0",
         "EffectRealPointsPerLevel": "1",
@@ -2916,5 +2916,5 @@
       }
     ]
   },
-  "uiCommit": "4cd0ab752a77164f654ccbca9d0c1fe8dafceebe"
+  "uiCommit": "734f065329cff4992835b01a84f210a297db91b6"
 }
