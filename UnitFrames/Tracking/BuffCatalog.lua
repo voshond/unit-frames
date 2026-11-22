@@ -1,9 +1,9 @@
 local _, ns = ...
 
 ns.BuffCatalog = {
-	build = "1.60.1.70888",
+	build = "1.60.1.71037",
 	interface = 16001,
-	uiCommit = "4cd0ab752a77164f654ccbca9d0c1fe8dafceebe",
+	uiCommit = "734f065329cff4992835b01a84f210a297db91b6",
 	families = {
 		[17] = { name = "Power Word: Shield", class = "PRIEST", kind = "absorb", ids = { 17, 592, 600, 3747, 6065, 6066, 10898, 10899, 10900, 10901, 27607, 27779, 1236154 } },
 		[139] = { name = "Renew", class = "PRIEST", kind = "hot", ids = { 139, 6074, 6075, 6076, 6077, 6078, 10927, 10928, 10929, 25315, 27606, 425268, 425269, 425270, 425271, 425272, 425273, 425274, 425275, 425276, 425277, 1236151 } },
@@ -26,7 +26,7 @@ ns.BuffCatalog = {
 		[8936] = { name = "Regrowth", class = "DRUID", kind = "hot", ids = { 8936, 8938, 8939, 8940, 8941, 9750, 9856, 9857, 9858, 436937, 436938, 436939, 436940, 436942, 436943, 436944, 436945, 436946 } },
 		[10060] = { name = "Power Infusion", class = "PRIEST", kind = "external", ids = { 10060 } },
 		[11958] = { name = "Ice Block", class = "MAGE", kind = "defensive", ids = { 11958, 27619 } },
-		[14752] = { name = "Divine Spirit", class = "PRIEST", kind = "raid", ids = { 14752, 14818, 14819, 27841 } },
+		[14752] = { name = "Divine Spirit", class = "PRIEST", kind = "raid", ids = { 14752, 14818, 14819, 27681, 27841 } },
 		[19263] = { name = "Deterrence", class = "HUNTER", kind = "defensive", ids = { 19263 } },
 		[19506] = { name = "Trueshot Aura", class = "HUNTER", kind = "raid", ids = { 19506, 20905, 20906, 1299346, 1299348 } },
 		[19740] = { name = "Blessing of Might", class = "PALADIN", kind = "raid", ids = { 19740, 19834, 19835, 19836, 19837, 19838, 25291, 1286253 } },
@@ -40,7 +40,6 @@ ns.BuffCatalog = {
 		[25782] = { name = "Greater Blessing of Might", class = "PALADIN", kind = "raid", ids = { 25782, 25916 } },
 		[25894] = { name = "Greater Blessing of Wisdom", class = "PALADIN", kind = "raid", ids = { 25894, 25918 } },
 		[25898] = { name = "Greater Blessing of Kings", class = "PALADIN", kind = "raid", ids = { 25898 } },
-		[27681] = { name = "Prayer of Spirit", class = "PRIEST", kind = "raid", ids = { 27681, 1286257 } },
 		[27683] = { name = "Prayer of Shadow Protection", class = "PRIEST", kind = "raid", ids = { 27683 } },
 		[29166] = { name = "Innervate", class = "DRUID", kind = "external", ids = { 29166, 456195 } },
 		[400735] = { name = "Temporal Beacon", class = "MAGE", kind = "hot", ids = { 400735 } },
@@ -209,6 +208,7 @@ ns.BuffCatalog = {
 		[14752] = 14752,
 		[14818] = 14752,
 		[14819] = 14752,
+		[27681] = 14752,
 		[27841] = 14752,
 		[19263] = 19263,
 		[19506] = 19506,
@@ -252,8 +252,6 @@ ns.BuffCatalog = {
 		[25894] = 25894,
 		[25918] = 25894,
 		[25898] = 25898,
-		[27681] = 27681,
-		[1286257] = 27681,
 		[27683] = 27683,
 		[29166] = 29166,
 		[456195] = 29166,
@@ -356,6 +354,5 @@ ns.BuffCatalog = {
 		[1238215] = true,
 		[1240848] = true,
 		[1240849] = true,
-		[1286257] = true,
 	},
 }

@@ -1,9 +1,9 @@
 local _, ns = ...
 
 ns.DotCatalog = {
-	build = "1.60.1.70888",
+	build = "1.60.1.71037",
 	interface = 16001,
-	uiCommit = "4cd0ab752a77164f654ccbca9d0c1fe8dafceebe",
+	uiCommit = "734f065329cff4992835b01a84f210a297db91b6",
 	spells = {
 		[133] = { family = 133, school = 4, classMask = 128, durationMs = 4000, maxDurationMs = 4000, durationPerResourceMs = 0, periodMs = 2000, aura = 3, basePoints = 1, pointsPerResource = 0, spellPowerCoefficient = 0, attackPowerCoefficient = 0, pointsPerLevel = 0, directPoints = 18, projectile = true, supercedes = {  } },
 		[143] = { family = 133, school = 4, classMask = 128, durationMs = 6000, maxDurationMs = 6000, durationPerResourceMs = 0, periodMs = 2000, aura = 3, basePoints = 1, pointsPerResource = 0, spellPowerCoefficient = 0, attackPowerCoefficient = 0, pointsPerLevel = 0, directPoints = 32, projectile = true, supercedes = {  } },
